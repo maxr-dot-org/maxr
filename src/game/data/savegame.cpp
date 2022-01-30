@@ -28,15 +28,13 @@
 #include "game/logic/turntimeclock.h"
 #include "game/protocol/netmessage.h"
 #include "game/serialization/serialization.h"
-#include "game/serialization/xmlarchive.h"
+#include "game/serialization/jsonarchive.h"
 #include "maxrversion.h"
 #include "settings.h"
 #include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
-
-#include <3rd/tinyxml2/tinyxml2.h>
 
 #include <ctime>
 #include <config/workaround/cpp17/optional.h>
@@ -47,47 +45,38 @@
 namespace
 {
 	//--------------------------------------------------------------------------
-	bool loadDocument (tinyxml2::XMLDocument& xmlDocument, int slot)
+	std::optional<nlohmann::json> loadDocument (int slot)
 	{
 		const std::string fileName = cSavegame::getFileName (slot);
-		if (xmlDocument.LoadFile (fileName.c_str()) != tinyxml2::XML_NO_ERROR)
+		std::ifstream file (fileName);
+		nlohmann::json json;
+		if (!(file >> json))
 		{
-			Log.write ("Error loading savegame file: " + fileName + ". Reason: " + getXMLErrorMsg (xmlDocument), cLog::eLOG_TYPE_ERROR);
-			return false;
+			Log.write ("Error loading savegame file: " + fileName, cLog::eLOG_TYPE_ERROR);
+			return std::nullopt;
 		}
-		if (!xmlDocument.RootElement() || std::string ("MAXR_SAVE_FILE") != xmlDocument.RootElement()->Name())
-		{
-			Log.write ("Error loading savegame file: " + fileName + ": Rootnode \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
-			return false;
-		}
-		return true;
+		return json;
 	}
 
-
 	//--------------------------------------------------------------------------
-	std::optional<cVersion> loadVersion (const tinyxml2::XMLDocument& xmlDocument, int slot)
+	std::optional<cVersion> loadVersion (const nlohmann::json& json, int slot)
 	{
-		const char* versionString = xmlDocument.RootElement()->Attribute ("version");
-		if (versionString == nullptr)
+		const auto& jsonVersion = json["version"];
+		if (!jsonVersion.is_string())
 		{
-			Log.write ("Error loading savegame file " + std::to_string (slot) + ": \"version\" attribute of node \"MAXR_SAVE_FILE\" not found.", cLog::eLOG_TYPE_ERROR);
+			Log.write ("Error loading savegame file " + std::to_string (slot) + ": \"version\" field not found.", cLog::eLOG_TYPE_ERROR);
 			return std::nullopt;
 		}
 		cVersion version;
-		version.parseFromString (versionString);
+		version.parseFromString (jsonVersion);
 		return version;
 	}
 
-
 	//--------------------------------------------------------------------------
-	void writeHeader (tinyxml2::XMLDocument& xmlDocument, int slot, const std::string& saveName, const cModel &model)
+	void writeHeader (nlohmann::json& json, int slot, const std::string& saveName, const cModel &model)
 	{
 		//init document
-		xmlDocument.Clear();
-		xmlDocument.LinkEndChild (xmlDocument.NewDeclaration());
-		tinyxml2::XMLElement* rootnode = xmlDocument.NewElement ("MAXR_SAVE_FILE");
-		rootnode->SetAttribute ("version", (SAVE_FORMAT_VERSION).c_str());
-		xmlDocument.LinkEndChild (rootnode);
+		json["version"] = SAVE_FORMAT_VERSION;
 
 		//write header
 		char timestr[21];
@@ -107,13 +96,11 @@ namespace
 		if (model.getGameSettings()->gameType == eGameSettingsGameType::HotSeat)
 			type = eGameType::Hotseat;
 
-		cXmlArchiveIn archive (*xmlDocument.RootElement());
-		archive.openNewChild ("header");
+		cJsonArchiveOut archive (json["header"]);
 		archive << serialization::makeNvp ("gameVersion", std::string (PACKAGE_VERSION  " "  PACKAGE_REV));
 		archive << serialization::makeNvp ("gameName", saveName);
 		archive << serialization::makeNvp ("type", type);
 		archive << serialization::makeNvp ("date", std::string (timestr));
-		archive.closeChild();
 	}
 
 }
@@ -121,23 +108,22 @@ namespace
 //------------------------------------------------------------------------------
 void cSavegame::save (const cModel& model, int slot, const std::string& saveName)
 {
-	tinyxml2::XMLDocument xmlDocument;
-	writeHeader (xmlDocument, slot, saveName, model);
+	nlohmann::json json;
+	writeHeader (json, slot, saveName, model);
 
-	cXmlArchiveIn archive (*xmlDocument.RootElement());
+	cJsonArchiveOut archive (json);
 	archive << NVP (model);
 
 	// add model crc
-	archive.openNewChild ("model");
-	archive << serialization::makeNvp ("modelcrc", model.getChecksum());
-	archive.closeChild();
+	cJsonArchiveOut archiveCrc (json);
+	archiveCrc << serialization::makeNvp ("modelcrc", model.getChecksum());
 
 	makeDirectories (cSettings::getInstance().getSavesPath());
-	tinyxml2::XMLError result = xmlDocument.SaveFile (getFileName (slot).c_str());
-	if (result != tinyxml2::XML_NO_ERROR)
 	{
-		throw std::runtime_error (getXMLErrorMsg (xmlDocument));
+		std::ofstream file (getFileName (slot));
+		file << json.dump(2);
 	}
+#if 1
 	if (cSettings::getInstance().isDebug()) // Check Save/Load consistency
 	{
 		cModel model2;
@@ -149,30 +135,25 @@ void cSavegame::save (const cModel& model, int slot, const std::string& saveName
 			Log.write ("Checksum issue when saving", cLog::eLOG_TYPE_ERROR);
 		}
 	}
+#endif
 }
 
 //------------------------------------------------------------------------------
 void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 {
-	tinyxml2::XMLDocument xmlDocument;
-	if (!loadDocument (xmlDocument, guiInfo.slot))
+	auto json = loadDocument (guiInfo.slot);
+	if (!json)
 	{
 		return;
 	}
-	cXmlArchiveIn archive (*xmlDocument.RootElement());
-	archive.openNewChild ("GuiInfo");
-
+	cJsonArchiveOut archive ((*json)["GuiInfo"].emplace_back());
 	archive << serialization::makeNvp ("playerNr", guiInfo.playerNr);
 	archive << serialization::makeNvp ("guiState", guiInfo.guiInfo);
-	archive.closeChild();
 
 	makeDirectories (cSettings::getInstance().getSavesPath());
 	int loadedSlot = guiInfo.slot;
-	tinyxml2::XMLError result = xmlDocument.SaveFile (getFileName (loadedSlot).c_str());
-	if (result != tinyxml2::XML_NO_ERROR)
-	{
-		Log.write ("Writing savegame file failed: " + getXMLErrorMsg (xmlDocument), cLog::eLOG_TYPE_NET_WARNING);
-	}
+	std::ofstream file (getFileName (loadedSlot));
+	file << json->dump(2);
 }
 
 //------------------------------------------------------------------------------
@@ -180,14 +161,14 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 {
 	cSaveGameInfo info (slot);
 
-	tinyxml2::XMLDocument xmlDocument;
-	if (!loadDocument (xmlDocument, slot))
+	const auto& json = loadDocument (slot);
+	if (!json)
 	{
-		info.gameName = "XML Error";
+		info.gameName = "Load Error";
 		return info;
 	}
 
-	auto saveVersion = loadVersion (xmlDocument, slot);
+	auto saveVersion = loadVersion (*json, slot);
 	if (!saveVersion)
 	{
 		info.gameName = "XML Error";
@@ -197,22 +178,17 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 
 	try
 	{
-		cXmlArchiveOut archive (*xmlDocument.RootElement());
-		archive.enterChild ("header");
-		archive >> serialization::makeNvp ("gameVersion", info.gameVersion);
-		archive >> serialization::makeNvp ("gameName", info.gameName);
-		archive >> serialization::makeNvp ("type", info.type);
-		archive >> serialization::makeNvp ("date", info.date);
-		archive.leaveChild(); // header
+		cJsonArchiveIn header (json->at("header"));
 
-		archive.enterChild ("model");
-		archive.enterChild ("players");
+		header >> serialization::makeNvp ("gameVersion", info.gameVersion);
+		header >> serialization::makeNvp ("gameName", info.gameName);
+		header >> serialization::makeNvp ("type", info.type);
+		header >> serialization::makeNvp ("date", info.date);
+
 		int numPlayers = 0;
-		archive >> serialization::makeNvp ("length", numPlayers);
-		info.players.resize (numPlayers);
-		for (int i = 0; i < numPlayers; i++)
+		for (auto& playerJson : json->at("model").at("players"))
 		{
-			archive.enterChild ("item");
+			cJsonArchiveIn archive (playerJson);
 			sPlayerSettings player;
 			int id;
 			bool isDefeated;
@@ -221,24 +197,14 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 			archive >> NVP (id);
 			archive >> NVP (isDefeated);
 
-			info.players[i] = cPlayerBasicData (player, id, isDefeated);
-
-			archive.leaveChild(); // item
+			info.players.emplace_back (cPlayerBasicData (player, id, isDefeated));
 		}
-		archive.leaveChild(); // players
+		cJsonArchiveIn mapArchive (json->at("model").at("map").at("mapFile"));
+		mapArchive >> serialization::makeNvp ("filename", info.mapName);
+		mapArchive >> serialization::makeNvp ("crc", info.mapCrc);
 
-		archive.enterChild ("map");
-		archive.enterChild ("mapFile");
-		archive >> serialization::makeNvp ("filename", info.mapName);
-		archive >> serialization::makeNvp ("crc", info.mapCrc);
-		archive.leaveChild(); // mapFile
-		archive.leaveChild(); // map
-
-		archive.enterChild ("turnCounter");
-		archive >> serialization::makeNvp ("turn", info.turn);
-		archive.leaveChild(); //turnCounter
-
-		archive.leaveChild(); // model
+		cJsonArchiveIn turnArchive (json->at("model").at("turnCounter"));
+		turnArchive >> serialization::makeNvp ("turn", info.turn);
 	}
 	catch (const std::runtime_error& e)
 	{
@@ -254,19 +220,19 @@ std::string cSavegame::getFileName (int slot)
 {
 	char numberstr[4];
 	snprintf (numberstr, sizeof (numberstr), "%.3d", slot);
-	return cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
+	return cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".json";
 }
 
 //------------------------------------------------------------------------------
 void cSavegame::loadModel (cModel& model, int slot)
 {
-	tinyxml2::XMLDocument xmlDocument;
-	if (!loadDocument (xmlDocument, slot))
+	const auto& json = loadDocument (slot);
+	if (!json)
 	{
 		throw std::runtime_error ("Could not load savegame file " + std::to_string (slot));
 	}
 
-	auto saveVersion = loadVersion (xmlDocument, slot);
+	auto saveVersion = loadVersion (*json, slot);
 	if (!saveVersion)
 	{
 		throw std::runtime_error ("Could not load version info from savegame file " + std::to_string (slot));
@@ -276,53 +242,55 @@ void cSavegame::loadModel (cModel& model, int slot)
 	{
 		throw std::runtime_error ("Savegame version is not compatible. Versions < 1.0 are not supported.");
 	}
-
-	serialization::cPointerLoader loader (model);
-	cXmlArchiveOut archive (*xmlDocument.RootElement(), &loader);
-	archive >> NVP (model);
-
-	// check crc
-	uint32_t crcFromSave;
-	archive.enterChild ("model");
-	archive >> serialization::makeNvp ("modelcrc", crcFromSave);
-	archive.leaveChild();
-	Log.write (" Checksum from save file: " + std::to_string (crcFromSave), cLog::eLOG_TYPE_NET_DEBUG);
-
-	uint32_t modelCrc = model.getChecksum();
-	Log.write (" Checksum after loading model: " + std::to_string (modelCrc), cLog::eLOG_TYPE_NET_DEBUG);
-	Log.write (" GameId: " + std::to_string (model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
-
-	if (crcFromSave != modelCrc)
+	try
 	{
-		Log.write (" Crc of loaded model does not match the saved crc!", cLog::eLOG_TYPE_NET_ERROR);
-		//TODO: what to do in this case?
+		serialization::cPointerLoader loader (model);
+		cJsonArchiveIn archive (*json, &loader);
+		archive >> NVP (model);
+
+		// check crc
+		cJsonArchiveIn modelArchive (*json, &loader);
+		uint32_t crcFromSave;
+		modelArchive >> serialization::makeNvp ("modelcrc", crcFromSave);
+		Log.write (" Checksum from save file: " + std::to_string (crcFromSave), cLog::eLOG_TYPE_NET_DEBUG);
+
+		uint32_t modelCrc = model.getChecksum();
+		Log.write (" Checksum after loading model: " + std::to_string (modelCrc), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" GameId: " + std::to_string (model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
+
+		if (crcFromSave != modelCrc)
+		{
+			Log.write (" Crc of loaded model does not match the saved crc!", cLog::eLOG_TYPE_NET_ERROR);
+			//TODO: what to do in this case?
+		}
+	}
+	catch (const std::exception& e)
+	{
+		Log.write ("Error loading savegame file " + std::to_string (slot) + ": " + e.what(), cLog::eLOG_TYPE_ERROR);
 	}
 }
 
 //------------------------------------------------------------------------------
 void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 {
-	tinyxml2::XMLDocument xmlDocument;
-	if (!loadDocument (xmlDocument, slot))
+	const auto& json = loadDocument (slot);
+	if (!json)
 	{
 		throw std::runtime_error ("Could not load savegame file " + std::to_string (slot));
 	}
 
-	tinyxml2::XMLElement* guiInfoElement = xmlDocument.RootElement()->FirstChildElement ("GuiInfo");
-	while (guiInfoElement)
+	for (const auto& player : json->at("GuiInfo"))
 	{
-		cXmlArchiveOut archive (*guiInfoElement);
+		cJsonArchiveIn archive (player);
 		cNetMessageGUISaveInfo guiInfo (slot, -1);
 
-		serialization::makeNvp ("playerNr", guiInfo.playerNr);
+		archive >> serialization::makeNvp ("playerNr", guiInfo.playerNr);
 		archive >> serialization::makeNvp ("guiState", guiInfo.guiInfo);
 
 		if (guiInfo.playerNr == playerNr || playerNr == -1)
 		{
 			server->sendMessageToClients (guiInfo, guiInfo.playerNr);
 		}
-
-		guiInfoElement = guiInfoElement->NextSiblingElement ("GuiInfo");
 	}
 }
 
@@ -331,7 +299,7 @@ void fillSaveGames (std::size_t minIndex, std::size_t maxIndex, std::vector<cSav
 {
 	cSavegame savegame;
 	const auto saveFileNames = getFilesOfDirectory (cSettings::getInstance().getSavesPath());
-	const std::regex savename_regex{R"(Save(\d{3})\.xml)"};
+	const std::regex savename_regex{R"(Save(\d{3})\.json)"};
 
 	for (const auto& filename : saveFileNames)
 	{
