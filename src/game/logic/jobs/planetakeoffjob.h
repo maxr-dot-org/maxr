@@ -24,6 +24,7 @@
 
 #include "game/data/units/unit.h"
 #include "game/serialization/binaryarchive.h"
+#include "game/serialization/jsonarchive.h"
 #include "game/serialization/xmlarchive.h"
 #include "utility/signal/signalconnectionmanager.h"
 
@@ -40,6 +41,7 @@ public:
 	eJobType getType() const override;
 
 	void serialize (cBinaryArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
+	void serialize (cJsonArchiveOut& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
 	void serialize (cXmlArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
 
 	uint32_t getChecksum (uint32_t crc) const override;

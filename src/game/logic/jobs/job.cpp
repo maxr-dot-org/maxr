@@ -25,6 +25,7 @@
 #include "game/logic/jobs/planetakeoffjob.h"
 #include "game/logic/jobs/startbuildjob.h"
 #include "game/serialization/binaryarchive.h"
+#include "game/serialization/jsonarchive.h"
 #include "game/serialization/xmlarchive.h"
 
 //------------------------------------------------------------------------------
@@ -34,6 +35,12 @@ cJob::cJob (cUnit& unit) :
 
 //------------------------------------------------------------------------------
 std::unique_ptr<cJob> cJob::createFrom (cBinaryArchiveOut& archive)
+{
+	return createFromImpl (archive);
+}
+
+//------------------------------------------------------------------------------
+std::unique_ptr<cJob> cJob::createFrom (cJsonArchiveIn& archive)
 {
 	return createFromImpl (archive);
 }

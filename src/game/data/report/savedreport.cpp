@@ -118,6 +118,12 @@ std::unique_ptr<cSavedReport> cSavedReport::createFrom (cBinaryArchiveOut& archi
 }
 
 //------------------------------------------------------------------------------
+std::unique_ptr<cSavedReport> cSavedReport::createFrom (cJsonArchiveIn& archive)
+{
+	return createFromImpl (archive);
+}
+
+//------------------------------------------------------------------------------
 std::unique_ptr<cSavedReport> cSavedReport::createFrom (cXmlArchiveOut& archive)
 {
 	return createFromImpl (archive);
