@@ -169,6 +169,18 @@ private:
 	}
 
 	//--------------------------------------------------------------------------
+	template <typename T, typename Cmp>
+	void pushValue (const cFlatSet<T, Cmp>& v)
+	{
+		auto arr = nlohmann::json::array();
+		for (const auto& e : v)
+		{
+			cJsonArchiveOut (arr.emplace_back()) << e;
+		}
+		json = std::move (arr);
+	}
+
+	//--------------------------------------------------------------------------
 	template <typename T>
 	void pushValue (const std::optional<T>& o)
 	{
@@ -341,6 +353,19 @@ private:
 			std::pair<K, V> p;
 			cJsonArchiveIn (e) >> p;
 			m.insert(p);
+		}
+	}
+
+	//--------------------------------------------------------------------------
+	template <typename T, typename Cmp>
+	void popValue (cFlatSet<T, Cmp>& v)
+	{
+		std::size_t i = 0;
+		for (const auto& e : json)
+		{
+			T item;
+			cJsonArchiveIn (e) >> item;
+			v.insert (std::move (item));
 		}
 	}
 
