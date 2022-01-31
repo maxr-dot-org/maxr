@@ -250,7 +250,7 @@ private:
 		//check invalid characters in element and attribute names
 		assert (nvp.name.find_first_of ("<>\"= []?!&") == std::string::npos);
 
-		cJsonArchiveIn (json.at (nvp.name)) >> nvp.value;
+		cJsonArchiveIn (json.at (nvp.name), pointerLoader) >> nvp.value;
 	}
 
 	//--------------------------------------------------------------------------
@@ -315,7 +315,7 @@ private:
 		std::size_t i = 0;
 		for (const auto& e : json)
 		{
-			cJsonArchiveIn (e) >> v[i++];
+			cJsonArchiveIn (e, pointerLoader) >> v[i++];
 		}
 	}
 
@@ -328,7 +328,7 @@ private:
 		assert(json.size() == N);
 		for (const auto& e : json)
 		{
-			cJsonArchiveIn (e) >> a[i++];
+			cJsonArchiveIn (e, pointerLoader) >> a[i++];
 		}
 	}
 
@@ -340,7 +340,7 @@ private:
 		auto it = list.begin();
 		for (const auto& e : json)
 		{
-			cJsonArchiveIn (e) >> *it++;
+			cJsonArchiveIn (e, pointerLoader) >> *it++;
 		}
 	}
 
@@ -351,7 +351,7 @@ private:
 		for (const auto& e : json)
 		{
 			std::pair<K, V> p;
-			cJsonArchiveIn (e) >> p;
+			cJsonArchiveIn (e, pointerLoader) >> p;
 			m.insert(p);
 		}
 	}
@@ -364,7 +364,7 @@ private:
 		for (const auto& e : json)
 		{
 			T item;
-			cJsonArchiveIn (e) >> item;
+			cJsonArchiveIn (e, pointerLoader) >> item;
 			v.insert (std::move (item));
 		}
 	}
