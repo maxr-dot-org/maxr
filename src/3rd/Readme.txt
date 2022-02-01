@@ -6,6 +6,3 @@ Those files doesn't have Maxr copyright:
 
 - SDL_flic:
   Allow to handle flc format
-
-- tinyxml2
-  embed tinyxml 2.0.2

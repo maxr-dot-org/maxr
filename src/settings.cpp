@@ -25,7 +25,6 @@
 
 #include "defines.h"
 #include "game/serialization/jsonarchive.h"
-#include "game/serialization/xmlarchive.h"
 #include "maxrversion.h"
 #include "utility/files.h"
 #include "utility/log.h"
@@ -187,30 +186,6 @@ void cSettings::setPaths()
 }
 
 //------------------------------------------------------------------------------
-void cSettings::loadFromXmlFile (const std::string& path)
-{
-	tinyxml2::XMLDocument configFile;
-	if (!FileExists (path) || configFile.LoadFile (path.c_str()) != tinyxml2::XML_NO_ERROR)
-	{
-		saveInFile();
-		initializing = false;
-		initialized = true;
-		return;
-	}
-	cXmlArchiveOut archive (*configFile.RootElement());
-	try
-	{
-		serialize (archive);
-	} catch (const std::runtime_error& ex)
-	{
-		Log.write ("Cannot read settings, Create a new file (and backup the old one)", cLog::eLOG_TYPE_WARNING);
-		copyFile (path, path + ".old");
-		saveInFile();
-		initializing = false;
-		initialized = true;
-	}
-}
-//------------------------------------------------------------------------------
 void cSettings::loadFromJsonFile (const std::string& path)
 {
 	std::ifstream file (path);
@@ -244,17 +219,11 @@ void cSettings::initialize()
 
 	setPaths();
 
-	const auto settingsXml = homeDir + "maxr.xml";
 	const auto settingsJson = homeDir + "maxr.json";
 
 	if (FileExists (settingsJson))
 	{
 		loadFromJsonFile (settingsJson);
-	}
-	else if (FileExists (settingsXml))
-	{
-		loadFromXmlFile(settingsXml);
-		saveInFile();
 	}
 	else
 	{
@@ -263,7 +232,7 @@ void cSettings::initialize()
 	}
 
 	to_lower (global.voiceLanguage);
-	if (!global.debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.xml", cLog::eLOG_TYPE_WARNING);
+	if (!global.debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.json", cLog::eLOG_TYPE_WARNING);
 	else Log.write ("Debugmode enabled", cLog::eLOG_TYPE_INFO);
 
 #if MAC

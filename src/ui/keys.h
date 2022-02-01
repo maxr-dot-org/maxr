@@ -21,7 +21,7 @@
 #define ui_keysH
 
 #include "input/keyboard/keysequence.h"
-#include "game/serialization/xmlarchive.h"
+#include "game/serialization/serialization.h"
 
 enum class eMouseStyle
 {
@@ -47,7 +47,6 @@ public:
 	eMouseStyle getMouseStyle() const;
 public:
 	void loadFromJsonFile (const std::string& path);
-	void loadFromXmlFile(const std::string& path);
 public:
 	cKeySequence keyExit;
 	cKeySequence keyJumpToAction;

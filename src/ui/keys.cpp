@@ -20,7 +20,6 @@
 #include "keys.h"
 
 #include "game/serialization/jsonarchive.h"
-#include "game/serialization/xmlarchive.h"
 #include "settings.h"
 #include "utility/files.h"
 #include "utility/log.h"
@@ -109,31 +108,6 @@ cKeysList::cKeysList() :
 {}
 
 //------------------------------------------------------------------------------
-void cKeysList::loadFromXmlFile (const std::string& path)
-{
-	Log.write ("Use (old) xml format", cLog::eLOG_TYPE_INFO);
-	tinyxml2::XMLDocument doc;
-	if (doc.LoadFile (path.c_str()) != tinyxml2::XML_NO_ERROR)
-	{
-		Log.write ("cannot load keys.xml\ngenerating new file", cLog::eLOG_TYPE_WARNING);
-		return;
-	}
-	cXmlArchiveOut in (*doc.RootElement());
-
-	try
-	{
-		serialize (in);
-
-		Log.write ("Done", cLog::eLOG_TYPE_DEBUG);
-	}
-	catch (const std::exception& e)
-	{
-		Log.write (std::string ("Error while reading keys: ") + e.what(), cLog::eLOG_TYPE_WARNING);
-		Log.write ("Overwriting with default settings", cLog::eLOG_TYPE_WARNING);
-	}
-}
-
-//------------------------------------------------------------------------------
 void cKeysList::loadFromJsonFile (const std::string& path)
 {
 	std::ifstream file (path);
@@ -165,8 +139,6 @@ void cKeysList::loadFromFile()
 {
 	Log.write ("Loading Keys", cLog::eLOG_TYPE_INFO);
 
-	const auto KEYS_XMLGame = cSettings::getInstance().getDataDir() + "keys.xml";
-	const auto KEYS_XMLUsers = cSettings::getInstance().getHomeDir() + "keys.xml";
 	const auto keysJsonGame = cSettings::getInstance().getDataDir() + "keys.json";
 	const auto keysJsonUsers = cSettings::getInstance().getHomeDir() + "keys.json";
 
@@ -180,16 +152,6 @@ void cKeysList::loadFromFile()
 		copyFile (keysJsonGame, keysJsonUsers);
 		Log.write ("Key-file copied from gamedir to userdir", cLog::eLOG_TYPE_INFO);
 		loadFromJsonFile (keysJsonUsers);
-	}
-	else if (FileExists (KEYS_XMLUsers))
-	{
-		loadFromXmlFile(KEYS_XMLUsers);
-		saveToFile();
-	}
-	else if (FileExists (KEYS_XMLGame))
-	{
-		loadFromXmlFile(KEYS_XMLGame);
-		saveToFile();
 	}
 	else
 	{

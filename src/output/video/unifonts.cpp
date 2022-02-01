@@ -713,7 +713,7 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text,
 	do
 	{
 		// erase all invalid formatted breaklines
-		// like we may get them from translation XMLs
+		// like we may get them from translation
 		k = sText.find ("\\n");
 
 		if (k != string::npos)

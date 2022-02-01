@@ -42,7 +42,6 @@ public:
 
 	void serialize (cBinaryArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
 	void serialize (cJsonArchiveOut& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
-	void serialize (cXmlArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
 
 	const cUnit& getUnit() const { return *unit; }
 	sID getUnitTypeId() const { return unit->data.getId(); }

@@ -221,7 +221,6 @@ private:
 	 */
 	void initialize();
 
-	void loadFromXmlFile (const std::string& path);
 	void loadFromJsonFile (const std::string& path);
 
 	/**

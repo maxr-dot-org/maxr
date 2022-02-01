@@ -31,7 +31,6 @@
 #include "game/serialization/jsonarchive.h"
 #include "maxrversion.h"
 #include "settings.h"
-#include "utility/extendedtinyxml.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
@@ -171,7 +170,7 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 	auto saveVersion = loadVersion (*json, slot);
 	if (!saveVersion)
 	{
-		info.gameName = "XML Error";
+		info.gameName = "File Error";
 		return info;
 	}
 	info.saveVersion = *saveVersion;
@@ -209,7 +208,7 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 	catch (const std::runtime_error& e)
 	{
 		Log.write ("Error loading savegame file " + std::to_string (slot) + ": " + e.what(), cLog::eLOG_TYPE_ERROR);
-		info.gameName = "XML Error";
+		info.gameName = "File Error";
 		return info;
 	}
 	return info;

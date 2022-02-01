@@ -284,8 +284,8 @@ public:
 	}
 
 private:
-	std::string description; //untranslated data from unit xml. Will be used, when translation for the unit is not available
-	std::string name;        //untranslated data from unit xml. Will be used, when translation for the unit is not available
+	std::string description; //untranslated data from unit json. Will be used, when translation for the unit is not available
+	std::string name;        //untranslated data from unit json. Will be used, when translation for the unit is not available
 };
 
 //class for vehicle properties, that are individual for each instance of a unit

@@ -31,8 +31,6 @@ class cBinaryArchiveOut;
 class cBinaryArchiveIn;
 class cJsonArchiveIn;
 class cJsonArchiveOut;
-class cXmlArchiveIn;
-class cXmlArchiveOut;
 
 enum class eJobType
 {
@@ -60,11 +58,9 @@ public:
 
 	static std::unique_ptr<cJob> createFrom (cBinaryArchiveOut&);
 	static std::unique_ptr<cJob> createFrom (cJsonArchiveIn&);
-	static std::unique_ptr<cJob> createFrom (cXmlArchiveOut&);
 
 	virtual void serialize (cBinaryArchiveIn&) = 0;
 	virtual void serialize (cJsonArchiveOut&) = 0;
-	virtual void serialize (cXmlArchiveIn&) = 0;
 
 	virtual uint32_t getChecksum (uint32_t crc) const = 0;
 protected:

@@ -22,7 +22,6 @@
 #include "utility/crc.h"
 #include "game/serialization/binaryarchive.h"
 #include "game/serialization/jsonarchive.h"
-#include "game/serialization/xmlarchive.h"
 
 #include <iostream>
 #include <string>
@@ -104,21 +103,6 @@ std::ostream& operator<< (std::ostream& os, const std::forward_list<T>& list)
 
 namespace
 {
-	//--------------------------------------------------------------------------
-	template <typename T>
-	void checkXmlSaveLoad (T expected)
-	{
-		tinyxml2::XMLDocument doc;
-		doc.LinkEndChild (doc.NewElement ("TEST"));
-
-		cXmlArchiveIn in (*doc.RootElement());
-		cXmlArchiveOut out (*doc.RootElement());
-
-		in << serialization::makeNvp ("value", expected);
-		T value;
-		out >> serialization::makeNvp ("value", value);
-		CHECK_EQUAL (expected, value);
-	}
 
 	//--------------------------------------------------------------------------
 	template <typename T>
@@ -193,22 +177,6 @@ namespace
 	const std::optional<int> o = 42;
 	const std::forward_list<int> list{1, 2, 3};
 	const std::map<int, std::string> m{{1, "I"}, {2, "II"}, {5, "V"}};
-
-	//--------------------------------------------------------------------------
-	TEST (XmlSerialization)
-	{
-		checkXmlSaveLoad (n);
-		//checkXmlSaveLoad (f); // precision error
-		//checkXmlSaveLoad (d); // precision error
-		checkXmlSaveLoad (s);
-		checkXmlSaveLoad (v);
-		checkXmlSaveLoad (a);
-		checkXmlSaveLoad (p);
-		checkXmlSaveLoad (empty);
-		checkXmlSaveLoad (o);
-		checkXmlSaveLoad (m);
-		checkXmlSaveLoad (list);
-	}
 
 	//--------------------------------------------------------------------------
 	TEST (BinarySerializationNvp)
