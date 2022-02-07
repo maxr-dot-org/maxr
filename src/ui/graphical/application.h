@@ -61,50 +61,50 @@ public:
 	 * @param window The reference window to search for.
 	 *               This window will not be marked to be closed.
 	 */
-	void closeTill (const cWindow& window);
+	void closeTill (const cWindow&);
 
-	void registerMouse (cMouse& mouse);
-	void registerKeyboard (cKeyboard& keyboard);
+	void registerMouse (cMouse&);
+	void registerKeyboard (cKeyboard&);
 
-	void grapMouseFocus (cWidget& widget);
-	void releaseMouseFocus (const cWidget& widget);
-	bool hasMouseFocus (const cWidget& widget) const;
+	void grapMouseFocus (cWidget&);
+	void releaseMouseFocus (const cWidget&);
+	bool hasMouseFocus (const cWidget&) const;
 	bool hasMouseFocus() const;
 
-	void grapKeyFocus (cWidget& widget);
-	void releaseKeyFocus (const cWidget& widget);
-	bool hasKeyFocus (const cWidget& widget) const;
+	void grapKeyFocus (cWidget&);
+	void releaseKeyFocus (const cWidget&);
+	bool hasKeyFocus (const cWidget&) const;
 	bool hasKeyFocus() const;
 
-	void addRunnable (std::shared_ptr<cRunnable> runnable);
-	std::shared_ptr<cRunnable> removeRunnable (std::shared_ptr<cRunnable> runnable);
+	void addRunnable (std::shared_ptr<cRunnable>);
+	std::shared_ptr<cRunnable> removeRunnable (std::shared_ptr<cRunnable>);
 
-	cMouse* getActiveMouse();
-	cKeyboard* getActiveKeyboard();
+	cMouse* getActiveMouse() { return activeMouse; }
+	cKeyboard* getActiveKeyboard() { return activeKeyboard; }
 
 private:
 	template <typename Action> void addShortcut (cKeySequence, Action);
 
-	void center (cWindow& window);
+	void center (cWindow&);
 
 	cWindow* getActiveWindow();
 
-	cWidget* getMouseEventFirstTarget (const cPosition& position);
+	cWidget* getMouseEventFirstTarget (const cPosition&);
 
-	cWidget* getKeyFocusWidget() const;
+	cWidget* getKeyFocusWidget() const { return keyFocusWidget; }
 
-	void mousePressed (cMouse& mouse, eMouseButtonType button);
-	void mouseReleased (cMouse& mouse, eMouseButtonType button);
-	void mouseWheelMoved (cMouse& mouse, const cPosition& amount);
-	void mouseMoved (cMouse& mouse, const cPosition& offset);
+	void mousePressed (cMouse&, eMouseButtonType);
+	void mouseReleased (cMouse&, eMouseButtonType);
+	void mouseWheelMoved (cMouse&, const cPosition& amount);
+	void mouseMoved (cMouse&, const cPosition& offset);
 
-	void keyPressed (cKeyboard& keyboard, SDL_Keycode key);
-	void keyReleased (cKeyboard& keyboard, SDL_Keycode key);
-	void textEntered (cKeyboard& keyboard, const char* text);
+	void keyPressed (cKeyboard&, SDL_Keycode key);
+	void keyReleased (cKeyboard&, SDL_Keycode key);
+	void textEntered (cKeyboard&, const char* text);
 
-	void assignKeyFocus (cWidget* widget);
+	void assignKeyFocus (cWidget*);
 
-	bool hitShortcuts (const cKeySequence& keySequence);
+	bool hitShortcuts (const cKeySequence&);
 
 	void drawFramesPerSecond (unsigned int fps);
 
@@ -121,16 +121,15 @@ private:
 
 	std::vector<std::unique_ptr<cShortcut>> shortcuts;
 
-	cMouse* activeMouse;
-	cKeyboard* activeKeyboard;
+	cMouse* activeMouse = nullptr;
+	cKeyboard* activeKeyboard = nullptr;
 
-	cWidget* keyFocusWidget;
-	cWidget* mouseFocusWidget;
-	//cWidget* underMouseWidget;
+	cWidget* keyFocusWidget = nullptr;
+	cWidget* mouseFocusWidget = nullptr;
 
 	std::list<std::shared_ptr<cRunnable>> runnables;
 
-	bool shouldDrawFramesPerSecond;
+	bool shouldDrawFramesPerSecond = false;
 };
 
 //------------------------------------------------------------------------------

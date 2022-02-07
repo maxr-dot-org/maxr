@@ -19,13 +19,11 @@
 
 #include "application.h"
 
-#include "game/protocol/netmessage.h"
 #include "events/eventmanager.h"
 #include "input/keyboard/keyboard.h"
 #include "input/mouse/mouse.h"
 #include "output/video/unifonts.h"
 #include "output/video/video.h"
-#include "settings.h"
 #include "ui/graphical/framecounter.h"
 #include "ui/graphical/widget.h"
 #include "ui/graphical/window.h"
@@ -33,18 +31,13 @@
 
 //------------------------------------------------------------------------------
 cApplication::cApplication() :
-	frameCounter (std::make_shared<cFrameCounter>()),
-	activeMouse (nullptr),
-	activeKeyboard (nullptr),
-	keyFocusWidget (nullptr),
-	mouseFocusWidget (nullptr),
-	shouldDrawFramesPerSecond (false)
+	frameCounter (std::make_shared<cFrameCounter>())
 {
 	signalConnectionManager.connect (Video.resolutionChanged, [this]()
 	{
-		for (auto i = modalWindows.rbegin(); i != modalWindows.rend(); ++i)
+		for (auto rit = modalWindows.rbegin(); rit != modalWindows.rend(); ++rit)
 		{
-			const auto& modalWindow = *i;
+			const auto& modalWindow = *rit;
 			if (modalWindow->wantsCentered())
 			{
 				center (*modalWindow);
@@ -86,17 +79,17 @@ void cApplication::execute()
 	{
 		eventManager.run();
 
-		for (auto i = runnables.begin(); i != runnables.end(); /*erase in loop*/)
+		for (auto it = runnables.begin(); it != runnables.end(); /*erase in loop*/)
 		{
-			const auto& runnable = *i;
+			const auto& runnable = *it;
 			if (runnable->wantsToTerminate())
 			{
-				i = runnables.erase (i);
+				it = runnables.erase (it);
 			}
 			else
 			{
 				runnable->run();
-				++i;
+				++it;
 			}
 		}
 
@@ -144,11 +137,11 @@ void cApplication::execute()
 //------------------------------------------------------------------------------
 void cApplication::closeTill (const cWindow& window)
 {
-	for (auto i = modalWindows.rbegin(); i != modalWindows.rend(); ++i)
+	for (auto rit = modalWindows.rbegin(); rit != modalWindows.rend(); ++rit)
 	{
-		if (i->get() == &window) break;
+		if (rit->get() == &window) break;
 
-		(*i)->close();
+		(*rit)->close();
 	}
 }
 
@@ -222,18 +215,6 @@ bool cApplication::hasKeyFocus() const
 }
 
 //------------------------------------------------------------------------------
-cMouse* cApplication::getActiveMouse()
-{
-	return activeMouse;
-}
-
-//------------------------------------------------------------------------------
-cKeyboard* cApplication::getActiveKeyboard()
-{
-	return activeKeyboard;
-}
-
-//------------------------------------------------------------------------------
 void cApplication::addRunnable (std::shared_ptr<cRunnable> runnable)
 {
 	runnables.push_back (std::move (runnable));
@@ -242,20 +223,15 @@ void cApplication::addRunnable (std::shared_ptr<cRunnable> runnable)
 //------------------------------------------------------------------------------
 std::shared_ptr<cRunnable> cApplication::removeRunnable (std::shared_ptr<cRunnable> runnable)
 {
-	std::shared_ptr<cRunnable> result;
-	for (auto i = runnables.begin(); i != runnables.end();)
+	const auto it = ranges::find (runnables, runnable);
+
+	if (it == runnables.end())
 	{
-		if (*i == runnable)
-		{
-			result = std::move (*i);
-			i = runnables.erase (i);
-		}
-		else
-		{
-			++i;
-		}
+		auto result = std::move (*it);
+		runnables.erase (it);
+		return result;
 	}
-	return result;
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -265,12 +241,6 @@ cWindow* cApplication::getActiveWindow()
 	while (!modalWindows.empty() && modalWindows.back() == nullptr) modalWindows.pop_back();
 
 	return modalWindows.empty() ? nullptr : modalWindows.back().get();
-}
-
-//------------------------------------------------------------------------------
-cWidget* cApplication::getKeyFocusWidget() const
-{
-	return keyFocusWidget;
 }
 
 //------------------------------------------------------------------------------
