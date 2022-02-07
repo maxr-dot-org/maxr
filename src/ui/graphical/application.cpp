@@ -55,7 +55,6 @@ cApplication::cApplication() :
 	addShortcut (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_f)), [this]()
 	{
 		shouldDrawFramesPerSecond = !shouldDrawFramesPerSecond;
-		if (!shouldDrawFramesPerSecond) drawFramesPerSecond (0, false); // make sure the last fps will not be visible
 	});
 
 	addShortcut (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_w)), [this]()
@@ -477,10 +476,9 @@ bool cApplication::hitShortcuts (const cKeySequence& keySequence)
 }
 
 //------------------------------------------------------------------------------
-void cApplication::drawFramesPerSecond (unsigned int fps, bool draw)
+void cApplication::drawFramesPerSecond (unsigned int fps)
 {
 	SDL_Rect dest = {0, 0, 55, 10};
 	SDL_FillRect (cVideo::buffer, &dest, 0);
-	if (draw)
-		cUnicodeFont::font->showText (0, 0, "FPS: " + std::to_string (fps));
+	cUnicodeFont::font->showText (0, 0, "FPS: " + std::to_string (fps));
 }

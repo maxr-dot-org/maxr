@@ -106,7 +106,7 @@ private:
 
 	bool hitShortcuts (const cKeySequence& keySequence);
 
-	void drawFramesPerSecond (unsigned int fps, bool draw = true);
+	void drawFramesPerSecond (unsigned int fps);
 
 public:
 	std::shared_ptr<cFrameCounter> frameCounter;
