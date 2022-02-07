@@ -43,10 +43,13 @@ namespace
 	std::mutex putenv_mutex;
 
 	//------------------------------------------------------------------------------
-	void setLanguageEnv(const char* s)
+	void setLanguageEnv(const char* lang)
 	{
 		// putenv(char*) is some system, even if string is unchanged
-		putenv((char*)s);
+		// it even seems that pointer should still be alive
+		static char buffer[] = "LANGUAGE=....";
+		snprintf (buffer, sizeof (buffer), "LANGUAGE=%s", lang);
+		putenv (buffer);
 	}
 
 }
@@ -62,7 +65,7 @@ void cLanguage::setLanguagesFolder (const std::string& path)
 	bind_textdomain_codeset ("units", "utf-8");
 	textdomain ("maxr");
 	std::unique_lock<std::mutex> lock (putenv_mutex);
-	setLanguageEnv ("LANGUAGE=en");
+	setLanguageEnv ("en");
 }
 
 //------------------------------------------------------------------------------
@@ -75,7 +78,7 @@ void cLanguage::setCurrentLanguage (const std::string& code)
 	}
 	m_languageCode = code;
 	std::unique_lock<std::mutex> lock (putenv_mutex);
-	setLanguageEnv (("LANGUAGE=" + code).c_str());
+	setLanguageEnv (code.c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -88,13 +91,13 @@ std::string cLanguage::dGetText (const char* textDomain, const char* s) const
 	{
 		Log.write ("Missing translation: " + std::string (s), cLog::eLOG_TYPE_WARNING);
 
-		setLanguageEnv ("LANGUAGE=en");
+		setLanguageEnv ("en");
 		translated = dgettext (textDomain, s);
 		if (translated == s)
 		{
 			Log.write ("Missing English translation: " + std::string (s), cLog::eLOG_TYPE_WARNING);
 		}
-		setLanguageEnv (("LANGUAGE=" + m_languageCode).c_str());
+		setLanguageEnv (m_languageCode.c_str());
 	}
 	return translated;
 }
@@ -135,13 +138,13 @@ std::string cLanguage::plural (const std::string& text, std::size_t n) const
 	{
 		Log.write ("Missing translation (plural entry): " + std::string (text), cLog::eLOG_TYPE_WARNING);
 
-		setLanguageEnv ("LANGUAGE=en");
+		setLanguageEnv ("en");
 		translated = dngettext (maxrDomain, text.c_str(), text.c_str(), n);
 		if (translated == text)
 		{
 			Log.write ("Missing English translation (plural entry): " + std::string (text), cLog::eLOG_TYPE_WARNING);
 		}
-		setLanguageEnv (("LANGUAGE=" + m_languageCode).c_str());
+		setLanguageEnv (m_languageCode.c_str());
 	}
 	const auto pos = translated.find ("%d");
 
