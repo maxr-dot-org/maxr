@@ -112,12 +112,6 @@ cWindowLandingPositionSelection::~cWindowLandingPositionSelection()
 {}
 
 //------------------------------------------------------------------------------
-const cPosition& cWindowLandingPositionSelection::getSelectedPosition() const
-{
-	return lastSelectedPosition;
-}
-
-//------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::applyReselectionState (eLandingPositionState state)
 {
 	reselectionState = state;

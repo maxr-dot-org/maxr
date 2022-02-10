@@ -50,8 +50,6 @@ public:
 	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap>, bool fixedBridgeHead, const std::vector<sLandingUnit>&, std::shared_ptr<const cUnitsData>, bool withChatBox);
 	~cWindowLandingPositionSelection();
 
-	const cPosition& getSelectedPosition() const;
-
 	void applyReselectionState (eLandingPositionState);
 
 	void setInfoMessage (const std::string&);
