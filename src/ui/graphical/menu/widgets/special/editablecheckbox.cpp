@@ -24,7 +24,7 @@
 
 //------------------------------------------------------------------------------
 cEditableCheckBox::cEditableCheckBox (const cBox<cPosition>& area, const std::string& prefix, const std::string& suffix, eUnicodeFontType fontType) :
-	cFrame (area)
+	cWidget (area)
 {
 	checkBox = addChild (std::make_unique<cCheckBox> (area.getMinCorner(), prefix, fontType, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	auto prefixSize = cUnicodeFont::font->getTextWide (prefix + ".", fontType);

@@ -28,15 +28,7 @@ public:
 	cFrame();
 	explicit cFrame (const cBox<cPosition>& area);
 
-	template <typename WidgetType>
-	WidgetType* addChild (std::unique_ptr<WidgetType> child);
+	using cWidget::addChild;
 };
-
-//------------------------------------------------------------------------------
-template <typename WidgetType>
-WidgetType* cFrame::addChild (std::unique_ptr<WidgetType> child)
-{
-	return cWidget::addChild (std::move (child));
-}
 
 #endif // ui_graphical_menu_widgets_frameH
