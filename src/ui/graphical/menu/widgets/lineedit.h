@@ -41,22 +41,22 @@ enum class eLineEditFrameType
 class cLineEdit : public cClickableWidget
 {
 public:
-	cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType = eLineEditFrameType::None, eUnicodeFontType fontType = FONT_LATIN_NORMAL);
+	cLineEdit (const cBox<cPosition>& area, eLineEditFrameType = eLineEditFrameType::None, eUnicodeFontType = FONT_LATIN_NORMAL);
 	~cLineEdit();
 
 	const std::string& getText();
 	void setText (std::string text);
 
 	void setReadOnly (bool readOnly);
-	void setValidator (std::unique_ptr<cValidator> validator);
+	void setValidator (std::unique_ptr<cValidator>);
 
 	void finishEditing();
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
-	bool handleGetKeyFocus (cApplication& application) override;
-	void handleLooseKeyFocus (cApplication& application) override;
-	bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) override;
-	void handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text) override;
+	bool handleGetKeyFocus (cApplication&) override;
+	void handleLooseKeyFocus (cApplication&) override;
+	bool handleKeyPressed (cApplication&, cKeyboard&, SDL_Keycode) override;
+	void handleTextEntered (cApplication&, cKeyboard&, const char* text) override;
 
 	cSignal<void()> clicked;
 	cSignal<void()> textSet;
@@ -65,7 +65,7 @@ public:
 	cSignal<void (eValidatorState)> editingFinished;
 protected:
 
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 private:
 	const std::chrono::milliseconds cursorVisibleTime;
 	const std::chrono::milliseconds cursorInvisibleTime;

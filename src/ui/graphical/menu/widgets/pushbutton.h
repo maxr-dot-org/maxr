@@ -75,14 +75,14 @@ class cPushButton : public cClickableWidget
 {
 public:
 	explicit cPushButton (const cBox<cPosition>& area);
-	cPushButton (const cPosition& position, ePushButtonType buttonType);
-	cPushButton (const cPosition& position, ePushButtonType buttonType, cSoundChunk* clickSound);
-	cPushButton (const cPosition& position, ePushButtonType buttonType, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_BIG);
-	cPushButton (const cPosition& position, ePushButtonType buttonType, cSoundChunk* clickSound, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_BIG);
+	cPushButton (const cPosition&, ePushButtonType);
+	cPushButton (const cPosition&, ePushButtonType, cSoundChunk* clickSound);
+	cPushButton (const cPosition&, ePushButtonType, const std::string& text, eUnicodeFontType = FONT_LATIN_BIG);
+	cPushButton (const cPosition&, ePushButtonType, cSoundChunk* clickSound, const std::string& text, eUnicodeFontType = FONT_LATIN_BIG);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
-	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
+	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
 
 	void lock();
 	void unlock();
@@ -90,7 +90,7 @@ public:
 	cSignal<void()> clicked;
 protected:
 	void setPressed (bool pressed) override;
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
 	AutoSurface surface;

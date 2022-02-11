@@ -36,7 +36,7 @@ enum class eScrollBarStyle
 class cScrollBar : public cWidget
 {
 public:
-	cScrollBar (const cPosition& position, int width, eScrollBarStyle style, eOrientationType orientation = eOrientationType::Vertical);
+	cScrollBar (const cPosition&, int width, eScrollBarStyle, eOrientationType = eOrientationType::Vertical);
 
 	void setRange (int range);
 

@@ -29,7 +29,7 @@ class cUnit;
 class cReportUnitListViewItem : public cAbstractListViewItem
 {
 public:
-	explicit cReportUnitListViewItem (cUnit& unit, const cUnitsData& unitsData);
+	explicit cReportUnitListViewItem (cUnit&, const cUnitsData&);
 
 	cUnit& getUnit() const;
 

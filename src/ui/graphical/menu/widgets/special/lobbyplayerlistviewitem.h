@@ -33,7 +33,7 @@ class cPlayerBasicData;
 class cLobbyPlayerListViewItem : public cAbstractListViewItem
 {
 public:
-	explicit cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasicData> player);
+	explicit cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasicData>);
 
 	const std::shared_ptr<cPlayerBasicData>& getPlayer() const;
 	void update();

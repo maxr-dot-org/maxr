@@ -26,7 +26,7 @@
 class cShortcut
 {
 public:
-	cShortcut (cKeySequence keySequence);
+	cShortcut (cKeySequence);
 
 	const cKeySequence& getKeySequence() const;
 

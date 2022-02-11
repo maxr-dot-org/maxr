@@ -31,7 +31,7 @@ class cSaveGameInfo;
 class cSaveSlotWidget : public cClickableWidget
 {
 public:
-	explicit cSaveSlotWidget (const cPosition& position);
+	explicit cSaveSlotWidget (const cPosition&);
 
 	const std::string& getName() const;
 
@@ -52,7 +52,7 @@ public:
 	cSignal<void()> nameChanged;
 protected:
 
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 private:
 	cLabel* numberLabel;
 	cLabel* typeLabel;

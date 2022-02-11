@@ -48,7 +48,7 @@ class cListView : public cClickableWidget
 	static_assert (std::is_base_of<cAbstractListViewItem, ItemType>::value, "Items in list view have to inherit from cAbstractListViewItem");
 public:
 	explicit cListView (const cBox<cPosition>& area, bool allowMultiSelection = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
-	explicit cListView (const cBox<cPosition>& area, eScrollBarStyle scrollBarStyle, bool allowMultiSelection = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
+	explicit cListView (const cBox<cPosition>& area, eScrollBarStyle, bool allowMultiSelection = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
 
 	void disableSelectable();
 	void enableSelectable();
@@ -63,9 +63,9 @@ public:
 	const cPosition& getEndMargin() const;
 	int getItemDistance() const;
 
-	ItemType* addItem (std::unique_ptr<ItemType> item, eAddListItemScrollType scrollType = eAddListItemScrollType::None);
+	ItemType* addItem (std::unique_ptr<ItemType>, eAddListItemScrollType = eAddListItemScrollType::None);
 
-	std::unique_ptr<ItemType> removeItem (ItemType& item);
+	std::unique_ptr<ItemType> removeItem (ItemType&);
 
 	// TODO: provide iterator support instead of index access.
 	size_t getItemsCount() const;
@@ -77,10 +77,10 @@ public:
 	ItemType* getSelectedItem();
 	const std::vector<ItemType*>& getSelectedItems();
 
-	void setSelectedItem (const ItemType* item);
+	void setSelectedItem (const ItemType*);
 	void deselectAll();
 
-	void scrollToItem (const ItemType* item);
+	void scrollToItem (const ItemType*);
 
 	void scrollDown();
 	void scrollUp();
@@ -98,17 +98,17 @@ public:
 
 	cSignal<void (ItemType&)> itemClicked;
 
-	cWidget* getChildAt (const cPosition& position) const override;
-	bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) override;
-	bool handleGetKeyFocus (cApplication& application) override;
-	void handleLooseKeyFocus (cApplication& application) override;
-	bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) override;
+	cWidget* getChildAt (const cPosition&) const override;
+	bool handleMouseWheelMoved (cApplication&, cMouse&, const cPosition& amount) override;
+	bool handleGetKeyFocus (cApplication&) override;
+	void handleLooseKeyFocus (cApplication&) override;
+	bool handleKeyPressed (cApplication&, cKeyboard&, SDL_Keycode) override;
 	void handleMoved (const cPosition& offset) override;
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	void handleResized (const cPosition& oldSize) override;
 protected:
 
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

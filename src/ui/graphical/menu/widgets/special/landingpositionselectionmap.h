@@ -31,14 +31,14 @@ class cUnitsData;
 class cLandingPositionSelectionMap : public cClickableWidget
 {
 public:
-	cLandingPositionSelectionMap (const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData);
+	cLandingPositionSelectionMap (const cBox<cPosition>& area, std::shared_ptr<cStaticMap>, bool fixedBridgeHead, const std::vector<sLandingUnit>&, std::shared_ptr<const cUnitsData>);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
+	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
 
 	cSignal<void (const cPosition&)> clickedTile;
 protected:
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
 	AutoSurface mapSurface;
@@ -48,7 +48,7 @@ private:
 	const std::vector<sLandingUnit> landingUnits;
 	std::shared_ptr<const cUnitsData> unitsData;
 
-	bool isValidLandingLocation (const cPosition& position);
+	bool isValidLandingLocation (const cPosition&);
 };
 
 #endif // ui_graphical_menu_widgets_special_landingpositionselectionmapH

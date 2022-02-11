@@ -40,9 +40,9 @@ enum class eResourceBarType
 class cResourceBar : public cClickableWidget
 {
 public:
-	cResourceBar (const cBox<cPosition>& area, int minValue, int maxValue, eResourceBarType type, eOrientationType orientation, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
+	cResourceBar (const cBox<cPosition>& area, int minValue, int maxValue, eResourceBarType, eOrientationType, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
 
-	void setType (eResourceBarType type);
+	void setType (eResourceBarType);
 	void setStepSize (int stepSize);
 
 	int getMinValue() const;
@@ -71,7 +71,7 @@ public:
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
 protected:
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
 	AutoSurface surface;
@@ -95,7 +95,7 @@ private:
 
 	int stepSize;
 
-	void createSurface (eResourceBarType type);
+	void createSurface (eResourceBarType);
 };
 
 #endif // ui_graphical_menu_widgets_special_resourcebarH

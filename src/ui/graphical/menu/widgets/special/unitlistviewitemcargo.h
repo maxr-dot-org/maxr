@@ -25,7 +25,7 @@
 class cUnitListViewItemCargo : public cUnitListViewItem
 {
 public:
-	cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData& unitsData);
+	cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData&);
 
 	int getCargo() const;
 	void setCargo (int cargo);

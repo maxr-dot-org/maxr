@@ -28,12 +28,12 @@
 class cImage : public cClickableWidget
 {
 public:
-	cImage (const cPosition& position, SDL_Surface* image = nullptr, cSoundChunk* clickSound = nullptr);
+	cImage (const cPosition&, SDL_Surface* image = nullptr, cSoundChunk* clickSound = nullptr);
 
 	void setImage (SDL_Surface* image);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
-	bool isAt (const cPosition& position) const override;
+	bool isAt (const cPosition&) const override;
 
 	cSignal<void()> clicked;
 
@@ -41,7 +41,7 @@ public:
 	void enableAtTransparent();
 
 protected:
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
 	AutoSurface image;

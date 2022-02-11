@@ -29,7 +29,7 @@ class cAnimationTimer;
 class cProtectionGlass : public cWidget
 {
 public:
-	explicit cProtectionGlass (const cPosition& position, std::shared_ptr<cAnimationTimer> animationTimer, double percentClosed = 100);
+	explicit cProtectionGlass (const cPosition&, std::shared_ptr<cAnimationTimer>, double percentClosed = 100);
 
 	void open();
 

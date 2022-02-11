@@ -29,10 +29,6 @@
 #include <list>
 #include <string>
 
-/**
- *
- * @tparam T
- */
 template <typename T>
 class cMarker
 {
@@ -45,7 +41,7 @@ public:
 	void setValue (T value);
 	T getValue() const;
 
-	void setColor (cRgbColor color);
+	void setColor (cRgbColor);
 	const cRgbColor& getColor() const;
 private:
 	T value;

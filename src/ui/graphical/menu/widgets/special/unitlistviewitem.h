@@ -33,7 +33,7 @@ public:
 	//       The only reason it is here is because we need to know the
 	//       color of the unit.
 	//       Take note of the TODO in the constructor implementation as well.
-	cUnitListViewItem (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData& unitsData);
+	cUnitListViewItem (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData&);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 

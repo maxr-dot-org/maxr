@@ -32,15 +32,15 @@ class cClickableWidget : public cWidget
 {
 public:
 	cClickableWidget();
-	explicit cClickableWidget (const cPosition& position);
+	explicit cClickableWidget (const cPosition&);
 	explicit cClickableWidget (const cBox<cPosition>& area);
 
-	cShortcut& addClickShortcut (cKeySequence keySequence, eMouseButtonType button = eMouseButtonType::Left);
+	cShortcut& addClickShortcut (cKeySequence, eMouseButtonType = eMouseButtonType::Left);
 
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
-	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	void handleLooseMouseFocus (cApplication& application) override;
+	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
+	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
+	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
+	void handleLooseMouseFocus (cApplication&) override;
 
 	void setConsumeClick (bool consumeClick);
 protected:
@@ -51,17 +51,17 @@ protected:
 
 	virtual void setPressed (bool pressed);
 
-	void finishMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button);
+	void finishMousePressed (cApplication&, cMouse&, eMouseButtonType);
 
-	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) = 0;
+	virtual bool handleClicked (cApplication&, cMouse&, eMouseButtonType) = 0;
 
-	virtual bool acceptButton (eMouseButtonType button) const;
+	virtual bool acceptButton (eMouseButtonType) const;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
 	std::map<eMouseButtonType, bool> startedClickWithin;
 
-	bool& getStartedClickWithin (eMouseButtonType button);
+	bool& getStartedClickWithin (eMouseButtonType);
 };
 
 #endif // ui_graphical_menu_widgets_clickablewidgetH

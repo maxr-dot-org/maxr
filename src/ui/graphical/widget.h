@@ -45,7 +45,7 @@ public:
 	static void toggleDrawDebugFrames();
 
 	cWidget();
-	explicit cWidget (const cPosition& position);
+	explicit cWidget (const cPosition&);
 	explicit cWidget (const cBox<cPosition>& area);
 
 	virtual ~cWidget();
@@ -434,7 +434,7 @@ private:
 
 	void createFrameSurface();
 
-	void releaseFocusRecursive (cApplication& application);
+	void releaseFocusRecursive (cApplication&);
 };
 
 //------------------------------------------------------------------------------

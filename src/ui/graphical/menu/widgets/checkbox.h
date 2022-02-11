@@ -72,8 +72,8 @@ enum eCheckBoxTextAnchor
 class cCheckBox : public cClickableWidget
 {
 public:
-	explicit cCheckBox (const cPosition& position, eCheckBoxType type = eCheckBoxType::Standard, bool centered = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
-	cCheckBox (const cPosition& position, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_NORMAL, eCheckBoxTextAnchor textAnchor = eCheckBoxTextAnchor::Right, eCheckBoxType type = eCheckBoxType::Standard, bool centered = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
+	explicit cCheckBox (const cPosition&, eCheckBoxType = eCheckBoxType::Standard, bool centered = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
+	cCheckBox (const cPosition&, const std::string& text, eUnicodeFontType = FONT_LATIN_NORMAL, eCheckBoxTextAnchor = eCheckBoxTextAnchor::Right, eCheckBoxType = eCheckBoxType::Standard, bool centered = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
 
 	void setChecked (bool checked);
 	bool isChecked() const;
@@ -86,11 +86,11 @@ public:
 	cSignal<void()> toggled;
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
-	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
+	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
 protected:
 	void setPressed (bool pressed) override;
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 private:
 	AutoSurface surface;
 
@@ -106,7 +106,6 @@ private:
 	bool checked;
 
 	bool isLocked;
-
 
 	void renewSurface();
 };

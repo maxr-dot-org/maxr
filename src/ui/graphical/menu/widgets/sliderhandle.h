@@ -39,7 +39,7 @@ enum class eSliderHandleType
 class cSliderHandle : public cWidget
 {
 public:
-	cSliderHandle (const cPosition& position, eSliderHandleType sliderHandleType, eOrientationType orientation);
+	cSliderHandle (const cPosition&, eSliderHandleType, eOrientationType);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
@@ -56,11 +56,11 @@ private:
 
 	int grapOffset;
 
-	void createSurface (eSliderHandleType sliderHandleType);
+	void createSurface (eSliderHandleType);
 
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
-	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
+	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
+	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
 	void handleMoved (const cPosition& offset) override;
 };
 

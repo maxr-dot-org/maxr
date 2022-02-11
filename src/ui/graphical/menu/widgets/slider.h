@@ -39,8 +39,8 @@ enum class eSliderType
 class cSlider : public cClickableWidget
 {
 public:
-	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType orientation, eSliderType sliderType = eSliderType::Default);
-	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType orientation, eSliderHandleType handleType, eSliderType sliderType = eSliderType::Default);
+	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType, eSliderType = eSliderType::Default);
+	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType, eSliderHandleType, eSliderType = eSliderType::Default);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	void handleMoved (const cPosition& offset) override;
@@ -59,7 +59,7 @@ public:
 
 	cSignal<void()> valueChanged;
 protected:
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
 	cSignalConnectionManager signalConnectionManager;
@@ -79,8 +79,8 @@ private:
 
 	cSliderHandle* handle;
 
-	void createSurface (eSliderType sliderType);
-	void createHandle (eSliderHandleType handleType);
+	void createSurface (eSliderType);
+	void createHandle (eSliderHandleType);
 
 	void setHandleMinMaxPosition();
 

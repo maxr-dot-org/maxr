@@ -34,7 +34,7 @@ struct sID;
 class cUnitDetails : public cWidget
 {
 public:
-	explicit cUnitDetails (const cPosition& position);
+	explicit cUnitDetails (const cPosition&);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
@@ -46,9 +46,9 @@ private:
 
 	void reset();
 
-	void drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, const std::string& name, int value1, int value2);
-	void drawBigSymbols (eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2);
-	cBox<cPosition> getBigSymbolPosition (eUnitDataSymbolType symbolType);
+	void drawRow (size_t index, eUnitDataSymbolType, int amount, const std::string& name, int value1, int value2);
+	void drawBigSymbols (eUnitDataSymbolType, const cPosition&, int value1, int value2);
+	cBox<cPosition> getBigSymbolPosition (eUnitDataSymbolType);
 
 	static const size_t maxRows = 9;
 	static const int rowHeight = 19;

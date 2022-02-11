@@ -32,16 +32,16 @@ class cRgbColorPicker : public cWidget
 public:
 	explicit cRgbColorPicker (const cBox<cPosition>& area, const cRgbColor& color);
 
-	void setSelectedColor (const cRgbColor& color);
-	void setSelectedColor (const cHsvColor& color);
+	void setSelectedColor (const cRgbColor&);
+	void setSelectedColor (const cHsvColor&);
 	cRgbColor getSelectedColor() const;
 
 	cSignal<void()> selectedColorChanged;
 
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
-	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	void handleLooseMouseFocus (cApplication& application) override;
+	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
+	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
+	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
+	void handleLooseMouseFocus (cApplication&) override;
 private:
 	cHsvColor currentColor;
 

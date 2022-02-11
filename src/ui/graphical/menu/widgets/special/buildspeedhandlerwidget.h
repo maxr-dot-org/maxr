@@ -31,7 +31,7 @@ class cBuildSpeedHandlerWidget : public cWidget
 {
 	static const size_t elementsCount = 3;
 public:
-	cBuildSpeedHandlerWidget (const cPosition& position);
+	cBuildSpeedHandlerWidget (const cPosition&);
 
 	void setValues (const std::array<int, elementsCount>& turns, const std::array<int, elementsCount>& costs);
 

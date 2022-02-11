@@ -35,7 +35,7 @@ class cLandingPositionManager;
 class cPlayerLandingStatus
 {
 public:
-	explicit cPlayerLandingStatus (const cPlayerBasicData& player);
+	explicit cPlayerLandingStatus (const cPlayerBasicData&);
 
 	const cPlayerBasicData& getPlayer() const;
 
@@ -51,11 +51,11 @@ private:
 class cChatBoxLandingPlayerListViewItem : public cAbstractListViewItem
 {
 public:
-	explicit cChatBoxLandingPlayerListViewItem (const cPlayerLandingStatus& playerLandingStatus);
+	explicit cChatBoxLandingPlayerListViewItem (const cPlayerLandingStatus&);
 
 	int getPlayerNumber() const;
 
-	void setLandingPositionManager (const cLandingPositionManager* landingPositionManager);
+	void setLandingPositionManager (const cLandingPositionManager*);
 
 	void handleResized (const cPosition& oldSize) override;
 private:
