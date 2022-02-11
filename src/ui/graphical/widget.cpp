@@ -36,34 +36,17 @@
 }
 
 //------------------------------------------------------------------------------
-cWidget::cWidget() :
-	parent (nullptr),
-	enabled (true),
-	hidden (false),
-	area (cPosition (0, 0), cPosition (0, 0))
+cWidget::cWidget() : cWidget (cPosition (0, 0))
 {
-	createFrameSurface();
-
-	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface(); });
 }
 
 //------------------------------------------------------------------------------
-cWidget::cWidget (const cPosition& position) :
-	parent (nullptr),
-	enabled (true),
-	hidden (false),
-	area (position, position)
+cWidget::cWidget (const cPosition& position) : cWidget ({position, position})
 {
-	createFrameSurface();
-
-	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface(); });
 }
 
 //------------------------------------------------------------------------------
 cWidget::cWidget (const cBox<cPosition>& area_) :
-	parent (nullptr),
-	enabled (true),
-	hidden (false),
 	area (area_)
 {
 	createFrameSurface();
@@ -89,48 +72,6 @@ cWidget::~cWidget()
 	{
 		child->setParent (nullptr);
 	}
-}
-
-//------------------------------------------------------------------------------
-cWidget* cWidget::getParent() const
-{
-	return parent;
-}
-
-//------------------------------------------------------------------------------
-bool cWidget::isEnabled() const
-{
-	return enabled;
-}
-
-//------------------------------------------------------------------------------
-void cWidget::disable()
-{
-	enabled = false;
-}
-
-//------------------------------------------------------------------------------
-void cWidget::enable()
-{
-	enabled = true;
-}
-
-//------------------------------------------------------------------------------
-bool cWidget::isHidden() const
-{
-	return hidden;
-}
-
-//------------------------------------------------------------------------------
-void cWidget::hide()
-{
-	hidden = true;
-}
-
-//------------------------------------------------------------------------------
-void cWidget::show()
-{
-	hidden = false;
 }
 
 //------------------------------------------------------------------------------
@@ -199,12 +140,6 @@ void cWidget::fitToChildren()
 }
 
 //------------------------------------------------------------------------------
-const cBox<cPosition>& cWidget::getArea() const
-{
-	return area;
-}
-
-//------------------------------------------------------------------------------
 void cWidget::setArea (const cBox<cPosition>& area_)
 {
 	const cPosition newSize = area_.getSize();
@@ -221,12 +156,6 @@ cShortcut* cWidget::addShortcut (std::unique_ptr<cShortcut> shortcut)
 
 	shortcuts.push_back (std::move (shortcut));
 	return shortcuts.back().get();
-}
-
-//------------------------------------------------------------------------------
-const std::vector<std::unique_ptr<cShortcut>>& cWidget::getShortcuts() const
-{
-	return shortcuts;
 }
 
 //------------------------------------------------------------------------------
@@ -288,25 +217,25 @@ void cWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
+bool cWidget::handleMouseMoved (cApplication&, cMouse&, const cPosition& offset)
 {
 	return false;
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cWidget::handleMousePressed (cApplication&, cMouse&, eMouseButtonType)
 {
 	return false;
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cWidget::handleMouseReleased (cApplication&, cMouse&, eMouseButtonType)
 {
 	return false;
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount)
+bool cWidget::handleMouseWheelMoved (cApplication&, cMouse&, const cPosition& amount)
 {
 	return false;
 }
@@ -338,33 +267,33 @@ bool cWidget::handleKeyReleased (cApplication& application, cKeyboard& keyboard,
 }
 
 //------------------------------------------------------------------------------
-void cWidget::handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text)
+void cWidget::handleTextEntered (cApplication&, cKeyboard&, const char* text)
 {}
 
 ////------------------------------------------------------------------------------
-//void cWidget::handleHoveredOn (cApplication& application, cMouse& mouse)
+//void cWidget::handleHoveredOn (cApplication&, cMouse&)
 //{}
 //
 ////------------------------------------------------------------------------------
-//void  cWidget::handleHoveredAway (cApplication& application, cMouse& mouse)
+//void  cWidget::handleHoveredAway (cApplication&, cMouse&)
 //{}
 
 //------------------------------------------------------------------------------
-bool cWidget::handleGetKeyFocus (cApplication& application)
+bool cWidget::handleGetKeyFocus (cApplication&)
 {
 	return false;
 }
 
 //------------------------------------------------------------------------------
-void cWidget::handleLooseKeyFocus (cApplication& application)
+void cWidget::handleLooseKeyFocus (cApplication&)
 {}
 
 //------------------------------------------------------------------------------
-void cWidget::handleGetMouseFocus (cApplication& application)
+void cWidget::handleGetMouseFocus (cApplication&)
 {}
 
 //------------------------------------------------------------------------------
-void cWidget::handleLooseMouseFocus (cApplication& application)
+void cWidget::handleLooseMouseFocus (cApplication&)
 {}
 
 //------------------------------------------------------------------------------

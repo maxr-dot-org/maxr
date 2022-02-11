@@ -73,7 +73,7 @@ public:
 	 *
 	 * @return True if the window wants to be closed.
 	 */
-	bool isClosing() const;
+	bool isClosing() const { return closing; }
 
 	/**
 	 * Marks the window as to be closed.
@@ -124,7 +124,7 @@ public:
 	/**
 	 * Return true if the window wants to be centered.
 	 */
-	virtual bool wantsCentered() const;
+	virtual bool wantsCentered() const { return true; }
 
 	/**
 	 * Triggered when @ref handleRemoved is called.
@@ -158,7 +158,7 @@ protected:
 	 * @return The application or null if the current window is
 	 *         not the active one in any application.
 	 */
-	cApplication* getActiveApplication() const override;
+	cApplication* getActiveApplication() const override { return activeApplication; }
 
 	/**
 	 * Returns the default cursor for this window.
@@ -202,17 +202,17 @@ private:
 	 * Can be null if the window is not active in any application
 	 * at the moment.
 	 */
-	cApplication* activeApplication;
+	cApplication* activeApplication = nullptr;
 
 	/**
 	 * True if the window wants to be closed
 	 */
-	bool closing;
+	bool closing = false;
 
 	/**
 	 * True if the window has been drawn at least once since it has become active.
 	 */
-	bool hasBeenDrawnOnce;
+	bool hasBeenDrawnOnce = false;
 
 };
 

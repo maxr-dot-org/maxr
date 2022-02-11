@@ -33,21 +33,13 @@
 
 //------------------------------------------------------------------------------
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderType sliderType) :
-	cClickableWidget (area),
-	surface (nullptr),
-	type (sliderType),
-	currentValue (minValue_),
-	minValue (minValue_),
-	maxValue (maxValue_),
-	settingValue (false),
-	orientation (orientation_),
-	handle (nullptr)
+	cSlider (area,
+			 minValue_,
+			 maxValue_,
+			 orientation_,
+			 orientation == eOrientationType::Horizontal ? eSliderHandleType::Horizontal : eSliderHandleType::Vertical,
+			 sliderType)
 {
-	assert (minValue <= maxValue);
-
-	createHandle (orientation == eOrientationType::Horizontal ? eSliderHandleType::Horizontal : eSliderHandleType::Vertical);
-
-	createSurface (sliderType);
 }
 
 //------------------------------------------------------------------------------
@@ -58,9 +50,7 @@ cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOr
 	currentValue (minValue_),
 	minValue (minValue_),
 	maxValue (maxValue_),
-	settingValue (false),
-	orientation (orientation_),
-	handle (nullptr)
+	orientation (orientation_)
 {
 	assert (minValue <= maxValue);
 
@@ -89,12 +79,6 @@ void cSlider::handleMoved (const cPosition& offset)
 }
 
 //------------------------------------------------------------------------------
-int cSlider::getMinValue() const
-{
-	return minValue;
-}
-
-//------------------------------------------------------------------------------
 void cSlider::setMinValue (int minValue_)
 {
 	auto oldValue = getValue();
@@ -105,12 +89,6 @@ void cSlider::setMinValue (int minValue_)
 }
 
 //------------------------------------------------------------------------------
-int cSlider::getMaxValue() const
-{
-	return maxValue;
-}
-
-//------------------------------------------------------------------------------
 void cSlider::setMaxValue (int maxValue_)
 {
 	auto oldValue = getValue();
@@ -118,12 +96,6 @@ void cSlider::setMaxValue (int maxValue_)
 	maxValue = maxValue_;
 
 	setValue (oldValue);
-}
-
-//------------------------------------------------------------------------------
-int cSlider::getValue() const
-{
-	return currentValue;
 }
 
 //------------------------------------------------------------------------------

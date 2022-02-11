@@ -55,7 +55,7 @@ public:
 	 *
 	 * @return The parent widget or null if there is no parent.
 	 */
-	cWidget* getParent() const;
+	cWidget* getParent() const { return parent; }
 
 	/**
 	 * If a widget is disabled it will not receive any input events
@@ -63,32 +63,32 @@ public:
 	 *
 	 * @return True if the widget is enabled. False if it is disabled.
 	 */
-	bool isEnabled() const;
+	bool isEnabled() const { return enabled; }
 	/**
 	 * Disables the widget. See @ref isEnabled() for the effects.
 	 */
-	void disable();
+	void disable() { enabled = false; }
 	/**
 	 * Enables the widget. See @ref isEnabled() for the effects.
 	 */
-	void enable();
+	void enable() { enabled = true; }
 
 	/**
 	 * A hidden widget will not be drawn to the screen anymore.
 	 *
 	 * @return True if the widget is hidden. False if not.
 	 */
-	bool isHidden() const;
+	bool isHidden() const { return hidden; }
 	/**
 	 * Hides the widget. See @ref isHidden for the effects.
 	 * You may want to @ref disable the widget as well when
 	 * it is hidden.
 	 */
-	void hide();
+	void hide() { hidden = true; }
 	/**
 	 * Sets the widget as not hidden. See @ref isHidden for the effects.
 	 */
-	void show();
+	void show() { hidden = false; }
 
 	/**
 	 * Returns the position (upper left corner) of the widget
@@ -136,7 +136,7 @@ public:
 	/**
 	 * Returns the area of the widget in absolute screen coordinates.
 	 */
-	const cBox<cPosition>& getArea() const;
+	const cBox<cPosition>& getArea() const { return area; }
 	/*
 	 * Sets a new area for the widget.
 	 *
@@ -161,7 +161,7 @@ public:
 	/**
 	 * Returns all shortcuts that have been added to this widget.
 	 */
-	const std::vector<std::unique_ptr<cShortcut>>& getShortcuts() const;
+	const std::vector<std::unique_ptr<cShortcut>>& getShortcuts() const { return shortcuts; }
 
 	/**
 	 * Returns the most deep child (meaning possible a child of a child and so on) at the given
@@ -417,24 +417,20 @@ private:
 	cWidget (const cWidget&) = delete;
 	cWidget& operator= (const cWidget&) = delete;
 
-	cSignalConnectionManager signalConnectionManager;
-
-	cWidget* parent;
-
-	bool enabled;
-	bool hidden;
-
-	cBox<cPosition> area;
-
-	AutoSurface frameSurface;
-
-	std::vector<std::unique_ptr<cWidget>> children;
-
-	std::vector<std::unique_ptr<cShortcut>> shortcuts;
-
 	void createFrameSurface();
 
 	void releaseFocusRecursive (cApplication&);
+
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	cWidget* parent = nullptr;
+	bool enabled = true;
+	bool hidden = false;
+	cBox<cPosition> area;
+	AutoSurface frameSurface;
+	std::vector<std::unique_ptr<cWidget>> children;
+	std::vector<std::unique_ptr<cShortcut>> shortcuts;
 };
 
 //------------------------------------------------------------------------------

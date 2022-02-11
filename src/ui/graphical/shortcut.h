@@ -26,22 +26,20 @@
 class cShortcut
 {
 public:
-	cShortcut (cKeySequence);
+	explicit cShortcut (cKeySequence);
 
-	const cKeySequence& getKeySequence() const;
+	const cKeySequence& getKeySequence() const { return keySequence; }
 
 	void activate();
 	void deactivate();
-
-	bool isActive() const;
+	bool isActive() const { return active; }
 
 	bool hit (const cKeySequence&);
 
-	mutable cSignal<void()> triggered;
+	cSignal<void()> triggered;
 private:
 	cKeySequence keySequence;
-
-	bool active;
+	bool active = true;
 };
 
 #endif // ui_graphical_shortcut_H

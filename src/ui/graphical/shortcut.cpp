@@ -26,12 +26,6 @@ cShortcut::cShortcut (cKeySequence keySequence_) :
 {}
 
 //------------------------------------------------------------------------------
-const cKeySequence& cShortcut::getKeySequence() const
-{
-	return keySequence;
-}
-
-//------------------------------------------------------------------------------
 void cShortcut::activate()
 {
 	active = true;
@@ -41,12 +35,6 @@ void cShortcut::activate()
 void cShortcut::deactivate()
 {
 	active = false;
-}
-
-//------------------------------------------------------------------------------
-bool cShortcut::isActive() const
-{
-	return active;
 }
 
 //------------------------------------------------------------------------------

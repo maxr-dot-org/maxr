@@ -45,13 +45,13 @@ public:
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	void handleMoved (const cPosition& offset) override;
 
-	int getMinValue() const;
+	int getMinValue() const { return minValue; }
 	void setMinValue (int minValue);
 
-	int getMaxValue() const;
+	int getMaxValue() const { return maxValue; }
 	void setMaxValue (int maxValue);
 
-	int getValue() const;
+	int getValue() const { return currentValue; }
 	void setValue (int value);
 
 	void increase (int offset);
@@ -60,6 +60,18 @@ public:
 	cSignal<void()> valueChanged;
 protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
+
+private:
+	void createSurface (eSliderType);
+	void createHandle (eSliderHandleType);
+
+	void setHandleMinMaxPosition();
+
+	void computeHandleMinMaxPosition (int& minPosition, int& maxPosition) const;
+
+	void movedHandle();
+
+	int getValueFromHandlePosition() const;
 
 private:
 	cSignalConnectionManager signalConnectionManager;
@@ -73,22 +85,11 @@ private:
 	int minValue;
 	int maxValue;
 
-	bool settingValue;
+	bool settingValue = false;
 
 	eOrientationType orientation;
 
-	cSliderHandle* handle;
-
-	void createSurface (eSliderType);
-	void createHandle (eSliderHandleType);
-
-	void setHandleMinMaxPosition();
-
-	void computeHandleMinMaxPosition (int& minPosition, int& maxPosition) const;
-
-	void movedHandle();
-
-	int getValueFromHandlePosition() const;
+	cSliderHandle* handle = nullptr;
 };
 
 #endif // ui_graphical_menu_widgets_sliderH

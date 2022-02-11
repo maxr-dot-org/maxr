@@ -30,19 +30,9 @@
 
 //------------------------------------------------------------------------------
 cWindow::cWindow (AutoSurface surface_, eWindowBackgrounds backgroundType_) :
-	surface (nullptr),
-	backgroundType (backgroundType_),
-	activeApplication (nullptr),
-	closing (false),
-	hasBeenDrawnOnce (false)
+	backgroundType (backgroundType_)
 {
 	setSurface (std::move (surface_));
-}
-
-//------------------------------------------------------------------------------
-bool cWindow::isClosing() const
-{
-	return closing;
 }
 
 //------------------------------------------------------------------------------
@@ -120,18 +110,6 @@ void cWindow::handleDeactivated (cApplication& application, bool removed)
 
 		terminated();
 	}
-}
-
-//------------------------------------------------------------------------------
-bool cWindow::wantsCentered() const
-{
-	return true;
-}
-
-//------------------------------------------------------------------------------
-cApplication* cWindow::getActiveApplication() const
-{
-	return activeApplication;
 }
 
 //------------------------------------------------------------------------------
