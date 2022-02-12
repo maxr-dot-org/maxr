@@ -220,9 +220,6 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 }
 
-//------------------------------------------------------------------------------
-cWindowGameSettings::~cWindowGameSettings()
-{}
 
 //------------------------------------------------------------------------------
 void cWindowGameSettings::initFor (cLobbyClient& lobbyClient)
@@ -231,9 +228,9 @@ void cWindowGameSettings::initFor (cLobbyClient& lobbyClient)
 	if (gameSettings) applySettings (*gameSettings);
 	else applySettings (cGameSettings());
 
-	signalConnectionManager.connect (done, [this, &lobbyClient]()
+	signalConnectionManager.connect (done, [this, &lobbyClient](const cGameSettings& gameSettings)
 	{
-		lobbyClient.selectGameSettings (getGameSettings());
+		lobbyClient.selectGameSettings (gameSettings);
 		close();
 	});
 }
@@ -365,7 +362,7 @@ cGameSettings cWindowGameSettings::getGameSettings() const
 //------------------------------------------------------------------------------
 void cWindowGameSettings::okClicked()
 {
-	done();
+	done (getGameSettings());
 }
 
 //------------------------------------------------------------------------------

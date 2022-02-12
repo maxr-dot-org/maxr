@@ -43,14 +43,11 @@ class cWindowGameSettings : public cWindow
 {
 public:
 	explicit cWindowGameSettings (bool forHotSeatGame = false);
-	~cWindowGameSettings();
-
-	void initFor (cLobbyClient&);
 
 	void applySettings (const cGameSettings& gameSettings);
-	cGameSettings getGameSettings() const;
+	void initFor (cLobbyClient&);
 
-	cSignal<void()> done;
+	cSignal<void (const cGameSettings&)> done;
 
 private:
 	void okClicked();
@@ -58,6 +55,7 @@ private:
 
 	void disableTurnEndDeadlineOptions();
 	void enableTurnEndDeadlineOptions();
+	cGameSettings getGameSettings() const;
 
 private:
 	cSignalConnectionManager signalConnectionManager;

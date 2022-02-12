@@ -75,9 +75,9 @@ void cWindowSinglePlayer::newGameClicked()
 	auto windowGameSettings = getActiveApplication()->show (std::make_shared<cWindowGameSettings>());
 	windowGameSettings->applySettings (cGameSettings());
 
-	windowGameSettings->done.connect ([=]()
+	windowGameSettings->done.connect ([=](const cGameSettings& gameSettings)
 	{
-		game->setGameSettings (windowGameSettings->getGameSettings());
+		game->setGameSettings (gameSettings);
 
 		auto windowMapSelection = application->show (std::make_shared<cWindowMapSelection>());
 

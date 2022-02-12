@@ -83,10 +83,9 @@ void cMenuControllerMultiplayerHotSeat::selectGameSettings()
 
 	firstWindow = windowGameSettings;
 
-	windowGameSettings->done.connect ([=]()
+	windowGameSettings->done.connect ([this](const cGameSettings& gameSettings)
 	{
-		auto gameSettings = std::make_shared<cGameSettings> (windowGameSettings->getGameSettings());
-		game->setGameSettings (gameSettings);
+		game->setGameSettings (std::make_shared<cGameSettings> (gameSettings));
 
 		selectMap();
 	});
