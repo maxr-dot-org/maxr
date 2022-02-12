@@ -491,7 +491,7 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 				connectionManager->changePlayerNumber (oldPlayerNr, newPlayerNr);
 			}
 		}
-		players.erase (std::remove_if (players.begin(), players.end(), byPlayerNr (-1)), players.end());
+		EraseIf (players, byPlayerNr (-1));
 
 		sendNetMessage (cMuMsgStartGame());
 

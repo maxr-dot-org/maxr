@@ -673,7 +673,7 @@ void cModel::runAttackJobs()
 	{
 		attackJob->run (*this); //this can add new items to 'attackjobs'
 	}
-	attackJobs.erase (std::remove_if (attackJobs.begin(), attackJobs.end(), [](const auto& job){ return job->finished(); }), attackJobs.end());
+	EraseIf (attackJobs, [](const auto& job){ return job->finished(); });
 }
 
 //------------------------------------------------------------------------------

@@ -251,7 +251,7 @@ void cClient::handleSurveyorMoveJobs()
 	{
 		job->run (*this, surveyorAiJobs);
 	}
-	RemoveIf (surveyorAiJobs, [](auto& job){ return job->isFinished(); });
+	EraseIf (surveyorAiJobs, [](auto& job){ return job->isFinished(); });
 }
 
 //------------------------------------------------------------------------------

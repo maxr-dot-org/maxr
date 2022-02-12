@@ -30,6 +30,7 @@
 #include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "utility/language.h"
+#include "utility/listhelpers.h"
 
 #include <cassert>
 
@@ -51,7 +52,7 @@ void cInitGamePreparation::bindConnections (cLobbyClient& lobbyClient)
 		else
 		{
 			if (windowLandingPositionSelection) windowLandingPositionSelection->removeChatPlayerEntry (player.getNr());
-			playersLandingStatus.erase (std::remove_if (playersLandingStatus.begin(), playersLandingStatus.end(), [&] (const std::unique_ptr<cPlayerLandingStatus>& status) { return status->getPlayer().getNr() == player.getNr(); }), playersLandingStatus.end());
+			EraseIf (playersLandingStatus, [&] (const std::unique_ptr<cPlayerLandingStatus>& status) { return status->getPlayer().getNr() == player.getNr(); });
 		}
 	});
 

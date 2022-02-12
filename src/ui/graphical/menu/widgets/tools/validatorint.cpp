@@ -19,6 +19,8 @@
 
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
 
+#include "utility/listhelpers.h"
+
 #include <limits>
 #include <algorithm>
 #include <cctype>
@@ -52,9 +54,7 @@ eValidatorState cValidatorInt::validate (const std::string& text) const
 
 void cValidatorInt::fixup (std::string& text) const
 {
-	// remove all non digits
-	auto newEnd = std::remove_if (text.begin(), text.end(), [] (char c) { return !std::isdigit (c); });
-	text.erase (newEnd, text.end());
+	EraseIf (text, [] (char c) { return !std::isdigit (c); });
 
 	if (text.empty())
 	{

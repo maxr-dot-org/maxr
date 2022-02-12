@@ -24,7 +24,7 @@
 #include "output/sound/soundchannel.h"
 #include "settings.h"
 #include "ui/sound/effects/soundeffect.h"
-#include "utility/ranges.h"
+#include "utility/listhelpers.h"
 
 //--------------------------------------------------------------------------
 cSoundManager::sStoredSound::sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_) :
@@ -132,8 +132,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 
 	std::unique_lock<std::recursive_mutex> playingSoundsLock (playingSoundsMutex);
 
-	playingSounds.erase (std::remove_if (playingSounds.begin(), playingSounds.end(),
-	[] (const sStoredSound& storedSound) { return !storedSound.active; }), playingSounds.end());
+	EraseIf (playingSounds, [] (const sStoredSound& storedSound) { return !storedSound.active; });
 
 	const unsigned int currentGameTime = model ? model->getGameTime() : 0;
 
