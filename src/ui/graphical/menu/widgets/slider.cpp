@@ -218,7 +218,7 @@ void cSlider::createHandle (eSliderHandleType handleType)
 
 	setHandleMinMaxPosition();
 
-	signalConnectionManager.connect (handle->moved, std::bind (&cSlider::movedHandle, this));
+	signalConnectionManager.connect (handle->moved, [this]() { movedHandle(); });
 }
 
 //------------------------------------------------------------------------------

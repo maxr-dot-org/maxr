@@ -35,7 +35,7 @@ cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasic
 	assert (player != nullptr);
 
 	readyImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (getSize().x() - 10, 0)));
-	signalConnectionManager.connect (readyImage->clicked, [&]() { readyClicked(); });
+	signalConnectionManager.connect (readyImage->clicked, [this]() { readyClicked(); });
 
 	colorImage = addChild (std::make_unique<cImage> (getPosition()));
 
@@ -47,9 +47,9 @@ cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasic
 
 	fitToChildren();
 
-	signalConnectionManager.connect (player->nameChanged, std::bind (&cLobbyPlayerListViewItem::updatePlayerName, this));
-	signalConnectionManager.connect (player->colorChanged, std::bind (&cLobbyPlayerListViewItem::updatePlayerColor, this));
-	signalConnectionManager.connect (player->readyChanged, std::bind (&cLobbyPlayerListViewItem::updatePlayerReady, this));
+	signalConnectionManager.connect (player->nameChanged, [this]() { updatePlayerName(); });
+	signalConnectionManager.connect (player->colorChanged, [this]() { updatePlayerColor(); });
+	signalConnectionManager.connect (player->readyChanged, [this]() { updatePlayerReady(); });
 }
 
 //------------------------------------------------------------------------------

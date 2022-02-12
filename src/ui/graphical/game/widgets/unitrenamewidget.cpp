@@ -35,21 +35,21 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 	selectedUnitNamePrefixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), "", FONT_LATIN_SMALL_GREEN, eAlignmentType::Left));
 	selectedUnitNameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), eLineEditFrameType::None, FONT_LATIN_SMALL_GREEN));
 
-	signalConnectionManager.connect (selectedUnitNameEdit->returnPressed, [&]()
+	signalConnectionManager.connect (selectedUnitNameEdit->returnPressed, [this]()
 	{
 		if (activeUnit)
 		{
 			unitRenameTriggered();
 		}
 	});
-	signalConnectionManager.connect (selectedUnitNameEdit->editingFinished, [&] (eValidatorState)
+	signalConnectionManager.connect (selectedUnitNameEdit->editingFinished, [this] (eValidatorState)
 	{
 		if (activeUnit)
 		{
 			selectedUnitNameEdit->setText (getName (*activeUnit));
 		}
 	});
-	signalConnectionManager.connect (selectedUnitNameEdit->textSet, [&]()
+	signalConnectionManager.connect (selectedUnitNameEdit->textSet, [this]()
 	{
 		auto application = getActiveApplication();
 		if (application)
@@ -76,7 +76,7 @@ void cUnitRenameWidget::setUnit (const cUnit* unit, const cUnitsData& unitsData)
 		selectedUnitNameEdit->setText (getName (*unit));
 		selectedUnitStatusLabel->setText (getStatusStr (*unit, player, unitsData));
 
-		unitSignalConnectionManager.connect (unit->renamed, [&]()
+		unitSignalConnectionManager.connect (unit->renamed, [this]()
 		{
 			if (activeUnit)
 			{

@@ -57,7 +57,7 @@ private:
 				return;
 			}
 			unit->jobActive = true;
-			connectionManager.connect (unit->destroyed, [&](){finished = true; });
+			connectionManager.connect (unit->destroyed, [this](){finished = true; });
 		}
 	}
 

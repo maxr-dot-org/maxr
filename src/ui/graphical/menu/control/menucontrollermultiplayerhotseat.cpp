@@ -79,7 +79,7 @@ void cMenuControllerMultiplayerHotSeat::selectGameSettings()
 	auto windowGameSettings = application.show (std::make_shared<cWindowGameSettings> (true));
 	windowGameSettings->applySettings (cGameSettings());
 
-	windowGameSettings->terminated.connect (std::bind (&cMenuControllerMultiplayerHotSeat::reset, this));
+	windowGameSettings->terminated.connect ([this]() { reset(); });
 
 	firstWindow = windowGameSettings;
 
@@ -291,7 +291,7 @@ void cMenuControllerMultiplayerHotSeat::checkAllLandingPositions()
 	{
 		application.closeTill (*firstWindow);
 		firstWindow->close();
-		signalConnectionManager.connect (firstWindow->terminated, [&]() { firstWindow = nullptr; });
+		signalConnectionManager.connect (firstWindow->terminated, [this]() { firstWindow = nullptr; });
 
 		game->start (application);
 	}

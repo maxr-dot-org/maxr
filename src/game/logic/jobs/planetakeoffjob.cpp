@@ -29,7 +29,7 @@
 cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle) :
 	cJob (vehicle)
 {
-	connectionManager.connect (vehicle.destroyed, [&](){finished = true; });
+	connectionManager.connect (vehicle.destroyed, [this](){finished = true; });
 }
 
 //------------------------------------------------------------------------------

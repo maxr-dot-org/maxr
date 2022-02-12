@@ -38,7 +38,7 @@ cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr
 
 	currentFrameImage->clicked.connect ([this]() { clicked(); });
 
-	signalConnectionManager.connect (animationTimer->triggered100ms, std::bind (&cUnitVideoWidget::nextFrame, this));
+	signalConnectionManager.connect (animationTimer->triggered100ms, [this]() { nextFrame(); });
 }
 
 //------------------------------------------------------------------------------

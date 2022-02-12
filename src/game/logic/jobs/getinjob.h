@@ -72,7 +72,7 @@ cGetInJob::cGetInJob (Archive& archive)
 		finished = true;
 		return;
 	}
-	connectionManager.connect (loadingUnit->destroyed, [&](){finished = true; });
+	connectionManager.connect (loadingUnit->destroyed, [this](){finished = true; });
 	unit->jobActive = true;
 }
 

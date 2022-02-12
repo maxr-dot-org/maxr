@@ -55,13 +55,13 @@ cDialogLicense::cDialogLicense() :
 	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), FONT_LATIN_NORMAL));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
-	signalConnectionManager.connect (okButton->clicked, std::bind (&cDialogLicense::close, this));
+	signalConnectionManager.connect (okButton->clicked, [this]() { close(); });
 
 	upButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (241, 187), ePushButtonType::ArrowUpSmall));
-	signalConnectionManager.connect (upButton->clicked, std::bind (&cDialogLicense::pageUp, this));
+	signalConnectionManager.connect (upButton->clicked, [this]() { pageUp(); });
 
 	downButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (261, 187), ePushButtonType::ArrowDownSmall));
-	signalConnectionManager.connect (downButton->clicked, std::bind (&cDialogLicense::pageDown, this));
+	signalConnectionManager.connect (downButton->clicked, [this]() { pageDown(); });
 
 	readAuthors();
 	updatePageButtons();

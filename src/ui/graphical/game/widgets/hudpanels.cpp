@@ -51,7 +51,7 @@ void cHudPanels::open()
 {
 	cSoundDevice::getInstance().playSoundEffect (SoundData.SNDPanelOpen);
 
-	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cHudPanels::doOpenStep, this));
+	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this](){ doOpenStep(); });
 }
 
 //------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ void cHudPanels::close()
 {
 	cSoundDevice::getInstance().playSoundEffect (SoundData.SNDPanelClose);
 
-	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cHudPanels::doCloseStep, this));
+	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this]() { doCloseStep(); });
 }
 
 //------------------------------------------------------------------------------

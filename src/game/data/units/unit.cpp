@@ -51,18 +51,18 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 
 	isBig = (staticData && staticData->ID.isABuilding() && staticData->buildingData.isBig);
 
-	disabledChanged.connect ([&]() { statusChanged(); });
-	sentryChanged.connect ([&]() { statusChanged(); });
-	manualFireChanged.connect ([&]() { statusChanged(); });
-	attackingChanged.connect ([&]() { statusChanged(); });
-	beeingAttackedChanged.connect ([&]() { statusChanged(); });
+	disabledChanged.connect ([this]() { statusChanged(); });
+	sentryChanged.connect ([this]() { statusChanged(); });
+	manualFireChanged.connect ([this]() { statusChanged(); });
+	attackingChanged.connect ([this]() { statusChanged(); });
+	beeingAttackedChanged.connect ([this]() { statusChanged(); });
 
-	layingMinesChanged.connect ([&]() { statusChanged(); });
-	clearingMinesChanged.connect ([&]() { statusChanged(); });
-	buildingChanged.connect ([&]() { statusChanged(); });
-	clearingChanged.connect ([&]() { statusChanged(); });
-	workingChanged.connect ([&]() { statusChanged(); });
-	movingChanged.connect ([&]() { statusChanged(); });
+	layingMinesChanged.connect ([this]() { statusChanged(); });
+	clearingMinesChanged.connect ([this]() { statusChanged(); });
+	buildingChanged.connect ([this]() { statusChanged(); });
+	clearingChanged.connect ([this]() { statusChanged(); });
+	workingChanged.connect ([this]() { statusChanged(); });
+	movingChanged.connect ([this]() { statusChanged(); });
 }
 
 //------------------------------------------------------------------------------

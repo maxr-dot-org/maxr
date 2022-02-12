@@ -43,11 +43,11 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 
 	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (193, 294), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
-	signalConnectionManager.connect (doneButton->clicked, [&]() { done(); });
+	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
 	auto cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (91, 294), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), FONT_LATIN_NORMAL));
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
-	signalConnectionManager.connect (cancelButton->clicked, [&]() { close(); });
+	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
 	const std::string themeNames[rows] =
 	{
@@ -93,13 +93,13 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 		turnsLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (291, 72 + 28 * i), getPosition() + cPosition (291 + 44, 72 + 28 * i + 10)), "0", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 		sliders[i] = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (90, 70 + 28 * i), cPosition (90 + 51, 70 + 28 * i + 15)), 0, player.getResearchCentersWorkingTotal(), eOrientationType::Horizontal, eSliderHandleType::Horizontal, eSliderType::Invisible));
-		signalConnectionManager.connect (sliders[i]->valueChanged, std::bind (&cDialogResearch::handleSliderValueChanged, this, i));
+		signalConnectionManager.connect (sliders[i]->valueChanged, [this, i]() { handleSliderValueChanged (i); });
 
 		decreaseButtons[i] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (71, 70 + 28 * i), ePushButtonType::ArrowLeftSmall));
-		signalConnectionManager.connect (decreaseButtons[i]->clicked, [&, i]() { sliders[i]->decrease (1);  });
+		signalConnectionManager.connect (decreaseButtons[i]->clicked, [this, i]() { sliders[i]->decrease (1); });
 
 		increaseButtons[i] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (143, 70 + 28 * i), ePushButtonType::ArrowRightSmall));
-		signalConnectionManager.connect (increaseButtons[i]->clicked, [&, i]() { sliders[i]->increase (1);  });
+		signalConnectionManager.connect (increaseButtons[i]->clicked, [this, i]() { sliders[i]->increase (1); });
 	}
 
 	unusedResearchCenters = player.getResearchCentersWorkingTotal();

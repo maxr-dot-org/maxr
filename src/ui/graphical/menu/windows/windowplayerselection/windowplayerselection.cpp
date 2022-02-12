@@ -44,10 +44,10 @@ cWindowPlayerSelection::cWindowPlayerSelection() :
 	//addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 35), getPosition() + cPosition (500 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Clan"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
-	signalConnectionManager.connect (okButton->clicked, [&]() { done(); });
+	signalConnectionManager.connect (okButton->clicked, [this]() { done(); });
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
-	signalConnectionManager.connect (backButton->clicked, [&]() { close(); });
+	signalConnectionManager.connect (backButton->clicked, [this]() { close(); });
 
 	humanPlayerSurface = AutoSurface (LoadPCX (GFXOD_PLAYER_HUMAN));
 	aiPlayerSurface = AutoSurface (LoadPCX (GFXOD_PLAYER_PC));
@@ -59,9 +59,9 @@ cWindowPlayerSelection::cWindowPlayerSelection() :
 	for (size_t i = 0; i < maxPlayers; ++i)
 	{
 		humanPlayerImages[i] = addChild (std::make_unique<cImage> (getPosition() + cPosition (175, 67 + 92 * i), nullptr, &SoundData.SNDHudButton));
-		signalConnectionManager.connect (humanPlayerImages[i]->clicked, std::bind (&cWindowPlayerSelection::setPlayerType, this, i, ePlayerType::Human));
+		signalConnectionManager.connect (humanPlayerImages[i]->clicked, [this, i]() { setPlayerType (i, ePlayerType::Human); });
 		aiPlayerImages[i] = addChild (std::make_unique<cImage> (getPosition() + cPosition (175 + 109, 67 + 92 * i), nullptr, &SoundData.SNDHudButton));
-		//signalConnectionManager.connect (aiPlayerImages[i]->clicked, std::bind (&cWindowHotSeat::setPlayerType, this, i, ePlayerType::Ai));
+		//signalConnectionManager.connect (aiPlayerImages[i]->clicked, [this, i]() { setPlayerType (i, ePlayerType::Ai); });
 		signalConnectionManager.connect (aiPlayerImages[i]->clicked, [this]()
 		{
 			const auto application = getActiveApplication();
@@ -70,7 +70,7 @@ cWindowPlayerSelection::cWindowPlayerSelection() :
 			application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented")));
 		});
 		noPlayerImages[i] = addChild (std::make_unique<cImage> (getPosition() + cPosition (175 + 109 * 2, 67 + 92 * i), nullptr, &SoundData.SNDHudButton));
-		signalConnectionManager.connect (noPlayerImages[i]->clicked, std::bind (&cWindowPlayerSelection::setPlayerType, this, i, ePlayerType::None));
+		signalConnectionManager.connect (noPlayerImages[i]->clicked, [this, i]() { setPlayerType (i, ePlayerType::None); });
 
 		setPlayerType (i, i == 0 || i == 1 ? ePlayerType::Human : ePlayerType::None);
 	}

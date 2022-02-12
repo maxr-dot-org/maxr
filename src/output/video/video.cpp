@@ -43,7 +43,7 @@ cVideo Video;
 /*static*/ SDL_Surface* cVideo::buffer = nullptr; // the screen buffer
 
 #define COLOURDEPTH 32
-/** Minimum video mode resultion we need */
+/** Minimum video mode resolution we need */
 #define MINWIDTH 640
 #define MINHEIGHT 480
 
@@ -57,9 +57,7 @@ cVideo::cVideo() :
 	colorDepth (COLOURDEPTH),
 	windowMode (false)
 {
-	using namespace std::placeholders;
-
-	signalConnectionManager.connect (cKeyboard::getInstance().keyPressed, std::bind (&cVideo::keyPressed, this, _1, _2));
+	signalConnectionManager.connect (cKeyboard::getInstance().keyPressed, [this](cKeyboard& keyboard, SDL_Keycode key) { keyPressed (keyboard, key);} );
 }
 
 cVideo::~cVideo()

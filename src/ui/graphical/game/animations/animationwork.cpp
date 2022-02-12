@@ -73,7 +73,7 @@ void cAnimationWork::activate()
 	if (!building) return;
 	building->effectAlpha = random (220);
 	running = true;
-	animationTimerConnectionManager.connect (animationTimer.triggered100ms, std::bind (&cAnimationWork::run, this));
+	animationTimerConnectionManager.connect (animationTimer.triggered100ms, [this]() { run(); });
 }
 
 //------------------------------------------------------------------------------

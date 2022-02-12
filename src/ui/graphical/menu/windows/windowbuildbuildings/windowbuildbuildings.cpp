@@ -58,14 +58,14 @@ cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::sha
 	if (vehicle.getStaticData().canBuildPath)
 	{
 		auto pathButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (338, 428), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Path"), FONT_LATIN_NORMAL));
-		signalConnectionManager.connect (pathButton->clicked, [&]() { donePath(); });
+		signalConnectionManager.connect (pathButton->clicked, [this]() { donePath(); });
 	}
 
 	generateSelectionList (vehicle, *unitsData);
 
-	signalConnectionManager.connect (selectionUnitClickedSecondTime, [&] (const cUnitListViewItemBuy&) { done(); });
+	signalConnectionManager.connect (selectionUnitClickedSecondTime, [this] (const cUnitListViewItemBuy&) { done(); });
 
-	signalConnectionManager.connect (vehicle.destroyed, std::bind (&cWindowBuildBuildings::closeOnUnitDestruction, this));
+	signalConnectionManager.connect (vehicle.destroyed, [this]() { closeOnUnitDestruction(); });
 }
 
 //------------------------------------------------------------------------------

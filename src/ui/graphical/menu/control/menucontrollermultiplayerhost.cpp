@@ -123,7 +123,7 @@ void cMenuControllerMultiplayerHost::start()
 	application.show (windowNetworkLobby);
 	application.addRunnable (shared_from_this());
 
-	signalConnectionManager.connect (windowNetworkLobby->terminated, std::bind (&cMenuControllerMultiplayerHost::reset, this));
+	signalConnectionManager.connect (windowNetworkLobby->terminated, [this]() { reset(); });
 	signalConnectionManager.connect (windowNetworkLobby->backClicked, [this]()
 	{
 		windowNetworkLobby->close();
@@ -220,7 +220,7 @@ void cMenuControllerMultiplayerHost::startSavedGame (std::shared_ptr<cClient> cl
 
 	application.closeTill (*windowNetworkLobby);
 	windowNetworkLobby->close();
-	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
+	signalConnectionManager.connect (windowNetworkLobby->terminated, [this]() { windowNetworkLobby = nullptr; });
 
 	auto* server = lobbyServer.getServer();
 	assert (server);
@@ -243,7 +243,7 @@ void cMenuControllerMultiplayerHost::startNewGame (std::shared_ptr<cClient> clie
 {
 	application.closeTill (*windowNetworkLobby);
 	windowNetworkLobby->close();
-	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
+	signalConnectionManager.connect (windowNetworkLobby->terminated, [this]() { windowNetworkLobby = nullptr; });
 
 	const auto& initPlayerData = initGamePreparation->getInitPlayerData();
 

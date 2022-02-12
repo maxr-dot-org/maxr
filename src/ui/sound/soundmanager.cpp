@@ -185,10 +185,10 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 	auto it = std::lower_bound (playingSounds.begin(), playingSounds.end(), playingSound);
 	it = playingSounds.insert (it, std::move (playingSound));
 	auto& soundRef = *it->sound;
-	signalConnectionManager.connect (soundRef.stopped, std::bind (&cSoundManager::finishedSound, this, std::ref (soundRef)));
+	signalConnectionManager.connect (soundRef.stopped, [this, &soundRef]() { finishedSound (soundRef); });
 
 	updateSoundPosition (soundRef);
-	it->signalConnectionManager.connect (soundRef.positionChanged, std::bind (&cSoundManager::updateSoundPosition, this, std::ref (soundRef)));
+	it->signalConnectionManager.connect (soundRef.positionChanged, [this, &soundRef]() { updateSoundPosition (soundRef); });
 }
 
 //--------------------------------------------------------------------------

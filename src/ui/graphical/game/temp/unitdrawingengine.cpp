@@ -45,7 +45,7 @@ cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animati
 	shouldDrawAmmo (false),
 	shouldDrawColor (false)
 {
-	signalConnectionManager.connect (animationTimer->triggered100ms, std::bind (&cUnitDrawingEngine::rotateBlinkColor, this));
+	signalConnectionManager.connect (animationTimer->triggered100ms, [this]() { rotateBlinkColor(); });
 }
 
 //--------------------------------------------------------------------------

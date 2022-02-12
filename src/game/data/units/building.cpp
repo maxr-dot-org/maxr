@@ -141,11 +141,11 @@ cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData*
 
 	refreshData();
 
-	buildListChanged.connect ([&]() { statusChanged(); });
-	buildListFirstItemDataChanged.connect ([&]() { statusChanged(); });
-	researchAreaChanged.connect ([&]() { statusChanged(); });
-	metalPerRoundChanged.connect ([&]() { statusChanged(); });
-	ownerChanged.connect ([&]() { registerOwnerEvents(); });
+	buildListChanged.connect ([this]() { statusChanged(); });
+	buildListFirstItemDataChanged.connect ([this]() { statusChanged(); });
+	researchAreaChanged.connect ([this]() { statusChanged(); });
+	metalPerRoundChanged.connect ([this]() { statusChanged(); });
+	ownerChanged.connect ([this]() { registerOwnerEvents(); });
 
 	registerOwnerEvents();
 }
@@ -768,13 +768,13 @@ void cBuilding::registerOwnerEvents()
 
 	if (getStaticData().convertsGold)
 	{
-		ownerSignalConnectionManager.connect (getOwner()->creditsChanged, [&]() { statusChanged(); });
+		ownerSignalConnectionManager.connect (getOwner()->creditsChanged, [this]() { statusChanged(); });
 	}
 
 	if (getStaticData().canResearch)
 	{
-		ownerSignalConnectionManager.connect (getOwner()->researchCentersWorkingOnAreaChanged, [&] (cResearch::ResearchArea) { statusChanged(); });
-		ownerSignalConnectionManager.connect (getOwner()->getResearchState().neededResearchPointsChanged, [&] (cResearch::ResearchArea) { statusChanged(); });
-		ownerSignalConnectionManager.connect (getOwner()->getResearchState().currentResearchPointsChanged, [&] (cResearch::ResearchArea) { statusChanged(); });
+		ownerSignalConnectionManager.connect (getOwner()->researchCentersWorkingOnAreaChanged, [this] (cResearch::ResearchArea) { statusChanged(); });
+		ownerSignalConnectionManager.connect (getOwner()->getResearchState().neededResearchPointsChanged, [this] (cResearch::ResearchArea) { statusChanged(); });
+		ownerSignalConnectionManager.connect (getOwner()->getResearchState().currentResearchPointsChanged, [this] (cResearch::ResearchArea) { statusChanged(); });
 	}
 }

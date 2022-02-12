@@ -57,22 +57,22 @@ cDialogPreferences::cDialogPreferences() :
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20), getPosition() + cPosition (135, 66 + 20)), lngPack.i18n ("Text~Settings~Music"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	musicVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20), getPosition() + cPosition (240, 70 + 20)), 0, 128, eOrientationType::Horizontal));
-	signalConnectionManager.connect (musicVolumeSlider->valueChanged, std::bind (&cDialogPreferences::musicVolumeChanged, this));
+	signalConnectionManager.connect (musicVolumeSlider->valueChanged, [this]() { musicVolumeChanged(); });
 	disableMusicCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (245, 73), lngPack.i18n ("Text~Settings~Disable")));
-	signalConnectionManager.connect (disableMusicCheckBox->toggled, std::bind (&cDialogPreferences::musicMuteChanged, this));
+	signalConnectionManager.connect (disableMusicCheckBox->toggled, [this]() { musicMuteChanged(); });
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20 * 2), getPosition() + cPosition (135, 66 + 20 * 2)), lngPack.i18n ("Text~Settings~Effects"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	effectsVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20 * 2), getPosition() + cPosition (240, 70 + 20 * 2)), 0, 128, eOrientationType::Horizontal));
-	signalConnectionManager.connect (effectsVolumeSlider->valueChanged, std::bind (&cDialogPreferences::effectsVolumeChanged, this));
+	signalConnectionManager.connect (effectsVolumeSlider->valueChanged, [this]() { effectsVolumeChanged(); });
 	disableEffectsCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (245, 73 + 20), lngPack.i18n ("Text~Settings~Disable")));
-	signalConnectionManager.connect (disableEffectsCheckBox->toggled, std::bind (&cDialogPreferences::effectsMuteChanged, this));
+	signalConnectionManager.connect (disableEffectsCheckBox->toggled, [this]() { effectsMuteChanged(); });
 	effects3DCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (340, 73 + 20), "3D"));
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20 * 3), getPosition() + cPosition (135, 66 + 20 * 3)), lngPack.i18n ("Text~Settings~Voices"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	voicesVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20 * 3), getPosition() + cPosition (240, 70 + 20 * 3)), 0, 128, eOrientationType::Horizontal));
-	signalConnectionManager.connect (voicesVolumeSlider->valueChanged, std::bind (&cDialogPreferences::voicesVolumeChanged, this));
+	signalConnectionManager.connect (voicesVolumeSlider->valueChanged, [this]() { voicesVolumeChanged(); });
 	disableVoicesCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (245, 73 + 20 * 2), lngPack.i18n ("Text~Settings~Disable")));
-	signalConnectionManager.connect (disableVoicesCheckBox->toggled, std::bind (&cDialogPreferences::voicesMuteChanged, this));
+	signalConnectionManager.connect (disableVoicesCheckBox->toggled, [this]() { voicesMuteChanged(); });
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 158), getPosition() + cPosition (135, 168)), lngPack.i18n ("Text~Title~Player_Name"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	nameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (140, 154), getPosition() + cPosition (140 + 185, 154 + 18)), eLineEditFrameType::Box));
@@ -96,11 +96,11 @@ cDialogPreferences::cDialogPreferences() :
 
 	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (208, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
-	signalConnectionManager.connect (doneButton->clicked, std::bind (&cDialogPreferences::doneClicked, this));
+	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
 	auto cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (118, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), FONT_LATIN_NORMAL));
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
-	signalConnectionManager.connect (cancelButton->clicked, std::bind (&cDialogPreferences::cancelClicked, this));
+	signalConnectionManager.connect (cancelButton->clicked, [this]() { cancelClicked(); });
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298 + 20), getPosition() + cPosition (140 + 95, 298 + 20 + 10)), lngPack.i18n ("Text~Settings~Language") + lngPack.i18n ("Text~Punctuation~Colon"), FONT_LATIN_NORMAL, eAlignmentType::Right));
 	languagesComboBox = addChild (std::make_unique<cComboBox> (cBox<cPosition> (getPosition() + cPosition (240, 294 + 20), getPosition() + cPosition (240 + 100, 294 + 20 + 17))));

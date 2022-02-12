@@ -57,19 +57,19 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 	auto destinationUnitImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (208, 26)));
 
 	resourceBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (43, 159), getPosition() + cPosition (43 + 223, 159 + 16)), 0, 100, getResourceBarType (sourceUnit, destinationUnit), eOrientationType::Horizontal));
-	signalConnectionManager.connect (resourceBar->valueChanged, std::bind (&cNewDialogTransfer::transferValueChanged, this));
+	signalConnectionManager.connect (resourceBar->valueChanged, [this]() { transferValueChanged(); });
 	auto increaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (279, 159), ePushButtonType::ArrowRightSmall));
-	signalConnectionManager.connect (increaseButton->clicked, [&]() { resourceBar->increase (1); });
+	signalConnectionManager.connect (increaseButton->clicked, [this]() { resourceBar->increase (1); });
 	auto decreaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (17, 159), ePushButtonType::ArrowLeftSmall));
-	signalConnectionManager.connect (decreaseButton->clicked, [&]() { resourceBar->decrease (1); });
+	signalConnectionManager.connect (decreaseButton->clicked, [this]() { resourceBar->decrease (1); });
 
 	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (159, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
-	signalConnectionManager.connect (doneButton->clicked, [&]() { done(); });
+	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
 	auto cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (71, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), FONT_LATIN_NORMAL));
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
-	signalConnectionManager.connect (cancelButton->clicked, [&]() { close(); });
+	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
 	initUnitImage (*sourceUnitImage, sourceUnit);
 	initUnitImage (*destinationUnitImage, destinationUnit);
@@ -90,8 +90,8 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 
 	transferValueChanged();
 
-	signalConnectionManager.connect (sourceUnit.destroyed, std::bind (&cNewDialogTransfer::closeOnUnitDestruction, this));
-	signalConnectionManager.connect (destinationUnit.destroyed, std::bind (&cNewDialogTransfer::closeOnUnitDestruction, this));
+	signalConnectionManager.connect (sourceUnit.destroyed, [this]() { closeOnUnitDestruction(); });
+	signalConnectionManager.connect (destinationUnit.destroyed, [this]() { closeOnUnitDestruction(); });
 }
 
 //------------------------------------------------------------------------------

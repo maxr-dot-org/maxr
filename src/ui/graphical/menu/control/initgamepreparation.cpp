@@ -166,7 +166,7 @@ void cInitGamePreparation::startLandingPositionSelection()
 		lobbyClient.selectLandingPosition (landingPosition);
 	});
 
-	signalConnectionManager.connect (windowLandingPositionSelection->onCommandEntered, [=] (const std::string& text)
+	signalConnectionManager.connect (windowLandingPositionSelection->onCommandEntered, [this] (const std::string& text)
 	{
 		const std::string& playerName = lobbyClient.getLocalPlayer().getName();
 		windowLandingPositionSelection->addChatEntry (playerName, text);

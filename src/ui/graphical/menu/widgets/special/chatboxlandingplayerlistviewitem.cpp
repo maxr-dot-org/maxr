@@ -71,9 +71,9 @@ cChatBoxLandingPlayerListViewItem::cChatBoxLandingPlayerListViewItem (const cPla
 
 	fitToChildren();
 
-	signalConnectionManager.connect (player.nameChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerName, this));
-	signalConnectionManager.connect (player.colorChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerColor, this));
-	signalConnectionManager.connect (playerLandingStatus.hasSelectedPositionChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerHasSelectedPosition, this));
+	signalConnectionManager.connect (player.nameChanged, [this]() { updatePlayerName(); });
+	signalConnectionManager.connect (player.colorChanged, [this]() { updatePlayerColor(); });
+	signalConnectionManager.connect (playerLandingStatus.hasSelectedPositionChanged, [this]() { updatePlayerHasSelectedPosition(); });
 }
 
 //------------------------------------------------------------------------------

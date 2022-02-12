@@ -214,10 +214,10 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	// Buttons
 	//
 	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
-	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowGameSettings::okClicked, this));
+	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
-	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowGameSettings::backClicked, this));
+	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 }
 
 //------------------------------------------------------------------------------

@@ -51,16 +51,16 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, s
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (353, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Back")));
-	signalConnectionManager.connect (backButton->clicked, [&]() { close(); });
+	signalConnectionManager.connect (backButton->clicked, [this]() { close(); });
 
 	loadButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (514, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Load")));
-	signalConnectionManager.connect (loadButton->clicked, std::bind (&cWindowLoad::handleLoadClicked, this));
+	signalConnectionManager.connect (loadButton->clicked, [this]() { handleLoadClicked(); });
 	loadButton->lock();
 
 	auto upButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (33, 438), ePushButtonType::ArrowUpBig));
-	signalConnectionManager.connect (upButton->clicked, std::bind (&cWindowLoad::handleUpClicked, this));
+	signalConnectionManager.connect (upButton->clicked, [this]() { handleUpClicked(); });
 	auto downButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (63, 438), ePushButtonType::ArrowDownBig));
-	signalConnectionManager.connect (downButton->clicked, std::bind (&cWindowLoad::handleDownClicked, this));
+	signalConnectionManager.connect (downButton->clicked, [this]() { handleDownClicked(); });
 
 	for (size_t x = 0; x < columns; x++)
 	{
@@ -68,8 +68,8 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, s
 		{
 			const auto index = rows * x + y;
 			saveSlots[index] = addChild (std::make_unique<cSaveSlotWidget> (getPosition() + cPosition (17 + 402 * x, 45 + 76 * y)));
-			signalConnectionManager.connect (saveSlots[index]->clicked, std::bind (&cWindowLoad::handleSlotClicked, this, index));
-			signalConnectionManager.connect (saveSlots[index]->doubleClicked, std::bind (&cWindowLoad::handleSlotDoubleClicked, this, index));
+			signalConnectionManager.connect (saveSlots[index]->clicked, [this, index]() { handleSlotClicked (index); });
+			signalConnectionManager.connect (saveSlots[index]->doubleClicked, [this, index]() { handleSlotDoubleClicked(index); });
 		}
 	}
 

@@ -31,7 +31,7 @@ cGetInJob::cGetInJob (cVehicle& loadedVehicle, cUnit& loadingUnit) :
 	counter (32),
 	startFlightHeight (loadedVehicle.getFlightHeight())
 {
-	connectionManager.connect (loadingUnit.destroyed, [&](){finished = true; });
+	connectionManager.connect (loadingUnit.destroyed, [this](){finished = true; });
 	unit->alphaEffectValue = 254;
 }
 

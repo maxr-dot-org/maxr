@@ -83,10 +83,10 @@ cWindowReports::cWindowReports (const cModel& model,
 	scoreRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29 * 2), lngPack.i18n ("Text~Others~Score"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 	reportsRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29 * 3), lngPack.i18n ("Text~Others~Reports"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 
-	signalConnectionManager.connect (unitsRadioButton->toggled, std::bind (&cWindowReports::updateActiveFrame, this));
-	signalConnectionManager.connect (disadvantagesRadioButton->toggled, std::bind (&cWindowReports::updateActiveFrame, this));
-	signalConnectionManager.connect (scoreRadioButton->toggled, std::bind (&cWindowReports::updateActiveFrame, this));
-	signalConnectionManager.connect (reportsRadioButton->toggled, std::bind (&cWindowReports::updateActiveFrame, this));
+	signalConnectionManager.connect (unitsRadioButton->toggled, [this]() { updateActiveFrame(); });
+	signalConnectionManager.connect (disadvantagesRadioButton->toggled, [this]() { updateActiveFrame(); });
+	signalConnectionManager.connect (scoreRadioButton->toggled, [this]() { updateActiveFrame(); });
+	signalConnectionManager.connect (reportsRadioButton->toggled, [this]() { updateActiveFrame(); });
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 207), getPosition() + cPosition (497 + 100, 207 + font->getFontHeight())), lngPack.i18n ("Text~Others~Included")));
 
@@ -100,10 +100,10 @@ cWindowReports::cWindowReports (const cModel& model,
 	seaCheckBox->setChecked (true);
 	stationaryCheckBox->setChecked (true);
 
-	signalConnectionManager.connect (planesCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
-	signalConnectionManager.connect (groundCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
-	signalConnectionManager.connect (seaCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
-	signalConnectionManager.connect (stationaryCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
+	signalConnectionManager.connect (planesCheckBox->toggled, [this]() { handleFilterChanged(); });
+	signalConnectionManager.connect (groundCheckBox->toggled, [this]() { handleFilterChanged(); });
+	signalConnectionManager.connect (seaCheckBox->toggled, [this]() { handleFilterChanged(); });
+	signalConnectionManager.connect (stationaryCheckBox->toggled, [this]() { handleFilterChanged(); });
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 299), getPosition() + cPosition (497 + 100, 299 + font->getFontHeight())), lngPack.i18n ("Text~Others~Limited_To")));
 
@@ -112,29 +112,27 @@ cWindowReports::cWindowReports (const cModel& model,
 	damagedCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312 + 18 * 2), lngPack.i18n ("Text~Others~Damaged_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 	stealthCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312 + 18 * 3), lngPack.i18n ("Text~Others~Stealth_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 
-	signalConnectionManager.connect (produceCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
-	signalConnectionManager.connect (fightCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
-	signalConnectionManager.connect (damagedCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
-	signalConnectionManager.connect (stealthCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
+	signalConnectionManager.connect (produceCheckBox->toggled, [this]() { handleFilterChanged(); });
+	signalConnectionManager.connect (fightCheckBox->toggled, [this]() { handleFilterChanged(); });
+	signalConnectionManager.connect (damagedCheckBox->toggled, [this]() { handleFilterChanged(); });
+	signalConnectionManager.connect (stealthCheckBox->toggled, [this]() { handleFilterChanged(); });
 
 	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (524, 395), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
-	signalConnectionManager.connect (doneButton->clicked, std::bind (&cWindowReports::close, this));
+	signalConnectionManager.connect (doneButton->clicked, [this]() { close(); });
 
 	upButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (492, 426), ePushButtonType::ArrowUpBig));
-	signalConnectionManager.connect (upButton->clicked, std::bind (&cWindowReports::upPressed, this));
+	signalConnectionManager.connect (upButton->clicked, [this]() { upPressed(); });
 	downButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (525, 426), ePushButtonType::ArrowDownBig));
-	signalConnectionManager.connect (downButton->clicked, std::bind (&cWindowReports::downPressed, this));
+	signalConnectionManager.connect (downButton->clicked, [this]() { downPressed(); });
 
 	const cBox<cPosition> frameArea (getPosition() + cPosition (18, 15), getPosition() + cPosition (18 + 458, 15 + 447));
-
-	using namespace std::placeholders;
 
 	unitsFrame = addChild (std::make_unique<cFrame> (frameArea));
 	unitsList = unitsFrame->addChild (std::make_unique<cListView<cReportUnitListViewItem>> (frameArea));
 	unitsList->setBeginMargin (cPosition (5, 4));
 	unitsList->setItemDistance (6);
-	signalConnectionManager.connect (unitsList->itemClicked, std::bind (&cWindowReports::handleUnitClicked, this, _1));
+	signalConnectionManager.connect (unitsList->itemClicked, [this](cReportUnitListViewItem& item) { handleUnitClicked (item); });
 
 	const auto players = model.getPlayerList();
 	disadvantagesFrame = addChild (std::make_unique<cFrame> (frameArea));
@@ -188,7 +186,7 @@ cWindowReports::cWindowReports (const cModel& model,
 	reportsFrame = addChild (std::make_unique<cFrame> (frameArea));
 	reportsList = reportsFrame->addChild (std::make_unique<cListView<cReportMessageListViewItem>> (frameArea));
 	reportsList->setItemDistance (6);
-	signalConnectionManager.connect (reportsList->itemClicked, std::bind (&cWindowReports::handleReportClicked, this, _1));
+	signalConnectionManager.connect (reportsList->itemClicked, [this](cReportMessageListViewItem& item) { handleReportClicked (item); });
 
 	updateActiveFrame();
 	initializeScorePlot();

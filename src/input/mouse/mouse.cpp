@@ -33,11 +33,9 @@ cMouse::cMouse() :
 {
 	setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand), true);
 
-	using namespace std::placeholders;
-
-	signalConnectionManager.connect (cEventManager::getInstance().mouseMotionEvent, std::bind (&cMouse::handleMouseMotionEvent, this, _1));
-	signalConnectionManager.connect (cEventManager::getInstance().mouseButtonEvent, std::bind (&cMouse::handleMouseButtonEvent, this, _1));
-	signalConnectionManager.connect (cEventManager::getInstance().mouseWheelEvent, std::bind (&cMouse::handleMouseWheelEvent, this, _1));
+	signalConnectionManager.connect (cEventManager::getInstance().mouseMotionEvent, [this](const cEventMouseMotion& event) { handleMouseMotionEvent (event); });
+	signalConnectionManager.connect (cEventManager::getInstance().mouseButtonEvent, [this](const cEventMouseButton& event) { handleMouseButtonEvent (event); });
+	signalConnectionManager.connect (cEventManager::getInstance().mouseWheelEvent, [this](const cEventMouseWheel& event) { handleMouseWheelEvent (event); });
 }
 
 //------------------------------------------------------------------------------

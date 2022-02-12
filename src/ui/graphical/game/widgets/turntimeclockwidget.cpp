@@ -40,8 +40,8 @@ void cTurnTimeClockWidget::setTurnTimeClock (std::shared_ptr<const cTurnTimeCloc
 
 	if (turnTimeClock != nullptr)
 	{
-		signalConnectionManager.connect (turnTimeClock->secondChanged, std::bind (&cTurnTimeClockWidget::update, this));
-		signalConnectionManager.connect (turnTimeClock->deadlinesChanged, std::bind (&cTurnTimeClockWidget::update, this));
+		signalConnectionManager.connect (turnTimeClock->secondChanged, [this]() { update(); });
+		signalConnectionManager.connect (turnTimeClock->deadlinesChanged, [this]() { update(); });
 	}
 	update();
 }

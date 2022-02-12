@@ -44,7 +44,7 @@ cServer::cServer (std::shared_ptr<cConnectionManager> connectionManager) :
 	serverThread (nullptr),
 	exit (false)
 {
-	model.turnEnded.connect ([&]()
+	model.turnEnded.connect ([this]()
 	{
 		enableFreezeMode (eFreezeMode::WAIT_FOR_TURNEND);
 	});

@@ -79,16 +79,16 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
             const auto index = x + y * columns;
 
             activateButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), FONT_LATIN_NORMAL));
-            signalConnectionManager.connect (activateButtons[index]->clicked, std::bind (&cWindowStorage::activateClicked, this, index));
+            signalConnectionManager.connect (activateButtons[index]->clicked, [this, index]() { activateClicked (index); });
 
             reloadButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", FONT_LATIN_NORMAL));
-            signalConnectionManager.connect (reloadButtons[index]->clicked, std::bind (&cWindowStorage::reloadClicked, this, index));
+            signalConnectionManager.connect (reloadButtons[index]->clicked, [this, index]() { reloadClicked (index); });
 
             repairButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", FONT_LATIN_NORMAL));
-            signalConnectionManager.connect (repairButtons[index]->clicked, std::bind (&cWindowStorage::repairClicked, this, index));
+            signalConnectionManager.connect (repairButtons[index]->clicked, [this, index]() { repairClicked (index); });
 
             upgradeButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", FONT_LATIN_NORMAL));
-            signalConnectionManager.connect (upgradeButtons[index]->clicked, std::bind (&cWindowStorage::upgradeClicked, this, index));
+            signalConnectionManager.connect (upgradeButtons[index]->clicked, [this, index]() { upgradeClicked (index); });
 
 			unitImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (17 + x * stepImageX, 9 + y * 236)));
 			unitNames[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (17 + x * stepImageX + 5, 9 + y * 236 + 5), getPosition() + cPosition (17 + x * stepImageX + 5 + nameLabelX, 9 + y * 236 + 5 + 118)), ""));
@@ -116,38 +116,38 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 
 	metalBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (536, 85), getPosition() + cPosition (536 + 40, 85 + 10)), std::to_string (metalValue), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	metalBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (546, 106), getPosition() + cPosition (546 + 20, 106 + 115)), 0, metalValue, eResourceBarType::Metal, eOrientationType::Vertical));
-	signalConnectionManager.connect (metalBar->valueChanged, [&]() { metalBarAmountLabel->setText (std::to_string (metalBar->getValue())); });
+	signalConnectionManager.connect (metalBar->valueChanged, [this]() { metalBarAmountLabel->setText (std::to_string (metalBar->getValue())); });
 	metalBar->disable();
 
 	//
 	// Buttons
 	//
 	upButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (504, 426), ePushButtonType::ArrowUpBig));
-	signalConnectionManager.connect (upButton->clicked, std::bind (&cWindowStorage::upClicked, this));
+	signalConnectionManager.connect (upButton->clicked, [this]() { upClicked(); });
 
 	downButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (532, 426), ePushButtonType::ArrowDownBig));
-	signalConnectionManager.connect (downButton->clicked, std::bind (&cWindowStorage::downClicked, this));
+	signalConnectionManager.connect (downButton->clicked, [this]() { downClicked(); });
 
 	activateAllButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 246), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), FONT_LATIN_NORMAL));
-	signalConnectionManager.connect (activateAllButton->clicked, std::bind (&cWindowStorage::activateAllClicked, this));
+	signalConnectionManager.connect (activateAllButton->clicked, [this]() { activateAllClicked(); });
 
 	reloadAllButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 246 + 25), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", FONT_LATIN_NORMAL));
-	signalConnectionManager.connect (reloadAllButton->clicked, std::bind (&cWindowStorage::reloadAllClicked, this));
+	signalConnectionManager.connect (reloadAllButton->clicked, [this]() { reloadAllClicked(); });
 
 	repairAllButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 246 + 25 * 2), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", FONT_LATIN_NORMAL));
-	signalConnectionManager.connect (repairAllButton->clicked, std::bind (&cWindowStorage::repairAllClicked, this));
+	signalConnectionManager.connect (repairAllButton->clicked, [this]() { repairAllClicked(); });
 
 	upgradeAllButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 246 + 25 * 3), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", FONT_LATIN_NORMAL));
-	signalConnectionManager.connect (upgradeAllButton->clicked, std::bind (&cWindowStorage::upgradeAllClicked, this));
+	signalConnectionManager.connect (upgradeAllButton->clicked, [this]() { upgradeAllClicked(); });
 
 	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 371), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
-	signalConnectionManager.connect (doneButton->clicked, std::bind (&cWindowStorage::doneClicked, this));
+	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
 	updateUnitsWidgets();
 	updateGlobalButtons();
 	updateUpDownButtons();
 
-	signalConnectionManager.connect (unit.destroyed, std::bind (&cWindowStorage::closeOnUnitDestruction, this));
+	signalConnectionManager.connect (unit.destroyed, [this]() { closeOnUnitDestruction(); });
 }
 
 //------------------------------------------------------------------------------
@@ -205,19 +205,17 @@ void cWindowStorage::updateUnitsWidgets()
 				updateUnitName (storedUnit, positionIndex);
 				updateUnitButtons (storedUnit, positionIndex);
 
-				unitsSignalConnectionManager.connect (storedUnit.data.versionChanged, std::bind (&cWindowStorage::updateUnitName, this, std::ref (storedUnit), positionIndex));
+				unitsSignalConnectionManager.connect (storedUnit.data.versionChanged, [this, positionIndex, &storedUnit]() { updateUnitName (storedUnit, positionIndex); });
 
-				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
-				unitsSignalConnectionManager.connect (storedUnit.data.ammoChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
-				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsMaxChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
-				unitsSignalConnectionManager.connect (storedUnit.data.ammoMaxChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
-				unitsSignalConnectionManager.connect (storedUnit.data.versionChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
-
-				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
-				unitsSignalConnectionManager.connect (storedUnit.data.ammoChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
-				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsMaxChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
-				unitsSignalConnectionManager.connect (storedUnit.data.ammoMaxChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
-				unitsSignalConnectionManager.connect (storedUnit.data.versionChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
+				const auto onStoreUnitChanged = [this, positionIndex, &storedUnit]() {
+					updateUnitButtons (storedUnit, positionIndex);
+					updateGlobalButtons();
+				};
+				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsChanged, onStoreUnitChanged);
+				unitsSignalConnectionManager.connect (storedUnit.data.ammoChanged, onStoreUnitChanged);
+				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsMaxChanged, onStoreUnitChanged);
+				unitsSignalConnectionManager.connect (storedUnit.data.ammoMaxChanged, onStoreUnitChanged);
+				unitsSignalConnectionManager.connect (storedUnit.data.versionChanged, onStoreUnitChanged);
 			}
 			else
 			{

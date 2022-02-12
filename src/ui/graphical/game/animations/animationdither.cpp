@@ -81,7 +81,7 @@ bool cAnimationDither::isLocatedIn (const cBox<cPosition>& box) const
 void cAnimationDither::activate()
 {
 	if (!vehicle) return;
-	animationTimerConnectionManager.connect (animationTimer.triggered100ms, std::bind (&cAnimationDither::run, this));
+	animationTimerConnectionManager.connect (animationTimer.triggered100ms, [this]() { run(); });
 	running = true;
 }
 

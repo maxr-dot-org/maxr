@@ -107,7 +107,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	additionalInfoLabel->disable();
 	additionalInfoLabel->hide();
 
-	signalConnectionManager.connect (hudPanels->opened, [&]()
+	signalConnectionManager.connect (hudPanels->opened, [this]()
 	{
 		hudPanels->disable();
 		hudPanels->hide();
@@ -116,23 +116,21 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	hud->activateShortcuts();
 	gameMap->deactivateUnitCommandShortcuts();
 
-	using namespace std::placeholders;
+	signalConnectionManager.connect (hud->zoomChanged, [this]() { gameMap->setZoomFactor (hud->getZoomFactor(), true); });
 
-	signalConnectionManager.connect (hud->zoomChanged, [&]() { gameMap->setZoomFactor (hud->getZoomFactor(), true); });
+	signalConnectionManager.connect (hud->surveyToggled, [this]() { gameMap->setDrawSurvey (hud->getSurveyActive()); });
+	signalConnectionManager.connect (hud->hitsToggled, [this]() { gameMap->setDrawHits (hud->getHitsActive()); });
+	signalConnectionManager.connect (hud->scanToggled, [this]() { gameMap->setDrawScan (hud->getScanActive()); });
+	signalConnectionManager.connect (hud->statusToggled, [this]() { gameMap->setDrawStatus (hud->getStatusActive()); });
+	signalConnectionManager.connect (hud->ammoToggled, [this]() { gameMap->setDrawAmmo (hud->getAmmoActive()); });
+	signalConnectionManager.connect (hud->gridToggled, [this]() { gameMap->setDrawGrid (hud->getGridActive()); });
+	signalConnectionManager.connect (hud->colorToggled, [this]() { gameMap->setDrawColor (hud->getColorActive()); });
+	signalConnectionManager.connect (hud->rangeToggled, [this]() { gameMap->setDrawRange (hud->getRangeActive()); });
+	signalConnectionManager.connect (hud->fogToggled, [this]() { gameMap->setDrawFog (hud->getFogActive()); });
+	signalConnectionManager.connect (hud->lockToggled, [this]() { gameMap->setLockActive (hud->getLockActive()); });
 
-	signalConnectionManager.connect (hud->surveyToggled, [&]() { gameMap->setDrawSurvey (hud->getSurveyActive()); });
-	signalConnectionManager.connect (hud->hitsToggled, [&]() { gameMap->setDrawHits (hud->getHitsActive()); });
-	signalConnectionManager.connect (hud->scanToggled, [&]() { gameMap->setDrawScan (hud->getScanActive()); });
-	signalConnectionManager.connect (hud->statusToggled, [&]() { gameMap->setDrawStatus (hud->getStatusActive()); });
-	signalConnectionManager.connect (hud->ammoToggled, [&]() { gameMap->setDrawAmmo (hud->getAmmoActive()); });
-	signalConnectionManager.connect (hud->gridToggled, [&]() { gameMap->setDrawGrid (hud->getGridActive()); });
-	signalConnectionManager.connect (hud->colorToggled, [&]() { gameMap->setDrawColor (hud->getColorActive()); });
-	signalConnectionManager.connect (hud->rangeToggled, [&]() { gameMap->setDrawRange (hud->getRangeActive()); });
-	signalConnectionManager.connect (hud->fogToggled, [&]() { gameMap->setDrawFog (hud->getFogActive()); });
-	signalConnectionManager.connect (hud->lockToggled, [&]() { gameMap->setLockActive (hud->getLockActive()); });
-
-	signalConnectionManager.connect (hud->helpClicked, [&]() { gameMap->toggleHelpMode(); });
-	signalConnectionManager.connect (hud->chatToggled, [&]()
+	signalConnectionManager.connect (hud->helpClicked, [this]() { gameMap->toggleHelpMode(); });
+	signalConnectionManager.connect (hud->chatToggled, [this]()
 	{
 		if (hud->getChatActive())
 		{
@@ -147,13 +145,16 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	});
 	hud->setChatActive (true);
 
-	signalConnectionManager.connect (hud->miniMapZoomFactorToggled, [&]() { miniMap->setZoomFactor (hud->getMiniMapZoomFactorActive() ? 2 : 1); });
-	signalConnectionManager.connect (hud->miniMapAttackUnitsOnlyToggled, [&]() { miniMap->setAttackUnitsUnly (hud->getMiniMapAttackUnitsOnly()); });
+	signalConnectionManager.connect (hud->miniMapZoomFactorToggled, [this]() { miniMap->setZoomFactor (hud->getMiniMapZoomFactorActive() ? 2 : 1); });
+	signalConnectionManager.connect (hud->miniMapAttackUnitsOnlyToggled, [this]() { miniMap->setAttackUnitsUnly (hud->getMiniMapAttackUnitsOnly()); });
 
-	signalConnectionManager.connect (gameMap->scrolled, std::bind (&cGameGui::resetMiniMapViewWindow, this));
-	signalConnectionManager.connect (gameMap->zoomFactorChanged, std::bind (&cGameGui::resetMiniMapViewWindow, this));
-	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cGameGui::updateHudCoordinates, this, _1));
-	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cGameGui::updateHudUnitName, this, _1));
+	signalConnectionManager.connect (gameMap->scrolled, [this]() { resetMiniMapViewWindow(); });
+	signalConnectionManager.connect (gameMap->zoomFactorChanged, [this]() { resetMiniMapViewWindow(); });
+	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, [this](const cPosition& tilePosition)
+	{
+		updateHudCoordinates (tilePosition);
+		updateHudUnitName (tilePosition);
+	});
 
 	signalConnectionManager.connect (gameMap->mouseFocusReleased, [this]()
 	{
@@ -166,19 +167,14 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 		}
 	});
 
-	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [&]() { hud->setActiveUnit (gameMap->getUnitSelection().getSelectedUnit()); });
-	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, std::bind (&cGameGui::updateSelectedUnitSound, this));
-	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, std::bind (&cGameGui::connectSelectedUnit, this));
-	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [&]()
+	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [this]()
 	{
-		if (!player) return;
-
 		auto unit = gameMap->getUnitSelection().getSelectedUnit();
-		if (unit && unit->getOwner() == player.get()) makeReport (*soundManager, getCurrentState(), *unit);
-	});
-	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [&]()
-	{
-		if (gameMap->getUnitSelection().getSelectedUnit() == nullptr)
+		hud->setActiveUnit (unit);
+		updateSelectedUnitSound();
+		connectSelectedUnit();
+
+		if (unit == nullptr)
 		{
 			hud->activateShortcuts();
 		}
@@ -186,30 +182,34 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 		{
 			hud->deactivateShortcuts();
 		}
+
+		if (!player) return;
+
+		if (unit && unit->getOwner() == player.get()) makeReport (*soundManager, getCurrentState(), *unit);
 	});
 
-	signalConnectionManager.connect (miniMap->focus, [&] (const cPosition& position) { gameMap->centerAt (position); });
+	signalConnectionManager.connect (miniMap->focus, [this] (const cPosition& position) { gameMap->centerAt (position); });
 
-	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, [&]()
+	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this]()
 	{
 		if (mouseScrollDirection != cPosition (0, 0))
 		{
 			gameMap->scroll (mouseScrollDirection);
 		}
 	});
-	signalConnectionManager.connect (animationTimer->triggered400ms, [&]()
+	signalConnectionManager.connect (animationTimer->triggered400ms, [this]()
 	{
 		messageList->removeOldMessages();
 	});
 
-	terminated.connect ([&]()
+	terminated.connect ([this]()
 	{
 		stopSelectedUnitSound();
 	});
 
 	initShortcuts();
 
-	signalConnectionManager.connect (Video.resolutionChanged, std::bind (&cGameGui::handleResolutionChange, this));
+	signalConnectionManager.connect (Video.resolutionChanged, [this]() { handleResolutionChange(); });
 
 	signalConnectionManager.connect (Video.screenShotTaken, [this] (const std::string& path)
 	{
@@ -353,7 +353,7 @@ void cGameGui::exit()
 {
 	panelSignalConnectionManager.disconnectAll();
 
-	panelSignalConnectionManager.connect (hudPanels->closed, [&]()
+	panelSignalConnectionManager.connect (hudPanels->closed, [this]()
 	{
 		close();
 	});

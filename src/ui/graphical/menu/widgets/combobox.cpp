@@ -84,8 +84,8 @@ cComboBox::cComboBox (const cBox<cPosition>& area) :
 		}
 	});
 
-	signalConnectionManager.connect (listView->itemAdded, std::bind (&cComboBox::updateListViewSize, this));
-	signalConnectionManager.connect (listView->itemRemoved, std::bind (&cComboBox::updateListViewSize, this));
+	signalConnectionManager.connect (listView->itemAdded, [this]() { updateListViewSize(); });
+	signalConnectionManager.connect (listView->itemRemoved, [this]() { updateListViewSize(); });
 
 	updateListViewSize();
 	updateLineEditBackground();

@@ -48,32 +48,32 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	//
 	tankCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467, 411), eCheckBoxType::Tank));
 	tankCheckBox->setChecked (true);
-	signalConnectionManager.connect (tankCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
+	signalConnectionManager.connect (tankCheckBox->toggled, [this]() { generateSelectionList (false); });
 
 	planeCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33, 411), eCheckBoxType::Plane));
 	planeCheckBox->setChecked (true);
-	signalConnectionManager.connect (planeCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
+	signalConnectionManager.connect (planeCheckBox->toggled, [this]() { generateSelectionList (false); });
 
 	shipCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33 * 2, 411), eCheckBoxType::Ship));
 	shipCheckBox->setChecked (true);
-	signalConnectionManager.connect (shipCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
+	signalConnectionManager.connect (shipCheckBox->toggled, [this]() { generateSelectionList (false); });
 
 	buildingCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33 * 3, 411), eCheckBoxType::Building));
 	buildingCheckBox->setChecked (true);
-	signalConnectionManager.connect (buildingCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
+	signalConnectionManager.connect (buildingCheckBox->toggled, [this]() { generateSelectionList (false); });
 
 	tntCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33 * 4, 411), eCheckBoxType::Tnt));
 	tntCheckBox->setChecked (false);
-	signalConnectionManager.connect (tntCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
+	signalConnectionManager.connect (tntCheckBox->toggled, [this]() { generateSelectionList (false); });
 
 	auto updateBuyGroup = addChild (std::make_unique<cRadioGroup>());
 
 	buyCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (542, 445), lngPack.i18n ("Text~Others~Buy"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
 	buyCheckBox->setChecked (true);
-	signalConnectionManager.connect (buyCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
+	signalConnectionManager.connect (buyCheckBox->toggled, [this]() { generateSelectionList (false); });
 
 	upgradeCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (542, 445 + 17), lngPack.i18n ("Text~Others~Upgrade"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
-	signalConnectionManager.connect (upgradeCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
+	signalConnectionManager.connect (upgradeCheckBox->toggled, [this]() { generateSelectionList (false); });
 
 	//
 	// Resource Bar
@@ -81,20 +81,20 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (411, 285), getPosition() + cPosition (411 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Cargo"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	metalBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (421, 301), getPosition() + cPosition (421 + 20, 301 + 115)), 0, 100, eResourceBarType::Metal, eOrientationType::Vertical));
 	metalBar->setStepSize (metalBarSteps);
-	signalConnectionManager.connect (metalBar->valueChanged, std::bind (&cWindowLandingUnitSelection::metalChanged, this));
+	signalConnectionManager.connect (metalBar->valueChanged, [this]() { metalChanged(); });
 	metalBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (411, 275), getPosition() + cPosition (411 + 40, 275 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	metalBarUpButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (413, 424), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (metalBarUpButton->clicked, std::bind (&cWindowLandingUnitSelection::metalUpButtonClicked, this));
+	signalConnectionManager.connect (metalBarUpButton->clicked, [this]() { metalUpButtonClicked(); });
 	metalBarDownButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (413 + 20, 424), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (metalBarDownButton->clicked, std::bind (&cWindowLandingUnitSelection::metalDownButtonClicked, this));
+	signalConnectionManager.connect (metalBarDownButton->clicked, [this]() { metalDownButtonClicked(); });
 
 	//
 	// Gold Bar
 	//
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 285), getPosition() + cPosition (362 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Credits"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	goldBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (372, 301), getPosition() + cPosition (372 + 20, 301 + 115)), 0, initialGold, eResourceBarType::Gold, eOrientationType::Vertical));
-	signalConnectionManager.connect (goldBar->valueChanged, std::bind (&cWindowLandingUnitSelection::goldChanged, this));
+	signalConnectionManager.connect (goldBar->valueChanged, [this]() { goldChanged(); });
 	goldBar->disable();
 	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 275), getPosition() + cPosition (362 + 40, 275 + 10)), std::to_string (initialGold), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
@@ -104,10 +104,10 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	for (size_t i = 0; i < maxUpgradeButtons; ++i)
 	{
 		upgradeDecreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (283, 293 + 19 * i), ePushButtonType::ArrowLeftSmall, &SoundData.SNDObjectMenu));
-		signalConnectionManager.connect (upgradeDecreaseButton[i]->clicked, std::bind (&cWindowLandingUnitSelection::upgradeDecreaseClicked, this, i));
+		signalConnectionManager.connect (upgradeDecreaseButton[i]->clicked, [this, i]() { upgradeDecreaseClicked (i); });
 
 		upgradeIncreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (283 + 18, 293 + 19 * i), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
-		signalConnectionManager.connect (upgradeIncreaseButton[i]->clicked, std::bind (&cWindowLandingUnitSelection::upgradeIncreaseClicked, this, i));
+		signalConnectionManager.connect (upgradeIncreaseButton[i]->clicked, [this, i]() { upgradeIncreaseClicked (i); });
 
 		upgradeCostLabel[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (283 + 40, 293 + 2 + 19 * i), getPosition() + cPosition (283 + 40 + 40, 293 + 2 + 19 * i + 10)), ""));
 	}
@@ -126,9 +126,7 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	updateUpgradeButtons();
 	handleSelectedUnitSelectionChanged (nullptr);
 
-	using namespace std::placeholders;
-
-	signalConnectionManager.connect (selectedUnitSelectionChanged, std::bind (&cWindowLandingUnitSelection::handleSelectedUnitSelectionChanged, this, _1));
+	signalConnectionManager.connect (selectedUnitSelectionChanged, [this](cUnitListViewItemCargo* unitItem) { handleSelectedUnitSelectionChanged (unitItem); });
 }
 
 //------------------------------------------------------------------------------

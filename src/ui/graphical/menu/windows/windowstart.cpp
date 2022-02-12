@@ -37,22 +37,20 @@
 cWindowStart::cWindowStart() :
 	cWindowMain (lngPack.i18n ("Text~Title~MainMenu"))
 {
-	using namespace std::placeholders;
-
 	auto singlePlayerButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Single_Player")));
-	signalConnectionManager.connect (singlePlayerButton->clicked, std::bind (&cWindowStart::singlePlayerClicked, this));
+	signalConnectionManager.connect (singlePlayerButton->clicked, [this]() { singlePlayerClicked(); });
 
 	auto multiPlayerButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Multi_Player")));
-	signalConnectionManager.connect (multiPlayerButton->clicked, std::bind (&cWindowStart::multiPlayerClicked, this));
+	signalConnectionManager.connect (multiPlayerButton->clicked, [this]() { multiPlayerClicked(); });
 
 	auto preferencesButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Settings~Preferences")));
-	signalConnectionManager.connect (preferencesButton->clicked, std::bind (&cWindowStart::preferencesClicked, this));
+	signalConnectionManager.connect (preferencesButton->clicked, [this]() { preferencesClicked(); });
 
 	auto licenseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani")));
-	signalConnectionManager.connect (licenseButton->clicked, std::bind (&cWindowStart::licenceClicked, this));
+	signalConnectionManager.connect (licenseButton->clicked, [this]() { licenceClicked(); });
 
 	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
-	signalConnectionManager.connect (exitButton->clicked, std::bind (&cWindowStart::exitClicked, this));
+	signalConnectionManager.connect (exitButton->clicked, [this]() { exitClicked(); });
 }
 
 //------------------------------------------------------------------------------

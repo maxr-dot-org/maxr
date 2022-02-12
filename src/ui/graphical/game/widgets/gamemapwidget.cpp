@@ -99,8 +99,6 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	assert (animationTimer != nullptr);
 	assert (soundManager != nullptr);
 
-	using namespace std::placeholders;
-
 	signalConnectionManager.connect (cSettings::getInstance().animationsChanged, [this]()
 	{
 		if (cSettings::getInstance().isAnimations())
@@ -116,30 +114,30 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	setMouseInputMode (std::make_unique<cMouseModeDefault> (mapView.get(), unitSelection, player.get()));
 
 	// TODO: should this really be done here?
-	signalConnectionManager.connect (animationTimer->triggered400ms, [&]()
+	signalConnectionManager.connect (animationTimer->triggered400ms, [this]()
 	{
 		staticMap->getGraphic().generateNextAnimationFrame();
 	});
 
 	setWindDirection (random (360));
-	signalConnectionManager.connect (animationTimer->triggered400ms, std::bind (&cGameMapWidget::changeWindDirection, this));
+	signalConnectionManager.connect (animationTimer->triggered400ms, [this]() { changeWindDirection(); });
 
-	signalConnectionManager.connect (animationTimer->triggered50ms, std::bind (&cGameMapWidget::runOwnedEffects, this));
-	signalConnectionManager.connect (animationTimer->triggered100ms, std::bind (&cGameMapWidget::renewDamageEffects, this));
+	signalConnectionManager.connect (animationTimer->triggered50ms, [this]() { runOwnedEffects(); });
+	signalConnectionManager.connect (animationTimer->triggered100ms, [this]() { renewDamageEffects(); });
 
 	unitMenu = addChild (std::make_unique<cUnitContextMenuWidget>());
 	unitMenu->disable();
 	unitMenu->hide();
 
 	rightMouseButtonScrollerWidget = addChild (std::make_unique<cRightMouseButtonScrollerWidget> (animationTimer));
-	signalConnectionManager.connect (rightMouseButtonScrollerWidget->scroll, std::bind (&cGameMapWidget::scroll, this, _1));
+	signalConnectionManager.connect (rightMouseButtonScrollerWidget->scroll, [this](const cPosition& offset) { scroll (offset); });
 	signalConnectionManager.connect (rightMouseButtonScrollerWidget->mouseFocusReleased, [this]() { mouseFocusReleased(); });
 	signalConnectionManager.connect (rightMouseButtonScrollerWidget->stoppedScrolling, [this]() { updateMouseCursor(); });
 	rightMouseButtonScrollerWidget->disable();  // mouse events will be forwarded explicitly
 
-	mouseInputModeChanged.connect (std::bind (static_cast<void (cGameMapWidget::*)()> (&cGameMapWidget::updateMouseCursor), this));
+	mouseInputModeChanged.connect ([this]() { updateMouseCursor(); });
 
-	scrolled.connect (std::bind (&cGameMapWidget::updateUnitMenuPosition, this));
+	scrolled.connect ([this]() { updateUnitMenuPosition(); });
 	scrolled.connect ([this]()
 	{
 		soundManager->setListenerPosition (getMapCenterOffset());
@@ -160,89 +158,87 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 		soundManager->setMaxListeningDistance ((int) (diameter * 2));
 	});
 
-	unitSelection.mainSelectionChanged.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitSelection.mainSelectionChanged.connect (std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-	unitSelection.mainSelectionChanged.connect ([&]()
+	unitSelection.mainSelectionChanged.connect ([this]()
 	{
+		toggleUnitContextMenu (nullptr);
+		updateActiveUnitCommandShortcuts();
 		setMouseInputMode (std::make_unique<cMouseModeDefault> (mapView.get(), unitSelection, player.get()));
-	});
-	unitSelection.mainSelectionChanged.connect ([&]()
-	{
 		selectedUnitSignalConnectionManager.disconnectAll();
 		const auto selectedUnit = unitSelection.getSelectedUnit();
 		if (!selectedUnit) return;
 
-		selectedUnitSignalConnectionManager.connect (selectedUnit->data.shotsChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-		selectedUnitSignalConnectionManager.connect (selectedUnit->storedResourcesChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-		selectedUnitSignalConnectionManager.connect (selectedUnit->sentryChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-		selectedUnitSignalConnectionManager.connect (selectedUnit->manualFireChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-		selectedUnitSignalConnectionManager.connect (selectedUnit->workingChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-		selectedUnitSignalConnectionManager.connect (selectedUnit->clearingChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-		selectedUnitSignalConnectionManager.connect (selectedUnit->buildingChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
+		const auto shortcutsUpdater = [this]() { updateActiveUnitCommandShortcuts(); };
+		selectedUnitSignalConnectionManager.connect (selectedUnit->data.shotsChanged, shortcutsUpdater);
+		selectedUnitSignalConnectionManager.connect (selectedUnit->storedResourcesChanged, shortcutsUpdater);
+		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, shortcutsUpdater);
+		selectedUnitSignalConnectionManager.connect (selectedUnit->sentryChanged, shortcutsUpdater);
+		selectedUnitSignalConnectionManager.connect (selectedUnit->manualFireChanged, shortcutsUpdater);
+		selectedUnitSignalConnectionManager.connect (selectedUnit->workingChanged, shortcutsUpdater);
+		selectedUnitSignalConnectionManager.connect (selectedUnit->clearingChanged, shortcutsUpdater);
+		selectedUnitSignalConnectionManager.connect (selectedUnit->buildingChanged, shortcutsUpdater);
 		if (selectedUnit->isAVehicle())
 		{
 			const auto selectedVehicle = static_cast<const cVehicle*> (selectedUnit);
-			selectedUnitSignalConnectionManager.connect (selectedVehicle->moveJobChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-			selectedUnitSignalConnectionManager.connect (selectedVehicle->clearingTurnsChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
-			selectedUnitSignalConnectionManager.connect (selectedVehicle->buildingTurnsChanged, std::bind (&cGameMapWidget::updateActiveUnitCommandShortcuts, this));
+			selectedUnitSignalConnectionManager.connect (selectedVehicle->moveJobChanged, shortcutsUpdater);
+			selectedUnitSignalConnectionManager.connect (selectedVehicle->clearingTurnsChanged, shortcutsUpdater);
+			selectedUnitSignalConnectionManager.connect (selectedVehicle->buildingTurnsChanged, shortcutsUpdater);
 		}
 	});
 
-	unitMenu->attackToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Attack));
-	unitMenu->transferToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Transfer));
-	unitMenu->enterToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Enter));
-	unitMenu->loadToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Load));
-	unitMenu->supplyAmmoToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::SupplyAmmo));
-	unitMenu->repairToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Repair));
-	unitMenu->sabotageToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Disable));
-	unitMenu->stealToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Steal));
+	unitMenu->attackToggled.connect ([this]() { toggleMouseInputMode (eMouseModeType::Attack); });
+	unitMenu->transferToggled.connect ([this]() { toggleMouseInputMode (eMouseModeType::Transfer); });
+	unitMenu->enterToggled.connect ([this]() { toggleMouseInputMode (eMouseModeType::Enter); });
+	unitMenu->loadToggled.connect ([this]() { toggleMouseInputMode (eMouseModeType::Load); });
+	unitMenu->supplyAmmoToggled.connect ([this]() { toggleMouseInputMode (eMouseModeType::SupplyAmmo); });
+	unitMenu->repairToggled.connect ([this]() { toggleMouseInputMode (eMouseModeType::Repair); });
+	unitMenu->sabotageToggled.connect ([this]() { toggleMouseInputMode (eMouseModeType::Disable); });
+	unitMenu->stealToggled.connect ([this]() { toggleMouseInputMode (eMouseModeType::Steal); });
 
-	unitMenu->buildClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredBuild (*unitMenu->getUnit()); });
-	unitMenu->distributeClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredResourceDistribution (*unitMenu->getUnit()); });
-	unitMenu->startClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredStartWork (*unitMenu->getUnit()); });
-	unitMenu->stopClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredStopWork (*unitMenu->getUnit()); });
-	unitMenu->autoToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredAutoMoveJob (*unitMenu->getUnit()); });
-	unitMenu->removeClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredStartClear (*unitMenu->getUnit()); });
-	unitMenu->manualFireToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredManualFire (*unitMenu->getUnit()); });
-	unitMenu->sentryToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredSentry (*unitMenu->getUnit()); });
-	unitMenu->activateClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredActivate (*unitMenu->getUnit()); });
-	unitMenu->researchClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredResearchMenu (*unitMenu->getUnit()); });
-	unitMenu->buyUpgradesClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUpgradesMenu (*unitMenu->getUnit()); });
-	unitMenu->upgradeThisClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUpgradeThis (*unitMenu->getUnit()); });
-	unitMenu->upgradeAllClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUpgradeAll (*unitMenu->getUnit()); });
-	unitMenu->selfDestroyClicked.connect ([&]() { const auto* building = dynamic_cast<const cBuilding*> (unitMenu->getUnit()); if (building) triggeredSelfDestruction (*building); });
-	unitMenu->layMinesToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredLayMines (*unitMenu->getUnit()); });
-	unitMenu->collectMinesToggled.connect ([&]() { if (unitMenu->getUnit()) triggeredCollectMines (*unitMenu->getUnit()); });
-	unitMenu->infoClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUnitHelp (*unitMenu->getUnit()); });
-	unitMenu->doneClicked.connect ([&]() { if (unitMenu->getUnit()) triggeredUnitDone (*unitMenu->getUnit()); });
+	unitMenu->buildClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredBuild (*unitMenu->getUnit()); });
+	unitMenu->distributeClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredResourceDistribution (*unitMenu->getUnit()); });
+	unitMenu->startClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredStartWork (*unitMenu->getUnit()); });
+	unitMenu->stopClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredStopWork (*unitMenu->getUnit()); });
+	unitMenu->autoToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredAutoMoveJob (*unitMenu->getUnit()); });
+	unitMenu->removeClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredStartClear (*unitMenu->getUnit()); });
+	unitMenu->manualFireToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredManualFire (*unitMenu->getUnit()); });
+	unitMenu->sentryToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredSentry (*unitMenu->getUnit()); });
+	unitMenu->activateClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredActivate (*unitMenu->getUnit()); });
+	unitMenu->researchClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredResearchMenu (*unitMenu->getUnit()); });
+	unitMenu->buyUpgradesClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUpgradesMenu (*unitMenu->getUnit()); });
+	unitMenu->upgradeThisClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUpgradeThis (*unitMenu->getUnit()); });
+	unitMenu->upgradeAllClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUpgradeAll (*unitMenu->getUnit()); });
+	unitMenu->selfDestroyClicked.connect ([this]() { const auto* building = dynamic_cast<const cBuilding*> (unitMenu->getUnit()); if (building) triggeredSelfDestruction (*building); });
+	unitMenu->layMinesToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredLayMines (*unitMenu->getUnit()); });
+	unitMenu->collectMinesToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredCollectMines (*unitMenu->getUnit()); });
+	unitMenu->infoClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUnitHelp (*unitMenu->getUnit()); });
+	unitMenu->doneClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUnitDone (*unitMenu->getUnit()); });
 
-	unitMenu->attackToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->buildClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->distributeClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->transferToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->enterToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->startClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->autoToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->stopClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->removeClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->manualFireToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->sentryToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->activateClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->loadToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->researchClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->buyUpgradesClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->upgradeThisClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->upgradeAllClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->selfDestroyClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->supplyAmmoToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->repairToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->layMinesToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->collectMinesToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->sabotageToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->stealToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->infoClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
-	unitMenu->doneClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->attackToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->buildClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->distributeClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->transferToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->enterToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->startClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->autoToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->stopClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->removeClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->manualFireToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->sentryToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->activateClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->loadToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->researchClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->buyUpgradesClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->upgradeThisClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->upgradeAllClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->selfDestroyClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->supplyAmmoToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->repairToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->layMinesToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->collectMinesToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->sabotageToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->stealToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->infoClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
+	unitMenu->doneClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
 
 	attackShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuAttack));
 	attackShortcut->triggered.connect ([this]()
@@ -483,14 +479,14 @@ void cGameMapWidget::setMapView (std::shared_ptr<const cMapView> mapView_)
 
 	if (mapView != nullptr)
 	{
-		mapViewSignalConnectionManager.connect (mapView->unitDissappeared, [&](const cUnit& unit)
+		mapViewSignalConnectionManager.connect (mapView->unitDissappeared, [this](const cUnit& unit)
 		{
 			if (unitSelection.isSelected (unit))
 			{
 				unitSelection.deselectUnit (unit);
 			}
 		});
-		mapViewSignalConnectionManager.connect (mapView->unitAppeared, [&](const cUnit& unit)
+		mapViewSignalConnectionManager.connect (mapView->unitAppeared, [this](const cUnit& unit)
 		{
 			if (!cSettings::getInstance().isAnimations()) return;
 
@@ -503,7 +499,7 @@ void cGameMapWidget::setMapView (std::shared_ptr<const cMapView> mapView_)
 				animations.push_back (std::make_unique<cAnimationStartUp> (*animationTimer, unit));
 			}
 		});
-		mapViewSignalConnectionManager.connect (mapView->unitMoved, [&](const cUnit& unit, const cPosition& oldPosition)
+		mapViewSignalConnectionManager.connect (mapView->unitMoved, [this](const cUnit& unit, const cPosition& oldPosition)
 		{
 			if (!cSettings::getInstance().isAnimations()) return;
 
@@ -768,7 +764,7 @@ void cGameMapWidget::setMouseInputMode (std::unique_ptr<cMouseMode> newMouseMode
 	std::swap (newMouseMode, mouseMode);
 
 	mouseModeSignalConnectionManager.disconnectAll();
-	mouseModeSignalConnectionManager.connect (mouseMode->needRefresh, std::bind (static_cast<void (cGameMapWidget::*)()> (&cGameMapWidget::updateMouseCursor), this));
+	mouseModeSignalConnectionManager.connect (mouseMode->needRefresh, [this]() { updateMouseCursor(); });
 
 	auto activeMouse = getActiveMouse();
 	if (activeMouse && getArea().withinOrTouches (activeMouse->getPosition()))

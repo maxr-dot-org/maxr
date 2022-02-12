@@ -330,7 +330,7 @@ void cGameGuiController::initShortcuts()
 	addShortcut (KeysList.keyExit, [this]()
 	{
 		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Comp~End_Game")));
-		signalConnectionManager.connect (yesNoDialog->yesClicked, [&]()
+		signalConnectionManager.connect (yesNoDialog->yesClicked, [this]()
 		{
 			gameGui->exit();
 		});
@@ -373,7 +373,7 @@ void cGameGuiController::initChatCommands()
 	// TODO: translate descriptions?
 	chatCommands.push_back (
 		cChatCommand ("help", "Show this help message")
-		.setAction ([&]()
+		.setAction ([this]()
 		{
 			int maxPrefixLabelWidth = 0;
 			std::vector<cLobbyChatBoxListViewItem*> chatBoxCommandEntries;
@@ -402,14 +402,14 @@ void cGameGuiController::initChatCommands()
 	chatCommands.push_back (
 		cChatCommand ("cache size", "Set the drawing cache size")
 		.addArgument<cChatCommandArgumentInt<unsigned int>> ("size")
-		.setAction ([&](unsigned int size)
+		.setAction ([this](unsigned int size)
 		{
 			gameGui->getGameMap().getDrawingCache().setMaxCacheSize (size);
 		})
 	);
 	chatCommands.push_back (
 		cChatCommand ("cache flush", "Flush the drawing cache")
-		.setAction ([&]()
+		.setAction ([this]()
 		{
 			gameGui->getGameMap().getDrawingCache().flush();
 		})
@@ -419,7 +419,7 @@ void cGameGuiController::initChatCommands()
 		cChatCommand ("kick", "Remove a player from the game")
 		.addArgument<cChatCommandArgumentClientPlayer> (activeClient)
 		.addArgument<cChatCommandArgumentClient> (activeClient)
-		.setAction ([&](const cPlayer* player, cClient* client)
+		.setAction ([this](const cPlayer* player, cClient* client)
 		{
 			throw std::runtime_error ("Command not implemented");
 			//sentWantKickPlayer (*client, *player);
@@ -432,7 +432,7 @@ void cGameGuiController::initChatCommands()
 		.addArgument<cChatCommandArgumentServerPlayer> (server)
 		.addArgument<cChatCommandArgumentInt<int>> ("credits")
 		.addArgument<cChatCommandArgumentServer> (server)
-		.setAction ([&](const cPlayer* player, int credits, cServer* server)
+		.setAction ([](const cPlayer* player, int credits, cServer* server)
 		{
 			throw std::runtime_error ("Command not implemented");
 			//player->setCredits (credits);
@@ -445,7 +445,7 @@ void cGameGuiController::initChatCommands()
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentInt<int>> ("seconds")
 		.addArgument<cChatCommandArgumentServer> (server)
-		.setAction ([&](int seconds, cServer* server)
+		.setAction ([](int seconds, cServer* server)
 		{
 			throw std::runtime_error ("Command not implemented");
 			// FIXME: do not do changes on server data that are not synchronized with the server thread!
@@ -468,7 +468,7 @@ void cGameGuiController::initChatCommands()
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentInt<int>> ("seconds")
 		.addArgument<cChatCommandArgumentServer> (server)
-		.setAction ([&](int seconds, cServer* server)
+		.setAction ([](int seconds, cServer* server)
 		{
 			throw std::runtime_error ("Command not implemented");
 			// FIXME: do not do changes on server data that are not synchronized with the server thread!
@@ -489,7 +489,7 @@ void cGameGuiController::initChatCommands()
 		cChatCommand ("mark", "Add a mark to the log file")
 		.addArgument<cChatCommandArgumentString> ("text", true)
 		.addArgument<cChatCommandArgumentClient> (activeClient)
-		.setAction ([&](const std::string& text, cClient* client)
+		.setAction ([](const std::string& text, cClient* client)
 		{
 			/* auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_MARK_LOG);
 			message->pushString (text);
@@ -500,7 +500,7 @@ void cGameGuiController::initChatCommands()
 		cChatCommand ("color", "Change the color of the current player")
 		.addArgument<cChatCommandArgumentInt<size_t>> ("colornum")
 		.addArgument<cChatCommandArgumentClient> (activeClient)
-		.setAction ([&](size_t colorNum, cClient* client)
+		.setAction ([](size_t colorNum, cClient* client)
 		{
 			throw std::runtime_error ("Command not implemented");
 			//colorNum %= cPlayerColor::predefinedColorsCount;
@@ -513,7 +513,7 @@ void cGameGuiController::initChatCommands()
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServer> (server)
 		.addArgument<cChatCommandArgumentClient> (activeClient)
-		.setAction ([&](cServer* server, cClient* client)
+		.setAction ([](cServer* server, cClient* client)
 		{
 			throw std::runtime_error ("Command not implemented");
 			//client->getMap()->assignResources (*server->Map);
@@ -525,7 +525,7 @@ void cGameGuiController::initChatCommands()
 		cChatCommand ("pause", "Pause the game")
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServer> (server)
-		.setAction ([&](cServer* server)
+		.setAction ([](cServer* server)
 		{
 			// FIXME: do not do changes on server data that are not synchronized with the server thread!
 			server->enableFreezeMode (eFreezeMode::PAUSE);
@@ -535,7 +535,7 @@ void cGameGuiController::initChatCommands()
 		cChatCommand ("resume", "Resume a paused game")
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServer> (server)
-		.setAction ([&](cServer* server)
+		.setAction ([](cServer* server)
 		{
 			// FIXME: do not do changes on server data that are not synchronized with the server thread!
 			server->disableFreezeMode (eFreezeMode::PAUSE);
@@ -543,7 +543,7 @@ void cGameGuiController::initChatCommands()
 	);
 	chatCommands.push_back (
 		cChatCommand ("crash", "Emulates a crash (to test the crash report utility)")
-		.setAction ([&]()
+		.setAction ([]()
 		{
 			CR_EMULATE_CRASH();
 		})
@@ -554,7 +554,7 @@ void cGameGuiController::initChatCommands()
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServerPlayer> (server)
 		.addArgument<cChatCommandArgumentServer> (server)
-		.setAction ([&](const cPlayer* player, cServer* server)
+		.setAction ([](const cPlayer* player, cServer* server)
 		{
 			throw std::runtime_error ("Command not implemented");
 			/*if (player->isLocal())
@@ -574,7 +574,7 @@ void cGameGuiController::initChatCommands()
 		.addArgument<cChatCommandArgumentClientPlayer> (activeClient, true)
 		.addArgument<cChatCommandArgumentClient> (activeClient)
 		.addArgument<cChatCommandArgumentServer> (server, true)
-		.setAction ([&](const cPlayer* player, cClient* client, cServer* server)
+		.setAction ([](const cPlayer* player, cClient* client, cServer* server)
 		{
 			if (!server)
 			{
@@ -598,7 +598,7 @@ void cGameGuiController::initChatCommands()
 		.addArgument<cChatCommandArgumentServerPlayer> (server, true)
 		.addArgument<cChatCommandArgumentClient> (activeClient)
 		.addArgument<cChatCommandArgumentServer> (server)
-		.setAction ([&](const cPlayer* player, cClient* client, cServer* server)
+		.setAction ([](const cPlayer* player, cClient* client, cServer* server)
 		{
 			throw std::runtime_error ("Command not implemented");
 			/*if (player == nullptr)
@@ -617,19 +617,17 @@ void cGameGuiController::initChatCommands()
 //------------------------------------------------------------------------------
 void cGameGuiController::connectGuiStaticCommands()
 {
-	using namespace std::placeholders;
-
 	signalConnectionManager.connect (gameGui->terminated, [this]() { terminated(); });
 
-	signalConnectionManager.connect (gameGui->getChatBox().commandEntered, std::bind (&cGameGuiController::handleChatCommand, this, _1));
+	signalConnectionManager.connect (gameGui->getChatBox().commandEntered, [this](const std::string& text) { handleChatCommand (text); });
 
-	signalConnectionManager.connect (gameGui->getHud().preferencesClicked, std::bind (&cGameGuiController::showPreferencesDialog, this));
-	signalConnectionManager.connect (gameGui->getHud().filesClicked, std::bind (&cGameGuiController::showFilesWindow, this));
+	signalConnectionManager.connect (gameGui->getHud().preferencesClicked, [this]() { showPreferencesDialog(); });
+	signalConnectionManager.connect (gameGui->getHud().filesClicked, [this]() { showFilesWindow(); });
 
-	signalConnectionManager.connect (gameGui->getHud().centerClicked, std::bind (&cGameGuiController::centerSelectedUnit, this));
+	signalConnectionManager.connect (gameGui->getHud().centerClicked, [this]() { centerSelectedUnit(); });
 
-	signalConnectionManager.connect (gameGui->getHud().nextClicked, std::bind (&cGameGuiController::selectNextUnit, this));
-	signalConnectionManager.connect (gameGui->getHud().prevClicked, std::bind (&cGameGuiController::selectPreviousUnit, this));
+	signalConnectionManager.connect (gameGui->getHud().nextClicked, [this]() { selectNextUnit(); });
+	signalConnectionManager.connect (gameGui->getHud().prevClicked, [this]() { selectPreviousUnit(); });
 	signalConnectionManager.connect (gameGui->getHud().doneClicked, [this]()
 	{
 		auto keyboard = application.getActiveKeyboard();
@@ -643,11 +641,11 @@ void cGameGuiController::connectGuiStaticCommands()
 		}
 	});
 
-	signalConnectionManager.connect (gameGui->getHud().reportsClicked, std::bind (&cGameGuiController::showReportsWindow, this));
+	signalConnectionManager.connect (gameGui->getHud().reportsClicked, [this]() { showReportsWindow(); });
 
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredUnitHelp, std::bind (&cGameGuiController::showUnitHelpWindow, this, _1));
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredTransfer, std::bind (&cGameGuiController::showUnitTransferDialog, this, _1, _2));
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredBuild, [&] (const cUnit& unit)
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredUnitHelp, [this](const cUnit& unit) { showUnitHelpWindow (unit); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredTransfer, [this](const cUnit& source, const cUnit& dest) { showUnitTransferDialog (source, dest); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredBuild, [this] (const cUnit& unit)
 	{
 		if (unit.isAVehicle())
 		{
@@ -658,11 +656,11 @@ void cGameGuiController::connectGuiStaticCommands()
 			showBuildVehiclesWindow (static_cast<const cBuilding&> (unit));
 		}
 	});
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredResourceDistribution, std::bind (&cGameGuiController::showResourceDistributionDialog, this, _1));
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredResearchMenu, std::bind (&cGameGuiController::showResearchDialog, this, _1));
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradesMenu, std::bind (&cGameGuiController::showUpgradesWindow, this, _1));
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredActivate, std::bind (&cGameGuiController::showStorageWindow, this, _1));
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredSelfDestruction, std::bind (&cGameGuiController::showSelfDestroyDialog, this, _1));
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredResourceDistribution, [this](const cUnit& unit) { showResourceDistributionDialog (unit); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredResearchMenu, [this](const cUnit& unit) { showResearchDialog (unit); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradesMenu, [this](const cUnit& unit) { showUpgradesWindow (unit); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredActivate, [this](const cUnit& unit) { showStorageWindow (unit); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredSelfDestruction, [this](const cBuilding& building) { showSelfDestroyDialog (building); });
 }
 
 //------------------------------------------------------------------------------
@@ -1084,19 +1082,19 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.connectionToServerLost, [&]()
+	clientSignalConnectionManager.connect (client.connectionToServerLost, [this]()
 	{
 		gameGui->exit();
 	});
 
-	clientSignalConnectionManager.connect (client.freezeModeChanged, [&]()
+	clientSignalConnectionManager.connect (client.freezeModeChanged, [this]()
 	{
 		updateEndButtonState();
 		updateGuiInfoTexts();
 		updateChangeAllowed();
 	});
 
-	clientSignalConnectionManager.connect (model.newTurnStarted, [&](const sNewTurnReport&)
+	clientSignalConnectionManager.connect (model.newTurnStarted, [this](const sNewTurnReport&)
 	{
 		if (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get())
 		{
@@ -1164,7 +1162,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitStored, [&] (const cUnit& storingUnit, const cUnit& /*storedUnit*/)
+	clientSignalConnectionManager.connect (model.unitStored, [this] (const cUnit& storingUnit, const cUnit& /*storedUnit*/)
 	{
 		if (mapView->canSeeUnit (storingUnit))
 		{
@@ -1172,7 +1170,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitActivated, [&] (const cUnit& storingUnit, const cUnit& /*storedUnit*/)
+	clientSignalConnectionManager.connect (model.unitActivated, [this] (const cUnit& storingUnit, const cUnit& /*storedUnit*/)
 	{
 		if (mapView->canSeeUnit (storingUnit))
 		{
@@ -1180,7 +1178,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitStolen, [&] (const cUnit& source, const cUnit&, const cPlayer*)
+	clientSignalConnectionManager.connect (model.unitStolen, [this] (const cUnit& source, const cUnit&, const cPlayer*)
 	{
 		if (source.getOwner() && source.getOwner()->getId() == getActivePlayer()->getId())
 		{
@@ -1188,7 +1186,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitDisabled, [&] (const cUnit& source, const cUnit&)
+	clientSignalConnectionManager.connect (model.unitDisabled, [this] (const cUnit& source, const cUnit&)
 	{
 		if (source.getOwner() && source.getOwner()->getId() == getActivePlayer()->getId())
 		{
@@ -1196,7 +1194,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitStealDisableFailed, [&] (const cUnit& source, const cUnit&)
+	clientSignalConnectionManager.connect (model.unitStealDisableFailed, [this] (const cUnit& source, const cUnit&)
 	{
 		if (source.getOwner() && source.getOwner()->getId() == getActivePlayer()->getId())
 		{
@@ -1204,7 +1202,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitSuppliedWithAmmo, [&] (const cUnit& unit)
+	clientSignalConnectionManager.connect (model.unitSuppliedWithAmmo, [this] (const cUnit& unit)
 	{
 		if (mapView->canSeeUnit (unit))
 		{
@@ -1216,7 +1214,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitRepaired, [&] (const cUnit& unit)
+	clientSignalConnectionManager.connect (model.unitRepaired, [this] (const cUnit& unit)
 	{
 		if (mapView->canSeeUnit (unit))
 		{
@@ -1228,7 +1226,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.getModel().addedEffect, [&] (const std::shared_ptr<cFx>& effect)
+	clientSignalConnectionManager.connect (client.getModel().addedEffect, [this] (const std::shared_ptr<cFx>& effect)
 	{
 		cPosition fxPos = effect->getPixelPosition();
 		cPosition mapPos = cPosition (fxPos.x() / sGraphicTile::tilePixelWidth, fxPos.y() / sGraphicTile::tilePixelHeight);
@@ -1261,14 +1259,14 @@ void cGameGuiController::connectClient (cClient& client)
 		if (unit.data.getId() == client.getModel().getUnitsData()->getLandMineID()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
 		else if (unit.data.getId() == client.getModel().getUnitsData()->getSeaMineID()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDSeaMineClear, unit));
 	});
-	clientSignalConnectionManager.connect (model.planeLanding, [&](const cVehicle& plane)
+	clientSignalConnectionManager.connect (model.planeLanding, [this](const cVehicle& plane)
 	{
 		if (mapView->canSeeUnit (plane))
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectPlaneLand, SoundData.SNDPlaneLand, plane));
 		}
 	});
-	clientSignalConnectionManager.connect (model.planeTakeoff, [&](const cVehicle& plane)
+	clientSignalConnectionManager.connect (model.planeTakeoff, [this](const cVehicle& plane)
 	{
 		if (mapView->canSeeUnit (plane))
 		{
@@ -1288,7 +1286,7 @@ void cGameGuiController::connectReportSources (cClient& client)
 	playerGameGuiStates[player.getId()].reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
 
 	//report message received from server
-	allClientsSignalConnectionManager.connect (client.reportMessageReceived, [&](int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)
+	allClientsSignalConnectionManager.connect (client.reportMessageReceived, [this](int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)
 	{
 		addSavedReport (std::move (report), toPlayerNr);
 	});

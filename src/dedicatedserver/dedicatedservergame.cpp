@@ -81,8 +81,7 @@ namespace
 cDedicatedServerGame::cDedicatedServerGame (int saveGameNumber) :
 	lobbyServer (std::make_shared<cConnectionManager>())
 {
-	using namespace std::placeholders;
-	lobbyServer.addLobbyMessageHandler (std::make_unique<cDedicatedServerChatMessageHandler> (std::bind (&cDedicatedServerGame::handleChatCommand, this, _1, _2)));
+	lobbyServer.addLobbyMessageHandler (std::make_unique<cDedicatedServerChatMessageHandler> ([this](int playerId, const std::vector<std::string>& tokens) { handleChatCommand (playerId, tokens); }));
 
 	signalConnectionManager.connect (lobbyServer.onClientConnected, [this](const cPlayerBasicData& player)
 	{

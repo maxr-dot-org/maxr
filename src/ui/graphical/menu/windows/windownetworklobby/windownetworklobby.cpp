@@ -59,9 +59,9 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	settingsTextLabel->setWordWrap (true);
 
 	chatLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (20, 424), getPosition() + cPosition (20 + 430, 424 + 10))));
-	signalConnectionManager.connect (chatLineEdit->returnPressed, std::bind (&cWindowNetworkLobby::triggerChatMessage, this, true));
+	signalConnectionManager.connect (chatLineEdit->returnPressed, [this]() { triggerChatMessage (true); });
 	auto sendButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 416), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Send")));
-	signalConnectionManager.connect (sendButton->clicked, std::bind (&cWindowNetworkLobby::triggerChatMessage, this, false));
+	signalConnectionManager.connect (sendButton->clicked, [this]() { triggerChatMessage (false); });
 	chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition() + cPosition (14, 284), getPosition() + cPosition (14 + 439, 284 + 124)), eScrollBarStyle::Classic));
 	chatList->disableSelectable();
 	chatList->setBeginMargin (cPosition (12, 12));
@@ -125,7 +125,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	signalConnectionManager.connect (okButton->clicked, [this]() { triggeredStartGame(); });
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
-	signalConnectionManager.connect (backButton->clicked, [&]() { backClicked(); });
+	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	updateSettingsText();
 	updateMap();

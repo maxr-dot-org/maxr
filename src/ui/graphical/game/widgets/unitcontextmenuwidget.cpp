@@ -51,7 +51,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Attack_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Attack);
-		button->toggled.connect ([&]() { attackToggled(); });
+		button->toggled.connect ([this]() { attackToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -60,7 +60,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasBuildEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Build_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { buildClicked(); });
+		button->clicked.connect ([this]() { buildClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -70,7 +70,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasDistributeEntry (building, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Distribution_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { distributeClicked(); });
+		button->clicked.connect ([this]() { distributeClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -80,7 +80,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Transfer_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Transfer);
-		button->toggled.connect ([&]() { transferToggled(); });
+		button->toggled.connect ([this]() { transferToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -89,7 +89,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasStartEntry (building, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Start_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { startClicked(); });
+		button->clicked.connect ([this]() { startClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -100,7 +100,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Auto_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (vehicle->isSurveyorAutoMoveActive());
-		button->toggled.connect ([&]() { autoToggled(); });
+		button->toggled.connect ([this]() { autoToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -109,7 +109,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasStopEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Stop_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { stopClicked(); });
+		button->clicked.connect ([this]() { stopClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -118,7 +118,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasRemoveEntry (vehicle, player, map))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Clear_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { removeClicked(); });
+		button->clicked.connect ([this]() { removeClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -128,7 +128,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~ManualFireMode_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (unit->isManualFireActive());
-		button->toggled.connect ([&]() { manualFireToggled(); });
+		button->toggled.connect ([this]() { manualFireToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -138,7 +138,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Sentry"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (unit->isSentryActive());
-		button->toggled.connect ([&]() { sentryToggled(); });
+		button->toggled.connect ([this]() { sentryToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -147,7 +147,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasActivateEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Active_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { activateClicked(); });
+		button->clicked.connect ([this]() { activateClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -157,7 +157,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Load_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Load);
-		button->toggled.connect ([&]() { loadToggled(); });
+		button->toggled.connect ([this]() { loadToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -167,7 +167,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Enter_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Enter);
-		button->toggled.connect ([&]() { enterToggled(); });
+		button->toggled.connect ([this]() { enterToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -176,7 +176,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasResearchEntry (building, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Research"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { researchClicked(); });
+		button->clicked.connect ([this]() { researchClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -185,7 +185,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasBuyEntry (building, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Upgrademenu_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { buyUpgradesClicked(); });
+		button->clicked.connect ([this]() { buyUpgradesClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -194,7 +194,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasUpgradeThisEntry (building, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Upgradethis_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { upgradeThisClicked(); });
+		button->clicked.connect ([this]() { upgradeThisClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -203,7 +203,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasUpgradeAllEntry (building, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~UpgradeAll_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { upgradeAllClicked(); });
+		button->clicked.connect ([this]() { upgradeAllClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -212,7 +212,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasSelfDestroyEntry (building, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Destroy_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { selfDestroyClicked(); });
+		button->clicked.connect ([this]() { selfDestroyClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -222,7 +222,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Reload_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::SupplyAmmo);
-		button->toggled.connect ([&]() { supplyAmmoToggled(); });
+		button->toggled.connect ([this]() { supplyAmmoToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -232,7 +232,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Repair_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Repair);
-		button->toggled.connect ([&]() { repairToggled(); });
+		button->toggled.connect ([this]() { repairToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -242,7 +242,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Seed"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (vehicle->isUnitLayingMines());
-		button->toggled.connect ([&]() { layMinesToggled(); });
+		button->toggled.connect ([this]() { layMinesToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -252,7 +252,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Clear_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (vehicle->isUnitClearingMines());
-		button->toggled.connect ([&]() { collectMinesToggled(); });
+		button->toggled.connect ([this]() { collectMinesToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -262,7 +262,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Disable_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Disable);
-		button->toggled.connect ([&]() { sabotageToggled(); });
+		button->toggled.connect ([this]() { sabotageToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -272,7 +272,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	{
 		auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Steal_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 		button->setChecked (mouseInputMode == eMouseModeType::Steal);
-		button->toggled.connect ([&]() { stealToggled(); });
+		button->toggled.connect ([this]() { stealToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -281,7 +281,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasInfoEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Info_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { infoClicked(); });
+		button->clicked.connect ([this]() { infoClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}
@@ -290,7 +290,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (unitHasDoneEntry (unit, player))
 	{
 		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Done_7"), FONT_LATIN_SMALL_WHITE));
-		button->clicked.connect ([&]() { doneClicked(); });
+		button->clicked.connect ([this]() { doneClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
 	}

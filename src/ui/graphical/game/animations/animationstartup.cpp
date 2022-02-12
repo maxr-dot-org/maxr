@@ -31,7 +31,7 @@ cAnimationStartUp::cAnimationStartUp (cAnimationTimer& animationTimer_, const cU
 	unit->alphaEffectValue = 10;
 
 	running = true;
-	animationTimerConnectionManager.connect (animationTimer.triggered100ms, std::bind (&cAnimationStartUp::run, this));
+	animationTimerConnectionManager.connect (animationTimer.triggered100ms, [this]() { run(); });
 
 	// make sure the animation does not run on a destroyed unit
 	signalConnectionManager.connect (unit->destroyed, [this]()

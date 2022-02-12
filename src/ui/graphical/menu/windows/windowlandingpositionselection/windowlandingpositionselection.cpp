@@ -52,13 +52,11 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 	animationTimer (std::make_shared<cAnimationTimer>()),
 	lastSelectedPosition (0, 0)
 {
-	using namespace std::placeholders;
-
 	auto hudImageOwned = std::make_unique<cImage> (cPosition (0, 0), createHudSurface().get());
 	hudImageOwned->disableAtTransparent();
 
 	mapWidget = addChild (std::make_unique<cLandingPositionSelectionMap> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImageOwned->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, fixedBridgeHead, landingUnits, unitsData));
-	signalConnectionManager.connect (mapWidget->clickedTile, std::bind (&cWindowLandingPositionSelection::mapClicked, this, _1));
+	signalConnectionManager.connect (mapWidget->clickedTile, [this](const cPosition& tilePos) { mapClicked (tilePos); });
 
 	circlesImage = addChild (std::make_unique<cImage> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight)));
 	circlesImage->disable();
@@ -66,7 +64,7 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 	auto hudImage = addChild (std::move (hudImageOwned));
 
 	backButton = addChild (std::make_unique<cPushButton> (cPosition (35, hudImage->getEndPosition().y() - 40), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
-	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowLandingPositionSelection::backClicked, this));
+	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), "", FONT_LATIN_BIG, toEnumFlag (eAlignmentType::Center)));
 	infoLabel->setWordWrap (true);
@@ -102,7 +100,7 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 		chatBox = nullptr;
 	}
 
-	signalConnectionManager.connect (selectedPosition, [&] (const cPosition& position) { lastSelectedPosition = position; });
+	signalConnectionManager.connect (selectedPosition, [this] (const cPosition& position) { lastSelectedPosition = position; });
 
 	resize (hudImage->getSize());
 }
@@ -279,7 +277,7 @@ void cWindowLandingPositionSelection::startCircleAnimation (const cPosition& til
 	circleAnimationConnectionManager.disconnectAll();
 	circleAnimationState = 0.;
 
-	circleAnimationConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cWindowLandingPositionSelection::runCircleAnimation, this, tilePosition));
+	circleAnimationConnectionManager.connect (animationTimer->triggered10msCatchUp, [this, tilePosition]() { runCircleAnimation (tilePosition); });
 }
 
 //------------------------------------------------------------------------------

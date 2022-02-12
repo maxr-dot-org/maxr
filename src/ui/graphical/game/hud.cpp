@@ -49,77 +49,77 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 
 	endButton = addChild (std::make_unique<cPushButton> (cPosition (391, 4), ePushButtonType::HudEnd, lngPack.i18n ("Text~Others~End"), FONT_LATIN_NORMAL));
 	endButton->addClickShortcut (KeysList.keyEndTurn);
-	signalConnectionManager.connect (endButton->clicked, [&]() { endClicked(); });
+	signalConnectionManager.connect (endButton->clicked, [this]() { endClicked(); });
 
 	auto preferencesButton = addChild (std::make_unique<cPushButton> (cPosition (86, 4), ePushButtonType::HudPreferences, lngPack.i18n ("Text~Others~Settings"), FONT_LATIN_SMALL_WHITE));
-	signalConnectionManager.connect (preferencesButton->clicked, [&]() { preferencesClicked(); });
+	signalConnectionManager.connect (preferencesButton->clicked, [this]() { preferencesClicked(); });
 	auto filesButton = addChild (std::make_unique<cPushButton> (cPosition (17, 3), ePushButtonType::HudFiles, lngPack.i18n ("Text~Others~Files"), FONT_LATIN_SMALL_WHITE));
-	signalConnectionManager.connect (filesButton->clicked, [&]() { filesClicked(); });
+	signalConnectionManager.connect (filesButton->clicked, [this]() { filesClicked(); });
 
 	surveyButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296), lngPack.i18n ("Text~Others~Survey"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_00, false, &SoundData.SNDHudSwitch));
 	surveyShortcut = &surveyButton->addClickShortcut (KeysList.keySurvey);
-	signalConnectionManager.connect (surveyButton->toggled, [&]() { surveyToggled(); });
+	signalConnectionManager.connect (surveyButton->toggled, [this]() { surveyToggled(); });
 
 	hitsButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296), lngPack.i18n ("Text~Others~Hitpoints_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_01, false, &SoundData.SNDHudSwitch));
 	hitsShortcut = &hitsButton->addClickShortcut (KeysList.keyHitpoints);
-	signalConnectionManager.connect (hitsButton->toggled, [&]() { hitsToggled(); });
+	signalConnectionManager.connect (hitsButton->toggled, [this]() { hitsToggled(); });
 
 	scanButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296), lngPack.i18n ("Text~Others~Scan"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_02, false, &SoundData.SNDHudSwitch));
 	scanShortcut = &scanButton->addClickShortcut (KeysList.keyScan);
-	signalConnectionManager.connect (scanButton->toggled, [&]() { scanToggled(); });
+	signalConnectionManager.connect (scanButton->toggled, [this]() { scanToggled(); });
 
 	statusButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18), lngPack.i18n ("Text~Others~Status"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_10, false, &SoundData.SNDHudSwitch));
 	statusShortcut = &statusButton->addClickShortcut (KeysList.keyStatus);
-	signalConnectionManager.connect (statusButton->toggled, [&]() { statusToggled(); });
+	signalConnectionManager.connect (statusButton->toggled, [this]() { statusToggled(); });
 
 	ammoButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18), lngPack.i18n ("Text~Others~Ammo"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_11, false, &SoundData.SNDHudSwitch));
 	ammoShortcut = &ammoButton->addClickShortcut (KeysList.keyAmmo);
-	signalConnectionManager.connect (ammoButton->toggled, [&]() { ammoToggled(); });
+	signalConnectionManager.connect (ammoButton->toggled, [this]() { ammoToggled(); });
 
 	gridButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18), lngPack.i18n ("Text~Others~Grid"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_12, false, &SoundData.SNDHudSwitch));
 	gridShortcut = &gridButton->addClickShortcut (KeysList.keyGrid);
-	signalConnectionManager.connect (gridButton->toggled, [&]() { gridToggled(); });
+	signalConnectionManager.connect (gridButton->toggled, [this]() { gridToggled(); });
 
 	colorButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18 + 16), lngPack.i18n ("Text~Others~Color"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_20, false, &SoundData.SNDHudSwitch));
 	colorShortcut = &colorButton->addClickShortcut (KeysList.keyColors);
-	signalConnectionManager.connect (colorButton->toggled, [&]() { colorToggled(); });
+	signalConnectionManager.connect (colorButton->toggled, [this]() { colorToggled(); });
 
 	rangeButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18 + 16), lngPack.i18n ("Text~Others~Range"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, &SoundData.SNDHudSwitch));
 	rangeShortcut = &rangeButton->addClickShortcut (KeysList.keyRange);
-	signalConnectionManager.connect (rangeButton->toggled, [&]() { rangeToggled(); });
+	signalConnectionManager.connect (rangeButton->toggled, [this]() { rangeToggled(); });
 
 	fogButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18 + 16), lngPack.i18n ("Text~Others~Fog"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_22, false, &SoundData.SNDHudSwitch));
 	fogShortcut = &fogButton->addClickShortcut (KeysList.keyFog);
-	signalConnectionManager.connect (fogButton->toggled, [&]() { fogToggled(); });
+	signalConnectionManager.connect (fogButton->toggled, [this]() { fogToggled(); });
 
 	lockButton = addChild (std::make_unique<cCheckBox> (cPosition (32, 227), eCheckBoxType::HudLock, false, &SoundData.SNDHudSwitch));
-	signalConnectionManager.connect (lockButton->toggled, [&]() { lockToggled(); });
+	signalConnectionManager.connect (lockButton->toggled, [this]() { lockToggled(); });
 
 	miniMapAttackUnitsOnlyButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 413), eCheckBoxType::HudTnt, false, &SoundData.SNDHudSwitch));
-	signalConnectionManager.connect (miniMapAttackUnitsOnlyButton->toggled, [&]() { miniMapAttackUnitsOnlyToggled(); });
+	signalConnectionManager.connect (miniMapAttackUnitsOnlyButton->toggled, [this]() { miniMapAttackUnitsOnlyToggled(); });
 	miniMapZoomFactorButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 387), eCheckBoxType::Hud2x, false, &SoundData.SNDHudSwitch));
-	signalConnectionManager.connect (miniMapZoomFactorButton->toggled, [&]() { miniMapZoomFactorToggled(); });
+	signalConnectionManager.connect (miniMapZoomFactorButton->toggled, [this]() { miniMapZoomFactorToggled(); });
 
 	auto helpButton = addChild (std::make_unique<cPushButton> (cPosition (20, 250), ePushButtonType::HudHelp));
-	signalConnectionManager.connect (helpButton->clicked, [&]() { helpClicked(); });
+	signalConnectionManager.connect (helpButton->clicked, [this]() { helpClicked(); });
 	auto centerButton = addChild (std::make_unique<cPushButton> (cPosition (4, 227), ePushButtonType::HudCenter));
 	centerButton->addClickShortcut (KeysList.keyCenterUnit);
-	signalConnectionManager.connect (centerButton->clicked, [&]() { centerClicked(); });
+	signalConnectionManager.connect (centerButton->clicked, [this]() { centerClicked(); });
 
 	auto reportsButton = addChild (std::make_unique<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Text~Others~Log")));
-	signalConnectionManager.connect (reportsButton->clicked, [&]() { reportsClicked(); });
+	signalConnectionManager.connect (reportsButton->clicked, [this]() { reportsClicked(); });
 	chatButton = addChild (std::make_unique<cCheckBox> (cPosition (51, 252), lngPack.i18n ("Text~Others~Chat"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudChat));
-	signalConnectionManager.connect (chatButton->toggled, [&]() { chatToggled(); });
+	signalConnectionManager.connect (chatButton->toggled, [this]() { chatToggled(); });
 
 	auto nextButton = addChild (std::make_unique<cPushButton> (cPosition (124, 227), ePushButtonType::HudNext, ">>"));
 	nextButton->addClickShortcut (KeysList.keyUnitNext);
-	signalConnectionManager.connect (nextButton->clicked, [&]() { nextClicked(); });
+	signalConnectionManager.connect (nextButton->clicked, [this]() { nextClicked(); });
 	auto prevButton = addChild (std::make_unique<cPushButton> (cPosition (60, 227), ePushButtonType::HudPrev, "<<"));
 	prevButton->addClickShortcut (KeysList.keyUnitPrev);
-	signalConnectionManager.connect (prevButton->clicked, [&]() { prevClicked(); });
+	signalConnectionManager.connect (prevButton->clicked, [this]() { prevClicked(); });
 	auto doneButton = addChild (std::make_unique<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed_4")));
 	doneButton->addClickShortcut (KeysList.keyUnitDone);
-	signalConnectionManager.connect (doneButton->clicked, [&]() { doneClicked(); });
+	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
 	coordsLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (265, getEndPosition().y() - 18), cPosition (265 + 64, getEndPosition().y() - 18 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	unitNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (343, getEndPosition().y() - 18), cPosition (343 + 212, getEndPosition().y() - 18 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -127,11 +127,11 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (537, 7), cPosition (537 + 55, 7 + 10))));
 
 	zoomSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (22, 275), cPosition (22 + 126, 275 + 15)), 0, 100, eOrientationType::Horizontal, eSliderHandleType::HudZoom, eSliderType::Invisible));
-	signalConnectionManager.connect (zoomSlider->valueChanged, [&]() { zoomChanged(); });
+	signalConnectionManager.connect (zoomSlider->valueChanged, [this]() { zoomChanged(); });
 	auto zoomPlusButton = addChild (std::make_unique<cPushButton> (cBox<cPosition> (cPosition (2, 275), cPosition (2 + 15, 275 + 15))));
-	signalConnectionManager.connect (zoomPlusButton->clicked, std::bind (&cHud::handleZoomPlusClicked, this));
+	signalConnectionManager.connect (zoomPlusButton->clicked, [this]() { handleZoomPlusClicked(); });
 	auto zoomMinusButton = addChild (std::make_unique<cPushButton> (cBox<cPosition> (cPosition (152, 275), cPosition (152 + 15, 275 + 15))));
-	signalConnectionManager.connect (zoomMinusButton->clicked, std::bind (&cHud::handleZoomMinusClicked, this));
+	signalConnectionManager.connect (zoomMinusButton->clicked, [this]() { handleZoomMinusClicked(); });
 
 	unitVideo = addChild (std::make_unique<cUnitVideoWidget> (cBox<cPosition> (cPosition (10, 29), cPosition (10 + 125, 29 + 125)), animationTimer));
 	signalConnectionManager.connect (unitVideo->clicked, [this]()
@@ -142,14 +142,14 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 		}
 	});
 	auto playButton = addChild (std::make_unique<cPushButton> (cPosition (146, 123), ePushButtonType::HudPlay));
-	signalConnectionManager.connect (playButton->clicked, std::bind (&cUnitVideoWidget::start, unitVideo));
+	signalConnectionManager.connect (playButton->clicked, [this]() { unitVideo->start(); });
 	auto stopButton = addChild (std::make_unique<cPushButton> (cPosition (146, 143), ePushButtonType::HudStop));
-	signalConnectionManager.connect (stopButton->clicked, std::bind (&cUnitVideoWidget::stop, unitVideo));
+	signalConnectionManager.connect (stopButton->clicked, [this]() { unitVideo->stop(); });
 
 	unitDetails = addChild (std::make_unique<cUnitDetailsHud> (cBox<cPosition> (cPosition (8, 171), cPosition (8 + 155, 171 + 48))));
 
 	unitRenameWidget = addChild (std::make_unique<cUnitRenameWidget> (cPosition (12, 30), 123));
-	signalConnectionManager.connect (unitRenameWidget->unitRenameTriggered, [&]()
+	signalConnectionManager.connect (unitRenameWidget->unitRenameTriggered, [this]()
 	{
 		if (unitRenameWidget->getUnit())
 		{
@@ -175,7 +175,7 @@ void cHud::setTurnClock (std::shared_ptr<const cTurnCounter> turnClock_)
 	if (turnClock != nullptr)
 	{
 		turnLabel->setText (std::to_string (turnClock->getTurn()));
-		turnClockSignalConnectionManager.connect (turnClock->turnChanged, [&]()
+		turnClockSignalConnectionManager.connect (turnClock->turnChanged, [this]()
 		{
 			turnLabel->setText (std::to_string (turnClock->getTurn()));
 		});

@@ -66,7 +66,7 @@ void cAnimationStartUpBuildingSite::activate()
 	vehicle->bigBetonAlpha = 0;
 
 	running = true;
-	animationTimerConnectionManager.connect (animationTimer.triggered50ms, std::bind (&cAnimationStartUpBuildingSite::run, this));
+	animationTimerConnectionManager.connect (animationTimer.triggered50ms, [this]() { run(); });
 }
 
 //------------------------------------------------------------------------------

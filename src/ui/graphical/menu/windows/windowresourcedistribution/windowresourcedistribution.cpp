@@ -136,10 +136,10 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 
 	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (514, 430), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Done")));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
-	signalConnectionManager.connect (doneButton->clicked, [&]() { done(); });
+	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
 	//close window, when the mine, from which this menu was called, gets destroyed.
-	signalConnectionManager.connect (building.destroyed, std::bind (&cWindowResourceDistribution::closeOnUnitDestruction, this));
+	signalConnectionManager.connect (building.destroyed, [this]() { closeOnUnitDestruction(); });
 	//update subbase values, when any other building in the subbase gets destroyed
 	if (building.getOwner()) signalConnectionManager.connect (building.getOwner()->base.onSubbaseConfigurationChanged, [this](const std::vector<cBuilding*>& buildings){ updateOnSubbaseChanged (buildings); });
 }

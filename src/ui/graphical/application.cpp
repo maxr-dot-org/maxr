@@ -261,12 +261,10 @@ cWidget* cApplication::getMouseEventFirstTarget (const cPosition& position)
 //------------------------------------------------------------------------------
 void cApplication::registerMouse (cMouse& mouse)
 {
-	using namespace std::placeholders;
-
-	signalConnectionManager.connect (mouse.pressed, std::bind (&cApplication::mousePressed, this, _1, _2));
-	signalConnectionManager.connect (mouse.released, std::bind (&cApplication::mouseReleased, this, _1, _2));
-	signalConnectionManager.connect (mouse.wheelMoved, std::bind (&cApplication::mouseWheelMoved, this, _1, _2));
-	signalConnectionManager.connect (mouse.moved, std::bind (&cApplication::mouseMoved, this, _1, _2));
+	signalConnectionManager.connect (mouse.pressed, [this](cMouse& mouse, eMouseButtonType button) { mousePressed (mouse, button); });
+	signalConnectionManager.connect (mouse.released, [this](cMouse& mouse, eMouseButtonType button) { mouseReleased (mouse, button); });
+	signalConnectionManager.connect (mouse.wheelMoved, [this](cMouse& mouse, const cPosition& amount) { mouseWheelMoved (mouse, amount); });
+	signalConnectionManager.connect (mouse.moved, [this](cMouse& mouse, const cPosition& offset) { mouseMoved (mouse, offset); });
 
 	if (activeMouse == nullptr) activeMouse = &mouse;
 }
@@ -274,11 +272,9 @@ void cApplication::registerMouse (cMouse& mouse)
 //------------------------------------------------------------------------------
 void cApplication::registerKeyboard (cKeyboard& keyboard)
 {
-	using namespace std::placeholders;
-
-	signalConnectionManager.connect (keyboard.keyPressed, std::bind (&cApplication::keyPressed, this, _1, _2));
-	signalConnectionManager.connect (keyboard.keyReleased, std::bind (&cApplication::keyReleased, this, _1, _2));
-	signalConnectionManager.connect (keyboard.textEntered, std::bind (&cApplication::textEntered, this, _1, _2));
+	signalConnectionManager.connect (keyboard.keyPressed, [this](cKeyboard& keyboard, SDL_Keycode key) { keyPressed (keyboard, key); });
+	signalConnectionManager.connect (keyboard.keyReleased, [this](cKeyboard& keyboard, SDL_Keycode key) { keyReleased (keyboard, key); });
+	signalConnectionManager.connect (keyboard.textEntered, [this](cKeyboard& keyboard, const char* text) { textEntered (keyboard, text); });
 
 	if (activeKeyboard == nullptr) activeKeyboard = &keyboard;
 }

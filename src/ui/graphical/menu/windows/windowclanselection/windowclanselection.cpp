@@ -61,7 +61,7 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 			auto image = LoadPCX (clanLogoPaths[index].c_str());
 			SDL_SetColorKey (image.get(), SDL_TRUE, 0xFF00FF);
 			clanImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image.get(), &SoundData.SNDHudButton));
-			signalConnectionManager.connect (clanImages[index]->clicked, std::bind (&cWindowClanSelection::clanClicked, this, clanImages[index]));
+			signalConnectionManager.connect (clanImages[index]->clicked, [this, index]() { clanClicked (clanImages[index]); });
 
 			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (37 + 155 * column, 144 + 150 * row), getPosition() + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), getClanName (clanData->getClans()[index]), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 		}
@@ -79,10 +79,10 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 	// Buttons
 	//
 	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
-	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowClanSelection::okClicked, this));
+	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
-	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowClanSelection::backClicked, this));
+	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	updateClanDescription();
 }

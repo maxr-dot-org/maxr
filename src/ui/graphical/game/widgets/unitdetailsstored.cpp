@@ -59,10 +59,10 @@ void cUnitDetailsStored::setUnit (const cUnit* unit_)
 
 	if (unit)
 	{
-		unitSignalConnectionManager.connect (unit->data.hitpointsChanged, std::bind (&cUnitDetailsStored::reset, this));
-		unitSignalConnectionManager.connect (unit->data.ammoChanged, std::bind (&cUnitDetailsStored::reset, this));
-		unitSignalConnectionManager.connect (unit->data.hitpointsMaxChanged, std::bind (&cUnitDetailsStored::reset, this));
-		unitSignalConnectionManager.connect (unit->data.ammoMaxChanged, std::bind (&cUnitDetailsStored::reset, this));
+		unitSignalConnectionManager.connect (unit->data.hitpointsChanged, [this]() { reset(); });
+		unitSignalConnectionManager.connect (unit->data.ammoChanged, [this]() { reset(); });
+		unitSignalConnectionManager.connect (unit->data.hitpointsMaxChanged, [this]() { reset(); });
+		unitSignalConnectionManager.connect (unit->data.ammoMaxChanged, [this]() { reset(); });
 	}
 }
 

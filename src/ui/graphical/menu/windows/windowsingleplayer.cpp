@@ -49,16 +49,14 @@
 cWindowSinglePlayer::cWindowSinglePlayer() :
 	cWindowMain (lngPack.i18n ("Text~Others~Single_Player"))
 {
-	using namespace std::placeholders;
-
 	auto newGameButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_New")));
-	signalConnectionManager.connect (newGameButton->clicked, std::bind (&cWindowSinglePlayer::newGameClicked, this));
+	signalConnectionManager.connect (newGameButton->clicked, [this]() { newGameClicked(); });
 
 	auto loadGameButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_Load")));
-	signalConnectionManager.connect (loadGameButton->clicked, std::bind (&cWindowSinglePlayer::loadGameClicked, this));
+	signalConnectionManager.connect (loadGameButton->clicked, [this]() { loadGameClicked(); });
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back")));
-	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowSinglePlayer::backClicked, this));
+	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 }
 
 //------------------------------------------------------------------------------

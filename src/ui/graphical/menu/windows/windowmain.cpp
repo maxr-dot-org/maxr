@@ -43,7 +43,7 @@ cWindowMain::cWindowMain (const std::string& title) :
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 465), getPosition() + cPosition (getArea().getMaxCorner().x(), 475)), lngPack.i18n ("Text~Main~Credits_Reloaded") + " " + PACKAGE_VERSION, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	infoImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (16, 182), getRandomInfoImage(), &SoundData.SNDHudButton));
-	signalConnectionManager.connect (infoImage->clicked, std::bind (&cWindowMain::infoImageClicked, this));
+	signalConnectionManager.connect (infoImage->clicked, [this]() { infoImageClicked(); });
 }
 
 //------------------------------------------------------------------------------

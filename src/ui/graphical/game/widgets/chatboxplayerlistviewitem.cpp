@@ -43,7 +43,7 @@ cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) 
 
 	fitToChildren();
 
-	signalConnectionManager.connect (player->hasFinishedTurnChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerFinishedTurn, this));
+	signalConnectionManager.connect (player->hasFinishedTurnChanged, [this]() { updatePlayerFinishedTurn(); });
 }
 
 //------------------------------------------------------------------------------

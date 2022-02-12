@@ -82,22 +82,18 @@ cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface 
 template <typename SelectedUnitItemType>
 void cWindowAdvancedHangar<SelectedUnitItemType>::initialize()
 {
-	using namespace std::placeholders;
-
 	selectedUnitList = addChild (std::make_unique<cListView<SelectedUnitItemType>> (cBox<cPosition> (getPosition() + cPosition (330, 14), getPosition() + cPosition (330 + 130, 12 + 220))));
 	selectedUnitList->setEndMargin (cPosition (2, 9));
-	signalConnectionManager.connect (selectedUnitList->itemClicked, std::bind (&cWindowAdvancedHangar<SelectedUnitItemType>::selectedUnitClicked, this, _1));
-	signalConnectionManager.connect (selectedUnitList->selectionChanged, std::bind (&cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionChanged, this));
+	signalConnectionManager.connect (selectedUnitList->itemClicked, [this](SelectedUnitItemType& unitItem) { selectedUnitClicked (unitItem); });
+	signalConnectionManager.connect (selectedUnitList->selectionChanged, [this]() { handleSelectionChanged(); });
 
 	selectedListUpButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (327, 240), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (selectedListUpButton->clicked, std::bind (&cListView<SelectedUnitItemType>::pageUp, selectedUnitList));
+	signalConnectionManager.connect (selectedListUpButton->clicked, [this]() { selectedUnitList->pageUp(); });
 
 	selectedListDownButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (348, 240), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (selectedListDownButton->clicked, std::bind (&cListView<SelectedUnitItemType>::pageDown, selectedUnitList));
+	signalConnectionManager.connect (selectedListDownButton->clicked, [this]() { selectedUnitList->pageDown(); });
 
-	using namespace std::placeholders;
-
-	signalConnectionManager.connect (selectionUnitClickedSecondTime, std::bind (&cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionUnitClickedSecondTime, this, _1));
+	signalConnectionManager.connect (selectionUnitClickedSecondTime, [this](const cUnitListViewItemBuy& unitItem) { handleSelectionUnitClickedSecondTime (unitItem); });
 }
 
 //------------------------------------------------------------------------------

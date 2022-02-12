@@ -30,7 +30,7 @@ cAirTransportLoadJob::cAirTransportLoadJob (cVehicle& loadedVehicle, cUnit& load
 	vehicleToLoad (&loadedVehicle),
 	landing (true)
 {
-	connectionManager.connect (vehicleToLoad->destroyed, [&](){finished = true; });
+	connectionManager.connect (vehicleToLoad->destroyed, [this](){finished = true; });
 }
 
 //------------------------------------------------------------------------------

@@ -66,8 +66,8 @@ cSurveyorAi::cSurveyorAi (const cVehicle& vehicle) :
 	counter (0),
 	operationPoint (vehicle.getPosition())
 {
-	connectionManager.connect (vehicle.destroyed, [&]() {finished = true; });
-	connectionManager.connect (vehicle.ownerChanged, [&]() {finished = true; });
+	connectionManager.connect (vehicle.destroyed, [this]() {finished = true; });
+	connectionManager.connect (vehicle.ownerChanged, [this]() {finished = true; });
 }
 
 //------------------------------------------------------------------------------

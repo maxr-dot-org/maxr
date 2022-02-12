@@ -34,7 +34,7 @@ cDialogYesNo::cDialogYesNo (const std::string& text) :
 
 	auto yesButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Yes"), FONT_LATIN_NORMAL));
 	yesButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
-	signalConnectionManager.connect (yesButton->clicked, [&]()
+	signalConnectionManager.connect (yesButton->clicked, [this]()
 	{
 		yesClicked();
 		close();
@@ -42,7 +42,7 @@ cDialogYesNo::cDialogYesNo (const std::string& text) :
 
 	auto noButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~No"), FONT_LATIN_NORMAL));
 	noButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
-	signalConnectionManager.connect (noButton->clicked, [&]()
+	signalConnectionManager.connect (noButton->clicked, [this]()
 	{
 		noClicked();
 		close();

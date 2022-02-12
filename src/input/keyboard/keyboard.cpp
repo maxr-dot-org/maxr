@@ -27,10 +27,8 @@
 //------------------------------------------------------------------------------
 cKeyboard::cKeyboard()
 {
-	using namespace std::placeholders;
-
-	signalConnectionManager.connect (cEventManager::getInstance().keyboardEvent, std::bind (&cKeyboard::handleKeyboardEvent, this, _1));
-	signalConnectionManager.connect (cEventManager::getInstance().textInputEvent, std::bind (&cKeyboard::handleTextInputEvent, this, _1));
+	signalConnectionManager.connect (cEventManager::getInstance().keyboardEvent, [this](const cKeyboardEvent& event) { handleKeyboardEvent (event); });
+	signalConnectionManager.connect (cEventManager::getInstance().textInputEvent, [this](const cTextInputEvent& event) { handleTextInputEvent (event); });
 }
 
 //------------------------------------------------------------------------------

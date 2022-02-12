@@ -44,7 +44,7 @@ cProtectionGlass::cProtectionGlass (const cPosition& position, std::shared_ptr<c
 //------------------------------------------------------------------------------
 void cProtectionGlass::open()
 {
-	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cProtectionGlass::doOpenStep, this));
+	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this]() { doOpenStep(); });
 }
 
 //------------------------------------------------------------------------------

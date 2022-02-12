@@ -51,7 +51,7 @@ cWindowMapSelection::cWindowMapSelection() :
 			const auto index = row * mapColumns + column;
 
 			mapImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (21 + 158 * column, 86 + 198 * row), nullptr, &SoundData.SNDHudButton));
-			signalConnectionManager.connect (mapImages[index]->clicked, std::bind (&cWindowMapSelection::mapClicked, this, mapImages[index]));
+			signalConnectionManager.connect (mapImages[index]->clicked, [this, index]() { mapClicked (mapImages[index]); });
 
 			mapTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (6 + 158 * column, 48 + 198 * row), getPosition() + cPosition (155 + 158 * column, 48 + 10 + 198 * row)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 		}
@@ -61,17 +61,17 @@ cWindowMapSelection::cWindowMapSelection() :
 	// Buttons
 	//
 	upButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (292, 435), ePushButtonType::ArrowUpBig));
-	signalConnectionManager.connect (upButton->clicked, std::bind (&cWindowMapSelection::upClicked, this));
+	signalConnectionManager.connect (upButton->clicked, [this]() { upClicked(); });
 
 	downButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (321, 435), ePushButtonType::ArrowDownBig));
-	signalConnectionManager.connect (downButton->clicked, std::bind (&cWindowMapSelection::downClicked, this));
+	signalConnectionManager.connect (downButton->clicked, [this]() { downClicked(); });
 
 	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
 	okButton->lock();
-	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowMapSelection::okClicked, this));
+	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
-	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowMapSelection::backClicked, this));
+	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	loadMaps();
 	updateMaps();

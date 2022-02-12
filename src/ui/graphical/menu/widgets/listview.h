@@ -168,8 +168,8 @@ cListView<ItemType>::cListView (const cBox<cPosition>& area, eScrollBarStyle scr
 	scrollBar = addChild (std::make_unique<cScrollBar> (getPosition(), getSize().y(), scrollBarStyle, eOrientationType::Vertical));
 	scrollBar->move (cPosition (getSize().x() - scrollBar->getSize().x() + 1, 0));
 
-	signalConnectionManager.connect (scrollBar->forwardClicked, std::bind (&cListView<ItemType>::scrollDown, this));
-	signalConnectionManager.connect (scrollBar->backClicked, std::bind (&cListView<ItemType>::scrollUp, this));
+	signalConnectionManager.connect (scrollBar->forwardClicked, [this]() { scrollDown(); });
+	signalConnectionManager.connect (scrollBar->backClicked, [this]() { scrollUp(); });
 	signalConnectionManager.connect (scrollBar->offsetChanged, [this]()
 	{
 		if (this->scrollBar->getOffset() == this->pixelOffset) return;
