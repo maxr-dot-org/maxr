@@ -1073,26 +1073,16 @@ void cGameMapWidget::drawEffects (bool bottom)
 
 	const cPosition originalTileSize (sGraphicTile::tilePixelWidth, sGraphicTile::tilePixelHeight);
 
-	for (auto it = effects.begin(); it != effects.end();)   // ATTENTION: erase in loop. do not use continue;
+	EraseIf (effects, [](const auto& effect){ return effect->isFinished(); });
+	for (const auto& effect : effects)
 	{
-		auto& effect = *it;
-
-		if (effect->isFinished())
+		if (effect->bottom == bottom &&
+			(!player || player->canSeeAt (effect->getPixelPosition() / originalTileSize)))
 		{
-			it = effects.erase (it);
-		}
-		else
-		{
-			if (effect->bottom == bottom &&
-				(!player || player->canSeeAt (effect->getPixelPosition() / originalTileSize)))
-			{
-				cPosition screenDestination;
-				screenDestination.x() = getPosition().x() + static_cast<int> ((effect->getPixelPosition().x() - pixelOffset.x()) * getZoomFactor());
-				screenDestination.y() = getPosition().y() + static_cast<int> ((effect->getPixelPosition().y() - pixelOffset.y()) * getZoomFactor());
-				drawFx (*effect, getZoomFactor(), screenDestination);
-			}
-
-			++it;
+			cPosition screenDestination;
+			screenDestination.x() = getPosition().x() + static_cast<int> ((effect->getPixelPosition().x() - pixelOffset.x()) * getZoomFactor());
+			screenDestination.y() = getPosition().y() + static_cast<int> ((effect->getPixelPosition().y() - pixelOffset.y()) * getZoomFactor());
+			drawFx (*effect, getZoomFactor(), screenDestination);
 		}
 	}
 	SDL_SetClipRect (cVideo::buffer, nullptr);
@@ -2023,18 +2013,7 @@ void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPositio
 	const auto oldTileDrawingArea = cBox<cPosition> (oldTileDrawingRange.first, oldTileDrawingRange.second - cPosition (1, 1));
 
 	// delete finished animations or animations that are no longer in the visible area.
-	for (auto i = animations.begin(); i != animations.end(); /*erase in loop*/)
-	{
-		auto& animation = **i;
-		if (animation.isFinished() || !animation.isLocatedIn (tileDrawingArea))
-		{
-			i = animations.erase (i);
-		}
-		else
-		{
-			++i;
-		}
-	}
+	EraseIf (animations, [&](const auto& animation){ return animation->isFinished() || !animation->isLocatedIn (tileDrawingArea); });
 
 	// add animations for units that just entered the visible area.
 	if (mapView)
@@ -2209,16 +2188,16 @@ void cGameMapWidget::buildCollidingShortcutsMap()
 	collidingUnitCommandShortcuts.insert (std::make_pair (upgradeShortcut, std::set<const cShortcut*>()));
 	collidingUnitCommandShortcuts.insert (std::make_pair (destroyShortcut, std::set<const cShortcut*>()));
 
-	for (auto i = collidingUnitCommandShortcuts.begin(); i != collidingUnitCommandShortcuts.end(); ++i)
+	for (auto it = collidingUnitCommandShortcuts.begin(); it != collidingUnitCommandShortcuts.end(); ++it)
 	{
-		auto j = i;
-		++j;
-		for (; j != collidingUnitCommandShortcuts.end(); ++j)
+		auto it2 = it;
+		++it2;
+		for (; it2 != collidingUnitCommandShortcuts.end(); ++it2)
 		{
-			if (i->first->getKeySequence() == j->first->getKeySequence())
+			if (it->first->getKeySequence() == it2->first->getKeySequence())
 			{
-				i->second.insert (j->first);
-				j->second.insert (i->first);
+				it->second.insert (it2->first);
+				it2->second.insert (it->first);
 			}
 		}
 	}

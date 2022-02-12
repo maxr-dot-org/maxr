@@ -25,6 +25,7 @@
 #include "game/data/units/vehicle.h"
 #include "game/logic/client.h"
 #include "settings.h"
+#include "utility/listhelpers.h"
 #include "utility/random.h"
 
 cFx::cFx (bool bottom_, const cPosition& position_) :
@@ -60,17 +61,11 @@ size_t cFxContainer::size() const
 
 void cFxContainer::run()
 {
-	for (auto it = fxs.begin(); it != fxs.end();)
+	for (auto& fx : fxs)
 	{
-		auto& fx = * (*it);
-
-		fx.run();
-		if (fx.isFinished())
-		{
-			it = fxs.erase (it);
-		}
-		else ++it;
+		fx->run();
 	}
+	EraseIf (fxs, [](const auto& fx) { return fx->isFinished(); });
 }
 
 //------------------------------------------------------------------------------
@@ -207,16 +202,11 @@ cFxRocket::cFxRocket (const cPosition& startPosition_, const cPosition& endPosit
 void cFxRocket::run()
 {
 	//run smoke effect
-	for (unsigned i = 0; i < subEffects.size(); i++)
+	for (auto& subEffect : subEffects)
 	{
-		subEffects[i]->run();
-		if (subEffects[i]->isFinished())
-		{
-			subEffects.erase (subEffects.begin() + i);
-			i--;
-		}
+		subEffect->run();
 	}
-
+	EraseIf (subEffects, [](const auto& subEffect){ return subEffect->isFinished(); });
 	//add new smoke
 	if (tick >= length) return;
 	if (cSettings::getInstance().isAlphaEffects())

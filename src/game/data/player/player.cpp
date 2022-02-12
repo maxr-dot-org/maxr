@@ -631,9 +631,8 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 		researchCentersWorkingOnArea[i] = 0;
 	}
 
-	for (auto i = buildings.begin(); i != buildings.end(); ++i)
+	for (const auto& building : buildings)
 	{
-		const auto& building = *i;
 		if (building->getStaticData().canResearch && building->isUnitWorking())
 		{
 			researchCentersWorkingOnArea[building->getResearchArea()] += 1;
@@ -767,14 +766,12 @@ uint32_t cPlayer::getChecksum (uint32_t crc) const
 //------------------------------------------------------------------------------
 bool cPlayer::mayHaveOffensiveUnit() const
 {
-	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
+	for (const auto& vehicle : vehicles)
 	{
-		const auto& vehicle = *i;
 		if (vehicle->getStaticUnitData().canAttack || !vehicle->getStaticUnitData().canBuild.empty()) return true;
 	}
-	for (auto i = buildings.begin(); i != buildings.end(); ++i)
+	for (const auto& building : buildings)
 	{
-		const auto& building = *i;
 		if (building->getStaticUnitData().canAttack || !building->getStaticUnitData().canBuild.empty()) return true;
 	}
 	return false;

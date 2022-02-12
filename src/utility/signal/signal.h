@@ -27,6 +27,7 @@
 #include <utility>
 
 #include "utility/deref.h"
+#include "utility/listhelpers.h"
 #include "utility/scopedoperation.h"
 #include "utility/thread/dummymutex.h"
 
@@ -271,17 +272,7 @@ void cSignal<void (Args...), MutexType>::cleanUpConnections()
 {
 	if (isInvoking) return; // it is not safe to clean up yet
 
-	for (auto i = slots.begin(); i != slots.end();)
-	{
-		if (i->disconnected)
-		{
-			i = slots.erase (i);
-		}
-		else
-		{
-			++i;
-		}
-	}
+	EraseIf (slots, [](const auto& slot){ return slot.disconnected; });
 }
 
 #endif

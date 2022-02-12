@@ -157,11 +157,11 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 				case eSoundConflictHandlingType::StopOld:
 				{
 					// stop oldest sounds that are in conflict (list is sorted by start game time)
-					for (auto i = playingSounds.begin(); i != playingSounds.end() && conflicts > sound->getMaxConcurrentConflictedCount(); ++i)
+					for (auto it = playingSounds.begin(); it != playingSounds.end() && conflicts > sound->getMaxConcurrentConflictedCount(); ++it)
 					{
-						if (isInConflict (*i))
+						if (isInConflict (*it))
 						{
-							i->sound->stop();
+							it->sound->stop();
 							--conflicts;
 						}
 					}

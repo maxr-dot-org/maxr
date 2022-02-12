@@ -210,23 +210,18 @@ cBuilding* cUnitSelection::getSelectedBuilding() const
 //------------------------------------------------------------------------------
 std::vector<cUnit*> cUnitSelection::getSelectedUnits() const
 {
-	std::vector<cUnit*> result;
-	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
-	{
-		result.push_back (static_cast<cVehicle*> (i->first));
-	}
-	return result;
+	return ranges::Transform (selectedUnits, [](const auto& p) { return p.first; });
 }
 
 //------------------------------------------------------------------------------
 std::vector<cVehicle*> cUnitSelection::getSelectedVehicles() const
 {
 	std::vector<cVehicle*> result;
-	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
+	for (auto it = selectedUnits.begin(); it != selectedUnits.end(); ++it)
 	{
-		if (i->first->isAVehicle())
+		if (it->first->isAVehicle())
 		{
-			result.push_back (static_cast<cVehicle*> (i->first));
+			result.push_back (static_cast<cVehicle*> (it->first));
 		}
 	}
 	return result;
@@ -236,11 +231,11 @@ std::vector<cVehicle*> cUnitSelection::getSelectedVehicles() const
 std::vector<cBuilding*> cUnitSelection::getSelectedBuildings() const
 {
 	std::vector<cBuilding*> result;
-	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
+	for (auto it = selectedUnits.begin(); it != selectedUnits.end(); ++it)
 	{
-		if (i->first->isABuilding())
+		if (it->first->isABuilding())
 		{
-			result.push_back (static_cast<cBuilding*> (i->first));
+			result.push_back (static_cast<cBuilding*> (it->first));
 		}
 	}
 	return result;
@@ -255,23 +250,13 @@ size_t cUnitSelection::getSelectedUnitsCount() const
 //------------------------------------------------------------------------------
 size_t cUnitSelection::getSelectedVehiclesCount() const
 {
-	size_t result = 0;
-	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
-	{
-		if (i->first->isAVehicle()) ++result;
-	}
-	return result;
+	return ranges::count_if (selectedUnits, [](const auto& p){ return p.first->isAVehicle(); });
 }
 
 //------------------------------------------------------------------------------
 size_t cUnitSelection::getSelectedBuildingsCount() const
 {
-	size_t result = 0;
-	for (auto i = selectedUnits.begin(); i != selectedUnits.end(); ++i)
-	{
-		if (i->first->isABuilding()) ++result;
-	}
-	return result;
+	return ranges::count_if (selectedUnits, [](const auto& p){ return p.first->isABuilding(); });
 }
 
 //------------------------------------------------------------------------------

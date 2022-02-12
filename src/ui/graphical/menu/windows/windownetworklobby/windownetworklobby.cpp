@@ -359,7 +359,7 @@ void cWindowNetworkLobby::updateMap()
 	{
 		while (cUnicodeFont::font->getTextWide (">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 		{
-			mapName.erase (mapName.length() - 1, mapName.length());
+			mapName.pop_back();
 		}
 		mapName = mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
 	}

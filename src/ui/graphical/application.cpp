@@ -27,6 +27,7 @@
 #include "ui/graphical/framecounter.h"
 #include "ui/graphical/widget.h"
 #include "ui/graphical/window.h"
+#include "utility/listhelpers.h"
 #include "utility/runnable.h"
 
 //------------------------------------------------------------------------------
@@ -79,18 +80,10 @@ void cApplication::execute()
 	{
 		eventManager.run();
 
-		for (auto it = runnables.begin(); it != runnables.end(); /*erase in loop*/)
+		EraseIf (runnables, [](const auto& runnable){ return runnable->wantsToTerminate(); });
+		for (const auto& runnable : runnables)
 		{
-			const auto& runnable = *it;
-			if (runnable->wantsToTerminate())
-			{
-				it = runnables.erase (it);
-			}
-			else
-			{
-				runnable->run();
-				++it;
-			}
+			runnable->run();
 		}
 
 		const auto activeWindow = getActiveWindow();

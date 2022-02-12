@@ -31,7 +31,7 @@
 #include "ui/uidefines.h"
 #include "utility/files.h"
 #include "utility/language.h"
-#include "utility/ranges.h"
+#include "utility/listhelpers.h"
 
 //------------------------------------------------------------------------------
 cWindowMapSelection::cWindowMapSelection() :
@@ -171,7 +171,7 @@ void cWindowMapSelection::updateMaps()
 				{
 					while (font->getTextWide (">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 					{
-						mapName.erase (mapName.length() - 1, mapName.length());
+						mapName.pop_back();
 					}
 					mapName = ">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<";
 				}
@@ -185,7 +185,7 @@ void cWindowMapSelection::updateMaps()
 				{
 					while (font->getTextWide (">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 					{
-						mapName.erase (mapName.length() - 1, mapName.length());
+						mapName.pop_back();
 					}
 					mapName = mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
 				}
@@ -220,15 +220,7 @@ void cWindowMapSelection::loadMaps()
 			}
 		}
 	}
-	for (size_t i = 0; i != maps.size(); ++i)
-	{
-		const std::string& map = maps[i];
-		if (map.compare (map.length() - 3, 3, "WRL") != 0 && map.compare (map.length() - 3, 3, "wrl") != 0)
-		{
-			maps.erase (maps.begin() + i);
-			i--;
-		}
-	}
+	EraseIf (maps, [](const std::string& mapName){ return mapName.compare (mapName.length() - 3, 3, "WRL") != 0 && mapName.compare (mapName.length() - 3, 3, "wrl") != 0;});
 }
 
 //------------------------------------------------------------------------------

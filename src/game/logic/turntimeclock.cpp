@@ -153,31 +153,24 @@ unsigned int cTurnTimeClock::startNewDeadlineFrom (unsigned int gameTime, const 
 //------------------------------------------------------------------------------
 void cTurnTimeClock::removeDeadline (unsigned int id)
 {
-	for (auto i = deadlines.begin(); i != deadlines.end(); ++i)
+	auto it = ranges::find_if (deadlines, [id](const auto& deadline){ return deadline.getId() == id; });
+	if (it != deadlines.end())
 	{
-		if ((*i).getId() == id)
-		{
-			deadlines.erase (i);
-			deadlinesChanged();
-			return;
-		}
+		deadlines.erase (it);
+		deadlinesChanged();
 	}
 }
 
 //------------------------------------------------------------------------------
 void cTurnTimeClock::changeDeadline (unsigned int id, const std::chrono::seconds& duration)
 {
-	for (auto i = deadlines.begin(); i != deadlines.end(); ++i)
+	auto it = ranges::find_if (deadlines, [id](const auto& deadline){ return deadline.getId() == id; });
+	if (it != deadlines.end())
 	{
-		if (i->getId() == id)
-		{
-			i->changeDeadline (duration);
-			deadlinesChanged();
-			return;
-		}
+		it->changeDeadline (duration);
+		deadlinesChanged();
 	}
 }
-
 
 //------------------------------------------------------------------------------
 std::chrono::milliseconds cTurnTimeClock::getTimeSinceStart() const
@@ -194,9 +187,9 @@ std::chrono::milliseconds cTurnTimeClock::getTimeTillFirstDeadline() const
 	if (deadlines.empty()) return std::chrono::milliseconds (0);
 
 	auto minTime = getTimeTillDeadlineReached (deadlines[0]);
-	for (auto i = deadlines.begin() + 1; i != deadlines.end(); ++i)
+	for (auto it = deadlines.begin() + 1; it != deadlines.end(); ++it)
 	{
-		minTime = std::min (minTime, getTimeTillDeadlineReached (*i));
+		minTime = std::min (minTime, getTimeTillDeadlineReached (*it));
 	}
 	return minTime;
 }
@@ -204,14 +197,7 @@ std::chrono::milliseconds cTurnTimeClock::getTimeTillFirstDeadline() const
 //------------------------------------------------------------------------------
 bool cTurnTimeClock::hasReachedAnyDeadline() const
 {
-	for (auto i = deadlines.begin(); i != deadlines.end(); ++i)
-	{
-		if (getTimeTillDeadlineReached (*i) <= std::chrono::milliseconds (0))
-		{
-			return true;
-		}
-	}
-	return false;
+	return ranges::find_if (deadlines, [this](const auto& deadline){ return getTimeTillDeadlineReached (deadline) <= std::chrono::milliseconds (0); }) != deadlines.end();
 }
 
 //------------------------------------------------------------------------------

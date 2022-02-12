@@ -18,6 +18,8 @@
  ***************************************************************************/
 
 #include "utility/signal/signalconnectionmanager.h"
+
+#include "utility/listhelpers.h"
 #include "utility/signal/signalconnection.h"
 
 //------------------------------------------------------------------------------
@@ -29,21 +31,11 @@ cSignalConnectionManager::~cSignalConnectionManager()
 //------------------------------------------------------------------------------
 bool cSignalConnectionManager::disconnect (cSignalConnection& connection)
 {
-	bool found = false;
-	for (auto i = connections.begin(); i != connections.end();)
+	auto it = ranges::find (connections, connection);
+
+	if (it != connections.end())
 	{
-		if (*i == connection)
-		{
-			i = connections.erase (i);
-			found = true;
-		}
-		else
-		{
-			++i;
-		}
-	}
-	if (found)
-	{
+		connections.erase (it);
 		connection.disconnect();
 		return true;
 	}
