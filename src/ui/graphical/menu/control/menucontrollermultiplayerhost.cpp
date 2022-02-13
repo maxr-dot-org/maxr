@@ -159,9 +159,9 @@ void cMenuControllerMultiplayerHost::run()
 void cMenuControllerMultiplayerHost::handleSelectMap()
 {
 	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
-	windowMapSelection->done.connect ([=]()
+	windowMapSelection->done.connect ([=](const std::string& mapName)
 	{
-		lobbyClient.selectMapName (windowMapSelection->getSelectedMapName());
+		lobbyClient.selectMapName (mapName);
 		windowMapSelection->close();
 	});
 }

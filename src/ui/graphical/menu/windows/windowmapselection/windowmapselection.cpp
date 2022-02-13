@@ -35,9 +35,7 @@
 
 //------------------------------------------------------------------------------
 cWindowMapSelection::cWindowMapSelection() :
-	cWindow (LoadPCX (GFXOD_PLANET_SELECT)),
-	selectedMapIndex (-1),
-	page (0)
+	cWindow (LoadPCX (GFXOD_PLANET_SELECT))
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Planet"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
@@ -51,7 +49,7 @@ cWindowMapSelection::cWindowMapSelection() :
 			const auto index = row * mapColumns + column;
 
 			mapImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (21 + 158 * column, 86 + 198 * row), nullptr, &SoundData.SNDHudButton));
-			signalConnectionManager.connect (mapImages[index]->clicked, [this, index]() { mapClicked (mapImages[index]); });
+			signalConnectionManager.connect (mapImages[index]->clicked, [this, index]() { mapClicked (index); });
 
 			mapTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (6 + 158 * column, 48 + 198 * row), getPosition() + cPosition (155 + 158 * column, 48 + 10 + 198 * row)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 		}
@@ -80,22 +78,11 @@ cWindowMapSelection::cWindowMapSelection() :
 }
 
 //------------------------------------------------------------------------------
-cWindowMapSelection::~cWindowMapSelection()
-{}
-
-//------------------------------------------------------------------------------
-void cWindowMapSelection::mapClicked (const cImage* mapImage)
+void cWindowMapSelection::mapClicked (int imageIndex)
 {
-	for (size_t i = 0; i < mapImages.size(); ++i)
-	{
-		if (mapImage == mapImages[i])
-		{
-			selectedMapIndex = static_cast<int> (page * mapCount + i);
-			break;
-		}
-	}
+	selectedMapIndex = page * mapCount + imageIndex;
 	updateMaps();
-	if (selectedMapIndex != -1) okButton->unlock();
+	okButton->unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -123,7 +110,8 @@ void cWindowMapSelection::downClicked()
 //------------------------------------------------------------------------------
 void cWindowMapSelection::okClicked()
 {
-	done();
+	assert (static_cast<std::size_t>(selectedMapIndex) < maps.size());
+	done (maps[selectedMapIndex]);
 }
 
 //------------------------------------------------------------------------------
@@ -152,44 +140,39 @@ void cWindowMapSelection::updateMaps()
 		if (mapIndex < maps.size())
 		{
 			auto mapName = maps[mapIndex];
-
 			auto preview = loadMapPreview (mapName);
 
 			if (preview.surface == nullptr) continue;
 
 			const auto size = preview.size;
 			const int mapWinSize = 112;
-			const int selectedColor = 0x00C000;
-			const int unselectedColor = 0x000000;
+			const int selectedColor = 0x00'C0'00;
+			const int unselectedColor = 0x00'00'00;
 			AutoSurface imageSurface (SDL_CreateRGBSurface (0, mapWinSize + 8, mapWinSize + 8, Video.getColDepth(), 0, 0, 0, 0));
+
+			// remove extension
+			mapName = mapName.substr (0, mapName.length() - 4);
+			// shorter too long name and add map size suffix
+			auto mapSizeTxt = " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
+			if (font->getTextWide (">" + mapName + mapSizeTxt + "<") > 140)
+			{
+				while (font->getTextWide (">" + mapName + "..." + mapSizeTxt + "<") > 140)
+				{
+					mapName.pop_back();
+				}
+				mapName += "...";
+			}
+			mapName += mapSizeTxt;
 
 			if (selectedMapIndex == static_cast<int> (mapIndex))
 			{
 				SDL_FillRect (imageSurface.get(), nullptr, selectedColor);
 
-				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
-				{
-					while (font->getTextWide (">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
-					{
-						mapName.pop_back();
-					}
-					mapName = ">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<";
-				}
-				else mapName = ">" + mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<";
+				mapName = ">" + mapName + "<";
 			}
 			else
 			{
 				SDL_FillRect (imageSurface.get(), nullptr, unselectedColor);
-
-				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
-				{
-					while (font->getTextWide (">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
-					{
-						mapName.pop_back();
-					}
-					mapName = mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
-				}
-				else mapName = mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
 			}
 			SDL_Rect dest = {4, 4, mapWinSize, mapWinSize};
 			SDL_BlitSurface (preview.surface.get(), nullptr, imageSurface.get(), &dest);
@@ -212,29 +195,13 @@ void cWindowMapSelection::loadMaps()
 	if (!getUserMapsDir().empty())
 	{
 		std::vector<std::string> userMaps (getFilesOfDirectory (getUserMapsDir()));
-		for (size_t i = 0; i != userMaps.size(); ++i)
+		for (const auto& userMap : userMaps)
 		{
-			if (ranges::find (maps, userMaps[i]) == maps.end())
+			if (!Contains (maps, userMap))
 			{
-				maps.push_back (userMaps[i]);
+				maps.push_back (userMap);
 			}
 		}
 	}
 	EraseIf (maps, [](const std::string& mapName){ return mapName.compare (mapName.length() - 3, 3, "WRL") != 0 && mapName.compare (mapName.length() - 3, 3, "wrl") != 0;});
-}
-
-//------------------------------------------------------------------------------
-std::string cWindowMapSelection::getSelectedMapName() const
-{
-	if (selectedMapIndex < 0 || selectedMapIndex >= static_cast<int> (maps.size())) return "";
-
-	return maps[selectedMapIndex];
-}
-
-//------------------------------------------------------------------------------
-bool cWindowMapSelection::loadSelectedMap (cStaticMap& staticMap)
-{
-	if (selectedMapIndex < 0 || selectedMapIndex >= static_cast<int> (maps.size())) return false;
-
-	return staticMap.loadMap (maps[selectedMapIndex]);
 }

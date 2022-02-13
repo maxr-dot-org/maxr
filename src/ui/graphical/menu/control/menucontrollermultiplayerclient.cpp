@@ -161,8 +161,8 @@ void cMenuControllerMultiplayerClient::handleSelectMap()
 	if (!windowNetworkLobby) return;
 
 	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
-	windowMapSelection->done.connect ([=]() {
-		lobbyClient.selectMapName (windowMapSelection->getSelectedMapName());
+	windowMapSelection->done.connect ([=](const std::string& mapName) {
+		lobbyClient.selectMapName (mapName);
 		windowMapSelection->close();
 	});
 }

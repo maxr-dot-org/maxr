@@ -37,33 +37,11 @@ class cWindowMapSelection : public cWindow
 {
 public:
 	cWindowMapSelection();
-	~cWindowMapSelection();
 
-	cSignal<void()> done;
+	cSignal<void (const std::string& mapName)> done;
 
-	std::string getSelectedMapName() const;
-
-	bool loadSelectedMap (cStaticMap& staticMap);
 private:
-	cSignalConnectionManager signalConnectionManager;
-
-	static const size_t mapRows = 2;
-	static const size_t mapColumns = 4;
-	static const size_t mapCount = mapRows* mapColumns;
-
-	std::array<cLabel*, mapCount> mapTitles;
-	std::array<cImage*, mapCount> mapImages;
-
-	cPushButton* upButton;
-	cPushButton* downButton;
-
-	cPushButton* okButton;
-
-	std::vector<std::string> maps;
-	int selectedMapIndex;
-	unsigned int page;
-
-	void mapClicked (const cImage* mapImage);
+	void mapClicked (int imageIndex);
 
 	void upClicked();
 	void downClicked();
@@ -75,6 +53,23 @@ private:
 
 	void updateMaps();
 	void loadMaps();
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	static const size_t mapRows = 2;
+	static const size_t mapColumns = 4;
+	static const size_t mapCount = mapRows* mapColumns;
+
+	std::array<cLabel*, mapCount> mapTitles;
+	std::array<cImage*, mapCount> mapImages;
+
+	cPushButton* upButton = nullptr;
+	cPushButton* downButton = nullptr;
+	cPushButton* okButton = nullptr;
+
+	std::vector<std::string> maps;
+	int selectedMapIndex = -1;
+	unsigned int page = 0;
 };
 
 #endif // ui_graphical_menu_windows_windowmapselection_windowmapselectionH

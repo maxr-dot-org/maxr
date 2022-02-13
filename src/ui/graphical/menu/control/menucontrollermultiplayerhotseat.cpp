@@ -98,10 +98,10 @@ void cMenuControllerMultiplayerHotSeat::selectMap()
 
 	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
 
-	windowMapSelection->done.connect ([=]()
+	windowMapSelection->done.connect ([this](const std::string& mapName)
 	{
 		auto staticMap = std::make_shared<cStaticMap>();
-		if (!windowMapSelection->loadSelectedMap (*staticMap))
+		if (!staticMap->loadMap (mapName))
 		{
 			// TODO: error dialog: could not load selected map!
 			return;
