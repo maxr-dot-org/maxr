@@ -72,10 +72,6 @@ public:
 	 */
 	void disconnectAll();
 
-	/**
-	 * Clears all the stored connections without disconnecting them.
-	 */
-	void clear();
 private:
 	std::vector<cSignalConnection> connections;
 };

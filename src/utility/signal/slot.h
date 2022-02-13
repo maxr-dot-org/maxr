@@ -20,9 +20,9 @@
 #ifndef utility_signal_slotH
 #define utility_signal_slotH
 
-#include <functional>
+#include "utility/signal/signalconnection.h"
 
-class cSignalConnection;
+#include <functional>
 
 template <typename Signature>
 class cSlot
@@ -30,15 +30,14 @@ class cSlot
 public:
 	using function_type = std::function<Signature>;
 
-	cSlot (cSignalConnection connection_, function_type function_) :
-		connection (std::move (connection_)),
-		function (std::move (function_)),
-		disconnected (false)
+	cSlot (cSignalConnection connection, function_type function) :
+		connection (std::move (connection)),
+		function (std::move (function))
 	{}
 
 	cSignalConnection connection;
 	function_type function;
-	bool disconnected;
+	bool disconnected = false;
 };
 
 #endif

@@ -49,11 +49,5 @@ void cSignalConnectionManager::disconnectAll()
 	{
 		connection.disconnect();
 	}
-	clear();
-}
-
-//------------------------------------------------------------------------------
-void cSignalConnectionManager::clear()
-{
 	connections.clear();
 }
