@@ -197,7 +197,7 @@ std::chrono::milliseconds cTurnTimeClock::getTimeTillFirstDeadline() const
 //------------------------------------------------------------------------------
 bool cTurnTimeClock::hasReachedAnyDeadline() const
 {
-	return ranges::find_if (deadlines, [this](const auto& deadline){ return getTimeTillDeadlineReached (deadline) <= std::chrono::milliseconds (0); }) != deadlines.end();
+	return ranges::find_if (deadlines, [this](const auto& deadline){ return this->getTimeTillDeadlineReached (deadline) <= std::chrono::milliseconds (0); }) != deadlines.end();
 }
 
 //------------------------------------------------------------------------------
