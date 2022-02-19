@@ -34,7 +34,7 @@ class cImage;
 class cRightMouseButtonScrollerWidget : public cWidget
 {
 public:
-	cRightMouseButtonScrollerWidget (std::shared_ptr<cAnimationTimer> animationTimer);
+	cRightMouseButtonScrollerWidget (std::shared_ptr<cAnimationTimer>);
 
 	bool isScrolling() const;
 
@@ -45,10 +45,10 @@ public:
 	mutable cSignal<void()> startedScrolling;
 	mutable cSignal<void()> stoppedScrolling;
 
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
-	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	void handleLooseMouseFocus (cApplication& application) override;
+	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
+	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
+	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
+	void handleLooseMouseFocus (cApplication&) override;
 private:
 	static const double factor;
 	static const double minDistanceSquared;
@@ -58,12 +58,12 @@ private:
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
 
-	cImage* startIndicator;
+	cImage* startIndicator = nullptr;
 
 	cPosition startPosition;
-	bool hasStartedScrolling;
+	bool hasStartedScrolling = false;
 
-	cPosition getCursorCenter (cMouse& mouse) const;
+	cPosition getCursorCenter (cMouse&) const;
 };
 
 #endif // ui_graphical_game_control_rightmousebuttonscrollerH

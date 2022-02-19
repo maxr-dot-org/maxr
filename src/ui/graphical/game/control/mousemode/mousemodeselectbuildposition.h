@@ -31,7 +31,7 @@ public:
 	cMouseModeSelectBuildPosition (const cMapView*, const cUnitSelection&, const cPlayer*, sID buildId);
 
 	eMouseModeType getType() const override;
-	void setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData&) const override;
+	void setCursor (cMouse&, const cPosition& mapPosition, const cUnitsData&) const override;
 	std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition, const cUnitsData&) const override;
 
 	std::optional<cPosition> findNextBuildPosition (const cPosition& sourcePosition, const cPosition& desiredPosition, const cUnitsData&) const;

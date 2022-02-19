@@ -159,11 +159,11 @@ private:
 
 	std::chrono::milliseconds doubleClickTime;
 
-	void handleMouseMotionEvent (const cEventMouseMotion& mouseEvent);
-	void handleMouseButtonEvent (const cEventMouseButton& mouseEvent);
-	void handleMouseWheelEvent (const cEventMouseWheel& mouseEvent);
+	void handleMouseMotionEvent (const cEventMouseMotion&);
+	void handleMouseButtonEvent (const cEventMouseButton&);
+	void handleMouseWheelEvent (const cEventMouseWheel&);
 
-	std::chrono::steady_clock::time_point& getLastClickTime (eMouseButtonType button);
+	std::chrono::steady_clock::time_point& getLastClickTime (eMouseButtonType);
 };
 
 #endif // input_mouse_mouseH

@@ -38,13 +38,13 @@ template <typename T> class cBox;
 class cUnitSelection
 {
 public:
-	bool selectUnitAt (const cMapFieldView& field, bool base);
-	bool selectVehiclesAt (const cBox<cPosition>& box, const cMapView& map, const cPlayer& player);
-	bool selectUnit (cUnit& unit, bool add = false);
-	bool selectNextUnit (const cPlayer& player, const std::vector<unsigned int>& doneList);
-	bool selectPrevUnit (const cPlayer& player, const std::vector<unsigned int>& doneList);
+	bool selectUnitAt (const cMapFieldView&, bool base);
+	bool selectVehiclesAt (const cBox<cPosition>&, const cMapView&, const cPlayer&);
+	bool selectUnit (cUnit&, bool add = false);
+	bool selectNextUnit (const cPlayer&, const std::vector<unsigned int>& doneList);
+	bool selectPrevUnit (const cPlayer&, const std::vector<unsigned int>& doneList);
 
-	void deselectUnit (const cUnit& unit);
+	void deselectUnit (const cUnit&);
 	void deselectUnits();
 
 	cUnit* getSelectedUnit() const;
@@ -59,9 +59,9 @@ public:
 	size_t getSelectedVehiclesCount() const;
 	size_t getSelectedBuildingsCount() const;
 
-	bool isSelected (const cUnit& unit) const;
+	bool isSelected (const cUnit&) const;
 
-	bool canSelect (const cUnit* unit) const;
+	bool canSelect (const cUnit*) const;
 
 	mutable cSignal<void()> selectionChanged;
 	mutable cSignal<void()> mainSelectionChanged;
@@ -71,21 +71,21 @@ private:
 
 	std::vector<std::pair<cUnit*, cSignalConnection>> selectedUnits;
 
-	void addSelectedUnitBack (cUnit& unit);
-	void addSelectedUnitFront (cUnit& unit);
+	void addSelectedUnitBack (cUnit&);
+	void addSelectedUnitFront (cUnit&);
 
-	void removeSelectedUnit (const cUnit& unit);
+	void removeSelectedUnit (const cUnit&);
 	void removeAllSelectedUnits();
 
-	cVehicle* getNextVehicle (const cPlayer& player, const std::vector<unsigned int>& doneList, const cVehicle* start) const;
-	cBuilding* getNextBuilding (const cPlayer& player, const std::vector<unsigned int>& doneList, const cBuilding* start) const;
-	cBuilding* getNextMiningStation (const cPlayer& player, const cBuilding* start) const;
-	cUnit* getNextUnit (const cPlayer& player, const std::vector<unsigned int>& doneList, cUnit* start) const;
+	cVehicle* getNextVehicle (const cPlayer&, const std::vector<unsigned int>& doneList, const cVehicle* start) const;
+	cBuilding* getNextBuilding (const cPlayer&, const std::vector<unsigned int>& doneList, const cBuilding* start) const;
+	cBuilding* getNextMiningStation (const cPlayer&, const cBuilding* start) const;
+	cUnit* getNextUnit (const cPlayer&, const std::vector<unsigned int>& doneList, cUnit* start) const;
 
-	cVehicle* getPrevVehicle (const cPlayer& player, const std::vector<unsigned int>& doneList, const cVehicle* start) const;
-	cBuilding* getPrevBuilding (const cPlayer& player, const std::vector<unsigned int>& doneList, const cBuilding* start) const;
-	cBuilding* getPrevMiningStation (const cPlayer& player, const cBuilding* start) const;
-	cUnit* getPrevUnit (const cPlayer& player, const std::vector<unsigned int>& doneList, cUnit* start) const;
+	cVehicle* getPrevVehicle (const cPlayer&, const std::vector<unsigned int>& doneList, const cVehicle* start) const;
+	cBuilding* getPrevBuilding (const cPlayer&, const std::vector<unsigned int>& doneList, const cBuilding* start) const;
+	cBuilding* getPrevMiningStation (const cPlayer&, const cBuilding* start) const;
+	cUnit* getPrevUnit (const cPlayer&, const std::vector<unsigned int>& doneList, cUnit* start) const;
 };
 
 #endif // ui_graphical_game_unitselectionH

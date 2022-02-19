@@ -34,8 +34,7 @@ const double cRightMouseButtonScrollerWidget::minDistanceSquared = 15 * 15;
 //------------------------------------------------------------------------------
 cRightMouseButtonScrollerWidget::cRightMouseButtonScrollerWidget (std::shared_ptr<cAnimationTimer> animationTimer_) :
 	cWidget (cBox<cPosition> (cPosition (0, 0), cPosition (Video.getResolutionX(), Video.getResolutionY()))),
-	animationTimer (animationTimer_),
-	hasStartedScrolling (false)
+	animationTimer (animationTimer_)
 {
 	signalConnectionManager.connect (Video.resolutionChanged, [this]()
 	{

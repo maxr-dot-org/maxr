@@ -49,14 +49,13 @@ enum eMouseCursorSimpleType
 class cMouseCursorSimple : public cMouseCursor
 {
 public:
-	explicit cMouseCursorSimple (eMouseCursorSimpleType type_);
+	explicit cMouseCursorSimple (eMouseCursorSimpleType);
 
 	SDL_Surface* getSurface() const override;
-
 	cPosition getHotPoint() const override;
 
 protected:
-	bool equal (const cMouseCursor& other) const override;
+	bool equal (const cMouseCursor&) const override;
 
 private:
 	eMouseCursorSimpleType type;

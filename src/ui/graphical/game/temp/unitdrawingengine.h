@@ -41,17 +41,17 @@ class cFrameCounter;
 class cUnitDrawingEngine
 {
 public:
-	cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<const cFrameCounter> frameCounter);
+	cUnitDrawingEngine (std::shared_ptr<cAnimationTimer>, std::shared_ptr<const cFrameCounter>);
 
-	void drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player, const std::vector<cResearch::ResearchArea>&);
-	void drawUnit (const cVehicle& vehicle, SDL_Rect destination, float zoomFactor, const cMapView& map, const cUnitSelection* unitSelection, const cPlayer* player);
+	void drawUnit (const cBuilding&, SDL_Rect destination, float zoomFactor, const cUnitSelection*, const cPlayer*, const std::vector<cResearch::ResearchArea>&);
+	void drawUnit (const cVehicle&, SDL_Rect destination, float zoomFactor, const cMapView&, const cUnitSelection*, const cPlayer*);
 
 	void setDrawHits (bool drawHits);
 	void setDrawStatus (bool drawStatus);
 	void setDrawAmmo (bool drawAmmo);
 	void setDrawColor (bool drawColor);
 
-	void drawPath (const cVehicle& vehicle);
+	void drawPath (const cVehicle&);
 public:
 	std::shared_ptr<cAnimationTimer> animationTimer;
 	cDrawingCache drawingCache;
@@ -60,14 +60,14 @@ public:
 
 	cRgbColor blinkColor;
 
-	bool shouldDrawHits;
-	bool shouldDrawStatus;
-	bool shouldDrawAmmo;
-	bool shouldDrawColor;
+	bool shouldDrawHits = false;
+	bool shouldDrawStatus = false;
+	bool shouldDrawAmmo = false;
+	bool shouldDrawColor = false;
 
-	void drawHealthBar (const cUnit& unit, SDL_Rect destination);
-	void drawMunBar (const cUnit& unit, SDL_Rect destination);
-	void drawStatus (const cUnit& unit, SDL_Rect destination);
+	void drawHealthBar (const cUnit&, SDL_Rect destination);
+	void drawMunBar (const cUnit&, SDL_Rect destination);
+	void drawStatus (const cUnit&, SDL_Rect destination);
 
 	void rotateBlinkColor();
 };

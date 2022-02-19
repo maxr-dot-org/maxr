@@ -233,7 +233,7 @@ cBox<PointType> cBox<PointType>::intersection (const cBox<PointType>& other) con
 }
 
 template <typename PointType>
-void cBox<PointType>::expand (const PointType &lower, const PointType &upper)
+void cBox<PointType>::expand (const PointType& lower, const PointType& upper)
 {
     auto& min = getMinCorner();
     auto& max = getMaxCorner();

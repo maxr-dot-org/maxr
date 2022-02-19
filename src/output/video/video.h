@@ -73,14 +73,13 @@ public:
 	* @return  true if app should work in windowed mode
 	*          false it app should start in fullscreen
 	*/
-	bool getWindowMode() const;
+	bool getWindowMode() const { return windowMode; }
 
 	/**
 	* Set resolution/dimension of app window.
 	* @param iWidth desired window width
 	* @param iHeight desired window height
 	* @param bApply  set to true if app should apply new resolution too
-	* @return 0 on success
 	*/
 	void setResolution (int iWidth, int iHeight, bool bApply = false);
 
@@ -88,26 +87,25 @@ public:
 	* @deprecated for compat only - will be removed!
 	* @return stored window width
 	*/
-	int getResolutionX() const;
+	int getResolutionX() const { return resolutionX; }
 
 	/**
 	* @deprecated for compat only - will be removed!
 	* @return stored window height
 	*/
-	int getResolutionY() const;
+	int getResolutionY() const { return resolutionY; }
 
 	/**
 	* Sets colordepth
 	* @param iDepth colordepth to set. e.g. 32 (bpp)
-	* @return 0 on success
 	*/
-	int setColDepth (unsigned int iDepth);
+	void setColDepth (unsigned int iDepth);
 
 	/**
 	* Gets colordepth
 	* @return colordepth
 	*/
-	int getColDepth() const;
+	int getColDepth() const { return colorDepth; }
 
 	/**
 	 * Sets an new display (monitor) as the currently active one.
@@ -119,7 +117,7 @@ public:
 	 * Returns the index of the display that is currently used.
 	 * @return The display index.
 	 */
-	int getDisplayIndex() const;
+	int getDisplayIndex() const { return displayIndex; }
 
 	/**
 	* @return Detected videomodes

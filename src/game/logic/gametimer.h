@@ -85,15 +85,15 @@ class cGameTimerServer : public cGameTimer
 {
 	friend class cDebugOutputWidget;
 private:
-	void checkPlayersResponding (const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer& server);
+	void checkPlayersResponding (const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer&);
 	std::map<int, sGameTimerClientDebugData> clientDebugData;
 	std::map<int, unsigned int> receivedTime; // time that the client has reported to server in last sync message
 	unsigned int sentGameTime = 0;            // time that has server has reported to clients in last sync message
 
 public:
 	cGameTimerServer() = default;
-	void run (cModel& model, cServer& server);
-	void handleSyncMessage (const cNetMessageSyncClient& message, unsigned int gameTime);
+	void run (cModel&, cServer&server);
+	void handleSyncMessage (const cNetMessageSyncClient&, unsigned int gameTime);
 	void setPlayerNumbers (const std::vector<std::shared_ptr<cPlayer>>& playerList);
 };
 
@@ -113,18 +113,18 @@ private:
 	unsigned int debugRemoteChecksum = 0; // saved data for debug view only
 	unsigned int ping = 0;                // saved data for debug view only
 
-	void checkServerResponding (cClient& client);
+	void checkServerResponding (cClient&);
 public:
 	cGameTimerClient() = default;
 
 	void setReceivedTime (unsigned int time);
 	unsigned int getReceivedTime();
 
-	void run (cClient& client, cModel& model);
+	void run (cClient&, cModel&);
 
-	void sendSyncMessage (const cClient &client, unsigned int gameTime, unsigned int tickPerFrame, unsigned int timeBuffer);
+	void sendSyncMessage (const cClient&, unsigned int gameTime, unsigned int tickPerFrame, unsigned int timeBuffer);
 
-	void handleSyncMessage (const cNetMessageSyncServer& message, unsigned int gameTime);
+	void handleSyncMessage (const cNetMessageSyncServer&, unsigned int gameTime);
 };
 
 #endif // game_logic_gametimerH

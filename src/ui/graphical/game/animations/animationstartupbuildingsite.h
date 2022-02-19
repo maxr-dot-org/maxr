@@ -32,7 +32,7 @@ class cVehicle;
 class cAnimationStartUpBuildingSite : public cAnimation
 {
 public:
-	cAnimationStartUpBuildingSite (cAnimationTimer& animationTimer, const cVehicle& vehicle);
+	cAnimationStartUpBuildingSite (cAnimationTimer&, const cVehicle&);
 	~cAnimationStartUpBuildingSite();
 
 	bool isLocatedIn (const cBox<cPosition>& box) const override;
@@ -40,7 +40,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager animationTimerConnectionManager;
 	cAnimationTimer& animationTimer;
-	const cVehicle* vehicle;
+	const cVehicle* vehicle = nullptr;
 
 	void activate();
 	void run();

@@ -25,11 +25,9 @@
 class cMouseActionSelectBuildPathDestination : public cMouseAction
 {
 public:
-	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const override;
-
-	virtual bool doesChangeState() const override;
-
-	virtual bool isSingleAction() const override;
+	bool executeLeftClick (cGameMapWidget&, const cMapView&, const cPosition& mapPosition, cUnitSelection&, bool changeAllowed) const override;
+	bool doesChangeState() const override;
+	bool isSingleAction() const override;
 };
 
 #endif // ui_graphical_game_control_mouseaction_mouseactionselectbuildpathdestinationH

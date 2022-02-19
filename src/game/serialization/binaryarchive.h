@@ -109,7 +109,7 @@ public:
 
 	static const bool isWriter = false;
 
-	cBinaryArchiveOut (const unsigned char* data, size_t length, serialization::cPointerLoader* pointerLoader = nullptr);
+	cBinaryArchiveOut (const unsigned char* data, size_t length, serialization::cPointerLoader* = nullptr);
 
 	//--------------------------------------------------------------------------
 	template <typename T>

@@ -32,11 +32,10 @@ enum eMouseCursorAmountType
 class cMouseCursorAmount : public cMouseCursor
 {
 public:
-	cMouseCursorAmount (eMouseCursorAmountType type_);
-	cMouseCursorAmount (eMouseCursorAmountType type_, int percent_);
+	explicit cMouseCursorAmount (eMouseCursorAmountType);
+	cMouseCursorAmount (eMouseCursorAmountType, int percent);
 
 	SDL_Surface* getSurface() const override;
-
 	cPosition getHotPoint() const override;
 
 protected:

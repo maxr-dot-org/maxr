@@ -32,10 +32,10 @@ class cUnitLockList;
 class cGameGuiState
 {
 public:
-	void setSelectedUnits (const cUnitSelection& unitSelection);
+	void setSelectedUnits (const cUnitSelection&);
 	const std::vector<unsigned int>& getSelectedUnitIds() const;
 
-	void setLockedUnits (const cUnitLockList& unitLockList);
+	void setLockedUnits (const cUnitLockList&);
 	const std::vector<unsigned int>& getLockedUnitIds() const;
 
 	template <typename Archive>

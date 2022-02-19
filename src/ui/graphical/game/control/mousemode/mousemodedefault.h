@@ -36,22 +36,22 @@ class cMouseModeDefault : public cMouseMode
 		ActivateFinished
 	};
 public:
-	cMouseModeDefault (const cMapView* map, const cUnitSelection& unitSelection, const cPlayer* player);
+	cMouseModeDefault (const cMapView*, const cUnitSelection&, const cPlayer*);
 
 	eMouseModeType getType() const override;
-	void setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const override;
-	std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const override;
+	void setCursor (cMouse&, const cPosition& mapPosition, const cUnitsData&) const override;
+	std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition, const cUnitsData&) const override;
 
 protected:
 	void establishUnitSelectionConnections() override;
-	void establishMapFieldConnections (const cMapFieldView& field) override;
+	void establishMapFieldConnections (const cMapFieldView&) override;
 
 private:
 	cSignalConnectionManager keyboardConnectionManager;
 
-	eActionType selectAction (const cPosition& mapPosition, const cUnitsData& unitData) const;
+	eActionType selectAction (const cPosition& mapPosition, const cUnitsData&) const;
 
-	void updateFieldUnitConnections (const cMapFieldView& field);
+	void updateFieldUnitConnections (const cMapFieldView&);
 };
 
 #endif // ui_graphical_game_control_mousemode_mousemodeH

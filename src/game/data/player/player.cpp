@@ -110,7 +110,7 @@ cDynamicUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id)
 //------------------------------------------------------------------------------
 const cDynamicUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id) const
 {
-	for (const auto &data : dynamicUnitsData)
+	for (const auto& data : dynamicUnitsData)
 	{
 		if (data.getId() == id) return &data;
 	}

@@ -277,7 +277,7 @@ void cGameTimerClient::run (cClient& client, cModel& model)
 	}
 }
 
-void cGameTimerClient::sendSyncMessage (const cClient &client, unsigned int gameTime, unsigned int tickPerFrame, unsigned int timeBuffer)
+void cGameTimerClient::sendSyncMessage (const cClient& client, unsigned int gameTime, unsigned int tickPerFrame, unsigned int timeBuffer)
 {
 	cNetMessageSyncClient message;
 	message.gameTime = gameTime;

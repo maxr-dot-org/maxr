@@ -83,17 +83,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	animationTimer (animationTimer_),
 	soundManager (soundManager_),
 	staticMap (std::move (staticMap_)),
-	player (nullptr),
-	unitDrawingEngine (animationTimer, frameCounter),
-	changeAllowed (true),
-	pixelOffset (0, 0),
-	internalZoomFactor (1.f),
-	shouldDrawSurvey (false),
-	shouldDrawScan (false),
-	shouldDrawGrid (false),
-	shouldDrawRange (false),
-	shouldDrawFog (false),
-	lockActive (false)
+	unitDrawingEngine (animationTimer, frameCounter)
 {
 	assert (staticMap != nullptr);
 	assert (animationTimer != nullptr);

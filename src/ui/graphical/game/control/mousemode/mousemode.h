@@ -123,9 +123,9 @@ protected:
 	 */
 	cSignalConnectionManager mapFieldUnitsSignalConnectionManager;
 
-	const cMapView* map;
+	const cMapView* map = nullptr;
 	const cUnitSelection& unitSelection;
-	const cPlayer* player;
+	const cPlayer* player = nullptr;
 
 	/**
 	 * Gets called whenever the unit selection has changed.

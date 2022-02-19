@@ -73,14 +73,14 @@ public:
 	void closeServer();
 	void connectToServer (const sNetworkAddress&);
 
-	void close (const cSocket* socket);
-	int sendMessage (const cSocket* socket, unsigned int length, const unsigned char* buffer);
+	void close (const cSocket*);
+	int sendMessage (const cSocket*, unsigned int length, const unsigned char* buffer);
 
 private:
 	void handleNetworkThread();
 
-	void pushReadyMessages (cSocket* socket);
-	int send (const cSocket* socket, const unsigned char* buffer, unsigned int length);
+	void pushReadyMessages (cSocket*);
+	int send (const cSocket*, const unsigned char* buffer, unsigned int length);
 
 	void updateSocketSet();
 	void cleanupClosedSockets();

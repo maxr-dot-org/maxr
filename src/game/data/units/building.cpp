@@ -332,7 +332,7 @@ bool cBuilding::canTransferTo (const cUnit& unit) const
 		if (v->isUnitBuildingABuilding() || v->isUnitClearing())
 			return false;
 
-		for (const auto b : subBase->getBuildings())
+		for (const auto& b : subBase->getBuildings())
 		{
 			if (b->isNextTo (v->getPosition())) return true;
 		}

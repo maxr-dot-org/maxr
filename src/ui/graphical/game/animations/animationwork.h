@@ -32,16 +32,16 @@ class cBuilding;
 class cAnimationWork : public cAnimation
 {
 public:
-	cAnimationWork (cAnimationTimer& animationTimer, const cBuilding& building);
+	cAnimationWork (cAnimationTimer&, const cBuilding&);
 
 	bool isLocatedIn (const cBox<cPosition>& box) const override;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager animationTimerConnectionManager;
 	cAnimationTimer& animationTimer;
-	const cBuilding* building;
+	const cBuilding* building = nullptr;
 
-	bool incrementEffect;
+	bool incrementEffect = false;
 
 	void activate();
 	void run();

@@ -188,37 +188,25 @@ void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 	}
 }
 
-int cVideo::setColDepth (unsigned iDepth)
+void cVideo::setColDepth (unsigned iDepth)
 {
 	// TODO: Implement other colourdepths beside 32 & add sanity checks.
 	//       validate new color depth
 	if (iDepth != 32)
 	{
 		Log.write ("cVideo: TODO: Implement other colourdepths beside 32. Desired " + std::to_string (iDepth) + "bpp ignored.", cLog::eLOG_TYPE_WARNING);
-		return -1;
 	}
 	else
 	{
 		// TODO: [SDL2] : sanitycheck
 		colorDepth = iDepth;
 	}
-	return 0;
-}
-
-int cVideo::getColDepth() const
-{
-	return colorDepth;
 }
 
 void cVideo::setDisplayIndex (int index)
 {
 	displayIndex = index;
 	// TODO: apply the display index (reassign window to new display)
-}
-
-int cVideo::getDisplayIndex() const
-{
-	return displayIndex;
 }
 
 void cVideo::setWindowMode (bool bWindowMode, bool bApply)
@@ -277,20 +265,6 @@ void cVideo::clearBuffer()
 	SDL_FillRect (buffer, nullptr, SDL_MapRGB (buffer->format, 0, 0, 0));
 }
 
-bool cVideo::getWindowMode() const
-{
-	return windowMode;
-}
-
-int cVideo::getResolutionX() const
-{
-	return resolutionX;
-}
-
-int cVideo::getResolutionY() const
-{
-	return resolutionY;
-}
 
 void cVideo::detectResolutions()
 {

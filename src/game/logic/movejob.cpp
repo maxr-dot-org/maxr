@@ -338,7 +338,7 @@ void cMoveJob::moveVehicle (cModel& model)
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::updateSpeed (const cMap &map)
+void cMoveJob::updateSpeed (const cMap& map)
 {
 	int maxSpeed = 100 * MOVE_SPEED;
 

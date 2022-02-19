@@ -34,9 +34,7 @@ void cSoundChannel::channelFinishedCallback (int channel)
 
 //--------------------------------------------------------------------------
 cSoundChannel::cSoundChannel (int sdlChannelId_) :
-	sdlChannelId (sdlChannelId_),
-	muted (false),
-	looping (false)
+	sdlChannelId (sdlChannelId_)
 {
 	static bool initialized = false;
 	if (!initialized)
@@ -117,21 +115,9 @@ bool cSoundChannel::isPlaying (const cSoundChunk& chunk) const
 }
 
 //--------------------------------------------------------------------------
-bool cSoundChannel::isLooping() const
-{
-	return looping;
-}
-
-//--------------------------------------------------------------------------
 bool cSoundChannel::isPaused() const
 {
 	return Mix_Paused (sdlChannelId) != 0;
-}
-
-//--------------------------------------------------------------------------
-bool cSoundChannel::isMuted() const
-{
-	return muted;
 }
 
 //--------------------------------------------------------------------------
@@ -160,10 +146,4 @@ void cSoundChannel::setDistance (unsigned char distance)
 void cSoundChannel::setPosition (short angle, unsigned char distance)
 {
 	Mix_SetPosition (sdlChannelId, angle, distance);
-}
-
-//--------------------------------------------------------------------------
-int cSoundChannel::getSdlChannelId() const
-{
-	return sdlChannelId;
 }

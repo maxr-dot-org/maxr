@@ -32,7 +32,7 @@ class cAnimationTimer;
 class cHudPanels : public cWidget
 {
 public:
-	cHudPanels (const cPosition& position, int height, std::shared_ptr<cAnimationTimer> animationTimer, double percentClosed = 100);
+	cHudPanels (const cPosition&, int height, std::shared_ptr<cAnimationTimer>, double percentClosed = 100);
 
 	void open();
 	void close();

@@ -26,7 +26,7 @@ class cPosition;
 class cMouseCursor
 {
 public:
-	virtual ~cMouseCursor() {}
+	virtual ~cMouseCursor() = default;
 
 	virtual SDL_Surface* getSurface() const = 0;
 	virtual cPosition getHotPoint() const = 0;

@@ -36,23 +36,21 @@ class cUnitDetailsHud : public cWidget
 public:
 	explicit cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines = false);
 
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
-	void setUnit (const cUnit* unit);
-
-	void setPlayer (const cPlayer* player);
-
-	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
+	void setUnit (const cUnit*);
+	void setPlayer (const cPlayer*);
+	void setGameSettings (std::shared_ptr<const cGameSettings>);
 
 	// TODO: find nice place for these functions
-	static void drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2);
-	static cBox<cPosition> getSmallSymbolPosition (eUnitDataSymbolType symbolType);
+	static void drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType, const cPosition&, int value1, int value2);
+	static cBox<cPosition> getSmallSymbolPosition (eUnitDataSymbolType);
 private:
 	AutoSurface surface;
 
 	void reset();
 
-	void drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, int maximalAmount, const std::string& name);
+	void drawRow (size_t index, eUnitDataSymbolType, int amount, int maximalAmount, const std::string& name);
 
 	static const size_t maxRows = 4;
 	static const int rowHeight = 12;
@@ -62,8 +60,8 @@ private:
 
 	bool drawLines;
 
-	const cUnit* unit;
-	const cPlayer* player;
+	const cUnit* unit = nullptr;
+	const cPlayer* player = nullptr;
 	std::shared_ptr<const cGameSettings> gameSettings;
 };
 

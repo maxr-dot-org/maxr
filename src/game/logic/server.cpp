@@ -472,7 +472,7 @@ void cServer::updateGameTimerstate()
 //------------------------------------------------------------------------------
 void cServer::initPlayerConnectionState()
 {
-	for (const auto player : model.getPlayerList())
+	for (const auto& player : model.getPlayerList())
 	{
 		if (connectionManager->isPlayerConnected (player->getId()))
 		{

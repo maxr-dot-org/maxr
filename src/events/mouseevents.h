@@ -31,7 +31,7 @@
 class cEventMouseMotion
 {
 public:
-	cEventMouseMotion (const SDL_MouseMotionEvent& sdlEvent);
+	explicit cEventMouseMotion (const SDL_MouseMotionEvent&);
 
 	cPosition getNewPosition() const;
 	cPosition getOffset() const;
@@ -51,7 +51,7 @@ public:
 		Up
 	};
 
-	cEventMouseButton (const SDL_MouseButtonEvent& sdlEvent);
+	explicit cEventMouseButton (const SDL_MouseButtonEvent&);
 
 	eMouseButtonType getButton() const;
 	eType getType() const;
@@ -65,7 +65,7 @@ private:
 class cEventMouseWheel
 {
 public:
-	cEventMouseWheel (const SDL_MouseWheelEvent& sdlEvent);
+	explicit cEventMouseWheel (const SDL_MouseWheelEvent&);
 
 	cPosition getAmount() const;
 private:

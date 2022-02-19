@@ -32,11 +32,11 @@ class cMapView;
 class cMiniMapWidget : public cClickableWidget
 {
 public:
-	cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap);
+	cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap>);
 
 //	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
-//	void setPlayer (std::shared_ptr<const cPlayer> player);
-	void setMapView (std::shared_ptr<const cMapView> mapView);
+//	void setPlayer (std::shared_ptr<const cPlayer>);
+	void setMapView (std::shared_ptr<const cMapView>);
 
 	void setViewWindow (const cBox<cPosition>& viewWindow);
 
@@ -45,17 +45,17 @@ public:
 	void setZoomFactor (int zoomFactor);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
-	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	void handleLooseMouseFocus (cApplication& application) override;
+	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
+	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
+	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
+	void handleLooseMouseFocus (cApplication&) override;
 
 	cSignal<void (const cPosition&)> focus;
 	cSignal<void (const cPosition&)> triggeredMove;
 
 protected:
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	bool acceptButton (eMouseButtonType button) const override;
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
+	bool acceptButton (eMouseButtonType) const override;
 
 private:
 	cSignalConnectionManager dynamicMapSignalConnectionManager;

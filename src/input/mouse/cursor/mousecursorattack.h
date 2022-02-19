@@ -31,8 +31,8 @@ class cMouseCursorAttack : public cMouseCursor
 {
 public:
 	cMouseCursorAttack();
-	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMapView& map);
-	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_, bool inRange);
+	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMapView&);
+	cMouseCursorAttack (int currentHealthPercent, int newHealthPercent, bool inRange);
 
 	SDL_Surface* getSurface() const override;
 

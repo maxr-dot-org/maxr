@@ -37,10 +37,10 @@ public:
 
 	void clear();
 
-	bool isAt (const cPosition& position) const override;
+	bool isAt (const cPosition&) const override;
 	void handleResized (const cPosition& oldSize) override;
 private:
-	cListView<cGameMessageListViewItem>* listView;
+	cListView<cGameMessageListViewItem>* listView = nullptr;
 
 	const std::chrono::seconds maximalDisplayTime;
 };

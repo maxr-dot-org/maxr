@@ -84,14 +84,14 @@ struct sPlayerGuiInfo
 class cGameGuiController
 {
 public:
-	cGameGuiController (cApplication& application, std::shared_ptr<const cStaticMap> staticMap);
+	cGameGuiController (cApplication&, std::shared_ptr<const cStaticMap>);
 	~cGameGuiController();
 
 	void start();
 
 	void addPlayerGameGuiState (int playerNr, cGameGuiState playerGameGuiState);
 
-	void addSavedReport (std::unique_ptr<cSavedReport> savedReport, int playerNr);
+	void addSavedReport (std::unique_ptr<cSavedReport>, int playerNr);
 	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports (int playerNr) const;
 
 	void setSingleClient (std::shared_ptr<cClient>);
@@ -115,7 +115,7 @@ private:
 	std::shared_ptr<cClient> activeClient;
 	std::vector<std::shared_ptr<cClient>> clients;
 	std::shared_ptr<const cMapView> mapView;
-	cServer* server;
+	cServer* server = nullptr;
 
 	std::vector<std::unique_ptr<cChatCommandExecutor>> chatCommands;
 
@@ -130,7 +130,7 @@ private:
 
 	void connectGuiStaticCommands();
 
-	void setActiveClient (std::shared_ptr<cClient> client);
+	void setActiveClient (std::shared_ptr<cClient>);
 
 	void connectClient (cClient&);
 	void connectReportSources (cClient&);
@@ -141,19 +141,19 @@ private:
 	void showPreferencesDialog();
 	void showReportsWindow();
 
-	void showUnitHelpWindow (const cUnit& unit);
+	void showUnitHelpWindow (const cUnit&);
 	void showUnitTransferDialog (const cUnit& sourceUnit, const cUnit& destinationUnit);
-	void showBuildBuildingsWindow (const cVehicle& vehicle);
-	void showBuildVehiclesWindow (const cBuilding& building);
-	void showResourceDistributionDialog (const cUnit& unit);
-	void showResearchDialog (const cUnit& unit);
-	void showUpgradesWindow (const cUnit& unit);
-	void showStorageWindow (const cUnit& unit);
+	void showBuildBuildingsWindow (const cVehicle&);
+	void showBuildVehiclesWindow (const cBuilding&);
+	void showResourceDistributionDialog (const cUnit&);
+	void showResearchDialog (const cUnit&);
+	void showUpgradesWindow (const cUnit&);
+	void showStorageWindow (const cUnit&);
 	void showSelfDestroyDialog (const cBuilding&);
 
 	void handleChatCommand (const std::string& command);
 
-	void handleReportForActivePlayer (const cSavedReport& report);
+	void handleReportForActivePlayer (const cSavedReport&);
 
 	void selectNextUnit();
 	void selectPreviousUnit();
@@ -181,7 +181,7 @@ private:
 	mutable cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;
 	mutable cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingPathTriggered;
 	mutable cSignal<void (const cBuilding&, const std::vector<sID>&, int, bool)> buildVehiclesTriggered;
-	mutable cSignal<void (const cUnit& unit, size_t index, const cPosition& position)> activateAtTriggered;
+	mutable cSignal<void (const cUnit& unit, size_t index, const cPosition&)> activateAtTriggered;
 	mutable cSignal<void (const cUnit&, const cUnit&)> reloadTriggered;
 	mutable cSignal<void (const cUnit&, const cUnit&)> repairTriggered;
 	mutable cSignal<void (const cUnit&, size_t index)> upgradeTriggered;

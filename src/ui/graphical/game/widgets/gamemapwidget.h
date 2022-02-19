@@ -52,7 +52,7 @@ class cGameMapWidget : public cClickableWidget
 {
 	friend class cDebugOutputWidget;
 public:
-	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<cSoundManager> soundManager, std::shared_ptr<const cFrameCounter> frameCounter);
+	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap>, std::shared_ptr<cAnimationTimer>, std::shared_ptr<cSoundManager>, std::shared_ptr<const cFrameCounter>);
 	~cGameMapWidget();
 	void setMapView (std::shared_ptr<const cMapView>);
 	void setPlayer (std::shared_ptr<const cPlayer>);
@@ -82,14 +82,14 @@ public:
 	void scroll (const cPosition& offset);
 	const cPosition& getPixelOffset() const;
 
-	void centerAt (const cPosition& position);
+	void centerAt (const cPosition&);
 	cPosition getMapCenterOffset();
 
 	bool startFindBuildPosition (const sID& buildId);
 	void startFindPathBuildPosition();
-	void startActivateVehicle (const cUnit& unit, size_t index);
+	void startActivateVehicle (const cUnit&, size_t index);
 
-	void addEffect (std::shared_ptr<cFx> effect, bool playSound = true);
+	void addEffect (std::shared_ptr<cFx>, bool playSound = true);
 
 	void setDrawSurvey (bool drawSurvey);
 	void setDrawHits (bool drawHits);
@@ -107,7 +107,7 @@ public:
 	cBox<cPosition> getDisplayedMapArea() const;
 
 	void updateMouseCursor();
-	void updateMouseCursor (cMouse& mouse);
+	void updateMouseCursor (cMouse&);
 
 	void setChangeAllowed (bool value);
 
@@ -165,14 +165,14 @@ public:
 	cSignal<void (const cUnit&)> triggeredUnitDone;
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
-	bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	void handleLooseMouseFocus (cApplication& application) override;
+	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
+	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
+	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
+	void handleLooseMouseFocus (cApplication&) override;
 	void handleResized (const cPosition& oldSize) override;
 protected:
-	bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) override;
-	bool acceptButton (eMouseButtonType button) const override;
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
+	bool acceptButton (eMouseButtonType) const override;
 
 	//
 	// draw methods
@@ -201,11 +201,11 @@ protected:
 	void drawLockList();
 
 	void drawExitPoints();
-	void drawExitPoint (const cPosition& position);
-	void drawExitPointsIf (const cUnit& unit, const std::function<bool (const cPosition&)>& predicate);
+	void drawExitPoint (const cPosition&);
+	void drawExitPointsIf (const cUnit&, const std::function<bool (const cPosition&)>& predicate);
 	void drawBuildBand();
 
-	bool shouldDrawUnit (const cUnit& unit, const cPosition& visitingPosition, const std::pair<cPosition, cPosition>& tileDrawingRange);
+	bool shouldDrawUnit (const cUnit&, const cPosition& visitingPosition, const std::pair<cPosition, cPosition>& tileDrawingRange);
 
 	void addEffect();
 	//
@@ -224,15 +224,15 @@ protected:
 	SDL_Rect computeTileDrawingArea (const cPosition& zoomedTileSize, const cPosition& zoomedStartTilePixelOffset, const cPosition& tileStartIndex, const cPosition& tileIndex) const;
 
 	cPosition getMapTilePosition (const cPosition& pixelPosition) const;
-	cPosition getScreenPosition (const cUnit& unit, bool movementOffset = true) const;
+	cPosition getScreenPosition (const cUnit&, bool movementOffset = true) const;
 
 	void updateActiveAnimations();
 	void updateActiveAnimations (const std::pair<cPosition, cPosition>& oldTileDrawingRange);
-	void addAnimationsForUnit (const cUnit& unit);
+	void addAnimationsForUnit (const cUnit&);
 
 	void updateUnitMenuPosition();
 
-	void toggleUnitContextMenu (const cUnit* unit);
+	void toggleUnitContextMenu (const cUnit*);
 
 	void setMouseInputMode (std::unique_ptr<cMouseMode> newMouseMode);
 	void toggleMouseInputMode (eMouseModeType mouseInputMode);
@@ -240,14 +240,14 @@ protected:
 	void runOwnedEffects();
 
 	void renewDamageEffects();
-	void renewDamageEffect (const cBuilding& building);
-	void renewDamageEffect (const cVehicle& vehicle);
+	void renewDamageEffect (const cBuilding&);
+	void renewDamageEffect (const cVehicle&);
 
 	void setWindDirection (int direction);
 	void changeWindDirection();
 
 	void buildCollidingShortcutsMap();
-	void activateShortcutConditional (cShortcut& shortcut, std::set<const cShortcut*>& blockedShortcuts, const std::set<const cShortcut*>& collidingShortcuts);
+	void activateShortcutConditional (cShortcut&, std::set<const cShortcut*>& blockedShortcuts, const std::set<const cShortcut*>& collidingShortcuts);
 public:
 	std::vector<cResearch::ResearchArea> currentTurnResearchAreasFinished;
 private:
@@ -272,11 +272,11 @@ private:
 
 	cUnitLockList unitLockList;
 
-	cUnitContextMenuWidget* unitMenu;
+	cUnitContextMenuWidget* unitMenu = nullptr;
 
 	std::unique_ptr<cMouseMode> mouseMode;
 
-	bool changeAllowed;
+	bool changeAllowed = true;
 
 	std::vector<std::shared_ptr<cFx>> effects;
 
@@ -285,29 +285,29 @@ private:
 	//
 	// unit command shortcuts
 	//
-	cShortcut* attackShortcut;
-	cShortcut* buildShortcut;
-	cShortcut* transferShortcut;
-	cShortcut* automoveShortcut;
-	cShortcut* startShortcut;
-	cShortcut* stopShortcut;
-	cShortcut* clearShortcut;
-	cShortcut* sentryShortcut;
-	cShortcut* manualFireShortcut;
-	cShortcut* activateShortcut;
-	cShortcut* loadShortcut;
-	cShortcut* enterShortcut;
-	cShortcut* relaodShortcut;
-	cShortcut* repairShortcut;
-	cShortcut* layMineShortcut;
-	cShortcut* clearMineShortcut;
-	cShortcut* disableShortcut;
-	cShortcut* stealShortcut;
-	cShortcut* infoShortcut;
-	cShortcut* distributeShortcut;
-	cShortcut* researchShortcut;
-	cShortcut* upgradeShortcut;
-	cShortcut* destroyShortcut;
+	cShortcut* attackShortcut = nullptr;
+	cShortcut* buildShortcut = nullptr;
+	cShortcut* transferShortcut = nullptr;
+	cShortcut* automoveShortcut = nullptr;
+	cShortcut* startShortcut = nullptr;
+	cShortcut* stopShortcut = nullptr;
+	cShortcut* clearShortcut = nullptr;
+	cShortcut* sentryShortcut = nullptr;
+	cShortcut* manualFireShortcut = nullptr;
+	cShortcut* activateShortcut = nullptr;
+	cShortcut* loadShortcut = nullptr;
+	cShortcut* enterShortcut = nullptr;
+	cShortcut* relaodShortcut = nullptr;
+	cShortcut* repairShortcut = nullptr;
+	cShortcut* layMineShortcut = nullptr;
+	cShortcut* clearMineShortcut = nullptr;
+	cShortcut* disableShortcut = nullptr;
+	cShortcut* stealShortcut = nullptr;
+	cShortcut* infoShortcut = nullptr;
+	cShortcut* distributeShortcut = nullptr;
+	cShortcut* researchShortcut = nullptr;
+	cShortcut* upgradeShortcut = nullptr;
+	cShortcut* destroyShortcut = nullptr;
 
 	std::map<const cShortcut*, std::set<const cShortcut*>> collidingUnitCommandShortcuts;
 
@@ -315,19 +315,19 @@ private:
 	// drawing information data
 	//
 	cPosition pixelOffset;
-	float internalZoomFactor; // should not be used directly! use getZoomFactor() instead!
+	float internalZoomFactor = 1.f; // should not be used directly! use getZoomFactor() instead!
 
-	bool shouldDrawSurvey;
-	bool shouldDrawScan;
-	bool shouldDrawGrid;
-	bool shouldDrawRange;
-	bool shouldDrawFog;
+	bool shouldDrawSurvey = false;
+	bool shouldDrawScan = false;
+	bool shouldDrawGrid = false;
+	bool shouldDrawRange = false;
+	bool shouldDrawFog = false;
 
-	bool lockActive;
+	bool lockActive = false;
 
 	float windDirection;
 
-	cRightMouseButtonScrollerWidget* rightMouseButtonScrollerWidget;
+	cRightMouseButtonScrollerWidget* rightMouseButtonScrollerWidget = nullptr;
 };
 
 #endif // ui_graphical_game_widgets_gamemapwidgetH

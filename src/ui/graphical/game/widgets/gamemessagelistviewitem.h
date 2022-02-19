@@ -44,7 +44,7 @@ public:
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	void handleResized (const cPosition& oldSize) override;
 private:
-	cLabel* messageLabel;
+	cLabel* messageLabel = nullptr;
 
 	eGameMessageListViewItemBackgroundColor backgroundColor;
 	AutoSurface background;

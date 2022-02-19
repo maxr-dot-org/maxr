@@ -39,11 +39,7 @@
 cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<const cFrameCounter> frameCounter) :
 	animationTimer (std::move (animationTimer_)),
 	drawingCache (frameCounter),
-	blinkColor (cRgbColor::white()),
-	shouldDrawHits (false),
-	shouldDrawStatus (false),
-	shouldDrawAmmo (false),
-	shouldDrawColor (false)
+	blinkColor (cRgbColor::white())
 {
 	signalConnectionManager.connect (animationTimer->triggered100ms, [this]() { rotateBlinkColor(); });
 }

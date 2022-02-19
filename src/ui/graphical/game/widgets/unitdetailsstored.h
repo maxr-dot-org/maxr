@@ -38,7 +38,7 @@ public:
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
-	void setUnit (const cUnit* unit);
+	void setUnit (const cUnit*);
 private:
 	cSignalConnectionManager unitSignalConnectionManager;
 
@@ -46,7 +46,7 @@ private:
 
 	void reset();
 
-	void drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, int maximalAmount, const std::string& name);
+	void drawRow (size_t index, eUnitDataSymbolType, int amount, int maximalAmount, const std::string& name);
 
 	static const size_t maxRows = 2;
 	static const int rowHeight = 15;
@@ -54,7 +54,7 @@ private:
 	std::array<cLabel*, maxRows> amountLabels;
 	std::array<cLabel*, maxRows> nameLabels;
 
-	const cUnit* unit;
+	const cUnit* unit = nullptr;
 };
 
 #endif // ui_graphical_game_widgets_unitdetailsstoredH

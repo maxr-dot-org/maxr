@@ -40,7 +40,7 @@ class cUnitVideoWidget : public cWidget
 {
 	using FliAnimationPointerType = std::unique_ptr<FLI_Animation, void (*) (FLI_Animation*)>;
 public:
-	cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer> animationTimer);
+	cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer>);
 
 	void start();
 	void stop();
@@ -50,16 +50,16 @@ public:
 
 	bool hasAnimation() const;
 
-	void setUnit (const cUnit* unit);
+	void setUnit (const cUnit*);
 
 	cSignal<void()> clicked;
 private:
-	cImage* currentFrameImage;
+	cImage* currentFrameImage = nullptr;
 	FliAnimationPointerType fliAnimation;
 
 	cSignalConnectionManager signalConnectionManager;
 
-	bool playing;
+	bool playing = true;
 
 	void nextFrame();
 };

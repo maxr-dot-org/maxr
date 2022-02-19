@@ -335,7 +335,7 @@ void cSurveyorAi::changeOP()
 }
 
 //------------------------------------------------------------------------------
-bool cSurveyorAi::positionHasBeenSurveyedByPath (const cPosition position, const std::forward_list<cPosition>& path) const
+bool cSurveyorAi::positionHasBeenSurveyedByPath (const cPosition& position, const std::forward_list<cPosition>& path) const
 {
 	for (const auto& pathPos : path)
 	{

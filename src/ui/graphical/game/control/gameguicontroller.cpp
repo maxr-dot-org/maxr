@@ -2096,7 +2096,7 @@ void cGameGuiController::updateGuiInfoTexts()
 	{
 		std::string disconncetedPlayers;
 		std::string notRespondingPlayers;
-		for (const auto playerState : playerConnectionStates)
+		for (const auto& playerState : playerConnectionStates)
 		{
 			const cPlayer& player = *activeClient->getModel().getPlayer (playerState.first);
 			if (playerState.second == ePlayerConnectionState::DISCONNECTED)

@@ -45,8 +45,8 @@ public:
 	cSoundChannel* getFreeSoundEffectChannel();
 	cSoundChannel* getFreeVoiceChannel();
 
-	bool playSoundEffect (const cSoundChunk& chunk);
-	bool playVoice (const cSoundChunk& chunk);
+	bool playSoundEffect (const cSoundChunk&);
+	bool playVoice (const cSoundChunk&);
 
 	void startMusic (const std::string& fileName);
 	void startRandomMusic();

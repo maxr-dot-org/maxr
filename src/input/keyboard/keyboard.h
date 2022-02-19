@@ -90,9 +90,9 @@ private:
 
 	cSignalConnectionManager signalConnectionManager;
 
-	void updateModifiersFromKeyPress (const cKeyboardEvent& event);
-	void handleKeyboardEvent (const cKeyboardEvent& keyboardEvent);
-	void handleTextInputEvent (const cTextInputEvent& textInputEvent);
+	void updateModifiersFromKeyPress (const cKeyboardEvent&);
+	void handleKeyboardEvent (const cKeyboardEvent&);
+	void handleTextInputEvent (const cTextInputEvent&);
 
 	KeyModifierFlags currentModifiers;
 };

@@ -32,7 +32,7 @@ class cVehicle;
 class cAnimationDither : public cAnimation
 {
 public:
-	cAnimationDither (cAnimationTimer& animationTimer, const cVehicle& building);
+	cAnimationDither (cAnimationTimer&, const cVehicle&);
 	~cAnimationDither();
 
 	bool isLocatedIn (const cBox<cPosition>& box) const override;
@@ -40,9 +40,9 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager animationTimerConnectionManager;
 	cAnimationTimer& animationTimer;
-	const cVehicle* vehicle;
+	const cVehicle* vehicle = nullptr;
 
-	bool incrementEffect;
+	bool incrementEffect = false;
 
 	void activate();
 	void run();

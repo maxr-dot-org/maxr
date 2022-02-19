@@ -45,11 +45,8 @@ public:
 	/**
 	 * Initializes the base class animation to be not running and not finished.
 	 */
-	cAnimation() :
-		finished (false),
-		running (false)
-	{}
-	virtual ~cAnimation() {}
+	cAnimation() = default;
+	virtual ~cAnimation() = default;
 
 	/**
 	 * Should return true when the animation needs to be executed if the
@@ -71,8 +68,8 @@ public:
 	bool isRunning() const { return running; }
 
 protected:
-	bool finished;
-	bool running;
+	bool finished = false;
+	bool running = false;
 };
 
 #endif // ui_graphical_game_animations_animationH

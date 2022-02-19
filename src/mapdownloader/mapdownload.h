@@ -50,7 +50,7 @@ class cMapReceiver
 public:
 	cMapReceiver (const std::string& mapName, int mapSize);
 
-	bool receiveData (const cMuMsgMapDownloadData& message);
+	bool receiveData (const cMuMsgMapDownloadData&);
 	bool finished();
 
 	const std::string& getMapName() const { return mapName; }
@@ -66,8 +66,7 @@ private:
 class cMapSender
 {
 public:
-	cMapSender (cConnectionManager& connectionManager, int toPlayerNr,
-				const std::string& mapName);
+	cMapSender (cConnectionManager&, int toPlayerNr, const std::string& mapName);
 	~cMapSender();
 
 	int getToPlayerNr() const { return toPlayerNr; }
@@ -78,8 +77,8 @@ private:
 	void run();
 
 	bool getMapFileContent();
-	void sendMsg (cNetMessage& msg);
-	void sendMsg (cNetMessage&& msg);
+	void sendMsg (cNetMessage&);
+	void sendMsg (cNetMessage&&);
 
 private:
 	cConnectionManager& connectionManager;

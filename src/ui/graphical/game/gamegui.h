@@ -62,7 +62,7 @@ class cUnitsData;
 class cGameGui : public cWindow
 {
 public:
-	cGameGui (std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cSoundManager> soundManager, std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<const cFrameCounter> frameCounter);
+	cGameGui (std::shared_ptr<const cStaticMap>, std::shared_ptr<cSoundManager>, std::shared_ptr<cAnimationTimer>, std::shared_ptr<const cFrameCounter>);
 
 	void setMapView (std::shared_ptr<const cMapView>);
 	void setPlayer (std::shared_ptr<const cPlayer>);
@@ -89,50 +89,23 @@ public:
 
 	cDebugOutputWidget& getDebugOutput();
 
-	void setInfoTexts (const std::string& primiaryText, const std::string& additionalText);
+	void setInfoTexts (const std::string& primaryText, const std::string& additionalText);
 
 	void exit();
 
 	cGameGuiState getCurrentState() const;
-	void restoreState (const cGameGuiState& state);
+	void restoreState (const cGameGuiState&);
 
-	bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) override;
-	bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) override;
-	void handleActivated (cApplication& application, bool firstTime) override;
-	void handleDeactivated (cApplication& application, bool removed) override;
+	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
+	bool handleMouseWheelMoved (cApplication&, cMouse&, const cPosition& amount) override;
+	void handleActivated (cApplication&, bool firstTime) override;
+	void handleDeactivated (cApplication&, bool removed) override;
 	bool wantsCentered() const override;
 protected:
 
 	std::unique_ptr<cMouseCursor> getDefaultCursor() const override;
+
 private:
-	cSignalConnectionManager signalConnectionManager;
-	cSignalConnectionManager panelSignalConnectionManager;
-	cSignalConnectionManager selectedUnitConnectionManager;
-
-	std::shared_ptr<cAnimationTimer> animationTimer;
-	std::shared_ptr<cSoundManager> soundManager;
-
-	std::shared_ptr<const cStaticMap> staticMap;
-	std::shared_ptr<const cMapView> mapView;
-	std::shared_ptr<const cPlayer> player;
-
-	cHud* hud;
-	cHudPanels* hudPanels;
-	cGameMapWidget* gameMap;
-	cMiniMapWidget* miniMap;
-	cGameMessageListView* messageList;
-	cChatBox<cLobbyChatBoxListViewItem, cChatBoxPlayerListViewItem>* chatBox;
-	cDebugOutputWidget* debugOutput;
-
-	cLabel* primiaryInfoLabel;
-	cLabel* additionalInfoLabel;
-
-	cPosition mouseScrollDirection;
-
-	std::shared_ptr<cSoundEffect> selectedUnitSoundLoop;
-
-	bool openPanelOnActivation;
-
 	void startOpenPanel();
 	void startClosePanel();
 
@@ -152,8 +125,37 @@ private:
 	void updateSelectedUnitIdleSound();
 	void updateSelectedUnitMoveSound (bool startedNew);
 
-	void startSelectedUnitSound (const cUnit& unit, const cSoundChunk& sound);
+	void startSelectedUnitSound (const cUnit&, const cSoundChunk&);
 	void stopSelectedUnitSound();
+
+private:
+	cSignalConnectionManager signalConnectionManager;
+	cSignalConnectionManager panelSignalConnectionManager;
+	cSignalConnectionManager selectedUnitConnectionManager;
+
+	std::shared_ptr<cAnimationTimer> animationTimer;
+	std::shared_ptr<cSoundManager> soundManager;
+
+	std::shared_ptr<const cStaticMap> staticMap;
+	std::shared_ptr<const cMapView> mapView;
+	std::shared_ptr<const cPlayer> player;
+
+	cHud* hud = nullptr;
+	cHudPanels* hudPanels = nullptr;
+	cGameMapWidget* gameMap = nullptr;
+	cMiniMapWidget* miniMap = nullptr;
+	cGameMessageListView* messageList = nullptr;
+	cChatBox<cLobbyChatBoxListViewItem, cChatBoxPlayerListViewItem>* chatBox = nullptr;
+	cDebugOutputWidget* debugOutput = nullptr;
+
+	cLabel* primiaryInfoLabel = nullptr;
+	cLabel* additionalInfoLabel = nullptr;
+
+	cPosition mouseScrollDirection;
+
+	std::shared_ptr<cSoundEffect> selectedUnitSoundLoop;
+
+	bool openPanelOnActivation = true;
 };
 
 #endif // ui_graphical_game_gameguiH

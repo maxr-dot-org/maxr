@@ -45,9 +45,9 @@ class cDebugOutputWidget : public cWidget
 public:
 	cDebugOutputWidget (const cBox<cPosition>& area);
 
-	void setClient (const cClient* client);
-	void setServer (const cServer* server);
-	void setGameMap (const cGameMapWidget* gameMap);
+	void setClient (const cClient*);
+	void setServer (const cServer*);
+	void setGameMap (const cGameMapWidget*);
 
 	void initChatCommand (std::vector<std::unique_ptr<cChatCommandExecutor>>&);
 

@@ -34,7 +34,7 @@ class cUnit;
 class cAnimationStartUp : public cAnimation
 {
 public:
-	cAnimationStartUp (cAnimationTimer& animationTimer, const cUnit& unit);
+	cAnimationStartUp (cAnimationTimer&, const cUnit&);
 	~cAnimationStartUp();
 
 	bool isLocatedIn (const cBox<cPosition>& box) const override;
@@ -42,7 +42,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager animationTimerConnectionManager;
 	cAnimationTimer& animationTimer;
-	const cUnit* unit;
+	const cUnit* unit = nullptr;
 
 	void run();
 };

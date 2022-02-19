@@ -36,16 +36,16 @@ class cChatCommand
 public:
 	static bool isCommand (const std::string& command);
 
-	cChatCommand (const std::string name, const std::string description);
+	cChatCommand (std::string name, std::string description);
 
-	const std::string& getName() const;
-	const std::string& getDescription() const;
+	const std::string& getName() const { return name; }
+	const std::string& getDescription() const { return description; }
 
 	cChatCommand& setShouldBeReported (bool value);
-	bool getShouldBeReported() const;
+	bool getShouldBeReported() const { return shouldBeReported; }
 
 	cChatCommand& setIsServerOnly (bool value);
-	bool getIsServerOnly() const;
+	bool getIsServerOnly() const { return isServerOnly; }
 
 	template <typename NewArgument, typename... Args>
 	cChatCommandParser<NewArgument> addArgument (Args&&... args);
@@ -56,8 +56,8 @@ public:
 private:
 	std::string name;
 	std::string description;
-	bool shouldBeReported;
-	bool isServerOnly;
+	bool shouldBeReported = false;
+	bool isServerOnly = false;
 };
 
 #include "chatcommandexecutor.h"

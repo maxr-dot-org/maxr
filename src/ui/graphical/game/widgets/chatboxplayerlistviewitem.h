@@ -33,25 +33,27 @@ class cPlayer;
 class cChatBoxPlayerListViewItem : public cAbstractListViewItem
 {
 public:
-	explicit cChatBoxPlayerListViewItem (const cPlayer& player);
+	explicit cChatBoxPlayerListViewItem (const cPlayer&);
 
 	const cPlayer& getPlayer() const;
 
 	int getPlayerNumber() const;
 
 	void handleResized (const cPosition& oldSize) override;
+
 private:
-	cSignalConnectionManager signalConnectionManager;
-
-	cLabel* nameLabel;
-	cImage* colorImage;
-	cImage* readyImage;
-
-	const cPlayer* player;
-
 	void updatePlayerName();
 	void updatePlayerColor();
 	void updatePlayerFinishedTurn();
+
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	cLabel* nameLabel = nullptr;
+	cImage* colorImage = nullptr;
+	cImage* readyImage = nullptr;
+
+	const cPlayer* player = nullptr;
 };
 
 #endif // ui_graphical_menu_widgets_special_lobbyplayerlistviewitemH

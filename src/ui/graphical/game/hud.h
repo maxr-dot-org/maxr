@@ -52,10 +52,10 @@ public:
 
 	cHud (std::shared_ptr<cAnimationTimer> animationTimer);
 
-	void setPlayer (std::shared_ptr<const cPlayer> player);
-	void setTurnClock (std::shared_ptr<const cTurnCounter> turnClock);
-	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
-	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
+	void setPlayer (std::shared_ptr<const cPlayer>);
+	void setTurnClock (std::shared_ptr<const cTurnCounter>);
+	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock>);
+	void setGameSettings (std::shared_ptr<const cGameSettings>);
 
 	static AutoSurface generateSurface();
 
@@ -152,12 +152,16 @@ public:
 
 	mutable cSignal<void (const cUnit&, const std::string&)> triggeredRenameUnit;
 
-	void setActiveUnit (const cUnit* unit);
+	void setActiveUnit (const cUnit*);
 	void setUnitsData (std::shared_ptr<const cUnitsData>);
 
-	bool isAt (const cPosition& position) const override;
+	bool isAt (const cPosition&) const override;
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
-protected:
+
+private:
+	void handleZoomPlusClicked();
+	void handleZoomMinusClicked();
+	void handlePreferencesClicked();
 
 private:
 	AutoSurface surface;
@@ -169,50 +173,43 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager turnClockSignalConnectionManager;
 
-	cPushButton* endButton;
+	cPushButton* endButton = nullptr;
 
-	cSlider* zoomSlider;
+	cSlider* zoomSlider = nullptr;
 
-	cCheckBox* surveyButton;
-	cCheckBox* hitsButton;
-	cCheckBox* scanButton;
-	cCheckBox* statusButton;
-	cCheckBox* ammoButton;
-	cCheckBox* gridButton;
-	cCheckBox* colorButton;
-	cCheckBox* rangeButton;
-	cCheckBox* fogButton;
-	cCheckBox* lockButton;
-	cCheckBox* chatButton;
+	cCheckBox* surveyButton = nullptr;
+	cCheckBox* hitsButton = nullptr;
+	cCheckBox* scanButton = nullptr;
+	cCheckBox* statusButton = nullptr;
+	cCheckBox* ammoButton = nullptr;
+	cCheckBox* gridButton = nullptr;
+	cCheckBox* colorButton = nullptr;
+	cCheckBox* rangeButton = nullptr;
+	cCheckBox* fogButton = nullptr;
+	cCheckBox* lockButton = nullptr;
+	cCheckBox* chatButton = nullptr;
 
-	cShortcut* surveyShortcut;
-	cShortcut* hitsShortcut;
-	cShortcut* scanShortcut;
-	cShortcut* statusShortcut;
-	cShortcut* ammoShortcut;
-	cShortcut* gridShortcut;
-	cShortcut* colorShortcut;
-	cShortcut* rangeShortcut;
-	cShortcut* fogShortcut;
+	cShortcut* surveyShortcut = nullptr;
+	cShortcut* hitsShortcut = nullptr;
+	cShortcut* scanShortcut = nullptr;
+	cShortcut* statusShortcut = nullptr;
+	cShortcut* ammoShortcut = nullptr;
+	cShortcut* gridShortcut = nullptr;
+	cShortcut* colorShortcut = nullptr;
+	cShortcut* rangeShortcut = nullptr;
+	cShortcut* fogShortcut = nullptr;
 
-	cCheckBox* miniMapZoomFactorButton;
-	cCheckBox* miniMapAttackUnitsOnlyButton;
+	cCheckBox* miniMapZoomFactorButton = nullptr;
+	cCheckBox* miniMapAttackUnitsOnlyButton = nullptr;
 
-	cLabel* coordsLabel;
-	cLabel* unitNameLabel;
-	cLabel* turnLabel;
-	cTurnTimeClockWidget* turnTimeClockWidget;
+	cLabel* coordsLabel = nullptr;
+	cLabel* unitNameLabel = nullptr;
+	cLabel* turnLabel = nullptr;
+	cTurnTimeClockWidget* turnTimeClockWidget = nullptr;
 
-	cUnitRenameWidget* unitRenameWidget;
-
-	cUnitVideoWidget* unitVideo;
-
-	cUnitDetailsHud* unitDetails;
-
-	void handleZoomPlusClicked();
-	void handleZoomMinusClicked();
-
-	void handlePreferencesClicked();
+	cUnitRenameWidget* unitRenameWidget = nullptr;
+	cUnitVideoWidget* unitVideo = nullptr;
+	cUnitDetailsHud* unitDetails = nullptr;
 };
 
 

@@ -29,8 +29,7 @@
 //------------------------------------------------------------------------------
 cAnimationWork::cAnimationWork (cAnimationTimer& animationTimer_, const cBuilding& building_) :
 	animationTimer (animationTimer_),
-	building (&building_),
-	incrementEffect (false)
+	building (&building_)
 {
 	auto& uiData = UnitsUiData.getBuildingUI (*building);
 	if (building->isUnitWorking() || uiData.staticData.powerOnGraphic)

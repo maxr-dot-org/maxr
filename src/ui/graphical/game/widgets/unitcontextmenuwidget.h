@@ -35,7 +35,7 @@ class cUnitContextMenuWidget : public cWidget
 public:
 	cUnitContextMenuWidget();
 
-	void setUnit (const cUnit* unit, eMouseModeType mouseInputMode, const cPlayer* player, const cMapView* map);
+	void setUnit (const cUnit*, eMouseModeType mouseInputMode, const cPlayer*, const cMapView*);
 	const cUnit* getUnit();
 
 	static bool unitHasAttackEntry (const cUnit*, const cPlayer*);
@@ -92,7 +92,7 @@ public:
 	cSignal<void()> infoClicked;
 	cSignal<void()> doneClicked;
 private:
-	const cUnit* unit;
+	const cUnit* unit = nullptr;
 };
 
 #endif // ui_graphical_game_widgets_unitcontextmenuwidgetH

@@ -72,7 +72,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void writeHeader (nlohmann::json& json, int slot, const std::string& saveName, const cModel &model)
+	void writeHeader (nlohmann::json& json, int slot, const std::string& saveName, const cModel& model)
 	{
 		//init document
 		json["version"] = SAVE_FORMAT_VERSION;

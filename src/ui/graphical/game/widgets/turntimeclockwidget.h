@@ -34,11 +34,11 @@ class cTurnTimeClockWidget : public cWidget
 public:
 	cTurnTimeClockWidget (const cBox<cPosition>& area);
 
-	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
+	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock>);
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cLabel* textLabel;
+	cLabel* textLabel = nullptr;
 
 	std::shared_ptr<const cTurnTimeClock> turnTimeClock;
 

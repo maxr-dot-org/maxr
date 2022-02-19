@@ -42,28 +42,28 @@ class cUnitsData;
 class cUnitRenameWidget : public cWidget
 {
 public:
-	cUnitRenameWidget (const cPosition& position, int width);
+	cUnitRenameWidget (const cPosition&, int width);
 
-	void setUnit (const cUnit* unit, const cUnitsData& unitsData);
+	void setUnit (const cUnit*, const cUnitsData&);
 	const cUnit* getUnit() const;
 
-	void setPlayer (const cPlayer* player, const cUnitsData& unitsData);
+	void setPlayer (const cPlayer*, const cUnitsData&);
 
 	const std::string& getUnitName() const;
 
-	bool isAt (const cPosition& position) const override;
+	bool isAt (const cPosition&) const override;
 
 	cSignal<void()> unitRenameTriggered;
 private:
-	cLabel* selectedUnitStatusLabel;
-	cLabel* selectedUnitNamePrefixLabel;
-	cLineEdit* selectedUnitNameEdit;
+	cLabel* selectedUnitStatusLabel = nullptr;
+	cLabel* selectedUnitNamePrefixLabel = nullptr;
+	cLineEdit* selectedUnitNameEdit = nullptr;
 
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager unitSignalConnectionManager;
 
-	const cUnit* activeUnit;
-	const cPlayer* player;
+	const cUnit* activeUnit = nullptr;
+	const cPlayer* player = nullptr;
 };
 
 #endif // ui_graphical_game_widgets_unitvideowidgetH

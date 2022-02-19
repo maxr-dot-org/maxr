@@ -26,11 +26,6 @@
 #include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
-cUnitLockList::cUnitLockList() :
-	player (nullptr)
-{}
-
-//------------------------------------------------------------------------------
 void cUnitLockList::setPlayer (const cPlayer* player_)
 {
 	player = player_;

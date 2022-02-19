@@ -26,8 +26,7 @@
 //------------------------------------------------------------------------------
 cAnimationDither::cAnimationDither (cAnimationTimer& animationTimer_, const cVehicle& vehicle_) :
 	animationTimer (animationTimer_),
-	vehicle (&vehicle_),
-	incrementEffect (false)
+	vehicle (&vehicle_)
 {
 	// immediately start for planes that are in the air already
 	if (vehicle->getFlightHeight() > 0)

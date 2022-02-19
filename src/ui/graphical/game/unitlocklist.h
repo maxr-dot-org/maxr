@@ -31,22 +31,22 @@ class cPlayer;
 class cUnitLockList
 {
 public:
-	cUnitLockList();
+	cUnitLockList() = default;
 
-	void setPlayer (const cPlayer* player);
+	void setPlayer (const cPlayer*);
 
-	void toggleLockAt (const cMapFieldView& field);
+	void toggleLockAt (const cMapFieldView&);
 
 	size_t getLockedUnitsCount() const;
 	const cUnit* getLockedUnit (size_t index) const;
 
 	void unlockAll();
 
-	void lockUnit (const cUnit& unit);
+	void lockUnit (const cUnit&);
 private:
 	std::vector<std::pair<const cUnit*, cSignalConnectionManager>> lockedUnits;
 
-	const cPlayer* player;
+	const cPlayer* player = nullptr;
 };
 
 #endif // ui_graphical_game_unitlocklistH

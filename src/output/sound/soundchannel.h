@@ -33,7 +33,7 @@ class cSoundChannel
 public:
 	explicit cSoundChannel (int sdlChannelId);
 
-	void play (const cSoundChunk& chunk, bool loop = false);
+	void play (const cSoundChunk&, bool loop = false);
 
 	void pause();
 	void resume();
@@ -44,13 +44,13 @@ public:
 	void unmute();
 
 	bool isPlaying() const;
-	bool isPlaying (const cSoundChunk& chunk) const;
+	bool isPlaying (const cSoundChunk&) const;
 
-	bool isLooping() const;
+	bool isLooping() const { return looping; }
 
 	bool isPaused() const;
 
-	bool isMuted() const;
+	bool isMuted() const { return muted; }
 
 	void setVolume (int volume);
 
@@ -58,7 +58,7 @@ public:
 	void setDistance (unsigned char distance);
 	void setPosition (short angle, unsigned char distance);
 
-	int getSdlChannelId() const;
+	int getSdlChannelId() const { return sdlChannelId; }
 
 	cSignal<void()> started;
 	cSignal<void(), std::recursive_mutex> stopped;
@@ -68,10 +68,10 @@ public:
 private:
 	int sdlChannelId;
 
-	bool muted;
+	bool muted = false;
 	int volume;
 
-	bool looping;
+	bool looping = false;
 
 	cSignalConnectionManager signalConnectionManager;
 
