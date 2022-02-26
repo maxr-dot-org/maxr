@@ -196,15 +196,13 @@ cUnit* cUnitSelection::getSelectedUnit() const
 //------------------------------------------------------------------------------
 cVehicle* cUnitSelection::getSelectedVehicle() const
 {
-	auto selectedUnit = getSelectedUnit();
-	return static_cast<cVehicle*> (selectedUnit && selectedUnit->isAVehicle() ? selectedUnit : nullptr);
+	return dynamic_cast<cVehicle*> (getSelectedUnit());
 }
 
 //------------------------------------------------------------------------------
 cBuilding* cUnitSelection::getSelectedBuilding() const
 {
-	auto selectedUnit = getSelectedUnit();
-	return static_cast<cBuilding*> (selectedUnit && selectedUnit->isABuilding() ? selectedUnit : nullptr);
+	return dynamic_cast<cBuilding*> (getSelectedUnit());
 }
 
 //------------------------------------------------------------------------------
