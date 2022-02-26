@@ -63,39 +63,33 @@ bool cUnitSelection::selectUnitAt (const cMapFieldView& field, bool base)
 //------------------------------------------------------------------------------
 void cUnitSelection::addSelectedUnitBack (cUnit& unit)
 {
-	auto unitPtr = &unit;
-	auto connection = selectedUnitsSignalConnectionManager.connect (unit.destroyed, [this, unitPtr]()
-	{
-		deselectUnit (*unitPtr);
-	});
-	selectedUnits.push_back (std::make_pair (&unit, connection));
+	selectedUnits.emplace_back();
+	selectedUnits.back().first = &unit;
+	auto& unitSignalConnectionManager = selectedUnits.back().second;
+	unitSignalConnectionManager.connect (unit.destroyed, [this, &unit]() { deselectUnit (unit); });
 }
 
 //------------------------------------------------------------------------------
 void cUnitSelection::addSelectedUnitFront (cUnit& unit)
 {
-	auto unitPtr = &unit;
-	auto connection = selectedUnitsSignalConnectionManager.connect (unit.destroyed, [this, unitPtr]()
-	{
-		deselectUnit (*unitPtr);
-	});
-	selectedUnits.insert (selectedUnits.begin(), std::make_pair (&unit, connection));
+	auto it = selectedUnits.emplace(selectedUnits.begin());
+	it->first = &unit;
+	auto& unitSignalConnectionManager = it->second;
+	unitSignalConnectionManager.connect (unit.destroyed, [this, &unit]() { deselectUnit (unit); });
 }
 
 //------------------------------------------------------------------------------
 void cUnitSelection::removeSelectedUnit (const cUnit& unit)
 {
-	auto iter = ranges::find_if (selectedUnits, [&unit] (const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
+	auto iter = ranges::find_if (selectedUnits, [&unit] (const auto& entry) { return entry.first == &unit; });
 	if (iter == selectedUnits.end()) return;
 
-	selectedUnitsSignalConnectionManager.disconnect (iter->second);
 	selectedUnits.erase (iter);
 }
 
 //------------------------------------------------------------------------------
 void cUnitSelection::removeAllSelectedUnits()
 {
-	selectedUnitsSignalConnectionManager.disconnectAll();
 	selectedUnits.clear();
 }
 
@@ -260,7 +254,7 @@ size_t cUnitSelection::getSelectedBuildingsCount() const
 //------------------------------------------------------------------------------
 bool cUnitSelection::isSelected (const cUnit& unit) const
 {
-	auto iter = ranges::find_if (selectedUnits, [&unit] (const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
+	auto iter = ranges::find_if (selectedUnits, [&unit] (const auto& entry) { return entry.first == &unit; });
 	return iter != selectedUnits.end();
 }
 

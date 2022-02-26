@@ -67,9 +67,8 @@ public:
 	mutable cSignal<void()> mainSelectionChanged;
 	mutable cSignal<void()> groupSelectionChanged;
 private:
-	cSignalConnectionManager selectedUnitsSignalConnectionManager;
 
-	std::vector<std::pair<cUnit*, cSignalConnection>> selectedUnits;
+	std::vector<std::pair<cUnit*, cSignalConnectionManager>> selectedUnits;
 
 	void addSelectedUnitBack (cUnit&);
 	void addSelectedUnitFront (cUnit&);
