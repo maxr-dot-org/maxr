@@ -218,7 +218,7 @@ std::shared_ptr<cRunnable> cApplication::removeRunnable (std::shared_ptr<cRunnab
 {
 	const auto it = ranges::find (runnables, runnable);
 
-	if (it == runnables.end())
+	if (it != runnables.end())
 	{
 		auto result = std::move (*it);
 		runnables.erase (it);
