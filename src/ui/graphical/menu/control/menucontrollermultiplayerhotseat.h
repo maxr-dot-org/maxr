@@ -20,8 +20,10 @@
 #ifndef ui_graphical_menu_control_menucontrollermultiplayerhotseatH
 #define ui_graphical_menu_control_menucontrollermultiplayerhotseatH
 
+#include <memory>
 #include <vector>
 
+#include "utility/runnable.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "game/logic/landingpositionmanager.h"
 
@@ -33,12 +35,13 @@ class cWindow;
 class cLandingPositionManager;
 class cPlayerBasicData;
 
-class cMenuControllerMultiplayerHotSeat
+class cMenuControllerMultiplayerHotSeat : public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerHotSeat>
 {
 public:
-	cMenuControllerMultiplayerHotSeat (cApplication& application);
+	cMenuControllerMultiplayerHotSeat (cApplication&);
 
 	void start();
+	void run() override {}
 private:
 	cSignalConnectionManager signalConnectionManager;
 

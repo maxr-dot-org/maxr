@@ -69,12 +69,15 @@ void cMenuControllerMultiplayerHotSeat::reset()
 	invalidLandingPositionPlayers.clear();
 	playerLandingSelectionWindows.clear();
 	landingSelectionWindowConnections.disconnectAll();
+	application.removeRunnable (shared_from_this()); // finish lifetime
 }
 
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHotSeat::selectGameSettings()
 {
 	if (!game) return;
+
+	application.addRunnable (shared_from_this()); // ensure lifetime
 
 	auto windowGameSettings = application.show (std::make_shared<cWindowGameSettings> (true));
 	windowGameSettings->applySettings (cGameSettings());

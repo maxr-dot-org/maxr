@@ -274,6 +274,7 @@ void cGameGuiController::setServer (cServer* server_)
 //------------------------------------------------------------------------------
 void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 {
+	if (activeClient == client_) { return; }
 	activeClient = std::move (client_);
 	if (activeClient)
 	{
