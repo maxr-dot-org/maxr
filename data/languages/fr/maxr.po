@@ -41,7 +41,7 @@ msgid "Text~Comp~AttackingEnemy"
 msgstr "%s attaque l'enemi"
 
 msgid "Text~Comp~AttackingStatusStr"
-msgstr ""
+msgstr "en attaque"
 
 msgid "Text~Comp~Building_Disabled"
 msgstr "Bâtiment désactivé"
@@ -404,13 +404,13 @@ msgid "Text~Multiplayer~MapDL_Download"
 msgstr "Carte %s du serveur"
 
 msgid "Text~Multiplayer~MapDL_DownloadInvalid"
-msgstr ""
+msgstr "carte officielle M.A.X. (sous license) : %s"
 
 msgid "Text~Multiplayer~MapDL_DownloadRequest"
-msgstr ""
+msgstr "Carte non installée : Demande de téléchargement"
 
 msgid "Text~Multiplayer~MapDL_DownloadRequestInvalid"
-msgstr ""
+msgstr "Carte non instalée : téléchargement non autorisé"
 
 msgid "Text~Multiplayer~MapDL_Finished"
 msgstr "Téléchargement de la carte terminée"
@@ -1028,7 +1028,7 @@ msgid "Text~Title~Credits_start"
 msgstr "Crédit initial"
 
 msgid "Text~Title~Custom_11"
-msgstr ""
+msgstr "Personalisé"
 
 msgid "Text~Title~Game_Type"
 msgstr "Type de jeu"
