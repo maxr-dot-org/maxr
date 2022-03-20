@@ -92,7 +92,7 @@ void cLobbyClient::connectToServer (const sNetworkAddress& address)
 	// Connect only if there isn't a connection yet
 	if (connectionManager->isConnectedToServer()) return;
 
-	Log.write ("Connecting to " + address.toString(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Connecting to " + address.toString(), cLog::eLogType::NetDebug);
 
 	connectionManager->connectToServer (address);
 }
@@ -100,7 +100,7 @@ void cLobbyClient::connectToServer (const sNetworkAddress& address)
 //------------------------------------------------------------------------------
 void cLobbyClient::connectToLocalServer (cLobbyServer& server)
 {
-	Log.write ("Connecting to local server", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Connecting to local server", cLog::eLogType::NetDebug);
 
 	server.localClientConnects (*this, localPlayer);
 	// For network clients, similar to :
@@ -123,7 +123,7 @@ void cLobbyClient::sendNetMessage (cNetMessage& message)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("LobbyClient: --> " + json.dump (-1) + " to host", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyClient: --> " + json.dump (-1) + " to host", cLog::eLogType::NetDebug);
 
 	connectionManager->sendToServer (message);
 }
@@ -253,7 +253,7 @@ void cLobbyClient::handleNetMessage (const cNetMessage& message)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("LobbyClient: <-- " + json.dump (-1), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyClient: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
 
 	switch (message.getType())
 	{
@@ -276,7 +276,7 @@ void cLobbyClient::handleNetMessage (const cNetMessage& message)
 			handleNetMessage_GAME_ALREADY_RUNNING (static_cast<const cNetMessageGameAlreadyRunning&> (message));
 			return;
 		default:
-			Log.write ("LobbyClient: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("LobbyClient: Can not handle message", cLog::eLogType::NetError);
 			return;
 	}
 }
@@ -334,7 +334,7 @@ void cLobbyClient::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 			handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION (static_cast<const cMuMsgPlayerAbortedGamePreparations&> (message));
 			break;
 		default:
-			Log.write ("LobbyClient: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("LobbyClient: Can not handle message", cLog::eLogType::NetError);
 			break;
 	}
 }
@@ -364,13 +364,13 @@ void cLobbyClient::handleNetMessage_TCP_CONNECTED (const cNetMessageTcpConnected
 	{
 		onDifferentVersion (message.packageVersion, message.packageRev);
 	}
-	Log.write ("Connected and assigned playerNr: " + std::to_string (message.playerNr), cLog::eLOG_TYPE_INFO);
+	Log.write ("Connected and assigned playerNr: " + std::to_string (message.playerNr), cLog::eLogType::Info);
 }
 
 //------------------------------------------------------------------------------
 void cLobbyClient::handleNetMessage_TCP_CONNECT_FAILED (const cNetMessageTcpConnectFailed& message)
 {
-	Log.write ("Error on connecting to server", cLog::eLOG_TYPE_WARNING);
+	Log.write ("Error on connecting to server", cLog::eLogType::Warning);
 
 	localPlayer.setNr (-1);
 	onConnectionFailed (message.reason);

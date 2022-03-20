@@ -27,15 +27,15 @@
 class cLog
 {
 public:
-	enum eLogType
+	enum class eLogType
 	{
-		eLOG_TYPE_DEBUG,
-		eLOG_TYPE_INFO,
-		eLOG_TYPE_WARNING,
-		eLOG_TYPE_ERROR,
-		eLOG_TYPE_NET_DEBUG,
-		eLOG_TYPE_NET_WARNING,
-		eLOG_TYPE_NET_ERROR,
+		Debug,
+		Info,
+		Warning,
+		Error,
+		NetDebug,
+		NetWarning,
+		NetError
 	};
 
 	/**
@@ -44,7 +44,7 @@ public:
 	* @param str Message for the log
 	* @param type Type for the log
 	*/
-	void write (const std::string& msg, eLogType type = eLOG_TYPE_INFO);
+	void write (const std::string& msg, eLogType type = eLogType::Info);
 
 	/**
 	* Writes a marker into logfile - please use only very few times!
@@ -52,7 +52,7 @@ public:
 	void mark();
 
 private:
-	void checkOpenFile (eLogType type);
+	void checkOpenFile (eLogType);
 	void writeToFile (const std::string& msg, std::ofstream& file);
 
 private:

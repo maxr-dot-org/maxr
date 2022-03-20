@@ -329,7 +329,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	clear();
 	// Open File
 	filename = filename_;
-	Log.write ("Loading map \"" + filename_ + "\"", cLog::eLOG_TYPE_DEBUG);
+	Log.write ("Loading map \"" + filename_ + "\"", cLog::eLogType::Debug);
 
 	// first try in the factory maps directory
 	std::string fullFilename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + filename;
@@ -346,7 +346,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	}
 	if (fpMapFile == nullptr)
 	{
-		Log.write ("Cannot load map file: \"" + filename + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Cannot load map file: \"" + filename + "\"", cLog::eLogType::Warning);
 		clear();
 		return false;
 	}
@@ -360,7 +360,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	// DMO - for some reason some original maps have this filetype
 	if (strcmp (szFileTyp, "WRL") != 0 && strcmp (szFileTyp, "WRX") != 0 && strcmp (szFileTyp, "DMO") != 0)
 	{
-		Log.write ("Wrong file format: \"" + filename + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Wrong file format: \"" + filename + "\"", cLog::eLogType::Warning);
 		SDL_RWclose (fpMapFile);
 		clear();
 		return false;
@@ -369,21 +369,21 @@ bool cStaticMap::loadMap (const std::string& filename_)
 
 	// Read informations and get positions from the map-file
 	const short sWidth = SDL_ReadLE16 (fpMapFile);
-	Log.write ("SizeX: " + std::to_string (sWidth), cLog::eLOG_TYPE_DEBUG);
+	Log.write ("SizeX: " + std::to_string (sWidth), cLog::eLogType::Debug);
 	const short sHeight = SDL_ReadLE16 (fpMapFile);
-	Log.write ("SizeY: " + std::to_string (sHeight), cLog::eLOG_TYPE_DEBUG);
+	Log.write ("SizeY: " + std::to_string (sHeight), cLog::eLogType::Debug);
 	SDL_RWseek (fpMapFile, sWidth * sHeight, SEEK_CUR); // Ignore Mini-Map
 	const Sint64 iDataPos = SDL_RWtell (fpMapFile); // Map-Data
 	SDL_RWseek (fpMapFile, sWidth * sHeight * 2, SEEK_CUR);
 	const int iNumberOfTerrains = SDL_ReadLE16 (fpMapFile); // Read PicCount
-	Log.write ("Number of terrains: " + std::to_string (iNumberOfTerrains), cLog::eLOG_TYPE_DEBUG);
+	Log.write ("Number of terrains: " + std::to_string (iNumberOfTerrains), cLog::eLogType::Debug);
 	const Sint64 iGraphicsPos = SDL_RWtell (fpMapFile); // Terrain Graphics
 	const Sint64 iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64; // Palette
 	const Sint64 iInfoPos = iPalettePos + 256 * 3; // Special informations
 
 	if (sWidth != sHeight)
 	{
-		Log.write ("Map must be quadratic!: \"" + filename + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Map must be quadratic!: \"" + filename + "\"", cLog::eLogType::Warning);
 		SDL_RWclose (fpMapFile);
 		clear();
 		return false;
@@ -418,7 +418,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 				terrains[iNum].blocked = true;
 				break;
 			default:
-				Log.write ("unknown terrain type " + std::to_string (cByte) + " on tile " + std::to_string (iNum) + " found. Handled as blocked!", cLog::eLOG_TYPE_WARNING);
+				Log.write ("unknown terrain type " + std::to_string (cByte) + " on tile " + std::to_string (iNum) + " found. Handled as blocked!", cLog::eLogType::Warning);
 				terrains[iNum].blocked = true;
 				//SDL_RWclose (fpMapFile);
 				//return false;
@@ -439,7 +439,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 			int Kachel = SDL_ReadLE16 (fpMapFile);
 			if (Kachel >= iNumberOfTerrains)
 			{
-				Log.write ("a map field referred to a nonexisting terrain: " + std::to_string (Kachel), cLog::eLOG_TYPE_WARNING);
+				Log.write ("a map field referred to a nonexisting terrain: " + std::to_string (Kachel), cLog::eLogType::Warning);
 				SDL_RWclose (fpMapFile);
 				clear();
 				return false;
@@ -687,7 +687,7 @@ void cMap::moveVehicleBig (cVehicle& vehicle, const cPosition& position)
 {
 	if (vehicle.getIsBig())
 	{
-		Log.write ("Calling moveVehicleBig on a big vehicle", cLog::eLOG_TYPE_NET_ERROR);
+		Log.write ("Calling moveVehicleBig on a big vehicle", cLog::eLogType::NetError);
 		//calling this function twice is always an error.
 		//nevertheless try to proceed by resetting the data.isBig flag
 		moveVehicle (vehicle, position);

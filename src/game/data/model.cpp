@@ -386,7 +386,7 @@ void cModel::deleteUnit (cUnit* unit)
 	if (unit == nullptr)
 		return;
 
-	Log.write (" cModel: delete unit, id: " + std::to_string (unit->getId()) + " @" + std::to_string (getGameTime()), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" cModel: delete unit, id: " + std::to_string (unit->getId()) + " @" + std::to_string (getGameTime()), cLog::eLogType::NetDebug);
 
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->isRubble())
 	{

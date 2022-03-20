@@ -112,7 +112,7 @@ AutoSurface LoadPCX (const std::string& name)
 	cBufferedFile bufferedFile;
 	if (!bufferedFile.open (name.c_str(), "rb"))
 	{
-		Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);  // Image corrupted, create empty surface.
+		Log.write (SDL_GetError(), cLog::eLogType::Warning);  // Image corrupted, create empty surface.
 		return AutoSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));
 	}
 	// Load the image.
@@ -122,7 +122,7 @@ AutoSurface LoadPCX (const std::string& name)
 	AutoSurface s (SDL_CreateRGBSurface (0, x, y, 32, 0, 0, 0, 0));
 	if (!s)
 	{
-		Log.write (SDL_GetError(), cLog::eLOG_TYPE_ERROR);
+		Log.write (SDL_GetError(), cLog::eLogType::Error);
 		return nullptr; //app will crash using this
 	}
 	SDL_SetColorKey (s.get(), SDL_TRUE, 0xFF00FF);

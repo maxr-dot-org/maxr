@@ -51,7 +51,7 @@ void cActionResumeMove::execute (cModel& model) const
 		cVehicle* vehicle = model.getVehicleFromID (unitId);
 		if (vehicle == nullptr)
 		{
-			Log.write (" Can't find vehicle with id " + std::to_string (unitId), cLog::eLOG_TYPE_NET_WARNING);
+			Log.write (" Can't find vehicle with id " + std::to_string (unitId), cLog::eLogType::NetWarning);
 			return;
 		}
 		if (!vehicle->getOwner()) return;

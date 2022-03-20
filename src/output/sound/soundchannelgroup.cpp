@@ -71,7 +71,7 @@ cSoundChannel& cSoundChannelGroup::getFreeChannel (bool haltIfNotAvailable)
 
 	if (channel == -1)
 	{
-		Log.write ("Could not get any available channel of group: " + std::to_string (sdlGroupTag), cLog::eLOG_TYPE_WARNING);
+		Log.write ("Could not get any available channel of group: " + std::to_string (sdlGroupTag), cLog::eLogType::Warning);
 		static cSoundChannel dummyChannel (0);
 		return dummyChannel;
 	}

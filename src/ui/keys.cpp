@@ -115,7 +115,7 @@ void cKeysList::loadFromJsonFile (const std::string& path)
 
 	if (!(file >> json))
 	{
-		Log.write ("cannot load keys.json\ngenerating new file", cLog::eLOG_TYPE_WARNING);
+		Log.write ("cannot load keys.json\ngenerating new file", cLog::eLogType::Warning);
 		saveToFile();
 		return;
 	}
@@ -124,12 +124,12 @@ void cKeysList::loadFromJsonFile (const std::string& path)
 		cJsonArchiveIn in (json);
 		serialize (in);
 
-		Log.write ("Done", cLog::eLOG_TYPE_DEBUG);
+		Log.write ("Done", cLog::eLogType::Debug);
 	}
 	catch (const std::exception& e)
 	{
-		Log.write (std::string ("Error while reading keys: ") + e.what(), cLog::eLOG_TYPE_WARNING);
-		Log.write ("Overwriting with default settings", cLog::eLOG_TYPE_WARNING);
+		Log.write (std::string ("Error while reading keys: ") + e.what(), cLog::eLogType::Warning);
+		Log.write ("Overwriting with default settings", cLog::eLogType::Warning);
 		saveToFile();
 	}
 }
@@ -137,25 +137,25 @@ void cKeysList::loadFromJsonFile (const std::string& path)
 //------------------------------------------------------------------------------
 void cKeysList::loadFromFile()
 {
-	Log.write ("Loading Keys", cLog::eLOG_TYPE_INFO);
+	Log.write ("Loading Keys", cLog::eLogType::Info);
 
 	const auto keysJsonGame = cSettings::getInstance().getDataDir() + "keys.json";
 	const auto keysJsonUsers = cSettings::getInstance().getHomeDir() + "keys.json";
 
 	if (FileExists (keysJsonUsers))
 	{
-		Log.write ("User key-file in use", cLog::eLOG_TYPE_INFO);
+		Log.write ("User key-file in use", cLog::eLogType::Info);
 		loadFromJsonFile (keysJsonUsers);
 	}
 	else if (FileExists (keysJsonGame))
 	{
 		copyFile (keysJsonGame, keysJsonUsers);
-		Log.write ("Key-file copied from gamedir to userdir", cLog::eLOG_TYPE_INFO);
+		Log.write ("Key-file copied from gamedir to userdir", cLog::eLogType::Info);
 		loadFromJsonFile (keysJsonUsers);
 	}
 	else
 	{
-		Log.write ("generating new keys-file", cLog::eLOG_TYPE_WARNING);
+		Log.write ("generating new keys-file", cLog::eLogType::Warning);
 		saveToFile();
 		return;
 	}

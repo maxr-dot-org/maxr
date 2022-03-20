@@ -245,12 +245,12 @@ std::string getCurrentExeDir()
 		int iSize = readlink ("/proc/self/exe", cPathToExe, sizeof (cPathToExe));
 		if (iSize < 0)
 		{
-			Log.write ("Can't resolve full path to program. Doesn't this system feature /proc/self/exe?", cLog::eLOG_TYPE_WARNING);
+			Log.write ("Can't resolve full path to program. Doesn't this system feature /proc/self/exe?", cLog::eLogType::Warning);
 			return "";
 		}
 		else if (iSize >= 255)
 		{
-			Log.write ("Can't resolve full path to program since my array is to small and my programmer is to lame to write a buffer for me!", cLog::eLOG_TYPE_WARNING);
+			Log.write ("Can't resolve full path to program since my array is to small and my programmer is to lame to write a buffer for me!", cLog::eLogType::Warning);
 			return "";
 		}
 		else
@@ -272,7 +272,7 @@ std::string getCurrentExeDir()
 			// check for binary itself in bin folder
 			if (FileExists ((exePath + "maxr").c_str()))
 			{
-				Log.write ("Path to binary is: " + exePath, cLog::eLOG_TYPE_INFO);
+				Log.write ("Path to binary is: " + exePath, cLog::eLogType::Info);
 			}
 			else
 			{
@@ -284,7 +284,7 @@ std::string getCurrentExeDir()
 					exePath = exePath.substr (0, iPos - 5);
 					if (FileExists ((exePath + "maxr").c_str()))
 					{
-						Log.write ("Path to binary is: " + exePath, cLog::eLOG_TYPE_INFO);
+						Log.write ("Path to binary is: " + exePath, cLog::eLogType::Info);
 					}
 				}
 			}

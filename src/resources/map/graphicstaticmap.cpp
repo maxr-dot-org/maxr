@@ -105,7 +105,7 @@ bool cGraphicStaticMap::loadTile (SDL_RWops* fpMapFile, std::size_t graphicOffse
 	AutoSurface surface (loadTerrGraph (fpMapFile, graphicOffset, palette, index));
 	if (surface == nullptr)
 	{
-		Log.write ("EOF while loading terrain number " + std::to_string (index), cLog::eLOG_TYPE_WARNING);
+		Log.write ("EOF while loading terrain number " + std::to_string (index), cLog::eLogType::Warning);
 		SDL_RWclose (fpMapFile);
 		tiles.clear();
 		return false;

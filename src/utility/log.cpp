@@ -43,7 +43,7 @@ namespace
 //------------------------------------------------------------------------------
 void cLog::write (const std::string& msg, eLogType type)
 {
-	if ((type == eLOG_TYPE_DEBUG || type == eLOG_TYPE_NET_DEBUG) && !cSettings::getInstance().isDebug())
+	if ((type == eLogType::Debug || type == eLogType::NetDebug) && !cSettings::getInstance().isDebug())
  	{
 		//in case debug is disabled we skip message
  		return;
@@ -57,26 +57,26 @@ void cLog::write (const std::string& msg, eLogType type)
 	auto threadId = "Thread " + toString (std::this_thread::get_id());
 	switch (type)
 	{
-		case eLOG_TYPE_NET_WARNING:
-		case eLOG_TYPE_WARNING:
+		case eLogType::NetWarning:
+		case eLogType::Warning:
 			tmp = threadId + ": (WW): " + msg;
 			break;
-		case eLOG_TYPE_NET_ERROR:
-		case eLOG_TYPE_ERROR:
+		case eLogType::NetError:
+		case eLogType::Error:
 			tmp = threadId + ": (EE): " + msg;
 			std::cout << tmp << "\n"; break;
-		case eLOG_TYPE_NET_DEBUG:
-		case eLOG_TYPE_DEBUG:
+		case eLogType::NetDebug:
+		case eLogType::Debug:
 			tmp = threadId + ": (DD): " + msg;
 			break;
-		case eLOG_TYPE_INFO:
+		case eLogType::Info:
 		default:
 			tmp = threadId + ": (II): " + msg;
 			break;
 	}
 	tmp += '\n';
 
-	if (type == eLOG_TYPE_NET_DEBUG || type == eLOG_TYPE_NET_WARNING || type == eLOG_TYPE_NET_ERROR)
+	if (type == eLogType::NetDebug || type == eLogType::NetWarning || type == eLogType::NetError)
 	{
 		writeToFile (tmp, netLogfile);
 	}
@@ -91,7 +91,7 @@ void cLog::mark()
 {
 	std::unique_lock<std::mutex> l (mutex);
 
-	checkOpenFile (eLOG_TYPE_INFO);
+	checkOpenFile (eLogType::Info);
 
 	std::string str = "==============================(MARK)==============================";
 	str += '\n';
@@ -102,7 +102,7 @@ void cLog::mark()
 //------------------------------------------------------------------------------
 void cLog::checkOpenFile (eLogType type)
 {
-	if (type == eLOG_TYPE_NET_DEBUG || type == eLOG_TYPE_NET_WARNING || type == eLOG_TYPE_NET_ERROR)
+	if (type == eLogType::NetDebug || type == eLogType::NetWarning || type == eLogType::NetError)
 	{
 		if (netLogfile.is_open())
 		{

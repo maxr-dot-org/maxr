@@ -87,7 +87,7 @@ cNetwork::cNetwork (cConnectionManager& connectionManager, std::recursive_mutex&
 		}
 		catch (const std::exception& ex)
 		{
-			Log.write (std::string ("Exception: ") + ex.what(), cLog::eLOG_TYPE_ERROR);
+			Log.write (std::string ("Exception: ") + ex.what(), cLog::eLogType::Error);
 		}
 	})
 {
@@ -116,7 +116,7 @@ int cNetwork::openServer (int port)
 {
 	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
-	Log.write ("Network: Open server on port: " + std::to_string (port), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Network: Open server on port: " + std::to_string (port), cLog::eLogType::NetDebug);
 
 	IPaddress ipaddr;
 	if (SDLNet_ResolveHost (&ipaddr, nullptr, port) == -1)
@@ -154,7 +154,7 @@ void cNetwork::connectToServer (const sNetworkAddress& address)
 
 	if (connectTo)
 	{
-		Log.write ("Network: Can only handle one connection attempt at once", cLog::eLOG_TYPE_NET_ERROR);
+		Log.write ("Network: Can only handle one connection attempt at once", cLog::eLogType::NetError);
 		connectionManager.connectionResult (nullptr);
 		return;
 	}
@@ -168,7 +168,7 @@ void cNetwork::close (const cSocket* socket)
 
 	if (!Contains (sockets, socket))
 	{
-		Log.write ("Network: Unable to close socket. Invalid socket", cLog::eLOG_TYPE_NET_ERROR);
+		Log.write ("Network: Unable to close socket. Invalid socket", cLog::eLogType::NetError);
 		return;
 	}
 	connectionManager.connectionClosed (socket);
@@ -187,7 +187,7 @@ int cNetwork::sendMessage (const cSocket* socket, unsigned int length, const uns
 
 	if (!Contains (sockets, socket))
 	{
-		Log.write ("Network: Unable to send message. Invalid socket", cLog::eLOG_TYPE_NET_ERROR);
+		Log.write ("Network: Unable to send message. Invalid socket", cLog::eLogType::NetError);
 		return -1;
 	}
 
@@ -211,7 +211,7 @@ int cNetwork::send (const cSocket* socket, const unsigned char* buffer, unsigned
 	if (bytesSent != length)
 	{
 		// delete socket when sending fails
-		Log.write ("Network: Error while sending message. Closing socket...", cLog::eLOG_TYPE_NET_WARNING);
+		Log.write ("Network: Error while sending message. Closing socket...", cLog::eLogType::NetWarning);
 		close (socket);
 		return -1;
 	}
@@ -275,13 +275,13 @@ void cNetwork::handleNetworkThread()
 						ip += std::to_string ((remoteAddress->host >> 16) & 0xFF) + '.';
 						ip += std::to_string ((remoteAddress->host >> 24) & 0xFF);
 
-						Log.write ("Network: Incoming connection from " + ip, cLog::eLOG_TYPE_NET_DEBUG);
+						Log.write ("Network: Incoming connection from " + ip, cLog::eLogType::NetDebug);
 					}
 
 					if (sockets.size() + 1 >= MAX_TCP_CONNECTIONS ) // +1 for serverSocket
 					{
 						SDLNet_TCP_Close (sdlSocket);
-						Log.write ("Network: Maximum number of tcp connections reached. Connection closed.", cLog::eLOG_TYPE_NET_WARNING);
+						Log.write ("Network: Maximum number of tcp connections reached. Connection closed.", cLog::eLogType::NetWarning);
 					}
 					else
 					{
@@ -299,7 +299,7 @@ void cNetwork::handleNetworkThread()
 				IPaddress ipaddr;
 				if (SDLNet_ResolveHost (&ipaddr, connectTo->ip.c_str(), connectTo->port) == -1)
 				{
-					Log.write ("Network: Couldn't resolve host", cLog::eLOG_TYPE_WARNING);
+					Log.write ("Network: Couldn't resolve host", cLog::eLogType::Warning);
 					connectionManager.connectionResult (nullptr);
 				}
 				else
@@ -307,7 +307,7 @@ void cNetwork::handleNetworkThread()
 					TCPsocket sdlSocket = SDLNet_TCP_Open (&ipaddr);
 					if (sdlSocket == nullptr)
 					{
-						Log.write ("Network: Couldn't connect to host", cLog::eLOG_TYPE_WARNING);
+						Log.write ("Network: Couldn't connect to host", cLog::eLogType::Warning);
 						connectionManager.connectionResult (nullptr);
 					}
 					else
@@ -339,7 +339,7 @@ void cNetwork::pushReadyMessages (cSocket* socket)
 		if (startWord != START_WORD)
 		{
 			//something went terribly wrong. We are unable to continue the communication.
-			Log.write ("Network: Wrong start character in received message. Socket closed!", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Network: Wrong start character in received message. Socket closed!", cLog::eLogType::NetError);
 			close (socket);
 			break;
 		}
@@ -348,7 +348,7 @@ void cNetwork::pushReadyMessages (cSocket* socket)
 		uint32_t messageLength = SDL_SwapLE32 (*reinterpret_cast<uint32_t*> (socket->buffer.data + readPos + 4));
 		if (messageLength > PACKAGE_LENGTH)
 		{
-			Log.write ("Network: Length of received message exceeds PACKAGE_LENGTH. Socket closed!", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Network: Length of received message exceeds PACKAGE_LENGTH. Socket closed!", cLog::eLogType::NetError);
 			close (socket);
 			break;
 		}

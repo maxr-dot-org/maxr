@@ -51,7 +51,7 @@ namespace
 		nlohmann::json json;
 		if (!(file >> json))
 		{
-			Log.write ("Error loading savegame file: " + fileName, cLog::eLOG_TYPE_ERROR);
+			Log.write ("Error loading savegame file: " + fileName, cLog::eLogType::Error);
 			return std::nullopt;
 		}
 		return json;
@@ -63,7 +63,7 @@ namespace
 		const auto& jsonVersion = json["version"];
 		if (!jsonVersion.is_string())
 		{
-			Log.write ("Error loading savegame file " + std::to_string (slot) + ": \"version\" field not found.", cLog::eLOG_TYPE_ERROR);
+			Log.write ("Error loading savegame file " + std::to_string (slot) + ": \"version\" field not found.", cLog::eLogType::Error);
 			return std::nullopt;
 		}
 		cVersion version;
@@ -131,7 +131,7 @@ void cSavegame::save (const cModel& model, int slot, const std::string& saveName
 
 		if (model.getChecksum() != model2.getChecksum())
 		{
-			Log.write ("Checksum issue when saving", cLog::eLOG_TYPE_ERROR);
+			Log.write ("Checksum issue when saving", cLog::eLogType::Error);
 		}
 	}
 #endif
@@ -207,7 +207,7 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 	}
 	catch (const std::runtime_error& e)
 	{
-		Log.write ("Error loading savegame file " + std::to_string (slot) + ": " + e.what(), cLog::eLOG_TYPE_ERROR);
+		Log.write ("Error loading savegame file " + std::to_string (slot) + ": " + e.what(), cLog::eLogType::Error);
 		info.gameName = "File Error";
 		return info;
 	}
@@ -251,21 +251,21 @@ void cSavegame::loadModel (cModel& model, int slot)
 		cJsonArchiveIn modelArchive (*json, &loader);
 		uint32_t crcFromSave;
 		modelArchive >> serialization::makeNvp ("modelcrc", crcFromSave);
-		Log.write (" Checksum from save file: " + std::to_string (crcFromSave), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Checksum from save file: " + std::to_string (crcFromSave), cLog::eLogType::NetDebug);
 
 		uint32_t modelCrc = model.getChecksum();
-		Log.write (" Checksum after loading model: " + std::to_string (modelCrc), cLog::eLOG_TYPE_NET_DEBUG);
-		Log.write (" GameId: " + std::to_string (model.getGameId()), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Checksum after loading model: " + std::to_string (modelCrc), cLog::eLogType::NetDebug);
+		Log.write (" GameId: " + std::to_string (model.getGameId()), cLog::eLogType::NetDebug);
 
 		if (crcFromSave != modelCrc)
 		{
-			Log.write (" Crc of loaded model does not match the saved crc!", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write (" Crc of loaded model does not match the saved crc!", cLog::eLogType::NetError);
 			//TODO: what to do in this case?
 		}
 	}
 	catch (const std::exception& e)
 	{
-		Log.write ("Error loading savegame file " + std::to_string (slot) + ": " + e.what(), cLog::eLOG_TYPE_ERROR);
+		Log.write ("Error loading savegame file " + std::to_string (slot) + ": " + e.what(), cLog::eLogType::Error);
 	}
 }
 

@@ -156,7 +156,7 @@ void cDedicatedServerGame::runInThread()
 		catch (const std::exception& ex)
 		{
 			std::cerr << "Exception: " << ex.what() << std::endl;
-			Log.write (std::string ("Exception: ") + ex.what(), cLog::eLOG_TYPE_ERROR);
+			Log.write (std::string ("Exception: ") + ex.what(), cLog::eLogType::Error);
 		}
 	});
 }

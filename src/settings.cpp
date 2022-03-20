@@ -58,7 +58,7 @@ namespace
 		sPathToGameData = getCurrentExeDir();
 #else
 		// BEGIN crude path validation to find gamedata
-		Log.write ("Probing for data paths using default values:", cLog::eLOG_TYPE_INFO);
+		Log.write ("Probing for data paths using default values:", cLog::eLogType::Info);
 
 		std::string sPathArray[] =
 		{
@@ -98,13 +98,13 @@ namespace
 		cDataDir = getenv ("MAXRDATA");
 		if (cDataDir == nullptr)
 		{
-			Log.write ("$MAXRDATA is not set", cLog::eLOG_TYPE_INFO);
+			Log.write ("$MAXRDATA is not set", cLog::eLogType::Info);
 		}
 		else
 		{
 			sPathArray[0] = cDataDir;
 			sPathArray[1] = BUILD_DATADIR;
-			Log.write ("$MAXRDATA is set and overrides default data search path", cLog::eLOG_TYPE_WARNING);
+			Log.write ("$MAXRDATA is set and overrides default data search path", cLog::eLogType::Warning);
 		}
 		// END SET MAXRDATA
 
@@ -121,11 +121,11 @@ namespace
 		// still empty? cry for mama - we couldn't locate any typical data folder
 		if (sPathToGameData.empty())
 		{
-			Log.write ("No success probing for data folder!", cLog::eLOG_TYPE_ERROR);
+			Log.write ("No success probing for data folder!", cLog::eLogType::Error);
 		}
 		else
 		{
-			Log.write ("Found gamedata in: " + sPathToGameData, cLog::eLOG_TYPE_INFO);
+			Log.write ("Found gamedata in: " + sPathToGameData, cLog::eLogType::Info);
 		}
 		// END crude path validation to find gamedata
 #endif
@@ -193,7 +193,7 @@ void cSettings::loadFromJsonFile (const std::string& path)
 
 	if (!(file >> json))
 	{
-		Log.write ("cannot load maxr.json\ngenerating new file", cLog::eLOG_TYPE_WARNING);
+		Log.write ("cannot load maxr.json\ngenerating new file", cLog::eLogType::Warning);
 		saveInFile();
 		return;
 	}
@@ -204,8 +204,8 @@ void cSettings::loadFromJsonFile (const std::string& path)
 	}
 	catch (const std::exception& e)
 	{
-		Log.write (std::string ("Error while reading settings: ") + e.what(), cLog::eLOG_TYPE_WARNING);
-		Log.write ("Overwriting with default settings", cLog::eLOG_TYPE_WARNING);
+		Log.write (std::string ("Error while reading settings: ") + e.what(), cLog::eLogType::Warning);
+		Log.write ("Overwriting with default settings", cLog::eLogType::Warning);
 		saveInFile();
 	}
 }
@@ -227,13 +227,13 @@ void cSettings::initialize()
 	}
 	else
 	{
-		Log.write ("generating new settings", cLog::eLOG_TYPE_WARNING);
+		Log.write ("generating new settings", cLog::eLogType::Warning);
 		saveInFile();
 	}
 
 	to_lower (global.voiceLanguage);
-	if (!global.debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.json", cLog::eLOG_TYPE_WARNING);
-	else Log.write ("Debugmode enabled", cLog::eLOG_TYPE_INFO);
+	if (!global.debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.json", cLog::eLogType::Warning);
+	else Log.write ("Debugmode enabled", cLog::eLogType::Info);
 
 #if MAC
 	// Create saves directory, if it doesn't exist, yet.
@@ -241,9 +241,9 @@ void cSettings::initialize()
 	if (!FileExists (getSavesPath().c_str()))
 	{
 		if (mkdir (getSavesPath().c_str(), 0755) == 0)
-			Log.write ("Created new save directory " + getSavesPath(), cLog::eLOG_TYPE_INFO);
+			Log.write ("Created new save directory " + getSavesPath(), cLog::eLogType::Info);
 		else
-			Log.write ("Can't create save directory " + getSavesPath(), cLog::eLOG_TYPE_ERROR);
+			Log.write ("Can't create save directory " + getSavesPath(), cLog::eLogType::Error);
 	}
 #endif
 	initialized = true;

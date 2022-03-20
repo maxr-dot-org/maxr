@@ -52,7 +52,7 @@ void cActionStartMove::execute (cModel& model) const
 	cVehicle* vehicle = model.getVehicleFromID (unitId);
 	if (vehicle == nullptr)
 	{
-		Log.write (" Can't find vehicle with id " + std::to_string (unitId), cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Can't find vehicle with id " + std::to_string (unitId), cLog::eLogType::NetWarning);
 		return;
 	}
 	if (!vehicle->getOwner()) return;
@@ -72,32 +72,32 @@ void cActionStartMove::execute (cModel& model) const
 	// TODO: is this check really needed?
 	if (vehicle->isBeeingAttacked())
 	{
-		Log.write (" Cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle currently under attack", cLog::eLogType::NetDebug);
 		return;
 	}
 	if (vehicle->isAttacking())
 	{
-		Log.write (" Cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle currently attacking", cLog::eLogType::NetDebug);
 		return;
 	}
 	if (vehicle->isUnitBuildingABuilding() || vehicle->BuildPath)
 	{
-		Log.write (" Cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle currently building", cLog::eLogType::NetDebug);
 		return;
 	}
 	if (vehicle->isUnitClearing())
 	{
-		Log.write (" Cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle currently building", cLog::eLogType::NetDebug);
 		return;
 	}
 	if (vehicle->isDisabled())
 	{
-		Log.write (" Cannot move a vehicle currently disabled", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle currently disabled", cLog::eLogType::NetDebug);
 		return;
 	}
 	if (vehicle->isUnitMoving())
 	{
-		Log.write (" Cannot move a vehicle already moving", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Cannot move a vehicle already moving", cLog::eLogType::NetDebug);
 		return;
 	}
 

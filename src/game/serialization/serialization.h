@@ -97,7 +97,7 @@ namespace serialization
 		{
 			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&](const auto& p) { return p.first == e; });
 			if (it != sEnumStringMapping<E>::m.end()) return it->second;
-			Log.write (std::string ("Unknown ") + typeid (E).name() + " " + std::to_string (static_cast<int> (e)), cLog::eLOG_TYPE_WARNING);
+			Log.write (std::string ("Unknown ") + typeid (E).name() + " " + std::to_string (static_cast<int> (e)), cLog::eLogType::Warning);
 			return std::to_string (static_cast<int> (e));
 		}
 		static E fromString (const std::string& s)
@@ -105,7 +105,7 @@ namespace serialization
 			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&](const auto& p) { return p.second == s; });
 			if (it != sEnumStringMapping<E>::m.end()) return it->first;
 
-			Log.write (std::string ("Unknown ") + typeid (E).name() + " value " + s, cLog::eLOG_TYPE_WARNING);
+			Log.write (std::string ("Unknown ") + typeid (E).name() + " value " + s, cLog::eLogType::Warning);
 			throw std::runtime_error (std::string ("Unknown ") + typeid (E).name() + " value " + s);
 		}
 	};

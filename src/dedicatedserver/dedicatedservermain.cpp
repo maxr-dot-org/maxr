@@ -44,7 +44,7 @@ try
 
 	if (LoadData() == eLoadingState::Error)
 	{
-		Log.write ("Error while loading data!", cLog::eLOG_TYPE_ERROR);
+		Log.write ("Error while loading data!", cLog::eLogType::Error);
 		return -1;
 	}
 	cDedicatedServer (DEFAULTPORT).run();
@@ -53,6 +53,6 @@ try
 }
 catch (const std::exception& ex)
 {
-	Log.write (ex.what(), cLog::eLOG_TYPE_ERROR);
+	Log.write (ex.what(), cLog::eLogType::Error);
 	return -1;
 }

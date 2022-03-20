@@ -169,14 +169,14 @@ bool cMapReceiver::receiveData (const cMuMsgMapDownloadData& message)
 	std::ostringstream os;
 	os << "MapReceiver: Received Data for map " << mapName << ": "
 	   << bytesReceived << "/" << readBuffer.size();
-	Log.write (os.str(), cLog::eLOG_TYPE_DEBUG);
+	Log.write (os.str(), cLog::eLogType::Debug);
 	return true;
 }
 
 //------------------------------------------------------------------------------
 bool cMapReceiver::finished()
 {
-	Log.write ("MapReceiver: Received complete map", cLog::eLOG_TYPE_DEBUG);
+	Log.write ("MapReceiver: Received complete map", cLog::eLogType::Debug);
 
 	if (bytesReceived != readBuffer.size())
 		return false;
@@ -223,7 +223,7 @@ cMapSender::~cMapSender()
 		// the thread was not finished yet
 		// (else it would have deleted sendBuffer already)
 		// send a canceled msg to the client
-		Log.write ("MapSender: Canceling an unfinished upload thread", cLog::eLOG_TYPE_DEBUG);
+		Log.write ("MapSender: Canceling an unfinished upload thread", cLog::eLogType::Debug);
 		sendMsg (cMuMsgCanceledMapDownload());
 	}
 }
@@ -239,7 +239,7 @@ void cMapSender::runInThread()
 		}
 		catch (const std::exception& ex)
 		{
-			Log.write (std::string ("Exception: ") + ex.what(), cLog::eLOG_TYPE_ERROR);
+			Log.write (std::string ("Exception: ") + ex.what(), cLog::eLogType::Error);
 		}
 	});
 }
@@ -258,7 +258,7 @@ bool cMapSender::getMapFileContent()
 	}
 	if (!file.is_open())
 	{
-		Log.write (string ("MapSender: could not read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_WARNING);
+		Log.write (string ("MapSender: could not read the map \"") + filename + "\" into memory.", cLog::eLogType::Warning);
 		return false;
 	}
 	const std::size_t mapSize = file.tellg();
@@ -266,7 +266,7 @@ bool cMapSender::getMapFileContent()
 	file.seekg (0, ios::beg);
 	file.read (sendBuffer.data(), mapSize);
 	file.close();
-	Log.write (string ("MapSender: read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_DEBUG);
+	Log.write (string ("MapSender: read the map \"") + filename + "\" into memory.", cLog::eLogType::Debug);
 	return true;
 }
 
@@ -317,7 +317,7 @@ void cMapSender::sendMsg (cNetMessage& message)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("MapSender: --> " + json.dump (-1) + " to " + std::to_string (toPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("MapSender: --> " + json.dump (-1) + " to " + std::to_string (toPlayerNr), cLog::eLogType::NetDebug);
 
 	connectionManager.sendToPlayer (message, toPlayerNr);
 }

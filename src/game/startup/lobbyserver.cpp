@@ -126,12 +126,12 @@ eOpenServerResult cLobbyServer::startServer (int port)
 
 	if (connectionManager->openServer (port))
 	{
-		Log.write ("Error opening socket", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Error opening socket", cLog::eLogType::Warning);
 		return eOpenServerResult::Failed;
 	}
 	else
 	{
-		Log.write ("Game open (Port: " + std::to_string (port) + ")", cLog::eLOG_TYPE_INFO);
+		Log.write ("Game open (Port: " + std::to_string (port) + ")", cLog::eLogType::Info);
 		return eOpenServerResult::Success;
 	}
 }
@@ -153,7 +153,7 @@ void cLobbyServer::sendNetMessage (const cNetMessage& message, int receiverPlaye
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("LobbyServer: --> " + json.dump (-1) + " to " + std::to_string (receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyServer: --> " + json.dump (-1) + " to " + std::to_string (receiverPlayerNr), cLog::eLogType::NetDebug);
 
 	if (receiverPlayerNr == -1)
 		connectionManager->sendToPlayers (message);
@@ -167,7 +167,7 @@ void cLobbyServer::forwardMessage (const cNetMessage& message)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("LobbyServer: forward --> " + json.dump (-1) + " from " + std::to_string (message.playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyServer: forward --> " + json.dump (-1) + " from " + std::to_string (message.playerNr), cLog::eLogType::NetDebug);
 
 
 	for (auto& player : players)
@@ -260,7 +260,7 @@ void cLobbyServer::askedToFinishLobby (int fromPlayer)
 //------------------------------------------------------------------------------
 void cLobbyServer::sendChatMessage (const std::string& message, int receiverPlayerNr /*= -1*/)
 {
-	Log.write ("LobbyServer: --> " + message + " to " + std::to_string (receiverPlayerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyServer: --> " + message + " to " + std::to_string (receiverPlayerNr), cLog::eLogType::NetDebug);
 
 	if (receiverPlayerNr == -1)
 		connectionManager->sendToPlayers (cMuMsgChat (message));
@@ -274,7 +274,7 @@ void cLobbyServer::handleNetMessage (const cNetMessage& message)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("LobbyServer: <-- " + json.dump (-1), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyServer: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
 
 	switch (message.getType())
 	{
@@ -288,7 +288,7 @@ void cLobbyServer::handleNetMessage (const cNetMessage& message)
 			handleLobbyMessage (static_cast<const cMultiplayerLobbyMessage&> (message));
 			return;
 		default:
-			Log.write ("Lobby Server: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Lobby Server: Can not handle message", cLog::eLogType::NetError);
 			return;
 	}
 }
@@ -328,7 +328,7 @@ void cLobbyServer::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 			clientAbortsPreparation (static_cast<const cMuMsgPlayerAbortedGamePreparations&> (message));
 			break;
 		default:
-			Log.write ("LobbyServer: Can not handle message", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("LobbyServer: Can not handle message", cLog::eLogType::NetError);
 			break;
 	}
 }
@@ -503,7 +503,7 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 		}
 		catch (const std::runtime_error& e)
 		{
-			Log.write ((std::string)"Error loading save game: " + e.what(), cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ((std::string)"Error loading save game: " + e.what(), cLog::eLogType::NetError);
 			server.reset();
 			onErrorLoadSavedGame (saveGameInfo.number);
 			return;
@@ -551,7 +551,7 @@ void cLobbyServer::clientLands (const cMuMsgLandingPosition& message)
 {
 	if (!landingPositionManager) return;
 
-	Log.write ("LobbyServer: received landing position from Player " + std::to_string (message.playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("LobbyServer: received landing position from Player " + std::to_string (message.playerNr), cLog::eLogType::NetDebug);
 
 	auto player = getPlayer (message.playerNr);
 	if (player == nullptr) return;

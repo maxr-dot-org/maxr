@@ -28,12 +28,12 @@ SDLNetComponent::SDLNetComponent()
 {
 	if (SDLNet_Init() == -1)
 	{
-		Log.write ("Could not init SDLNet_Init\nNetwork games won't be available!", cLog::eLOG_TYPE_WARNING);
-		Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
+		Log.write ("Could not init SDLNet_Init\nNetwork games won't be available!", cLog::eLogType::Warning);
+		Log.write (SDL_GetError(), cLog::eLogType::Warning);
 	}
 	else
 	{
-		Log.write ("Net started", cLog::eLOG_TYPE_INFO);
+		Log.write ("Net started", cLog::eLogType::Info);
 	}
 }
 
