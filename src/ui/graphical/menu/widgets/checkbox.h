@@ -63,7 +63,7 @@ enum class eCheckBoxType
 	ArrowDownSmall
 };
 
-enum eCheckBoxTextAnchor
+enum class eCheckBoxTextAnchor
 {
 	Left,
 	Right
