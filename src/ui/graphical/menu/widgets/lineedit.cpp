@@ -134,7 +134,7 @@ void cLineEdit::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 
 	const auto offsetRect = getTextDrawOffset();
 	const cPosition textPosition = getPosition() + offsetRect;
-	const auto cursorXOffset = cUnicodeFont::getFontSize (fontType) == FONT_SIZE_SMALL ? -1 : 0;
+	const auto cursorXOffset = cUnicodeFont::getFontSize (fontType) == eUnicodeFontSize::Small ? -1 : 0;
 
 	auto font = cUnicodeFont::font.get();
 	font->showText (textPosition.x(), textPosition.y(), text.substr (startOffset, endOffset - startOffset), fontType);

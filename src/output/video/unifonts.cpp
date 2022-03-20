@@ -870,15 +870,15 @@ int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype) const
 		default:
 		case FONT_LATIN_NORMAL:
 		case FONT_LATIN_NORMAL_RED:
-			return FONT_SIZE_NORMAL;
+			return eUnicodeFontSize::Normal;
 		case FONT_LATIN_BIG:
 		case FONT_LATIN_BIG_GOLD:
-			return FONT_SIZE_BIG;
+			return eUnicodeFontSize::Big;
 		case FONT_LATIN_SMALL_WHITE:
 		case FONT_LATIN_SMALL_RED:
 		case FONT_LATIN_SMALL_GREEN:
 		case FONT_LATIN_SMALL_YELLOW:
-			return FONT_SIZE_SMALL;
+			return eUnicodeFontSize::Small;
 	}
 }
 

@@ -42,11 +42,11 @@ enum eUnicodeFontType
 };
 
 /** different sizes that fonttypes can have*/
-enum eUnicodeFontSize
+enum class eUnicodeFontSize
 {
-	FONT_SIZE_NORMAL,
-	FONT_SIZE_BIG,
-	FONT_SIZE_SMALL,
+	Normal,
+	Big,
+	Small,
 };
 
 /** different ISO-8559-X charsets*/
