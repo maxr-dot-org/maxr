@@ -50,25 +50,25 @@ enum class eUnicodeFontSize
 };
 
 /** different ISO-8559-X charsets*/
-enum eUnicodeFontCharset
+enum class eUnicodeFontCharset
 {
-	CHARSET_ISO8559_ALL, // main part of the charsets which is the same in all charsets
-	CHARSET_ISO8559_1,
-	CHARSET_ISO8559_2,
-	CHARSET_ISO8559_3,
-	CHARSET_ISO8559_4,
-	CHARSET_ISO8559_5,
-	CHARSET_ISO8559_6,
-	CHARSET_ISO8559_7,
-	CHARSET_ISO8559_8,
-	CHARSET_ISO8559_9,
-	CHARSET_ISO8559_10,
-	CHARSET_ISO8559_11,
-	CHARSET_ISO8559_12, // doesn't exists but is just a placeholder that the enum-numbers are the same as the iso-numbers
-	CHARSET_ISO8559_13,
-	CHARSET_ISO8559_14,
-	CHARSET_ISO8559_15,
-	CHARSET_ISO8559_16,
+	Iso8559_ALL = 0, // main part of the charsets which is the same in all charsets
+	Iso8559_1,
+	Iso8559_2,
+	Iso8559_3,
+	Iso8559_4,
+	Iso8559_5,
+	Iso8559_6,
+	Iso8559_7,
+	Iso8559_8,
+	Iso8559_9,
+	Iso8559_10,
+	Iso8559_11,
+	Iso8559_12, // doesn't exists but is just a placeholder that the enum-numbers are the same as the iso-numbers
+	Iso8559_13,
+	Iso8559_14,
+	Iso8559_15,
+	Iso8559_16,
 };
 
 /**

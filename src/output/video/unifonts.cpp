@@ -238,7 +238,7 @@ static const unsigned short iso8859_10_2uni[96] =
 	0x00f8, 0x0173, 0x00fa, 0x00fb, 0x00fc, 0x00fd, 0x00fe, 0x0138,
 };
 
-// ISO-8859-11 isn't supportet yet
+// ISO-8859-11 isn't supported yet
 
 // ISO-8859-12 doesn't exists
 
@@ -324,44 +324,44 @@ cUnicodeFont::cUnicodeFont()
 {
 	// load all existing fonts.
 	// If there will be added some, they have also to be added here!
-	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinNormal);
-	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinNormal);
-	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinNormal);
-	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinNormal);
+	loadChars (eUnicodeFontCharset::Iso8559_ALL, eUnicodeFontType::LatinNormal);
+	loadChars (eUnicodeFontCharset::Iso8559_1, eUnicodeFontType::LatinNormal);
+	loadChars (eUnicodeFontCharset::Iso8559_2, eUnicodeFontType::LatinNormal);
+	loadChars (eUnicodeFontCharset::Iso8559_5, eUnicodeFontType::LatinNormal);
 
-	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinNormalRed);
-	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinNormalRed);
-	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinNormalRed);
-	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinNormalRed);
+	loadChars (eUnicodeFontCharset::Iso8559_ALL, eUnicodeFontType::LatinNormalRed);
+	loadChars (eUnicodeFontCharset::Iso8559_1, eUnicodeFontType::LatinNormalRed);
+	loadChars (eUnicodeFontCharset::Iso8559_2, eUnicodeFontType::LatinNormalRed);
+	loadChars (eUnicodeFontCharset::Iso8559_5, eUnicodeFontType::LatinNormalRed);
 
-	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinBig);
-	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinBig);
-	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinBig);
-	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinBig);
+	loadChars (eUnicodeFontCharset::Iso8559_ALL, eUnicodeFontType::LatinBig);
+	loadChars (eUnicodeFontCharset::Iso8559_1, eUnicodeFontType::LatinBig);
+	loadChars (eUnicodeFontCharset::Iso8559_2, eUnicodeFontType::LatinBig);
+	loadChars (eUnicodeFontCharset::Iso8559_5, eUnicodeFontType::LatinBig);
 
-	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinBigGold);
-	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinBigGold);
-	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinBigGold);
+	loadChars (eUnicodeFontCharset::Iso8559_ALL, eUnicodeFontType::LatinBigGold);
+	loadChars (eUnicodeFontCharset::Iso8559_1, eUnicodeFontType::LatinBigGold);
+	loadChars (eUnicodeFontCharset::Iso8559_2, eUnicodeFontType::LatinBigGold);
 
-	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinSmallWhite);
-	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinSmallWhite);
-	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinSmallWhite);
-	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinSmallWhite);
+	loadChars (eUnicodeFontCharset::Iso8559_ALL, eUnicodeFontType::LatinSmallWhite);
+	loadChars (eUnicodeFontCharset::Iso8559_1, eUnicodeFontType::LatinSmallWhite);
+	loadChars (eUnicodeFontCharset::Iso8559_2, eUnicodeFontType::LatinSmallWhite);
+	loadChars (eUnicodeFontCharset::Iso8559_5, eUnicodeFontType::LatinSmallWhite);
 
-	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinSmallRed);
-	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinSmallRed);
-	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinSmallRed);
-	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinSmallRed);
+	loadChars (eUnicodeFontCharset::Iso8559_ALL, eUnicodeFontType::LatinSmallRed);
+	loadChars (eUnicodeFontCharset::Iso8559_1, eUnicodeFontType::LatinSmallRed);
+	loadChars (eUnicodeFontCharset::Iso8559_2, eUnicodeFontType::LatinSmallRed);
+	loadChars (eUnicodeFontCharset::Iso8559_5, eUnicodeFontType::LatinSmallRed);
 
-	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinSmallGreen);
-	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinSmallGreen);
-	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinSmallGreen);
-	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinSmallGreen);
+	loadChars (eUnicodeFontCharset::Iso8559_ALL, eUnicodeFontType::LatinSmallGreen);
+	loadChars (eUnicodeFontCharset::Iso8559_1, eUnicodeFontType::LatinSmallGreen);
+	loadChars (eUnicodeFontCharset::Iso8559_2, eUnicodeFontType::LatinSmallGreen);
+	loadChars (eUnicodeFontCharset::Iso8559_5, eUnicodeFontType::LatinSmallGreen);
 
-	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinSmallYellow);
-	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinSmallYellow);
-	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinSmallYellow);
-	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinSmallYellow);
+	loadChars (eUnicodeFontCharset::Iso8559_ALL, eUnicodeFontType::LatinSmallYellow);
+	loadChars (eUnicodeFontCharset::Iso8559_1, eUnicodeFontType::LatinSmallYellow);
+	loadChars (eUnicodeFontCharset::Iso8559_2, eUnicodeFontType::LatinSmallYellow);
+	loadChars (eUnicodeFontCharset::Iso8559_5, eUnicodeFontType::LatinSmallYellow);
 }
 
 void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType fonttype)
@@ -382,7 +382,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 	const unsigned short* iso8859_to_uni = getIsoPage (charset);
 
 	int highcount;
-	if (charset == CHARSET_ISO8559_ALL) highcount = 16;
+	if (charset == eUnicodeFontCharset::Iso8559_ALL) highcount = 16;
 	else highcount = 6;
 
 	int cellW = surface->w / 16;
@@ -441,8 +441,8 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 			int unicodeplace = 0;
 			if (iso8859_to_uni == nullptr)
 			{
-				if (charset == CHARSET_ISO8559_ALL) unicodeplace = currentChar;
-				else if (charset == CHARSET_ISO8559_1) unicodeplace = currentChar + 128 + 2 * 16;
+				if (charset == eUnicodeFontCharset::Iso8559_ALL) unicodeplace = currentChar;
+				else if (charset == eUnicodeFontCharset::Iso8559_1) unicodeplace = currentChar + 128 + 2 * 16;
 			}
 			else unicodeplace = iso8859_to_uni[currentChar];
 			chars[unicodeplace] = AutoSurface (SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0));
@@ -527,12 +527,12 @@ AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 			filename += "small";
 			break;
 	}
-	if (charset != CHARSET_ISO8559_ALL)
+	if (charset != eUnicodeFontCharset::Iso8559_ALL)
 	{
 		filename += "_iso-8559-";
 		// it's important that the enum-numbers are the same
-		// as theire iso-numbers!
-		filename += std::to_string (charset);
+		// as their iso-numbers!
+		filename += std::to_string (static_cast<int> (charset));
 	}
 	filename += ".pcx";
 
@@ -545,22 +545,22 @@ const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset) con
 {
 	switch (charset)
 	{
-		case CHARSET_ISO8559_ALL: return nullptr;
-		case CHARSET_ISO8559_1: return nullptr;
-		case CHARSET_ISO8559_2: return iso8859_2_2uni;
-		case CHARSET_ISO8559_3: return iso8859_3_2uni;
-		case CHARSET_ISO8559_4: return iso8859_4_2uni;
-		case CHARSET_ISO8559_5: return iso8859_5_2uni;
-		case CHARSET_ISO8559_6: return iso8859_6_2uni;
-		case CHARSET_ISO8559_7: return iso8859_7_2uni;
-		case CHARSET_ISO8559_8: return iso8859_8_2uni;
-		case CHARSET_ISO8559_9: return iso8859_9_2uni;
-		case CHARSET_ISO8559_10: return iso8859_10_2uni;
-		case CHARSET_ISO8559_11: return nullptr;
-		case CHARSET_ISO8559_13: return iso8859_13_2uni;
-		case CHARSET_ISO8559_14: return iso8859_14_2uni;
-		case CHARSET_ISO8559_15: return iso8859_15_2uni;
-		case CHARSET_ISO8559_16: return iso8859_16_2uni;
+		case eUnicodeFontCharset::Iso8559_ALL: return nullptr;
+		case eUnicodeFontCharset::Iso8559_1: return nullptr;
+		case eUnicodeFontCharset::Iso8559_2: return iso8859_2_2uni;
+		case eUnicodeFontCharset::Iso8559_3: return iso8859_3_2uni;
+		case eUnicodeFontCharset::Iso8559_4: return iso8859_4_2uni;
+		case eUnicodeFontCharset::Iso8559_5: return iso8859_5_2uni;
+		case eUnicodeFontCharset::Iso8559_6: return iso8859_6_2uni;
+		case eUnicodeFontCharset::Iso8559_7: return iso8859_7_2uni;
+		case eUnicodeFontCharset::Iso8559_8: return iso8859_8_2uni;
+		case eUnicodeFontCharset::Iso8559_9: return iso8859_9_2uni;
+		case eUnicodeFontCharset::Iso8559_10: return iso8859_10_2uni;
+		case eUnicodeFontCharset::Iso8559_11: return nullptr;
+		case eUnicodeFontCharset::Iso8559_13: return iso8859_13_2uni;
+		case eUnicodeFontCharset::Iso8559_14: return iso8859_14_2uni;
+		case eUnicodeFontCharset::Iso8559_15: return iso8859_15_2uni;
+		case eUnicodeFontCharset::Iso8559_16: return iso8859_16_2uni;
 		default:
 			//LOG: unknown iso format
 			break;
