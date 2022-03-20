@@ -35,7 +35,7 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 	cWindow (LoadPCX (GFXOD_DIALOG_RESEARCH), eWindowBackgrounds::Alpha),
 	player (player_)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 19), getPosition() + cPosition (getArea().getMaxCorner().x(), 19 + 10)), lngPack.i18n ("Text~Title~Load"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 19), getPosition() + cPosition (getArea().getMaxCorner().x(), 19 + 10)), lngPack.i18n ("Text~Title~Labs"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (23, 52), getPosition() + cPosition (23 + 40, 52 + 10)), lngPack.i18n ("Text~Comp~Labs"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (160, 52), getPosition() + cPosition (160 + 75, 52 + 10)), lngPack.i18n ("Text~Comp~Themes"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
