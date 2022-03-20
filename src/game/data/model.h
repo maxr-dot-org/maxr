@@ -270,7 +270,8 @@ private:
 
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
 
-	enum {TURN_ACTIVE, EXECUTE_REMAINING_MOVEMENTS, EXECUTE_TURN_START} turnEndState = TURN_ACTIVE;
+	enum class eTurnEndState {TurnActive, ExecuteRemainingMovements, ExecuteTurnStart};
+	eTurnEndState turnEndState = eTurnEndState::TurnActive;
 
 	/** lists with all FX-Animation */
 	cFxContainer effectsList;

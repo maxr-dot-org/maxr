@@ -681,7 +681,7 @@ void cModel::handleTurnEnd()
 {
 	switch (turnEndState)
 	{
-	case TURN_ACTIVE:
+		case eTurnEndState::TurnActive:
 		{
 			bool turnFinished = true;
 			if (gameSettings->gameType == eGameSettingsGameType::Simultaneous)
@@ -712,11 +712,11 @@ void cModel::handleTurnEnd()
 					player->turnEndMovementsStarted();
 				}
 
-				turnEndState = EXECUTE_REMAINING_MOVEMENTS;
+				turnEndState = eTurnEndState::ExecuteRemainingMovements;
 			}
 		}
 		break;
-	case EXECUTE_REMAINING_MOVEMENTS:
+		case eTurnEndState::ExecuteRemainingMovements:
 		{
 			bool activeMoveJob = false;
 			for (const auto& moveJob : moveJobs)
@@ -728,11 +728,11 @@ void cModel::handleTurnEnd()
 			}
 			if (!activeMoveJob)
 			{
-				turnEndState = EXECUTE_TURN_START;
+				turnEndState = eTurnEndState::ExecuteTurnStart;
 			}
 		}
 		break;
-	case EXECUTE_TURN_START:
+		case eTurnEndState::ExecuteTurnStart:
 		{
 			sNewTurnReport newTurnReport;
 			if (gameSettings->gameType == eGameSettingsGameType::Simultaneous)
@@ -794,7 +794,7 @@ void cModel::handleTurnEnd()
 				}
 			}
 
-			turnEndState = TURN_ACTIVE;
+			turnEndState = eTurnEndState::TurnActive;
 			newTurnStarted (newTurnReport);
 		}
 		break;
