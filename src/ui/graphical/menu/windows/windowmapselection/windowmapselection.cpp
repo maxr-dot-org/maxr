@@ -37,7 +37,7 @@
 cWindowMapSelection::cWindowMapSelection() :
 	cWindow (LoadPCX (GFXOD_PLANET_SELECT))
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Planet"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Planet"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	//
 	// Map Images
@@ -51,7 +51,7 @@ cWindowMapSelection::cWindowMapSelection() :
 			mapImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (21 + 158 * column, 86 + 198 * row), nullptr, &SoundData.SNDHudButton));
 			signalConnectionManager.connect (mapImages[index]->clicked, [this, index]() { mapClicked (index); });
 
-			mapTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (6 + 158 * column, 48 + 198 * row), getPosition() + cPosition (155 + 158 * column, 48 + 10 + 198 * row)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+			mapTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (6 + 158 * column, 48 + 198 * row), getPosition() + cPosition (155 + 158 * column, 48 + 10 + 198 * row)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 		}
 	}
 

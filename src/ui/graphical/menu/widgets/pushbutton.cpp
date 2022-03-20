@@ -35,14 +35,14 @@
 cPushButton::cPushButton (const cBox<cPosition>& area) :
 	cClickableWidget (area),
 	buttonType (ePushButtonType::Invisible),
-	fontType (FONT_LATIN_BIG),
+	fontType (eUnicodeFontType::LatinBig),
 	text (""),
 	clickSound (&SoundData.SNDHudButton),
 	isLocked (false)
 
 {
 	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
-		fontType = FONT_LATIN_SMALL_WHITE;
+		fontType = eUnicodeFontType::LatinSmallWhite;
 	renewSurface();
 }
 
@@ -50,13 +50,13 @@ cPushButton::cPushButton (const cBox<cPosition>& area) :
 cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_) :
 	cClickableWidget (position),
 	buttonType (buttonType_),
-	fontType (FONT_LATIN_BIG),
+	fontType (eUnicodeFontType::LatinBig),
 	text (""),
 	clickSound (&SoundData.SNDHudButton),
 	isLocked (false)
 {
 	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
-		fontType = FONT_LATIN_SMALL_WHITE;
+		fontType = eUnicodeFontType::LatinSmallWhite;
 	renewSurface();
 }
 
@@ -64,13 +64,13 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_, cSoundChunk* clickSound_) :
 	cClickableWidget (position),
 	buttonType (buttonType_),
-	fontType (FONT_LATIN_BIG),
+	fontType (eUnicodeFontType::LatinBig),
 	text (""),
 	clickSound (clickSound_),
 	isLocked (false)
 {
 	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
-		fontType = FONT_LATIN_SMALL_WHITE;
+		fontType = eUnicodeFontType::LatinSmallWhite;
 	renewSurface();
 }
 
@@ -84,7 +84,7 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 	isLocked (false)
 {
 	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
-		fontType = FONT_LATIN_SMALL_WHITE;
+		fontType = eUnicodeFontType::LatinSmallWhite;
 	renewSurface();
 }
 
@@ -98,7 +98,7 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 	isLocked (false)
 {
 	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
-		fontType = FONT_LATIN_SMALL_WHITE;
+		fontType = eUnicodeFontType::LatinSmallWhite;
 	renewSurface();
 }
 
@@ -113,9 +113,9 @@ void cPushButton::draw (SDL_Surface& destination, const cBox<cPosition>& clipRec
 		auto font = cUnicodeFont::font.get();
 		if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
 		{
-			if (isPressed || isLocked) font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset(), text, FONT_LATIN_SMALL_GREEN);
-			else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset() - 1, text, FONT_LATIN_SMALL_RED);
-			font->showTextCentered (position.x + position.w / 2 - 1, position.y + getTextYOffset() - 1 + (isPressed || isLocked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
+			if (isPressed || isLocked) font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset(), text, eUnicodeFontType::LatinSmallGreen);
+			else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset() - 1, text, eUnicodeFontType::LatinSmallRed);
+			font->showTextCentered (position.x + position.w / 2 - 1, position.y + getTextYOffset() - 1 + (isPressed || isLocked ? 1 : 0), text, eUnicodeFontType::LatinSmallWhite);
 		}
 		else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset(), text, fontType);
 	}

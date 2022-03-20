@@ -28,7 +28,7 @@
 cTurnTimeClockWidget::cTurnTimeClockWidget (const cBox<cPosition>& area) :
 	cWidget (area)
 {
-	textLabel = addChild (std::make_unique <cLabel> (area, "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	textLabel = addChild (std::make_unique <cLabel> (area, "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 }
 
 //------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ void cTurnTimeClockWidget::update()
 	if (turnTimeClock == nullptr)
 	{
 		textLabel->setText ("");
-		textLabel->setFont (FONT_LATIN_NORMAL);
+		textLabel->setFont (eUnicodeFontType::LatinNormal);
 		return;
 	}
 	const auto time = turnTimeClock->hasDeadline() ? turnTimeClock->getTimeTillFirstDeadline() : turnTimeClock->getTimeSinceStart();
@@ -61,10 +61,10 @@ void cTurnTimeClockWidget::update()
 
 	if (turnTimeClock->hasDeadline() && std::chrono::duration_cast<std::chrono::seconds> (time) <= cTurnTimeClock::alertRemainingTime)
 	{
-		textLabel->setFont (FONT_LATIN_NORMAL_RED);
+		textLabel->setFont (eUnicodeFontType::LatinNormalRed);
 	}
 	else
 	{
-		textLabel->setFont (FONT_LATIN_NORMAL);
+		textLabel->setFont (eUnicodeFontType::LatinNormal);
 	}
 }

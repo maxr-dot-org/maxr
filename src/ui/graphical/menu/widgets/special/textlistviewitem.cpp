@@ -23,9 +23,9 @@
 
 //------------------------------------------------------------------------------
 cTextListViewItem::cTextListViewItem (const std::string& text) :
-	cAbstractListViewItem (cPosition (50, cUnicodeFont::font->getFontHeight (FONT_LATIN_NORMAL)))
+	cAbstractListViewItem (cPosition (50, cUnicodeFont::font->getFontHeight (eUnicodeFontType::LatinNormal)))
 {
-	label = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (0, 0), cPosition (getSize().x() - 1, cUnicodeFont::font->getFontHeight (FONT_LATIN_NORMAL))), text));
+	label = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (0, 0), cPosition (getSize().x() - 1, cUnicodeFont::font->getFontHeight (eUnicodeFontType::LatinNormal))), text));
 	label->setConsumeClick (false);
 }
 

@@ -29,16 +29,16 @@
 class cPosition;
 
 /** different fonttypes*/
-enum eUnicodeFontType
+enum class eUnicodeFontType
 {
-	FONT_LATIN_NORMAL,
-	FONT_LATIN_NORMAL_RED,
-	FONT_LATIN_BIG,
-	FONT_LATIN_BIG_GOLD,
-	FONT_LATIN_SMALL_WHITE,
-	FONT_LATIN_SMALL_RED,
-	FONT_LATIN_SMALL_GREEN,
-	FONT_LATIN_SMALL_YELLOW,
+	LatinNormal,
+	LatinNormalRed,
+	LatinBig,
+	LatinBigGold,
+	LatinSmallWhite,
+	LatinSmallRed,
+	LatinSmallGreen,
+	LatinSmallYellow,
 };
 
 /** different sizes that fonttypes can have*/
@@ -93,23 +93,23 @@ public:
 	 * @author beko
 	 * @param rdest destination to start drawing
 	 * @param sText text to draw
-	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 */
 	void showText (SDL_Rect rDest, const std::string& sText,
-				   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+				   eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 	/**
 	 * Displays a text
 	 * @author beko
 	 * @param x position x to start drawing
 	 * @param y position y to start drawing
 	 * @param sText text to draw
-	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 */
 	void showText (int x, int y, const std::string& sText,
-				   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+				   eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 
 	void showText (const cPosition& position, const std::string& sText,
-				   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+				   eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 
 	/**
 	 * Displays a text as block.<br><br>
@@ -121,58 +121,58 @@ public:
 	 * @param rDest SDL_Rect for position and wide of textbox.
 	 *        Height is not taken care of!
 	 * @param sText text to draw
-	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 */
 	int showTextAsBlock (SDL_Rect rDest, const std::string& sText,
-						 eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+						 eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 	/**
 	 * Displays a text centered on given X
 	 * @author beko
 	 * @param rDest DL_Rect for position.<br>Use X for position to center on.
 	 *              <br>Y is not taken care of!
 	 * @param sText text to draw
-	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 */
 	void showTextCentered (SDL_Rect rDest, const std::string& sText,
-						   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+						   eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 	/**
 	 * Displays a text centered on given X
 	 * @author beko
 	 * @param x Use X for position to center on.<br>Y is not taken care of!
 	 * @param y position y to start drawing
 	 * @param sText text to draw
-	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 */
 	void showTextCentered (int x, int y, const std::string& sText,
-						   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+						   eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 
 	void showTextCentered (const cPosition& pos, const std::string& sText,
-						   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+						   eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 	/**
 	 * Calculates the needed width for a text in pixels
 	 * @author beko
 	 * @param sText text to check
-	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 * @return needed width for text
 	 */
 	int getTextWide (const std::string& sText,
-					 eUnicodeFontType fonttype = FONT_LATIN_NORMAL) const;
+					 eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal) const;
 	/**
 	 * Calculates the needed space for a text in pixels
 	 * @author beko
 	 * @param sText text to check
-	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 * @return SDL_Rect with needed width and height for text
 	 */
 	SDL_Rect getTextSize (const std::string& sText,
-						  eUnicodeFontType fonttype = FONT_LATIN_NORMAL) const;
+						  eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal) const;
 	/**
 	 * Holds information of font height
 	 * @author beko
-	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 * @return Height of fonttype in pixels
 	 */
-	int getFontHeight (eUnicodeFontType fonttype = FONT_LATIN_NORMAL) const;
+	int getFontHeight (eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal) const;
 	/**
 	 * Holds information of font size
 	 * @author alzi

@@ -77,8 +77,8 @@ public:
 	explicit cPushButton (const cBox<cPosition>& area);
 	cPushButton (const cPosition&, ePushButtonType);
 	cPushButton (const cPosition&, ePushButtonType, cSoundChunk* clickSound);
-	cPushButton (const cPosition&, ePushButtonType, const std::string& text, eUnicodeFontType = FONT_LATIN_BIG);
-	cPushButton (const cPosition&, ePushButtonType, cSoundChunk* clickSound, const std::string& text, eUnicodeFontType = FONT_LATIN_BIG);
+	cPushButton (const cPosition&, ePushButtonType, const std::string& text, eUnicodeFontType = eUnicodeFontType::LatinBig);
+	cPushButton (const cPosition&, ePushButtonType, cSoundChunk* clickSound, const std::string& text, eUnicodeFontType = eUnicodeFontType::LatinBig);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;

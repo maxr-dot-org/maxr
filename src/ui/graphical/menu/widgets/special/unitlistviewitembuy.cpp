@@ -27,7 +27,7 @@
 cUnitListViewItemBuy::cUnitListViewItemBuy (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData& unitsData) :
 	cUnitListViewItem (width, unitId, owner, unitsData)
 {
-	auto costLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (width - 15, 0), cPosition (width, unitImage->getEndPosition().y())), std::to_string (owner.getUnitDataCurrentVersion (unitId)->getBuildCost()), FONT_LATIN_SMALL_YELLOW, toEnumFlag (eAlignmentType::Right) | eAlignmentType::CenterVerical));
+	auto costLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (width - 15, 0), cPosition (width, unitImage->getEndPosition().y())), std::to_string (owner.getUnitDataCurrentVersion (unitId)->getBuildCost()), eUnicodeFontType::LatinSmallYellow, toEnumFlag (eAlignmentType::Right) | eAlignmentType::CenterVerical));
 	costLabel->setConsumeClick (false);
 
 	nameLabel->resize (nameLabel->getSize() - cPosition (15, 0));
@@ -36,11 +36,11 @@ cUnitListViewItemBuy::cUnitListViewItemBuy (unsigned int width, const sID& unitI
 //------------------------------------------------------------------------------
 void cUnitListViewItemBuy::markAsInsufficient()
 {
-	nameLabel->setFont (FONT_LATIN_SMALL_RED);
+	nameLabel->setFont (eUnicodeFontType::LatinSmallRed);
 }
 
 //------------------------------------------------------------------------------
 void cUnitListViewItemBuy::unmarkAsInsufficient()
 {
-	nameLabel->setFont (FONT_LATIN_SMALL_WHITE);
+	nameLabel->setFont (eUnicodeFontType::LatinSmallWhite);
 }

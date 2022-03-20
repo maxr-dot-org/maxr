@@ -99,11 +99,11 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	hudPanels = addChild (std::make_unique<cHudPanels> (getPosition(), getSize().y(), animationTimer));
 
 	auto font = cUnicodeFont::font.get();
-	primiaryInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (FONT_LATIN_BIG))), "", FONT_LATIN_BIG, toEnumFlag (eAlignmentType::CenterHorizontal)  | eAlignmentType::Top));
+	primiaryInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig))), "", eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::CenterHorizontal)  | eAlignmentType::Top));
 	primiaryInfoLabel->disable();
 	primiaryInfoLabel->hide();
 
-	additionalInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235 + font->getFontHeight (FONT_LATIN_BIG)), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (FONT_LATIN_BIG) + font->getFontHeight (FONT_LATIN_NORMAL))), "", FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal)  | eAlignmentType::Top));
+	additionalInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig)), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig) + font->getFontHeight (eUnicodeFontType::LatinNormal))), "", eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal)  | eAlignmentType::Top));
 	additionalInfoLabel->disable();
 	additionalInfoLabel->hide();
 
@@ -891,8 +891,8 @@ void cGameGui::handleResolutionChange()
 
 	chatBox->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition().y() - cHud::panelBottomHeight - 12 - 100), getEndPosition() - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12)));
 
-	primiaryInfoLabel->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (FONT_LATIN_BIG))));
-	additionalInfoLabel->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235 + font->getFontHeight (FONT_LATIN_BIG)), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (FONT_LATIN_BIG) + font->getFontHeight (FONT_LATIN_NORMAL))));
+	primiaryInfoLabel->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig))));
+	additionalInfoLabel->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig)), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig) + font->getFontHeight (eUnicodeFontType::LatinNormal))));
 
 	debugOutput->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition().x() - cHud::panelRightWidth - 8, getEndPosition().y() - cHud::panelBottomHeight - 8)));
 }

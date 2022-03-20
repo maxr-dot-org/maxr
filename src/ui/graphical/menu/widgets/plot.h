@@ -463,13 +463,13 @@ void cPlot<T, U>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRec
 	// draw axes
 	drawLine (destination, getPosition() + origin, getPosition() + origin + cPosition (xPixelWidth, 0), xAxis.getColor());
 
-	font->showTextCentered (getPosition() + origin + cPosition (0, 2), std::to_string (xAxis.getMinValue()), FONT_LATIN_SMALL_WHITE);
-	font->showTextCentered (getPosition() + origin + cPosition (xPixelWidth, 2), std::to_string (xAxis.getMaxValue()), FONT_LATIN_SMALL_WHITE);
+	font->showTextCentered (getPosition() + origin + cPosition (0, 2), std::to_string (xAxis.getMinValue()), eUnicodeFontType::LatinSmallWhite);
+	font->showTextCentered (getPosition() + origin + cPosition (xPixelWidth, 2), std::to_string (xAxis.getMaxValue()), eUnicodeFontType::LatinSmallWhite);
 
 	drawLine (destination, getPosition() + origin, getPosition() + origin + cPosition (0, -yPixelWidth), yAxis.getColor());
 
-	font->showText (getPosition() + origin + cPosition (-16, -font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2), std::to_string (yAxis.getMinValue()), FONT_LATIN_SMALL_WHITE);
-	font->showText (getPosition() + origin + cPosition (-16, -yPixelWidth - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2), std::to_string (yAxis.getMaxValue()), FONT_LATIN_SMALL_WHITE);
+	font->showText (getPosition() + origin + cPosition (-16, -font->getFontHeight (eUnicodeFontType::LatinSmallWhite) / 2), std::to_string (yAxis.getMinValue()), eUnicodeFontType::LatinSmallWhite);
+	font->showText (getPosition() + origin + cPosition (-16, -yPixelWidth - font->getFontHeight (eUnicodeFontType::LatinSmallWhite) / 2), std::to_string (yAxis.getMaxValue()), eUnicodeFontType::LatinSmallWhite);
 
 	// draw markers
 	for (const auto& marker : xMarkers)
@@ -479,7 +479,7 @@ void cPlot<T, U>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRec
 		const auto pixelX = toPixelX (marker.getValue());
 		drawLine (destination, getPosition() + origin + cPosition (pixelX, 0), getPosition() + origin + cPosition (pixelX, -yPixelWidth), marker.getColor());
 
-		font->showTextCentered (getPosition() + origin + cPosition (pixelX, 2), std::to_string (marker.getValue()), FONT_LATIN_SMALL_WHITE);
+		font->showTextCentered (getPosition() + origin + cPosition (pixelX, 2), std::to_string (marker.getValue()), eUnicodeFontType::LatinSmallWhite);
 	}
 
 	for (const auto& marker : yMarkers)
@@ -489,7 +489,7 @@ void cPlot<T, U>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRec
 		const auto pixelY = toPixelY (marker.getValue());
 		drawLine (destination, getPosition() + origin + cPosition (0, -pixelY), getPosition() + origin + cPosition (xPixelWidth, -pixelY), marker.getColor());
 
-		font->showText (getPosition() + origin + cPosition (-16, -pixelY - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2), std::to_string (marker.getValue()), FONT_LATIN_SMALL_WHITE);
+		font->showText (getPosition() + origin + cPosition (-16, -pixelY - font->getFontHeight (eUnicodeFontType::LatinSmallWhite) / 2), std::to_string (marker.getValue()), eUnicodeFontType::LatinSmallWhite);
 	}
 	cWidget::draw (destination, clipRect);
 }

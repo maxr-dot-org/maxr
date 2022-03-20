@@ -45,14 +45,14 @@ cDialogLicense::cDialogLicense() :
 {
 	auto* font = cUnicodeFont::font.get();
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight())), "\"M.A.X.R.\"", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight())), "\"M.A.X.R.\"", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
-	headerLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30 + font->getFontHeight()), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight() * 2)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	headerLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30 + font->getFontHeight()), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight() * 2)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
-	textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 35 + font->getFontHeight() * 3), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight() * 3 + 142)), "", FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
+	textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 35 + font->getFontHeight() * 3), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight() * 3 + 142)), "", eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
 	textLabel->setWordWrap (true);
 
-	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), FONT_LATIN_NORMAL));
+	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), eUnicodeFontType::LatinNormal));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { close(); });
@@ -154,22 +154,22 @@ void cDialogLicense::resetTexts()
 		default:
 		case 0:
 			textLabel->setText (page0Text);
-			textLabel->setFont (FONT_LATIN_NORMAL);
+			textLabel->setFont (eUnicodeFontType::LatinNormal);
 			headerLabel->setText (generalHeader);
 			break;
 		case 1:
 			textLabel->setText (page1Text);
-			textLabel->setFont (FONT_LATIN_NORMAL);
+			textLabel->setFont (eUnicodeFontType::LatinNormal);
 			headerLabel->setText (generalHeader);
 			break;
 		case 2:
 			textLabel->setText (page2Text);
-			textLabel->setFont (FONT_LATIN_NORMAL);
+			textLabel->setFont (eUnicodeFontType::LatinNormal);
 			headerLabel->setText (generalHeader);
 			break;
 		case 3:
 			textLabel->setText (authors);
-			textLabel->setFont (FONT_LATIN_SMALL_WHITE);
+			textLabel->setFont (eUnicodeFontType::LatinSmallWhite);
 			headerLabel->setText (authorsHeader);
 			break;
 	}

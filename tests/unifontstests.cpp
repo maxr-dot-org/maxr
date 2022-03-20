@@ -61,7 +61,7 @@ namespace
 		const auto font = std::make_unique<cUnicodeFont> (cUnitTestTag{});
 		const auto text = concatenateLines (expected);
 
-		auto res = font->breakText (text, text.size() * charWidth, FONT_LATIN_NORMAL);
+		auto res = font->breakText (text, text.size() * charWidth, eUnicodeFontType::LatinNormal);
 
 		CHECK_EQUAL (std::regex_replace (text, std::regex ("\n"), "|"),
 					std::regex_replace (concatenateLines (res, "|"), std::regex ("\n"), "\\n"));
@@ -91,7 +91,7 @@ namespace
 	{
 		const auto font = std::make_unique<cUnicodeFont> (cUnitTestTag{});
 
-		auto res = font->breakText (text, nbPixels, FONT_LATIN_NORMAL);
+		auto res = font->breakText (text, nbPixels, eUnicodeFontType::LatinNormal);
 
 		CHECK_EQUAL (expected, concatenateLines (res, "|"));
 	}

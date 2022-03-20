@@ -50,10 +50,10 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	localPlayer (std::make_shared<cPlayerBasicData> (cPlayerBasicData::fromSettings())),
 	saveGameInfo (-1)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), title, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	mapImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (33, 106)));
-	mapNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (90 - 70, 65), getPosition() + cPosition (90 + 70, 65 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	mapNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (90 - 70, 65), getPosition() + cPosition (90 + 70, 65 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	settingsTextLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (192, 52), getPosition() + cPosition (192 + 246, 52 + 175)), ""));
 	settingsTextLabel->setWordWrap (true);
@@ -68,10 +68,10 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	chatList->setEndMargin (cPosition (10, 10));
 	chatList->setScrollOffset (cUnicodeFont::font->getFontHeight() + 3);
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 245), getPosition() + cPosition (20 + 170, 245 + 10)), lngPack.i18n ("Text~Title~IP"), FONT_LATIN_NORMAL, eAlignmentType::Left));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (228, 245), getPosition() + cPosition (228 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Port"), FONT_LATIN_NORMAL, eAlignmentType::Left));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (352, 245), getPosition() + cPosition (352 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Player_Name"), FONT_LATIN_NORMAL, eAlignmentType::Left));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 245), getPosition() + cPosition (500 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Color"), FONT_LATIN_NORMAL, eAlignmentType::Left));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 245), getPosition() + cPosition (20 + 170, 245 + 10)), lngPack.i18n ("Text~Title~IP"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (228, 245), getPosition() + cPosition (228 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Port"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (352, 245), getPosition() + cPosition (352 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 245), getPosition() + cPosition (500 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
 
 	ipLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (20, 260), getPosition() + cPosition (20 + 178, 260 + 10))));
 	if (disableIp)

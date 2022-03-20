@@ -39,7 +39,7 @@ cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::sha
 	cWindowHangar (LoadPCX (GFXOD_BUILD_SCREEN), unitsData, *vehicle_.getOwner()),
 	vehicle (vehicle_)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Vehicle"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Vehicle"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10))));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
@@ -57,7 +57,7 @@ cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::sha
 
 	if (vehicle.getStaticData().canBuildPath)
 	{
-		auto pathButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (338, 428), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Path"), FONT_LATIN_NORMAL));
+		auto pathButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (338, 428), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Path"), eUnicodeFontType::LatinNormal));
 		signalConnectionManager.connect (pathButton->clicked, [this]() { donePath(); });
 	}
 

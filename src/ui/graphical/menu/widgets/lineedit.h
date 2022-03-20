@@ -41,7 +41,7 @@ enum class eLineEditFrameType
 class cLineEdit : public cClickableWidget
 {
 public:
-	cLineEdit (const cBox<cPosition>& area, eLineEditFrameType = eLineEditFrameType::None, eUnicodeFontType = FONT_LATIN_NORMAL);
+	cLineEdit (const cBox<cPosition>& area, eLineEditFrameType = eLineEditFrameType::None, eUnicodeFontType = eUnicodeFontType::LatinNormal);
 	~cLineEdit();
 
 	const std::string& getText();

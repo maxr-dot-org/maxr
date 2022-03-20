@@ -45,7 +45,7 @@ cComboBox::cComboBox (const cBox<cPosition>& area) :
 	downButton = addChild (std::make_unique<cCheckBox> (getEndPosition(), eCheckBoxType::ArrowDownSmall));
 	downButton->move (downButton->getSize() * -1);
 
-	const cBox<cPosition> lineEditArea (getPosition() + cPosition (2, (area.getSize().y() - font->getFontHeight (FONT_LATIN_NORMAL)) / 2) + 1, cPosition (getEndPosition().x() - downButton->getSize().x() - 2, getPosition().y() + (area.getSize().y() - font->getFontHeight (FONT_LATIN_NORMAL)) / 2 + font->getFontHeight (FONT_LATIN_NORMAL)));
+	const cBox<cPosition> lineEditArea (getPosition() + cPosition (2, (area.getSize().y() - font->getFontHeight (eUnicodeFontType::LatinNormal)) / 2) + 1, cPosition (getEndPosition().x() - downButton->getSize().x() - 2, getPosition().y() + (area.getSize().y() - font->getFontHeight (eUnicodeFontType::LatinNormal)) / 2 + font->getFontHeight (eUnicodeFontType::LatinNormal)));
 	lineEdit = addChild (std::make_unique<cLineEdit> (lineEditArea));
 	lineEdit->setReadOnly (true);
 
@@ -123,7 +123,7 @@ void cComboBox::updateListViewSize()
 {
 	const auto visibleItems = static_cast<int> (std::min (maxVisibleItems, listView->getItemsCount()));
 
-	const auto itemHeight = cUnicodeFont::font->getFontHeight (FONT_LATIN_NORMAL) + 1;
+	const auto itemHeight = cUnicodeFont::font->getFontHeight (eUnicodeFontType::LatinNormal) + 1;
 
 	const auto requiredSize = listView->getBeginMargin().y() + listView->getEndMargin().y() + itemHeight * visibleItems + (visibleItems > 0 ? (listView->getItemDistance() * (visibleItems - 1)) : 0) + 1;
 

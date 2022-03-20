@@ -73,7 +73,7 @@ class cCheckBox : public cClickableWidget
 {
 public:
 	explicit cCheckBox (const cPosition&, eCheckBoxType = eCheckBoxType::Standard, bool centered = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
-	cCheckBox (const cPosition&, const std::string& text, eUnicodeFontType = FONT_LATIN_NORMAL, eCheckBoxTextAnchor = eCheckBoxTextAnchor::Right, eCheckBoxType = eCheckBoxType::Standard, bool centered = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
+	cCheckBox (const cPosition&, const std::string& text, eUnicodeFontType = eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor = eCheckBoxTextAnchor::Right, eCheckBoxType = eCheckBoxType::Standard, bool centered = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
 
 	void setChecked (bool checked);
 	bool isChecked() const;

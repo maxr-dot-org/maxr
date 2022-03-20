@@ -78,10 +78,10 @@ cWindowReports::cWindowReports (const cModel& model,
 	turnTimeClockWidget->setTurnTimeClock (model.getTurnTimeClock());
 
 	auto typeButtonGroup = addChild (std::make_unique<cRadioGroup>());
-	unitsRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71), lngPack.i18n ("Text~Others~Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
-	disadvantagesRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29), lngPack.i18n ("Text~Others~Disadvantages_8cut"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
-	scoreRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29 * 2), lngPack.i18n ("Text~Others~Score"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
-	reportsRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29 * 3), lngPack.i18n ("Text~Others~Reports"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+	unitsRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71), lngPack.i18n ("Text~Others~Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+	disadvantagesRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29), lngPack.i18n ("Text~Others~Disadvantages_8cut"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+	scoreRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29 * 2), lngPack.i18n ("Text~Others~Score"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+	reportsRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29 * 3), lngPack.i18n ("Text~Others~Reports"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 
 	signalConnectionManager.connect (unitsRadioButton->toggled, [this]() { updateActiveFrame(); });
 	signalConnectionManager.connect (disadvantagesRadioButton->toggled, [this]() { updateActiveFrame(); });
@@ -90,10 +90,10 @@ cWindowReports::cWindowReports (const cModel& model,
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 207), getPosition() + cPosition (497 + 100, 207 + font->getFontHeight())), lngPack.i18n ("Text~Others~Included")));
 
-	planesCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218), lngPack.i18n ("Text~Others~Air_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
-	groundCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218 + 18), lngPack.i18n ("Text~Others~Ground_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
-	seaCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218 + 18 * 2), lngPack.i18n ("Text~Others~Sea_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
-	stationaryCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218 + 18 * 3), lngPack.i18n ("Text~Others~Stationary_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
+	planesCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218), lngPack.i18n ("Text~Others~Air_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
+	groundCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218 + 18), lngPack.i18n ("Text~Others~Ground_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
+	seaCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218 + 18 * 2), lngPack.i18n ("Text~Others~Sea_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
+	stationaryCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218 + 18 * 3), lngPack.i18n ("Text~Others~Stationary_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 
 	planesCheckBox->setChecked (true);
 	groundCheckBox->setChecked (true);
@@ -107,17 +107,17 @@ cWindowReports::cWindowReports (const cModel& model,
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 299), getPosition() + cPosition (497 + 100, 299 + font->getFontHeight())), lngPack.i18n ("Text~Others~Limited_To")));
 
-	produceCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312), lngPack.i18n ("Text~Others~Produce_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
-	fightCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312 + 18), lngPack.i18n ("Text~Others~Fight_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
-	damagedCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312 + 18 * 2), lngPack.i18n ("Text~Others~Damaged_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
-	stealthCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312 + 18 * 3), lngPack.i18n ("Text~Others~Stealth_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
+	produceCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312), lngPack.i18n ("Text~Others~Produce_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
+	fightCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312 + 18), lngPack.i18n ("Text~Others~Fight_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
+	damagedCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312 + 18 * 2), lngPack.i18n ("Text~Others~Damaged_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
+	stealthCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312 + 18 * 3), lngPack.i18n ("Text~Others~Stealth_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 
 	signalConnectionManager.connect (produceCheckBox->toggled, [this]() { handleFilterChanged(); });
 	signalConnectionManager.connect (fightCheckBox->toggled, [this]() { handleFilterChanged(); });
 	signalConnectionManager.connect (damagedCheckBox->toggled, [this]() { handleFilterChanged(); });
 	signalConnectionManager.connect (stealthCheckBox->toggled, [this]() { handleFilterChanged(); });
 
-	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (524, 395), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
+	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (524, 395), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { close(); });
 
@@ -145,7 +145,7 @@ cWindowReports::cWindowReports (const cModel& model,
 		const int row = static_cast<int> (i / cReportDisadvantagesListViewItem::maxItemsInRow);
 		const int col = static_cast<int> (i % cReportDisadvantagesListViewItem::maxItemsInRow);
 
-		disadvantagesFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (disadvantagesFrame->getPosition() + cPosition (playerNameStartXPos + cReportDisadvantagesListViewItem::casualityLabelWidth * col + (row % 2 == 0 ? 15 : 0), font->getFontHeight()*row), disadvantagesFrame->getPosition() + cPosition (playerNameStartXPos + cReportDisadvantagesListViewItem::casualityLabelWidth * (col + 1) + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * (row + 1))), player->getName(), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+		disadvantagesFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (disadvantagesFrame->getPosition() + cPosition (playerNameStartXPos + cReportDisadvantagesListViewItem::casualityLabelWidth * col + (row % 2 == 0 ? 15 : 0), font->getFontHeight()*row), disadvantagesFrame->getPosition() + cPosition (playerNameStartXPos + cReportDisadvantagesListViewItem::casualityLabelWidth * (col + 1) + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * (row + 1))), player->getName(), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 	}
 
 	scoreFrame = addChild (std::make_unique<cFrame> (frameArea));

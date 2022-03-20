@@ -33,7 +33,7 @@
 cCheckBox::cCheckBox (const cPosition& position, eCheckBoxType type_, bool centered, cSoundChunk* clickSound_) :
 	cClickableWidget (position),
 	type (type_),
-	fontType (FONT_LATIN_NORMAL),
+	fontType (eUnicodeFontType::LatinNormal),
 	textAnchor (eCheckBoxTextAnchor::Right),
 	textLimitWidth (-1),
 	clickSound (clickSound_),
@@ -129,13 +129,13 @@ void cCheckBox::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 		case eCheckBoxType::HudIndex_22:
 			if (textDesty != 6 && textDesty != 7) textDesty = 5;
 			SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
-			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + textDesty, text, FONT_LATIN_SMALL_GREEN);
-			else font->showTextCentered (position.x + position.w / 2, position.y + textDesty - 1, text, FONT_LATIN_SMALL_RED);
-			font->showTextCentered (position.x + position.w / 2 - 1, position.y + textDesty - 1 + (checked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
+			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + textDesty, text, eUnicodeFontType::LatinSmallGreen);
+			else font->showTextCentered (position.x + position.w / 2, position.y + textDesty - 1, text, eUnicodeFontType::LatinSmallRed);
+			font->showTextCentered (position.x + position.w / 2 - 1, position.y + textDesty - 1 + (checked ? 1 : 0), text, eUnicodeFontType::LatinSmallWhite);
 			break;
 		case eCheckBoxType::UnitContextMenu:
 			SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
-			font->showTextCentered (position.x + position.w / 2, position.y + (position.h / 2 - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2) + 1, text, FONT_LATIN_SMALL_WHITE);
+			font->showTextCentered (position.x + position.w / 2, position.y + (position.h / 2 - font->getFontHeight (eUnicodeFontType::LatinSmallWhite) / 2) + 1, text, eUnicodeFontType::LatinSmallWhite);
 			break;
 	}
 

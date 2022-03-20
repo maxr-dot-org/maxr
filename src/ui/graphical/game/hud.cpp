@@ -47,48 +47,48 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	surface = generateSurface();
 	resize (cPosition (surface->w, surface->h));
 
-	endButton = addChild (std::make_unique<cPushButton> (cPosition (391, 4), ePushButtonType::HudEnd, lngPack.i18n ("Text~Others~End"), FONT_LATIN_NORMAL));
+	endButton = addChild (std::make_unique<cPushButton> (cPosition (391, 4), ePushButtonType::HudEnd, lngPack.i18n ("Text~Others~End"), eUnicodeFontType::LatinNormal));
 	endButton->addClickShortcut (KeysList.keyEndTurn);
 	signalConnectionManager.connect (endButton->clicked, [this]() { endClicked(); });
 
-	auto preferencesButton = addChild (std::make_unique<cPushButton> (cPosition (86, 4), ePushButtonType::HudPreferences, lngPack.i18n ("Text~Others~Settings"), FONT_LATIN_SMALL_WHITE));
+	auto preferencesButton = addChild (std::make_unique<cPushButton> (cPosition (86, 4), ePushButtonType::HudPreferences, lngPack.i18n ("Text~Others~Settings"), eUnicodeFontType::LatinSmallWhite));
 	signalConnectionManager.connect (preferencesButton->clicked, [this]() { preferencesClicked(); });
-	auto filesButton = addChild (std::make_unique<cPushButton> (cPosition (17, 3), ePushButtonType::HudFiles, lngPack.i18n ("Text~Others~Files"), FONT_LATIN_SMALL_WHITE));
+	auto filesButton = addChild (std::make_unique<cPushButton> (cPosition (17, 3), ePushButtonType::HudFiles, lngPack.i18n ("Text~Others~Files"), eUnicodeFontType::LatinSmallWhite));
 	signalConnectionManager.connect (filesButton->clicked, [this]() { filesClicked(); });
 
-	surveyButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296), lngPack.i18n ("Text~Others~Survey"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_00, false, &SoundData.SNDHudSwitch));
+	surveyButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296), lngPack.i18n ("Text~Others~Survey"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_00, false, &SoundData.SNDHudSwitch));
 	surveyShortcut = &surveyButton->addClickShortcut (KeysList.keySurvey);
 	signalConnectionManager.connect (surveyButton->toggled, [this]() { surveyToggled(); });
 
-	hitsButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296), lngPack.i18n ("Text~Others~Hitpoints_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_01, false, &SoundData.SNDHudSwitch));
+	hitsButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296), lngPack.i18n ("Text~Others~Hitpoints_7"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_01, false, &SoundData.SNDHudSwitch));
 	hitsShortcut = &hitsButton->addClickShortcut (KeysList.keyHitpoints);
 	signalConnectionManager.connect (hitsButton->toggled, [this]() { hitsToggled(); });
 
-	scanButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296), lngPack.i18n ("Text~Others~Scan"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_02, false, &SoundData.SNDHudSwitch));
+	scanButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296), lngPack.i18n ("Text~Others~Scan"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_02, false, &SoundData.SNDHudSwitch));
 	scanShortcut = &scanButton->addClickShortcut (KeysList.keyScan);
 	signalConnectionManager.connect (scanButton->toggled, [this]() { scanToggled(); });
 
-	statusButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18), lngPack.i18n ("Text~Others~Status"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_10, false, &SoundData.SNDHudSwitch));
+	statusButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18), lngPack.i18n ("Text~Others~Status"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_10, false, &SoundData.SNDHudSwitch));
 	statusShortcut = &statusButton->addClickShortcut (KeysList.keyStatus);
 	signalConnectionManager.connect (statusButton->toggled, [this]() { statusToggled(); });
 
-	ammoButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18), lngPack.i18n ("Text~Others~Ammo"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_11, false, &SoundData.SNDHudSwitch));
+	ammoButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18), lngPack.i18n ("Text~Others~Ammo"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_11, false, &SoundData.SNDHudSwitch));
 	ammoShortcut = &ammoButton->addClickShortcut (KeysList.keyAmmo);
 	signalConnectionManager.connect (ammoButton->toggled, [this]() { ammoToggled(); });
 
-	gridButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18), lngPack.i18n ("Text~Others~Grid"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_12, false, &SoundData.SNDHudSwitch));
+	gridButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18), lngPack.i18n ("Text~Others~Grid"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_12, false, &SoundData.SNDHudSwitch));
 	gridShortcut = &gridButton->addClickShortcut (KeysList.keyGrid);
 	signalConnectionManager.connect (gridButton->toggled, [this]() { gridToggled(); });
 
-	colorButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18 + 16), lngPack.i18n ("Text~Others~Color"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_20, false, &SoundData.SNDHudSwitch));
+	colorButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18 + 16), lngPack.i18n ("Text~Others~Color"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_20, false, &SoundData.SNDHudSwitch));
 	colorShortcut = &colorButton->addClickShortcut (KeysList.keyColors);
 	signalConnectionManager.connect (colorButton->toggled, [this]() { colorToggled(); });
 
-	rangeButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18 + 16), lngPack.i18n ("Text~Others~Range"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, &SoundData.SNDHudSwitch));
+	rangeButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18 + 16), lngPack.i18n ("Text~Others~Range"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, &SoundData.SNDHudSwitch));
 	rangeShortcut = &rangeButton->addClickShortcut (KeysList.keyRange);
 	signalConnectionManager.connect (rangeButton->toggled, [this]() { rangeToggled(); });
 
-	fogButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18 + 16), lngPack.i18n ("Text~Others~Fog"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_22, false, &SoundData.SNDHudSwitch));
+	fogButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18 + 16), lngPack.i18n ("Text~Others~Fog"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_22, false, &SoundData.SNDHudSwitch));
 	fogShortcut = &fogButton->addClickShortcut (KeysList.keyFog);
 	signalConnectionManager.connect (fogButton->toggled, [this]() { fogToggled(); });
 
@@ -108,7 +108,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 
 	auto reportsButton = addChild (std::make_unique<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Text~Others~Log")));
 	signalConnectionManager.connect (reportsButton->clicked, [this]() { reportsClicked(); });
-	chatButton = addChild (std::make_unique<cCheckBox> (cPosition (51, 252), lngPack.i18n ("Text~Others~Chat"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudChat));
+	chatButton = addChild (std::make_unique<cCheckBox> (cPosition (51, 252), lngPack.i18n ("Text~Others~Chat"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudChat));
 	signalConnectionManager.connect (chatButton->toggled, [this]() { chatToggled(); });
 
 	auto nextButton = addChild (std::make_unique<cPushButton> (cPosition (124, 227), ePushButtonType::HudNext, ">>"));
@@ -121,9 +121,9 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	doneButton->addClickShortcut (KeysList.keyUnitDone);
 	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
-	coordsLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (265, getEndPosition().y() - 18), cPosition (265 + 64, getEndPosition().y() - 18 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-	unitNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (343, getEndPosition().y() - 18), cPosition (343 + 212, getEndPosition().y() - 18 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-	turnLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (471, 7), cPosition (471 + 55, 7 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	coordsLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (265, getEndPosition().y() - 18), cPosition (265 + 64, getEndPosition().y() - 18 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	unitNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (343, getEndPosition().y() - 18), cPosition (343 + 212, getEndPosition().y() - 18 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	turnLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (471, 7), cPosition (471 + 55, 7 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 	turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (537, 7), cPosition (537 + 55, 7 + 10))));
 
 	zoomSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (22, 275), cPosition (22 + 126, 275 + 15)), 0, 100, eOrientationType::Horizontal, eSliderHandleType::HudZoom, eSliderType::Invisible));

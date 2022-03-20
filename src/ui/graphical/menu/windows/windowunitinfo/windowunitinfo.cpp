@@ -37,16 +37,16 @@
 cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const cPlayer* owner, const cUnitsData& unitsData) :
 	cWindow (LoadPCX (GFXOD_HELP), eWindowBackgrounds::Black)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Unitinfo"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Unitinfo"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	auto infoImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (11, 13)));
 
-	auto infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (344, 67), getPosition() + cPosition (344 + 279, 67 + 176)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	auto infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (344, 67), getPosition() + cPosition (344 + 279, 67 + 176)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left));
 	infoLabel->setWordWrap (true);
 
 	auto unitDetails = addChild (std::make_unique<cUnitDetails> (getPosition() + cPosition (16, 297)));
 
-	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
+	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { close(); });
 

@@ -324,44 +324,44 @@ cUnicodeFont::cUnicodeFont()
 {
 	// load all existing fonts.
 	// If there will be added some, they have also to be added here!
-	loadChars (CHARSET_ISO8559_ALL, FONT_LATIN_NORMAL);
-	loadChars (CHARSET_ISO8559_1, FONT_LATIN_NORMAL);
-	loadChars (CHARSET_ISO8559_2, FONT_LATIN_NORMAL);
-	loadChars (CHARSET_ISO8559_5, FONT_LATIN_NORMAL);
+	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinNormal);
+	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinNormal);
+	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinNormal);
+	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinNormal);
 
-	loadChars (CHARSET_ISO8559_ALL, FONT_LATIN_NORMAL_RED);
-	loadChars (CHARSET_ISO8559_1, FONT_LATIN_NORMAL_RED);
-	loadChars (CHARSET_ISO8559_2, FONT_LATIN_NORMAL_RED);
-	loadChars (CHARSET_ISO8559_5, FONT_LATIN_NORMAL_RED);
+	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinNormalRed);
+	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinNormalRed);
+	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinNormalRed);
+	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinNormalRed);
 
-	loadChars (CHARSET_ISO8559_ALL, FONT_LATIN_BIG);
-	loadChars (CHARSET_ISO8559_1, FONT_LATIN_BIG);
-	loadChars (CHARSET_ISO8559_2, FONT_LATIN_BIG);
-	loadChars (CHARSET_ISO8559_5, FONT_LATIN_BIG);
+	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinBig);
+	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinBig);
+	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinBig);
+	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinBig);
 
-	loadChars (CHARSET_ISO8559_ALL, FONT_LATIN_BIG_GOLD);
-	loadChars (CHARSET_ISO8559_1, FONT_LATIN_BIG_GOLD);
-	loadChars (CHARSET_ISO8559_2, FONT_LATIN_BIG_GOLD);
+	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinBigGold);
+	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinBigGold);
+	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinBigGold);
 
-	loadChars (CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_WHITE);
-	loadChars (CHARSET_ISO8559_1, FONT_LATIN_SMALL_WHITE);
-	loadChars (CHARSET_ISO8559_2, FONT_LATIN_SMALL_WHITE);
-	loadChars (CHARSET_ISO8559_5, FONT_LATIN_SMALL_WHITE);
+	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinSmallWhite);
+	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinSmallWhite);
+	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinSmallWhite);
+	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinSmallWhite);
 
-	loadChars (CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_RED);
-	loadChars (CHARSET_ISO8559_1, FONT_LATIN_SMALL_RED);
-	loadChars (CHARSET_ISO8559_2, FONT_LATIN_SMALL_RED);
-	loadChars (CHARSET_ISO8559_5, FONT_LATIN_SMALL_RED);
+	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinSmallRed);
+	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinSmallRed);
+	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinSmallRed);
+	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinSmallRed);
 
-	loadChars (CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_GREEN);
-	loadChars (CHARSET_ISO8559_1, FONT_LATIN_SMALL_GREEN);
-	loadChars (CHARSET_ISO8559_2, FONT_LATIN_SMALL_GREEN);
-	loadChars (CHARSET_ISO8559_5, FONT_LATIN_SMALL_GREEN);
+	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinSmallGreen);
+	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinSmallGreen);
+	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinSmallGreen);
+	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinSmallGreen);
 
-	loadChars (CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_YELLOW);
-	loadChars (CHARSET_ISO8559_1, FONT_LATIN_SMALL_YELLOW);
-	loadChars (CHARSET_ISO8559_2, FONT_LATIN_SMALL_YELLOW);
-	loadChars (CHARSET_ISO8559_5, FONT_LATIN_SMALL_YELLOW);
+	loadChars (CHARSET_ISO8559_ALL, eUnicodeFontType::LatinSmallYellow);
+	loadChars (CHARSET_ISO8559_1, eUnicodeFontType::LatinSmallYellow);
+	loadChars (CHARSET_ISO8559_2, eUnicodeFontType::LatinSmallYellow);
+	loadChars (CHARSET_ISO8559_5, eUnicodeFontType::LatinSmallYellow);
 }
 
 void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType fonttype)
@@ -454,23 +454,23 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 			// change color for some fonts
 			switch (fonttype)
 			{
-				case FONT_LATIN_NORMAL_RED:
+				case eUnicodeFontType::LatinNormalRed:
 					replaceColor (*chars[unicodeplace], cRgbColor (214, 189, 148), cRgbColor (250, 0, 0));
 					replaceColor (*chars[unicodeplace], cRgbColor (140, 132, 132), cRgbColor (163, 0, 0));
 					break;
-				case FONT_LATIN_SMALL_RED:
+				case eUnicodeFontType::LatinSmallRed:
 					replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (230, 0, 0));
 					break;
-				case FONT_LATIN_SMALL_GREEN:
+				case eUnicodeFontType::LatinSmallGreen:
 					replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (4, 174, 4));
 					break;
-				case FONT_LATIN_SMALL_YELLOW:
+				case eUnicodeFontType::LatinSmallYellow:
 					replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (219, 222, 0));
 					break;
-				case FONT_LATIN_NORMAL:
-				case FONT_LATIN_BIG:
-				case FONT_LATIN_BIG_GOLD:
-				case FONT_LATIN_SMALL_WHITE:
+				case eUnicodeFontType::LatinNormal:
+				case eUnicodeFontType::LatinBig:
+				case eUnicodeFontType::LatinBigGold:
+				case eUnicodeFontType::LatinSmallWhite:
 					break;
 			}
 
@@ -485,14 +485,14 @@ cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype) const
 {
 	switch (fonttype)
 	{
-		case FONT_LATIN_NORMAL: return &charsNormal;
-		case FONT_LATIN_NORMAL_RED: return &charsNormalRed;
-		case FONT_LATIN_BIG: return &charsBig;
-		case FONT_LATIN_BIG_GOLD: return &charsBigGold;
-		case FONT_LATIN_SMALL_WHITE: return &charsSmallWhite;
-		case FONT_LATIN_SMALL_RED: return &charsSmallRed;
-		case FONT_LATIN_SMALL_GREEN: return &charsSmallGreen;
-		case FONT_LATIN_SMALL_YELLOW: return &charsSmallYellow;
+		case eUnicodeFontType::LatinNormal: return &charsNormal;
+		case eUnicodeFontType::LatinNormalRed: return &charsNormalRed;
+		case eUnicodeFontType::LatinBig: return &charsBig;
+		case eUnicodeFontType::LatinBigGold: return &charsBigGold;
+		case eUnicodeFontType::LatinSmallWhite: return &charsSmallWhite;
+		case eUnicodeFontType::LatinSmallRed: return &charsSmallRed;
+		case eUnicodeFontType::LatinSmallGreen: return &charsSmallGreen;
+		case eUnicodeFontType::LatinSmallYellow: return &charsSmallYellow;
 	}
 	return nullptr;
 }
@@ -510,20 +510,20 @@ AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 	string filename = cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_";
 	switch (fonttype)
 	{
-		case FONT_LATIN_NORMAL:
-		case FONT_LATIN_NORMAL_RED:
+		case eUnicodeFontType::LatinNormal:
+		case eUnicodeFontType::LatinNormalRed:
 			filename += "normal";
 			break;
-		case FONT_LATIN_BIG:
+		case eUnicodeFontType::LatinBig:
 			filename += "big";
 			break;
-		case FONT_LATIN_BIG_GOLD:
+		case eUnicodeFontType::LatinBigGold:
 			filename += "big_gold";
 			break;
-		case FONT_LATIN_SMALL_WHITE:
-		case FONT_LATIN_SMALL_RED:
-		case FONT_LATIN_SMALL_GREEN:
-		case FONT_LATIN_SMALL_YELLOW:
+		case eUnicodeFontType::LatinSmallWhite:
+		case eUnicodeFontType::LatinSmallRed:
+		case eUnicodeFontType::LatinSmallGreen:
+		case eUnicodeFontType::LatinSmallYellow:
 			filename += "small";
 			break;
 	}
@@ -587,17 +587,17 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 	// since we don't support lower chars on the small fonts
 	switch (fonttype)
 	{
-		case FONT_LATIN_SMALL_GREEN:
-		case FONT_LATIN_SMALL_RED:
-		case FONT_LATIN_SMALL_WHITE:
-		case FONT_LATIN_SMALL_YELLOW:
+		case eUnicodeFontType::LatinSmallGreen:
+		case eUnicodeFontType::LatinSmallRed:
+		case eUnicodeFontType::LatinSmallWhite:
+		case eUnicodeFontType::LatinSmallYellow:
 			for (size_t i = 0; i < sText.size(); i++) sText[i] = toupper (sText[i]);
 			iSpace = 1;
 			break;
-		case FONT_LATIN_NORMAL:
-		case FONT_LATIN_NORMAL_RED:
-		case FONT_LATIN_BIG:
-		case FONT_LATIN_BIG_GOLD:
+		case eUnicodeFontType::LatinNormal:
+		case eUnicodeFontType::LatinNormalRed:
+		case eUnicodeFontType::LatinBig:
+		case eUnicodeFontType::LatinBigGold:
 			break;
 	}
 
@@ -801,17 +801,17 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 	// since we don't support lower chars on the small fonts
 	switch (fonttype)
 	{
-		case FONT_LATIN_SMALL_GREEN:
-		case FONT_LATIN_SMALL_RED:
-		case FONT_LATIN_SMALL_WHITE:
-		case FONT_LATIN_SMALL_YELLOW:
+		case eUnicodeFontType::LatinSmallGreen:
+		case eUnicodeFontType::LatinSmallRed:
+		case eUnicodeFontType::LatinSmallWhite:
+		case eUnicodeFontType::LatinSmallYellow:
 			for (size_t i = 0; i < sText.size(); i++) sText[i] = toupper (sText[i]);
 			iSpace = 1;
 			break;
-		case FONT_LATIN_NORMAL:
-		case FONT_LATIN_NORMAL_RED:
-		case FONT_LATIN_BIG:
-		case FONT_LATIN_BIG_GOLD:
+		case eUnicodeFontType::LatinNormal:
+		case eUnicodeFontType::LatinNormalRed:
+		case eUnicodeFontType::LatinBig:
+		case eUnicodeFontType::LatinBigGold:
 			break;
 	}
 
@@ -868,16 +868,16 @@ int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype) const
 	switch (fonttype)
 	{
 		default:
-		case FONT_LATIN_NORMAL:
-		case FONT_LATIN_NORMAL_RED:
+		case eUnicodeFontType::LatinNormal:
+		case eUnicodeFontType::LatinNormalRed:
 			return eUnicodeFontSize::Normal;
-		case FONT_LATIN_BIG:
-		case FONT_LATIN_BIG_GOLD:
+		case eUnicodeFontType::LatinBig:
+		case eUnicodeFontType::LatinBigGold:
 			return eUnicodeFontSize::Big;
-		case FONT_LATIN_SMALL_WHITE:
-		case FONT_LATIN_SMALL_RED:
-		case FONT_LATIN_SMALL_GREEN:
-		case FONT_LATIN_SMALL_YELLOW:
+		case eUnicodeFontType::LatinSmallWhite:
+		case eUnicodeFontType::LatinSmallRed:
+		case eUnicodeFontType::LatinSmallGreen:
+		case eUnicodeFontType::LatinSmallYellow:
 			return eUnicodeFontSize::Small;
 	}
 }
@@ -936,18 +936,18 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 	int space;
 	switch (fonttype)
 	{
-		case FONT_LATIN_SMALL_GREEN:
-		case FONT_LATIN_SMALL_RED:
-		case FONT_LATIN_SMALL_WHITE:
-		case FONT_LATIN_SMALL_YELLOW:
+		case eUnicodeFontType::LatinSmallGreen:
+		case eUnicodeFontType::LatinSmallRed:
+		case eUnicodeFontType::LatinSmallWhite:
+		case eUnicodeFontType::LatinSmallYellow:
 			unicodeCharacter = toupper (unicodeCharacter);
 			space = 1;
 			break;
 		default:
-		case FONT_LATIN_NORMAL:
-		case FONT_LATIN_NORMAL_RED:
-		case FONT_LATIN_BIG:
-		case FONT_LATIN_BIG_GOLD:
+		case eUnicodeFontType::LatinNormal:
+		case eUnicodeFontType::LatinNormalRed:
+		case eUnicodeFontType::LatinBig:
+		case eUnicodeFontType::LatinBigGold:
 			space = 0;
 			break;
 	}

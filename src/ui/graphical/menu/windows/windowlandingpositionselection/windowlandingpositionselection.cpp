@@ -63,10 +63,10 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 
 	auto hudImage = addChild (std::move (hudImageOwned));
 
-	backButton = addChild (std::make_unique<cPushButton> (cPosition (35, hudImage->getEndPosition().y() - 40), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
+	backButton = addChild (std::make_unique<cPushButton> (cPosition (35, hudImage->getEndPosition().y() - 40), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), eUnicodeFontType::LatinNormal));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
-	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), "", FONT_LATIN_BIG, toEnumFlag (eAlignmentType::Center)));
+	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), "", eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::Center)));
 	infoLabel->setWordWrap (true);
 	infoLabel->disable();
 
@@ -79,7 +79,7 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 			onCommandEntered (message);
 		});
 
-		auto toggleChatBoxButton = addChild (std::make_unique<cCheckBox> (cPosition (35, hudImage->getEndPosition().y() - 65), lngPack.i18n ("Text~Others~Chat"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+		auto toggleChatBoxButton = addChild (std::make_unique<cCheckBox> (cPosition (35, hudImage->getEndPosition().y() - 65), lngPack.i18n ("Text~Others~Chat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 		toggleChatBoxButton->setChecked (true);
 		signalConnectionManager.connect (toggleChatBoxButton->toggled, [this, toggleChatBoxButton]()
 		{

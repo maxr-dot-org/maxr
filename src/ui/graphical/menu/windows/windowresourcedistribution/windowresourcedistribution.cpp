@@ -52,7 +52,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	cWindow (LoadPCX (GFXOD_MINEMANAGER)),
 	building (building_)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), lngPack.i18n ("Text~Title~Mine"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), lngPack.i18n ("Text~Title~Mine"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (525, 16), cPosition (525 + 60, 16 + 10))));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
@@ -80,9 +80,9 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 		else if (i == 1) resourceName = lngPack.i18n ("Text~Title~Oil");
 		else resourceName = lngPack.i18n ("Text~Title~Gold");
 
-		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 121 * i + 10)), resourceName, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 + 121 * i + 10)), lngPack.i18n ("Text~Others~Usage_7"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 * 2 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 * 2 + 121 * i + 10)), lngPack.i18n ("Text~Comp~Reserve"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 121 * i + 10)), resourceName, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 + 121 * i + 10)), lngPack.i18n ("Text~Others~Usage_7"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 * 2 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 * 2 + 121 * i + 10)), lngPack.i18n ("Text~Comp~Reserve"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 		auto decreaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (139, 70 + 120 * i), ePushButtonType::ArrowLeftBig));
 		signalConnectionManager.connect (decreaseButton->clicked, [this, i]()
@@ -104,9 +104,9 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	// above the resource bars.
 	for (size_t i = 0; i < 3; ++i)
 	{
-		metalLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 78 + 37 * i), getPosition() + cPosition (174 + 240, 78 + 37 * i + 15)), "Metal", FONT_LATIN_BIG, eAlignmentType::CenterHorizontal));
-		oilLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 198 + 37 * i), getPosition() + cPosition (174 + 240, 198 + 37 * i + 15)), "Oil", FONT_LATIN_BIG, eAlignmentType::CenterHorizontal));
-		goldLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 318 + 37 * i), getPosition() + cPosition (174 + 240, 318 + 37 * i + 15)), "Gold", FONT_LATIN_BIG, eAlignmentType::CenterHorizontal));
+		metalLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 78 + 37 * i), getPosition() + cPosition (174 + 240, 78 + 37 * i + 15)), "Metal", eUnicodeFontType::LatinBig, eAlignmentType::CenterHorizontal));
+		oilLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 198 + 37 * i), getPosition() + cPosition (174 + 240, 198 + 37 * i + 15)), "Oil", eUnicodeFontType::LatinBig, eAlignmentType::CenterHorizontal));
+		goldLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 318 + 37 * i), getPosition() + cPosition (174 + 240, 318 + 37 * i + 15)), "Gold", eUnicodeFontType::LatinBig, eAlignmentType::CenterHorizontal));
 
 		// disable the label so that they will not receive any mouse events
 		metalLabels[i]->disable();

@@ -299,7 +299,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 				sText += unitName + " (";
 				sText += std::to_string (iRound) + ")";
 
-				if (font->getTextWide (sText, FONT_LATIN_SMALL_WHITE) > 126)
+				if (font->getTextWide (sText, eUnicodeFontType::LatinSmallWhite) > 126)
 				{
 					sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n ("Text~Punctuation~Colon") + "\n";
 					sText += unitName + " (";

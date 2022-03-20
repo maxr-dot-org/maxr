@@ -42,7 +42,7 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), unitsData, *building_.getOwner()),
 	building (building_)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10))));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
@@ -64,7 +64,7 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 	backButton->moveTo (getPosition() + cPosition (300, 452));
 	okButton->moveTo (getPosition() + cPosition (387, 452));
 
-	repeatCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (447, 322), lngPack.i18n ("Text~Comp~Repeat"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Standard));
+	repeatCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (447, 322), lngPack.i18n ("Text~Comp~Repeat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Standard));
 
 	generateSelectionList (building, map, *unitsData);
 	generateBuildList (building);

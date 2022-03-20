@@ -62,10 +62,10 @@ void cWindowHangar::initialize()
 {
 	infoImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (11, 13)));
 
-	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (21, 23), getPosition() + cPosition (21 + 280, 23 + 220)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (21, 23), getPosition() + cPosition (21 + 280, 23 + 220)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left));
 	infoLabel->setWordWrap (true);
 
-	infoTextCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (291, 264), lngPack.i18n ("Text~Comp~Description"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left));
+	infoTextCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (291, 264), lngPack.i18n ("Text~Comp~Description"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left));
 	infoTextCheckBox->setChecked (true);
 	signalConnectionManager.connect (infoTextCheckBox->toggled, [this]() { infoCheckBoxToggled(); });
 
@@ -83,11 +83,11 @@ void cWindowHangar::initialize()
 	signalConnectionManager.connect (selectionListDownButton->clicked, [this]() { selectionUnitList->pageDown(); });
 
 
-	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
+	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
-	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
+	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), eUnicodeFontType::LatinNormal));
 	backButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 }

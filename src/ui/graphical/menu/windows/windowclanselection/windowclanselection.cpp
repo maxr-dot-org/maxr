@@ -36,7 +36,7 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 	clanData (clanData),
 	selectedClan (0)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	//
 	// Clan Images
@@ -63,7 +63,7 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 			clanImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image.get(), &SoundData.SNDHudButton));
 			signalConnectionManager.connect (clanImages[index]->clicked, [this, index]() { clanClicked (clanImages[index]); });
 
-			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (37 + 155 * column, 144 + 150 * row), getPosition() + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), getClanName (clanData->getClans()[index]), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (37 + 155 * column, 144 + 150 * row), getPosition() + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), getClanName (clanData->getClans()[index]), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 		}
 	}
 	clanTitles[selectedClan]->setText (">" + getClanName (clanData->getClans()[selectedClan]) + "<");
@@ -71,9 +71,9 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 	//
 	// Clan Description
 	//
-	clanDescription1 = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (47, 362), getPosition() + cPosition (47 + 550, 362 + 50)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
-	clanDescription2 = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (380, 362), getPosition() + cPosition (380 + 217, 362 + 50)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
-	clanShortDescription = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (47, 349), getPosition() + cPosition (47 + 550, 349 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	clanDescription1 = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (47, 362), getPosition() + cPosition (47 + 550, 362 + 50)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	clanDescription2 = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (380, 362), getPosition() + cPosition (380 + 217, 362 + 50)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	clanShortDescription = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (47, 349), getPosition() + cPosition (47 + 550, 349 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left));
 
 	//
 	// Buttons

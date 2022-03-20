@@ -30,7 +30,7 @@
 class cLabel : public cClickableWidget
 {
 public:
-	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType = FONT_LATIN_NORMAL, AlignmentFlags = toEnumFlag (eAlignmentType::Left)  | eAlignmentType::Top);
+	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType = eUnicodeFontType::LatinNormal, AlignmentFlags = toEnumFlag (eAlignmentType::Left)  | eAlignmentType::Top);
 
 	void setText (const std::string& text);
 	const std::string& getText() const;

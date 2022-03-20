@@ -89,21 +89,21 @@ static void MakeLog (const std::string& sTxt, int ok, int pos)
 		return;
 	}
 	auto& font = *cUnicodeFont::font;
-	const SDL_Rect rDest = {22, 152, 228, Uint16 (font.getFontHeight (FONT_LATIN_BIG_GOLD)) };
-	const SDL_Rect rDest2 = {250, 152, 230, Uint16 (font.getFontHeight (FONT_LATIN_BIG_GOLD)) };
+	const SDL_Rect rDest = {22, 152, 228, Uint16 (font.getFontHeight (eUnicodeFontType::LatinBigGold)) };
+	const SDL_Rect rDest2 = {250, 152, 230, Uint16 (font.getFontHeight (eUnicodeFontType::LatinBigGold)) };
 
 	switch (ok)
 	{
 		case 0:
-			font.showText (rDest.x, rDest.y + rDest.h * pos, sTxt, FONT_LATIN_NORMAL);
+			font.showText (rDest.x, rDest.y + rDest.h * pos, sTxt, eUnicodeFontType::LatinNormal);
 			break;
 
 		case 1:
-			font.showText (rDest2.x, rDest2.y + rDest2.h * pos, "OK", FONT_LATIN_BIG_GOLD);
+			font.showText (rDest2.x, rDest2.y + rDest2.h * pos, "OK", eUnicodeFontType::LatinBigGold);
 			break;
 
 		default:
-			font.showText (rDest2.x, rDest2.y + rDest2.h * pos, "ERROR ..check maxr.log!", FONT_LATIN_BIG_GOLD);
+			font.showText (rDest2.x, rDest2.y + rDest2.h * pos, "ERROR ..check maxr.log!", eUnicodeFontType::LatinBigGold);
 			break;
 	}
 	// TODO: Warn that screen has been changed

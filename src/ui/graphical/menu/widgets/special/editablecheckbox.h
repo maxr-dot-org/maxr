@@ -30,7 +30,7 @@
 class cEditableCheckBox : public cWidget
 {
 public:
-	cEditableCheckBox (const cBox<cPosition>&, const std::string& prefix, const std::string& suffix, eUnicodeFontType fontType = FONT_LATIN_NORMAL);
+	cEditableCheckBox (const cBox<cPosition>&, const std::string& prefix, const std::string& suffix, eUnicodeFontType fontType = eUnicodeFontType::LatinNormal);
 
 	void setText (const std::string& text) { lineEdit->setText (text); }
 	const std::string& getText() const { return lineEdit->getText(); }

@@ -63,7 +63,7 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const cStati
 	}
 	auto unitImage = addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageHeight) / 2), unitSurface.get()));
 
-	auto nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x(), 0), cPosition (unitImage->getEndPosition().x() + unitNameWidth, totalHeight)), getStaticUnitName (data), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	auto nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x(), 0), cPosition (unitImage->getEndPosition().x() + unitNameWidth, totalHeight)), getStaticUnitName (data), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	nameLabel->setWordWrap (true);
 	nameLabel->setConsumeClick (false);
 
@@ -74,7 +74,7 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const cStati
 		const int row = static_cast<int> (i / maxItemsInRow);
 		const int col = static_cast<int> (i % maxItemsInRow);
 
-		auto disadvantageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * col + (row % 2 == 0 ? 15 : 0), font->getFontHeight()*row), cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * (col + 1) + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * (row + 1))), std::to_string (disadvantage), FONT_LATIN_NORMAL, eAlignmentType::Center));
+		auto disadvantageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * col + (row % 2 == 0 ? 15 : 0), font->getFontHeight()*row), cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * (col + 1) + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * (row + 1))), std::to_string (disadvantage), eUnicodeFontType::LatinNormal, eAlignmentType::Center));
 		disadvantageLabel->setConsumeClick (false);
 	}
 

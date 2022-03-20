@@ -55,7 +55,7 @@ public:
 
 private:
 	void setPrintPosition (cPosition);
-	void print (const std::string&, eUnicodeFontType = FONT_LATIN_SMALL_WHITE);
+	void print (const std::string&, eUnicodeFontType = eUnicodeFontType::LatinSmallWhite);
 
 	void trace();
 	void traceVehicle (const cVehicle&, cPosition& drawPosition);

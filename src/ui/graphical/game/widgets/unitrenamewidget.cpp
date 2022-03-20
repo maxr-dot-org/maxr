@@ -31,9 +31,9 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 	activeUnit (nullptr),
 	player (nullptr)
 {
-	selectedUnitStatusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 10), getPosition() + cPosition (width, 10 + 110)), "", FONT_LATIN_SMALL_WHITE, eAlignmentType::Left));
-	selectedUnitNamePrefixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), "", FONT_LATIN_SMALL_GREEN, eAlignmentType::Left));
-	selectedUnitNameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), eLineEditFrameType::None, FONT_LATIN_SMALL_GREEN));
+	selectedUnitStatusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 10), getPosition() + cPosition (width, 10 + 110)), "", eUnicodeFontType::LatinSmallWhite, eAlignmentType::Left));
+	selectedUnitNamePrefixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), "", eUnicodeFontType::LatinSmallGreen, eAlignmentType::Left));
+	selectedUnitNameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), eLineEditFrameType::None, eUnicodeFontType::LatinSmallGreen));
 
 	signalConnectionManager.connect (selectedUnitNameEdit->returnPressed, [this]()
 	{
@@ -103,7 +103,7 @@ void cUnitRenameWidget::setUnit (const cUnit* unit, const cUnitsData& unitsData)
 	selectedUnitNameEdit->enable();
 
 	auto font = cUnicodeFont::font.get();
-	const auto xPosition = selectedUnitNamePrefixLabel->getPosition().x() + font->getTextWide (selectedUnitNamePrefixLabel->getText() + " ", FONT_LATIN_SMALL_GREEN);
+	const auto xPosition = selectedUnitNamePrefixLabel->getPosition().x() + font->getTextWide (selectedUnitNamePrefixLabel->getText() + " ", eUnicodeFontType::LatinSmallGreen);
 	const cPosition moveOffset (xPosition - selectedUnitNameEdit->getPosition().x(), 0);
 	selectedUnitNameEdit->move (moveOffset);
 	selectedUnitNameEdit->resize (selectedUnitNameEdit->getSize() - moveOffset);

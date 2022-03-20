@@ -38,8 +38,8 @@ cUnitDetailsStored::cUnitDetailsStored (const cBox<cPosition>& area) :
 
 	for (size_t i = 0; i < maxRows; ++i)
 	{
-		amountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (3, 2 + rowHeight * i), getPosition() + cPosition (3 + 30, 2 + rowHeight * i + rowHeight)), "", FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Bottom));
-		nameLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 2 + rowHeight * i), getPosition() + cPosition (35 + 30, 2 + rowHeight * i + rowHeight)), "", FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom));
+		amountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (3, 2 + rowHeight * i), getPosition() + cPosition (3 + 30, 2 + rowHeight * i + rowHeight)), "", eUnicodeFontType::LatinSmallWhite, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Bottom));
+		nameLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 2 + rowHeight * i), getPosition() + cPosition (35 + 30, 2 + rowHeight * i + rowHeight)), "", eUnicodeFontType::LatinSmallWhite, toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom));
 	}
 
 	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
@@ -108,9 +108,9 @@ void cUnitDetailsStored::drawRow (size_t index, eUnitDataSymbolType symbolType, 
 	nameLabels[index]->show();
 
 	eUnicodeFontType fontType;
-	if (amount > maximalAmount / 2) fontType = FONT_LATIN_SMALL_GREEN;
-	else if (amount > maximalAmount / 4) fontType = FONT_LATIN_SMALL_YELLOW;
-	else fontType = FONT_LATIN_SMALL_RED;
+	if (amount > maximalAmount / 2) fontType = eUnicodeFontType::LatinSmallGreen;
+	else if (amount > maximalAmount / 4) fontType = eUnicodeFontType::LatinSmallYellow;
+	else fontType = eUnicodeFontType::LatinSmallRed;
 
 	amountLabels[index]->setFont (fontType);
 	amountLabels[index]->setText (std::to_string (amount) + "/" + std::to_string (maximalAmount));

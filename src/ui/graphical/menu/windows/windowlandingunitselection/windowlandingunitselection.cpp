@@ -41,7 +41,7 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	cWindowAdvancedHangar<cUnitListViewItemCargo> (LoadPCX (GFXOD_HANGAR), unitsData, playerColor, playerClan),
 	selectedCargoUnit (nullptr)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (474, 12), getPosition() + cPosition (474 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Choose_Units"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (474, 12), getPosition() + cPosition (474 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Choose_Units"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	//
 	// Unit Filters
@@ -68,21 +68,21 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 
 	auto updateBuyGroup = addChild (std::make_unique<cRadioGroup>());
 
-	buyCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (542, 445), lngPack.i18n ("Text~Others~Buy"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
+	buyCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (542, 445), lngPack.i18n ("Text~Others~Buy"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
 	buyCheckBox->setChecked (true);
 	signalConnectionManager.connect (buyCheckBox->toggled, [this]() { generateSelectionList (false); });
 
-	upgradeCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (542, 445 + 17), lngPack.i18n ("Text~Others~Upgrade"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
+	upgradeCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (542, 445 + 17), lngPack.i18n ("Text~Others~Upgrade"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
 	signalConnectionManager.connect (upgradeCheckBox->toggled, [this]() { generateSelectionList (false); });
 
 	//
 	// Resource Bar
 	//
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (411, 285), getPosition() + cPosition (411 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Cargo"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (411, 285), getPosition() + cPosition (411 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Cargo"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 	metalBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (421, 301), getPosition() + cPosition (421 + 20, 301 + 115)), 0, 100, eResourceBarType::Metal, eOrientationType::Vertical));
 	metalBar->setStepSize (metalBarSteps);
 	signalConnectionManager.connect (metalBar->valueChanged, [this]() { metalChanged(); });
-	metalBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (411, 275), getPosition() + cPosition (411 + 40, 275 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	metalBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (411, 275), getPosition() + cPosition (411 + 40, 275 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	metalBarUpButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (413, 424), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (metalBarUpButton->clicked, [this]() { metalUpButtonClicked(); });
@@ -92,11 +92,11 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	//
 	// Gold Bar
 	//
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 285), getPosition() + cPosition (362 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Credits"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 285), getPosition() + cPosition (362 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Credits"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 	goldBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (372, 301), getPosition() + cPosition (372 + 20, 301 + 115)), 0, initialGold, eResourceBarType::Gold, eOrientationType::Vertical));
 	signalConnectionManager.connect (goldBar->valueChanged, [this]() { goldChanged(); });
 	goldBar->disable();
-	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 275), getPosition() + cPosition (362 + 40, 275 + 10)), std::to_string (initialGold), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 275), getPosition() + cPosition (362 + 40, 275 + 10)), std::to_string (initialGold), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	//
 	// Upgrade Buttons
