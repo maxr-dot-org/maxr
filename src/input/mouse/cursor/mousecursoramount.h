@@ -23,7 +23,7 @@
 #include "input/mouse/cursor/mousecursor.h"
 #include "SDLutility/autosurface.h"
 
-enum eMouseCursorAmountType
+enum class eMouseCursorAmountType
 {
 	Steal,
 	Disable
