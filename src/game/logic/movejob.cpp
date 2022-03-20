@@ -36,7 +36,7 @@ constexpr double MOVE_ACCELERATION = 0.08; // change of vehicle speed per tick
 
 //------------------------------------------------------------------------------
 cMoveJob::cMoveJob() :
-	state (FINISHED)
+	state (eMoveJobState::Finished)
 {}
 
 //------------------------------------------------------------------------------
@@ -58,9 +58,9 @@ void cMoveJob::run (cModel& model)
 {
 	if (!vehicle || vehicle->getMoveJob() != this)
 	{
-		state = FINISHED;
+		state = eMoveJobState::Finished;
 	}
-	if (state == FINISHED || state == WAITING)
+	if (state == eMoveJobState::Finished || state == eMoveJobState::Waiting)
 	{
 		return;
 	}
@@ -96,19 +96,19 @@ void cMoveJob::run (cModel& model)
 //------------------------------------------------------------------------------
 bool cMoveJob::isFinished() const
 {
-	return state == FINISHED;
+	return state == eMoveJobState::Finished;
 }
 
 //------------------------------------------------------------------------------
 bool cMoveJob::isWaiting() const
 {
-	return state == WAITING;
+	return state == eMoveJobState::Waiting;
 }
 
 //------------------------------------------------------------------------------
 bool cMoveJob::isActive() const
 {
-	return state == ACTIVE || state == STOPPING;
+	return state == eMoveJobState::Active || state == eMoveJobState::Stopping;
 }
 
 //------------------------------------------------------------------------------
@@ -116,11 +116,11 @@ void cMoveJob::stop()
 {
 	if (isActive())
 	{
-		state = STOPPING;
+		state = eMoveJobState::Stopping;
 	}
 	else
 	{
-		state = FINISHED;
+		state = eMoveJobState::Finished;
 		vehicle->setMoving (false);
 		vehicle->WalkFrame = 0;
 		vehicle->data.setSpeed (vehicle->data.getSpeed() + savedSpeed);
@@ -158,15 +158,15 @@ void cMoveJob::startMove (cModel& model)
 {
 	cMap& map = *model.getMap();
 
-	if (path.empty() || state == STOPPING)
+	if (path.empty() || state == eMoveJobState::Stopping)
 	{
-		state = FINISHED;
+		state = eMoveJobState::Finished;
 		vehicle->setMoving (false);
 		vehicle->WalkFrame = 0;
 		return;
 	}
 
-	if (state == WAITING)
+	if (state == eMoveJobState::Waiting)
 	{
 		return;
 	}
@@ -191,7 +191,7 @@ void cMoveJob::startMove (cModel& model)
 		vehicle->data.setSpeed (0);
 		vehicle->setMoving (false);
 		vehicle->WalkFrame = 0;
-		state = WAITING;
+		state = eMoveJobState::Waiting;
 		currentSpeed = 0;
 		return;
 	}
@@ -287,7 +287,7 @@ bool cMoveJob::recalculatePath (cModel &model)
 	}
 
 	// no path to destination
-	state = FINISHED;
+	state = eMoveJobState::Finished;
 	vehicle->setMoving (false);
 	vehicle->WalkFrame = 0;
 	vehicle->moveJobBlocked();
@@ -358,7 +358,7 @@ void cMoveJob::updateSpeed (const cMap& map)
 		maxSpeed = 100 * MOVE_SPEED * 2;
 	}
 
-	if (path.empty() || state == STOPPING || cPathCalculator::calcNextCost (vehicle->getPosition(), path.front(), vehicle, &map) > vehicle->data.getSpeed())
+	if (path.empty() || state == eMoveJobState::Stopping || cPathCalculator::calcNextCost (vehicle->getPosition(), path.front(), vehicle, &map) > vehicle->data.getSpeed())
 	{
 		int maxSpeedBreaking = 100 * sqrt (2 * MOVE_ACCELERATION * vehicle->getMovementOffset().l2Norm());
 		maxSpeed = std::min (maxSpeed, maxSpeedBreaking);
@@ -396,7 +396,7 @@ void cMoveJob::endMove (cModel& model)
 
 		vehicle->setMoving (false);
 		vehicle->WalkFrame = 0;
-		state = WAITING;
+		state = eMoveJobState::Waiting;
 		currentSpeed = 0;
 	}
 
@@ -422,7 +422,7 @@ void cMoveJob::endMove (cModel& model)
 
 	if (path.empty())
 	{
-		state = FINISHED;
+		state = eMoveJobState::Finished;
 		vehicle->setMoving (false);
 		vehicle->WalkFrame = 0;
 
@@ -435,9 +435,9 @@ void cMoveJob::endMove (cModel& model)
 //------------------------------------------------------------------------------
 void cMoveJob::resume()
 {
-	if (state == WAITING)
+	if (state == eMoveJobState::Waiting)
 	{
-		state = ACTIVE;
+		state = eMoveJobState::Active;
 	}
 }
 

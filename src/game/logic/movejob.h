@@ -73,7 +73,7 @@ public:
 	void run (cModel&);
 	/**
 	* Stop the movejob. If the job is not active, it is stopped immediately.
-	* If the job is active, the state of the job is set to STOPPING
+	* If the job is active, the state of the job is set to eMoveJobState::Stopping
 	* and the job will be halted when the unit reaches the next field.
 	*/
 	void stop();
@@ -124,7 +124,7 @@ public:
 		}
 	}
 private:
-	enum eMoveJobState {ACTIVE, WAITING, STOPPING, FINISHED};
+	enum class eMoveJobState {Active, Waiting, Stopping, Finished};
 
 	/**
 	* calculates the needed rotation before the next movement
@@ -169,7 +169,7 @@ private:
 	cVehicle* vehicle = nullptr;
 	/** list of positions. First element is the next field, that the unit will drive to after the current one. */
 	std::forward_list<cPosition> path;
-	eMoveJobState state = ACTIVE;
+	eMoveJobState state = eMoveJobState::Active;
 
 	/** movement points, that are taken to the next turn, to prevent that the player looses movement points due to rounding issues */
 	unsigned int savedSpeed = 0;
