@@ -36,48 +36,6 @@ class cStaticMap;
 
 struct sNewTurnPlayerReport;
 
-//-----------------------------------------------------------------------------
-// Enum for the symbols
-//-----------------------------------------------------------------------------
-#ifndef D_eSymbols
-#define D_eSymbols
-
-//-----------------------------------------------------------------------------
-enum eSymbols
-{
-	SSpeed,
-	SHits,
-	SAmmo,
-	SMetal,
-	SEnergy,
-	SShots,
-	SOil,
-	SGold,
-	STrans,
-	SHuman,
-	SAir
-};
-
-//-----------------------------------------------------------------------------
-enum eSymbolsBig
-{
-	SBSpeed,
-	SBHits,
-	SBAmmo,
-	SBAttack,
-	SBShots,
-	SBRange,
-	SBArmor,
-	SBScan,
-	SBMetal,
-	SBOil,
-	SBGold,
-	SBEnergy,
-	SBHuman
-};
-
-#endif
-
 enum class eSupplyType {
 	REARM,
 	REPAIR
