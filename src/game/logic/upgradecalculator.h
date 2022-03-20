@@ -147,11 +147,11 @@ public:
 	 */
 	int getMaterialCostForUpgrading (int unitCost) const;
 
-	enum UnitTypes
+	enum class eUnitType
 	{
-		kBuilding = 0, // Mines, Research Centers, Storage, Generators...
-		kInfantry, // Infantry and Infiltrator
-		kStandardUnit // all other, like Tank, Ground Attack Plane, Scanner...
+		Building = 0, // Mines, Research Centers, Storage, Generators...
+		Infantry, // Infantry and Infiltrator
+		StandardUnit // all other, like Tank, Ground Attack Plane, Scanner...
 	};
 
 	/**
@@ -172,7 +172,7 @@ public:
 	 * (can be negative if kCost is the upgradeType)
 	 */
 	int calcChangeByResearch (int startValue, int curResearchLevel,
-							  int upgradeType = -1, int unitType = kBuilding) const;
+							  int upgradeType = -1, eUnitType unitType = eUnitType::Building) const;
 
 	/**
 	 * Prints some upgrade values to the standard log on debug-level.

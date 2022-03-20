@@ -588,9 +588,9 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::ResearchArea>& area
 				case cResearch::kCostResearch: startValue = originalData.getBuildCost(); break;
 			}
 
-			cUpgradeCalculator::UnitTypes unitType = cUpgradeCalculator::kStandardUnit;
-			if (unitData.getId().isABuilding()) unitType = cUpgradeCalculator::kBuilding;
-			if (originalUnitsData.getStaticUnitData (unitData.getId()).vehicleData.isHuman) unitType = cUpgradeCalculator::kInfantry;
+			cUpgradeCalculator::eUnitType unitType = cUpgradeCalculator::eUnitType::StandardUnit;
+			if (unitData.getId().isABuilding()) unitType = cUpgradeCalculator::eUnitType::Building;
+			if (originalUnitsData.getStaticUnitData (unitData.getId()).vehicleData.isHuman) unitType = cUpgradeCalculator::eUnitType::Infantry;
 
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel - 10,
 								   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1, unitType);

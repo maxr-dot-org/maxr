@@ -821,7 +821,7 @@ int cUpgradeCalculator::calcIncreaseByUpgrade (int startValue) const
 
 //--------------------------------------------------
 int cUpgradeCalculator::calcChangeByResearch (int startValue, int curResearchLevel,
-											  int upgradeType, int unitType) const
+											  int upgradeType, eUnitType unitType) const
 {
 	if (curResearchLevel <= 0) // no research done yet...
 		return 0;
@@ -844,13 +844,12 @@ int cUpgradeCalculator::calcChangeByResearch (int startValue, int curResearchLev
 		//  Building construction: steps of 2,
 		//  Infantry training: steps of 1)
 		int costRounded = startValue;
-		if (unitType == kBuilding)
-			costRounded = getNearestPossibleCost (realCost, 2);
-		else if (unitType == kInfantry)
-			costRounded = getNearestPossibleCost (realCost, 1);
-		else if (unitType == kStandardUnit)
-			costRounded = getNearestPossibleCost (realCost, 3);
-
+		switch (unitType)
+		{
+			case eUnitType::Building: costRounded = getNearestPossibleCost (realCost, 2); break;
+			case eUnitType::Infantry: costRounded = getNearestPossibleCost (realCost, 1); break;
+			case eUnitType::StandardUnit: costRounded = getNearestPossibleCost (realCost, 3); break;
+		}
 		return costRounded - startValue;
 	}
 	else
@@ -889,79 +888,79 @@ void cUpgradeCalculator::printAllToLog() const
 	printToLog ("CALC CHANGE BY RESEARCH TEST ---- CALC CHANGE BY RESEARCH TEST");
 
 	printToLog ("--------------- Cost-Research for Buildings ----------------");
-	printToLog ("Building-Cost: Start 40, Level   0 => Change: ", calcChangeByResearch (40,   0, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level  10 => Change: ", calcChangeByResearch (40,  10, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level  20 => Change: ", calcChangeByResearch (40,  20, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level  30 => Change: ", calcChangeByResearch (40,  30, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level  40 => Change: ", calcChangeByResearch (40,  40, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level  50 => Change: ", calcChangeByResearch (40,  50, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level  60 => Change: ", calcChangeByResearch (40,  60, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level  70 => Change: ", calcChangeByResearch (40,  70, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level  80 => Change: ", calcChangeByResearch (40,  80, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level  90 => Change: ", calcChangeByResearch (40,  90, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 100 => Change: ", calcChangeByResearch (40, 100, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 110 => Change: ", calcChangeByResearch (40, 110, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 120 => Change: ", calcChangeByResearch (40, 120, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 130 => Change: ", calcChangeByResearch (40, 130, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 140 => Change: ", calcChangeByResearch (40, 140, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 150 => Change: ", calcChangeByResearch (40, 150, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 160 => Change: ", calcChangeByResearch (40, 160, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 170 => Change: ", calcChangeByResearch (40, 170, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 180 => Change: ", calcChangeByResearch (40, 180, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 190 => Change: ", calcChangeByResearch (40, 190, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 200 => Change: ", calcChangeByResearch (40, 200, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 210 => Change: ", calcChangeByResearch (40, 210, kCost, kBuilding));
-	printToLog ("Building-Cost: Start 40, Level 220 => Change: ", calcChangeByResearch (40, 220, kCost, kBuilding));
+	printToLog ("Building-Cost: Start 40, Level   0 => Change: ", calcChangeByResearch (40,   0, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  10 => Change: ", calcChangeByResearch (40,  10, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  20 => Change: ", calcChangeByResearch (40,  20, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  30 => Change: ", calcChangeByResearch (40,  30, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  40 => Change: ", calcChangeByResearch (40,  40, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  50 => Change: ", calcChangeByResearch (40,  50, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  60 => Change: ", calcChangeByResearch (40,  60, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  70 => Change: ", calcChangeByResearch (40,  70, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  80 => Change: ", calcChangeByResearch (40,  80, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  90 => Change: ", calcChangeByResearch (40,  90, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 100 => Change: ", calcChangeByResearch (40, 100, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 110 => Change: ", calcChangeByResearch (40, 110, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 120 => Change: ", calcChangeByResearch (40, 120, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 130 => Change: ", calcChangeByResearch (40, 130, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 140 => Change: ", calcChangeByResearch (40, 140, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 150 => Change: ", calcChangeByResearch (40, 150, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 160 => Change: ", calcChangeByResearch (40, 160, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 170 => Change: ", calcChangeByResearch (40, 170, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 180 => Change: ", calcChangeByResearch (40, 180, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 190 => Change: ", calcChangeByResearch (40, 190, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 200 => Change: ", calcChangeByResearch (40, 200, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 210 => Change: ", calcChangeByResearch (40, 210, kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 220 => Change: ", calcChangeByResearch (40, 220, kCost, eUnitType::Building));
 
 	printToLog ("--------------- Cost-Research for Standard Units ----------------");
-	printToLog ("Unit-Cost: Start 24, Level   0 => Change: ", calcChangeByResearch (24,   0, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  10 => Change: ", calcChangeByResearch (24,  10, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  20 => Change: ", calcChangeByResearch (24,  20, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  30 => Change: ", calcChangeByResearch (24,  30, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  40 => Change: ", calcChangeByResearch (24,  40, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  50 => Change: ", calcChangeByResearch (24,  50, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  60 => Change: ", calcChangeByResearch (24,  60, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  70 => Change: ", calcChangeByResearch (24,  70, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  80 => Change: ", calcChangeByResearch (24,  80, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  90 => Change: ", calcChangeByResearch (24,  90, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 100 => Change: ", calcChangeByResearch (24, 100, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 110 => Change: ", calcChangeByResearch (24, 110, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 120 => Change: ", calcChangeByResearch (24, 120, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 130 => Change: ", calcChangeByResearch (24, 130, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 140 => Change: ", calcChangeByResearch (24, 140, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 150 => Change: ", calcChangeByResearch (24, 150, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 160 => Change: ", calcChangeByResearch (24, 160, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 170 => Change: ", calcChangeByResearch (24, 170, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 180 => Change: ", calcChangeByResearch (24, 180, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 190 => Change: ", calcChangeByResearch (24, 190, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 200 => Change: ", calcChangeByResearch (24, 200, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 210 => Change: ", calcChangeByResearch (24, 210, kCost, kStandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 220 => Change: ", calcChangeByResearch (24, 220, kCost, kStandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level   0 => Change: ", calcChangeByResearch (24,   0, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  10 => Change: ", calcChangeByResearch (24,  10, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  20 => Change: ", calcChangeByResearch (24,  20, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  30 => Change: ", calcChangeByResearch (24,  30, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  40 => Change: ", calcChangeByResearch (24,  40, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  50 => Change: ", calcChangeByResearch (24,  50, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  60 => Change: ", calcChangeByResearch (24,  60, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  70 => Change: ", calcChangeByResearch (24,  70, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  80 => Change: ", calcChangeByResearch (24,  80, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  90 => Change: ", calcChangeByResearch (24,  90, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 100 => Change: ", calcChangeByResearch (24, 100, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 110 => Change: ", calcChangeByResearch (24, 110, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 120 => Change: ", calcChangeByResearch (24, 120, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 130 => Change: ", calcChangeByResearch (24, 130, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 140 => Change: ", calcChangeByResearch (24, 140, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 150 => Change: ", calcChangeByResearch (24, 150, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 160 => Change: ", calcChangeByResearch (24, 160, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 170 => Change: ", calcChangeByResearch (24, 170, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 180 => Change: ", calcChangeByResearch (24, 180, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 190 => Change: ", calcChangeByResearch (24, 190, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 200 => Change: ", calcChangeByResearch (24, 200, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 210 => Change: ", calcChangeByResearch (24, 210, kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 220 => Change: ", calcChangeByResearch (24, 220, kCost, eUnitType::StandardUnit));
 
 	printToLog ("--------------- Cost-Research for Infantry ----------------");
-	printToLog ("Infantry-Cost: Start 9, Level   0 => Change: ", calcChangeByResearch (9,   0, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level  10 => Change: ", calcChangeByResearch (9,  10, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level  20 => Change: ", calcChangeByResearch (9,  20, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level  30 => Change: ", calcChangeByResearch (9,  30, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level  40 => Change: ", calcChangeByResearch (9,  40, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level  50 => Change: ", calcChangeByResearch (9,  50, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level  60 => Change: ", calcChangeByResearch (9,  60, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level  70 => Change: ", calcChangeByResearch (9,  70, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level  80 => Change: ", calcChangeByResearch (9,  80, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level  90 => Change: ", calcChangeByResearch (9,  90, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 100 => Change: ", calcChangeByResearch (9, 100, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 110 => Change: ", calcChangeByResearch (9, 110, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 120 => Change: ", calcChangeByResearch (9, 120, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 130 => Change: ", calcChangeByResearch (9, 130, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 140 => Change: ", calcChangeByResearch (9, 140, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 150 => Change: ", calcChangeByResearch (9, 150, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 160 => Change: ", calcChangeByResearch (9, 160, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 170 => Change: ", calcChangeByResearch (9, 170, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 180 => Change: ", calcChangeByResearch (9, 180, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 190 => Change: ", calcChangeByResearch (9, 190, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 200 => Change: ", calcChangeByResearch (9, 200, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 210 => Change: ", calcChangeByResearch (9, 210, kCost, kInfantry));
-	printToLog ("Infantry-Cost: Start 9, Level 220 => Change: ", calcChangeByResearch (9, 220, kCost, kInfantry));
+	printToLog ("Infantry-Cost: Start 9, Level   0 => Change: ", calcChangeByResearch (9,   0, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  10 => Change: ", calcChangeByResearch (9,  10, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  20 => Change: ", calcChangeByResearch (9,  20, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  30 => Change: ", calcChangeByResearch (9,  30, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  40 => Change: ", calcChangeByResearch (9,  40, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  50 => Change: ", calcChangeByResearch (9,  50, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  60 => Change: ", calcChangeByResearch (9,  60, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  70 => Change: ", calcChangeByResearch (9,  70, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  80 => Change: ", calcChangeByResearch (9,  80, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  90 => Change: ", calcChangeByResearch (9,  90, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 100 => Change: ", calcChangeByResearch (9, 100, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 110 => Change: ", calcChangeByResearch (9, 110, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 120 => Change: ", calcChangeByResearch (9, 120, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 130 => Change: ", calcChangeByResearch (9, 130, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 140 => Change: ", calcChangeByResearch (9, 140, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 150 => Change: ", calcChangeByResearch (9, 150, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 160 => Change: ", calcChangeByResearch (9, 160, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 170 => Change: ", calcChangeByResearch (9, 170, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 180 => Change: ", calcChangeByResearch (9, 180, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 190 => Change: ", calcChangeByResearch (9, 190, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 200 => Change: ", calcChangeByResearch (9, 200, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 210 => Change: ", calcChangeByResearch (9, 210, kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 220 => Change: ", calcChangeByResearch (9, 220, kCost, eUnitType::Infantry));
 
 	printToLog ("--------------- Upgrade-Research (e.g. Armor) ----------------");
 	printToLog ("Normal-Research: Start 12, Level   0 => Change: ", calcChangeByResearch (12,   0));
