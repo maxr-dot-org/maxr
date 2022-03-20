@@ -81,6 +81,45 @@ namespace
 		else return lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster") + suffix;
 	}
 
+	//--------------------------------------------------------------------------
+	std::string toTranslatedString (cResearch::ResearchArea area)
+	{
+		switch (area)
+		{
+			case cResearch::kAttackResearch: return lngPack.i18n ("Text~Others~Attack");
+			case cResearch::kShotsResearch: return lngPack.i18n ("Text~Others~Shots_7");
+			case cResearch::kRangeResearch: return lngPack.i18n ("Text~Others~Range");
+			case cResearch::kArmorResearch: return lngPack.i18n ("Text~Others~Armor_7");
+			case cResearch::kHitpointsResearch: return lngPack.i18n ("Text~Others~Hitpoints_7");
+			case cResearch::kSpeedResearch: return lngPack.i18n ("Text~Others~Speed");
+			case cResearch::kScanResearch: return lngPack.i18n ("Text~Others~Scan");
+			case cResearch::kCostResearch: return lngPack.i18n ("Text~Others~Costs");
+		}
+		return "";
+	}
+
+	//--------------------------------------------------------------------------
+	std::string getResearchAreaStatus (const cPlayer& player, cResearch::ResearchArea area)
+	{
+		const auto workingCenterCount = player.getResearchCentersWorkingOnArea (area);
+		if (workingCenterCount > 0)
+		{
+			const auto remainingTurnCount = player.getResearchState().getRemainingTurns (area, player.getResearchCentersWorkingOnArea (area));
+			return toTranslatedString (area) + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (remainingTurnCount) + "\n";
+		}
+		return "";
+	}
+
+	//--------------------------------------------------------------------------
+	std::string getResearchAreaStatus (const cPlayer& player)
+	{
+		std::string res;
+		for (int area = 0; area < cResearch::kNrResearchAreas; area++)
+		{
+			res += getResearchAreaStatus (player, static_cast<cResearch::ResearchArea> (area));
+		}
+		return res;
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -327,26 +366,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 		// Research Center
 		if (building.getStaticData().canResearch && building.getOwner() == whoWantsToKnow && building.getOwner())
 		{
-			std::string sText = lngPack.i18n ("Text~Comp~Working") + "\n";
-			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
-			{
-				if (building.getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area) > 0)
-				{
-					switch (area)
-					{
-						case cResearch::kAttackResearch: sText += lngPack.i18n ("Text~Others~Attack"); break;
-						case cResearch::kShotsResearch: sText += lngPack.i18n ("Text~Others~Shots_7"); break;
-						case cResearch::kRangeResearch: sText += lngPack.i18n ("Text~Others~Range"); break;
-						case cResearch::kArmorResearch: sText += lngPack.i18n ("Text~Others~Armor_7"); break;
-						case cResearch::kHitpointsResearch: sText += lngPack.i18n ("Text~Others~Hitpoints_7"); break;
-						case cResearch::kSpeedResearch: sText += lngPack.i18n ("Text~Others~Speed"); break;
-						case cResearch::kScanResearch: sText += lngPack.i18n ("Text~Others~Scan"); break;
-						case cResearch::kCostResearch: sText += lngPack.i18n ("Text~Others~Costs"); break;
-					}
-					sText += lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (building.getOwner()->getResearchState().getRemainingTurns (area, building.getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area))) + "\n";
-				}
-			}
-			return sText;
+			return lngPack.i18n ("Text~Comp~Working") + "\n" +  getResearchAreaStatus (*building.getOwner());
 		}
 
 		// Goldraffinerie:
@@ -384,28 +404,8 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 	// Research Center
 	if (building.getStaticData().canResearch && building.getOwner() == whoWantsToKnow && building.getOwner() && !building.isUnitWorking())
 	{
-		std::string sText = lngPack.i18n ("Text~Comp~Waits") + "\n";
-		for (int area = 0; area < cResearch::kNrResearchAreas; area++)
-		{
-			if (building.getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area) > 0)
-			{
-				switch (area)
-				{
-				case cResearch::kAttackResearch: sText += lngPack.i18n ("Text~Others~Attack"); break;
-				case cResearch::kShotsResearch: sText += lngPack.i18n ("Text~Others~Shots_7"); break;
-				case cResearch::kRangeResearch: sText += lngPack.i18n ("Text~Others~Range"); break;
-				case cResearch::kArmorResearch: sText += lngPack.i18n ("Text~Others~Armor_7"); break;
-				case cResearch::kHitpointsResearch: sText += lngPack.i18n ("Text~Others~Hitpoints_7"); break;
-				case cResearch::kSpeedResearch: sText += lngPack.i18n ("Text~Others~Speed"); break;
-				case cResearch::kScanResearch: sText += lngPack.i18n ("Text~Others~Scan"); break;
-				case cResearch::kCostResearch: sText += lngPack.i18n ("Text~Others~Costs"); break;
-				}
-				sText += lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (building.getOwner()->getResearchState().getRemainingTurns (area, building.getOwner()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area))) + "\n";
-			}
-		}
-		return sText;
+		return lngPack.i18n ("Text~Comp~Waits") + "\n" + getResearchAreaStatus (*building.getOwner());
 	}
-
 	return lngPack.i18n ("Text~Comp~Waits");
 }
 
