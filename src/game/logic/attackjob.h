@@ -87,8 +87,8 @@ private:
 	std::vector<int> lockedTargets;
 	int fireDir = 0;
 	int counter = 0;
-	enum eAJStates { S_ROTATING, S_PLAYING_MUZZLE, S_FIRING, S_FINISHED };
-	eAJStates state = S_ROTATING;
+	enum class eAJState { Rotating, PlayingMuzzle, Firing, Finished };
+	eAJState state = eAJState::Rotating;
 };
 
 //--------------------------------------------------------------------------

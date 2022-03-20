@@ -44,7 +44,7 @@ cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const
 	targetPosition (targetPosition),
 	fireDir (0),
 	counter (10),
-	state (S_ROTATING)
+	state (eAJState::Rotating)
 {
 	Log.write (" cAttackJob: Started attack, aggressor: " + aggressor.getDisplayName (aggressor.getStaticUnitData().getDefaultName()) + ", ID: " + std::to_string (aggressor.getId()) + " @" + std::to_string (model.getGameTime()), cLog::eLogType::NetDebug);
 	assert (!aggressor.isAVehicle() || !static_cast<cVehicle&> (aggressor).isUnitMoving());
@@ -78,19 +78,19 @@ void cAttackJob::run (cModel& model)
 	if (aggressor == nullptr)
 	{
 		releaseTargets (model);
-		state = S_FINISHED;
+		state = eAJState::Finished;
 	}
 
 	switch (state)
 	{
-		case S_ROTATING:
+		case eAJState::Rotating:
 		{
 			if (counter == 0)
 			{
 				if (aggressor->dir == fireDir)
 				{
 					fire (model);
-					state = S_FIRING;
+					state = eAJState::Firing;
 				}
 				else
 				{
@@ -100,16 +100,16 @@ void cAttackJob::run (cModel& model)
 			}
 			break;
 		}
-		case S_FIRING:
+		case eAJState::Firing:
 			if (counter == 0)
 			{
 				impact (model);
 				releaseTargets (model);
-				state = S_FINISHED;
+				state = eAJState::Finished;
 			}
 			break;
-		case S_FINISHED:
-		default:
+		case eAJState::Finished:
+		case eAJState::PlayingMuzzle:
 			break;
 	}
 }
@@ -117,7 +117,7 @@ void cAttackJob::run (cModel& model)
 //------------------------------------------------------------------------------
 bool cAttackJob::finished() const
 {
-	return state == S_FINISHED;
+	return state == eAJState::Finished;
 }
 
 //------------------------------------------------------------------------------
