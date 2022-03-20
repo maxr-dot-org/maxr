@@ -61,7 +61,7 @@ eMouseButtonType cEventMouseButton::getButton() const
 //------------------------------------------------------------------------------
 cEventMouseButton::eType cEventMouseButton::getType() const
 {
-	return sdlEvent.type == SDL_MOUSEBUTTONUP ? Up : Down;
+	return sdlEvent.type == SDL_MOUSEBUTTONUP ? eType::Up : eType::Down;
 }
 
 //------------------------------------------------------------------------------

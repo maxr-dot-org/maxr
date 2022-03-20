@@ -59,25 +59,28 @@ void cMouse::handleMouseMotionEvent (const cEventMouseMotion& event)
 //------------------------------------------------------------------------------
 void cMouse::handleMouseButtonEvent (const cEventMouseButton& event)
 {
-	assert (event.getType() == cEventMouseButton::Down || event.getType() == cEventMouseButton::Up);
-
 	auto button = event.getButton();
 
-	if (event.getType() == cEventMouseButton::Down)
+	switch (event.getType())
 	{
-		buttonPressedState[button] = true;
+		case cEventMouseButton::eType::Down:
+		{
+			buttonPressedState[button] = true;
 
-		const auto currentClickTime = std::chrono::steady_clock::now();
-		auto& lastClickTime = getLastClickTime (button);
-		buttonClickCount[button] = (currentClickTime - lastClickTime) <= doubleClickTime ? getButtonClickCount (button) + 1 : 1;
-		lastClickTime = currentClickTime;
+			const auto currentClickTime = std::chrono::steady_clock::now();
+			auto& lastClickTime = getLastClickTime (button);
+			buttonClickCount[button] = (currentClickTime - lastClickTime) <= doubleClickTime ? getButtonClickCount (button) + 1 : 1;
+			lastClickTime = currentClickTime;
 
-		pressed (*this, button);
-	}
-	else if (event.getType() == cEventMouseButton::Up)
-	{
-		buttonPressedState[button] = false;
-		released (*this, button);
+			pressed (*this, button);
+			break;
+		}
+		case cEventMouseButton::eType::Up:
+		{
+			buttonPressedState[button] = false;
+			released (*this, button);
+			break;
+		}
 	}
 }
 

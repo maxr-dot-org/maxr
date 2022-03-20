@@ -45,7 +45,7 @@ private:
 class cEventMouseButton
 {
 public:
-	enum eType
+	enum class eType
 	{
 		Down,
 		Up
