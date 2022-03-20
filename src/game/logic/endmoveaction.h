@@ -28,20 +28,20 @@ class cVehicle;
 class cModel;
 class cUnit;
 
-enum eEndMoveActionType
+enum class eEndMoveActionType
 {
-	EMAT_NONE,
-	EMAT_LOAD,
-	EMAT_ATTACK
+	None,
+	Load,
+	Attack
 };
 
 class cEndMoveAction
 {
 public:
 	cEndMoveAction();
-	cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type);
+	cEndMoveAction (const cVehicle&, const cUnit& destUnit, eEndMoveActionType);
 
-	void execute (cModel& model);
+	void execute (cModel&);
 	eEndMoveActionType getType() const;
 	uint32_t getChecksum (uint32_t crc) const;
 
@@ -53,9 +53,9 @@ public:
 		archive & NVP (destID);
 	}
 private:
-	void executeLoadAction (cModel& model);
-	void executeGetInAction (cModel& model);
-	void executeAttackAction (cModel& model);
+	void executeLoadAction (cModel&);
+	void executeGetInAction (cModel&);
+	void executeAttackAction (cModel&);
 
 	int vehicleID;
 	eEndMoveActionType endMoveAction;

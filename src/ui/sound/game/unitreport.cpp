@@ -53,7 +53,7 @@ void makeReport (cSoundManager& soundManager, const cGameGuiState&, const cVehic
 	else if (vehicle.data.getHitpoints() > vehicle.data.getHitpointsMax() / 2)
 	{
 		// Status green
-		if (vehicle.getMoveJob() && vehicle.getMoveJob()->getEndMoveAction().getType() == EMAT_ATTACK)
+		if (vehicle.getMoveJob() && vehicle.getMoveJob()->getEndMoveAction().getType() == eEndMoveActionType::Attack)
 		{
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
 		}

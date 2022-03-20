@@ -481,7 +481,7 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 	// generate other infos for normal non-unit-related-events and infiltrators
 	std::string sTmp;
 	{
-		if (vehicle.getMoveJob() && vehicle.getMoveJob()->getEndMoveAction().getType() == EMAT_ATTACK)
+		if (vehicle.getMoveJob() && vehicle.getMoveJob()->getEndMoveAction().getType() == eEndMoveActionType::Attack)
 			sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
 		else if (vehicle.getMoveJob())
 			sTmp = lngPack.i18n ("Text~Comp~Moving");

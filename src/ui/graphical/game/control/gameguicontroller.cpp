@@ -883,7 +883,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::EMAT_LOAD);
+						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::Load);
 						activeClient->sendNetMessage (cActionStartMove (vehicle, path, emat));
 					}
 					else
@@ -904,7 +904,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::EMAT_LOAD);
+						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::Load);
 						activeClient->sendNetMessage (cActionStartMove (*overVehicle, path, emat));
 					}
 					else
@@ -929,7 +929,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::EMAT_LOAD);
+						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::Load);
 						activeClient->sendNetMessage (cActionStartMove (*overVehicle, path, emat));
 					}
 					else
@@ -950,7 +950,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						cEndMoveAction emat (*overPlane, unit, eEndMoveActionType::EMAT_LOAD);
+						cEndMoveAction emat (*overPlane, unit, eEndMoveActionType::Load);
 						activeClient->sendNetMessage (cActionStartMove (*overPlane, path, emat));;
 					}
 					else
@@ -987,7 +987,7 @@ void cGameGuiController::connectClient (cClient& client)
 				const auto path = pc.calcPath();
 				if (!path.empty())
 				{
-					cEndMoveAction emat (vehicle, *target, EMAT_ATTACK);
+					cEndMoveAction emat (vehicle, *target, eEndMoveActionType::Attack);
 					activeClient->sendNetMessage (cActionStartMove (vehicle, path, emat));
 				}
 				else

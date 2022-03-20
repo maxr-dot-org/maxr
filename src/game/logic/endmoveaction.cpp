@@ -37,7 +37,7 @@ cEndMoveAction::cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, 
 //------------------------------------------------------------------------------
 cEndMoveAction::cEndMoveAction () :
 	vehicleID (-1),
-	endMoveAction (EMAT_NONE),
+	endMoveAction (eEndMoveActionType::None),
 	destID (-1)
 {}
 
@@ -46,10 +46,10 @@ void cEndMoveAction::execute (cModel& model)
 {
 	switch (endMoveAction)
 	{
-		case EMAT_LOAD:
+		case eEndMoveActionType::Load:
 			executeLoadAction (model);
 			break;
-		case EMAT_ATTACK:
+		case eEndMoveActionType::Attack:
 			executeAttackAction (model);
 			break;
 		default:
