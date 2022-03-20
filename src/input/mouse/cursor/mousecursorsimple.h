@@ -22,7 +22,7 @@
 
 #include "input/mouse/cursor/mousecursor.h"
 
-enum eMouseCursorSimpleType
+enum class eMouseCursorSimpleType
 {
 	Hand,
 	No,
