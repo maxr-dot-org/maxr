@@ -34,7 +34,7 @@
 /* Size of a memory block while pathfinding */
 #define MEM_BLOCK_SIZE 10
 
-cPathDestHandler::cPathDestHandler (ePathDestinationTypes type_, const cPosition& destination_, const cVehicle* srcVehicle_, const cUnit* destUnit_) :
+cPathDestHandler::cPathDestHandler (ePathDestinationType type_, const cPosition& destination_, const cVehicle* srcVehicle_, const cUnit* destUnit_) :
 	type (type_),
 	srcVehicle (srcVehicle_),
 	destUnit (destUnit_),
@@ -45,11 +45,11 @@ bool cPathDestHandler::hasReachedDestination (const cPosition& position) const
 {
 	switch (type)
 	{
-		case PATH_DEST_TYPE_POS:
+		case ePathDestinationType::Pos:
 			return (destination == position);
-		case PATH_DEST_TYPE_LOAD:
+		case ePathDestinationType::Load:
 			return (destUnit && destUnit->isNextTo (position));
-		case PATH_DEST_TYPE_ATTACK:
+		case ePathDestinationType::Attack:
 			return (position - destination).l2NormSquared() <= Square (srcVehicle->data.getRange());
 		default:
 			return true;
@@ -61,10 +61,10 @@ int cPathDestHandler::heuristicCost (const cPosition& source) const
 {
 	switch (type)
 	{
-		case PATH_DEST_TYPE_POS:
-		case PATH_DEST_TYPE_LOAD:
+		case ePathDestinationType::Pos:
+		case ePathDestinationType::Load:
 			return 0;
-		case PATH_DEST_TYPE_ATTACK:
+		case ePathDestinationType::Attack:
 		default:
 		{
 			return Round ((destination - source).l2Norm());
@@ -74,19 +74,19 @@ int cPathDestHandler::heuristicCost (const cPosition& source) const
 
 cPathCalculator::cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, const std::vector<cVehicle*>* group)
 {
-	destHandler = std::make_unique<cPathDestHandler> (PATH_DEST_TYPE_POS, destPosition, nullptr, nullptr);
+	destHandler = std::make_unique<cPathDestHandler> (ePathDestinationType::Pos, destPosition, nullptr, nullptr);
 	init (Vehicle.getPosition(), Map, Vehicle, group);
 }
 
 cPathCalculator::cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cUnit& destUnit, bool load)
 {
-	destHandler = std::make_unique<cPathDestHandler> (load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, cPosition (0, 0), &Vehicle, &destUnit);
+	destHandler = std::make_unique<cPathDestHandler> (load ? ePathDestinationType::Load : ePathDestinationType::Attack, cPosition (0, 0), &Vehicle, &destUnit);
 	init (Vehicle.getPosition(), Map, Vehicle, nullptr);
 }
 
 cPathCalculator::cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, bool attack)
 {
-	destHandler = std::make_unique<cPathDestHandler> (attack ? PATH_DEST_TYPE_ATTACK : PATH_DEST_TYPE_POS, destPosition, &Vehicle, nullptr);
+	destHandler = std::make_unique<cPathDestHandler> (attack ? ePathDestinationType::Attack : ePathDestinationType::Pos, destPosition, &Vehicle, nullptr);
 	init (Vehicle.getPosition(), Map, Vehicle, nullptr);
 }
 

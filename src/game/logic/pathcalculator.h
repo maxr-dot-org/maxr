@@ -43,23 +43,23 @@ struct sPathNode
 	sPathNode* prev;
 };
 
-enum ePathDestinationTypes
+enum class ePathDestinationType
 {
-	PATH_DEST_TYPE_POS,
-	PATH_DEST_TYPE_LOAD,
-	PATH_DEST_TYPE_ATTACK
+	Pos,
+	Load,
+	Attack
 };
 
 class cPathDestHandler
 {
-	ePathDestinationTypes type;
+	ePathDestinationType type;
 
 	const cVehicle* srcVehicle;
 
 	const cUnit* destUnit;
 	cPosition destination;
 public:
-	cPathDestHandler (ePathDestinationTypes type_, const cPosition& destination, const cVehicle* srcVehicle_, const cUnit* destUnit_);
+	cPathDestHandler (ePathDestinationType, const cPosition& destination, const cVehicle* srcVehicle, const cUnit* destUnit);
 
 	bool hasReachedDestination (const cPosition& position) const;
 	int heuristicCost (const cPosition& source) const;
@@ -68,12 +68,12 @@ public:
 
 class cPathCalculator
 {
-	void init (const cPosition& source, const cMapView& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group);
+	void init (const cPosition& source, const cMapView&, const cVehicle&, const std::vector<cVehicle*>* group);
 
 public:
-	cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, const std::vector<cVehicle*>* group);
-	cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cUnit& destUnit,  bool load);
-	cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, bool attack);
+	cPathCalculator (const cVehicle&, const cMapView&, const cPosition& destPosition, const std::vector<cVehicle*>* group);
+	cPathCalculator (const cVehicle&, const cMapView&, const cUnit& destUnit, bool load);
+	cPathCalculator (const cVehicle&, const cMapView&, const cPosition& destPosition, bool attack);
 	~cPathCalculator();
 
 	/**
@@ -87,7 +87,7 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	template <typename T>
-	static int calcNextCost (const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const T* map);
+	static int calcNextCost (const cPosition& source, const cPosition& destination, const cVehicle*, const T* map);
 
 	/* the map on which the path will be calculated */
 	const cMapView* Map;
