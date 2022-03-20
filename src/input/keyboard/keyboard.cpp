@@ -41,7 +41,7 @@ cKeyboard& cKeyboard::getInstance()
 //------------------------------------------------------------------------------
 void cKeyboard::updateModifiersFromKeyPress (const cKeyboardEvent& event)
 {
-	if (event.getType() != cKeyboardEvent::Down) return;
+	if (event.getType() != cKeyboardEvent::eType::Down) return;
 
 	SDL_Keycode key = event.getKey();
 
@@ -91,18 +91,14 @@ bool cKeyboard::isAllModifiersActive (KeyModifierFlags flags) const
 //------------------------------------------------------------------------------
 void cKeyboard::handleKeyboardEvent (const cKeyboardEvent& event)
 {
-	assert (event.getType() == cKeyboardEvent::Down || event.getType() == cKeyboardEvent::Up);
 	KeyModifierFlags oldModifiers = currentModifiers;
 
 	currentModifiers = event.getModifiers(); //set modifier of current key event
 
-	if (event.getType() == cKeyboardEvent::Down)
+	switch (event.getType())
 	{
-		keyPressed (*this, event.getKey());
-	}
-	else if (event.getType() == cKeyboardEvent::Up)
-	{
-		keyReleased (*this, event.getKey());
+		case cKeyboardEvent::eType::Down: keyPressed (*this, event.getKey()); break;
+		case cKeyboardEvent::eType::Up: keyReleased (*this, event.getKey()); break;
 	}
 
 	//set modifier in case the key event was a modifier key itself
@@ -111,7 +107,6 @@ void cKeyboard::handleKeyboardEvent (const cKeyboardEvent& event)
 
 	if (currentModifiers != oldModifiers)
 		modifierChanged();
-
 }
 
 //------------------------------------------------------------------------------

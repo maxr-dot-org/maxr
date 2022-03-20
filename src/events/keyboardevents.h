@@ -27,7 +27,7 @@
 class cKeyboardEvent
 {
 public:
-	enum eType
+	enum class eType
 	{
 		Down,
 		Up

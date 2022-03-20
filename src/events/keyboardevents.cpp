@@ -33,7 +33,7 @@ SDL_Keycode cKeyboardEvent::getKey() const
 //------------------------------------------------------------------------------
 cKeyboardEvent::eType cKeyboardEvent::getType() const
 {
-	return sdlEvent.state == SDL_PRESSED ? Down : Up;
+	return sdlEvent.state == SDL_PRESSED ? eType::Down : eType::Up;
 }
 
 //------------------------------------------------------------------------------
