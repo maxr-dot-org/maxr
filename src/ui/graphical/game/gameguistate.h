@@ -79,7 +79,7 @@ public:
 	bool miniMapAttackUnitsOnly = false;
 	bool unitVideoPlaying = true;
 	bool chatActive = true;
-	std::vector<cResearch::ResearchArea> currentTurnResearchAreasFinished;
+	std::vector<cResearch::eResearchArea> currentTurnResearchAreasFinished;
 private:
 	std::vector<unsigned int> selectedUnitIds;
 	std::vector<unsigned int> lockedUnitIds;

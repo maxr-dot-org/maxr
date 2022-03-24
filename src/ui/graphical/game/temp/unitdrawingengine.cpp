@@ -69,7 +69,7 @@ void cUnitDrawingEngine::setDrawColor (bool drawColor)
 }
 
 //--------------------------------------------------------------------------
-void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player, const std::vector<cResearch::ResearchArea>& currentTurnResearchAreasFinished)
+void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player, const std::vector<cResearch::eResearchArea>& currentTurnResearchAreasFinished)
 {
 	unsigned long long animationTime = animationTimer->getAnimationTime(); //call getAnimationTime only once in this method and save the result,
 	//to avoid a changing time within this method

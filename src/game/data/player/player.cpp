@@ -460,7 +460,7 @@ bool cPlayer::hasUnits() const
 //------------------------------------------------------------------------------
 /** Starts a research center. */
 //------------------------------------------------------------------------------
-void cPlayer::startAResearch (cResearch::ResearchArea researchArea)
+void cPlayer::startAResearch (cResearch::eResearchArea researchArea)
 {
 	++researchCentersWorkingTotal;
 	++researchCentersWorkingOnArea[researchArea];
@@ -472,7 +472,7 @@ void cPlayer::startAResearch (cResearch::ResearchArea researchArea)
 //------------------------------------------------------------------------------
 /** Stops a research center. */
 //------------------------------------------------------------------------------
-void cPlayer::stopAResearch (cResearch::ResearchArea researchArea)
+void cPlayer::stopAResearch (cResearch::eResearchArea researchArea)
 {
 	--researchCentersWorkingTotal;
 	if (researchCentersWorkingOnArea[researchArea] > 0)
@@ -486,17 +486,17 @@ void cPlayer::stopAResearch (cResearch::ResearchArea researchArea)
 //------------------------------------------------------------------------------
 /** At turn end update the research level */
 //------------------------------------------------------------------------------
-std::vector<cResearch::ResearchArea> cPlayer::doResearch (const cUnitsData& unitsData)
+std::vector<cResearch::eResearchArea> cPlayer::doResearch (const cUnitsData& unitsData)
 {
-	std::vector<cResearch::ResearchArea> areasReachingNextLevel;
+	std::vector<cResearch::eResearchArea> areasReachingNextLevel;
 
 	for (int area = 0; area < cResearch::kNrResearchAreas; ++area)
 	{
 		if (researchCentersWorkingOnArea[area] > 0 &&
-			researchState.doResearch (researchCentersWorkingOnArea[area], area))
+			researchState.doResearch (researchCentersWorkingOnArea[area], static_cast<cResearch::eResearchArea>(area)))
 		{
 			// next level reached
-			areasReachingNextLevel.push_back (cResearch::ResearchArea (area));
+			areasReachingNextLevel.push_back (cResearch::eResearchArea (area));
 		}
 	}
 	if (!areasReachingNextLevel.empty())
@@ -558,7 +558,7 @@ int cPlayer::getScore() const
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::upgradeUnitTypes (const std::vector<cResearch::ResearchArea>& areasReachingNextLevel, const cUnitsData& originalUnitsData)
+void cPlayer::upgradeUnitTypes (const std::vector<cResearch::eResearchArea>& areasReachingNextLevel, const cUnitsData& originalUnitsData)
 {
 	for (auto& unitData : dynamicUnitsData)
 	{
@@ -639,7 +639,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	{
 		if (oldResearchCentersWorkingOnArea[i] != researchCentersWorkingOnArea[i])
 		{
-			researchCentersWorkingOnAreaChanged ((cResearch::ResearchArea)i);
+			researchCentersWorkingOnAreaChanged ((cResearch::eResearchArea)i);
 		}
 	}
 	if (researchCentersWorkingTotal != newResearchCount) researchCentersWorkingTotalChanged();
@@ -790,7 +790,7 @@ int cPlayer::getResearchCentersWorkingTotal() const
 }
 
 //------------------------------------------------------------------------------
-int cPlayer::getResearchCentersWorkingOnArea (cResearch::ResearchArea area) const
+int cPlayer::getResearchCentersWorkingOnArea (cResearch::eResearchArea area) const
 {
 	return researchCentersWorkingOnArea[area];
 }

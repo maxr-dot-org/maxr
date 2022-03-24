@@ -249,7 +249,7 @@ protected:
 	void buildCollidingShortcutsMap();
 	void activateShortcutConditional (cShortcut&, std::set<const cShortcut*>& blockedShortcuts, const std::set<const cShortcut*>& collidingShortcuts);
 public:
-	std::vector<cResearch::ResearchArea> currentTurnResearchAreasFinished;
+	std::vector<cResearch::eResearchArea> currentTurnResearchAreasFinished;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager mapViewSignalConnectionManager;

@@ -82,7 +82,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	std::string toTranslatedString (cResearch::ResearchArea area)
+	std::string toTranslatedString (cResearch::eResearchArea area)
 	{
 		switch (area)
 		{
@@ -99,7 +99,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	std::string getResearchAreaStatus (const cPlayer& player, cResearch::ResearchArea area)
+	std::string getResearchAreaStatus (const cPlayer& player, cResearch::eResearchArea area)
 	{
 		const auto workingCenterCount = player.getResearchCentersWorkingOnArea (area);
 		if (workingCenterCount > 0)
@@ -116,7 +116,7 @@ namespace
 		std::string res;
 		for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 		{
-			res += getResearchAreaStatus (player, static_cast<cResearch::ResearchArea> (area));
+			res += getResearchAreaStatus (player, static_cast<cResearch::eResearchArea> (area));
 		}
 		return res;
 	}

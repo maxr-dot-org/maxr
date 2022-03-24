@@ -698,14 +698,14 @@ const sMiningResource& cBuilding::getMaxProd() const
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::setResearchArea (cResearch::ResearchArea area)
+void cBuilding::setResearchArea (cResearch::eResearchArea area)
 {
 	std::swap (researchArea, area);
 	if (researchArea != area) researchAreaChanged();
 }
 
 //-----------------------------------------------------------------------------
-cResearch::ResearchArea cBuilding::getResearchArea() const
+cResearch::eResearchArea cBuilding::getResearchArea() const
 {
 	return researchArea;
 }
@@ -773,8 +773,8 @@ void cBuilding::registerOwnerEvents()
 
 	if (getStaticData().canResearch)
 	{
-		ownerSignalConnectionManager.connect (getOwner()->researchCentersWorkingOnAreaChanged, [this] (cResearch::ResearchArea) { statusChanged(); });
-		ownerSignalConnectionManager.connect (getOwner()->getResearchState().neededResearchPointsChanged, [this] (cResearch::ResearchArea) { statusChanged(); });
-		ownerSignalConnectionManager.connect (getOwner()->getResearchState().currentResearchPointsChanged, [this] (cResearch::ResearchArea) { statusChanged(); });
+		ownerSignalConnectionManager.connect (getOwner()->researchCentersWorkingOnAreaChanged, [this] (cResearch::eResearchArea) { statusChanged(); });
+		ownerSignalConnectionManager.connect (getOwner()->getResearchState().neededResearchPointsChanged, [this] (cResearch::eResearchArea) { statusChanged(); });
+		ownerSignalConnectionManager.connect (getOwner()->getResearchState().currentResearchPointsChanged, [this] (cResearch::eResearchArea) { statusChanged(); });
 	}
 }

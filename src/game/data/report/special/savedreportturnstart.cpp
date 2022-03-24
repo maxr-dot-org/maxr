@@ -20,7 +20,7 @@
 #include "savedreportturnstart.h"
 
 //------------------------------------------------------------------------------
-cSavedReportTurnStart::cSavedReportTurnStart (int turn, const std::vector<sTurnstartReport>& unitReports, const std::vector<cResearch::ResearchArea>& researchAreas) :
+cSavedReportTurnStart::cSavedReportTurnStart (int turn, const std::vector<sTurnstartReport>& unitReports, const std::vector<cResearch::eResearchArea>& researchAreas) :
 	turn (turn),
 	unitReports (unitReports),
 	researchAreas (researchAreas)

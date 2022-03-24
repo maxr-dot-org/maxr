@@ -69,7 +69,7 @@ struct sNewTurnPlayerReport
 public:
 	void addUnitBuilt (const sID& unitTypeId);
 public:
-	std::vector<cResearch::ResearchArea> finishedResearchs;
+	std::vector<cResearch::eResearchArea> finishedResearchs;
 	std::vector<sTurnstartReport> unitsBuilt;
 };
 
@@ -178,7 +178,7 @@ public:
 	bool hasMineDetection (const cPosition& pos) const { return detectMinesMap.get (pos); }
 	bool hasSeaDetection (const cPosition& pos) const { return detectSeaMap.get (pos); }
 
-	std::vector<cResearch::ResearchArea> doResearch (const cUnitsData&);  // proceed with the research at turn end
+	std::vector<cResearch::eResearchArea> doResearch (const cUnitsData&);  // proceed with the research at turn end
 
 	void refreshSentryMaps();
 
@@ -188,10 +188,10 @@ public:
 	cResearch& getResearchState();
 
 	int getResearchCentersWorkingTotal() const;
-	int getResearchCentersWorkingOnArea (cResearch::ResearchArea) const;
+	int getResearchCentersWorkingOnArea (cResearch::eResearchArea) const;
 
-	void startAResearch (cResearch::ResearchArea);
-	void stopAResearch (cResearch::ResearchArea);
+	void startAResearch (cResearch::eResearchArea);
+	void stopAResearch (cResearch::eResearchArea);
 
 	void refreshResearchCentersWorkingOnArea();
 	void refreshBase (const cMap&);
@@ -202,7 +202,7 @@ public:
 
 	mutable cSignal<void()> creditsChanged;
 	mutable cSignal<void()> hasFinishedTurnChanged;
-	mutable cSignal<void (cResearch::ResearchArea)> researchCentersWorkingOnAreaChanged;
+	mutable cSignal<void (cResearch::eResearchArea)> researchCentersWorkingOnAreaChanged;
 	mutable cSignal<void()> researchCentersWorkingTotalChanged;
 	mutable cSignal<void()> turnEndMovementsStarted;
 	mutable cSignal<void (const cUnit&)> unitDestroyed;
@@ -309,7 +309,7 @@ public:
 	}
 	SERIALIZATION_SPLIT_MEMBER()
 private:
-	void upgradeUnitTypes (const std::vector<cResearch::ResearchArea>&, const cUnitsData& originalUnitsData);
+	void upgradeUnitTypes (const std::vector<cResearch::eResearchArea>&, const cUnitsData& originalUnitsData);
 
 	std::string resourceMapToString() const;
 	void setResourceMapFromString (const std::string&);

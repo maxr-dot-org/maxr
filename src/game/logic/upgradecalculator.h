@@ -265,7 +265,7 @@ class cResearch
 {
 public:
 	static constexpr std::size_t kNrResearchAreas = 8;
-	enum ResearchArea
+	enum eResearchArea
 	{
 		kAttackResearch = 0,
 		kShotsResearch,
@@ -284,32 +284,32 @@ public:
 	 * the specified researchArea.
 	 * @return true, if the next research level was reached
 	 */
-	bool doResearch (int researchPoints, ResearchArea researchArea);
+	bool doResearch (int researchPoints, eResearchArea researchArea);
 
-	int getCurResearchLevel (ResearchArea researchArea) const;  ///< 0, 10, 20, 30, ...
+	int getCurResearchLevel (eResearchArea researchArea) const;  ///< 0, 10, 20, 30, ...
 	/// Number of research-center turns the player invested in an area
-	int getCurResearchPoints (ResearchArea researchArea) const;
+	int getCurResearchPoints (eResearchArea researchArea) const;
 	/// Number of research-center turns needed to reach the next level
-	int getNeededResearchPoints (ResearchArea researchArea) const;
-	int getRemainingResearchPoints (ResearchArea researchArea) const { return getNeededResearchPoints (researchArea) - getCurResearchPoints (researchArea); }
+	int getNeededResearchPoints (eResearchArea researchArea) const;
+	int getRemainingResearchPoints (eResearchArea researchArea) const { return getNeededResearchPoints (researchArea) - getCurResearchPoints (researchArea); }
 
 	/// returns the needed number of turns to reach the next level
 	/// with the given nr of research centers
-	int getRemainingTurns (ResearchArea researchArea, int centersWorkingOn) const;
+	int getRemainingTurns (eResearchArea researchArea, int centersWorkingOn) const;
 
 	/// will also set the neededResearchPoints if necessary
-	void setCurResearchLevel (int researchLevel, ResearchArea researchArea);
+	void setCurResearchLevel (int researchLevel, eResearchArea researchArea);
 	/// if researchPoints >= neededResearchPoints, nothing will be done
-	void setCurResearchPoints (int researchPoints, ResearchArea researchArea);
+	void setCurResearchPoints (int researchPoints, eResearchArea researchArea);
 
-	int getUpgradeCalculatorUpgradeType (ResearchArea researchArea) const;
-	std::optional<cResearch::ResearchArea> getResearchArea (int upgradeCalculatorType) const;
+	int getUpgradeCalculatorUpgradeType (eResearchArea researchArea) const;
+	std::optional<cResearch::eResearchArea> getResearchArea (int upgradeCalculatorType) const;
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	mutable cSignal<void (ResearchArea)> currentResearchLevelChanged;
-	mutable cSignal<void (ResearchArea)> currentResearchPointsChanged;
-	mutable cSignal<void (ResearchArea)> neededResearchPointsChanged;
+	mutable cSignal<void (eResearchArea)> currentResearchLevelChanged;
+	mutable cSignal<void (eResearchArea)> currentResearchPointsChanged;
+	mutable cSignal<void (eResearchArea)> neededResearchPointsChanged;
 
 	template <typename Archive>
 	void serialize (Archive& archive)

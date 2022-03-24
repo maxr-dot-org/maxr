@@ -43,7 +43,7 @@ class cUnitDrawingEngine
 public:
 	cUnitDrawingEngine (std::shared_ptr<cAnimationTimer>, std::shared_ptr<const cFrameCounter>);
 
-	void drawUnit (const cBuilding&, SDL_Rect destination, float zoomFactor, const cUnitSelection*, const cPlayer*, const std::vector<cResearch::ResearchArea>&);
+	void drawUnit (const cBuilding&, SDL_Rect destination, float zoomFactor, const cUnitSelection*, const cPlayer*, const std::vector<cResearch::eResearchArea>&);
 	void drawUnit (const cVehicle&, SDL_Rect destination, float zoomFactor, const cMapView&, const cUnitSelection*, const cPlayer*);
 
 	void setDrawHits (bool drawHits);

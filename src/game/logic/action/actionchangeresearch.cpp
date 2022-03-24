@@ -55,7 +55,7 @@ void cActionChangeResearch::execute (cModel& model) const
 	// needed, if newUsedResearch < player->ResearchCount
 	std::vector<cBuilding*> researchCentersToStop;
 	std::vector<cBuilding*> researchCentersToChangeArea;
-	std::vector<cResearch::ResearchArea> newAreasForResearchCenters;
+	std::vector<cResearch::eResearchArea> newAreasForResearchCenters;
 
 	bool error = false;
 	const auto buildings = player->getBuildings();
@@ -69,7 +69,7 @@ void cActionChangeResearch::execute (cModel& model) const
 			if (building->getStaticData().canResearch && building->isUnitWorking())
 			{
 				researchCentersToChangeArea.push_back (building.get());
-				newAreasForResearchCenters.push_back ((cResearch::ResearchArea)newArea);
+				newAreasForResearchCenters.push_back ((cResearch::eResearchArea)newArea);
 				--centersToAssign;
 			}
 		}

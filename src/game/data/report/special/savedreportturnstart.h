@@ -27,7 +27,7 @@
 class cSavedReportTurnStart : public cSavedReport
 {
 public:
-	cSavedReportTurnStart (int turn, const std::vector<sTurnstartReport>&, const std::vector<cResearch::ResearchArea>&);
+	cSavedReportTurnStart (int turn, const std::vector<sTurnstartReport>&, const std::vector<cResearch::eResearchArea>&);
 
 	template <typename Archive, ENABLE_ARCHIVE_OUT>
 	explicit cSavedReportTurnStart (Archive& archive)
@@ -53,7 +53,7 @@ private:
 public:
 	int turn;
 	std::vector<sTurnstartReport> unitReports;
-	std::vector<cResearch::ResearchArea> researchAreas;
+	std::vector<cResearch::eResearchArea> researchAreas;
 };
 
 #endif // game_data_reports_special_savedreportturnstartH
