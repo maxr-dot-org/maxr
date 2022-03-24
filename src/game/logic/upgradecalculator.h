@@ -265,16 +265,16 @@ class cResearch
 {
 public:
 	static constexpr std::size_t kNrResearchAreas = 8;
-	enum eResearchArea
+	enum class eResearchArea
 	{
-		kAttackResearch = 0,
-		kShotsResearch,
-		kRangeResearch,
-		kArmorResearch,
-		kHitpointsResearch,
-		kSpeedResearch,
-		kScanResearch,
-		kCostResearch
+		AttackResearch = 0,
+		ShotsResearch,
+		RangeResearch,
+		ArmorResearch,
+		HitpointsResearch,
+		SpeedResearch,
+		ScanResearch,
+		CostResearch
 	};
 
 	cResearch();

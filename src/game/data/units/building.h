@@ -243,7 +243,7 @@ private:
 
 	int rubbleValue = 0;   // number of resources in the rubble field
 
-	cResearch::eResearchArea researchArea = cResearch::kAttackResearch; ///< if the building can research, this is the area the building last researched or is researching
+	cResearch::eResearchArea researchArea = cResearch::eResearchArea::AttackResearch; ///< if the building can research, this is the area the building last researched or is researching
 
 	std::vector<cBuildListItem> buildList; // list with the units to be build by this factory
 };

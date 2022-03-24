@@ -86,14 +86,14 @@ namespace
 	{
 		switch (area)
 		{
-			case cResearch::kAttackResearch: return lngPack.i18n ("Text~Others~Attack");
-			case cResearch::kShotsResearch: return lngPack.i18n ("Text~Others~Shots_7");
-			case cResearch::kRangeResearch: return lngPack.i18n ("Text~Others~Range");
-			case cResearch::kArmorResearch: return lngPack.i18n ("Text~Others~Armor_7");
-			case cResearch::kHitpointsResearch: return lngPack.i18n ("Text~Others~Hitpoints_7");
-			case cResearch::kSpeedResearch: return lngPack.i18n ("Text~Others~Speed");
-			case cResearch::kScanResearch: return lngPack.i18n ("Text~Others~Scan");
-			case cResearch::kCostResearch: return lngPack.i18n ("Text~Others~Costs");
+			case cResearch::eResearchArea::AttackResearch: return lngPack.i18n ("Text~Others~Attack");
+			case cResearch::eResearchArea::ShotsResearch: return lngPack.i18n ("Text~Others~Shots_7");
+			case cResearch::eResearchArea::RangeResearch: return lngPack.i18n ("Text~Others~Range");
+			case cResearch::eResearchArea::ArmorResearch: return lngPack.i18n ("Text~Others~Armor_7");
+			case cResearch::eResearchArea::HitpointsResearch: return lngPack.i18n ("Text~Others~Hitpoints_7");
+			case cResearch::eResearchArea::SpeedResearch: return lngPack.i18n ("Text~Others~Speed");
+			case cResearch::eResearchArea::ScanResearch: return lngPack.i18n ("Text~Others~Scan");
+			case cResearch::eResearchArea::CostResearch: return lngPack.i18n ("Text~Others~Costs");
 		}
 		return "";
 	}
@@ -674,12 +674,9 @@ namespace
 			const char* sep = "";
 			for (const auto researchArea : report.researchAreas)
 			{
-				if (researchArea >= 0 && researchArea < 8)
-				{
-					message += sep;
-					sep = ", ";
-					message += themeNames[researchArea];
-				}
+				message += sep;
+				sep = ", ";
+				message += themeNames[static_cast<int>(researchArea)];
 			}
 		}
 

@@ -1320,19 +1320,19 @@ void cResearch::init()
 //--------------------------------------------------
 int cResearch::getCurResearchLevel (eResearchArea researchArea) const
 {
-	return curResearchLevel[researchArea];
+	return curResearchLevel[static_cast<int>(researchArea)];
 }
 
 //--------------------------------------------------
 int cResearch::getCurResearchPoints (eResearchArea researchArea) const
 {
-	return curResearchPoints[researchArea];
+	return curResearchPoints[static_cast<int>(researchArea)];
 }
 
 //--------------------------------------------------
 int cResearch::getNeededResearchPoints (eResearchArea researchArea) const
 {
-	return neededResearchPoints[researchArea];
+	return neededResearchPoints[static_cast<int>(researchArea)];
 }
 
 //--------------------------------------------------
@@ -1354,31 +1354,31 @@ void cResearch::setCurResearchLevel (int researchLevel, eResearchArea researchAr
 {
 	if (researchLevel >= 0 && researchLevel % 10 == 0)
 	{
-		const auto oldLevel = curResearchLevel[researchArea];
-		const auto oldPoints = curResearchPoints[researchArea];
-		const auto oldNeededPoints = neededResearchPoints[researchArea];
+		const auto oldLevel = curResearchLevel[static_cast<int>(researchArea)];
+		const auto oldPoints = curResearchPoints[static_cast<int>(researchArea)];
+		const auto oldNeededPoints = neededResearchPoints[static_cast<int>(researchArea)];
 
-		curResearchLevel[researchArea] = researchLevel;
-		neededResearchPoints[researchArea] = cUpgradeCalculator::instance().calcResearchTurns (researchLevel, getUpgradeCalculatorUpgradeType (researchArea));
-		if (curResearchPoints[researchArea] >= neededResearchPoints[researchArea])
+		curResearchLevel[static_cast<int>(researchArea)] = researchLevel;
+		neededResearchPoints[static_cast<int>(researchArea)] = cUpgradeCalculator::instance().calcResearchTurns (researchLevel, getUpgradeCalculatorUpgradeType (researchArea));
+		if (curResearchPoints[static_cast<int>(researchArea)] >= neededResearchPoints[static_cast<int>(researchArea)])
 		{
-			curResearchPoints[researchArea] = 0;
+			curResearchPoints[static_cast<int>(researchArea)] = 0;
 		}
 
-		if (oldLevel != curResearchLevel[researchArea]) currentResearchLevelChanged (researchArea);
-		if (oldPoints != curResearchPoints[researchArea]) currentResearchPointsChanged (researchArea);
-		if (oldNeededPoints != neededResearchPoints[researchArea]) neededResearchPointsChanged (researchArea);
+		if (oldLevel != curResearchLevel[static_cast<int>(researchArea)]) currentResearchLevelChanged (researchArea);
+		if (oldPoints != curResearchPoints[static_cast<int>(researchArea)]) currentResearchPointsChanged (researchArea);
+		if (oldNeededPoints != neededResearchPoints[static_cast<int>(researchArea)]) neededResearchPointsChanged (researchArea);
 	}
 }
 
 //--------------------------------------------------
 void cResearch::setCurResearchPoints (int researchPoints, eResearchArea researchArea)
 {
-	if (researchPoints >= 0 && researchPoints < neededResearchPoints[researchArea])
+	if (researchPoints >= 0 && researchPoints < neededResearchPoints[static_cast<int>(researchArea)])
 	{
-		std::swap (curResearchPoints[researchArea], researchPoints);
+		std::swap (curResearchPoints[static_cast<int>(researchArea)], researchPoints);
 
-		if (researchPoints != curResearchPoints[researchArea]) currentResearchPointsChanged (researchArea);
+		if (researchPoints != curResearchPoints[static_cast<int>(researchArea)]) currentResearchPointsChanged (researchArea);
 	}
 }
 
@@ -1387,28 +1387,28 @@ bool cResearch::doResearch (int researchPoints, eResearchArea researchArea)
 {
 	if (researchPoints > 0)
 	{
-		const auto oldPoints = curResearchPoints[researchArea];
+		const auto oldPoints = curResearchPoints[static_cast<int>(researchArea)];
 
-		curResearchPoints[researchArea] += researchPoints;
+		curResearchPoints[static_cast<int>(researchArea)] += researchPoints;
 
-		if (curResearchPoints[researchArea] >= neededResearchPoints [researchArea])
+		if (curResearchPoints[static_cast<int>(researchArea)] >= neededResearchPoints [static_cast<int>(researchArea)])
 		{
-			const auto oldLevel = curResearchLevel[researchArea];
-			const auto oldNeededPoints = neededResearchPoints[researchArea];
+			const auto oldLevel = curResearchLevel[static_cast<int>(researchArea)];
+			const auto oldNeededPoints = neededResearchPoints[static_cast<int>(researchArea)];
 
-			curResearchPoints[researchArea] = 0;
-			curResearchLevel[researchArea] += 10;
-			neededResearchPoints[researchArea] = cUpgradeCalculator::instance().calcResearchTurns (curResearchLevel[researchArea],
+			curResearchPoints[static_cast<int>(researchArea)] = 0;
+			curResearchLevel[static_cast<int>(researchArea)] += 10;
+			neededResearchPoints[static_cast<int>(researchArea)] = cUpgradeCalculator::instance().calcResearchTurns (curResearchLevel[static_cast<int>(researchArea)],
 												 getUpgradeCalculatorUpgradeType (researchArea));
 
-			if (oldLevel != curResearchLevel[researchArea]) currentResearchLevelChanged (researchArea);
-			if (oldPoints != curResearchPoints[researchArea]) currentResearchPointsChanged (researchArea);
-			if (oldNeededPoints != neededResearchPoints[researchArea]) neededResearchPointsChanged (researchArea);
+			if (oldLevel != curResearchLevel[static_cast<int>(researchArea)]) currentResearchLevelChanged (researchArea);
+			if (oldPoints != curResearchPoints[static_cast<int>(researchArea)]) currentResearchPointsChanged (researchArea);
+			if (oldNeededPoints != neededResearchPoints[static_cast<int>(researchArea)]) neededResearchPointsChanged (researchArea);
 
 			return true;
 		}
 
-		if (oldPoints != curResearchPoints[researchArea]) currentResearchPointsChanged (researchArea);
+		if (oldPoints != curResearchPoints[static_cast<int>(researchArea)]) currentResearchPointsChanged (researchArea);
 	}
 	return false;
 }
@@ -1418,14 +1418,14 @@ int cResearch::getUpgradeCalculatorUpgradeType (eResearchArea researchArea) cons
 {
 	switch (researchArea)
 	{
-		case eResearchArea::kAttackResearch: return cUpgradeCalculator::kAttack;
-		case eResearchArea::kShotsResearch: return cUpgradeCalculator::kShots;
-		case eResearchArea::kRangeResearch: return cUpgradeCalculator::kRange;
-		case eResearchArea::kArmorResearch: return cUpgradeCalculator::kArmor;
-		case eResearchArea::kHitpointsResearch: return cUpgradeCalculator::kHitpoints;
-		case eResearchArea::kSpeedResearch: return cUpgradeCalculator::kSpeed;
-		case eResearchArea::kScanResearch: return cUpgradeCalculator::kScan;
-		case eResearchArea::kCostResearch: return cUpgradeCalculator::kCost;
+		case eResearchArea::AttackResearch: return cUpgradeCalculator::kAttack;
+		case eResearchArea::ShotsResearch: return cUpgradeCalculator::kShots;
+		case eResearchArea::RangeResearch: return cUpgradeCalculator::kRange;
+		case eResearchArea::ArmorResearch: return cUpgradeCalculator::kArmor;
+		case eResearchArea::HitpointsResearch: return cUpgradeCalculator::kHitpoints;
+		case eResearchArea::SpeedResearch: return cUpgradeCalculator::kSpeed;
+		case eResearchArea::ScanResearch: return cUpgradeCalculator::kScan;
+		case eResearchArea::CostResearch: return cUpgradeCalculator::kCost;
 	}
 	return 0;
 }
@@ -1435,15 +1435,15 @@ std::optional<cResearch::eResearchArea> cResearch::getResearchArea (int upgradeC
 {
 	switch (upgradeCalculatorType)
 	{
-		case cUpgradeCalculator::kHitpoints: return kHitpointsResearch;
-		case cUpgradeCalculator::kArmor: return kArmorResearch;
+		case cUpgradeCalculator::kHitpoints: return eResearchArea::HitpointsResearch;
+		case cUpgradeCalculator::kArmor: return eResearchArea::ArmorResearch;
 		case cUpgradeCalculator::kAmmo: return std::nullopt;
-		case cUpgradeCalculator::kAttack: return kAttackResearch;
-		case cUpgradeCalculator::kSpeed: return kSpeedResearch;
-		case cUpgradeCalculator::kShots: return kShotsResearch;
-		case cUpgradeCalculator::kRange: return kRangeResearch;
-		case cUpgradeCalculator::kScan: return kScanResearch;
-		case cUpgradeCalculator::kCost: return kCostResearch;
+		case cUpgradeCalculator::kAttack: return eResearchArea::AttackResearch;
+		case cUpgradeCalculator::kSpeed: return eResearchArea::SpeedResearch;
+		case cUpgradeCalculator::kShots: return eResearchArea::ShotsResearch;
+		case cUpgradeCalculator::kRange: return eResearchArea::RangeResearch;
+		case cUpgradeCalculator::kScan: return eResearchArea::ScanResearch;
+		case cUpgradeCalculator::kCost: return eResearchArea::CostResearch;
 	}
 	return std::nullopt;
 }

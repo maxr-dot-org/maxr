@@ -463,7 +463,7 @@ bool cPlayer::hasUnits() const
 void cPlayer::startAResearch (cResearch::eResearchArea researchArea)
 {
 	++researchCentersWorkingTotal;
-	++researchCentersWorkingOnArea[researchArea];
+	++researchCentersWorkingOnArea[static_cast<int>(researchArea)];
 
 	researchCentersWorkingOnAreaChanged (researchArea);
 	researchCentersWorkingTotalChanged();
@@ -475,9 +475,9 @@ void cPlayer::startAResearch (cResearch::eResearchArea researchArea)
 void cPlayer::stopAResearch (cResearch::eResearchArea researchArea)
 {
 	--researchCentersWorkingTotal;
-	if (researchCentersWorkingOnArea[researchArea] > 0)
+	if (researchCentersWorkingOnArea[static_cast<int>(researchArea)] > 0)
 	{
-		--researchCentersWorkingOnArea[researchArea];
+		--researchCentersWorkingOnArea[static_cast<int>(researchArea)];
 		researchCentersWorkingOnAreaChanged (researchArea);
 	}
 	researchCentersWorkingTotalChanged();
@@ -566,20 +566,20 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::eResearchArea>& are
 		bool incrementVersion = false;
 		for (auto researchArea : areasReachingNextLevel)
 		{
-			if (unitData.getId().isABuilding() && researchArea == cResearch::kSpeedResearch) continue;
+			if (unitData.getId().isABuilding() && researchArea == cResearch::eResearchArea::SpeedResearch) continue;
 
 			const int newResearchLevel = researchState.getCurResearchLevel (researchArea);
 			int startValue = 0;
 			switch (researchArea)
 			{
-				case cResearch::kAttackResearch: startValue = originalData.getDamage(); break;
-				case cResearch::kShotsResearch: startValue = originalData.getShotsMax(); break;
-				case cResearch::kRangeResearch: startValue = originalData.getRange(); break;
-				case cResearch::kArmorResearch: startValue = originalData.getArmor(); break;
-				case cResearch::kHitpointsResearch: startValue = originalData.getHitpointsMax(); break;
-				case cResearch::kScanResearch: startValue = originalData.getScan(); break;
-				case cResearch::kSpeedResearch: startValue = originalData.getSpeedMax(); break;
-				case cResearch::kCostResearch: startValue = originalData.getBuildCost(); break;
+				case cResearch::eResearchArea::AttackResearch: startValue = originalData.getDamage(); break;
+				case cResearch::eResearchArea::ShotsResearch: startValue = originalData.getShotsMax(); break;
+				case cResearch::eResearchArea::RangeResearch: startValue = originalData.getRange(); break;
+				case cResearch::eResearchArea::ArmorResearch: startValue = originalData.getArmor(); break;
+				case cResearch::eResearchArea::HitpointsResearch: startValue = originalData.getHitpointsMax(); break;
+				case cResearch::eResearchArea::ScanResearch: startValue = originalData.getScan(); break;
+				case cResearch::eResearchArea::SpeedResearch: startValue = originalData.getSpeedMax(); break;
+				case cResearch::eResearchArea::CostResearch: startValue = originalData.getBuildCost(); break;
 			}
 
 			cUpgradeCalculator::eUnitType unitType = cUpgradeCalculator::eUnitType::StandardUnit;
@@ -587,24 +587,24 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::eResearchArea>& are
 			if (originalUnitsData.getStaticUnitData (unitData.getId()).vehicleData.isHuman) unitType = cUpgradeCalculator::eUnitType::Infantry;
 
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel - 10,
-								   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1, unitType);
+								   researchArea == cResearch::eResearchArea::CostResearch ? cUpgradeCalculator::kCost : -1, unitType);
 			int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel,
-								   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1, unitType);
+								   researchArea == cResearch::eResearchArea::CostResearch ? cUpgradeCalculator::kCost : -1, unitType);
 
 			if (oldResearchBonus != newResearchBonus)
 			{
 				switch (researchArea)
 				{
-					case cResearch::kAttackResearch: unitData.setDamage (unitData.getDamage() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kShotsResearch: unitData.setShotsMax (unitData.getShotsMax() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kRangeResearch: unitData.setRange (unitData.getRange() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kArmorResearch: unitData.setArmor (unitData.getArmor() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kHitpointsResearch: unitData.setHitpointsMax (unitData.getHitpointsMax() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kScanResearch: unitData.setScan (unitData.getScan() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kSpeedResearch: unitData.setSpeedMax (unitData.getSpeedMax() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kCostResearch: unitData.setBuildCost (unitData.getBuildCost() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::eResearchArea::AttackResearch: unitData.setDamage (unitData.getDamage() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::eResearchArea::ShotsResearch: unitData.setShotsMax (unitData.getShotsMax() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::eResearchArea::RangeResearch: unitData.setRange (unitData.getRange() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::eResearchArea::ArmorResearch: unitData.setArmor (unitData.getArmor() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::eResearchArea::HitpointsResearch: unitData.setHitpointsMax (unitData.getHitpointsMax() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::eResearchArea::ScanResearch: unitData.setScan (unitData.getScan() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::eResearchArea::SpeedResearch: unitData.setSpeedMax (unitData.getSpeedMax() + newResearchBonus - oldResearchBonus); break;
+					case cResearch::eResearchArea::CostResearch: unitData.setBuildCost (unitData.getBuildCost() + newResearchBonus - oldResearchBonus); break;
 				}
-				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs
+				if (researchArea != cResearch::eResearchArea::CostResearch)   // don't increment the version, if the only change are the costs
 					incrementVersion = true;
 			}
 		}
@@ -629,7 +629,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	{
 		if (building->getStaticData().canResearch && building->isUnitWorking())
 		{
-			researchCentersWorkingOnArea[building->getResearchArea()] += 1;
+			researchCentersWorkingOnArea[static_cast<int>(building->getResearchArea())] += 1;
 			newResearchCount++;
 		}
 	}
@@ -792,7 +792,7 @@ int cPlayer::getResearchCentersWorkingTotal() const
 //------------------------------------------------------------------------------
 int cPlayer::getResearchCentersWorkingOnArea (cResearch::eResearchArea area) const
 {
-	return researchCentersWorkingOnArea[area];
+	return researchCentersWorkingOnArea[static_cast<int>(area)];
 }
 
 //------------------------------------------------------------------------------
