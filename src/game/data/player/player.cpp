@@ -462,14 +462,11 @@ bool cPlayer::hasUnits() const
 //------------------------------------------------------------------------------
 void cPlayer::startAResearch (cResearch::ResearchArea researchArea)
 {
-	if (0 <= researchArea && researchArea <= cResearch::kNrResearchAreas)
-	{
-		++researchCentersWorkingTotal;
-		++researchCentersWorkingOnArea[researchArea];
+	++researchCentersWorkingTotal;
+	++researchCentersWorkingOnArea[researchArea];
 
-		researchCentersWorkingOnAreaChanged (researchArea);
-		researchCentersWorkingTotalChanged();
-	}
+	researchCentersWorkingOnAreaChanged (researchArea);
+	researchCentersWorkingTotalChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -477,16 +474,13 @@ void cPlayer::startAResearch (cResearch::ResearchArea researchArea)
 //------------------------------------------------------------------------------
 void cPlayer::stopAResearch (cResearch::ResearchArea researchArea)
 {
-	if (0 <= researchArea && researchArea <= cResearch::kNrResearchAreas)
+	--researchCentersWorkingTotal;
+	if (researchCentersWorkingOnArea[researchArea] > 0)
 	{
-		--researchCentersWorkingTotal;
-		if (researchCentersWorkingOnArea[researchArea] > 0)
-		{
-			--researchCentersWorkingOnArea[researchArea];
-			researchCentersWorkingOnAreaChanged (researchArea);
-		}
-		researchCentersWorkingTotalChanged();
+		--researchCentersWorkingOnArea[researchArea];
+		researchCentersWorkingOnAreaChanged (researchArea);
 	}
+	researchCentersWorkingTotalChanged();
 }
 
 //------------------------------------------------------------------------------

@@ -88,7 +88,7 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 
 		researchCenterCountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (24, 72 + 28 * i), getPosition() + cPosition (24 + 38, 72 + 28 * i + 10)), "0", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
-		percentageLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (236, 72 + 28 * i), getPosition() + cPosition (236 + 44, 72 + 28 * i + 10)), "+" + std::to_string (player.getResearchState().getCurResearchLevel (i)) + "%", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		percentageLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (236, 72 + 28 * i), getPosition() + cPosition (236 + 44, 72 + 28 * i + 10)), "+" + std::to_string (player.getResearchState().getCurResearchLevel (static_cast<cResearch::ResearchArea>(i))) + "%", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 		turnsLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (291, 72 + 28 * i), getPosition() + cPosition (291 + 44, 72 + 28 * i + 10)), "0", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
@@ -127,7 +127,7 @@ void cDialogResearch::updateWidgets()
 		researchCenterCountLabels[i]->setText (std::to_string (researchSettings[i]));
 		sliders[i]->setValue (researchSettings[i]);
 
-		turnsLabels[i]->setText (std::to_string (player.getResearchState().getRemainingTurns (i, researchSettings[i])));
+		turnsLabels[i]->setText (std::to_string (player.getResearchState().getRemainingTurns (static_cast<cResearch::ResearchArea>(i), researchSettings[i])));
 
 		if (unusedResearchCenters <= 0) increaseButtons[i]->lock();
 		else increaseButtons[i]->unlock();

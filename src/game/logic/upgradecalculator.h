@@ -23,6 +23,8 @@
 #include <array>
 #include <map>
 
+#include "config/workaround/cpp17/optional.h"
+
 #include "game/serialization/nvp.h"
 #include "utility/signal/signal.h"
 
@@ -262,6 +264,7 @@ private:
 class cResearch
 {
 public:
+	static constexpr std::size_t kNrResearchAreas = 8;
 	enum ResearchArea
 	{
 		kAttackResearch = 0,
@@ -271,8 +274,7 @@ public:
 		kHitpointsResearch,
 		kSpeedResearch,
 		kScanResearch,
-		kCostResearch,
-		kNrResearchAreas
+		kCostResearch
 	};
 
 	cResearch();
@@ -282,26 +284,26 @@ public:
 	 * the specified researchArea.
 	 * @return true, if the next research level was reached
 	 */
-	bool doResearch (int researchPoints, int researchArea);
+	bool doResearch (int researchPoints, ResearchArea researchArea);
 
-	int getCurResearchLevel (int researchArea) const;  ///< 0, 10, 20, 30, ...
+	int getCurResearchLevel (ResearchArea researchArea) const;  ///< 0, 10, 20, 30, ...
 	/// Number of research-center turns the player invested in an area
-	int getCurResearchPoints (int researchArea) const;
+	int getCurResearchPoints (ResearchArea researchArea) const;
 	/// Number of research-center turns needed to reach the next level
-	int getNeededResearchPoints (int researchArea) const;
-	int getRemainingResearchPoints (int researchArea) const { return getNeededResearchPoints (researchArea) - getCurResearchPoints (researchArea); }
+	int getNeededResearchPoints (ResearchArea researchArea) const;
+	int getRemainingResearchPoints (ResearchArea researchArea) const { return getNeededResearchPoints (researchArea) - getCurResearchPoints (researchArea); }
 
 	/// returns the needed number of turns to reach the next level
 	/// with the given nr of research centers
-	int getRemainingTurns (int researchArea, int centersWorkingOn) const;
+	int getRemainingTurns (ResearchArea researchArea, int centersWorkingOn) const;
 
 	/// will also set the neededResearchPoints if necessary
-	void setCurResearchLevel (int researchLevel, int researchArea);
+	void setCurResearchLevel (int researchLevel, ResearchArea researchArea);
 	/// if researchPoints >= neededResearchPoints, nothing will be done
-	void setCurResearchPoints (int researchPoints, int researchArea);
+	void setCurResearchPoints (int researchPoints, ResearchArea researchArea);
 
-	int getUpgradeCalculatorUpgradeType (int researchArea) const;
-	int getResearchArea (int upgradeCalculatorType) const;
+	int getUpgradeCalculatorUpgradeType (ResearchArea researchArea) const;
+	std::optional<cResearch::ResearchArea> getResearchArea (int upgradeCalculatorType) const;
 
 	uint32_t getChecksum (uint32_t crc) const;
 
