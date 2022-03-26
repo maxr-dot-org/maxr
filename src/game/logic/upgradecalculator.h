@@ -92,7 +92,7 @@ public:
 	 *                      that has to be taken into account
 	 * @return the costs for this upgrade if available
 	 */
-	std::optional<int> calcPrice (int curValue, int orgValue, eUpgradeType, const cResearch& researchLevel) const;
+	std::optional<int> calcPrice (int curValue, int orgValue, eUpgradeType, const cResearch&) const;
 
 	/**
 	 * Calculates the increase of a unit value, when an upgrade is bought.
@@ -117,7 +117,7 @@ public:
 	 *                      that has to be taken into account
 	 * @return the costs for this upgrade if available
 	 */
-	std::optional<int> getCostForUpgrade (int orgValue, int curValue, int newValue, eUpgradeType, const cResearch& researchLevel) const;
+	std::optional<int> getCostForUpgrade (int orgValue, int curValue, int newValue, eUpgradeType, const cResearch&) const;
 
 	/**
 	 * Calculates the turns needed for one research center
@@ -281,32 +281,21 @@ public:
 	 * the specified researchArea.
 	 * @return true, if the next research level was reached
 	 */
-	bool doResearch (int researchPoints, eResearchArea researchArea);
+	bool doResearch (int researchPoints, eResearchArea);
 
-	int getCurResearchLevel (eResearchArea researchArea) const;  ///< 0, 10, 20, 30, ...
-	/// Number of research-center turns the player invested in an area
-	int getCurResearchPoints (eResearchArea researchArea) const;
-	/// Number of research-center turns needed to reach the next level
-	int getNeededResearchPoints (eResearchArea researchArea) const;
-	int getRemainingResearchPoints (eResearchArea researchArea) const { return getNeededResearchPoints (researchArea) - getCurResearchPoints (researchArea); }
+	int getCurResearchLevel (eResearchArea) const;  ///< 0, 10, 20, 30, ...
 
 	/// returns the needed number of turns to reach the next level
 	/// with the given nr of research centers
-	int getRemainingTurns (eResearchArea researchArea, int centersWorkingOn) const;
-
-	/// will also set the neededResearchPoints if necessary
-	void setCurResearchLevel (int researchLevel, eResearchArea researchArea);
-	/// if researchPoints >= neededResearchPoints, nothing will be done
-	void setCurResearchPoints (int researchPoints, eResearchArea researchArea);
+	int getRemainingTurns (eResearchArea, int centersWorkingOn) const;
 
 	cUpgradeCalculator::eUpgradeType getUpgradeCalculatorUpgradeType (eResearchArea) const;
 	std::optional<cResearch::eResearchArea> getResearchArea (cUpgradeCalculator::eUpgradeType) const;
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	mutable cSignal<void (eResearchArea)> currentResearchLevelChanged;
-	mutable cSignal<void (eResearchArea)> currentResearchPointsChanged;
-	mutable cSignal<void (eResearchArea)> neededResearchPointsChanged;
+	cSignal<void (eResearchArea)> currentResearchPointsChanged;
+	cSignal<void (eResearchArea)> neededResearchPointsChanged;
 
 	template <typename Archive>
 	void serialize (Archive& archive)
@@ -316,9 +305,7 @@ public:
 		archive & NVP (neededResearchPoints);
 	}
 	//-------------------------------------------
-protected:
-	void init();  ///< sets all research information to the initial values
-
+private:
 	std::array<int, kNrResearchAreas> curResearchLevel; ///< 0, 10, 20, 30, ...
 	/// Number of research-center turns the player invested in an area
 	std::array<int, kNrResearchAreas> curResearchPoints;
@@ -335,9 +322,9 @@ struct sUnitUpgrade
 {
 	sUnitUpgrade() = default;
 
-	int purchase (const cResearch& researchLevel);
-	int cancelPurchase (const cResearch& researchLevel);
-	int computedPurchasedCount (const cResearch& researchLevel);
+	int purchase (const cResearch&);
+	int cancelPurchase (const cResearch&);
+	int computedPurchasedCount (const cResearch&);
 
 	/** The different values of a unit that can be upgraded */
 	enum class eUpgradeType
@@ -357,7 +344,6 @@ struct sUnitUpgrade
 	eUpgradeType getType() const { return type; }
 	std::optional<int> getNextPrice() const { return nextPrice; }
 	int getPurchased() const { return purchased; }
-
 
 	template <typename Archive>
 	void serialize (Archive& archive)
@@ -386,15 +372,15 @@ private:
 class cUnitUpgrade
 {
 public:
-	void init (const cDynamicUnitData& origData, const cDynamicUnitData& curData, const cStaticUnitData& staticData, const cResearch& researchLevel);
+	void init (const cDynamicUnitData& origData, const cDynamicUnitData& curData, const cStaticUnitData&, const cResearch&);
 	sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeType);
 	const sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeType) const;
 
-	int computedPurchasedCount (const cResearch& researchLevel);
+	int computedPurchasedCount (const cResearch&);
 	bool hasBeenPurchased() const;
 	int getValueOrDefault (sUnitUpgrade::eUpgradeType, int defaultValue) const;
-	void updateUnitData (cDynamicUnitData& data) const;
-	int calcTotalCosts (const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch& reseachState) const;
+	void updateUnitData (cDynamicUnitData&) const;
+	int calcTotalCosts (const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch&) const;
 
 	template <typename Archive>
 	void serialize (Archive& archive)

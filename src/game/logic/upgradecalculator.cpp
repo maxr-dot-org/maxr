@@ -29,7 +29,7 @@
 
 #include <cassert>
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 cUpgradeCalculator& cUpgradeCalculator::instance()
 {
 	static cUpgradeCalculator _instance;
@@ -39,12 +39,12 @@ cUpgradeCalculator& cUpgradeCalculator::instance()
 	return _instance;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 cUpgradeCalculator::cUpgradeCalculator()
 	: setupDone (false)
 {}
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 void cUpgradeCalculator::setupLookupTables()
 {
 	// ------------------------------ HITPOINTS and ARMOR and AMMO
@@ -599,7 +599,7 @@ void cUpgradeCalculator::setupLookupTables()
 	setupDone = true;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 std::optional<int> cUpgradeCalculator::lookupPrice (const PriceMap& prices, int value) const
 {
 	PriceMap::const_iterator it = prices.find (value);
@@ -608,7 +608,7 @@ std::optional<int> cUpgradeCalculator::lookupPrice (const PriceMap& prices, int 
 	return std::nullopt;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 std::optional<int> cUpgradeCalculator::calcPrice (int curValue, int orgValue, eUpgradeType upgradeType, const cResearch& researchLevel) const
 {
 	auto researchArea = researchLevel.getResearchArea (upgradeType).value_or (0);
@@ -717,7 +717,7 @@ std::optional<int> cUpgradeCalculator::calcPrice (int curValue, int orgValue, eU
 	return std::nullopt;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 std::optional<int> cUpgradeCalculator::getCostForUpgrade (int orgValue, int curValue, int newValue, eUpgradeType upgradeType, const cResearch& researchLevel) const
 {
 	int cost = 0;
@@ -744,7 +744,7 @@ std::optional<int> cUpgradeCalculator::getCostForUpgrade (int orgValue, int curV
 	return cost;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, eUpgradeType upgradeType) const
 {
 	switch (upgradeType)
@@ -806,7 +806,7 @@ int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, eUpgradeType up
 	return kNoResearchAvailable;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int cUpgradeCalculator::calcIncreaseByUpgrade (int startValue) const
 {
 	if (startValue < 10)
@@ -818,7 +818,7 @@ int cUpgradeCalculator::calcIncreaseByUpgrade (int startValue) const
 	return 10;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int cUpgradeCalculator::calcChangeByResearch (int startValue, int curResearchLevel,
 											  std::optional<eUpgradeType> upgradeType, eUnitType unitType) const
 {
@@ -855,7 +855,7 @@ int cUpgradeCalculator::calcChangeByResearch (int startValue, int curResearchLev
 		return 0;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int cUpgradeCalculator::getMaterialCostForUpgrading (int unitCost) const
 {
 	if (unitCost < 4)
@@ -863,7 +863,7 @@ int cUpgradeCalculator::getMaterialCostForUpgrading (int unitCost) const
 	return unitCost / 4;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int cUpgradeCalculator::getNearestPossibleCost (float realCost, int costDifference) const
 {
 	if (costDifference <= 0)
@@ -881,7 +881,7 @@ int cUpgradeCalculator::getNearestPossibleCost (float realCost, int costDifferen
 	return result;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 void cUpgradeCalculator::printAllToLog() const
 {
 	printToLog ("CALC CHANGE BY RESEARCH TEST ---- CALC CHANGE BY RESEARCH TEST");
@@ -987,7 +987,7 @@ void cUpgradeCalculator::printAllToLog() const
 	printToLog ("Normal-Research: Start 12, Level 220 => Change: ", calcChangeByResearch (12, 220));
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 void cUpgradeCalculator::printToLog (const char* str, int value) const
 {
 	if (value != -1000)
@@ -1283,62 +1283,29 @@ void cUpgradeCalculator::printToLog (const char* str, int value) const
 // R E S E A R C H   C L A S S ---------------------
 //--------------------------------------------------
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 cResearch::cResearch()
 {
-	init();
-}
-
-//--------------------------------------------------
-void cResearch::init()
-{
-	int oldCurResearchLevel[kNrResearchAreas];
-	int oldCurResearchPoints[kNrResearchAreas];
-	int oldNeededResearchPoints[kNrResearchAreas];
-
 	for (int i = 0; i < kNrResearchAreas; i++)
 	{
-		oldCurResearchLevel[i] = curResearchLevel[i];
-		oldCurResearchPoints[i] = curResearchPoints[i];
-		oldNeededResearchPoints[i] = neededResearchPoints[i];
-
 		curResearchLevel[i] = 0;
 		curResearchPoints[i] = 0;
 		neededResearchPoints[i] = cUpgradeCalculator::instance().calcResearchTurns (0, getUpgradeCalculatorUpgradeType (static_cast<eResearchArea>(i)));
 	}
-
-	for (int i = 0; i < kNrResearchAreas; i++)
-	{
-		if (oldCurResearchLevel[i] != curResearchLevel[i]) currentResearchLevelChanged (static_cast<eResearchArea>(i));
-		if (oldCurResearchPoints[i] != curResearchPoints[i]) currentResearchPointsChanged (static_cast<eResearchArea>(i));
-		if (oldNeededResearchPoints[i] != neededResearchPoints[i]) neededResearchPointsChanged (static_cast<eResearchArea>(i));
-	}
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int cResearch::getCurResearchLevel (eResearchArea researchArea) const
 {
 	return curResearchLevel[static_cast<int>(researchArea)];
 }
 
-//--------------------------------------------------
-int cResearch::getCurResearchPoints (eResearchArea researchArea) const
-{
-	return curResearchPoints[static_cast<int>(researchArea)];
-}
-
-//--------------------------------------------------
-int cResearch::getNeededResearchPoints (eResearchArea researchArea) const
-{
-	return neededResearchPoints[static_cast<int>(researchArea)];
-}
-
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int cResearch::getRemainingTurns (eResearchArea researchArea, int centersWorkingOn) const
 {
 	if (centersWorkingOn > 0)
 	{
-		int remainingPoints = getRemainingResearchPoints (researchArea);
+		int remainingPoints = neededResearchPoints[static_cast<int>(researchArea)] - curResearchPoints[static_cast<int>(researchArea)];
 		if (remainingPoints % centersWorkingOn == 0)
 			return remainingPoints / centersWorkingOn;
 		else
@@ -1347,40 +1314,7 @@ int cResearch::getRemainingTurns (eResearchArea researchArea, int centersWorking
 	return 0;
 }
 
-//--------------------------------------------------
-void cResearch::setCurResearchLevel (int researchLevel, eResearchArea researchArea)
-{
-	if (researchLevel >= 0 && researchLevel % 10 == 0)
-	{
-		const auto oldLevel = curResearchLevel[static_cast<int>(researchArea)];
-		const auto oldPoints = curResearchPoints[static_cast<int>(researchArea)];
-		const auto oldNeededPoints = neededResearchPoints[static_cast<int>(researchArea)];
-
-		curResearchLevel[static_cast<int>(researchArea)] = researchLevel;
-		neededResearchPoints[static_cast<int>(researchArea)] = cUpgradeCalculator::instance().calcResearchTurns (researchLevel, getUpgradeCalculatorUpgradeType (researchArea));
-		if (curResearchPoints[static_cast<int>(researchArea)] >= neededResearchPoints[static_cast<int>(researchArea)])
-		{
-			curResearchPoints[static_cast<int>(researchArea)] = 0;
-		}
-
-		if (oldLevel != curResearchLevel[static_cast<int>(researchArea)]) currentResearchLevelChanged (researchArea);
-		if (oldPoints != curResearchPoints[static_cast<int>(researchArea)]) currentResearchPointsChanged (researchArea);
-		if (oldNeededPoints != neededResearchPoints[static_cast<int>(researchArea)]) neededResearchPointsChanged (researchArea);
-	}
-}
-
-//--------------------------------------------------
-void cResearch::setCurResearchPoints (int researchPoints, eResearchArea researchArea)
-{
-	if (researchPoints >= 0 && researchPoints < neededResearchPoints[static_cast<int>(researchArea)])
-	{
-		std::swap (curResearchPoints[static_cast<int>(researchArea)], researchPoints);
-
-		if (researchPoints != curResearchPoints[static_cast<int>(researchArea)]) currentResearchPointsChanged (researchArea);
-	}
-}
-
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 bool cResearch::doResearch (int researchPoints, eResearchArea researchArea)
 {
 	if (researchPoints > 0)
@@ -1399,7 +1333,6 @@ bool cResearch::doResearch (int researchPoints, eResearchArea researchArea)
 			neededResearchPoints[static_cast<int>(researchArea)] = cUpgradeCalculator::instance().calcResearchTurns (curResearchLevel[static_cast<int>(researchArea)],
 												 getUpgradeCalculatorUpgradeType (researchArea));
 
-			if (oldLevel != curResearchLevel[static_cast<int>(researchArea)]) currentResearchLevelChanged (researchArea);
 			if (oldPoints != curResearchPoints[static_cast<int>(researchArea)]) currentResearchPointsChanged (researchArea);
 			if (oldNeededPoints != neededResearchPoints[static_cast<int>(researchArea)]) neededResearchPointsChanged (researchArea);
 
@@ -1411,7 +1344,7 @@ bool cResearch::doResearch (int researchPoints, eResearchArea researchArea)
 	return false;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 cUpgradeCalculator::eUpgradeType cResearch::getUpgradeCalculatorUpgradeType (eResearchArea researchArea) const
 {
 	switch (researchArea)
@@ -1428,7 +1361,7 @@ cUpgradeCalculator::eUpgradeType cResearch::getUpgradeCalculatorUpgradeType (eRe
 	throw std::runtime_error ("unknown research area");
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 std::optional<cResearch::eResearchArea> cResearch::getResearchArea (cUpgradeCalculator::eUpgradeType upgradeCalculatorType) const
 {
 	switch (upgradeCalculatorType)
@@ -1446,6 +1379,7 @@ std::optional<cResearch::eResearchArea> cResearch::getResearchArea (cUpgradeCalc
 	throw std::runtime_error ("unknown upgrade type");
 }
 
+//------------------------------------------------------------------------------
 uint32_t cResearch::getChecksum (uint32_t crc) const
 {
 	for (int i = 0; i < kNrResearchAreas; i++)
@@ -1462,7 +1396,7 @@ uint32_t cResearch::getChecksum (uint32_t crc) const
 //      sUnitUpgrade C L A S S ---------------------
 //--------------------------------------------------
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 static cUpgradeCalculator::eUpgradeType GetUpgradeType (const sUnitUpgrade& upgrade)
 {
 	switch (upgrade.getType())
@@ -1480,7 +1414,7 @@ static cUpgradeCalculator::eUpgradeType GetUpgradeType (const sUnitUpgrade& upgr
 	}
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int sUnitUpgrade::purchase (const cResearch& researchLevel)
 {
 	cUpgradeCalculator::eUpgradeType upgradeType = GetUpgradeType (*this);
@@ -1501,7 +1435,7 @@ int sUnitUpgrade::purchase (const cResearch& researchLevel)
 	return cost;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int sUnitUpgrade::cancelPurchase (const cResearch& researchLevel)
 {
 	cUpgradeCalculator::eUpgradeType upgradeType = GetUpgradeType (*this);
@@ -1521,7 +1455,7 @@ int sUnitUpgrade::cancelPurchase (const cResearch& researchLevel)
 	return -nextPrice.value_or (0);
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int sUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
 {
 	if (type == sUnitUpgrade::eUpgradeType::None) return 0;
@@ -1542,7 +1476,7 @@ int sUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
 	return -cost;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitUpgrade::init (const cDynamicUnitData& origData, const cDynamicUnitData& curData, const cStaticUnitData& staticData, const cResearch& researchLevel)
 {
 	int i = 0;
@@ -1622,7 +1556,7 @@ void cUnitUpgrade::init (const cDynamicUnitData& origData, const cDynamicUnitDat
 	}
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int cUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
 {
 	int cost = 0;
@@ -1634,7 +1568,7 @@ int cUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
 	return cost;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 sUnitUpgrade* cUnitUpgrade::getUpgrade (sUnitUpgrade::eUpgradeType type)
 {
 	for (auto& upgrade : upgrades)
@@ -1644,7 +1578,7 @@ sUnitUpgrade* cUnitUpgrade::getUpgrade (sUnitUpgrade::eUpgradeType type)
 	return nullptr;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 const sUnitUpgrade* cUnitUpgrade::getUpgrade (sUnitUpgrade::eUpgradeType type) const
 {
 	for (const auto& upgrade : upgrades)
@@ -1654,7 +1588,7 @@ const sUnitUpgrade* cUnitUpgrade::getUpgrade (sUnitUpgrade::eUpgradeType type) c
 	return nullptr;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int cUnitUpgrade::getValueOrDefault (sUnitUpgrade::eUpgradeType upgradeType, int defaultValue) const
 {
 	for (const auto& upgrade : upgrades)
@@ -1665,7 +1599,7 @@ int cUnitUpgrade::getValueOrDefault (sUnitUpgrade::eUpgradeType upgradeType, int
 	return defaultValue; // the specified upgrade was not found...
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 bool cUnitUpgrade::hasBeenPurchased() const
 {
 	for (const auto& upgrade : upgrades)
@@ -1678,7 +1612,7 @@ bool cUnitUpgrade::hasBeenPurchased() const
 	return false;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitUpgrade::updateUnitData (cDynamicUnitData& data) const
 {
 	for (const auto& upgrade : upgrades)
@@ -1718,7 +1652,7 @@ void cUnitUpgrade::updateUnitData (cDynamicUnitData& data) const
 }
 
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 int cUnitUpgrade::calcTotalCosts (const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch& reseachState) const
 {
 	int totalCosts = 0;
