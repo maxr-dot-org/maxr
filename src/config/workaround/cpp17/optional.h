@@ -102,6 +102,12 @@ namespace std
 			} u;
 		};
 
+		template <typename T>
+		std::optional<std::decay_t<T>> make_optional(T&& t)
+		{
+			return {std::forward<T>(t)};
+		}
+
 	}
 
 }
