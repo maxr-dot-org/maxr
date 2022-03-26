@@ -600,50 +600,48 @@ void cUpgradeCalculator::setupLookupTables()
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::lookupPrice (const PriceMap& prices, int value) const
+std::optional<int> cUpgradeCalculator::lookupPrice (const PriceMap& prices, int value) const
 {
 	PriceMap::const_iterator it = prices.find (value);
 	if (it != prices.end())
 		return it->second; // the price
-	return kNoPriceAvailable;
+	return std::nullopt;
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::calcPrice (int curValue, int orgValue, eUpgradeType upgradeType, const cResearch& researchLevel) const
+std::optional<int> cUpgradeCalculator::calcPrice (int curValue, int orgValue, eUpgradeType upgradeType, const cResearch& researchLevel) const
 {
 	auto researchArea = researchLevel.getResearchArea (upgradeType).value_or (0);
 	int bonusByResearch = calcChangeByResearch (orgValue, researchLevel.getCurResearchLevel (researchArea));
 	curValue -= bonusByResearch;
 
-	int price = kNoPriceAvailable;
 	switch (upgradeType)
 	{
-
 		case eUpgradeType::Hitpoints:
 		case eUpgradeType::Armor:
 		case eUpgradeType::Ammo:
 		{
 			switch (orgValue)
 			{
-				case 2:  price = lookupPrice (hitpointsArmorAmmo_2,  curValue); break;
-				case 4:  price = lookupPrice (hitpointsArmorAmmo_4,  curValue); break;
-				case 6:  price = lookupPrice (hitpointsArmorAmmo_6,  curValue); break;
-				case 7:  price = lookupPrice (hitpointsArmorAmmo_7,  curValue); break;
-				case 8:  price = lookupPrice (hitpointsArmorAmmo_8,  curValue); break;
-				case 9:  price = lookupPrice (hitpointsArmorAmmo_9,  curValue); break;
-				case 10: price = lookupPrice (hitpointsArmorAmmo_10, curValue); break;
-				case 12: price = lookupPrice (hitpointsArmorAmmo_12, curValue); break;
-				case 14: price = lookupPrice (hitpointsArmorAmmo_14, curValue); break;
-				case 16: price = lookupPrice (hitpointsArmorAmmo_16, curValue); break;
-				case 18: price = lookupPrice (hitpointsArmorAmmo_18, curValue); break;
-				case 20: price = lookupPrice (hitpointsArmorAmmo_20, curValue); break;
-				case 24: price = lookupPrice (hitpointsArmorAmmo_24, curValue); break;
-				case 26: price = lookupPrice (hitpointsArmorAmmo_26, curValue); break;
-				case 28: price = lookupPrice (hitpointsArmorAmmo_28, curValue); break;
-				case 32: price = lookupPrice (hitpointsArmorAmmo_32, curValue); break;
-				case 36: price = lookupPrice (hitpointsArmorAmmo_36, curValue); break;
-				case 40: price = lookupPrice (hitpointsArmorAmmo_40, curValue); break;
-				case 56: price = lookupPrice (hitpointsArmorAmmo_56, curValue); break;
+				case 2:  return lookupPrice (hitpointsArmorAmmo_2,  curValue);
+				case 4:  return lookupPrice (hitpointsArmorAmmo_4,  curValue);
+				case 6:  return lookupPrice (hitpointsArmorAmmo_6,  curValue);
+				case 7:  return lookupPrice (hitpointsArmorAmmo_7,  curValue);
+				case 8:  return lookupPrice (hitpointsArmorAmmo_8,  curValue);
+				case 9:  return lookupPrice (hitpointsArmorAmmo_9,  curValue);
+				case 10: return lookupPrice (hitpointsArmorAmmo_10, curValue);
+				case 12: return lookupPrice (hitpointsArmorAmmo_12, curValue);
+				case 14: return lookupPrice (hitpointsArmorAmmo_14, curValue);
+				case 16: return lookupPrice (hitpointsArmorAmmo_16, curValue);
+				case 18: return lookupPrice (hitpointsArmorAmmo_18, curValue);
+				case 20: return lookupPrice (hitpointsArmorAmmo_20, curValue);
+				case 24: return lookupPrice (hitpointsArmorAmmo_24, curValue);
+				case 26: return lookupPrice (hitpointsArmorAmmo_26, curValue);
+				case 28: return lookupPrice (hitpointsArmorAmmo_28, curValue);
+				case 32: return lookupPrice (hitpointsArmorAmmo_32, curValue);
+				case 36: return lookupPrice (hitpointsArmorAmmo_36, curValue);
+				case 40: return lookupPrice (hitpointsArmorAmmo_40, curValue);
+				case 56: return lookupPrice (hitpointsArmorAmmo_56, curValue);
 				default: break;
 			}
 			break;
@@ -654,25 +652,25 @@ int cUpgradeCalculator::calcPrice (int curValue, int orgValue, eUpgradeType upgr
 		{
 			switch (orgValue)
 			{
-				case 5:  price = lookupPrice (attackSpeed_5,  curValue); break;
-				case 6:  price = lookupPrice (attackSpeed_6,  curValue); break;
-				case 7:  price = lookupPrice (attackSpeed_7,  curValue); break;
-				case 8:  price = lookupPrice (attackSpeed_8,  curValue); break;
-				case 9:  price = lookupPrice (attackSpeed_9,  curValue); break;
-				case 10: price = lookupPrice (attackSpeed_10, curValue); break;
-				case 11: price = lookupPrice (attackSpeed_11, curValue); break;
-				case 12: price = lookupPrice (attackSpeed_12, curValue); break;
-				case 14: price = lookupPrice (attackSpeed_14, curValue); break;
-				case 15: price = lookupPrice (attackSpeed_15, curValue); break;
-				case 16: price = lookupPrice (attackSpeed_16, curValue); break;
-				case 17: price = lookupPrice (attackSpeed_17, curValue); break;
-				case 18: price = lookupPrice (attackSpeed_18, curValue); break;
-				case 20: price = lookupPrice (attackSpeed_20, curValue); break;
-				case 22: price = lookupPrice (attackSpeed_22, curValue); break;
-				case 24: price = lookupPrice (attackSpeed_24, curValue); break;
-				case 28: price = lookupPrice (attackSpeed_28, curValue); break;
-				case 30: price = lookupPrice (attackSpeed_30, curValue); break;
-				case 36: price = lookupPrice (attackSpeed_36, curValue); break;
+				case 5:  return lookupPrice (attackSpeed_5,  curValue);
+				case 6:  return lookupPrice (attackSpeed_6,  curValue);
+				case 7:  return lookupPrice (attackSpeed_7,  curValue);
+				case 8:  return lookupPrice (attackSpeed_8,  curValue);
+				case 9:  return lookupPrice (attackSpeed_9,  curValue);
+				case 10: return lookupPrice (attackSpeed_10, curValue);
+				case 11: return lookupPrice (attackSpeed_11, curValue);
+				case 12: return lookupPrice (attackSpeed_12, curValue);
+				case 14: return lookupPrice (attackSpeed_14, curValue);
+				case 15: return lookupPrice (attackSpeed_15, curValue);
+				case 16: return lookupPrice (attackSpeed_16, curValue);
+				case 17: return lookupPrice (attackSpeed_17, curValue);
+				case 18: return lookupPrice (attackSpeed_18, curValue);
+				case 20: return lookupPrice (attackSpeed_20, curValue);
+				case 22: return lookupPrice (attackSpeed_22, curValue);
+				case 24: return lookupPrice (attackSpeed_24, curValue);
+				case 28: return lookupPrice (attackSpeed_28, curValue);
+				case 30: return lookupPrice (attackSpeed_30, curValue);
+				case 36: return lookupPrice (attackSpeed_36, curValue);
 				default: break;
 			}
 			break;
@@ -683,21 +681,21 @@ int cUpgradeCalculator::calcPrice (int curValue, int orgValue, eUpgradeType upgr
 		{
 			switch (orgValue)
 			{
-				case 3:  price = lookupPrice (rangeScan_3,  curValue); break;
-				case 4:  price = lookupPrice (rangeScan_4,  curValue); break;
-				case 5:  price = lookupPrice (rangeScan_5,  curValue); break;
-				case 6:  price = lookupPrice (rangeScan_6,  curValue); break;
-				case 7:  price = lookupPrice (rangeScan_7,  curValue); break;
-				case 8:  price = lookupPrice (rangeScan_8,  curValue); break;
-				case 9:  price = lookupPrice (rangeScan_9,  curValue); break;
-				case 10: price = lookupPrice (rangeScan_10, curValue); break;
-				case 11: price = lookupPrice (rangeScan_11, curValue); break;
-				case 12: price = lookupPrice (rangeScan_12, curValue); break;
-				case 14: price = lookupPrice (rangeScan_14, curValue); break;
-				case 16: price = lookupPrice (rangeScan_16, curValue); break;
-				case 18: price = lookupPrice (rangeScan_18, curValue); break;
-				case 20: price = lookupPrice (rangeScan_20, curValue); break;
-				case 24: price = lookupPrice (rangeScan_24, curValue); break;
+				case 3:  return lookupPrice (rangeScan_3,  curValue);
+				case 4:  return lookupPrice (rangeScan_4,  curValue);
+				case 5:  return lookupPrice (rangeScan_5,  curValue);
+				case 6:  return lookupPrice (rangeScan_6,  curValue);
+				case 7:  return lookupPrice (rangeScan_7,  curValue);
+				case 8:  return lookupPrice (rangeScan_8,  curValue);
+				case 9:  return lookupPrice (rangeScan_9,  curValue);
+				case 10: return lookupPrice (rangeScan_10, curValue);
+				case 11: return lookupPrice (rangeScan_11, curValue);
+				case 12: return lookupPrice (rangeScan_12, curValue);
+				case 14: return lookupPrice (rangeScan_14, curValue);
+				case 16: return lookupPrice (rangeScan_16, curValue);
+				case 18: return lookupPrice (rangeScan_18, curValue);
+				case 20: return lookupPrice (rangeScan_20, curValue);
+				case 24: return lookupPrice (rangeScan_24, curValue);
 				default: break;
 			}
 			break;
@@ -707,8 +705,8 @@ int cUpgradeCalculator::calcPrice (int curValue, int orgValue, eUpgradeType upgr
 		{
 			switch (orgValue)
 			{
-				case 1:  price = lookupPrice (shots_1,  curValue); break;
-				case 2:  price = lookupPrice (shots_2,  curValue); break;
+				case 1:  return lookupPrice (shots_1, curValue);
+				case 2:  return lookupPrice (shots_2, curValue);
 				default: break;
 			}
 			break;
@@ -716,11 +714,11 @@ int cUpgradeCalculator::calcPrice (int curValue, int orgValue, eUpgradeType upgr
 
 		default: break;
 	}
-	return price;
+	return std::nullopt;
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::getCostForUpgrade (int orgValue, int curValue, int newValue, eUpgradeType upgradeType, const cResearch& researchLevel) const
+std::optional<int> cUpgradeCalculator::getCostForUpgrade (int orgValue, int curValue, int newValue, eUpgradeType upgradeType, const cResearch& researchLevel) const
 {
 	int cost = 0;
 	if (orgValue <= curValue && curValue < newValue)
@@ -728,19 +726,19 @@ int cUpgradeCalculator::getCostForUpgrade (int orgValue, int curValue, int newVa
 		int upgradedValue = curValue;
 		while (upgradedValue < newValue)
 		{
-			int costsForThis = calcPrice (upgradedValue, orgValue, upgradeType, researchLevel);
-			if (costsForThis != kNoPriceAvailable)
+			std::optional<int> costsForThis = calcPrice (upgradedValue, orgValue, upgradeType, researchLevel);
+			if (costsForThis)
 			{
-				cost += costsForThis;
+				cost += *costsForThis;
 				upgradedValue += calcIncreaseByUpgrade (orgValue);
 				if (upgradedValue > newValue)
 				{
 					// it is not possible to reach the newValue with upgrading
-					return kNoPriceAvailable;
+					return std::nullopt;
 				}
 			}
 			else
-				return kNoPriceAvailable;
+				return std::nullopt;
 		}
 	}
 	return cost;
@@ -1487,7 +1485,7 @@ int sUnitUpgrade::purchase (const cResearch& researchLevel)
 {
 	cUpgradeCalculator::eUpgradeType upgradeType = GetUpgradeType (*this);
 	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
-	const int cost = nextPrice;
+	const int cost = nextPrice.value_or (0);
 
 	if (upgradeType == cUpgradeCalculator::eUpgradeType::Speed)
 	{
@@ -1520,7 +1518,7 @@ int sUnitUpgrade::cancelPurchase (const cResearch& researchLevel)
 		nextPrice = uc.calcPrice (curValue, startValue, upgradeType, researchLevel);
 	}
 	--purchased;
-	return -nextPrice;
+	return -nextPrice.value_or (0);
 }
 
 //--------------------------------------------------
@@ -1726,7 +1724,7 @@ int cUnitUpgrade::calcTotalCosts (const cDynamicUnitData& originalData, const cD
 	int totalCosts = 0;
 	for (const auto& upgrade : upgrades)
 	{
-		int costs = 0;
+		std::optional<int> costs = 0;
 		switch (upgrade.getType())
 		{
 		case sUnitUpgrade::eUpgradeType::Damage:
@@ -1760,12 +1758,12 @@ int cUnitUpgrade::calcTotalCosts (const cDynamicUnitData& originalData, const cD
 			return 0;
 		}
 
-		if (upgrade.getPurchased() && costs <= 0)
+		if (upgrade.getPurchased() && costs.value_or (0) <= 0)
 		{
 			Log.write (" Can't apply upgrade. Unable to calculate price.", cLog::eLogType::NetError);
 			return 0;
 		}
-		totalCosts += costs;
+		totalCosts += costs.value_or (0);
 	}
 
 	return totalCosts;

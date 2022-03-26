@@ -79,7 +79,6 @@ public:
 
 	enum
 	{
-		kNoPriceAvailable = 0,
 		kNoResearchAvailable = 66666
 	};
 
@@ -91,10 +90,9 @@ public:
 	 * @param upgradeType the area of the upgrade
 	 * @param researchLevel the research level of the player
 	 *                      that has to be taken into account
-	 * @return the costs for this upgrade or kNoPriceAvailable
-	 *         if the values are unknown
+	 * @return the costs for this upgrade if available
 	 */
-	int calcPrice (int curValue, int orgValue, eUpgradeType, const cResearch& researchLevel) const;
+	std::optional<int> calcPrice (int curValue, int orgValue, eUpgradeType, const cResearch& researchLevel) const;
 
 	/**
 	 * Calculates the increase of a unit value, when an upgrade is bought.
@@ -117,10 +115,9 @@ public:
 	 * @upgradeType the area of the upgrade
 	 * @param researchLevel the research level of the player
 	 *                      that has to be taken into account
-	 * @return the costs for this upgrade or kNoPriceAvailable
-	 *         if such an upgrade is impossible
+	 * @return the costs for this upgrade if available
 	 */
-	int getCostForUpgrade (int orgValue, int curValue, int newValue, eUpgradeType, const cResearch& researchLevel) const;
+	std::optional<int> getCostForUpgrade (int orgValue, int curValue, int newValue, eUpgradeType, const cResearch& researchLevel) const;
 
 	/**
 	 * Calculates the turns needed for one research center
@@ -246,7 +243,7 @@ private:
 	PriceMap shots_1;
 	PriceMap shots_2;
 
-	int lookupPrice (const PriceMap& prices, int value) const;
+	std::optional<int> lookupPrice (const PriceMap&, int value) const;
 	void setupLookupTables();
 
 	int getNearestPossibleCost (float realCost, int costDifference) const;
@@ -358,7 +355,7 @@ struct sUnitUpgrade
 
 	int getCurValue() const { return curValue; }
 	eUpgradeType getType() const { return type; }
-	int getNextPrice() const { return nextPrice; }
+	std::optional<int> getNextPrice() const { return nextPrice; }
 	int getPurchased() const { return purchased; }
 
 
@@ -375,7 +372,7 @@ struct sUnitUpgrade
 private:
 	friend class cUnitUpgrade;
 	/** what will the next upgrade cost */
-	int nextPrice = 0;
+	std::optional<int> nextPrice = 0;
 	/** how many upgrades of this type has the player purchased */
 	int purchased = 0;
 	/** what is the current value */

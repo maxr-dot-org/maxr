@@ -156,9 +156,9 @@ void cWindowUpgrades::updateUpgradeButtons()
 			continue;
 		}
 
-		if (upgrade.getNextPrice() != cUpgradeCalculator::kNoPriceAvailable)
+		if (upgrade.getNextPrice())
 		{
-			upgradeCostLabel[i]->setText (std::to_string (upgrade.getNextPrice()));
+			upgradeCostLabel[i]->setText (std::to_string (*upgrade.getNextPrice()));
 			upgradeCostLabel[i]->show();
 		}
 		else
@@ -166,7 +166,7 @@ void cWindowUpgrades::updateUpgradeButtons()
 			upgradeCostLabel[i]->hide();
 		}
 
-		if (goldBar->getValue() >= upgrade.getNextPrice() && upgrade.getNextPrice() != cUpgradeCalculator::kNoPriceAvailable)
+		if (upgrade.getNextPrice() && goldBar->getValue() >= *upgrade.getNextPrice())
 		{
 			upgradeIncreaseButton[i]->unlock();
 		}
