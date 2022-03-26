@@ -94,12 +94,30 @@ template <typename T>
 template <typename T>
 [[nodiscard]] uint32_t calcCheckSum (std::shared_ptr<T> data, uint32_t crc)
 {
-    //target type of the pointer must have a getId() member
     if (data)
     {
         return calcCheckSum (*data, crc);
     }
     return calcCheckSum (-1, crc);
+}
+
+template <typename T>
+[[nodiscard]] uint32_t calcCheckSum (const std::optional<T>& data, uint32_t crc)
+{
+    if (data)
+    {
+        return calcCheckSum (*data, crc);
+    }
+    return calcCheckSum (-1, crc);
+}
+
+template <typename T, std::size_t N>
+[[nodiscard]] uint32_t calcCheckSum (const std::array<T, N>& data, uint32_t checksum)
+{
+	for (const auto& x : data)
+		checksum = calcCheckSum (x, checksum);
+
+	return checksum;
 }
 
 template <typename T>
