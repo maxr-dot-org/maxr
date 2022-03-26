@@ -94,7 +94,7 @@ public:
 	 * @return the costs for this upgrade or kNoPriceAvailable
 	 *         if the values are unknown
 	 */
-	int calcPrice (int curValue, int orgValue, int upgradeType, const cResearch& researchLevel) const;
+	int calcPrice (int curValue, int orgValue, UpgradeTypes, const cResearch& researchLevel) const;
 
 	/**
 	 * Calculates the increase of a unit value, when an upgrade is bought.
@@ -120,7 +120,7 @@ public:
 	 * @return the costs for this upgrade or kNoPriceAvailable
 	 *         if such an upgrade is impossible
 	 */
-	int getCostForUpgrade (int orgValue, int curValue, int newValue, int upgradeType, const cResearch& researchLevel) const;
+	int getCostForUpgrade (int orgValue, int curValue, int newValue, UpgradeTypes, const cResearch& researchLevel) const;
 
 	/**
 	 * Calculates the turns needed for one research center
@@ -132,7 +132,7 @@ public:
 	 *         with one research center
 	 *         or kNoResearchAvailable if the passed values are out of range
 	 */
-	int calcResearchTurns (int curResearchLevel, int upgradeType) const;
+	int calcResearchTurns (int curResearchLevel, UpgradeTypes) const;
 
 	/**
 	 * Calculates the raw-material needed for upgrading a unit,
@@ -174,7 +174,7 @@ public:
 	 * (can be negative if kCost is the upgradeType)
 	 */
 	int calcChangeByResearch (int startValue, int curResearchLevel,
-							  int upgradeType = -1, eUnitType unitType = eUnitType::Building) const;
+							  std::optional<UpgradeTypes> = std::nullopt, eUnitType = eUnitType::Building) const;
 
 	/**
 	 * Prints some upgrade values to the standard log on debug-level.
@@ -302,8 +302,8 @@ public:
 	/// if researchPoints >= neededResearchPoints, nothing will be done
 	void setCurResearchPoints (int researchPoints, eResearchArea researchArea);
 
-	int getUpgradeCalculatorUpgradeType (eResearchArea researchArea) const;
-	std::optional<cResearch::eResearchArea> getResearchArea (int upgradeCalculatorType) const;
+	cUpgradeCalculator::UpgradeTypes getUpgradeCalculatorUpgradeType (eResearchArea) const;
+	std::optional<cResearch::eResearchArea> getResearchArea (cUpgradeCalculator::UpgradeTypes) const;
 
 	uint32_t getChecksum (uint32_t crc) const;
 
