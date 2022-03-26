@@ -958,10 +958,7 @@ cSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& bui
 
 uint32_t cBase::getChecksum (uint32_t crc) const
 {
-	for (const auto& sb : SubBases)
-		crc = calcCheckSum (*sb, crc);
-
-	return crc;
+	return calcCheckSum (SubBases, crc);
 }
 
 void cBase::addBuilding (cBuilding& building, const cMap& map)

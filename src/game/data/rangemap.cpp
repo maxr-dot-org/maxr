@@ -207,12 +207,7 @@ uint32_t cRangeMap::getChecksum (uint32_t crc) const
 {
 	if (!crcCache)
 	{
-		crcCache = 0;
-		size_t vecSize = map.size();
-		for (size_t i = 0; i < vecSize; ++i)
-		{
-			*crcCache = calcCheckSum (map[i], *crcCache);
-		}
+		crcCache = calcCheckSum (map, 0);
 	}
 
 	return calcCheckSum (*crcCache, crc);

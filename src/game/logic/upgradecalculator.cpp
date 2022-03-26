@@ -1382,12 +1382,9 @@ std::optional<cResearch::eResearchArea> cResearch::getResearchArea (cUpgradeCalc
 //------------------------------------------------------------------------------
 uint32_t cResearch::getChecksum (uint32_t crc) const
 {
-	for (int i = 0; i < kNrResearchAreas; i++)
-		crc = calcCheckSum (curResearchLevel[i], crc);
-	for (int i = 0; i < kNrResearchAreas; i++)
-		crc = calcCheckSum (curResearchPoints[i], crc);
-	for (int i = 0; i < kNrResearchAreas; i++)
-		crc = calcCheckSum (neededResearchPoints[i], crc);
+	crc = calcCheckSum (curResearchLevel, crc);
+	crc = calcCheckSum (curResearchPoints, crc);
+	crc = calcCheckSum (neededResearchPoints, crc);
 
 	return crc;
 }

@@ -345,11 +345,10 @@ private:
 	int clan = -1;
 	int credits = 0;
 
-
 	bool hasFinishedTurn = false;
 
 	cResearch researchState;   ///< stores the current research level of the player
-	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]{}; ///< counts the number of research centers that are currently working on each area
+	std::array<int, cResearch::kNrResearchAreas> researchCentersWorkingOnArea{}; ///< counts the number of research centers that are currently working on each area
 	int researchCentersWorkingTotal = 0;  ///< number of working research centers
 };
 

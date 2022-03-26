@@ -731,10 +731,8 @@ uint32_t cPlayer::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (id, crc);
 	crc = calcCheckSum (dynamicUnitsData, crc);
 	crc = calcCheckSum (base, crc);
-	for (const auto& v : vehicles)
-		crc = calcCheckSum (*v, crc);
-	for (const auto& b : buildings)
-		crc = calcCheckSum (*b, crc);
+	crc = calcCheckSum (vehicles, crc);
+	crc = calcCheckSum (buildings, crc);
 	crc = calcCheckSum (landingPos, crc);
 	crc = calcCheckSum (mapSize, crc);
 	crc = calcCheckSum (scanMap, crc);
@@ -750,8 +748,7 @@ uint32_t cPlayer::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (credits, crc);
 	crc = calcCheckSum (hasFinishedTurn, crc);
 	crc = calcCheckSum (researchState, crc);
-	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
-		crc = calcCheckSum (researchCentersWorkingOnArea[i], crc);
+	crc = calcCheckSum (researchCentersWorkingOnArea, crc);
 	crc = calcCheckSum (researchCentersWorkingTotal, crc);
 
 	return crc;

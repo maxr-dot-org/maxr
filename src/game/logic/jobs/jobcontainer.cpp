@@ -70,11 +70,7 @@ void cJobContainer::clear()
 //------------------------------------------------------------------------------
 uint32_t cJobContainer::getChecksum (uint32_t crc) const
 {
-	for (const auto& job : jobs)
-	{
-		crc = calcCheckSum (*job, crc);
-	}
-	return crc;
+	return calcCheckSum (jobs, crc);
 }
 
 //------------------------------------------------------------------------------

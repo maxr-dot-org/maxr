@@ -20,6 +20,7 @@
 #ifndef utility_crcH
 #define utility_crcH
 
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <forward_list>
@@ -27,6 +28,9 @@
 #include <memory>
 #include <string>
 #include <vector>
+
+#include "config/workaround/cpp17/optional.h"
+#include "utility/flatset.h"
 
 #include <SDL_endian.h>
 
@@ -92,7 +96,17 @@ template <typename T>
 }
 
 template <typename T>
-[[nodiscard]] uint32_t calcCheckSum (std::shared_ptr<T> data, uint32_t crc)
+[[nodiscard]] uint32_t calcCheckSum (const std::shared_ptr<T>& data, uint32_t crc)
+{
+    if (data)
+    {
+        return calcCheckSum (*data, crc);
+    }
+    return calcCheckSum (-1, crc);
+}
+
+template <typename T>
+[[nodiscard]] uint32_t calcCheckSum (const std::unique_ptr<T>& data, uint32_t crc)
 {
     if (data)
     {
@@ -142,6 +156,15 @@ template <typename K, typename T>
 
 template <typename T>
 [[nodiscard]] uint32_t calcCheckSum (const std::forward_list<T>& data, uint32_t checksum)
+{
+	for (const auto& x : data)
+		checksum = calcCheckSum (x, checksum);
+
+	return checksum;
+}
+
+template <typename Key, typename T, typename Compare>
+[[nodiscard]] uint32_t calcCheckSum (const cFlatSet<Key, T, Compare>& data, uint32_t checksum)
 {
 	for (const auto& x : data)
 		checksum = calcCheckSum (x, checksum);

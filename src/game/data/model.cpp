@@ -100,18 +100,13 @@ uint32_t cModel::getChecksum() const
 	crc = calcCheckSum (gameId, crc);
 	crc = calcCheckSum (*gameSettings, crc);
 	crc = calcCheckSum (*map, crc);
-	for (const auto& player : playerList)
-		crc = calcCheckSum (*player, crc);
-	for (const auto& building : neutralBuildings)
-		crc = calcCheckSum (*building, crc);
-	for (const auto& vehicle : neutralVehicles)
-		crc = calcCheckSum (*vehicle, crc);
+	crc = calcCheckSum (playerList, crc);
+	crc = calcCheckSum (neutralBuildings, crc);
+	crc = calcCheckSum (neutralVehicles, crc);
 	crc = calcCheckSum (nextUnitId, crc);
 	crc = calcCheckSum (*unitsData, crc);
-	for (const auto& movejob : moveJobs)
-		crc = calcCheckSum (*movejob, crc);
-	for (const auto& attackJob : attackJobs)
-		crc = calcCheckSum (*attackJob, crc);
+	crc = calcCheckSum (moveJobs, crc);
+	crc = calcCheckSum (attackJobs, crc);
 	crc = calcCheckSum (*turnCounter, crc);
 	crc = calcCheckSum (turnEndState, crc);
 	crc = calcCheckSum (activeTurnPlayer->getId(), crc);
