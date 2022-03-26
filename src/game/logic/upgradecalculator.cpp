@@ -745,7 +745,7 @@ std::optional<int> cUpgradeCalculator::getCostForUpgrade (int orgValue, int curV
 }
 
 //------------------------------------------------------------------------------
-int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, eUpgradeType upgradeType) const
+std::optional<int> cUpgradeCalculator::calcResearchTurns (int curResearchLevel, eUpgradeType upgradeType) const
 {
 	switch (upgradeType)
 	{
@@ -803,7 +803,7 @@ int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, eUpgradeType up
 		default: break;
 	}
 
-	return kNoResearchAvailable;
+	return std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -1303,13 +1303,11 @@ int cResearch::getCurResearchLevel (eResearchArea researchArea) const
 //------------------------------------------------------------------------------
 int cResearch::getRemainingTurns (eResearchArea researchArea, int centersWorkingOn) const
 {
-	if (centersWorkingOn > 0)
+	if (centersWorkingOn > 0 && neededResearchPoints[static_cast<int>(researchArea)])
 	{
-		int remainingPoints = neededResearchPoints[static_cast<int>(researchArea)] - curResearchPoints[static_cast<int>(researchArea)];
-		if (remainingPoints % centersWorkingOn == 0)
-			return remainingPoints / centersWorkingOn;
-		else
-			return (remainingPoints / centersWorkingOn) + 1;
+		const int remainingPoints = *neededResearchPoints[static_cast<int>(researchArea)] - curResearchPoints[static_cast<int>(researchArea)];
+
+		return (remainingPoints + centersWorkingOn - 1) / centersWorkingOn;
 	}
 	return 0;
 }
@@ -1317,13 +1315,13 @@ int cResearch::getRemainingTurns (eResearchArea researchArea, int centersWorking
 //------------------------------------------------------------------------------
 bool cResearch::doResearch (int researchPoints, eResearchArea researchArea)
 {
-	if (researchPoints > 0)
+	if (researchPoints > 0 && neededResearchPoints [static_cast<int>(researchArea)])
 	{
 		const auto oldPoints = curResearchPoints[static_cast<int>(researchArea)];
 
 		curResearchPoints[static_cast<int>(researchArea)] += researchPoints;
 
-		if (curResearchPoints[static_cast<int>(researchArea)] >= neededResearchPoints [static_cast<int>(researchArea)])
+		if (curResearchPoints[static_cast<int>(researchArea)] >= *neededResearchPoints [static_cast<int>(researchArea)])
 		{
 			const auto oldLevel = curResearchLevel[static_cast<int>(researchArea)];
 			const auto oldNeededPoints = neededResearchPoints[static_cast<int>(researchArea)];

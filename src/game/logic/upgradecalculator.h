@@ -77,11 +77,6 @@ public:
 		Cost
 	};
 
-	enum
-	{
-		kNoResearchAvailable = 66666
-	};
-
 	/**
 	 * Calculates the price (gold) to upgrade from the given value.
 	 * @param curValue the value the unit currently has
@@ -127,9 +122,9 @@ public:
 	 * @param upgradeType the area of the upgrade
 	 * @return the turns needed to reach the next level
 	 *         with one research center
-	 *         or kNoResearchAvailable if the passed values are out of range
+	 *         or std::nullopt if the passed values are out of range
 	 */
-	int calcResearchTurns (int curResearchLevel, eUpgradeType) const;
+	std::optional<int> calcResearchTurns (int curResearchLevel, eUpgradeType) const;
 
 	/**
 	 * Calculates the raw-material needed for upgrading a unit,
@@ -311,7 +306,7 @@ private:
 	std::array<int, kNrResearchAreas> curResearchPoints;
 	/// Number of research-center turns needed to reach the next level
 	// (remainingResearchPoints == neededResearchPoints - curResearchPoints)
-	std::array<int, kNrResearchAreas> neededResearchPoints;
+	std::array<std::optional<int>, kNrResearchAreas> neededResearchPoints;
 };
 
 /**
