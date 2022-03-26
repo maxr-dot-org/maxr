@@ -609,7 +609,7 @@ int cUpgradeCalculator::lookupPrice (const PriceMap& prices, int value) const
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::calcPrice (int curValue, int orgValue, UpgradeTypes upgradeType, const cResearch& researchLevel) const
+int cUpgradeCalculator::calcPrice (int curValue, int orgValue, eUpgradeType upgradeType, const cResearch& researchLevel) const
 {
 	auto researchArea = researchLevel.getResearchArea (upgradeType).value_or (0);
 	int bonusByResearch = calcChangeByResearch (orgValue, researchLevel.getCurResearchLevel (researchArea));
@@ -619,9 +619,9 @@ int cUpgradeCalculator::calcPrice (int curValue, int orgValue, UpgradeTypes upgr
 	switch (upgradeType)
 	{
 
-		case UpgradeTypes::kHitpoints:
-		case UpgradeTypes::kArmor:
-		case UpgradeTypes::kAmmo:
+		case eUpgradeType::Hitpoints:
+		case eUpgradeType::Armor:
+		case eUpgradeType::Ammo:
 		{
 			switch (orgValue)
 			{
@@ -649,8 +649,8 @@ int cUpgradeCalculator::calcPrice (int curValue, int orgValue, UpgradeTypes upgr
 			break;
 		}
 
-		case UpgradeTypes::kAttack:
-		case UpgradeTypes::kSpeed:
+		case eUpgradeType::Attack:
+		case eUpgradeType::Speed:
 		{
 			switch (orgValue)
 			{
@@ -678,8 +678,8 @@ int cUpgradeCalculator::calcPrice (int curValue, int orgValue, UpgradeTypes upgr
 			break;
 		}
 
-		case UpgradeTypes::kRange:
-		case UpgradeTypes::kScan:
+		case eUpgradeType::Range:
+		case eUpgradeType::Scan:
 		{
 			switch (orgValue)
 			{
@@ -703,7 +703,7 @@ int cUpgradeCalculator::calcPrice (int curValue, int orgValue, UpgradeTypes upgr
 			break;
 		}
 
-		case UpgradeTypes::kShots:
+		case eUpgradeType::Shots:
 		{
 			switch (orgValue)
 			{
@@ -720,7 +720,7 @@ int cUpgradeCalculator::calcPrice (int curValue, int orgValue, UpgradeTypes upgr
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::getCostForUpgrade (int orgValue, int curValue, int newValue, UpgradeTypes upgradeType, const cResearch& researchLevel) const
+int cUpgradeCalculator::getCostForUpgrade (int orgValue, int curValue, int newValue, eUpgradeType upgradeType, const cResearch& researchLevel) const
 {
 	int cost = 0;
 	if (orgValue <= curValue && curValue < newValue)
@@ -747,12 +747,12 @@ int cUpgradeCalculator::getCostForUpgrade (int orgValue, int curValue, int newVa
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, UpgradeTypes upgradeType) const
+int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, eUpgradeType upgradeType) const
 {
 	switch (upgradeType)
 	{
-		case UpgradeTypes::kHitpoints:
-		case UpgradeTypes::kArmor:
+		case eUpgradeType::Hitpoints:
+		case eUpgradeType::Armor:
 		{
 			const unsigned int index = curResearchLevel / 10;
 			const int values[] =
@@ -767,9 +767,9 @@ int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, UpgradeTypes up
 			break;
 		}
 
-		case UpgradeTypes::kAttack:
-		case UpgradeTypes::kSpeed:
-		case UpgradeTypes::kShots:
+		case eUpgradeType::Attack:
+		case eUpgradeType::Speed:
+		case eUpgradeType::Shots:
 		{
 			const unsigned int index = curResearchLevel / 10;
 			const int values[] =
@@ -784,9 +784,9 @@ int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, UpgradeTypes up
 			break;
 		}
 
-		case UpgradeTypes::kRange:
-		case UpgradeTypes::kScan:
-		case UpgradeTypes::kCost:
+		case eUpgradeType::Range:
+		case eUpgradeType::Scan:
+		case eUpgradeType::Cost:
 		{
 			const unsigned int index = curResearchLevel / 10;
 			const int values[] =
@@ -801,7 +801,7 @@ int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, UpgradeTypes up
 			break;
 		}
 
-		// case UpgradeTypes::kAmmo: <- There's no research possibility for Ammo in M.A.X.!
+		// case eUpgradeType::Ammo: <- There's no research possibility for Ammo in M.A.X.!
 		default: break;
 	}
 
@@ -822,19 +822,19 @@ int cUpgradeCalculator::calcIncreaseByUpgrade (int startValue) const
 
 //--------------------------------------------------
 int cUpgradeCalculator::calcChangeByResearch (int startValue, int curResearchLevel,
-											  std::optional<UpgradeTypes> upgradeType, eUnitType unitType) const
+											  std::optional<eUpgradeType> upgradeType, eUnitType unitType) const
 {
 	if (curResearchLevel <= 0) // no research done yet...
 		return 0;
 
 	// standard research areas - all handled the same way
-	if (upgradeType == std::nullopt || *upgradeType != UpgradeTypes::kCost)
+	if (upgradeType == std::nullopt || *upgradeType != eUpgradeType::Cost)
 	{
 		// a simple integer division does the job
 		int newValue = (startValue * (100 + curResearchLevel)) / 100;
 		return newValue - startValue;
 	}
-	else if (*upgradeType == UpgradeTypes::kCost)
+	else if (*upgradeType == eUpgradeType::Cost)
 	{
 		// cost makes a decrease based on the formula 1/x
 		// (where x is the research level)
@@ -889,79 +889,79 @@ void cUpgradeCalculator::printAllToLog() const
 	printToLog ("CALC CHANGE BY RESEARCH TEST ---- CALC CHANGE BY RESEARCH TEST");
 
 	printToLog ("--------------- Cost-Research for Buildings ----------------");
-	printToLog ("Building-Cost: Start 40, Level   0 => Change: ", calcChangeByResearch (40,   0, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level  10 => Change: ", calcChangeByResearch (40,  10, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level  20 => Change: ", calcChangeByResearch (40,  20, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level  30 => Change: ", calcChangeByResearch (40,  30, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level  40 => Change: ", calcChangeByResearch (40,  40, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level  50 => Change: ", calcChangeByResearch (40,  50, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level  60 => Change: ", calcChangeByResearch (40,  60, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level  70 => Change: ", calcChangeByResearch (40,  70, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level  80 => Change: ", calcChangeByResearch (40,  80, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level  90 => Change: ", calcChangeByResearch (40,  90, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 100 => Change: ", calcChangeByResearch (40, 100, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 110 => Change: ", calcChangeByResearch (40, 110, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 120 => Change: ", calcChangeByResearch (40, 120, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 130 => Change: ", calcChangeByResearch (40, 130, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 140 => Change: ", calcChangeByResearch (40, 140, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 150 => Change: ", calcChangeByResearch (40, 150, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 160 => Change: ", calcChangeByResearch (40, 160, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 170 => Change: ", calcChangeByResearch (40, 170, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 180 => Change: ", calcChangeByResearch (40, 180, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 190 => Change: ", calcChangeByResearch (40, 190, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 200 => Change: ", calcChangeByResearch (40, 200, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 210 => Change: ", calcChangeByResearch (40, 210, UpgradeTypes::kCost, eUnitType::Building));
-	printToLog ("Building-Cost: Start 40, Level 220 => Change: ", calcChangeByResearch (40, 220, UpgradeTypes::kCost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level   0 => Change: ", calcChangeByResearch (40,   0, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  10 => Change: ", calcChangeByResearch (40,  10, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  20 => Change: ", calcChangeByResearch (40,  20, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  30 => Change: ", calcChangeByResearch (40,  30, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  40 => Change: ", calcChangeByResearch (40,  40, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  50 => Change: ", calcChangeByResearch (40,  50, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  60 => Change: ", calcChangeByResearch (40,  60, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  70 => Change: ", calcChangeByResearch (40,  70, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  80 => Change: ", calcChangeByResearch (40,  80, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level  90 => Change: ", calcChangeByResearch (40,  90, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 100 => Change: ", calcChangeByResearch (40, 100, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 110 => Change: ", calcChangeByResearch (40, 110, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 120 => Change: ", calcChangeByResearch (40, 120, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 130 => Change: ", calcChangeByResearch (40, 130, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 140 => Change: ", calcChangeByResearch (40, 140, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 150 => Change: ", calcChangeByResearch (40, 150, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 160 => Change: ", calcChangeByResearch (40, 160, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 170 => Change: ", calcChangeByResearch (40, 170, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 180 => Change: ", calcChangeByResearch (40, 180, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 190 => Change: ", calcChangeByResearch (40, 190, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 200 => Change: ", calcChangeByResearch (40, 200, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 210 => Change: ", calcChangeByResearch (40, 210, eUpgradeType::Cost, eUnitType::Building));
+	printToLog ("Building-Cost: Start 40, Level 220 => Change: ", calcChangeByResearch (40, 220, eUpgradeType::Cost, eUnitType::Building));
 
 	printToLog ("--------------- Cost-Research for Standard Units ----------------");
-	printToLog ("Unit-Cost: Start 24, Level   0 => Change: ", calcChangeByResearch (24,   0, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  10 => Change: ", calcChangeByResearch (24,  10, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  20 => Change: ", calcChangeByResearch (24,  20, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  30 => Change: ", calcChangeByResearch (24,  30, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  40 => Change: ", calcChangeByResearch (24,  40, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  50 => Change: ", calcChangeByResearch (24,  50, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  60 => Change: ", calcChangeByResearch (24,  60, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  70 => Change: ", calcChangeByResearch (24,  70, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  80 => Change: ", calcChangeByResearch (24,  80, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level  90 => Change: ", calcChangeByResearch (24,  90, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 100 => Change: ", calcChangeByResearch (24, 100, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 110 => Change: ", calcChangeByResearch (24, 110, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 120 => Change: ", calcChangeByResearch (24, 120, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 130 => Change: ", calcChangeByResearch (24, 130, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 140 => Change: ", calcChangeByResearch (24, 140, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 150 => Change: ", calcChangeByResearch (24, 150, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 160 => Change: ", calcChangeByResearch (24, 160, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 170 => Change: ", calcChangeByResearch (24, 170, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 180 => Change: ", calcChangeByResearch (24, 180, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 190 => Change: ", calcChangeByResearch (24, 190, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 200 => Change: ", calcChangeByResearch (24, 200, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 210 => Change: ", calcChangeByResearch (24, 210, UpgradeTypes::kCost, eUnitType::StandardUnit));
-	printToLog ("Unit-Cost: Start 24, Level 220 => Change: ", calcChangeByResearch (24, 220, UpgradeTypes::kCost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level   0 => Change: ", calcChangeByResearch (24,   0, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  10 => Change: ", calcChangeByResearch (24,  10, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  20 => Change: ", calcChangeByResearch (24,  20, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  30 => Change: ", calcChangeByResearch (24,  30, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  40 => Change: ", calcChangeByResearch (24,  40, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  50 => Change: ", calcChangeByResearch (24,  50, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  60 => Change: ", calcChangeByResearch (24,  60, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  70 => Change: ", calcChangeByResearch (24,  70, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  80 => Change: ", calcChangeByResearch (24,  80, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level  90 => Change: ", calcChangeByResearch (24,  90, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 100 => Change: ", calcChangeByResearch (24, 100, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 110 => Change: ", calcChangeByResearch (24, 110, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 120 => Change: ", calcChangeByResearch (24, 120, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 130 => Change: ", calcChangeByResearch (24, 130, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 140 => Change: ", calcChangeByResearch (24, 140, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 150 => Change: ", calcChangeByResearch (24, 150, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 160 => Change: ", calcChangeByResearch (24, 160, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 170 => Change: ", calcChangeByResearch (24, 170, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 180 => Change: ", calcChangeByResearch (24, 180, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 190 => Change: ", calcChangeByResearch (24, 190, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 200 => Change: ", calcChangeByResearch (24, 200, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 210 => Change: ", calcChangeByResearch (24, 210, eUpgradeType::Cost, eUnitType::StandardUnit));
+	printToLog ("Unit-Cost: Start 24, Level 220 => Change: ", calcChangeByResearch (24, 220, eUpgradeType::Cost, eUnitType::StandardUnit));
 
 	printToLog ("--------------- Cost-Research for Infantry ----------------");
-	printToLog ("Infantry-Cost: Start 9, Level   0 => Change: ", calcChangeByResearch (9,   0, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level  10 => Change: ", calcChangeByResearch (9,  10, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level  20 => Change: ", calcChangeByResearch (9,  20, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level  30 => Change: ", calcChangeByResearch (9,  30, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level  40 => Change: ", calcChangeByResearch (9,  40, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level  50 => Change: ", calcChangeByResearch (9,  50, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level  60 => Change: ", calcChangeByResearch (9,  60, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level  70 => Change: ", calcChangeByResearch (9,  70, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level  80 => Change: ", calcChangeByResearch (9,  80, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level  90 => Change: ", calcChangeByResearch (9,  90, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 100 => Change: ", calcChangeByResearch (9, 100, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 110 => Change: ", calcChangeByResearch (9, 110, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 120 => Change: ", calcChangeByResearch (9, 120, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 130 => Change: ", calcChangeByResearch (9, 130, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 140 => Change: ", calcChangeByResearch (9, 140, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 150 => Change: ", calcChangeByResearch (9, 150, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 160 => Change: ", calcChangeByResearch (9, 160, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 170 => Change: ", calcChangeByResearch (9, 170, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 180 => Change: ", calcChangeByResearch (9, 180, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 190 => Change: ", calcChangeByResearch (9, 190, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 200 => Change: ", calcChangeByResearch (9, 200, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 210 => Change: ", calcChangeByResearch (9, 210, UpgradeTypes::kCost, eUnitType::Infantry));
-	printToLog ("Infantry-Cost: Start 9, Level 220 => Change: ", calcChangeByResearch (9, 220, UpgradeTypes::kCost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level   0 => Change: ", calcChangeByResearch (9,   0, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  10 => Change: ", calcChangeByResearch (9,  10, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  20 => Change: ", calcChangeByResearch (9,  20, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  30 => Change: ", calcChangeByResearch (9,  30, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  40 => Change: ", calcChangeByResearch (9,  40, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  50 => Change: ", calcChangeByResearch (9,  50, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  60 => Change: ", calcChangeByResearch (9,  60, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  70 => Change: ", calcChangeByResearch (9,  70, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  80 => Change: ", calcChangeByResearch (9,  80, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level  90 => Change: ", calcChangeByResearch (9,  90, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 100 => Change: ", calcChangeByResearch (9, 100, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 110 => Change: ", calcChangeByResearch (9, 110, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 120 => Change: ", calcChangeByResearch (9, 120, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 130 => Change: ", calcChangeByResearch (9, 130, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 140 => Change: ", calcChangeByResearch (9, 140, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 150 => Change: ", calcChangeByResearch (9, 150, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 160 => Change: ", calcChangeByResearch (9, 160, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 170 => Change: ", calcChangeByResearch (9, 170, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 180 => Change: ", calcChangeByResearch (9, 180, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 190 => Change: ", calcChangeByResearch (9, 190, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 200 => Change: ", calcChangeByResearch (9, 200, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 210 => Change: ", calcChangeByResearch (9, 210, eUpgradeType::Cost, eUnitType::Infantry));
+	printToLog ("Infantry-Cost: Start 9, Level 220 => Change: ", calcChangeByResearch (9, 220, eUpgradeType::Cost, eUnitType::Infantry));
 
 	printToLog ("--------------- Upgrade-Research (e.g. Armor) ----------------");
 	printToLog ("Normal-Research: Start 12, Level   0 => Change: ", calcChangeByResearch (12,   0));
@@ -1414,36 +1414,36 @@ bool cResearch::doResearch (int researchPoints, eResearchArea researchArea)
 }
 
 //--------------------------------------------------
-cUpgradeCalculator::UpgradeTypes cResearch::getUpgradeCalculatorUpgradeType (eResearchArea researchArea) const
+cUpgradeCalculator::eUpgradeType cResearch::getUpgradeCalculatorUpgradeType (eResearchArea researchArea) const
 {
 	switch (researchArea)
 	{
-		case eResearchArea::AttackResearch: return cUpgradeCalculator::UpgradeTypes::kAttack;
-		case eResearchArea::ShotsResearch: return cUpgradeCalculator::UpgradeTypes::kShots;
-		case eResearchArea::RangeResearch: return cUpgradeCalculator::UpgradeTypes::kRange;
-		case eResearchArea::ArmorResearch: return cUpgradeCalculator::UpgradeTypes::kArmor;
-		case eResearchArea::HitpointsResearch: return cUpgradeCalculator::UpgradeTypes::kHitpoints;
-		case eResearchArea::SpeedResearch: return cUpgradeCalculator::UpgradeTypes::kSpeed;
-		case eResearchArea::ScanResearch: return cUpgradeCalculator::UpgradeTypes::kScan;
-		case eResearchArea::CostResearch: return cUpgradeCalculator::UpgradeTypes::kCost;
+		case eResearchArea::AttackResearch: return cUpgradeCalculator::eUpgradeType::Attack;
+		case eResearchArea::ShotsResearch: return cUpgradeCalculator::eUpgradeType::Shots;
+		case eResearchArea::RangeResearch: return cUpgradeCalculator::eUpgradeType::Range;
+		case eResearchArea::ArmorResearch: return cUpgradeCalculator::eUpgradeType::Armor;
+		case eResearchArea::HitpointsResearch: return cUpgradeCalculator::eUpgradeType::Hitpoints;
+		case eResearchArea::SpeedResearch: return cUpgradeCalculator::eUpgradeType::Speed;
+		case eResearchArea::ScanResearch: return cUpgradeCalculator::eUpgradeType::Scan;
+		case eResearchArea::CostResearch: return cUpgradeCalculator::eUpgradeType::Cost;
 	}
 	throw std::runtime_error ("unknown research area");
 }
 
 //--------------------------------------------------
-std::optional<cResearch::eResearchArea> cResearch::getResearchArea (cUpgradeCalculator::UpgradeTypes upgradeCalculatorType) const
+std::optional<cResearch::eResearchArea> cResearch::getResearchArea (cUpgradeCalculator::eUpgradeType upgradeCalculatorType) const
 {
 	switch (upgradeCalculatorType)
 	{
-		case cUpgradeCalculator::UpgradeTypes::kHitpoints: return eResearchArea::HitpointsResearch;
-		case cUpgradeCalculator::UpgradeTypes::kArmor: return eResearchArea::ArmorResearch;
-		case cUpgradeCalculator::UpgradeTypes::kAmmo: return std::nullopt;
-		case cUpgradeCalculator::UpgradeTypes::kAttack: return eResearchArea::AttackResearch;
-		case cUpgradeCalculator::UpgradeTypes::kSpeed: return eResearchArea::SpeedResearch;
-		case cUpgradeCalculator::UpgradeTypes::kShots: return eResearchArea::ShotsResearch;
-		case cUpgradeCalculator::UpgradeTypes::kRange: return eResearchArea::RangeResearch;
-		case cUpgradeCalculator::UpgradeTypes::kScan: return eResearchArea::ScanResearch;
-		case cUpgradeCalculator::UpgradeTypes::kCost: return eResearchArea::CostResearch;
+		case cUpgradeCalculator::eUpgradeType::Hitpoints: return eResearchArea::HitpointsResearch;
+		case cUpgradeCalculator::eUpgradeType::Armor: return eResearchArea::ArmorResearch;
+		case cUpgradeCalculator::eUpgradeType::Ammo: return std::nullopt;
+		case cUpgradeCalculator::eUpgradeType::Attack: return eResearchArea::AttackResearch;
+		case cUpgradeCalculator::eUpgradeType::Speed: return eResearchArea::SpeedResearch;
+		case cUpgradeCalculator::eUpgradeType::Shots: return eResearchArea::ShotsResearch;
+		case cUpgradeCalculator::eUpgradeType::Range: return eResearchArea::RangeResearch;
+		case cUpgradeCalculator::eUpgradeType::Scan: return eResearchArea::ScanResearch;
+		case cUpgradeCalculator::eUpgradeType::Cost: return eResearchArea::CostResearch;
 	}
 	throw std::runtime_error ("unknown upgrade type");
 }
@@ -1465,31 +1465,31 @@ uint32_t cResearch::getChecksum (uint32_t crc) const
 //--------------------------------------------------
 
 //--------------------------------------------------
-static cUpgradeCalculator::UpgradeTypes GetUpgradeType (const sUnitUpgrade& upgrade)
+static cUpgradeCalculator::eUpgradeType GetUpgradeType (const sUnitUpgrade& upgrade)
 {
 	switch (upgrade.getType())
 	{
-		case sUnitUpgrade::eUpgradeType::Damage: return cUpgradeCalculator::UpgradeTypes::kAttack;
-		case sUnitUpgrade::eUpgradeType::Shots: return cUpgradeCalculator::UpgradeTypes::kShots;
-		case sUnitUpgrade::eUpgradeType::Range: return cUpgradeCalculator::UpgradeTypes::kRange;
-		case sUnitUpgrade::eUpgradeType::Ammo: return cUpgradeCalculator::UpgradeTypes::kAmmo;
-		case sUnitUpgrade::eUpgradeType::Armor: return cUpgradeCalculator::UpgradeTypes::kArmor;
-		case sUnitUpgrade::eUpgradeType::Hits: return cUpgradeCalculator::UpgradeTypes::kHitpoints;
-		case sUnitUpgrade::eUpgradeType::Scan: return cUpgradeCalculator::UpgradeTypes::kScan;
-		case sUnitUpgrade::eUpgradeType::Speed: return cUpgradeCalculator::UpgradeTypes::kSpeed;
+		case sUnitUpgrade::eUpgradeType::Damage: return cUpgradeCalculator::eUpgradeType::Attack;
+		case sUnitUpgrade::eUpgradeType::Shots: return cUpgradeCalculator::eUpgradeType::Shots;
+		case sUnitUpgrade::eUpgradeType::Range: return cUpgradeCalculator::eUpgradeType::Range;
+		case sUnitUpgrade::eUpgradeType::Ammo: return cUpgradeCalculator::eUpgradeType::Ammo;
+		case sUnitUpgrade::eUpgradeType::Armor: return cUpgradeCalculator::eUpgradeType::Armor;
+		case sUnitUpgrade::eUpgradeType::Hits: return cUpgradeCalculator::eUpgradeType::Hitpoints;
+		case sUnitUpgrade::eUpgradeType::Scan: return cUpgradeCalculator::eUpgradeType::Scan;
+		case sUnitUpgrade::eUpgradeType::Speed: return cUpgradeCalculator::eUpgradeType::Speed;
 		case sUnitUpgrade::eUpgradeType::None: // Follow next line
-		default: return cUpgradeCalculator::UpgradeTypes::kAttack;
+		default: return cUpgradeCalculator::eUpgradeType::Attack;
 	}
 }
 
 //--------------------------------------------------
 int sUnitUpgrade::purchase (const cResearch& researchLevel)
 {
-	cUpgradeCalculator::UpgradeTypes upgradeType = GetUpgradeType (*this);
+	cUpgradeCalculator::eUpgradeType upgradeType = GetUpgradeType (*this);
 	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	const int cost = nextPrice;
 
-	if (upgradeType == cUpgradeCalculator::UpgradeTypes::kSpeed)
+	if (upgradeType == cUpgradeCalculator::eUpgradeType::Speed)
 	{
 		curValue += 4 * uc.calcIncreaseByUpgrade (startValue / 4);
 		nextPrice = uc.calcPrice (curValue / 4, startValue / 4, upgradeType, researchLevel);
@@ -1506,10 +1506,10 @@ int sUnitUpgrade::purchase (const cResearch& researchLevel)
 //--------------------------------------------------
 int sUnitUpgrade::cancelPurchase (const cResearch& researchLevel)
 {
-	cUpgradeCalculator::UpgradeTypes upgradeType = GetUpgradeType (*this);
+	cUpgradeCalculator::eUpgradeType upgradeType = GetUpgradeType (*this);
 	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 
-	if (upgradeType == cUpgradeCalculator::UpgradeTypes::kSpeed)
+	if (upgradeType == cUpgradeCalculator::eUpgradeType::Speed)
 	{
 		curValue -= 4 * uc.calcIncreaseByUpgrade (startValue / 4);
 		nextPrice = uc.calcPrice (curValue / 4, startValue / 4, upgradeType, researchLevel);
@@ -1528,7 +1528,7 @@ int sUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
 {
 	if (type == sUnitUpgrade::eUpgradeType::None) return 0;
 
-	cUpgradeCalculator::UpgradeTypes upgradeType = GetUpgradeType (*this);
+	cUpgradeCalculator::eUpgradeType upgradeType = GetUpgradeType (*this);
 	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	sUnitUpgrade other (*this);
 	int cost = 0;
@@ -1554,7 +1554,7 @@ void cUnitUpgrade::init (const cDynamicUnitData& origData, const cDynamicUnitDat
 		// Damage:
 		upgrades[i].startValue = origData.getDamage();
 		upgrades[i].curValue = curData.getDamage();
-		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getDamage(), origData.getDamage(), cUpgradeCalculator::UpgradeTypes::kAttack, researchLevel);
+		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getDamage(), origData.getDamage(), cUpgradeCalculator::eUpgradeType::Attack, researchLevel);
 		upgrades[i].type = sUnitUpgrade::eUpgradeType::Damage;
 		i++;
 		if (staticData.ID.isAVehicle() || !staticData.buildingData.explodesOnContact)
@@ -1562,19 +1562,19 @@ void cUnitUpgrade::init (const cDynamicUnitData& origData, const cDynamicUnitDat
 			// Shots:
 			upgrades[i].startValue = origData.getShotsMax();
 			upgrades[i].curValue = curData.getShotsMax();
-			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getShotsMax(), origData.getShotsMax(), cUpgradeCalculator::UpgradeTypes::kShots, researchLevel);
+			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getShotsMax(), origData.getShotsMax(), cUpgradeCalculator::eUpgradeType::Shots, researchLevel);
 			upgrades[i].type = sUnitUpgrade::eUpgradeType::Shots;
 			i++;
 			// Range:
 			upgrades[i].startValue = origData.getRange();
 			upgrades[i].curValue = curData.getRange();
-			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getRange(), origData.getRange(), cUpgradeCalculator::UpgradeTypes::kRange, researchLevel);
+			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getRange(), origData.getRange(), cUpgradeCalculator::eUpgradeType::Range, researchLevel);
 			upgrades[i].type = sUnitUpgrade::eUpgradeType::Range;
 			i++;
 			// Ammo:
 			upgrades[i].startValue = origData.getAmmoMax();
 			upgrades[i].curValue = curData.getAmmoMax();
-			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getAmmoMax(), origData.getAmmoMax(), cUpgradeCalculator::UpgradeTypes::kAmmo, researchLevel);
+			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getAmmoMax(), origData.getAmmoMax(), cUpgradeCalculator::eUpgradeType::Ammo, researchLevel);
 			upgrades[i].type = sUnitUpgrade::eUpgradeType::Ammo;
 			i++;
 		}
@@ -1592,14 +1592,14 @@ void cUnitUpgrade::init (const cDynamicUnitData& origData, const cDynamicUnitDat
 	// Armor:
 	upgrades[i].startValue = origData.getArmor();
 	upgrades[i].curValue = curData.getArmor();
-	upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getArmor(), origData.getArmor(), cUpgradeCalculator::UpgradeTypes::kArmor, researchLevel);
+	upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getArmor(), origData.getArmor(), cUpgradeCalculator::eUpgradeType::Armor, researchLevel);
 	upgrades[i].type = sUnitUpgrade::eUpgradeType::Armor;
 	i++;
 
 	// Hitpoints:
 	upgrades[i].startValue = origData.getHitpointsMax();
 	upgrades[i].curValue = curData.getHitpointsMax();
-	upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getHitpointsMax(), origData.getHitpointsMax(), cUpgradeCalculator::UpgradeTypes::kHitpoints, researchLevel);
+	upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getHitpointsMax(), origData.getHitpointsMax(), cUpgradeCalculator::eUpgradeType::Hitpoints, researchLevel);
 	upgrades[i].type = sUnitUpgrade::eUpgradeType::Hits;
 	i++;
 
@@ -1608,7 +1608,7 @@ void cUnitUpgrade::init (const cDynamicUnitData& origData, const cDynamicUnitDat
 	{
 		upgrades[i].startValue = origData.getScan();
 		upgrades[i].curValue = curData.getScan();
-		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getScan(), origData.getScan(), cUpgradeCalculator::UpgradeTypes::kScan, researchLevel);
+		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getScan(), origData.getScan(), cUpgradeCalculator::eUpgradeType::Scan, researchLevel);
 		upgrades[i].type = sUnitUpgrade::eUpgradeType::Scan;
 		i++;
 	}
@@ -1618,7 +1618,7 @@ void cUnitUpgrade::init (const cDynamicUnitData& origData, const cDynamicUnitDat
 	{
 		upgrades[i].startValue = origData.getSpeedMax();
 		upgrades[i].curValue = curData.getSpeedMax();
-		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getSpeedMax() / 4, origData.getSpeedMax() / 4, cUpgradeCalculator::UpgradeTypes::kSpeed, researchLevel);
+		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getSpeedMax() / 4, origData.getSpeedMax() / 4, cUpgradeCalculator::eUpgradeType::Speed, researchLevel);
 		upgrades[i].type = sUnitUpgrade::eUpgradeType::Speed;
 		i++;
 	}
@@ -1730,28 +1730,28 @@ int cUnitUpgrade::calcTotalCosts (const cDynamicUnitData& originalData, const cD
 		switch (upgrade.getType())
 		{
 		case sUnitUpgrade::eUpgradeType::Damage:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getDamage(), currentData.getDamage(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kAttack, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getDamage(), currentData.getDamage(), upgrade.getCurValue(), cUpgradeCalculator::eUpgradeType::Attack, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Shots:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getShotsMax(), currentData.getShotsMax(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kShots, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getShotsMax(), currentData.getShotsMax(), upgrade.getCurValue(), cUpgradeCalculator::eUpgradeType::Shots, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Range:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getRange(), currentData.getRange(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kRange, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getRange(), currentData.getRange(), upgrade.getCurValue(), cUpgradeCalculator::eUpgradeType::Range, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Ammo:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getAmmoMax(), currentData.getAmmoMax(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kAmmo, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getAmmoMax(), currentData.getAmmoMax(), upgrade.getCurValue(), cUpgradeCalculator::eUpgradeType::Ammo, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Armor:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getArmor(), currentData.getArmor(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kArmor, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getArmor(), currentData.getArmor(), upgrade.getCurValue(), cUpgradeCalculator::eUpgradeType::Armor, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Hits:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getHitpointsMax(), currentData.getHitpointsMax(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kHitpoints, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getHitpointsMax(), currentData.getHitpointsMax(), upgrade.getCurValue(), cUpgradeCalculator::eUpgradeType::Hitpoints, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Scan:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getScan(), currentData.getScan(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kScan, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getScan(), currentData.getScan(), upgrade.getCurValue(), cUpgradeCalculator::eUpgradeType::Scan, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Speed:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getSpeedMax() / 4, currentData.getSpeedMax() / 4, upgrade.getCurValue() / 4, cUpgradeCalculator::UpgradeTypes::kSpeed, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getSpeedMax() / 4, currentData.getSpeedMax() / 4, upgrade.getCurValue() / 4, cUpgradeCalculator::eUpgradeType::Speed, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::None:
 			break;

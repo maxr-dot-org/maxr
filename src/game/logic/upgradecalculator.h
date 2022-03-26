@@ -64,17 +64,17 @@ class cUpgradeCalculator
 public:
 	static cUpgradeCalculator& instance();
 
-	enum class UpgradeTypes
+	enum class eUpgradeType
 	{
-		kHitpoints = 0,
-		kArmor,
-		kAmmo,
-		kAttack,
-		kSpeed,
-		kShots,
-		kRange,
-		kScan,
-		kCost
+		Hitpoints = 0,
+		Armor,
+		Ammo,
+		Attack,
+		Speed,
+		Shots,
+		Range,
+		Scan,
+		Cost
 	};
 
 	enum
@@ -94,7 +94,7 @@ public:
 	 * @return the costs for this upgrade or kNoPriceAvailable
 	 *         if the values are unknown
 	 */
-	int calcPrice (int curValue, int orgValue, UpgradeTypes, const cResearch& researchLevel) const;
+	int calcPrice (int curValue, int orgValue, eUpgradeType, const cResearch& researchLevel) const;
 
 	/**
 	 * Calculates the increase of a unit value, when an upgrade is bought.
@@ -120,7 +120,7 @@ public:
 	 * @return the costs for this upgrade or kNoPriceAvailable
 	 *         if such an upgrade is impossible
 	 */
-	int getCostForUpgrade (int orgValue, int curValue, int newValue, UpgradeTypes, const cResearch& researchLevel) const;
+	int getCostForUpgrade (int orgValue, int curValue, int newValue, eUpgradeType, const cResearch& researchLevel) const;
 
 	/**
 	 * Calculates the turns needed for one research center
@@ -132,7 +132,7 @@ public:
 	 *         with one research center
 	 *         or kNoResearchAvailable if the passed values are out of range
 	 */
-	int calcResearchTurns (int curResearchLevel, UpgradeTypes) const;
+	int calcResearchTurns (int curResearchLevel, eUpgradeType) const;
 
 	/**
 	 * Calculates the raw-material needed for upgrading a unit,
@@ -174,7 +174,7 @@ public:
 	 * (can be negative if kCost is the upgradeType)
 	 */
 	int calcChangeByResearch (int startValue, int curResearchLevel,
-							  std::optional<UpgradeTypes> = std::nullopt, eUnitType = eUnitType::Building) const;
+							  std::optional<eUpgradeType> = std::nullopt, eUnitType = eUnitType::Building) const;
 
 	/**
 	 * Prints some upgrade values to the standard log on debug-level.
@@ -302,8 +302,8 @@ public:
 	/// if researchPoints >= neededResearchPoints, nothing will be done
 	void setCurResearchPoints (int researchPoints, eResearchArea researchArea);
 
-	cUpgradeCalculator::UpgradeTypes getUpgradeCalculatorUpgradeType (eResearchArea) const;
-	std::optional<cResearch::eResearchArea> getResearchArea (cUpgradeCalculator::UpgradeTypes) const;
+	cUpgradeCalculator::eUpgradeType getUpgradeCalculatorUpgradeType (eResearchArea) const;
+	std::optional<cResearch::eResearchArea> getResearchArea (cUpgradeCalculator::eUpgradeType) const;
 
 	uint32_t getChecksum (uint32_t crc) const;
 
