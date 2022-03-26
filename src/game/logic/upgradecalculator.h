@@ -64,7 +64,7 @@ class cUpgradeCalculator
 public:
 	static cUpgradeCalculator& instance();
 
-	enum UpgradeTypes
+	enum class UpgradeTypes
 	{
 		kHitpoints = 0,
 		kArmor,

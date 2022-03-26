@@ -1418,14 +1418,14 @@ cUpgradeCalculator::UpgradeTypes cResearch::getUpgradeCalculatorUpgradeType (eRe
 {
 	switch (researchArea)
 	{
-		case eResearchArea::AttackResearch: return cUpgradeCalculator::kAttack;
-		case eResearchArea::ShotsResearch: return cUpgradeCalculator::kShots;
-		case eResearchArea::RangeResearch: return cUpgradeCalculator::kRange;
-		case eResearchArea::ArmorResearch: return cUpgradeCalculator::kArmor;
-		case eResearchArea::HitpointsResearch: return cUpgradeCalculator::kHitpoints;
-		case eResearchArea::SpeedResearch: return cUpgradeCalculator::kSpeed;
-		case eResearchArea::ScanResearch: return cUpgradeCalculator::kScan;
-		case eResearchArea::CostResearch: return cUpgradeCalculator::kCost;
+		case eResearchArea::AttackResearch: return cUpgradeCalculator::UpgradeTypes::kAttack;
+		case eResearchArea::ShotsResearch: return cUpgradeCalculator::UpgradeTypes::kShots;
+		case eResearchArea::RangeResearch: return cUpgradeCalculator::UpgradeTypes::kRange;
+		case eResearchArea::ArmorResearch: return cUpgradeCalculator::UpgradeTypes::kArmor;
+		case eResearchArea::HitpointsResearch: return cUpgradeCalculator::UpgradeTypes::kHitpoints;
+		case eResearchArea::SpeedResearch: return cUpgradeCalculator::UpgradeTypes::kSpeed;
+		case eResearchArea::ScanResearch: return cUpgradeCalculator::UpgradeTypes::kScan;
+		case eResearchArea::CostResearch: return cUpgradeCalculator::UpgradeTypes::kCost;
 	}
 	throw std::runtime_error ("unknown research area");
 }
@@ -1469,16 +1469,16 @@ static cUpgradeCalculator::UpgradeTypes GetUpgradeType (const sUnitUpgrade& upgr
 {
 	switch (upgrade.getType())
 	{
-		case sUnitUpgrade::eUpgradeType::Damage: return cUpgradeCalculator::kAttack;
-		case sUnitUpgrade::eUpgradeType::Shots: return cUpgradeCalculator::kShots;
-		case sUnitUpgrade::eUpgradeType::Range: return cUpgradeCalculator::kRange;
-		case sUnitUpgrade::eUpgradeType::Ammo: return cUpgradeCalculator::kAmmo;
-		case sUnitUpgrade::eUpgradeType::Armor: return cUpgradeCalculator::kArmor;
-		case sUnitUpgrade::eUpgradeType::Hits: return cUpgradeCalculator::kHitpoints;
-		case sUnitUpgrade::eUpgradeType::Scan: return cUpgradeCalculator::kScan;
-		case sUnitUpgrade::eUpgradeType::Speed: return cUpgradeCalculator::kSpeed;
+		case sUnitUpgrade::eUpgradeType::Damage: return cUpgradeCalculator::UpgradeTypes::kAttack;
+		case sUnitUpgrade::eUpgradeType::Shots: return cUpgradeCalculator::UpgradeTypes::kShots;
+		case sUnitUpgrade::eUpgradeType::Range: return cUpgradeCalculator::UpgradeTypes::kRange;
+		case sUnitUpgrade::eUpgradeType::Ammo: return cUpgradeCalculator::UpgradeTypes::kAmmo;
+		case sUnitUpgrade::eUpgradeType::Armor: return cUpgradeCalculator::UpgradeTypes::kArmor;
+		case sUnitUpgrade::eUpgradeType::Hits: return cUpgradeCalculator::UpgradeTypes::kHitpoints;
+		case sUnitUpgrade::eUpgradeType::Scan: return cUpgradeCalculator::UpgradeTypes::kScan;
+		case sUnitUpgrade::eUpgradeType::Speed: return cUpgradeCalculator::UpgradeTypes::kSpeed;
 		case sUnitUpgrade::eUpgradeType::None: // Follow next line
-		default: return cUpgradeCalculator::kAttack;
+		default: return cUpgradeCalculator::UpgradeTypes::kAttack;
 	}
 }
 
@@ -1489,7 +1489,7 @@ int sUnitUpgrade::purchase (const cResearch& researchLevel)
 	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	const int cost = nextPrice;
 
-	if (upgradeType == cUpgradeCalculator::kSpeed)
+	if (upgradeType == cUpgradeCalculator::UpgradeTypes::kSpeed)
 	{
 		curValue += 4 * uc.calcIncreaseByUpgrade (startValue / 4);
 		nextPrice = uc.calcPrice (curValue / 4, startValue / 4, upgradeType, researchLevel);
@@ -1509,7 +1509,7 @@ int sUnitUpgrade::cancelPurchase (const cResearch& researchLevel)
 	cUpgradeCalculator::UpgradeTypes upgradeType = GetUpgradeType (*this);
 	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 
-	if (upgradeType == cUpgradeCalculator::kSpeed)
+	if (upgradeType == cUpgradeCalculator::UpgradeTypes::kSpeed)
 	{
 		curValue -= 4 * uc.calcIncreaseByUpgrade (startValue / 4);
 		nextPrice = uc.calcPrice (curValue / 4, startValue / 4, upgradeType, researchLevel);
@@ -1730,28 +1730,28 @@ int cUnitUpgrade::calcTotalCosts (const cDynamicUnitData& originalData, const cD
 		switch (upgrade.getType())
 		{
 		case sUnitUpgrade::eUpgradeType::Damage:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getDamage(), currentData.getDamage(), upgrade.getCurValue(), cUpgradeCalculator::kAttack, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getDamage(), currentData.getDamage(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kAttack, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Shots:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getShotsMax(), currentData.getShotsMax(), upgrade.getCurValue(), cUpgradeCalculator::kShots, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getShotsMax(), currentData.getShotsMax(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kShots, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Range:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getRange(), currentData.getRange(), upgrade.getCurValue(), cUpgradeCalculator::kRange, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getRange(), currentData.getRange(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kRange, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Ammo:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getAmmoMax(), currentData.getAmmoMax(), upgrade.getCurValue(), cUpgradeCalculator::kAmmo, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getAmmoMax(), currentData.getAmmoMax(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kAmmo, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Armor:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getArmor(), currentData.getArmor(), upgrade.getCurValue(), cUpgradeCalculator::kArmor, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getArmor(), currentData.getArmor(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kArmor, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Hits:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getHitpointsMax(), currentData.getHitpointsMax(), upgrade.getCurValue(), cUpgradeCalculator::kHitpoints, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getHitpointsMax(), currentData.getHitpointsMax(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kHitpoints, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Scan:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getScan(), currentData.getScan(), upgrade.getCurValue(), cUpgradeCalculator::kScan, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getScan(), currentData.getScan(), upgrade.getCurValue(), cUpgradeCalculator::UpgradeTypes::kScan, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::Speed:
-			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getSpeedMax() / 4, currentData.getSpeedMax() / 4, upgrade.getCurValue() / 4, cUpgradeCalculator::kSpeed, reseachState);
+			costs = cUpgradeCalculator::instance().getCostForUpgrade (originalData.getSpeedMax() / 4, currentData.getSpeedMax() / 4, upgrade.getCurValue() / 4, cUpgradeCalculator::UpgradeTypes::kSpeed, reseachState);
 			break;
 		case sUnitUpgrade::eUpgradeType::None:
 			break;

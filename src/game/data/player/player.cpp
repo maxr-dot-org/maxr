@@ -587,9 +587,9 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::eResearchArea>& are
 			if (originalUnitsData.getStaticUnitData (unitData.getId()).vehicleData.isHuman) unitType = cUpgradeCalculator::eUnitType::Infantry;
 
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel - 10,
-								   researchArea == cResearch::eResearchArea::CostResearch ? std::make_optional(cUpgradeCalculator::kCost) : std::nullopt, unitType);
+								   researchArea == cResearch::eResearchArea::CostResearch ? std::make_optional(cUpgradeCalculator::UpgradeTypes::kCost) : std::nullopt, unitType);
 			int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel,
-								   researchArea == cResearch::eResearchArea::CostResearch ? std::make_optional(cUpgradeCalculator::kCost) : std::nullopt, unitType);
+								   researchArea == cResearch::eResearchArea::CostResearch ? std::make_optional(cUpgradeCalculator::UpgradeTypes::kCost) : std::nullopt, unitType);
 
 			if (oldResearchBonus != newResearchBonus)
 			{
