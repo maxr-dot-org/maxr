@@ -46,7 +46,7 @@ cServer::cServer (std::shared_ptr<cConnectionManager> connectionManager) :
 {
 	model.turnEnded.connect ([this]()
 	{
-		enableFreezeMode (eFreezeMode::WAIT_FOR_TURNEND);
+		enableFreezeMode (eFreezeMode::WaitForTurnend);
 	});
 	model.newTurnStarted.connect ([this](const sNewTurnReport&)
 	{
@@ -54,7 +54,7 @@ cServer::cServer (std::shared_ptr<cConnectionManager> connectionManager) :
 		{
 			saveGameState (10, lngPack.i18n ("Text~Comp~Turn_5") + " " + std::to_string (model.getTurnCounter()->getTurn()) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
 		}
-		disableFreezeMode (eFreezeMode::WAIT_FOR_TURNEND);
+		disableFreezeMode (eFreezeMode::WaitForTurnend);
 	});
 }
 
@@ -392,9 +392,9 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 //------------------------------------------------------------------------------
 void cServer::setPlayerNotResponding (int playerId)
 {
-	if (playerConnectionStates[playerId] != ePlayerConnectionState::CONNECTED) return;
+	if (playerConnectionStates[playerId] != ePlayerConnectionState::Connected) return;
 
-	playerConnectionStates[playerId] = ePlayerConnectionState::NOT_RESPONDING;
+	playerConnectionStates[playerId] = ePlayerConnectionState::NotResponding;
 	Log.write (" Server: Player " + std::to_string (playerId) + " not responding", cLog::eLogType::NetDebug);
 	updateWaitForClientFlag();
 }
@@ -402,9 +402,9 @@ void cServer::setPlayerNotResponding (int playerId)
 //------------------------------------------------------------------------------
 void cServer::clearPlayerNotResponding (int playerId)
 {
-	if (playerConnectionStates[playerId] != ePlayerConnectionState::NOT_RESPONDING) return;
+	if (playerConnectionStates[playerId] != ePlayerConnectionState::NotResponding) return;
 
-	playerConnectionStates[playerId] = ePlayerConnectionState::CONNECTED;
+	playerConnectionStates[playerId] = ePlayerConnectionState::Connected;
 	Log.write (" Server: Player " + std::to_string (playerId) + " responding again", cLog::eLogType::NetDebug);
 	updateWaitForClientFlag();
 }
@@ -415,12 +415,12 @@ void cServer::playerDisconnected (int playerId)
 	const auto player = model.getPlayer (playerId);
 	if (player->isDefeated)
 	{
-		playerConnectionStates[playerId] = ePlayerConnectionState::INACTIVE;
+		playerConnectionStates[playerId] = ePlayerConnectionState::Inactive;
 	}
 	else
 	{
 		//TODO: set to INACTIVE when running in dedicated mode
-		playerConnectionStates[playerId] = ePlayerConnectionState::DISCONNECTED;
+		playerConnectionStates[playerId] = ePlayerConnectionState::Disconnected;
 	}
 	Log.write (" Server: Player " + std::to_string (playerId) + " disconnected", cLog::eLogType::NetDebug);
 	updateWaitForClientFlag();
@@ -429,7 +429,7 @@ void cServer::playerDisconnected (int playerId)
 //------------------------------------------------------------------------------
 void cServer::playerConnected (int playerId)
 {
-	playerConnectionStates[playerId] = ePlayerConnectionState::CONNECTED;
+	playerConnectionStates[playerId] = ePlayerConnectionState::Connected;
 	Log.write (" Server: Player " + std::to_string (playerId) + " connected", cLog::eLogType::NetDebug);
 	updateWaitForClientFlag();
 }
@@ -440,7 +440,7 @@ void cServer::updateWaitForClientFlag()
 	bool freeze = false;
 	for (const auto& state : playerConnectionStates)
 	{
-		if (state.second == ePlayerConnectionState::DISCONNECTED || state.second == ePlayerConnectionState::NOT_RESPONDING)
+		if (state.second == ePlayerConnectionState::Disconnected || state.second == ePlayerConnectionState::NotResponding)
 		{
 			freeze = true;
 		}
@@ -448,11 +448,11 @@ void cServer::updateWaitForClientFlag()
 
 	if (freeze)
 	{
-		enableFreezeMode (eFreezeMode::WAIT_FOR_CLIENT);
+		enableFreezeMode (eFreezeMode::WaitForClient);
 	}
 	else
 	{
-		disableFreezeMode (eFreezeMode::WAIT_FOR_CLIENT);
+		disableFreezeMode (eFreezeMode::WaitForClient);
 	}
 }
 
@@ -476,13 +476,13 @@ void cServer::initPlayerConnectionState()
 	{
 		if (connectionManager->isPlayerConnected (player->getId()))
 		{
-			playerConnectionStates[player->getId()] = ePlayerConnectionState::CONNECTED;
+			playerConnectionStates[player->getId()] = ePlayerConnectionState::Connected;
 		}
 		else
 		{
 			// assume that game always start with all necessary players connected.
 			// So set the disconnected players to INACTIVE
-			playerConnectionStates[player->getId()] = ePlayerConnectionState::INACTIVE;
+			playerConnectionStates[player->getId()] = ePlayerConnectionState::Inactive;
 		}
 	}
 }

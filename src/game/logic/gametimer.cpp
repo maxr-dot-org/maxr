@@ -211,17 +211,17 @@ void cGameTimerClient::checkServerResponding (cClient& client)
 	if (syncMessageReceived)
 	{
 		timeSinceLastSyncMessage = 0;
-		if (freezeModes.isEnabled (eFreezeMode::WAIT_FOR_SERVER))
+		if (freezeModes.isEnabled (eFreezeMode::WaitForServer))
 		{
-			client.disableFreezeMode (eFreezeMode::WAIT_FOR_SERVER);
+			client.disableFreezeMode (eFreezeMode::WaitForServer);
 		}
 	}
 	else if (!freezeModes.gameTimePaused())
 	{
 		timeSinceLastSyncMessage++;
-		if (timeSinceLastSyncMessage > MAX_WAITING_FOR_SERVER && !freezeModes.isEnabled (eFreezeMode::WAIT_FOR_SERVER))
+		if (timeSinceLastSyncMessage > MAX_WAITING_FOR_SERVER && !freezeModes.isEnabled (eFreezeMode::WaitForServer))
 		{
-			client.enableFreezeMode (eFreezeMode::WAIT_FOR_SERVER);
+			client.enableFreezeMode (eFreezeMode::WaitForServer);
 		}
 	}
 }

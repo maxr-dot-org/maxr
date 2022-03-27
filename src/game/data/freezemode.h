@@ -25,18 +25,18 @@
 
 enum class ePlayerConnectionState
 {
-	INACTIVE,       // player is not connected, but game can continue (e. g. defeated player)
-	CONNECTED,      // player is connected. Normal operation.
-	NOT_RESPONDING, // player is connected, but no sync message received for some time. Game should be paused.
-	DISCONNECTED    // player has lost connection. Game should be paused.
+	Inactive,      // player is not connected, but game can continue (e.g. defeated player)
+	Connected,     // player is connected. Normal operation.
+	NotResponding, // player is connected, but no sync message received for some time. Game should be paused.
+	Disconnected   // player has lost connection. Game should be paused.
 };
 
 enum class eFreezeMode
 {
-	WAIT_FOR_TURNEND,   // server is processing the turn end
-	PAUSE,              // pause, because... pause
-	WAIT_FOR_CLIENT,    // waiting for response from client
-	WAIT_FOR_SERVER     // waiting for response from server
+	WaitForTurnend, // server is processing the turn end
+	Pause,          // pause, because... pause
+	WaitForClient,  // waiting for response from client
+	WaitForServer   // waiting for response from server
 };
 
 namespace serialization

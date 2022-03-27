@@ -210,9 +210,9 @@ void cClient::handleNetMessages()
 				const cNetMessageFreezeModes* msg = static_cast<cNetMessageFreezeModes*> (message.get());
 
 				// don't overwrite waitForServer flag
-				bool waitForServer = freezeModes.isEnabled (eFreezeMode::WAIT_FOR_SERVER);
+				bool waitForServer = freezeModes.isEnabled (eFreezeMode::WaitForServer);
 				freezeModes = msg->freezeModes;
-				if (waitForServer) freezeModes.enable (eFreezeMode::WAIT_FOR_SERVER);
+				if (waitForServer) freezeModes.enable (eFreezeMode::WaitForServer);
 
 				for (const auto& state : msg->playerStates)
 				{

@@ -27,20 +27,20 @@ namespace serialization
 	const std::vector<std::pair<ePlayerConnectionState, const char*>>
 	sEnumStringMapping<ePlayerConnectionState>::m =
 	{
-		{ePlayerConnectionState::INACTIVE, "Inactive"},
-		{ePlayerConnectionState::CONNECTED, "Connected"},
-		{ePlayerConnectionState::NOT_RESPONDING, "Not responding"},
-		{ePlayerConnectionState::DISCONNECTED, "Disconnected"}
+		{ePlayerConnectionState::Inactive, "Inactive"},
+		{ePlayerConnectionState::Connected, "Connected"},
+		{ePlayerConnectionState::NotResponding, "Not responding"},
+		{ePlayerConnectionState::Disconnected, "Disconnected"}
 	};
 
 	//--------------------------------------------------------------------------
 	const std::vector<std::pair<eFreezeMode, const char*>>
 	sEnumStringMapping<eFreezeMode>::m =
 	{
-		{eFreezeMode::WAIT_FOR_TURNEND, "WAIT_FOR_TURNEND"},
-		{eFreezeMode::PAUSE, "PAUSE"},
-		{eFreezeMode::WAIT_FOR_CLIENT, "WAIT_FOR_CLIENT"},
-		{eFreezeMode::WAIT_FOR_SERVER, "WAIT_FOR_SERVER"}
+		{eFreezeMode::WaitForTurnend, "WAIT_FOR_TURNEND"},
+		{eFreezeMode::Pause, "PAUSE"},
+		{eFreezeMode::WaitForClient, "WAIT_FOR_CLIENT"},
+		{eFreezeMode::WaitForServer, "WAIT_FOR_SERVER"}
 	};
 }
 //------------------------------------------------------------------------------
@@ -48,16 +48,16 @@ void cFreezeModes::enable (eFreezeMode mode)
 {
 	switch (mode)
 	{
-	case eFreezeMode::WAIT_FOR_TURNEND:
+	case eFreezeMode::WaitForTurnend:
 		waitForTurnEnd = true;
 		return;
-	case eFreezeMode::PAUSE:
+	case eFreezeMode::Pause:
 		pause = true;
 		return;
-	case eFreezeMode::WAIT_FOR_CLIENT:
+	case eFreezeMode::WaitForClient:
 		waitForClient = true;
 		return;
-	case eFreezeMode::WAIT_FOR_SERVER:
+	case eFreezeMode::WaitForServer:
 		waitForServer = true;
 		return;
 	}
@@ -69,16 +69,16 @@ void cFreezeModes::disable (eFreezeMode mode)
 {
 	switch (mode)
 	{
-	case eFreezeMode::WAIT_FOR_TURNEND:
+	case eFreezeMode::WaitForTurnend:
 		waitForTurnEnd = false;
 		return;
-	case eFreezeMode::PAUSE:
+	case eFreezeMode::Pause:
 		pause = false;
 		return;
-	case eFreezeMode::WAIT_FOR_CLIENT:
+	case eFreezeMode::WaitForClient:
 		waitForClient = false;
 		return;
-	case eFreezeMode::WAIT_FOR_SERVER:
+	case eFreezeMode::WaitForServer:
 		waitForServer = false;
 		return;
 	}
@@ -102,10 +102,10 @@ bool cFreezeModes::isEnabled (eFreezeMode mode) const
 {
 	switch (mode)
 	{
-		case eFreezeMode::PAUSE: return pause;
-		case eFreezeMode::WAIT_FOR_TURNEND: return waitForTurnEnd;
-		case eFreezeMode::WAIT_FOR_CLIENT: return waitForClient;
-		case eFreezeMode::WAIT_FOR_SERVER: return waitForServer;
+		case eFreezeMode::Pause: return pause;
+		case eFreezeMode::WaitForTurnend: return waitForTurnEnd;
+		case eFreezeMode::WaitForClient: return waitForClient;
+		case eFreezeMode::WaitForServer: return waitForServer;
 	}
 	assert (0); // Incorrect parameter
 	return false;
