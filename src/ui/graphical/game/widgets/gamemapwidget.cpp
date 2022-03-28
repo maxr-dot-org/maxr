@@ -1410,7 +1410,7 @@ void cGameMapWidget::drawUnitCircles()
 		}
 		if (shouldDrawRange)
 		{
-			if (selectedVehicle->getStaticUnitData().canAttack & TERRAIN_AIR) drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			if (selectedVehicle->getStaticUnitData().canAttack & eTerrainFlag::Air) drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 			else drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 	}
@@ -1432,13 +1432,13 @@ void cGameMapWidget::drawUnitCircles()
 							selectedBuilding->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 			}
 		}
-		if (shouldDrawRange && (selectedBuilding->getStaticUnitData().canAttack & TERRAIN_GROUND) && !selectedBuilding->getStaticData().explodesOnContact)
+		if (shouldDrawRange && (selectedBuilding->getStaticUnitData().canAttack & eTerrainFlag::Ground) && !selectedBuilding->getStaticData().explodesOnContact)
 		{
 			drawCircle (screenPosition. x() + zoomedTileSize.x() / 2,
 						screenPosition. y() + zoomedTileSize.y() / 2,
 						selectedBuilding->data.getRange() * zoomedTileSize.x() + 2, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
-		if (shouldDrawRange && (selectedBuilding->getStaticUnitData().canAttack & TERRAIN_AIR))
+		if (shouldDrawRange && (selectedBuilding->getStaticUnitData().canAttack & eTerrainFlag::Air))
 		{
 			drawCircle (screenPosition. x() + zoomedTileSize.x() / 2,
 						screenPosition. y() + zoomedTileSize.y() / 2,
@@ -1592,10 +1592,10 @@ void cGameMapWidget::drawLockList()
 			else
 				drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, unit->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 		}
-		if (shouldDrawRange && (unit->getStaticUnitData().canAttack & TERRAIN_GROUND))
+		if (shouldDrawRange && (unit->getStaticUnitData().canAttack & eTerrainFlag::Ground))
 			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2,
 						unit->data.getRange() * zoomedTileSize.x() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
-		if (shouldDrawRange && (unit->getIsBig() & TERRAIN_AIR))
+		if (shouldDrawRange && (unit->getIsBig() & eTerrainFlag::Air))
 			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2,
 						unit->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 		//if (ammoChecked() && unit->data.canAttack)

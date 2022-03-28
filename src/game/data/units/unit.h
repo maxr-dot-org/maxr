@@ -40,15 +40,15 @@ struct sTerrain;
 
 enum class eSupplyType;
 
-enum
+enum eTerrainFlag
 {
-	TERRAIN_NONE = 0,
-	TERRAIN_AIR = 1,
-	TERRAIN_SEA = 2,
-	TERRAIN_GROUND = 4,
-	TERRAIN_COAST = 8,
-	AREA_SUB = 16,
-	AREA_EXP_MINE = 32
+	None = 0,
+	Air = 1,
+	Sea = 2,
+	Ground = 4,
+	Coast = 8,
+	AreaSub = 16,
+	AreaExpMine = 32
 };
 
 //-----------------------------------------------------------------------------

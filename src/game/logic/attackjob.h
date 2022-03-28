@@ -106,8 +106,8 @@ cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, con
 	auto planes = mapField.getPlanes();
 	for (cVehicle* plane : planes)
 	{
-		if (plane->getFlightHeight() > 0 && !(attackMode & TERRAIN_AIR))    continue;
-		if (plane->getFlightHeight() == 0 && !(attackMode & TERRAIN_GROUND)) continue;
+		if (plane->getFlightHeight() > 0 && !(attackMode & eTerrainFlag::Air)) continue;
+		if (plane->getFlightHeight() == 0 && !(attackMode & eTerrainFlag::Ground)) continue;
 
 		if (targetVehicle == nullptr)
 		{
@@ -123,14 +123,14 @@ cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, con
 	}
 
 	// vehicles
-	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
+	if (!targetVehicle && (attackMode & eTerrainFlag::Ground))
 	{
 		targetVehicle = mapField.getVehicle();
-		if (targetVehicle && (targetVehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA) && map.isWater (position) && !(attackMode & AREA_SUB)) targetVehicle = nullptr;
+		if (targetVehicle && (targetVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Sea) && map.isWater (position) && !(attackMode & eTerrainFlag::AreaSub)) targetVehicle = nullptr;
 	}
 
 	// buildings
-	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
+	if (!targetVehicle && (attackMode & eTerrainFlag::Ground))
 	{
 		targetBuilding = mapField.getBuilding();
 		if (targetBuilding && targetBuilding->isRubble()) targetBuilding = nullptr;

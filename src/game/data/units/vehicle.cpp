@@ -499,7 +499,7 @@ bool cVehicle::doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const
 		&& opponentUnit->canAttackObjectAt (getPosition(), mapView, true)
 		// Possible TODO: better handling of stealth units.
 		// e.g. do reaction fire, if already detected ?
-		&& (opponentUnit->isAVehicle() == false || opponentUnit->getStaticUnitData().isStealthOn == TERRAIN_NONE))
+		&& (opponentUnit->isAVehicle() == false || opponentUnit->getStaticUnitData().isStealthOn == eTerrainFlag::None))
 	{
 		if (makeAttackOnThis (model, opponentUnit, "reaction fire"))
 			return true;

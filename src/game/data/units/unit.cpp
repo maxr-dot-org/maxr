@@ -408,7 +408,7 @@ void cUnit::rotateTo (int newDir)
 //------------------------------------------------------------------------------
 bool cUnit::canAttackObjectAt (const cPosition& position, const cMapView& map, bool forceAttack, bool checkRange) const
 {
-	if (staticData->canAttack == TERRAIN_NONE) return false;
+	if (staticData->canAttack == eTerrainFlag::None) return false;
 	if (data.getShots() <= 0) return false;
 	if (data.getAmmo() <= 0) return false;
 	if (attacking) return false;
@@ -570,7 +570,7 @@ void cUnit::setStoredResources (int value)
 //------------------------------------------------------------------------------
 bool cUnit::isStealthOnCurrentTerrain (const cMapField& field, const sTerrain& terrain) const
 {
-	if (staticData->isStealthOn & AREA_EXP_MINE)
+	if (staticData->isStealthOn & eTerrainFlag::AreaExpMine)
 	{
 		return true;
 	}
@@ -578,20 +578,20 @@ bool cUnit::isStealthOnCurrentTerrain (const cMapField& field, const sTerrain& t
 		isAVehicle() &&
 		static_cast<const cVehicle*> (this)->getFlightHeight() > 0)
 	{
-		return (staticData->isStealthOn & TERRAIN_AIR) != 0;
+		return (staticData->isStealthOn & eTerrainFlag::Air) != 0;
 	}
 	else if ((field.hasBridgeOrPlattform() && staticData->factorGround > 0) ||
 			(!terrain.coast && !terrain.water))
 	{
-		return (staticData->isStealthOn & TERRAIN_GROUND) != 0;
+		return (staticData->isStealthOn & eTerrainFlag::Ground) != 0;
 	}
 	else if (terrain.coast)
 	{
-		return (staticData->isStealthOn & TERRAIN_COAST) != 0;
+		return (staticData->isStealthOn & eTerrainFlag::Coast) != 0;
 	}
 	else if (terrain.water)
 	{
-		return (staticData->isStealthOn & TERRAIN_SEA) != 0;
+		return (staticData->isStealthOn & eTerrainFlag::Sea) != 0;
 	}
 
 	return false;
@@ -600,7 +600,7 @@ bool cUnit::isStealthOnCurrentTerrain (const cMapField& field, const sTerrain& t
 //------------------------------------------------------------------------------
 void cUnit::detectThisUnit (const cMap& map, const std::vector<std::shared_ptr<cPlayer>>& playerList)
 {
-	if (staticData->isStealthOn == TERRAIN_NONE) return;
+	if (staticData->isStealthOn == eTerrainFlag::None) return;
 
 	for (const auto& player : playerList)
 	{
@@ -614,7 +614,7 @@ void cUnit::detectThisUnit (const cMap& map, const std::vector<std::shared_ptr<c
 //------------------------------------------------------------------------------
 void cUnit::detectOtherUnits (const cMap& map) const
 {
-	if (!owner || staticData->canDetectStealthOn == TERRAIN_NONE) return;
+	if (!owner || staticData->canDetectStealthOn == eTerrainFlag::None) return;
 
 	const int minx = std::max (getPosition().x() - data.getScan(), 0);
 	const int maxx = std::min (getPosition().x() + data.getScan(), map.getSize().x() - 1);
@@ -665,7 +665,7 @@ bool cUnit::checkDetectedByPlayer (const cPlayer& player, const cMap& map) const
 	if (&player == owner)
 		return false;
 
-	if (staticData->isStealthOn == TERRAIN_NONE)
+	if (staticData->isStealthOn == eTerrainFlag::None)
 		return false;
 
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded())
@@ -686,27 +686,27 @@ bool cUnit::checkDetectedByPlayer (const cPlayer& player, const cMap& map) const
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & TERRAIN_GROUND) && player.hasLandDetection (position) && !isOnCoast && !isOnWater)
+	else if ((staticData->isStealthOn & eTerrainFlag::Ground) && player.hasLandDetection (position) && !isOnCoast && !isOnWater)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & TERRAIN_SEA) && player.hasSeaDetection (position) && isOnWater)
+	else if ((staticData->isStealthOn & eTerrainFlag::Sea) && player.hasSeaDetection (position) && isOnWater)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & TERRAIN_COAST) && player.hasLandDetection (position) && isOnCoast && staticData->factorGround > 0)
+	else if ((staticData->isStealthOn & eTerrainFlag::Coast) && player.hasLandDetection (position) && isOnCoast && staticData->factorGround > 0)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & TERRAIN_COAST) && player.hasSeaDetection (position) && isOnCoast && staticData->factorSea > 0)
+	else if ((staticData->isStealthOn & eTerrainFlag::Coast) && player.hasSeaDetection (position) && isOnCoast && staticData->factorSea > 0)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & AREA_EXP_MINE) && player.hasMineDetection (position))
+	else if ((staticData->isStealthOn & eTerrainFlag::AreaExpMine) && player.hasMineDetection (position))
 	{
 		return true;
 	}
-	//TODO: isStealthOn & TERRAIN_AIR
+	//TODO: isStealthOn & eTerrainFlag::Air
 
 	return false;
 }

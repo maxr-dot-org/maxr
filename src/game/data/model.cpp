@@ -822,7 +822,7 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 	cVehicle* stealthVehicle = map->getField (position).getVehicle();
 	if (!stealthVehicle) return;
 	if (stealthVehicle->getOwner() == vehicleOwner) return;
-	if (stealthVehicle->getStaticUnitData().isStealthOn == TERRAIN_NONE) return;
+	if (stealthVehicle->getStaticUnitData().isStealthOn == eTerrainFlag::None) return;
 	if (stealthVehicle->isDetectedByPlayer (vehicleOwner)) return;
 
 	if (stealthVehicle->isUnitMoving())
@@ -867,7 +867,7 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 			// check whether the vehicle would be detected
 			// on the destination field
 			bool detectOnDest = false;
-			if (stealthVehicle->getStaticUnitData().isStealthOn & TERRAIN_GROUND)
+			if (stealthVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Ground)
 			{
 				for (size_t i = 0; i != playerList.size(); ++i)
 				{
@@ -876,7 +876,7 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 				}
 				if (map->isWater (currentPosition)) detectOnDest = true;
 			}
-			if (stealthVehicle->getStaticUnitData().isStealthOn & TERRAIN_SEA)
+			if (stealthVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Sea)
 			{
 				for (size_t i = 0; i != playerList.size(); ++i)
 				{

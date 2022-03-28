@@ -148,15 +148,15 @@ void cPlayer::addToScan (const cUnit& unit)
 	const int size = unit.getIsBig() ? 2 : 1;
 
 	scanMap.add (unit.data.getScan(), unit.getPosition(), size);
-	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
+	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Ground)
 	{
 		detectLandMap.add (unit.data.getScan(), unit.getPosition(), size);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
+	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Sea)
 	{
 		detectSeaMap.add (unit.data.getScan(), unit.getPosition(), size);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & AREA_EXP_MINE)
+	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::AreaExpMine)
 	{
 		// mines can only be detected on directly adjacent fields
 		detectMinesMap.add (1, unit.getPosition(), size, true);
@@ -171,15 +171,15 @@ void cPlayer::updateScan (const cUnit& unit, const cPosition& newPosition, bool 
 	const int oldSize = unit.getIsBig() ? 2 : 1;
 	const int newSize = newIsBig ? 2 : 1;
 	scanMap.update (unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
-	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
+	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Ground)
 	{
 		detectLandMap.update (unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
+	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Sea)
 	{
 		detectSeaMap.update (unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & AREA_EXP_MINE)
+	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::AreaExpMine)
 	{
 		// mines can only be detected on directly adjacent fields
 		detectMinesMap.update (1, unit.getPosition(), newPosition, oldSize, newSize, true);
@@ -193,11 +193,11 @@ void cPlayer::updateScan (const cUnit& unit, int newScanRange)
 
 	const int size = unit.getIsBig() ? 2 : 1;
 	scanMap.update (unit.data.getScan(), newScanRange, unit.getPosition(), size);
-	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
+	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Ground)
 	{
 		detectLandMap.update (unit.data.getScan(), newScanRange, unit.getPosition(), size);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
+	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Sea)
 	{
 		detectSeaMap.update (unit.data.getScan(), newScanRange, unit.getPosition(), size);
 	}
@@ -210,15 +210,15 @@ void cPlayer::removeFromScan (const cUnit& unit)
 	const int size = unit.getIsBig() ? 2 : 1;
 
 	scanMap.remove (unit.data.getScan(), unit.getPosition(), size);
-	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_GROUND)
+	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Ground)
 	{
 		detectLandMap.remove (unit.data.getScan(), unit.getPosition(), size);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & TERRAIN_SEA)
+	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Sea)
 	{
 		detectSeaMap.remove (unit.data.getScan(), unit.getPosition(), size);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & AREA_EXP_MINE)
+	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::AreaExpMine)
 	{
 		// mines can only be detected on directly adjacent fields
 		detectMinesMap.remove (1, unit.getPosition(), size, true);
@@ -294,11 +294,11 @@ void cPlayer::addToSentryMap (const cUnit& u)
 	assert (u.isSentryActive());
 
 	const int size = u.getIsBig() ? 2 : 1;
-	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
+	if (u.getStaticUnitData().canAttack & eTerrainFlag::Air)
 	{
 		sentriesMapAir.add (u.data.getRange(), u.getPosition(), size);
 	}
-	if (u.getStaticUnitData().canAttack & (TERRAIN_GROUND | TERRAIN_SEA))
+	if (u.getStaticUnitData().canAttack & (eTerrainFlag::Ground | eTerrainFlag::Sea))
 	{
 		sentriesMapGround.add (u.data.getRange(), u.getPosition(), size);
 	}
@@ -308,11 +308,11 @@ void cPlayer::addToSentryMap (const cUnit& u)
 void cPlayer::removeFromSentryMap (const cUnit& u)
 {
 	const int size = u.getIsBig() ? 2 : 1;
-	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
+	if (u.getStaticUnitData().canAttack & eTerrainFlag::Air)
 	{
 		sentriesMapAir.remove (u.data.getRange(), u.getPosition(), size);
 	}
-	else if (u.getStaticUnitData().canAttack & (TERRAIN_GROUND | TERRAIN_SEA))
+	else if (u.getStaticUnitData().canAttack & (eTerrainFlag::Ground | eTerrainFlag::Sea))
 	{
 		sentriesMapGround.remove (u.data.getRange(), u.getPosition(), size);
 	}
@@ -324,11 +324,11 @@ void cPlayer::updateSentry (const cUnit& u, int newRange)
 	if (!u.isSentryActive()) return;
 
 	const int size = u.getIsBig() ? 2 : 1;
-	if (u.getStaticUnitData().canAttack & TERRAIN_AIR)
+	if (u.getStaticUnitData().canAttack & eTerrainFlag::Air)
 	{
 		sentriesMapAir.update (u.data.getRange(), newRange, u.getPosition(), size);
 	}
-	else if (u.getStaticUnitData().canAttack & (TERRAIN_GROUND | TERRAIN_SEA))
+	else if (u.getStaticUnitData().canAttack & (eTerrainFlag::Ground | eTerrainFlag::Sea))
 	{
 		sentriesMapGround.update (u.data.getRange(), newRange, u.getPosition(), size);
 	}

@@ -126,7 +126,7 @@ cBuilding::cBuilding (unsigned int ID) : cBuilding (nullptr, nullptr, nullptr, I
 cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* owner, unsigned int ID) :
 	cUnit (data, staticData, owner, ID)
 {
-	setSentryActive (staticData && staticData->canAttack != TERRAIN_NONE);
+	setSentryActive (staticData && staticData->canAttack != eTerrainFlag::None);
 
 	if (isBig)
 	{

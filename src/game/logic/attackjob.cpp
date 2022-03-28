@@ -58,7 +58,7 @@ cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const
 
 	// make the aggressor visible on all clients
 	// who can see the aggressor offset
-	if (aggressor.getStaticUnitData().isStealthOn != TERRAIN_NONE)
+	if (aggressor.getStaticUnitData().isStealthOn != eTerrainFlag::None)
 	{
 		for (const auto& player : model.getPlayerList())
 		{
@@ -416,7 +416,7 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 	Log.write (" cAttackJob: Impact at " + toString (position) + " @" + std::to_string (model.getGameTime()), cLog::eLogType::NetDebug);
 
 	// if target is a stealth unit, make it visible on all clients
-	if (target && target->getStaticUnitData().isStealthOn != TERRAIN_NONE)
+	if (target && target->getStaticUnitData().isStealthOn != eTerrainFlag::None)
 	{
 		for (const auto& player : model.getPlayerList())
 		{

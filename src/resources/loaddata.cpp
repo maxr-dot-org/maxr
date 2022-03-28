@@ -472,7 +472,7 @@ static cStaticUnitData createStaticUnitData (const sID& id, const sStaticCommonU
 
 	// TODO: make the code differ between attacking sea units and land units.
 	// until this is done being able to attack sea units means being able to attack ground units.
-	if (res.canAttack & TERRAIN_SEA) res.canAttack |= TERRAIN_GROUND;
+	if (res.canAttack & eTerrainFlag::Sea) res.canAttack |= eTerrainFlag::Ground;
 
 	return res;
 }

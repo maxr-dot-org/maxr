@@ -35,5 +35,5 @@ eSavedReportType cSavedReportDetected::getType() const
 //------------------------------------------------------------------------------
 bool cSavedReportDetected::isSubmarine() const
 {
-	return getUnit().getStaticUnitData().isStealthOn & TERRAIN_SEA && getUnit().getStaticUnitData().canAttack;
+	return getUnit().getStaticUnitData().isStealthOn & eTerrainFlag::Sea && getUnit().getStaticUnitData().canAttack;
 }

@@ -53,7 +53,7 @@ namespace
 //------------------------------------------------------------------------------
 void sVehicleUIData::render_shadow (const cVehicle& vehicle, const cMapView& map, SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor) const
 {
-	if (map.isWater (vehicle.getPosition()) && (vehicle.getStaticUnitData().isStealthOn & TERRAIN_SEA)) return;
+	if (map.isWater (vehicle.getPosition()) && (vehicle.getStaticUnitData().isStealthOn & eTerrainFlag::Sea)) return;
 
 	if (vehicle.alphaEffectValue && cSettings::getInstance().isAlphaEffects())
 	{
@@ -228,7 +228,7 @@ void render (const cVehicle& vehicle, const cMapView* map, unsigned long long an
 		const cBuilding* building = map->getField (vehicle.getPosition()).getBaseBuilding();
 		if (building && vehicle.getStaticUnitData().factorGround > 0 && (building->getStaticUnitData().surfacePosition == eSurfacePosition::Base || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase)) water = false;
 
-		if (water && (vehicle.getStaticUnitData().isStealthOn & TERRAIN_SEA) && !vehicle.isDetectedByAnyPlayer() && vehicle.getOwner() == activePlayer) alpha = std::min (alpha, 100);
+		if (water && (vehicle.getStaticUnitData().isStealthOn & eTerrainFlag::Sea) && !vehicle.isDetectedByAnyPlayer() && vehicle.getOwner() == activePlayer) alpha = std::min (alpha, 100);
 	}
 	render_simple (vehicle, surface, dest, zoomFactor, alpha);
 }
