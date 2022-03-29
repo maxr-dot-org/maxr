@@ -20,8 +20,8 @@
 #ifndef ui_graphical_menu_widgets_special_unitlistviewitemH
 #define ui_graphical_menu_widgets_special_unitlistviewitemH
 
-#include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 #include "game/data/units/unitdata.h"
+#include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 
 class cImage;
 class cLabel;

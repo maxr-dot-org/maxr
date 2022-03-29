@@ -20,12 +20,12 @@
 #ifndef ui_graphical_menu_windows_windownetworklobby_windownetworklobbyH
 #define ui_graphical_menu_windows_windownetworklobby_windownetworklobbyH
 
-#include <memory>
-
+#include "game/data/savegameinfo.h"
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "game/data/savegameinfo.h"
+
+#include <memory>
 
 class cGameSettings;
 class cImage;
@@ -38,7 +38,8 @@ class cLobbyServer;
 class cPlayerBasicData;
 class cPushButton;
 class cStaticMap;
-template <typename T> class cListView;
+template <typename T>
+class cListView;
 
 class cWindowNetworkLobby : public cWindow
 {
@@ -92,6 +93,7 @@ public:
 
 	cSignal<void()> triggeredStartGame;
 	cSignal<void()> backClicked;
+
 protected:
 	cSignalConnectionManager signalConnectionManager;
 

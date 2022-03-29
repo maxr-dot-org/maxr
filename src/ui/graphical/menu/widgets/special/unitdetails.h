@@ -20,12 +20,11 @@
 #ifndef ui_graphical_menu_widgets_special_unitdetailsH
 #define ui_graphical_menu_widgets_special_unitdetailsH
 
-#include <array>
-
-#include "ui/graphical/menu/widgets/special/unitdatasymboltype.h"
-
-#include "ui/graphical/widget.h"
 #include "game/data/units/unitdata.h"
+#include "ui/graphical/menu/widgets/special/unitdatasymboltype.h"
+#include "ui/graphical/widget.h"
+
+#include <array>
 
 class cLabel;
 class cUnitUpgrade;
@@ -42,8 +41,8 @@ public:
 
 	void setUnit (const sID&, const cPlayer* owner, const cUnitsData&, const cDynamicUnitData* = nullptr, const cUnitUpgrade* = nullptr);
 	void setUpgrades (const cUnitUpgrade* upgrades);
-private:
 
+private:
 	void reset();
 
 	void drawRow (size_t index, eUnitDataSymbolType, int amount, const std::string& name, int value1, int value2);

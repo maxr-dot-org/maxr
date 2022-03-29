@@ -20,10 +20,10 @@
 #ifndef ui_graphical_menu_dialogs_dialoglicenseH
 #define ui_graphical_menu_dialogs_dialoglicenseH
 
-#include <string>
-
 #include "ui/graphical/window.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <string>
 
 class cPushButton;
 class cLabel;

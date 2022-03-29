@@ -48,7 +48,7 @@ bool Contains (const std::vector<T>& container, const typename trait_add_const<T
 template <typename T>
 std::vector<T*> ExtractPtrs (const std::vector<std::unique_ptr<T>>& v)
 {
-	return ranges::Transform (v, [](const auto& ptr){ return ptr.get(); });
+	return ranges::Transform (v, [] (const auto& ptr) { return ptr.get(); });
 }
 
 //--------------------------------------------------------------------------
@@ -67,7 +67,7 @@ void EraseIf (Container& container, Predicate pred)
 template <typename T>
 void RemoveEmpty (std::vector<T>& container)
 {
-	EraseIf (container, [](const T& elem) { return elem.empty(); });
+	EraseIf (container, [] (const T& elem) { return elem.empty(); });
 }
 
 template <typename T>
@@ -91,14 +91,14 @@ template <typename T, typename F>
 {
 	std::vector<T> res (v);
 
-	EraseIf (res, [&](const auto& e){ return !filter (e); });
+	EraseIf (res, [&] (const auto& e) { return !filter (e); });
 	return res;
 }
 
 template <typename T>
 auto ByGetTo (const T* p)
 {
-	return [p](const auto& e) { return e.get() == p; };
+	return [p] (const auto& e) { return e.get() == p; };
 }
 
 #endif // utility_listhelpersH

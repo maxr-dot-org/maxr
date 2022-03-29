@@ -50,7 +50,6 @@ bool makeDir (const std::string& path);
 // Poor replacement of std::directory
 void makeDirectories (const std::string& path);
 
-
 /**
 * Gets the filenames of all files in the directory
 * @author alzi
@@ -78,6 +77,5 @@ std::string getHomeDir();
 std::string getCurrentExeDir();
 
 void copyFile (const std::string& source, const std::string& dest);
-
 
 #endif // utility_filesH

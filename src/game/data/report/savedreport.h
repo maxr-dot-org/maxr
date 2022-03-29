@@ -20,14 +20,13 @@
 #ifndef game_data_reports_savedreportH
 #define game_data_reports_savedreportH
 
-#include <memory>
-#include <string>
-
 #include "config/workaround/cpp17/optional.h"
-
 #include "game/serialization/binaryarchive.h"
 #include "game/serialization/jsonarchive.h"
 #include "utility/position.h"
+
+#include <memory>
+#include <string>
 
 struct sID;
 class cModel;
@@ -36,56 +35,56 @@ enum class eSavedReportType
 {
 	// fixed numbers for save backward-compatibility
 	// Simple reports
-	MetalInsufficient    = 0,
-	FuelInsufficient     = 1,
-	GoldInsufficient     = 2,
-	EnergyInsufficient   = 3,
-	TeamInsufficient     = 4,
+	MetalInsufficient = 0,
+	FuelInsufficient = 1,
+	GoldInsufficient = 2,
+	EnergyInsufficient = 3,
+	TeamInsufficient = 4,
 
-	MetalLow             = 5,
-	FuelLow              = 6,
-	GoldLow              = 7,
-	EnergyLow            = 8,
-	TeamLow              = 9,
+	MetalLow = 5,
+	FuelLow = 6,
+	GoldLow = 7,
+	EnergyLow = 8,
+	TeamLow = 9,
 
-	EnergyToLow          = 10,
-	EnergyIsNeeded       = 11,
+	EnergyToLow = 10,
+	EnergyIsNeeded = 11,
 
-	BuildingDisabled     = 12,
+	BuildingDisabled = 12,
 
 	Producing_PositionBlocked = 13,
 	Producing_InsufficientMaterial = 34,
 
-	TurnWait             = 14,
-	TurnAutoMove         = 15,
+	TurnWait = 14,
+	TurnAutoMove = 15,
 
 	// Special reports
-	HostCommand          = 16,
+	HostCommand = 16,
 
-	ResourceChanged      = 17,
+	ResourceChanged = 17,
 
-	LostConnection       = 18,
+	LostConnection = 18,
 
-	PlayerEndedTurn      = 19,
-	PlayerDefeated       = 20,
-	PlayerLeft           = 21,
-	Upgraded             = 22,
-	TurnStart            = 23,
-	PlayerWins           = 35,
-	SuddenDeath          = 36,
+	PlayerEndedTurn = 19,
+	PlayerDefeated = 20,
+	PlayerLeft = 21,
+	Upgraded = 22,
+	TurnStart = 23,
+	PlayerWins = 35,
+	SuddenDeath = 36,
 
 	// Unit reports
-	Attacked             = 24,
-	AttackingEnemy       = 25,
-	CapturedByEnemy      = 26,
-	Destroyed            = 27,
-	Detected             = 28,
-	Disabled             = 29,
-	PathInterrupted      = 30,
-	SurveyorAiConfused   = 31,
+	Attacked = 24,
+	AttackingEnemy = 25,
+	CapturedByEnemy = 26,
+	Destroyed = 27,
+	Detected = 28,
+	Disabled = 29,
+	PathInterrupted = 30,
+	SurveyorAiConfused = 31,
 
 	// Chat report
-	Chat                 = 33
+	Chat = 33
 };
 
 class cSavedReport
@@ -104,6 +103,7 @@ public:
 
 	virtual void serialize (cBinaryArchiveIn& archive) { serializeThis (archive); }
 	virtual void serialize (cJsonArchiveOut& archive) { serializeThis (archive); }
+
 private:
 	template <typename Archive>
 	static std::unique_ptr<cSavedReport> createFromImpl (Archive&);

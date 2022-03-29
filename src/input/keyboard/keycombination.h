@@ -20,11 +20,10 @@
 #ifndef input_keyboard_keycombination_H
 #define input_keyboard_keycombination_H
 
-#include <string>
+#include "input/keyboard/keymodifiertype.h"
 
 #include <SDL.h>
-
-#include "input/keyboard/keymodifiertype.h"
+#include <string>
 
 class cKeyCombination
 {
@@ -40,6 +39,7 @@ public:
 	bool matches (const cKeyCombination& other) const;
 
 	static bool isRepresentableKey (SDL_Keycode key);
+
 private:
 	KeyModifierFlags modifiers;
 	SDL_Keycode key;

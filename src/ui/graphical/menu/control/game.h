@@ -20,9 +20,10 @@
 #ifndef ui_graphical_menu_control_gameH
 #define ui_graphical_menu_control_gameH
 
-#include <memory>
 #include "utility/runnable.h"
 #include "utility/signal/signal.h"
+
+#include <memory>
 
 class cUnitsData;
 class cClanData;
@@ -48,6 +49,7 @@ public:
 	}
 
 	cSignal<void()> terminated;
+
 private:
 	bool terminate = false;
 };

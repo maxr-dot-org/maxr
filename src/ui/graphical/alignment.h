@@ -33,17 +33,17 @@
  */
 enum class eAlignmentType
 {
-	Left				= (1 << 0),
-	Right				= (1 << 1),
-	CenterHorizontal	= (1 << 2),
-	HorizontalMask		= Left | Right | CenterHorizontal,
+	Left = (1 << 0),
+	Right = (1 << 1),
+	CenterHorizontal = (1 << 2),
+	HorizontalMask = Left | Right | CenterHorizontal,
 
-	Top					= (1 << 3),
-	Bottom				= (1 << 4),
-	CenterVerical		= (1 << 5),
-	MaskVertical		= Top | Bottom | CenterVerical,
+	Top = (1 << 3),
+	Bottom = (1 << 4),
+	CenterVerical = (1 << 5),
+	MaskVertical = Top | Bottom | CenterVerical,
 
-	Center				= CenterHorizontal | CenterVerical
+	Center = CenterHorizontal | CenterVerical
 };
 
 using AlignmentFlags = cEnumFlag<eAlignmentType>;

@@ -20,18 +20,18 @@
 #ifndef ui_graphical_game_widgets_gamemapwidgetH
 #define ui_graphical_game_widgets_gamemapwidgetH
 
-#include <map>
-#include <set>
-
 #include "game/logic/fxeffects.h"
 #include "game/logic/upgradecalculator.h"
 #include "ui/graphical/game/control/mousemode/mousemodetype.h"
 #include "ui/graphical/game/temp/unitdrawingengine.h"
+#include "ui/graphical/game/unitlocklist.h"
 #include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitselectionbox.h"
-#include "ui/graphical/game/unitlocklist.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"
+
+#include <map>
+#include <set>
 
 struct SDL_Surface;
 
@@ -51,6 +51,7 @@ class cFrameCounter;
 class cGameMapWidget : public cClickableWidget
 {
 	friend class cDebugOutputWidget;
+
 public:
 	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap>, std::shared_ptr<cAnimationTimer>, std::shared_ptr<cSoundManager>, std::shared_ptr<const cFrameCounter>);
 	~cGameMapWidget();
@@ -170,6 +171,7 @@ public:
 	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
 	void handleLooseMouseFocus (cApplication&) override;
 	void handleResized (const cPosition& oldSize) override;
+
 protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 	bool acceptButton (eMouseButtonType) const override;
@@ -248,8 +250,10 @@ protected:
 
 	void buildCollidingShortcutsMap();
 	void activateShortcutConditional (cShortcut&, std::set<const cShortcut*>& blockedShortcuts, const std::set<const cShortcut*>& collidingShortcuts);
+
 public:
 	std::vector<cResearch::eResearchArea> currentTurnResearchAreasFinished;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager mapViewSignalConnectionManager;

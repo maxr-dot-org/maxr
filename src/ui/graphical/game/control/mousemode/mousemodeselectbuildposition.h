@@ -20,10 +20,9 @@
 #ifndef ui_graphical_game_control_mousemode_mousemodeselectbuildpositionH
 #define ui_graphical_game_control_mousemode_mousemodeselectbuildpositionH
 
+#include "config/workaround/cpp17/optional.h"
 #include "game/data/units/unitdata.h"
 #include "ui/graphical/game/control/mousemode/mousemode.h"
-
-#include "config/workaround/cpp17/optional.h"
 
 class cMouseModeSelectBuildPosition : public cMouseMode
 {

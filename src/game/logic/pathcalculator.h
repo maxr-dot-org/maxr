@@ -20,13 +20,13 @@
 #ifndef game_logic_pathcalculatorH
 #define game_logic_pathcalculatorH
 
-#include <forward_list>
-
-#include "utility/position.h"
 #include "game/data/map/map.h"
-#include "utility/log.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "utility/log.h"
+#include "utility/position.h"
+
+#include <forward_list>
 
 class cVehicle;
 class cUnit;
@@ -58,13 +58,13 @@ class cPathDestHandler
 
 	const cUnit* destUnit;
 	cPosition destination;
+
 public:
 	cPathDestHandler (ePathDestinationType, const cPosition& destination, const cVehicle* srcVehicle, const cUnit* destUnit);
 
 	bool hasReachedDestination (const cPosition& position) const;
 	int heuristicCost (const cPosition& source) const;
 };
-
 
 class cPathCalculator
 {
@@ -99,7 +99,6 @@ public:
 	cPosition source;
 	bool bPlane, bShip;
 	std::unique_ptr<cPathDestHandler> destHandler;
-
 
 private:
 	/* memoryblocks for the nodes */
@@ -148,35 +147,33 @@ int cPathCalculator::calcNextCost (const cPosition& source, const cPosition& des
 	// select base movement factor
 	if (vehicle->getStaticUnitData().factorAir > 0)
 	{
-		costs = (int)(4 * vehicle->getStaticUnitData().factorAir);
+		costs = (int) (4 * vehicle->getStaticUnitData().factorAir);
 	}
 	else if (map->isWater (destination) && !(map->getField (destination).hasBridgeOrPlattform() && vehicle->getStaticUnitData().factorGround > 0))
 	{
-		costs = (int)(4 * vehicle->getStaticUnitData().factorSea);
+		costs = (int) (4 * vehicle->getStaticUnitData().factorSea);
 	}
 	else if (map->isCoast (destination) && !(map->getField (destination).hasBridgeOrPlattform() && vehicle->getStaticUnitData().factorGround > 0))
 	{
-		costs = (int)(4 * vehicle->getStaticUnitData().factorCoast);
+		costs = (int) (4 * vehicle->getStaticUnitData().factorCoast);
 	}
 	else
 	{
-		costs = (int)(4 * vehicle->getStaticUnitData().factorGround);
+		costs = (int) (4 * vehicle->getStaticUnitData().factorGround);
 	}
 
 	// moving on a road is cheaper
 	// assuming, only speed of ground units can be modified
 	const cBuilding* building = map->getField (destination).getBaseBuilding();
-	if (building &&
-		building->getStaticData().modifiesSpeed != 0 &&
-		vehicle->getStaticUnitData().factorGround > 0)
+	if (building && building->getStaticData().modifiesSpeed != 0 && vehicle->getStaticUnitData().factorGround > 0)
 	{
-		costs = (int)(costs * building->getStaticData().modifiesSpeed);
+		costs = (int) (costs * building->getStaticData().modifiesSpeed);
 	}
 
 	// multiply with the factor 1.5 for diagonal movements
 	if (source.x() != destination.x() && source.y() != destination.y())
 	{
-		costs = (int)(costs * 1.5f);
+		costs = (int) (costs * 1.5f);
 	}
 
 	return costs;

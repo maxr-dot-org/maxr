@@ -29,6 +29,7 @@ public:
 
 	int getRemainingMetal() const;
 	void setRemainingMetal (int remainingMetal);
+
 private:
 	int remainingMetal;
 };

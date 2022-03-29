@@ -20,11 +20,10 @@
 #ifndef game_logic_jobs_planetakeoffjobH
 #define game_logic_jobs_planetakeoffjobH
 
-#include "job.h"
-
 #include "game/data/units/unit.h"
 #include "game/serialization/binaryarchive.h"
 #include "game/serialization/jsonarchive.h"
+#include "job.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 class cVehicle;
@@ -34,15 +33,27 @@ class cPlaneTakeoffJob : public cJob
 public:
 	cPlaneTakeoffJob (cVehicle& vehicle);
 	template <typename Archive>
-	cPlaneTakeoffJob (Archive& archive) { serializeThis (archive); }
+	cPlaneTakeoffJob (Archive& archive)
+	{
+		serializeThis (archive);
+	}
 
 	void run (cModel& model) override;
 	eJobType getType() const override;
 
-	void serialize (cBinaryArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		archive << serialization::makeNvp ("type", getType());
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		archive << serialization::makeNvp ("type", getType());
+		serializeThis (archive);
+	}
 
 	uint32_t getChecksum (uint32_t crc) const override;
+
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
@@ -57,7 +68,7 @@ private:
 				return;
 			}
 			unit->jobActive = true;
-			connectionManager.connect (unit->destroyed, [this](){finished = true; });
+			connectionManager.connect (unit->destroyed, [this]() { finished = true; });
 		}
 	}
 

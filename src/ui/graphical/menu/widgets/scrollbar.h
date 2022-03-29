@@ -20,8 +20,8 @@
 #ifndef ui_graphical_menu_widgets_scrollbarH
 #define ui_graphical_menu_widgets_scrollbarH
 
-#include "ui/graphical/widget.h"
 #include "ui/graphical/orientation.h"
+#include "ui/graphical/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 class cPushButton;
@@ -50,6 +50,7 @@ public:
 	cSignal<void()> forwardClicked;
 
 	void handleResized (const cPosition& oldSize) override;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

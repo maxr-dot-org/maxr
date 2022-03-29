@@ -20,9 +20,9 @@
 #ifndef ui_graphical_menu_widgets_special_buildspeedhandlerwidgetH
 #define ui_graphical_menu_widgets_special_buildspeedhandlerwidgetH
 
-#include <array>
-
 #include "ui/graphical/widget.h"
+
+#include <array>
 
 class cLabel;
 class cCheckBox;
@@ -30,6 +30,7 @@ class cCheckBox;
 class cBuildSpeedHandlerWidget : public cWidget
 {
 	static const size_t elementsCount = 3;
+
 public:
 	cBuildSpeedHandlerWidget (const cPosition&);
 
@@ -37,6 +38,7 @@ public:
 
 	void setBuildSpeedIndex (size_t speedIndex);
 	size_t getBuildSpeedIndex();
+
 private:
 	std::array<cLabel*, elementsCount> turnLabels;
 	std::array<cLabel*, elementsCount> costLabels;

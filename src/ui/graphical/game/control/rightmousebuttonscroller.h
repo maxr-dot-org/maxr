@@ -20,12 +20,12 @@
 #ifndef ui_graphical_game_control_rightmousebuttonscrollerH
 #define ui_graphical_game_control_rightmousebuttonscrollerH
 
-#include <memory>
-
 #include "ui/graphical/widget.h"
 #include "utility/position.h"
-#include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cMouse;
 class cAnimationTimer;
@@ -49,6 +49,7 @@ public:
 	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
 	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
 	void handleLooseMouseFocus (cApplication&) override;
+
 private:
 	static const double factor;
 	static const double minDistanceSquared;

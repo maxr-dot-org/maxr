@@ -30,6 +30,7 @@ public:
 	eSavedReportType getType() const override;
 
 	bool isAlert() const override;
+
 private:
 	eSavedReportType type;
 };

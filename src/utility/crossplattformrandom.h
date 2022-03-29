@@ -20,16 +20,17 @@
 #ifndef utility_crossplatformrandomH
 #define utility_crossplatformrandomH
 
-#include <cstdint>
-
-#include "utility/crc.h"
 #include "game/serialization/serialization.h"
+#include "utility/crc.h"
+
+#include <cstdint>
 
 class cCrossPlattformRandom
 {
 private:
 	uint32_t stateW = 0;
 	uint32_t stateZ = 0;
+
 public:
 	cCrossPlattformRandom() = default;
 
@@ -48,7 +49,7 @@ public:
 		archive & NVP (stateZ);
 	}
 
-	[[nodiscard]]friend std::uint32_t calcCheckSum (const cCrossPlattformRandom& self, std::uint32_t crc)
+	[[nodiscard]] friend std::uint32_t calcCheckSum (const cCrossPlattformRandom& self, std::uint32_t crc)
 	{
 		crc = calcCheckSum (self.stateW, crc);
 		crc = calcCheckSum (self.stateZ, crc);

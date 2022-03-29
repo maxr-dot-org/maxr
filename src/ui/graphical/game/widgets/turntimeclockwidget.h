@@ -20,11 +20,11 @@
 #ifndef ui_graphical_game_widgets_turntimeclockwidgetH
 #define ui_graphical_game_widgets_turntimeclockwidgetH
 
-#include <memory>
-#include <chrono>
-
 #include "ui/graphical/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <chrono>
+#include <memory>
 
 class cLabel;
 class cTurnTimeClock;
@@ -35,6 +35,7 @@ public:
 	cTurnTimeClockWidget (const cBox<cPosition>& area);
 
 	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock>);
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

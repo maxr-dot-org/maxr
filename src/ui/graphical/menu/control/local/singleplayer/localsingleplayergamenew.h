@@ -20,8 +20,6 @@
 #ifndef ui_graphical_menu_control_local_singleplayer_localsingleplayergamenewH
 #define ui_graphical_menu_control_local_singleplayer_localsingleplayergamenewH
 
-#include <memory>
-
 #include "game/connectionmanager.h"
 #include "game/startup/initplayerdata.h"
 #include "game/startup/lobbyclient.h"
@@ -29,6 +27,8 @@
 #include "ui/graphical/menu/control/initgamepreparation.h"
 #include "ui/graphical/menu/control/local/singleplayer/localsingleplayergame.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cApplication;
 class cStaticMap;
@@ -49,6 +49,7 @@ public:
 	void selectMapName (const std::string&);
 
 	static cPlayerBasicData createPlayer();
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

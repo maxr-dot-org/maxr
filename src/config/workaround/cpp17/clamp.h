@@ -31,8 +31,8 @@ namespace std
 		{
 			return std::max (min, std::min (value, max));
 		}
-	}
-}
+	} // namespace compatibility_cpp17
+} // namespace std
 
 #else
 # include <algorithm>

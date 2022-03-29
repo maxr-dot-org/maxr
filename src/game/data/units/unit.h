@@ -34,7 +34,8 @@ class cMapView;
 class cPlayer;
 class cVehicle;
 
-template <typename> class cBox;
+template <typename>
+class cBox;
 
 struct sTerrain;
 
@@ -56,6 +57,7 @@ class cUnit
 {
 protected:
 	cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID);
+
 public:
 	virtual ~cUnit();
 
@@ -77,7 +79,11 @@ public:
 	void storeVehicle (cVehicle&, cMap&);
 	void exitVehicleTo (cVehicle&, const cPosition&, cMap&);
 
-	virtual const cPosition& getMovementOffset() const { static const cPosition dummy (0, 0); return dummy; }
+	virtual const cPosition& getMovementOffset() const
+	{
+		static const cPosition dummy (0, 0);
+		return dummy;
+	}
 
 	const cPosition& getPosition() const;
 	void setPosition (cPosition);
@@ -92,7 +98,6 @@ public:
 	bool isNextTo (const cPosition& position) const;
 	bool isDisabled() const { return turnsDisabled > 0; }
 	bool isAbove (const cPosition& position) const;
-
 
 	std::optional<std::string> getCustomName() const;
 	std::string getNamePrefix() const;
@@ -127,7 +132,6 @@ public:
 	/** Resets the list of players, that detected this unit in this turn
 	 * (is called at turn end). */
 	void clearDetectedInThisTurnPlayerList();
-
 
 	void setDisabledTurns (int turns);
 	void setSentryActive (bool value);
@@ -176,8 +180,8 @@ public:
 	mutable cSignal<void()> movingChanged;
 
 	mutable cSignal<void()> storedUnitsChanged; //the unit has loaded or unloaded another unit
-	mutable cSignal<void()> stored;            //this unit has been loaded by another unit
-	mutable cSignal<void()> activated;         //this unit has been unloaded by another unit
+	mutable cSignal<void()> stored; //this unit has been loaded by another unit
+	mutable cSignal<void()> activated; //this unit has been unloaded by another unit
 
 	mutable cSignal<void()> layingMinesChanged;
 	mutable cSignal<void()> clearingMinesChanged;
@@ -219,7 +223,6 @@ public:
 		}
 	}
 
-
 public: // TODO: make protected/private and make getters/setters
 	const cStaticUnitData& getStaticUnitData() const;
 	cDynamicUnitData data; // basic data of the unit
@@ -242,7 +245,6 @@ protected:
 	*/
 	bool checkDetectedByPlayer (const cPlayer&, const cMap&) const;
 
-
 	/** Detection state of stealth units. Use cPlayer::canSeeUnit() to check
 	*   if the unit is actually visible at the moment.
 	*   This list is always empty for units without stealth abilities.
@@ -262,10 +264,10 @@ private:
 
 	std::string customName; //stores the name of the unit, when the player enters an own name for the unit. Otherwise the string is empty.
 
-	int turnsDisabled = 0;  ///< the number of turns this unit will be disabled, 0 if the unit is active
+	int turnsDisabled = 0; ///< the number of turns this unit will be disabled, 0 if the unit is active
 	bool sentryActive = false; ///< is the unit on sentry?
 	bool manualFireActive = false; ///< if active, then the unit only fires by manual control and not as reaction fire
-	bool attacking = false;  ///< is the unit currently attacking?
+	bool attacking = false; ///< is the unit currently attacking?
 	bool beeingAttacked = false; ///< true when an attack on this unit is running
 	bool beenAttacked = false; //the unit was attacked in this turn
 	int storageResCur = 0; //amount of stored resources

@@ -20,16 +20,16 @@
 #ifndef ui_graphical_menu_control_local_hotseat_localhotseatgamenewH
 #define ui_graphical_menu_control_local_hotseat_localhotseatgamenewH
 
-#include <memory>
-#include <vector>
-#include <utility>
-
-#include "game/startup/initplayerdata.h"
 #include "game/data/player/playerbasicdata.h"
+#include "game/startup/initplayerdata.h"
 #include "ui/graphical/menu/control/local/hotseat/localhotseatgame.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
+#include <utility>
+#include <vector>
 
 class cApplication;
 class cStaticMap;
@@ -67,6 +67,7 @@ public:
 	size_t getPlayerCount() const;
 	const cPlayerBasicData& getPlayer (size_t playerIndex) const;
 	int getPlayerClan (size_t playerIndex) const;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

@@ -20,11 +20,10 @@
 #ifndef utility_arraycrcH
 #define utility_arraycrcH
 
+#include "config/workaround/cpp17/optional.h"
 #include "crc.h"
 
 #include <cstdint>
-
-#include "config/workaround/cpp17/optional.h"
 
 /**
 * This is a wrapper class around a dynamically allocated array.

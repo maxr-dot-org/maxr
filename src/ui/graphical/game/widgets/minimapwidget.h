@@ -34,8 +34,8 @@ class cMiniMapWidget : public cClickableWidget
 public:
 	cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap>);
 
-//	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
-//	void setPlayer (std::shared_ptr<const cPlayer>);
+	//	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
+	//	void setPlayer (std::shared_ptr<const cPlayer>);
 	void setMapView (std::shared_ptr<const cMapView>);
 
 	void setViewWindow (const cBox<cPosition>& viewWindow);
@@ -69,8 +69,8 @@ private:
 
 	std::shared_ptr<const cStaticMap> staticMap;
 	std::shared_ptr<const cMapView> mapView; // may be null
-//	std::shared_ptr<const cMap> dynamicMap; // may be null
-//	std::shared_ptr<const cPlayer> player; // may be null
+	//	std::shared_ptr<const cMap> dynamicMap; // may be null
+	//	std::shared_ptr<const cPlayer> player; // may be null
 
 	int zoomFactor; // TODO: may use floating value here
 	cPosition offset;
@@ -88,6 +88,5 @@ private:
 
 	cPosition computeMapPosition (const cPosition& screenPosition);
 };
-
 
 #endif // ui_graphical_game_widgets_minimapwidgetH

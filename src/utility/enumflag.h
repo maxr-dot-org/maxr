@@ -20,9 +20,9 @@
 #ifndef utility_enumflagH
 #define utility_enumflagH
 
-#include <type_traits>
-
 #include "utility/tounderlyingtype.h"
+
+#include <type_traits>
 
 /**
  * Simple class for an enumeration based "bit-flag".
@@ -35,6 +35,7 @@ template <typename E>
 class cEnumFlag
 {
 	static_assert (std::is_enum<E>::value, "Template parameter has to be an enumerator type!");
+
 public:
 	cEnumFlag() = default;
 	cEnumFlag (E value);

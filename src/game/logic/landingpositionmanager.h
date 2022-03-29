@@ -20,13 +20,13 @@
 #ifndef game_logic_landingpositionmanagerH
 #define game_logic_landingpositionmanagerH
 
-#include <vector>
-#include <memory>
-
-#include "game/logic/landingpositionstate.h"
 #include "game/data/player/playerbasicdata.h"
+#include "game/logic/landingpositionstate.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
+
+#include <memory>
+#include <vector>
 
 class cPlayerBasicData;
 
@@ -45,6 +45,7 @@ class cLandingPositionManager
 
 		bool needNewPosition;
 	};
+
 public:
 	static const double warningDistance;
 	static const double tooCloseDistance;
@@ -106,6 +107,7 @@ public:
 	 * none of the positions are in conflict.
 	 */
 	mutable cSignal<void()> allPositionsValid;
+
 private:
 	std::vector<sLandingPositionData> landingPositions;
 

@@ -20,12 +20,12 @@
 #ifndef game_data_player_playerbasicdataH
 #define game_data_player_playerbasicdataH
 
-#include <string>
-
 #include "game/data/player/playersettings.h"
 #include "game/serialization/serialization.h"
 #include "utility/color.h"
 #include "utility/signal/signal.h"
+
+#include <string>
 
 /**
  * a structure that includes all information needed in pre-game.
@@ -51,8 +51,8 @@ public:
 	void setDefeated (bool defeated);
 	bool isDefeated() const;
 
-	bool operator == (const cPlayerBasicData&) const;
-	bool operator != (const cPlayerBasicData& rhs) const { return !(*this == rhs); }
+	bool operator== (const cPlayerBasicData&) const;
+	bool operator!= (const cPlayerBasicData& rhs) const { return !(*this == rhs); }
 
 	mutable cSignal<void()> nameChanged;
 	mutable cSignal<void()> numberChanged;
@@ -68,6 +68,7 @@ public:
 		archive & NVP (ready);
 		archive & NVP (defeated);
 	}
+
 private:
 	sPlayerSettings player;
 	int nr;
@@ -78,13 +79,13 @@ private:
 //--------------------------------------------------------------------------
 inline auto byPlayerNr (int playerNr)
 {
-	return [=](const cPlayerBasicData& player){ return player.getNr() == playerNr; };
+	return [=] (const cPlayerBasicData& player) { return player.getNr() == playerNr; };
 }
 
 //--------------------------------------------------------------------------
 inline auto byPlayerName (const std::string& name)
 {
-	return [=](const cPlayerBasicData& player){ return player.getName() == name; };
+	return [=] (const cPlayerBasicData& player) { return player.getName() == name; };
 }
 
 #endif // game_data_player_playerbasicdataH

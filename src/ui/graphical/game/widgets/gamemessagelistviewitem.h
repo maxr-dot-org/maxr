@@ -20,10 +20,10 @@
 #ifndef ui_graphical_game_widgets_gamemessagelistviewitemH
 #define ui_graphical_game_widgets_gamemessagelistviewitemH
 
-#include <chrono>
-
-#include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 #include "SDLutility/autosurface.h"
+#include "ui/graphical/menu/widgets/abstractlistviewitem.h"
+
+#include <chrono>
 
 class cLabel;
 
@@ -43,6 +43,7 @@ public:
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	void handleResized (const cPosition& oldSize) override;
+
 private:
 	cLabel* messageLabel = nullptr;
 

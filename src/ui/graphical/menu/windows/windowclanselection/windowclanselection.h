@@ -20,11 +20,11 @@
 #ifndef ui_graphical_menu_windows_windowclanselection_windowclanselectionH
 #define ui_graphical_menu_windows_windowclanselection_windowclanselectionH
 
-#include <array>
-
 #include "ui/graphical/window.h"
-#include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+#include <array>
 
 class cImage;
 class cLabel;
@@ -41,12 +41,13 @@ public:
 	cSignal<void()> canceled;
 
 	unsigned int getSelectedClan() const;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 
 	static const size_t clanRows = 2;
 	static const size_t clanColumns = 4;
-	static const size_t clanCount = clanRows* clanColumns;
+	static const size_t clanCount = clanRows * clanColumns;
 
 	std::array<cImage*, clanCount> clanImages;
 	std::array<cLabel*, clanCount> clanTitles;

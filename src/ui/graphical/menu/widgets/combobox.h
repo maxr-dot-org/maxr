@@ -20,17 +20,18 @@
 #ifndef ui_graphical_menu_widgets_comboboxH
 #define ui_graphical_menu_widgets_comboboxH
 
-#include <string>
-
-#include "ui/graphical/widget.h"
 #include "SDLutility/autosurface.h"
+#include "ui/graphical/widget.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <string>
 
 class cCheckBox;
 class cLineEdit;
 class cTextListViewItem;
-template <typename> class cListView;
+template <typename>
+class cListView;
 
 class cComboBox : public cWidget
 {
@@ -52,6 +53,7 @@ public:
 	void setSelectedIndex (size_t index);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

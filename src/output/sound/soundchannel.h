@@ -65,6 +65,7 @@ public:
 
 	cSignal<void(), std::recursive_mutex> paused;
 	cSignal<void(), std::recursive_mutex> resumed;
+
 private:
 	int sdlChannelId;
 

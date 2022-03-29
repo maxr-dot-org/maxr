@@ -43,12 +43,12 @@ class cUnitsData;
 class cHud : public cWidget
 {
 public:
-	static const int panelLeftWidth    = 180;
-	static const int panelRightWidth   = 12;
-	static const int panelTotalWidth   = panelLeftWidth + panelRightWidth;
-	static const int panelTopHeight    = 18;
+	static const int panelLeftWidth = 180;
+	static const int panelRightWidth = 12;
+	static const int panelTotalWidth = panelLeftWidth + panelRightWidth;
+	static const int panelTopHeight = 18;
 	static const int panelBottomHeight = 14;
-	static const int panelTotalHeight  = panelTopHeight + panelBottomHeight;
+	static const int panelTotalHeight = panelTopHeight + panelBottomHeight;
 
 	cHud (std::shared_ptr<cAnimationTimer> animationTimer);
 
@@ -211,6 +211,5 @@ private:
 	cUnitVideoWidget* unitVideo = nullptr;
 	cUnitDetailsHud* unitDetails = nullptr;
 };
-
 
 #endif // ui_graphical_game_hudH

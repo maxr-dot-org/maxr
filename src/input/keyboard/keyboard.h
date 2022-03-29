@@ -20,11 +20,11 @@
 #ifndef input_keyboard_keyboardH
 #define input_keyboard_keyboardH
 
-#include <SDL.h>
-
+#include "input/keyboard/keymodifiertype.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "input/keyboard/keymodifiertype.h"
+
+#include <SDL.h>
 
 class cKeyboardEvent;
 class cTextInputEvent;
@@ -86,8 +86,8 @@ public:
 	 * @return True if all of the passed modifier flags are active.
 	 */
 	bool isAllModifiersActive (KeyModifierFlags flags) const;
-private:
 
+private:
 	cSignalConnectionManager signalConnectionManager;
 
 	void updateModifiersFromKeyPress (const cKeyboardEvent&);

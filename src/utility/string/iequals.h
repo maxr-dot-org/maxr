@@ -20,8 +20,8 @@
 #ifndef utility_string_iequalsH
 #define utility_string_iequalsH
 
-#include <string>
 #include <cctype>
+#include <string>
 
 /**
  * Case insensitive string comparison.

@@ -21,8 +21,9 @@
 #define game_logic_actionStartMoveH
 
 #include "action.h"
-#include <forward_list>
 #include "game/logic/endmoveaction.h"
+
+#include <forward_list>
 
 class cActionStartMove : public cActionT<cAction::eActiontype::StartMove>
 {
@@ -31,10 +32,19 @@ public:
 	cActionStartMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectResource = false);
 	cActionStartMove (cBinaryArchiveOut& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
 
 	void execute (cModel& model) const override;
+
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)

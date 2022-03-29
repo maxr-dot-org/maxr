@@ -20,13 +20,13 @@
 #ifndef game_logic_turntimeclockH
 #define game_logic_turntimeclockH
 
-#include <chrono>
-#include <memory>
-#include <string>
-
 #include "game/serialization/nvp.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <chrono>
+#include <memory>
+#include <string>
 
 class cModel;
 
@@ -51,6 +51,7 @@ public:
 		archive & NVP (deadline);
 		archive & NVP (id);
 	}
+
 private:
 	unsigned int startGameTime = 0;
 	std::chrono::milliseconds deadline{0};
@@ -96,6 +97,7 @@ public:
 		archive & NVP (startTurnGameTime);
 		archive & NVP (nextDeadlineId);
 	}
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 
@@ -106,7 +108,6 @@ private:
 	unsigned int startTurnGameTime;
 
 	std::chrono::milliseconds getTimeTillDeadlineReached (const cTurnTimeDeadline& deadline) const;
-
 };
 
 std::string to_MM_ss (std::chrono::milliseconds);

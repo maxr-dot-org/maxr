@@ -20,13 +20,13 @@
 #ifndef ui_graphical_menu_control_local_singleplayer_localsingleplayergamesavedH
 #define ui_graphical_menu_control_local_singleplayer_localsingleplayergamesavedH
 
-#include <memory>
-#include <vector>
-#include <utility>
-
 #include "ui/graphical/menu/control/local/singleplayer/localsingleplayergame.h"
 #include "utility/position.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
+#include <utility>
+#include <vector>
 
 class cApplication;
 

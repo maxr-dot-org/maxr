@@ -20,18 +20,17 @@
 #ifndef ui_graphical_widgetH
 #define ui_graphical_widgetH
 
-#include <vector>
-#include <memory>
-#include <type_traits>
-
-#include <SDL.h>
-
+#include "SDLutility/autosurface.h"
 #include "input/mouse/mousebuttontype.h"
+#include "ui/graphical/shortcut.h"
 #include "utility/box.h"
 #include "utility/position.h"
-#include "SDLutility/autosurface.h"
-#include "ui/graphical/shortcut.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <SDL.h>
+#include <memory>
+#include <type_traits>
+#include <vector>
 
 class cMouse;
 class cKeyboard;
@@ -410,6 +409,7 @@ protected:
 	 * or if the window does not have an active application.
 	 */
 	virtual cApplication* getActiveApplication() const;
+
 private:
 	static bool drawDebugFrames;
 	static cSignal<void()> drawDebugFramesChanged;

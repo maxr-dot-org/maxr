@@ -20,9 +20,9 @@
 #ifndef ui_graphical_menu_widgets_sliderhandleH
 #define ui_graphical_menu_widgets_sliderhandleH
 
-#include "ui/graphical/widget.h"
-#include "ui/graphical/orientation.h"
 #include "SDLutility/autosurface.h"
+#include "ui/graphical/orientation.h"
+#include "ui/graphical/widget.h"
 #include "utility/signal/signal.h"
 
 struct SDL_Surface;
@@ -46,6 +46,7 @@ public:
 	void setMinMaxPosition (int minPosition, int maxPosition);
 
 	cSignal<void()> moved;
+
 private:
 	AutoSurface surface;
 

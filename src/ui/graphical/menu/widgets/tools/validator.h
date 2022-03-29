@@ -20,9 +20,9 @@
 #ifndef ui_graphical_widgets_tools_validatorH
 #define ui_graphical_widgets_tools_validatorH
 
-#include <string>
-
 #include "ui/graphical/menu/widgets/tools/validatorstate.h"
+
+#include <string>
 
 class cValidator
 {

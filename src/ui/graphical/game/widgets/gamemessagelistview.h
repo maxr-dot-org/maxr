@@ -20,8 +20,8 @@
 #ifndef ui_graphical_game_widgets_gamemessagelistviewH
 #define ui_graphical_game_widgets_gamemessagelistviewH
 
-#include "ui/graphical/widget.h"
 #include "ui/graphical/game/widgets/gamemessagelistviewitem.h"
+#include "ui/graphical/widget.h"
 
 template <typename>
 class cListView;
@@ -39,6 +39,7 @@ public:
 
 	bool isAt (const cPosition&) const override;
 	void handleResized (const cPosition& oldSize) override;
+
 private:
 	cListView<cGameMessageListViewItem>* listView = nullptr;
 

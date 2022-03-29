@@ -30,10 +30,19 @@ public:
 	cActionAttack (const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit);
 	cActionAttack (cBinaryArchiveOut& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
 
 	void execute (cModel& model) const override;
+
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
@@ -46,7 +55,6 @@ private:
 	unsigned int agressorId;
 	cPosition targetPosition;
 	unsigned int targetId;
-
 };
 
 #endif // game_logic_actionAttackH

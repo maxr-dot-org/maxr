@@ -20,12 +20,11 @@
 #ifndef ui_graphical_game_widgets_unitvideowidgetH
 #define ui_graphical_game_widgets_unitvideowidgetH
 
-#include <3rd/SDL_flic/SDL_flic.h>
-
-#include <memory>
-
 #include "ui/graphical/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <3rd/SDL_flic/SDL_flic.h>
+#include <memory>
 
 class cPosition;
 
@@ -39,6 +38,7 @@ class cAnimationTimer;
 class cUnitVideoWidget : public cWidget
 {
 	using FliAnimationPointerType = std::unique_ptr<FLI_Animation, void (*) (FLI_Animation*)>;
+
 public:
 	cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer>);
 
@@ -53,6 +53,7 @@ public:
 	void setUnit (const cUnit*);
 
 	cSignal<void()> clicked;
+
 private:
 	cImage* currentFrameImage = nullptr;
 	FliAnimationPointerType fliAnimation;

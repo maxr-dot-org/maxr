@@ -20,13 +20,12 @@
 #ifndef game_data_reports_special_savedreportlostconnectionH
 #define game_data_reports_special_savedreportlostconnectionH
 
-#include "game/data/report/savedreport.h"
 #include "game/data/player/player.h"
+#include "game/data/report/savedreport.h"
 
 class cSavedReportLostConnection : public cSavedReport
 {
 public:
-
 	cSavedReportLostConnection (const cPlayer&);
 
 	template <typename Archive, ENABLE_ARCHIVE_OUT>
@@ -35,8 +34,16 @@ public:
 		serializeThis (archive);
 	}
 
-	void serialize (cBinaryArchiveIn& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { cSavedReport::serialize (archive); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		cSavedReport::serialize (archive);
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		cSavedReport::serialize (archive);
+		serializeThis (archive);
+	}
 
 	eSavedReportType getType() const override;
 

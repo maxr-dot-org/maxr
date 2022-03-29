@@ -20,12 +20,12 @@
 #ifndef ui_graphical_menu_windows_windowresourcedistribution_windowresourcedistributionH
 #define ui_graphical_menu_windows_windowresourcedistribution_windowresourcedistributionH
 
-#include <array>
-
 #include "game/data/base/base.h"
 #include "ui/graphical/window.h"
-#include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+#include <array>
 
 class cResourceBar;
 class cLabel;
@@ -39,6 +39,7 @@ public:
 	sMiningResource getProduction() const;
 
 	cSignal<void()> done;
+
 private:
 	void setBarLabels();
 	void setBarValues();
@@ -65,7 +66,6 @@ private:
 	std::array<cLabel*, 3> metalLabels;
 	std::array<cLabel*, 3> oilLabels;
 	std::array<cLabel*, 3> goldLabels;
-
 };
 
 #endif // ui_graphical_menu_windows_windowresourcedistribution_windowresourcedistributionH

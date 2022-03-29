@@ -35,6 +35,7 @@ public:
 	void setColor (const cRgbColor&);
 
 	cSignal<void (const cRgbColor&)> onColorChanged;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cRgbColor color;

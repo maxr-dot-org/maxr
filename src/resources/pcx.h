@@ -20,9 +20,9 @@
 #ifndef resources_pcxH
 #define resources_pcxH
 
-#include <string>
-
 #include "SDLutility/autosurface.h"
+
+#include <string>
 
 /** Loads an image to a surface
  * @param name path to img

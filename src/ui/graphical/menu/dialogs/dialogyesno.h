@@ -32,6 +32,7 @@ public:
 
 	cSignal<void()> yesClicked;
 	cSignal<void()> noClicked;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 };

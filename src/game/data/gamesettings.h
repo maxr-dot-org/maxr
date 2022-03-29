@@ -20,10 +20,10 @@
 #ifndef ui_graphical_menu_windows_windowgamesettings_gamesettingsH
 #define ui_graphical_menu_windows_windowgamesettings_gamesettingsH
 
-#include <string>
-#include <chrono>
-
 #include "game/serialization/serialization.h"
+
+#include <chrono>
+#include <string>
 
 enum class eGameSettingsResourceAmount
 {
@@ -64,12 +64,12 @@ enum class eGameSettingsVictoryCondition
 class cGameSettings
 {
 public:
-	static const int defaultCreditsNone    = 0;
-	static const int defaultCreditsLow     = 50;
+	static const int defaultCreditsNone = 0;
+	static const int defaultCreditsLow = 50;
 	static const int defaultCreditsLimited = 100;
-	static const int defaultCreditsNormal  = 150;
-	static const int defaultCreditsHigh    = 200;
-	static const int defaultCreditsMore    = 250;
+	static const int defaultCreditsNormal = 150;
+	static const int defaultCreditsHigh = 200;
+	static const int defaultCreditsMore = 250;
 
 	static const int defaultVictoryTurnsOptions[3];
 	static const int defaultVictoryPointsOptions[3];

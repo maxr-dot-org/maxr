@@ -21,8 +21,8 @@
 #define game_data_units_vehicleH
 
 #include "game/data/units/commandodata.h"
-#include "game/data/units/unitdata.h"
 #include "game/data/units/unit.h"
+#include "game/data/units/unitdata.h"
 
 #include <array>
 #include <vector>
@@ -36,7 +36,8 @@ class cStaticMap;
 
 struct sNewTurnPlayerReport;
 
-enum class eSupplyType {
+enum class eSupplyType
+{
 	REARM,
 	REPAIR
 };
@@ -79,7 +80,6 @@ public:
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const override;
 	bool canSupply (const cMapView& map, const cPosition& position, eSupplyType supplyType) const;
 	bool canSupply (const cUnit* unit, eSupplyType supplyType) const override;
-
 
 	void calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<int, 3>& turboBuildCosts, int buildCosts) const;
 	/**
@@ -136,7 +136,6 @@ public:
 	int getBuildCostsStart() const;
 	void setBuildCostsStart (int value);
 	int getBuildTurnsStart() const;
-
 
 	int getFlightHeight() const;
 	void setFlightHeight (int value);
@@ -195,8 +194,8 @@ public:
 		archive & NVP (flightHeight);
 		commandoData.serialize (archive);
 	}
-private:
 
+private:
 	//---- sentry and reaction fire helpers ------------------------------------
 	/**
 	 * Is called after a unit moved one field;
@@ -220,11 +219,11 @@ public:
 	mutable int bigBetonAlpha = 254;
 	cPosition bandPosition; // X,Y Position für das Band
 	cPosition buildBigSavedPosition; // last position before building has started
-	bool BuildPath = false;   // Gibt an, ob ein Pfad gebaut werden soll
+	bool BuildPath = false; // Gibt an, ob ein Pfad gebaut werden soll
 	cPosition DamageFXPoint; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	unsigned int WalkFrame = 0; // Frame der Geh-Annimation
 private:
-	cPosition tileMovementOffset;  // offset within tile during movement
+	cPosition tileMovementOffset; // offset within tile during movement
 
 	bool moving = false;
 	cMoveJob* moveJob = nullptr;

@@ -20,11 +20,11 @@
 #ifndef resources_buildinguidataH
 #define resources_buildinguidataH
 
+#include "SDLutility/autosurface.h"
 #include "game/data/units/id.h"
 #include "game/serialization/serialization.h"
 #include "resources/sound.h"
 
-#include "SDLutility/autosurface.h"
 #include <SDL.h>
 
 //------------------------------------------------------------------------------
@@ -83,8 +83,8 @@ public:
 	AutoSurface img, img_org; // Surface of the building
 	AutoSurface shw, shw_org; // Surfaces of the shadow
 	AutoSurface eff, eff_org; // Surfaces of the effects
-	AutoSurface video;  // video
-	AutoSurface info;   // info image
+	AutoSurface video; // video
+	AutoSurface info; // info image
 
 	// Die Sounds:
 	cSoundChunk Start;

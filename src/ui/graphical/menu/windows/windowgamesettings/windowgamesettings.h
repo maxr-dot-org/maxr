@@ -21,8 +21,8 @@
 #define ui_graphical_menu_windows_windowgamesettings_windowgamesettingsH
 
 #include "ui/graphical/window.h"
-#include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 class cGameSettings;
 
@@ -31,7 +31,8 @@ class cEditableCheckBox;
 class cLabel;
 class cLineEdit;
 class cLobbyClient;
-template <typename> class cRadioGroupValue;
+template <typename>
+class cRadioGroupValue;
 
 enum class eGameSettingsResourceAmount;
 enum class eGameSettingsResourceDensity;

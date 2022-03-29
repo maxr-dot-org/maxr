@@ -22,7 +22,7 @@
 
 #if __cplusplus < 201700
 
-#include <tuple>
+# include <tuple>
 
 namespace std
 {
@@ -31,12 +31,12 @@ namespace std
 	{
 		namespace details
 		{
-			template <typename F, typename Tuple, std::size_t ... Is>
+			template <typename F, typename Tuple, std::size_t... Is>
 			auto apply (F func, Tuple&& tuple, std::index_sequence<Is...>)
 			{
 				return func (std::get<Is> (std::forward<Tuple> (tuple))...);
 			}
-		}
+		} // namespace details
 
 		template <typename F, typename Tuple>
 		auto apply (F func, Tuple&& tuple)
@@ -45,9 +45,9 @@ namespace std
 			return details::apply (func, std::forward<Tuple> (tuple), Seq{});
 		}
 
-	}
+	} // namespace compatibility_cpp17
 
-}
+} // namespace std
 
 #endif
 #endif

@@ -20,11 +20,11 @@
 #ifndef ui_graphical_game_gameguistateH
 #define ui_graphical_game_gameguistateH
 
-#include <vector>
-
 #include "game/logic/upgradecalculator.h"
 #include "game/serialization/serialization.h"
 #include "utility/position.h"
+
+#include <vector>
 
 class cUnitSelection;
 class cUnitLockList;
@@ -61,6 +61,7 @@ public:
 		archive & NVP (selectedUnitIds);
 		archive & NVP (lockedUnitIds);
 	}
+
 public:
 	cPosition mapPosition;
 	float mapZoomFactor = 1.f;
@@ -80,6 +81,7 @@ public:
 	bool unitVideoPlaying = true;
 	bool chatActive = true;
 	std::vector<cResearch::eResearchArea> currentTurnResearchAreasFinished;
+
 private:
 	std::vector<unsigned int> selectedUnitIds;
 	std::vector<unsigned int> lockedUnitIds;

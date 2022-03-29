@@ -20,12 +20,12 @@
 #ifndef ui_graphical_game_control_chatcommand_chatcommandexecutorH
 #define ui_graphical_game_control_chatcommand_chatcommandexecutorH
 
-#include <exception>
-#include <string>
-#include <sstream>
-#include <tuple>
-
 #include "config/workaround/cpp17/apply.h"
+
+#include <exception>
+#include <sstream>
+#include <string>
+#include <tuple>
 
 class cChatCommand;
 
@@ -49,6 +49,7 @@ public:
 	bool tryExecute (const std::string& command) const override;
 	void printArguments (std::ostream& result) const override;
 	const cChatCommand& getCommand() const override;
+
 private:
 	F function;
 	cChatCommandParser<Arguments...> argumentParser;

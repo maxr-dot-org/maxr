@@ -31,6 +31,7 @@ public:
 
 	const PointType& operator*();
 	const PointType* operator->();
+
 private:
 	const PointType begin;
 	const PointType end;

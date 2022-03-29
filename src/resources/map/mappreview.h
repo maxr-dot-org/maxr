@@ -20,10 +20,10 @@
 #ifndef resources_map_mappreviewH
 #define resources_map_mappreviewH
 
-#include <string>
-
 #include "SDLutility/autosurface.h"
 #include "utility/position.h"
+
+#include <string>
 
 struct sMapPreview
 {

@@ -20,13 +20,13 @@
 #ifndef ui_graphical_menu_windows_windowmapselection_windowmapselectionH
 #define ui_graphical_menu_windows_windowmapselection_windowmapselectionH
 
-#include <array>
-#include <vector>
-#include <string>
-
 #include "ui/graphical/window.h"
-#include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+#include <array>
+#include <string>
+#include <vector>
 
 class cImage;
 class cLabel;
@@ -53,12 +53,13 @@ private:
 
 	void updateMaps();
 	void loadMaps();
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 
 	static const size_t mapRows = 2;
 	static const size_t mapColumns = 4;
-	static const size_t mapCount = mapRows* mapColumns;
+	static const size_t mapCount = mapRows * mapColumns;
 
 	std::array<cLabel*, mapCount> mapTitles;
 	std::array<cImage*, mapCount> mapImages;

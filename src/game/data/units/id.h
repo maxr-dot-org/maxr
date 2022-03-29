@@ -26,8 +26,10 @@
 
 struct sID
 {
-	sID() : firstPart (0), secondPart (0) {}
-	sID (int first, int second) : firstPart (first), secondPart (second) {}
+	sID() :
+		firstPart (0), secondPart (0) {}
+	sID (int first, int second) :
+		firstPart (first), secondPart (second) {}
 
 	std::string getText() const;
 

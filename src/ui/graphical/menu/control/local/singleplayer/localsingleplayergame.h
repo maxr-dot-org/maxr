@@ -20,11 +20,11 @@
 #ifndef ui_graphical_menu_control_local_singleplayer_localsingleplayergameH
 #define ui_graphical_menu_control_local_singleplayer_localsingleplayergameH
 
+#include "ui/graphical/game/control/gameguicontroller.h"
+#include "ui/graphical/menu/control/game.h"
+
 #include <memory>
 #include <string>
-
-#include "ui/graphical/menu/control/game.h"
-#include "ui/graphical/game/control/gameguicontroller.h"
 
 class cClient;
 class cServer;
@@ -42,7 +42,6 @@ protected:
 	std::unique_ptr<cServer> server;
 
 	std::unique_ptr<cGameGuiController> gameGuiController;
-
 };
 
 #endif

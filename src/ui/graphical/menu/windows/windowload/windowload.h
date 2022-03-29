@@ -20,13 +20,13 @@
 #ifndef ui_graphical_menu_windows_windowload_windowloadH
 #define ui_graphical_menu_windows_windowload_windowloadH
 
-#include <array>
-#include <functional>
-#include <vector>
-
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <array>
+#include <functional>
+#include <vector>
 
 class cPushButton;
 class cSaveGameInfo;

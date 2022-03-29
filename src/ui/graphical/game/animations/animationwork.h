@@ -35,6 +35,7 @@ public:
 	cAnimationWork (cAnimationTimer&, const cBuilding&);
 
 	bool isLocatedIn (const cBox<cPosition>& box) const override;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager animationTimerConnectionManager;

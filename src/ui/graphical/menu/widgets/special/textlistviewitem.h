@@ -32,6 +32,7 @@ public:
 	const std::string& getText() const;
 
 	void handleResized (const cPosition& oldSize) override;
+
 protected:
 	cLabel* label;
 };

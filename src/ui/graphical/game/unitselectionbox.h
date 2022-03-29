@@ -41,6 +41,7 @@ public:
 	const cBox<cFixedVector<double, 2>>& getBox() const;
 
 	cBox<cPosition> getCorrectedMapBox() const;
+
 private:
 	cBox<cFixedVector<double, 2>> box;
 };

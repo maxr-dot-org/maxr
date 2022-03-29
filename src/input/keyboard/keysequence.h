@@ -20,11 +20,11 @@
 #ifndef input_keyboard_keysequence_H
 #define input_keyboard_keysequence_H
 
+#include "game/serialization/serialization.h"
+#include "input/keyboard/keycombination.h"
+
 #include <string>
 #include <vector>
-
-#include "input/keyboard/keycombination.h"
-#include "game/serialization/serialization.h"
 
 class cKeySequence
 {

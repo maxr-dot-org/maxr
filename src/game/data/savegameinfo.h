@@ -19,21 +19,21 @@
 #ifndef game_data_savegameinfoH
 #define game_data_savegameinfoH
 
+#include "game/serialization/serialization.h"
+#include "player/playerbasicdata.h"
+#include "utility/version.h"
+
 #include <string>
 #include <vector>
-
-#include "game/serialization/serialization.h"
-#include "utility/version.h"
-#include "player/playerbasicdata.h"
 
 /**
 * The Types which are possible for a game
 */
 enum class eGameType
 {
-	Single,  // a singleplayer game
+	Single, // a singleplayer game
 	Hotseat, // a hotseat multiplayer game
-	TcpIp    // a multiplayergame over TCP/IP
+	TcpIp // a multiplayergame over TCP/IP
 };
 
 /**

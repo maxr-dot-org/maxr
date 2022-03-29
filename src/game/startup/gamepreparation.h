@@ -20,10 +20,10 @@
 #ifndef game_startup_gamepreparationH
 #define game_startup_gamepreparationH
 
+#include "game/data/units/unitdata.h"
+
 #include <utility>
 #include <vector>
-
-#include "game/data/units/unitdata.h"
 
 class cGameSettings;
 class cUnitsData;

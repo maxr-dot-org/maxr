@@ -20,8 +20,8 @@
 #ifndef ui_graphical_shortcut_H
 #define ui_graphical_shortcut_H
 
-#include "utility/signal/signal.h"
 #include "input/keyboard/keysequence.h"
+#include "utility/signal/signal.h"
 
 class cShortcut
 {
@@ -37,6 +37,7 @@ public:
 	bool hit (const cKeySequence&);
 
 	cSignal<void()> triggered;
+
 private:
 	cKeySequence keySequence;
 	bool active = true;

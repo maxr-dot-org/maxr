@@ -20,36 +20,38 @@
 #ifndef game_data_freezemodeH
 #define game_data_freezemodeH
 
-#include <string>
 #include <game/serialization/serialization.h>
+#include <string>
 
 enum class ePlayerConnectionState
 {
-	Inactive,      // player is not connected, but game can continue (e.g. defeated player)
-	Connected,     // player is connected. Normal operation.
+	Inactive, // player is not connected, but game can continue (e.g. defeated player)
+	Connected, // player is connected. Normal operation.
 	NotResponding, // player is connected, but no sync message received for some time. Game should be paused.
-	Disconnected   // player has lost connection. Game should be paused.
+	Disconnected // player has lost connection. Game should be paused.
 };
 
 enum class eFreezeMode
 {
 	WaitForTurnend, // server is processing the turn end
-	Pause,          // pause, because... pause
-	WaitForClient,  // waiting for response from client
-	WaitForServer   // waiting for response from server
+	Pause, // pause, because... pause
+	WaitForClient, // waiting for response from client
+	WaitForServer // waiting for response from server
 };
 
 namespace serialization
 {
-	template <> struct sEnumStringMapping<ePlayerConnectionState>
+	template <>
+	struct sEnumStringMapping<ePlayerConnectionState>
 	{
 		static const std::vector<std::pair<ePlayerConnectionState, const char*>> m;
 	};
-	template <> struct sEnumStringMapping<eFreezeMode>
+	template <>
+	struct sEnumStringMapping<eFreezeMode>
 	{
 		static const std::vector<std::pair<eFreezeMode, const char*>> m;
 	};
-}
+} // namespace serialization
 class cFreezeModes
 {
 public:
@@ -73,8 +75,8 @@ public:
 
 	// These modes are triggered on server (and synchronized to clients):
 	bool waitForTurnEnd = false; // server is processing the turn end
-	bool pause = false;          // pause, because... pause
-	bool waitForClient = false;  // waiting for response from client
+	bool pause = false; // pause, because... pause
+	bool waitForClient = false; // waiting for response from client
 
 	// This mode is triggered on client (and not synchronized with server or other clients):
 	bool waitForServer = false; // waiting for response from server

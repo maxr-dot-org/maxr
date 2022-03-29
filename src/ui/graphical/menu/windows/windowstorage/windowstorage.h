@@ -20,11 +20,11 @@
 #ifndef ui_graphical_menu_windows_windowstorage_windowstorageH
 #define ui_graphical_menu_windows_windowstorage_windowstorageH
 
-#include <array>
-
 #include "ui/graphical/window.h"
-#include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+#include <array>
 
 class cUnit;
 class cVehicle;
@@ -49,6 +49,7 @@ public:
 	cSignal<void (size_t index)> reload;
 	cSignal<void (size_t index)> repair;
 	cSignal<void (size_t index)> upgrade;
+
 private:
 	const cUnit& unit;
 
@@ -77,14 +78,14 @@ private:
 	static const int maxColumns = 3;
 	static const int maxRows = 2;
 
-	std::array<cPushButton*, maxColumns* maxRows> activateButtons;
-	std::array<cPushButton*, maxColumns* maxRows> reloadButtons;
-	std::array<cPushButton*, maxColumns* maxRows> repairButtons;
-	std::array<cPushButton*, maxColumns* maxRows> upgradeButtons;
+	std::array<cPushButton*, maxColumns * maxRows> activateButtons;
+	std::array<cPushButton*, maxColumns * maxRows> reloadButtons;
+	std::array<cPushButton*, maxColumns * maxRows> repairButtons;
+	std::array<cPushButton*, maxColumns * maxRows> upgradeButtons;
 
-	std::array<cImage*, maxColumns* maxRows> unitImages;
-	std::array<cLabel*, maxColumns* maxRows> unitNames;
-	std::array<cUnitDetailsStored*, maxColumns* maxRows> unitDetails;
+	std::array<cImage*, maxColumns * maxRows> unitImages;
+	std::array<cLabel*, maxColumns * maxRows> unitNames;
+	std::array<cUnitDetailsStored*, maxColumns * maxRows> unitDetails;
 
 	void updateUnitsWidgets();
 	void updateUnitButtons (const cVehicle& unit, size_t positionIndex);

@@ -27,8 +27,7 @@
 #include "game/protocol/netmessage.h"
 #include "utility/thread/concurrentqueue.h"
 
-#include "SDL_thread.h"
-
+#include <SDL_thread.h>
 #include <memory>
 #include <string>
 
@@ -40,8 +39,8 @@ struct sLobbyPreparationData;
 class cServer : public INetMessageReceiver
 {
 	friend class cDebugOutputWidget;
-public:
 
+public:
 	cServer (std::shared_ptr<cConnectionManager>);
 	~cServer();
 

@@ -35,6 +35,7 @@ class cMouseModeDefault : public cMouseMode
 		Select,
 		ActivateFinished
 	};
+
 public:
 	cMouseModeDefault (const cMapView*, const cUnitSelection&, const cPlayer*);
 

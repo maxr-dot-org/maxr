@@ -21,8 +21,8 @@
 #define game_data_units_buildingH
 
 #include "game/data/miningresource.h"
-#include "game/data/units/unitdata.h"
 #include "game/data/units/unit.h"
+#include "game/data/units/unitdata.h"
 #include "game/logic/upgradecalculator.h" // cResearch::eResearchArea
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -69,6 +69,7 @@ public:
 		archive & NVP (type);
 		archive & NVP (remainingMetal);
 	}
+
 private:
 	sID type;
 	int remainingMetal;
@@ -221,19 +222,19 @@ private:
 
 public:
 	mutable int effectAlpha = 0; // alpha value for the effect
-	int rubbleTyp = 0;     // type of the rubble graphic (when unit is rubble)
+	int rubbleTyp = 0; // type of the rubble graphic (when unit is rubble)
 
 	bool BaseN = false, BaseE = false, BaseS = false, BaseW = false; // is the building connected in this direction?
 	bool BaseBN = false, BaseBE = false, BaseBS = false, BaseBW = false; // is the building connected in this direction (only for big buildings)
-	cSubBase* subBase = nullptr;     // the subbase to which this building belongs
-	sMiningResource prod;          // production settings (from mine allocation menu)
+	cSubBase* subBase = nullptr; // the subbase to which this building belongs
+	sMiningResource prod; // production settings (from mine allocation menu)
 
 	cPosition DamageFXPoint, DamageFXPoint2; // the points, where smoke will be generated when the building is damaged
 	/** true if the building was has been working before it was disabled */
 	bool wasWorking = false;
-	int points = 0;     // accumulated eco-sphere points
+	int points = 0; // accumulated eco-sphere points
 private:
-	bool isWorking = false;  // is the building currently working?
+	bool isWorking = false; // is the building currently working?
 
 	int buildSpeed = 0;
 	int metalPerRound = 0;
@@ -241,7 +242,7 @@ private:
 
 	sMiningResource maxProd; // the maximum possible production of the building (resources under the building)
 
-	int rubbleValue = 0;   // number of resources in the rubble field
+	int rubbleValue = 0; // number of resources in the rubble field
 
 	cResearch::eResearchArea researchArea = cResearch::eResearchArea::AttackResearch; ///< if the building can research, this is the area the building last researched or is researching
 

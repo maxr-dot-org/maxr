@@ -20,12 +20,12 @@
 #ifndef ui_graphical_menu_control_menucontrollermultiplayerhotseatH
 #define ui_graphical_menu_control_menucontrollermultiplayerhotseatH
 
-#include <memory>
-#include <vector>
-
+#include "game/logic/landingpositionmanager.h"
 #include "utility/runnable.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "game/logic/landingpositionmanager.h"
+
+#include <memory>
+#include <vector>
 
 class cApplication;
 class cLocalHotSeatGameNew;
@@ -42,6 +42,7 @@ public:
 
 	void start();
 	void run() override {}
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

@@ -20,12 +20,12 @@
 #ifndef ui_graphical_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH
 #define ui_graphical_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH
 
-#include <memory>
-
-#include "ui/graphical/window.h"
-#include "utility/signal/signalconnectionmanager.h"
-#include "utility/signal/signal.h"
 #include "game/logic/landingpositionstate.h"
+#include "ui/graphical/window.h"
+#include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cAnimationTimer;
 class cChatBoxLandingPlayerListViewItem;
@@ -42,7 +42,8 @@ class cUnitsData;
 struct sTerrain;
 struct sLandingUnit;
 
-template <typename, typename> class cChatBox;
+template <typename, typename>
+class cChatBox;
 
 class cWindowLandingPositionSelection : public cWindow
 {
@@ -74,6 +75,7 @@ public:
 
 	cSignal<void()> opened;
 	cSignal<void()> closed;
+
 private:
 	AutoSurface createHudSurface();
 

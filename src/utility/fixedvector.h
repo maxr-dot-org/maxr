@@ -20,10 +20,10 @@
 #ifndef utility_fixedvectorH
 #define utility_fixedvectorH
 
+#include <algorithm> // for std::max
 #include <cassert>
 #include <cmath>
 #include <type_traits>
-#include <algorithm> // for std::max
 
 /**
  * A simple fixed size vector that provides basic mathematical operations.
@@ -108,6 +108,7 @@ public:
 	 */
 	point_type data();
 	const_point_type data() const;
+
 private:
 	T data_[D];
 };
@@ -354,7 +355,7 @@ bool cFixedVector<T, D>::operator== (const value_type& other) const
 template <typename T, std::size_t D>
 bool cFixedVector<T, D>::operator!= (const value_type& other) const
 {
-	return ! ((*this) == other);
+	return !((*this) == other);
 }
 
 //------------------------------------------------------------------------------
@@ -372,9 +373,8 @@ bool cFixedVector<T, D>::operator== (const self_type& other) const
 template <typename T, std::size_t D>
 bool cFixedVector<T, D>::operator!= (const self_type& other) const
 {
-	return ! ((*this) == other);
+	return !((*this) == other);
 }
-
 
 //------------------------------------------------------------------------------
 template <typename T, std::size_t D>
@@ -425,7 +425,6 @@ typename cFixedVector<T, D>::self_type cFixedVector<T, D>::abs() const
 	}
 	return result;
 }
-
 
 //------------------------------------------------------------------------------
 template <typename T, std::size_t D>

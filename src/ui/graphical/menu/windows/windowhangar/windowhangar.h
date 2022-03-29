@@ -22,8 +22,8 @@
 
 #include "ui/graphical/window.h"
 #include "utility/color.h"
-#include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 class cCheckBox;
 class cImage;
@@ -37,7 +37,8 @@ class cUnitUpgrade;
 
 struct sID;
 
-template <typename T> class cListView;
+template <typename T>
+class cListView;
 
 class cWindowHangar : public cWindow
 {
@@ -48,6 +49,7 @@ public:
 
 	cSignal<void()> done;
 	cSignal<void()> canceled;
+
 protected:
 	cUnitListViewItemBuy& addSelectionUnit (const sID& unitId);
 	void setSelectedSelectionItem (const cUnitListViewItemBuy& item);
@@ -76,6 +78,7 @@ protected:
 	cSignal<void (const cUnitListViewItemBuy&)> selectionUnitClickedSecondTime;
 
 	cSignal<void (cUnitListViewItemBuy*)> selectionUnitSelectionChanged;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

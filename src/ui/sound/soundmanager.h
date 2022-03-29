@@ -48,6 +48,7 @@ public:
 	void playSound (std::shared_ptr<cSoundEffect> sound, bool loop = false);
 
 	void stopAllSounds();
+
 private:
 	struct sStoredSound
 	{

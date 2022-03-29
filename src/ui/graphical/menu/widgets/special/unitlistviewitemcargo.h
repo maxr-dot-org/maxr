@@ -29,6 +29,7 @@ public:
 
 	int getCargo() const;
 	void setCargo (int cargo);
+
 private:
 	const cStaticUnitData* unitData;
 	int cargo;

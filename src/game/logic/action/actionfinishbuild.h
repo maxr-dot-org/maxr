@@ -28,14 +28,22 @@ public:
 	cActionFinishBuild (const cUnit& unit, const cPosition& escapePosition);
 	cActionFinishBuild (cBinaryArchiveOut& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
 
 	void execute (cModel& model) const override;
 
 private:
-	void finishABuilding (cModel &model, cVehicle& vehicle) const;
-	void finishAVehicle (cModel &model, cBuilding& building) const;
+	void finishABuilding (cModel& model, cVehicle& vehicle) const;
+	void finishAVehicle (cModel& model, cBuilding& building) const;
 
 	int unitId;
 	cPosition escapePosition;

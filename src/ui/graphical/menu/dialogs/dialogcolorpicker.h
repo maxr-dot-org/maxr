@@ -40,6 +40,7 @@ public:
 
 	cSignal<void()> done;
 	cSignal<void()> canceled;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

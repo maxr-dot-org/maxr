@@ -79,6 +79,7 @@ public:
 	cSignal<void(), std::recursive_mutex> resumed;
 
 	cSignal<void()> positionChanged;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

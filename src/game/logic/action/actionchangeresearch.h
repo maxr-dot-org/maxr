@@ -31,13 +31,20 @@ public:
 	cActionChangeResearch (const std::array<int, cResearch::kNrResearchAreas>& researchAreas);
 	cActionChangeResearch (cBinaryArchiveOut& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
 
 	void execute (cModel& model) const override;
 
 private:
-
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
@@ -45,7 +52,6 @@ private:
 	}
 
 	std::array<int, cResearch::kNrResearchAreas> researchAreas;
-
 };
 
 #endif // game_logic_actionChangeResearchH

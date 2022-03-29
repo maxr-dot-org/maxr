@@ -20,10 +20,10 @@
 #ifndef ui_graphical_menu_widgets_special_resourcebarH
 #define ui_graphical_menu_widgets_special_resourcebarH
 
-#include "ui/graphical/menu/widgets/clickablewidget.h"
-#include "ui/graphical/orientation.h"
 #include "SDLutility/autosurface.h"
 #include "resources/sound.h"
+#include "ui/graphical/menu/widgets/clickablewidget.h"
+#include "ui/graphical/orientation.h"
 #include "utility/signal/signal.h"
 
 enum class eResourceBarType

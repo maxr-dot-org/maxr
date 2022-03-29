@@ -31,6 +31,7 @@ public:
 
 	bool hasPosition() const override;
 	const cPosition& getPosition() const override;
+
 private:
 	const cUnit& unit;
 };

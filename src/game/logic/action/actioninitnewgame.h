@@ -33,14 +33,23 @@ public:
 	explicit cActionInitNewGame (sInitPlayerData);
 	explicit cActionInitNewGame (cBinaryArchiveOut&);
 
-	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
 
 	void execute (cModel&) const override;
 
 	static bool isValidLandingPosition (cPosition, const cStaticMap&, bool fixedBridgeHead, const std::vector<sLandingUnit>&, const cUnitsData&);
 
 	sInitPlayerData initPlayerData;
+
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)

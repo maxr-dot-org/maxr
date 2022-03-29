@@ -20,23 +20,36 @@
 #ifndef utility_derefH
 #define utility_derefH
 
-template <typename T>
-inline T& deref (T& x) { return x; }
+#include <type_traits>
 
 template <typename T>
-inline T& deref (T* x) { return *x; }
+T& deref (T& x)
+{
+	return x;
+}
+
+template <typename T>
+T& deref (T* x)
+{
+	return *x;
+}
 
 //template <typename T>
-//inline T& deref (const std::unique_ptr<T>& x) { return *x; }
+//T& deref (const std::unique_ptr<T>& x) { return *x; }
 
 //template <typename T>
-//inline T& deref (const std::shared_ptr<T>& x) { return *x; }
-
-
-template <typename T>
-const T& conditionalDeref (const T& t, std::false_type) { return t; }
+//T& deref (const std::shared_ptr<T>& x) { return *x; }
 
 template <typename T>
-const T& conditionalDeref (const T* t, std::true_type) { return *t; }
+const T& conditionalDeref (const T& t, std::false_type)
+{
+	return t;
+}
+
+template <typename T>
+const T& conditionalDeref (const T* t, std::true_type)
+{
+	return *t;
+}
 
 #endif // utility_derefH

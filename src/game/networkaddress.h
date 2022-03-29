@@ -29,7 +29,7 @@ struct sNetworkAddress
 	std::string ip = "127.0.0.1"; // string? why not int array? --beko
 	std::uint16_t port;
 
-	std::string toString() const { return ip + ":" + std::to_string(port); }
+	std::string toString() const { return ip + ":" + std::to_string (port); }
 
 	template <typename Archive>
 	void serialize (Archive& archive)
@@ -37,7 +37,6 @@ struct sNetworkAddress
 		archive & NVP (ip);
 		archive & NVP (port);
 	}
-
 };
 
 #endif

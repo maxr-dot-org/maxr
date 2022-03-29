@@ -20,10 +20,10 @@
 #ifndef ui_graphical_menu_windows_windowupgrades_windowupgradesH
 #define ui_graphical_menu_windows_windowupgrades_windowupgradesH
 
-#include <map>
-#include <array>
-
 #include "ui/graphical/menu/windows/windowhangar/windowhangar.h"
+
+#include <array>
+#include <map>
 
 class cLabel;
 class cPushButton;
@@ -35,13 +35,12 @@ class cTurnTimeClock;
 class cWindowUpgradesFilterState
 {
 public:
-	cWindowUpgradesFilterState():
+	cWindowUpgradesFilterState() :
 		TankChecked (true),
 		PlaneChecked (true),
 		ShipChecked (true),
 		BuildingChecked (true),
-		TNTChecked (false)
-	{};
+		TNTChecked (false){}
 	bool TankChecked;
 	bool PlaneChecked;
 	bool ShipChecked;

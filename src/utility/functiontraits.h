@@ -39,14 +39,14 @@ struct sFunctionTraits<R (Args...)>
 {
 	using result_type = R;
 
-    static const size_t arity = sizeof... (Args);
+	static const size_t arity = sizeof...(Args);
 
-    template <size_t N>
-    struct argument
-    {
-        static_assert (N < arity, "Invalid argument index.");
-        using type = std::tuple_element_t<N, std::tuple<Args...>>;
-    };
+	template <size_t N>
+	struct argument
+	{
+		static_assert (N < arity, "Invalid argument index.");
+		using type = std::tuple_element_t<N, std::tuple<Args...>>;
+	};
 };
 
 template <typename R, typename... Args>

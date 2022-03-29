@@ -20,11 +20,11 @@
 #ifndef ui_graphical_menu_control_network_networkgameH
 #define ui_graphical_menu_control_network_networkgameH
 
-#include <memory>
-
 #include "ui/graphical/game/control/gameguicontroller.h"
 #include "ui/graphical/menu/control/game.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cApplication;
 class cClient;

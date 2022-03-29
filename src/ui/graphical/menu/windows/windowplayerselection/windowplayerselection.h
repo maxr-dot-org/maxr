@@ -20,12 +20,12 @@
 #ifndef ui_graphical_menu_windows_windowplayerselection_windowplayerselectionH
 #define ui_graphical_menu_windows_windowplayerselection_windowplayerselectionH
 
-#include <array>
-
+#include "SDLutility/autosurface.h"
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "SDLutility/autosurface.h"
+
+#include <array>
 
 class cImage;
 class cPushButton;
@@ -40,12 +40,14 @@ enum class ePlayerType
 class cWindowPlayerSelection : public cWindow
 {
 	const static size_t maxPlayers = 4;
+
 public:
 	cWindowPlayerSelection();
 
 	const std::array<ePlayerType, maxPlayers>& getPlayerTypes() const;
 
 	cSignal<void()> done;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

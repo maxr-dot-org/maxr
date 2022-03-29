@@ -32,13 +32,13 @@ struct sMiningResource
 
 	int total() const;
 
-	friend bool operator == (const sMiningResource& lhs, const sMiningResource& rhs)
+	friend bool operator== (const sMiningResource& lhs, const sMiningResource& rhs)
 	{
 		return lhs.metal == rhs.metal && lhs.oil == rhs.oil && lhs.gold == rhs.gold;
 	}
 
-	sMiningResource& operator += (const sMiningResource&);
-	sMiningResource& operator -= (const sMiningResource&);
+	sMiningResource& operator+= (const sMiningResource&);
+	sMiningResource& operator-= (const sMiningResource&);
 
 	template <typename Archive>
 	void serializeThis (Archive& archive)

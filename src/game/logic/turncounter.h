@@ -42,6 +42,7 @@ public:
 	}
 
 	mutable cSignal<void()> turnChanged;
+
 private:
 	int turn;
 };

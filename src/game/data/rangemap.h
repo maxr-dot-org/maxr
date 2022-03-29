@@ -20,11 +20,10 @@
 #ifndef game_data_rangemapH
 #define game_data_rangemapH
 
-#include "ui/graphical/game/widgets/debugoutputwidget.h"
-#include "utility/signal/signal.h"
-#include "utility/position.h"
-
 #include "config/workaround/cpp17/optional.h"
+#include "ui/graphical/game/widgets/debugoutputwidget.h"
+#include "utility/position.h"
+#include "utility/signal/signal.h"
 
 /**
 * This class is used to track, whether a position is a specific range to any
@@ -33,6 +32,7 @@
 class cRangeMap
 {
 	friend cDebugOutputWidget;
+
 public:
 	cRangeMap() = default;
 

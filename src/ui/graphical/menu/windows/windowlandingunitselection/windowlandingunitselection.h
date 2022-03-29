@@ -20,10 +20,10 @@
 #ifndef ui_graphical_menu_windows_windowlandingunitselection_windowlandingunitselectionH
 #define ui_graphical_menu_windows_windowlandingunitselection_windowlandingunitselectionH
 
+#include "ui/graphical/menu/windows/windowadvancedhangar/windowadvancedhangar.h"
+
 #include <array>
 #include <map>
-
-#include "ui/graphical/menu/windows/windowadvancedhangar/windowadvancedhangar.h"
 
 class cCheckBox;
 class cLabel;
@@ -49,8 +49,8 @@ protected:
 	bool tryAddSelectedUnit (const cUnitListViewItemBuy& unitItem) const override;
 	bool tryRemoveSelectedUnit (const cUnitListViewItemCargo& unitItem) const override;
 	void setActiveUnit (const sID& unitId) override;
-private:
 
+private:
 	void generateSelectionList (bool select);
 
 	void metalChanged();

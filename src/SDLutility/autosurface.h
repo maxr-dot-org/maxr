@@ -20,21 +20,21 @@
 #ifndef SDLutility_autosurfaceH
 #define SDLutility_autosurfaceH
 
-#include <memory>
 #include <SDL.h>
+#include <memory>
 
 namespace detail
 {
 
-struct SdlSurfaceDeleter
-{
-	void operator() (SDL_Surface* surface) const
+	struct SdlSurfaceDeleter
 	{
-		SDL_FreeSurface (surface);
-	}
-};
+		void operator() (SDL_Surface* surface) const
+		{
+			SDL_FreeSurface (surface);
+		}
+	};
 
-}
+} // namespace detail
 
 using AutoSurface = std::unique_ptr<SDL_Surface, detail::SdlSurfaceDeleter>;
 

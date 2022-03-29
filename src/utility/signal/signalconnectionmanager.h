@@ -20,9 +20,9 @@
 #ifndef utility_signal_signalconnectionmanagerH
 #define utility_signal_signalconnectionmanagerH
 
-#include <vector>
-
 #include "utility/signal/signalconnection.h"
+
+#include <vector>
 
 /**
  * A RAII signal connection manager class that can be used to bind

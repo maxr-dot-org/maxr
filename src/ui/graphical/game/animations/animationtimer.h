@@ -20,11 +20,11 @@
 #ifndef ui_graphical_game_animations_animationtimerH
 #define ui_graphical_game_animations_animationtimerH
 
+#include "utility/runnable.h"
+#include "utility/signal/signal.h"
+
 #include <SDL_timer.h>
 #include <atomic>
-
-#include "utility/signal/signal.h"
-#include "utility/runnable.h"
 
 /**
  * Central class to get animation timers from.
@@ -98,6 +98,7 @@ public:
 	cSignal<void()> triggered50msCatchUp;
 	cSignal<void()> triggered100msCatchUp;
 	cSignal<void()> triggered400msCatchUp;
+
 private:
 	const Uint32 sdlTimerInterval;
 	SDL_TimerID timerId;

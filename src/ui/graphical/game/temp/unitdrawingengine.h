@@ -20,12 +20,12 @@
 #ifndef ui_graphical_game_temp_unitdrawingengineH
 #define ui_graphical_game_temp_unitdrawingengineH
 
-#include <memory>
-
 #include "game/logic/upgradecalculator.h"
 #include "ui/graphical/game/temp/drawingcache.h"
 #include "utility/color.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cBuilding;
 class cVehicle;
@@ -52,6 +52,7 @@ public:
 	void setDrawColor (bool drawColor);
 
 	void drawPath (const cVehicle&);
+
 public:
 	std::shared_ptr<cAnimationTimer> animationTimer;
 	cDrawingCache drawingCache;

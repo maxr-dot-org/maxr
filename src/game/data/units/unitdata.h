@@ -20,13 +20,12 @@
 #ifndef game_data_units_unitdataH
 #define game_data_units_unitdataH
 
-#include "game/data/units/id.h"
+#include "config/workaround/cpp17/optional.h"
 #include "game/data/resourcetype.h"
+#include "game/data/units/id.h"
 #include "game/serialization/serialization.h"
-
 #include "utility/signal/signal.h"
 
-#include "config/workaround/cpp17/optional.h"
 #include <string>
 #include <utility>
 #include <vector>
@@ -73,23 +72,27 @@ enum class eStorageUnitsImageType
 };
 namespace serialization
 {
-	template <> struct sEnumStringMapping<eMuzzleType>
+	template <>
+	struct sEnumStringMapping<eMuzzleType>
 	{
 		static const std::vector<std::pair<eMuzzleType, const char*>> m;
 	};
-	template <> struct sEnumStringMapping<eSurfacePosition>
+	template <>
+	struct sEnumStringMapping<eSurfacePosition>
 	{
 		static const std::vector<std::pair<eSurfacePosition, const char*>> m;
 	};
-	template <> struct sEnumStringMapping<eOverbuildType>
+	template <>
+	struct sEnumStringMapping<eOverbuildType>
 	{
 		static const std::vector<std::pair<eOverbuildType, const char*>> m;
 	};
-	template <> struct sEnumStringMapping<eStorageUnitsImageType>
+	template <>
+	struct sEnumStringMapping<eStorageUnitsImageType>
 	{
 		static const std::vector<std::pair<eStorageUnitsImageType, const char*>> m;
 	};
-}
+} // namespace serialization
 struct sStaticCommonUnitData
 {
 	// Attack
@@ -157,8 +160,8 @@ struct sStaticCommonUnitData
 		archive & NVP (needsOil);
 		if (Archive::isWriter)
 		{
-			archive & serialization::makeNvp("needsEnergy", needsEnergy > 0 ? needsEnergy : -produceEnergy);
-			archive & serialization::makeNvp("needsHumans", needsHumans > 0 ? needsHumans : -produceHumans);
+			archive & serialization::makeNvp ("needsEnergy", needsEnergy > 0 ? needsEnergy : -produceEnergy);
+			archive & serialization::makeNvp ("needsHumans", needsHumans > 0 ? needsHumans : -produceHumans);
 		}
 		else
 		{
@@ -215,7 +218,6 @@ struct sStaticBuildingData
 		archive & NVP (maxBuildFactor);
 		archive & NVP (modifiesSpeed);
 	}
-
 };
 
 struct sStaticVehicleData
@@ -261,10 +263,11 @@ public:
 	cStaticUnitData() = default;
 	const std::string& getDefaultName() const;
 	const std::string& getDefaultDescription() const;
-	void setDefaultName (std::string name_){ name = name_; }
+	void setDefaultName (std::string name_) { name = name_; }
 	void setDefaultDescription (std::string text) { description = text; }
 
 	uint32_t getChecksum (uint32_t crc) const;
+
 public:
 	// Main
 	sID ID;
@@ -279,13 +282,15 @@ public:
 		archive & NVP (description);
 		archive & NVP (name);
 		sStaticCommonUnitData::serialize (archive);
-		if (ID.isABuilding()) buildingData.serialize (archive);
-		else vehicleData.serialize (archive);
+		if (ID.isABuilding())
+			buildingData.serialize (archive);
+		else
+			vehicleData.serialize (archive);
 	}
 
 private:
 	std::string description; //untranslated data from unit json. Will be used, when translation for the unit is not available
-	std::string name;        //untranslated data from unit json. Will be used, when translation for the unit is not available
+	std::string name; //untranslated data from unit json. Will be used, when translation for the unit is not available
 };
 
 //class for vehicle properties, that are individual for each instance of a unit
@@ -382,6 +387,7 @@ public:
 		if (!Archive::isWriter)
 			crcCache = std::nullopt;
 	}
+
 private:
 	// Main
 	sID id;
@@ -464,8 +470,16 @@ public:
 	void initializeIDData();
 	void initializeClanUnitData (const cClanData& clanData);
 
-	void addData (const cDynamicUnitData& data) { crcCache = std::nullopt; dynamicUnitData.push_back (data); }
-	void addData (const cStaticUnitData& data)  { crcCache = std::nullopt; staticUnitData.push_back (data); }
+	void addData (const cDynamicUnitData& data)
+	{
+		crcCache = std::nullopt;
+		dynamicUnitData.push_back (data);
+	}
+	void addData (const cStaticUnitData& data)
+	{
+		crcCache = std::nullopt;
+		staticUnitData.push_back (data);
+	}
 
 	bool isValidId (const sID& id) const;
 	size_t getNrOfClans() const;
@@ -498,7 +512,11 @@ public:
 	sID getSmallBetonID() const { return sID (1, specialBuildings.smallBeton); }
 	sID getSmallGeneratorID() const { return sID (1, specialBuildings.smallGenerator); }
 
-	void setSpecialBuildingIDs(sSpecialBuildingsId ids) { specialBuildings = ids; crcCache = std::nullopt; }
+	void setSpecialBuildingIDs (sSpecialBuildingsId ids)
+	{
+		specialBuildings = ids;
+		crcCache = std::nullopt;
+	}
 
 	template <typename Archive>
 	void serialize (Archive& archive)
@@ -531,7 +549,7 @@ private:
 	std::vector<cDynamicUnitData> dynamicUnitData;
 
 	// the dynamic unit data. Contains the modified versions for the clans
-	std::vector<std::vector<cDynamicUnitData> > clanDynamicUnitData;
+	std::vector<std::vector<cDynamicUnitData>> clanDynamicUnitData;
 
 	cStaticUnitData rubbleSmall;
 	cStaticUnitData rubbleBig;

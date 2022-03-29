@@ -20,11 +20,11 @@
 #ifndef ui_graphical_windowH
 #define ui_graphical_windowH
 
-#include <utility>
-
-#include "ui/graphical/widget.h"
 #include "SDLutility/autosurface.h"
+#include "ui/graphical/widget.h"
 #include "utility/signal/signal.h"
+
+#include <utility>
 
 class cMouseCursor;
 
@@ -130,6 +130,7 @@ public:
 	 * Triggered when @ref handleRemoved is called.
 	 */
 	cSignal<void()> terminated;
+
 protected:
 	/**
 	 * Gets the mouse of the of the application the current window is the
@@ -213,7 +214,6 @@ private:
 	 * True if the window has been drawn at least once since it has become active.
 	 */
 	bool hasBeenDrawnOnce = false;
-
 };
 
 #endif // ui_graphical_windowH

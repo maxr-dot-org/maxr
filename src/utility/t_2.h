@@ -21,36 +21,37 @@
 
 #include <cmath>
 
-template <class Type> class T_2
+template <class Type>
+class T_2
 {
 public:
 	static T_2<Type> Zero;
 	Type x;
 	Type y;
 	T_2() = default;
-	T_2 (Type px, Type py) : x (px), y (py) {}
+	T_2 (Type px, Type py) :
+		x (px), y (py) {}
 	void operator() (const Type& PX, const Type& PY)
 	{
 		x = PX;
 		y = PY;
 	}
-	bool operator == (const T_2<Type>& P) const
+	bool operator== (const T_2<Type>& P) const
 	{
 		return x == P.x && y == P.y;
 	}
-	bool operator != (const T_2<Type>& P) const
+	bool operator!= (const T_2<Type>& P) const
 	{
 		return x != P.x || y != P.y;
 	}
-	void operator *= (Type f)
+	void operator*= (Type f)
 	{
 		x *= f;
 		y *= f;
 	}
-	void operator /= (Type f)
+	void operator/= (Type f)
 	{
-		Type
-		f_ = 1.0f / f;
+		Type f_ = 1.0f / f;
 		x *= f_;
 		y *= f_;
 	}
@@ -62,46 +63,43 @@ public:
 			x /= P.x;
 			y /= P.y;
 		}*/
-	void operator += (const Type f)
+	void operator+= (const Type f)
 	{
 		x += f;
 		y += f;
 	}
-	void operator -= (const Type f)
+	void operator-= (const Type f)
 	{
 		x -= f;
 		y -= f;
 	}
-	void operator += (const T_2<Type>& P)
+	void operator+= (const T_2<Type>& P)
 	{
 		x += P.x;
 		y += P.y;
 	}
-	void operator -= (const T_2<Type>& P)
+	void operator-= (const T_2<Type>& P)
 	{
 		x -= P.x;
 		y -= P.y;
 	}
-	T_2<Type> operator + (const T_2<Type>& P) const
+	T_2<Type> operator+ (const T_2<Type>& P) const
 	{
-		T_2<Type>
-		R = *this;
+		T_2<Type> R = *this;
 		R.x += P.x;
 		R.y += P.y;
 		return R;
 	}
-	T_2<Type> operator - (const T_2<Type>& P) const
+	T_2<Type> operator- (const T_2<Type>& P) const
 	{
-		T_2<Type>
-		R = *this;
+		T_2<Type> R = *this;
 		R.x -= P.x;
 		R.y -= P.y;
 		return R;
 	}
-	T_2<Type> operator -() const
+	T_2<Type> operator-() const
 	{
-		T_2<Type>
-		R;
+		T_2<Type> R;
 		R.x = Type (-x);
 		R.y = Type (-y);
 		return R;
@@ -115,30 +113,27 @@ public:
 	{
 		x = y = 0;
 	}
-	T_2<Type> operator * (Type f) const
+	T_2<Type> operator* (Type f) const
 	{
-		T_2<Type>
-		R;
+		T_2<Type> R;
 		R (Type (x * f), Type (y * f));
 		return R;
 	}
-	T_2<Type> operator / (Type f)
+	T_2<Type> operator/ (Type f)
 	{
 		Type f_ = Type (1 / f);
-		T_2<Type>
-		R;
+		T_2<Type> R;
 		R (Type (x * f_), Type (y * f_));
 		return R;
 	}
-	Type operator * (const T_2<Type>& P) const
+	Type operator* (const T_2<Type>& P) const
 	{
 		return Type (x * P.x + y * P.y);
 	}
 	Type scalarProduct (const T_2<Type>& A, const T_2<Type>& B) const
 	{
-		Type
-		x = B.x - A.x,
-		y = B.y - A.y;
+		Type x = B.x - A.x;
+		Type y = B.y - A.y;
 		return Type (x * x + y * y);
 	}
 	void interpolate (const T_2<Type>& P1, const T_2<Type>& P2, Type f)
@@ -148,16 +143,14 @@ public:
 	}
 	T_2<Type> interpolate (const T_2<Type>& P1, Type f)
 	{
-		T_2<Type>
-		R;
+		T_2<Type> R;
 		R.x = Type (x + (P1.x - x) * f);
 		R.y = Type (y + (P1.y - y) * f);
 		return R;
 	}
 	T_2<Type> interpolate (const T_2<Type>& P1)
 	{
-		T_2<Type>
-		R;
+		T_2<Type> R;
 		R.x = Type (x + (P1.x - x) * 0.5f);
 		R.y = Type (y + (P1.y - y) * 0.5f);
 		return R;
@@ -173,9 +166,8 @@ public:
 	}
 	Type dist (const T_2<Type>& P) const
 	{
-		float
-		DX = P.x - x,
-		DY = P.y - y;
+		float DX = P.x - x;
+		float DY = P.y - y;
 		return sqrtf (DX * DX + DY * DY);
 	}
 	Type distSqr() const
@@ -184,29 +176,25 @@ public:
 	}
 	Type distSqr (const T_2<Type>& P) const
 	{
-		Type
-		DX = P.x - x,
-		DY = P.y - y;
+		Type DX = P.x - x;
+		Type DY = P.y - y;
 		return DX * DX + DY * DY;
 	}
 	void normalize()
 	{
-		float
-		f = 1.f / dist();
+		float f = 1.f / dist();
 		x *= f;
 		y *= f;
 	}
 	T_2<Type> normalized() const
 	{
-		T_2<Type>
-		R = *this;
+		T_2<Type> R = *this;
 		R.normalize();
 		return R;
 	}
-	T_2<Type> operator !() const
+	T_2<Type> operator!() const
 	{
-		T_2<Type>
-		R;
+		T_2<Type> R;
 		R (Type (-y), Type (x));
 		return R;
 	}
@@ -219,28 +207,27 @@ public:
 	{
 		x = A.y - B.y;
 		y = B.x - A.x;
-		Type
-		_f = 1.f / sqrtf (x * x + y * y);
+		Type _f = 1.f / sqrtf (x * x + y * y);
 		x *= _f;
 		y *= _f;
 	}
 };
 
-
-template <class Type> inline T_2<Type> I_2 (const Type PX, const Type PY)
+template <class Type>
+T_2<Type> I_2 (const Type PX, const Type PY)
 {
-	T_2<Type>
-	P;
+	T_2<Type> P;
 	P (PX, PY);
-	return (P);
+	return P;
 }
 
-template <class Type> inline T_2<Type> operator * (Type f, const T_2<Type>& P)
+template <class Type>
+T_2<Type> operator* (Type f, const T_2<Type>& P)
 {
 	return (I_2 (P.x * f, P.y * f));
 }
 
-template <class Type> T_2<Type> T_2<Type>::Zero (0, 0);
-
+template <class Type>
+T_2<Type> T_2<Type>::Zero (0, 0);
 
 #endif

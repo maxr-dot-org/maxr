@@ -20,15 +20,14 @@
 #ifndef ui_graphical_game_widgets_chatboxH
 #define ui_graphical_game_widgets_chatboxH
 
-#include <memory>
-
-#include "ui/graphical/widget.h"
-
 #include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/listview.h"
+#include "ui/graphical/widget.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cPosition;
 
@@ -37,7 +36,8 @@ class cBox;
 
 class cLineEdit;
 
-template <typename T> class cListView;
+template <typename T>
+class cListView;
 class cLobbyChatBoxListViewItem;
 class cChatBoxPlayerListViewItem;
 
@@ -66,6 +66,7 @@ public:
 	void focus();
 
 	cSignal<void (const std::string&)> commandEntered;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 
@@ -112,9 +113,10 @@ void cChatBox<ChatListItemType, PlayerListItemType>::draw (SDL_Surface& destinat
 {
 	auto application = getActiveApplication();
 
-	const bool hasKeyFocus = application && (application->hasKeyFocus (*chatLineEdit)/* ||
+	const bool hasKeyFocus = application && (application->hasKeyFocus (*chatLineEdit) /* ||
 																					 application->hasKeyFocus (*chatList) ||
-																					 application->hasKeyFocus (*playersList)*/);
+																					 application->hasKeyFocus (*playersList)*/
+	                         );
 
 	auto background = hasKeyFocus ? focusBackground.get() : nonFocusBackground.get();
 

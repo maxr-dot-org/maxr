@@ -30,6 +30,7 @@ public:
 	cWindowNetworkLobbyHost();
 
 	cSignal<void()> triggeredStartHost;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 };

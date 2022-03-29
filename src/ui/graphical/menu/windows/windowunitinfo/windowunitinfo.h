@@ -20,9 +20,9 @@
 #ifndef ui_graphical_menu_windows_windowunitinfo_windowunitinfoH
 #define ui_graphical_menu_windows_windowunitinfo_windowunitinfoH
 
+#include "game/data/units/unitdata.h"
 #include "ui/graphical/window.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "game/data/units/unitdata.h"
 
 class cPlayer;
 class cUnitsData;
@@ -31,6 +31,7 @@ class cWindowUnitInfo : public cWindow
 {
 public:
 	cWindowUnitInfo (const cDynamicUnitData&, const cPlayer* owner, const cUnitsData&);
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 };

@@ -45,8 +45,7 @@ T random (const T min, const T max)
 	using DistributionType = std::conditional_t<
 		std::is_integral<T>::value,
 		std::uniform_int_distribution<T>,
-		std::uniform_real_distribution<T>
-	>;
+		std::uniform_real_distribution<T>>;
 
 	static std::random_device rd;
 	static std::mt19937 gen (rd());
@@ -55,7 +54,6 @@ T random (const T min, const T max)
 
 	return distribution (gen);
 }
-
 
 /**
  * Creates a uniform distributed random number in the interval [0, max).

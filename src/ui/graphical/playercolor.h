@@ -20,11 +20,10 @@
 #ifndef ui_graphical_playercolorH
 #define ui_graphical_playercolorH
 
-#include "utility/color.h"
 #include "SDLutility/autosurface.h"
+#include "utility/color.h"
 
 #include <SDL.h>
-
 #include <map>
 
 class cPlayerColor

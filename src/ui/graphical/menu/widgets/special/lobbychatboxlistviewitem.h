@@ -20,9 +20,9 @@
 #ifndef ui_graphical_menu_widgets_special_lobbychatboxlistviewitemH
 #define ui_graphical_menu_widgets_special_lobbychatboxlistviewitemH
 
-#include <memory>
-
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
+
+#include <memory>
 
 class cImage;
 class cLabel;

@@ -20,11 +20,11 @@
 #ifndef ui_graphical_menu_widgets_special_lobbyplayerlistviewitemH
 #define ui_graphical_menu_widgets_special_lobbyplayerlistviewitemH
 
-#include <memory>
-
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cImage;
 class cLabel;
@@ -41,6 +41,7 @@ public:
 	cSignal<void()> readyClicked;
 
 	void handleResized (const cPosition& oldSize) override;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

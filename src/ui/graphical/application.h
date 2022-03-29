@@ -20,16 +20,15 @@
 #ifndef ui_graphical_applicationH
 #define ui_graphical_applicationH
 
-#include <SDL.h>
+#include "input/keyboard/keysequence.h"
+#include "input/mouse/mousebuttontype.h"
+#include "utility/signal/signalconnectionmanager.h"
+#include "utility/thread/concurrentqueue.h"
 
-#include <vector>
+#include <SDL.h>
 #include <list>
 #include <memory>
-
-#include "input/keyboard/keysequence.h"
-#include "utility/thread/concurrentqueue.h"
-#include "utility/signal/signalconnectionmanager.h"
-#include "input/mouse/mousebuttontype.h"
+#include <vector>
 
 class cMouse;
 class cKeyboard;
@@ -83,7 +82,8 @@ public:
 	cKeyboard* getActiveKeyboard() { return activeKeyboard; }
 
 private:
-	template <typename Action> void addShortcut (cKeySequence, Action);
+	template <typename Action>
+	void addShortcut (cKeySequence, Action);
 
 	void center (cWindow&);
 
@@ -110,6 +110,7 @@ private:
 
 public:
 	std::shared_ptr<cFrameCounter> frameCounter;
+
 private:
 	static const size_t maximalShortcutSequenceLength = 4;
 

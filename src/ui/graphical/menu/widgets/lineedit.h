@@ -20,15 +20,15 @@
 #ifndef ui_graphical_menu_widgets_lineeditH
 #define ui_graphical_menu_widgets_lineeditH
 
-#include <string>
-#include <memory>
-#include <chrono>
-
+#include "SDLutility/autosurface.h"
 #include "output/video/unifonts.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/menu/widgets/tools/validatorstate.h"
-#include "SDLutility/autosurface.h"
 #include "utility/signal/signal.h"
+
+#include <chrono>
+#include <memory>
+#include <string>
 
 class cValidator;
 
@@ -63,9 +63,10 @@ public:
 	cSignal<void()> escapePressed;
 	cSignal<void()> returnPressed;
 	cSignal<void (eValidatorState)> editingFinished;
-protected:
 
+protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
+
 private:
 	const std::chrono::milliseconds cursorVisibleTime;
 	const std::chrono::milliseconds cursorInvisibleTime;

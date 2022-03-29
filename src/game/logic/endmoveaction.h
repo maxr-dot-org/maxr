@@ -20,9 +20,9 @@
 #ifndef game_logic_endmoveaction_h
 #define game_logic_endmoveaction_h
 
-#include<stdint.h>
-
 #include "game/serialization/nvp.h"
+
+#include <stdint.h>
 
 class cVehicle;
 class cModel;
@@ -52,6 +52,7 @@ public:
 		archive & NVP (endMoveAction);
 		archive & NVP (destID);
 	}
+
 private:
 	void executeLoadAction (cModel&);
 	void executeGetInAction (cModel&);

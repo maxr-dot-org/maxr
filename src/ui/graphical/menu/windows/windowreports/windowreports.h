@@ -39,18 +39,21 @@ class cTurnCounter;
 class cTurnTimeClock;
 class cUnit;
 
-template <typename> class cListView;
-template <typename, typename> class cPlot;
+template <typename>
+class cListView;
+template <typename, typename>
+class cPlot;
 
 class cWindowReports : public cWindow
 {
 public:
 	cWindowReports (const cModel&,
-					std::shared_ptr<const cPlayer> localPlayer,
-					const std::vector<std::unique_ptr<cSavedReport>>& reports);
+	                std::shared_ptr<const cPlayer> localPlayer,
+	                const std::vector<std::unique_ptr<cSavedReport>>& reports);
 
 	cSignal<void (cUnit&)> unitClickedSecondTime;
 	cSignal<void (const cSavedReport&)> reportClickedSecondTime;
+
 private:
 	bool checkFilter (const cUnit& unit) const;
 	bool checkFilter (const cStaticUnitData& data) const;

@@ -20,8 +20,8 @@
 #ifndef ui_graphical_menu_widgets_special_landingpositionselectionmapH
 #define ui_graphical_menu_widgets_special_landingpositionselectionmapH
 
-#include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "SDLutility/autosurface.h"
+#include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"
 
 class cStaticMap;
@@ -37,6 +37,7 @@ public:
 	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
 
 	cSignal<void (const cPosition&)> clickedTile;
+
 protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 

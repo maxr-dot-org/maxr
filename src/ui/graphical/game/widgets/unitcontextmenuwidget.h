@@ -91,6 +91,7 @@ public:
 	cSignal<void()> stealToggled;
 	cSignal<void()> infoClicked;
 	cSignal<void()> doneClicked;
+
 private:
 	const cUnit* unit = nullptr;
 };

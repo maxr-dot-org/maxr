@@ -202,7 +202,6 @@ public:
 	mutable cSignal<void()> animationsChanged;
 	// TODO: add signals for other settings
 private:
-
 	/**
 	 * Private constructor for singleton design pattern.
 	 */
@@ -259,7 +258,6 @@ private:
 			archive & NVP (voiceLanguage);
 			archive & NVP (cacheSize);
 		}
-
 	};
 
 	struct sSoundSettings
@@ -303,18 +301,18 @@ private:
 
 	struct sPathSettings
 	{
-		std::string font = "fonts";          // Path to the fonts
-		std::string fx = "fx";               // Path to the effects
-		std::string gfx = "gfx";             // Path to the graphics
+		std::string font = "fonts"; // Path to the fonts
+		std::string fx = "fx"; // Path to the effects
+		std::string gfx = "gfx"; // Path to the graphics
 		std::string languages = "languages"; // Path to language files
-		std::string maps = "maps";           // Path to the maps
-		std::string saves = "saves";         // Path to the saves
-		std::string sounds = "sounds";       // Path to the sound-files
-		std::string voices = "voices";       // Path to the voice-files
-		std::string music = "music";         // Path to the music-files
-		std::string vehicles = "vehicles";   // Path to the vehicles
+		std::string maps = "maps"; // Path to the maps
+		std::string saves = "saves"; // Path to the saves
+		std::string sounds = "sounds"; // Path to the sound-files
+		std::string voices = "voices"; // Path to the voice-files
+		std::string music = "music"; // Path to the music-files
+		std::string vehicles = "vehicles"; // Path to the vehicles
 		std::string buildings = "buildings"; // Path to the buildings
-		std::string mve = "mve";             // Path to the in-game movies (*.mve)
+		std::string mve = "mve"; // Path to the in-game movies (*.mve)
 
 		template <typename Archive>
 		void serialize (Archive& archive)
@@ -332,7 +330,6 @@ private:
 			archive & NVP (buildings);
 			archive & NVP (mve);
 		}
-
 	};
 
 	struct sInGameSettings
@@ -369,9 +366,7 @@ private:
 			archive & NVP (makeTracks);
 			archive & NVP (scrollSpeed);
 		}
-
 	};
-
 
 	/**
 	 * The static instance of this object.

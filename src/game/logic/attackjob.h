@@ -20,13 +20,13 @@
 #ifndef game_logic_attackjobH
 #define game_logic_attackjobH
 
-#include <vector>
-
-#include "utility/position.h"
-#include "game/data/map/mapview.h"
 #include "game/data/map/mapfieldview.h"
-#include "game/data/units/vehicle.h"
+#include "game/data/map/mapview.h"
 #include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "utility/position.h"
+
+#include <vector>
 
 class cMap;
 class cPlayer;
@@ -87,7 +87,13 @@ private:
 	std::vector<int> lockedTargets;
 	int fireDir = 0;
 	int counter = 0;
-	enum class eAJState { Rotating, PlayingMuzzle, Firing, Finished };
+	enum class eAJState
+	{
+		Rotating,
+		PlayingMuzzle,
+		Firing,
+		Finished
+	};
 	eAJState state = eAJState::Rotating;
 };
 

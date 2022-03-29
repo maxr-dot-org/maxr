@@ -21,8 +21,8 @@
 #define ui_graphical_menu_widgets_listviewH
 
 #include "input/mouse/mouse.h"
-#include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 #include "resources/sound.h"
 #include "ui/graphical/application.h"
@@ -46,6 +46,7 @@ template <typename ItemType>
 class cListView : public cClickableWidget
 {
 	static_assert (std::is_base_of<cAbstractListViewItem, ItemType>::value, "Items in list view have to inherit from cAbstractListViewItem");
+
 public:
 	explicit cListView (const cBox<cPosition>& area, bool allowMultiSelection = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
 	explicit cListView (const cBox<cPosition>& area, eScrollBarStyle, bool allowMultiSelection = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
@@ -106,9 +107,10 @@ public:
 	void handleMoved (const cPosition& offset) override;
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	void handleResized (const cPosition& oldSize) override;
-protected:
 
+protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 
@@ -170,8 +172,7 @@ cListView<ItemType>::cListView (const cBox<cPosition>& area, eScrollBarStyle scr
 
 	signalConnectionManager.connect (scrollBar->forwardClicked, [this]() { scrollDown(); });
 	signalConnectionManager.connect (scrollBar->backClicked, [this]() { scrollUp(); });
-	signalConnectionManager.connect (scrollBar->offsetChanged, [this]()
-	{
+	signalConnectionManager.connect (scrollBar->offsetChanged, [this]() {
 		if (this->scrollBar->getOffset() == this->pixelOffset) return;
 
 		this->pixelOffset = std::max (this->scrollBar->getOffset(), 0);
@@ -271,8 +272,7 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item, eAddList
 	addedItem.setParent (this);
 
 	const auto itemPtr = &addedItem;
-	signalConnectionManager.connect (addedItem.resized, [this, itemPtr] (const cPosition& oldSize)
-	{
+	signalConnectionManager.connect (addedItem.resized, [this, itemPtr] (const cPosition& oldSize) {
 		const auto offset = itemPtr->getSize().y() - oldSize.y();
 		if (offset == 0) return;
 
@@ -361,7 +361,8 @@ std::unique_ptr<ItemType> cListView<ItemType>::removeItem (ItemType& item)
 
 		return removedItem;
 	}
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 //------------------------------------------------------------------------------

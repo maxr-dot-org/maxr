@@ -20,15 +20,12 @@
 #ifndef game_data_player_playerH
 #define game_data_player_playerH
 
-#include <string>
-#include <vector>
-
 #include "game/data/base/base.h"
 #include "game/data/player/playersettings.h"
 #include "game/data/rangemap.h"
-#include "game/data/units/unitdata.h"
-#include "game/data/units/unit.h" // sUnitLess
 #include "game/data/units/building.h"
+#include "game/data/units/unit.h" // sUnitLess
+#include "game/data/units/unitdata.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/upgradecalculator.h"
 #include "game/serialization/serialization.h"
@@ -38,6 +35,9 @@
 #include "utility/position.h"
 #include "utility/ranges.h"
 #include "utility/signal/signal.h"
+
+#include <string>
+#include <vector>
 
 class cHud;
 class cMapField;
@@ -68,6 +68,7 @@ struct sNewTurnPlayerReport
 {
 public:
 	void addUnitBuilt (const sID& unitTypeId);
+
 public:
 	std::vector<cResearch::eResearchArea> finishedResearchs;
 	std::vector<sTurnstartReport> unitsBuilt;
@@ -77,6 +78,7 @@ public:
 class cPlayer
 {
 	cPlayer (const cPlayer&) = delete;
+
 public:
 	cPlayer(); // used by serialization
 	cPlayer (const cPlayerBasicData&, const cUnitsData&);
@@ -152,7 +154,6 @@ public:
 	void removeFromSentryMap (const cUnit&);
 	void updateSentry (const cUnit&, int newRange);
 
-
 	/** return the number of running ecospheres */
 	int getNumEcoSpheres() const;
 	/** gets the score value from the score history */
@@ -178,7 +179,7 @@ public:
 	bool hasMineDetection (const cPosition& pos) const { return detectMinesMap.get (pos); }
 	bool hasSeaDetection (const cPosition& pos) const { return detectSeaMap.get (pos); }
 
-	std::vector<cResearch::eResearchArea> doResearch (const cUnitsData&);  // proceed with the research at turn end
+	std::vector<cResearch::eResearchArea> doResearch (const cUnitsData&); // proceed with the research at turn end
 
 	void refreshSentryMaps();
 
@@ -235,13 +236,12 @@ public:
 		// commando in car, which is in air transport which is in hangar.
 		// topological sort might be applied.
 		// but 3 passes on vehicles should be enough.
-		const auto hasStoredUnits = [](const auto& vehicle){ return !vehicle->storedUnits.empty(); };
+		const auto hasStoredUnits = [] (const auto& vehicle) { return !vehicle->storedUnits.empty(); };
 		const std::function<bool (const std::shared_ptr<cVehicle>&)> filters[] =
-		{
-			[&](const auto& vehicle){ return !hasStoredUnits (vehicle); },
-			[&](const auto& vehicle){ return hasStoredUnits (vehicle) && ranges::none_of (vehicle->storedUnits, hasStoredUnits);},
-			[&](const auto& vehicle){ return hasStoredUnits (vehicle) && ranges::any_of (vehicle->storedUnits, hasStoredUnits);}
-		};
+			{
+				[&] (const auto& vehicle) { return !hasStoredUnits (vehicle); },
+				[&] (const auto& vehicle) { return hasStoredUnits (vehicle) && ranges::none_of (vehicle->storedUnits, hasStoredUnits); },
+				[&] (const auto& vehicle) { return hasStoredUnits (vehicle) && ranges::any_of (vehicle->storedUnits, hasStoredUnits); }};
 		std::vector<std::shared_ptr<cVehicle>> orderedVehicles;
 		for (auto filter : filters)
 		{
@@ -318,9 +318,9 @@ private:
 
 public:
 	std::vector<cDynamicUnitData> dynamicUnitsData; // Current version of vehicles.
-	cBase base;               // the base (groups of connected buildings) of the player
-	bool isDefeated = false;  // true if the player has been defeated
-	int numEcos = 0;          // number of ecospheres. call countEcoSpheres to update.
+	cBase base; // the base (groups of connected buildings) of the player
+	bool isDefeated = false; // true if the player has been defeated
+	int numEcos = 0; // number of ecospheres. call countEcoSpheres to update.
 
 private:
 	sPlayerSettings player;
@@ -329,17 +329,17 @@ private:
 	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> vehicles;
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> buildings;
 
-	cPosition landingPos {-1, -1};
+	cPosition landingPos{-1, -1};
 	cPosition mapSize; // Width and Height of the map.
 
 	// using a special array with cached checksum. This speeds up the calculation of the model checksum.
-	cArrayCrc<uint8_t> resourceMap;        /** Map with explored resources. */
-	cRangeMap sentriesMapAir;     /** the covered air area */
-	cRangeMap sentriesMapGround;  /** the covered ground area */
-	cRangeMap scanMap;            /** seen Map tiles. */
-	cRangeMap detectLandMap;      /** the area where the player can detect land stealth units */
-	cRangeMap detectSeaMap;       /** the area where the player can detect sea stealth units */
-	cRangeMap detectMinesMap;     /** the area where the player can detect mines */
+	cArrayCrc<uint8_t> resourceMap; /** Map with explored resources. */
+	cRangeMap sentriesMapAir; /** the covered air area */
+	cRangeMap sentriesMapGround; /** the covered ground area */
+	cRangeMap scanMap; /** seen Map tiles. */
+	cRangeMap detectLandMap; /** the area where the player can detect land stealth units */
+	cRangeMap detectSeaMap; /** the area where the player can detect sea stealth units */
+	cRangeMap detectMinesMap; /** the area where the player can detect mines */
 	std::vector<int> pointsHistory; // history of player's total score (from eco-spheres) for graph
 
 	int clan = -1;
@@ -347,9 +347,9 @@ private:
 
 	bool hasFinishedTurn = false;
 
-	cResearch researchState;   ///< stores the current research level of the player
+	cResearch researchState; ///< stores the current research level of the player
 	std::array<int, cResearch::kNrResearchAreas> researchCentersWorkingOnArea{}; ///< counts the number of research centers that are currently working on each area
-	int researchCentersWorkingTotal = 0;  ///< number of working research centers
+	int researchCentersWorkingTotal = 0; ///< number of working research centers
 };
 
 #endif // game_data_player_playerH

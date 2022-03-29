@@ -20,11 +20,10 @@
 #ifndef ui_graphical_menu_widgets_checkboxH
 #define ui_graphical_menu_widgets_checkboxH
 
-#include "ui/graphical/menu/widgets/clickablewidget.h"
-
 #include "SDLutility/autosurface.h"
 #include "output/video/unifonts.h"
 #include "resources/sound.h"
+#include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"
 
 enum class eCheckBoxType
@@ -88,9 +87,11 @@ public:
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
 	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
+
 protected:
 	void setPressed (bool pressed) override;
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
+
 private:
 	AutoSurface surface;
 

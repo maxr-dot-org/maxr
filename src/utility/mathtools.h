@@ -35,9 +35,11 @@
 */
 float Round (float num, unsigned int n);
 
-
 template <typename T>
-T Square (T v) { return v * v; }
+T Square (T v)
+{
+	return v * v;
+}
 
 /**
 * Rounds given param num without numbers after decimal point<br>

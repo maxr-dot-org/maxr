@@ -20,6 +20,14 @@
 #ifndef serialization_serializationH
 #define serialization_serializationH
 
+#include "config/workaround/cpp17/optional.h"
+#include "nvp.h"
+#include "utility/color.h"
+#include "utility/flatset.h"
+#include "utility/log.h"
+#include "utility/position.h"
+#include "utility/ranges.h"
+
 #include <array>
 #include <cassert>
 #include <chrono>
@@ -30,14 +38,6 @@
 #include <string>
 #include <typeinfo>
 #include <vector>
-#include "config/workaround/cpp17/optional.h"
-
-#include "nvp.h"
-#include "utility/color.h"
-#include "utility/flatset.h"
-#include "utility/position.h"
-#include "utility/ranges.h"
-#include "utility/log.h"
 
 class cBuilding;
 class cJob;
@@ -60,7 +60,9 @@ struct sID;
 namespace serialization
 {
 	// Customisation point for enum serialization
-	template <typename E> struct sEnumStringMapping {};
+	template <typename E>
+	struct sEnumStringMapping
+	{};
 	// template <> struct serialization::sEnumStringMapping<MyEnum>
 	// {
 	//     static const std::vector<std::pair<MyEnum, const char*>> m;
@@ -85,24 +87,24 @@ namespace serialization
 
 			if (ss.fail() || !ss.eof()) //test eof, because all characters in the string should belong to the converted value
 				throw std::runtime_error ("Could not convert value " + s + " to " + typeid (E).name());
-			return static_cast<E>(underlying);
+			return static_cast<E> (underlying);
 		}
 	};
 
 	template <typename E>
-	struct sEnumSerializer<E, decltype(sEnumStringMapping<E>::m, void())>
+	struct sEnumSerializer<E, decltype (sEnumStringMapping<E>::m, void())>
 	{
 		static constexpr bool hasStringRepresentation = true;
 		static std::string toString (E e)
 		{
-			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&](const auto& p) { return p.first == e; });
+			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&] (const auto& p) { return p.first == e; });
 			if (it != sEnumStringMapping<E>::m.end()) return it->second;
 			Log.write (std::string ("Unknown ") + typeid (E).name() + " " + std::to_string (static_cast<int> (e)), cLog::eLogType::Warning);
 			return std::to_string (static_cast<int> (e));
 		}
 		static E fromString (const std::string& s)
 		{
-			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&](const auto& p) { return p.second == s; });
+			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&] (const auto& p) { return p.second == s; });
 			if (it != sEnumStringMapping<E>::m.end()) return it->first;
 
 			Log.write (std::string ("Unknown ") + typeid (E).name() + " value " + s, cLog::eLogType::Warning);
@@ -111,7 +113,7 @@ namespace serialization
 	};
 
 	template <typename E>
-	decltype(sEnumStringMapping<E>::m, std::string{}) enumToString (E e)
+	decltype (sEnumStringMapping<E>::m, std::string{}) enumToString (E e)
 	{
 		return sEnumSerializer<E>::toString (e);
 	}
@@ -120,7 +122,7 @@ namespace serialization
 	{
 		template <typename Archive, typename T>
 		void splitFree (Archive& archive, T& value);
-	}
+	} // namespace detail
 
 	//
 	// default serialize implementations
@@ -227,7 +229,7 @@ namespace serialization
 		{
 			T c;
 			archive >> makeNvp ("item", c);
-			value[i] = std::move(c);
+			value[i] = std::move (c);
 		}
 	}
 	template <typename Archive, typename T>
@@ -405,7 +407,8 @@ namespace serialization
 	{
 		bool valid = false;
 		archive >> makeNvp ("valid", valid);
-		if (valid) {
+		if (valid)
+		{
 			value = T{};
 			archive >> makeNvp ("data", *value);
 		}

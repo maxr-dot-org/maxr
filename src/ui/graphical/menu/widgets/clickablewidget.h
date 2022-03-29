@@ -20,10 +20,10 @@
 #ifndef ui_graphical_menu_widgets_clickablewidgetH
 #define ui_graphical_menu_widgets_clickablewidgetH
 
-#include <map>
-
 #include "ui/graphical/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <map>
 
 class cKeySequence;
 class cShortcut;
@@ -43,6 +43,7 @@ public:
 	void handleLooseMouseFocus (cApplication&) override;
 
 	void setConsumeClick (bool consumeClick);
+
 protected:
 	bool isPressed;
 	bool mouseWasOver;
@@ -56,6 +57,7 @@ protected:
 	virtual bool handleClicked (cApplication&, cMouse&, eMouseButtonType) = 0;
 
 	virtual bool acceptButton (eMouseButtonType) const;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

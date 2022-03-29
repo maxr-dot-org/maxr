@@ -20,11 +20,11 @@
 #ifndef ui_graphical_game_control_mousemode_mousemodeH
 #define ui_graphical_game_control_mousemode_mousemodeH
 
-#include <memory>
-
 #include "ui/graphical/game/control/mousemode/mousemodetype.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cMouse;
 class cMapView;
@@ -104,6 +104,7 @@ public:
 	 * or player has been changed).
 	 */
 	mutable cSignal<void()> needRefresh;
+
 protected:
 	/**
 	 * Signal connection manager for connections to signals from selected units.

@@ -20,11 +20,10 @@
 #ifndef output_sound_soundchunkH
 #define output_sound_soundchunkH
 
-#include <string>
-#include <memory>
-#include <chrono>
-
 #include <SDL_mixer.h>
+#include <chrono>
+#include <memory>
+#include <string>
 
 class cSoundChunk
 {
@@ -35,7 +34,7 @@ public:
 	cSoundChunk (const cSoundChunk&) = delete;
 	cSoundChunk& operator= (const cSoundChunk&) = delete;
 
-	bool operator==(const cSoundChunk&) const;
+	bool operator== (const cSoundChunk&) const;
 
 	void load (const std::string& fileName);
 
@@ -44,6 +43,7 @@ public:
 	std::chrono::milliseconds getLength() const;
 
 	Mix_Chunk* getSdlSound() const;
+
 private:
 	struct SdlMixChunkDeleter
 	{

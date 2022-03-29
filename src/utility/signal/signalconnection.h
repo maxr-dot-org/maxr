@@ -50,12 +50,12 @@ public:
 	 * does nothing.
 	 */
 	void disconnect();
+
 private:
 	cSignalConnection (unsigned long long identifier_, std::weak_ptr<cSignalReference>& signalReference);
 
 	unsigned long long identifier;
 	std::weak_ptr<cSignalReference> signalReference;
 };
-
 
 #endif // utility_signal_signalconnectionH

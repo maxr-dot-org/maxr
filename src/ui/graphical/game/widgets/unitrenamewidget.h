@@ -20,12 +20,11 @@
 #ifndef ui_graphical_game_widgets_unitrenamewidgetH
 #define ui_graphical_game_widgets_unitrenamewidgetH
 
-#include <memory>
-
 #include "ui/graphical/widget.h"
-
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cPosition;
 
@@ -54,6 +53,7 @@ public:
 	bool isAt (const cPosition&) const override;
 
 	cSignal<void()> unitRenameTriggered;
+
 private:
 	cLabel* selectedUnitStatusLabel = nullptr;
 	cLabel* selectedUnitNamePrefixLabel = nullptr;

@@ -23,7 +23,8 @@
 #include "utility/signal/signal.h"
 
 class cPosition;
-template <typename> class cBox;
+template <typename>
+class cBox;
 
 /**
  * This is the base class of an animation of anything (most probable a unit)

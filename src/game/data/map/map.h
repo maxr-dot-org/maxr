@@ -46,7 +46,8 @@ class cStaticUnitData;
 struct sResources
 {
 public:
-	sResources() : value (0), typ (eResourceType::None) {}
+	sResources() :
+		value (0), typ (eResourceType::None) {}
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
@@ -54,6 +55,7 @@ public:
 		archive & NVP (typ);
 	}
 	uint32_t getChecksum (uint32_t crc) const;
+
 public:
 	unsigned char value;
 	eResourceType typ;
@@ -132,9 +134,9 @@ private:
 
 struct sTerrain
 {
-	bool water = false;          /** is this terrain water? */
-	bool coast = false;          /** is this terrain a coast? */
-	bool blocked = false;        /** is this terrain blocked? */
+	bool water = false; /** is this terrain water? */
+	bool coast = false; /** is this terrain a coast? */
+	bool blocked = false; /** is this terrain blocked? */
 };
 
 class cStaticMap
@@ -149,7 +151,11 @@ public:
 
 	const std::string& getName() const { return filename; }
 	cPosition getSize() const { return cPosition (size, size); }
-	int getOffset (const cPosition& pos) const { assert (isValidPosition (pos));  return pos.y() * size + pos.x(); }
+	int getOffset (const cPosition& pos) const
+	{
+		assert (isValidPosition (pos));
+		return pos.y() * size + pos.x();
+	}
 
 	bool isValidPosition (const cPosition&) const;
 
@@ -195,7 +201,7 @@ public:
 
 	SERIALIZATION_SPLIT_MEMBER()
 private:
-	std::string filename;   // Name of the current map
+	std::string filename; // Name of the current map
 	uint32_t crc;
 	int size;
 	std::vector<int> Kacheln; // Terrain numbers of the map fields
@@ -300,6 +306,7 @@ public:
 	mutable cSignal<void (const cVehicle&, const cPosition&)> movedVehicle;
 
 	std::shared_ptr<cStaticMap> staticMap;
+
 private:
 	/**
 	* the information about the fields

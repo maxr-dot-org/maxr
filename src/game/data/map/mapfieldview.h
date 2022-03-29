@@ -20,9 +20,9 @@
 #ifndef game_data_map_mapfieldviewH
 #define game_data_map_mapfieldviewH
 
-#include <vector>
-
 #include "utility/signal/signal.h"
+
+#include <vector>
 
 class cMapField;
 class cVehicle;
@@ -63,8 +63,8 @@ public:
 	std::vector<cUnit*> getUnits() const;
 
 	cSignal<void()>& unitsChanged;
-private:
 
+private:
 	const cMapField& mapField;
 	const sTerrain& terrain;
 	const cPlayer* player; // may be null

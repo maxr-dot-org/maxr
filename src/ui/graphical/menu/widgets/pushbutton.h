@@ -20,13 +20,13 @@
 #ifndef ui_graphical_menu_widgets_pushbuttonH
 #define ui_graphical_menu_widgets_pushbuttonH
 
-#include <string>
-
-#include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "SDLutility/autosurface.h"
-#include "utility/signal/signal.h"
 #include "output/video/unifonts.h"
 #include "resources/sound.h"
+#include "ui/graphical/menu/widgets/clickablewidget.h"
+#include "utility/signal/signal.h"
+
+#include <string>
 
 enum class ePushButtonType
 {
@@ -88,6 +88,7 @@ public:
 	void unlock();
 
 	cSignal<void()> clicked;
+
 protected:
 	void setPressed (bool pressed) override;
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;

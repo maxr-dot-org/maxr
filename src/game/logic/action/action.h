@@ -26,7 +26,8 @@ class cAction : public cNetMessageT<eNetMessageType::ACTION>
 {
 public:
 	// When changing this enum, also update sEnumStringMapping<eActiontype>::m
-	enum class eActiontype {
+	enum class eActiontype
+	{
 		InitNewGame,
 		StartWork,
 		Stop,
@@ -60,13 +61,24 @@ public:
 
 	eActiontype getType() const;
 
-	void serialize (cBinaryArchiveIn& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { cNetMessage::serialize (archive); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		cNetMessage::serialize (archive);
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		cNetMessage::serialize (archive);
+		serializeThis (archive);
+	}
 
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 	virtual void execute (cModel& model) const = 0;
+
 protected:
-	cAction (eActiontype action) : action (action){}
+	cAction (eActiontype action) :
+		action (action) {}
+
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
@@ -75,23 +87,25 @@ private:
 	}
 
 	cAction (const cAction&) = delete;
-	cAction& operator=(const cAction&) = delete;
+	cAction& operator= (const cAction&) = delete;
 
 	eActiontype action;
 };
 namespace serialization
 {
-	template <> struct sEnumStringMapping<cAction::eActiontype>
+	template <>
+	struct sEnumStringMapping<cAction::eActiontype>
 	{
 		static const std::vector<std::pair<cAction::eActiontype, const char*>> m;
 	};
-}
+} // namespace serialization
 //------------------------------------------------------------------------------
 template <cAction::eActiontype ActionType>
 class cActionT : public cAction
 {
 public:
-	cActionT() : cAction (ActionType) {}
+	cActionT() :
+		cAction (ActionType) {}
 };
 
 #endif

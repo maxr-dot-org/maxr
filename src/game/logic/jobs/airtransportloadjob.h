@@ -20,12 +20,11 @@
 #ifndef game_logic_jobs_airtransportloadjobH
 #define game_logic_jobs_airtransportloadjobH
 
-#include "job.h"
-
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "game/serialization/binaryarchive.h"
 #include "game/serialization/jsonarchive.h"
+#include "job.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 /**
@@ -42,10 +41,19 @@ public:
 	void run (cModel& model) override;
 	eJobType getType() const override;
 
-	void serialize (cBinaryArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		archive << serialization::makeNvp ("type", getType());
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		archive << serialization::makeNvp ("type", getType());
+		serializeThis (archive);
+	}
 
 	uint32_t getChecksum (uint32_t crc) const override;
+
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
@@ -69,7 +77,7 @@ cAirTransportLoadJob::cAirTransportLoadJob (Archive& archive)
 		finished = true;
 		return;
 	}
-	connectionManager.connect (vehicleToLoad->destroyed, [this](){finished = true; });
+	connectionManager.connect (vehicleToLoad->destroyed, [this]() { finished = true; });
 	unit->jobActive = true;
 }
 

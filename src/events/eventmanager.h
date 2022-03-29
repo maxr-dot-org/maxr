@@ -20,9 +20,9 @@
 #ifndef events_eventmanagerH
 #define events_eventmanagerH
 
-#include <SDL.h>
-
 #include "utility/signal/signal.h"
+
+#include <SDL.h>
 
 class cEventMouseMotion;
 class cEventMouseButton;
@@ -63,6 +63,7 @@ public:
 	cSignal<void (const cTextInputEvent&)> textInputEvent;
 
 	bool shouldExit() const;
+
 private:
 	cEventManager();
 	cEventManager (const cEventManager&) = delete;

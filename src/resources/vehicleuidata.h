@@ -20,15 +20,14 @@
 #ifndef resources_vehicleuidataH
 #define resources_vehicleuidataH
 
+#include "SDLutility/autosurface.h"
 #include "game/data/units/id.h"
 #include "game/serialization/serialization.h"
 #include "resources/sound.h"
 
+#include <SDL.h>
 #include <array>
 #include <string>
-
-#include "SDLutility/autosurface.h"
-#include <SDL.h>
 
 class cMapView;
 struct sStaticVehicleData;
@@ -83,11 +82,11 @@ public:
 
 	std::array<AutoSurface, 8> img, img_org; // 8 Surfaces of the vehicle
 	std::array<AutoSurface, 8> shw, shw_org; // 8 Surfaces of shadows
-	AutoSurface build, build_org;         // Surfaces when building
+	AutoSurface build, build_org; // Surfaces when building
 	AutoSurface build_shw, build_shw_org; // Surfaces of shadows when building
-	AutoSurface clear_small, clear_small_org;         // Surfaces when clearing
+	AutoSurface clear_small, clear_small_org; // Surfaces when clearing
 	AutoSurface clear_small_shw, clear_small_shw_org; // Surfaces when clearing
-	AutoSurface overlay, overlay_org;    // Overlays
+	AutoSurface overlay, overlay_org; // Overlays
 	AutoSurface storage; // image of the vehicle in storage
 	std::string FLCFile; // FLC-Video
 	AutoSurface info; // info image

@@ -20,11 +20,11 @@
 #ifndef game_logic_surveyoraiH
 #define game_logic_surveyoraiH
 
-#include <forward_list>
-#include <memory>
-
 #include "utility/position.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <forward_list>
+#include <memory>
 
 class cMap;
 class cVehicle;
@@ -53,7 +53,7 @@ private:
 
 private:
 	const cVehicle& vehicle; // the vehicle the auto move job belongs to
-	bool finished;     // true when the job can be deleted
+	bool finished; // true when the job can be deleted
 	int counter;
 
 	// the operation point of the surveyor
@@ -63,4 +63,4 @@ private:
 	cSignalConnectionManager connectionManager;
 };
 
-#endif  // game_logic_surveyoraiH
+#endif // game_logic_surveyoraiH

@@ -20,6 +20,7 @@
 #ifndef ui_graphical_game_control_gameguicontrollerH
 #define ui_graphical_game_control_gameguicontrollerH
 
+#include "config/workaround/cpp17/optional.h"
 #include "game/logic/upgradecalculator.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "utility/position.h"
@@ -30,8 +31,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-
-#include "config/workaround/cpp17/optional.h"
 
 class cAnimationTimer;
 class cBuildListItem;
@@ -70,7 +69,7 @@ struct sPlayerGuiInfo
 	void serialize (Archive& archive)
 	{
 		archive & NVP (gameGuiState);
-		archive & serialization::makeNvp("reports", *reports);
+		archive & serialization::makeNvp ("reports", *reports);
 		archive & NVP (savedPositions);
 		archive & NVP (doneList);
 	}
@@ -99,6 +98,7 @@ public:
 	void setServer (cServer*);
 
 	mutable cSignal<void()> terminated;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager guiSignalConnectionManager;
@@ -124,7 +124,8 @@ private:
 	std::optional<cPosition> savedReportPosition;
 	std::shared_ptr<cWindowUpgradesFilterState> upgradesFilterState;
 
-	template <typename Action> void addShortcut (cKeySequence, Action);
+	template <typename Action>
+	void addShortcut (cKeySequence, Action);
 	void initShortcuts();
 	void initChatCommands();
 

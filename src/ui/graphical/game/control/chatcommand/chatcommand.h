@@ -20,8 +20,8 @@
 #ifndef ui_graphical_game_control_chatcommand_chatcommandH
 #define ui_graphical_game_control_chatcommand_chatcommandH
 
-#include <string>
 #include <memory>
+#include <string>
 
 template <typename... Arguments>
 class cChatCommandParser;
@@ -62,7 +62,6 @@ private:
 
 #include "chatcommandexecutor.h"
 #include "chatcommandparser.h"
-
 
 //------------------------------------------------------------------------------
 template <typename NewArgument, typename... Args>

@@ -20,18 +20,16 @@
 #ifndef input_mouse_mouseH
 #define input_mouse_mouseH
 
-#include <map>
-#include <chrono>
-#include <memory>
-
-#include <SDL.h>
-
-#include "utility/signal/signal.h"
-#include "utility/signal/signalconnectionmanager.h"
-#include "utility/position.h"
-
 #include "input/mouse/mousebuttontype.h"
 #include "input/mouse/mousecursortype.h"
+#include "utility/position.h"
+#include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+#include <SDL.h>
+#include <chrono>
+#include <map>
+#include <memory>
 
 class cEventMouseMotion;
 class cEventMouseButton;
@@ -142,8 +140,8 @@ public:
 	 * Hides the mouse cursor from the display.
 	 */
 	void hide();
-private:
 
+private:
 	using SdlCursorPtrType = std::unique_ptr<SDL_Cursor, void (*) (SDL_Cursor*)>;
 
 	cSignalConnectionManager signalConnectionManager;

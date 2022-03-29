@@ -20,13 +20,12 @@
 #ifndef game_logic_upgradecalculatorH
 #define game_logic_upgradecalculatorH
 
-#include <array>
-#include <map>
-
 #include "config/workaround/cpp17/optional.h"
-
 #include "game/serialization/nvp.h"
 #include "utility/signal/signal.h"
+
+#include <array>
+#include <map>
 
 class cResearch;
 class cUnitUpgrade;
@@ -165,8 +164,7 @@ public:
 	 * @return the change of the startValue
 	 * (can be negative if kCost is the upgradeType)
 	 */
-	int calcChangeByResearch (int startValue, int curResearchLevel,
-							  std::optional<eUpgradeType> = std::nullopt, eUnitType = eUnitType::Building) const;
+	int calcChangeByResearch (int startValue, int curResearchLevel, std::optional<eUpgradeType> = std::nullopt, eUnitType = eUnitType::Building) const;
 
 	/**
 	 * Prints some upgrade values to the standard log on debug-level.
@@ -248,8 +246,6 @@ private:
 	bool setupDone;
 };
 
-
-
 //-------------------------------------------
 /** Stores the current research state of a player. */
 //-------------------------------------------
@@ -278,7 +274,7 @@ public:
 	 */
 	bool doResearch (int researchPoints, eResearchArea);
 
-	int getCurResearchLevel (eResearchArea) const;  ///< 0, 10, 20, 30, ...
+	int getCurResearchLevel (eResearchArea) const; ///< 0, 10, 20, 30, ...
 
 	/// returns the needed number of turns to reach the next level
 	/// with the given nr of research centers
@@ -382,6 +378,7 @@ public:
 	{
 		archive & NVP (upgrades);
 	}
+
 public:
 	std::array<sUnitUpgrade, 8> upgrades;
 };

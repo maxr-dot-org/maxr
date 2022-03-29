@@ -20,10 +20,10 @@
 #ifndef game_data_map_mapviewH
 #define game_data_map_mapviewH
 
-#include <memory>
-
-#include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cMap;
 class cPlayer;
@@ -92,6 +92,5 @@ private:
 
 	cSignalConnectionManager connectionManager;
 };
-
 
 #endif

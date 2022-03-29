@@ -20,11 +20,11 @@
 #ifndef ui_graphical_menu_dialogs_dialogtransferH
 #define ui_graphical_menu_dialogs_dialogtransferH
 
+#include "game/data/units/unit.h"
+#include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "game/data/units/unit.h"
-#include "ui/graphical/menu/widgets/special/resourcebar.h"
 
 class cUnit;
 class cImage;
@@ -41,6 +41,7 @@ public:
 	eResourceType getResourceType() const;
 
 	cSignal<void()> done;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

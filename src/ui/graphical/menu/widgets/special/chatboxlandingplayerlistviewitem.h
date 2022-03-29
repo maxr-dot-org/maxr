@@ -20,12 +20,12 @@
 #ifndef ui_graphical_menu_widgets_special_chatboxlandingplayerlistviewitemH
 #define ui_graphical_menu_widgets_special_chatboxlandingplayerlistviewitemH
 
-#include <memory>
-
 #include "game/data/player/playerbasicdata.h"
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cImage;
 class cLabel;
@@ -43,6 +43,7 @@ public:
 	void setHasSelectedPosition (bool value);
 
 	mutable cSignal<void()> hasSelectedPositionChanged;
+
 private:
 	cPlayerBasicData player;
 	bool selectedPosition;
@@ -58,6 +59,7 @@ public:
 	void setLandingPositionManager (const cLandingPositionManager*);
 
 	void handleResized (const cPosition& oldSize) override;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager managerSignalConnectionManager;

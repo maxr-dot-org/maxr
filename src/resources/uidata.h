@@ -20,12 +20,12 @@
 #ifndef resources_uidataH
 #define resources_uidataH
 
-#include <vector>
-#include <SDL.h>
-
 #include "SDLutility/autosurface.h"
-#include "game/data/units/unitdata.h"
 #include "game/data/player/clans.h"
+#include "game/data/units/unitdata.h"
+
+#include <SDL.h>
+#include <vector>
 
 class cPlayer;
 class cLanguage;
@@ -103,6 +103,7 @@ class cEffectsData
 {
 public:
 	void load (const char* path);
+
 public:
 	AutoSurface fx_explo_big[2];
 	AutoSurface fx_explo_small[2];
@@ -125,6 +126,7 @@ class cResourceData
 {
 public:
 	void load (const char* path);
+
 public:
 	AutoSurface res_metal_org;
 	AutoSurface res_metal;
@@ -165,6 +167,7 @@ class cOtherData
 {
 public:
 	void loadWayPoints();
+
 public:
 	AutoSurface WayPointPfeile[8][60];
 	AutoSurface WayPointPfeileSpecial[8][60];

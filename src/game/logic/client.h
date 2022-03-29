@@ -20,15 +20,15 @@
 #ifndef game_logic_clientH
 #define game_logic_clientH
 
-#include <memory>
-
-#include "game/logic/gametimer.h"
 #include "game/connectionmanager.h"
+#include "game/data/model.h"
+#include "game/logic/gametimer.h"
 #include "game/protocol/netmessage.h"
-#include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "game/data/model.h"
+#include "utility/thread/concurrentqueue.h"
+
+#include <memory>
 
 class cBuilding;
 class cCasualtiesTracker;
@@ -51,10 +51,10 @@ struct sLobbyPreparationData;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
 
-
 class cClient : public INetMessageReceiver
 {
 	friend class cDebugOutputWidget;
+
 public:
 	cClient (std::shared_ptr<cConnectionManager>);
 	~cClient();
@@ -102,8 +102,8 @@ public:
 	cSignal<void (const cVehicle&)> surveyorAiConfused;
 
 	void run();
-private:
 
+private:
 	void handleSurveyorMoveJobs();
 
 private:

@@ -20,10 +20,10 @@
 #ifndef events_mouseeventsH
 #define events_mouseeventsH
 
-#include <SDL.h>
-
-#include "utility/position.h"
 #include "input/mouse/mousebuttontype.h"
+#include "utility/position.h"
+
+#include <SDL.h>
 
 /**
  * Mouse event for mouse motion.
@@ -35,6 +35,7 @@ public:
 
 	cPosition getNewPosition() const;
 	cPosition getOffset() const;
+
 private:
 	SDL_MouseMotionEvent sdlEvent;
 };
@@ -55,6 +56,7 @@ public:
 
 	eMouseButtonType getButton() const;
 	eType getType() const;
+
 private:
 	SDL_MouseButtonEvent sdlEvent;
 };
@@ -68,6 +70,7 @@ public:
 	explicit cEventMouseWheel (const SDL_MouseWheelEvent&);
 
 	cPosition getAmount() const;
+
 private:
 	SDL_MouseWheelEvent sdlEvent;
 };

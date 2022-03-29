@@ -20,9 +20,9 @@
 #ifndef ui_graphical_menu_windows_windowbuildvehicles_windowbuildvehiclesH
 #define ui_graphical_menu_windows_windowbuildvehicles_windowbuildvehiclesH
 
-#include <vector>
-
 #include "ui/graphical/menu/windows/windowadvancedhangar/windowadvancedhangar.h"
+
+#include <vector>
 
 class cCheckBox;
 class cBuilding;
@@ -41,6 +41,7 @@ public:
 	std::vector<sID> getBuildList() const;
 	int getSelectedBuildSpeed() const;
 	bool isRepeatActive() const;
+
 protected:
 	void setActiveUnit (const sID& unitId) override;
 

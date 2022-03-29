@@ -48,9 +48,11 @@ enum class eJobType
 class cJob
 {
 	friend class cJobContainer;
+
 protected:
 	cJob() = default;
 	explicit cJob (cUnit&);
+
 public:
 	virtual ~cJob() = default;
 	virtual void run (cModel&) = 0;
@@ -63,9 +65,11 @@ public:
 	virtual void serialize (cJsonArchiveOut&) = 0;
 
 	virtual uint32_t getChecksum (uint32_t crc) const = 0;
+
 protected:
 	bool finished = false;
 	cUnit* unit = nullptr;
+
 private:
 	template <typename Archive>
 	static std::unique_ptr<cJob> createFromImpl (Archive&);

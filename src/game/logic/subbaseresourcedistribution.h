@@ -36,5 +36,4 @@ sMiningResource setBuildingsProduction (std::vector<cBuilding*>&, sMiningResourc
 
 sMiningResource increaseOilProduction (std::vector<cBuilding*>&, int missingOil);
 
-
 #endif

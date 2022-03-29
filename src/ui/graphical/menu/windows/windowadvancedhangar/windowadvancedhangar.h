@@ -20,9 +20,9 @@
 #ifndef ui_graphical_menu_windows_windowadvancedhangar_windowadvancedhangarH
 #define ui_graphical_menu_windows_windowadvancedhangar_windowadvancedhangarH
 
-#include "ui/graphical/menu/windows/windowhangar/windowhangar.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
+#include "ui/graphical/menu/windows/windowhangar/windowhangar.h"
 #include "utility/color.h"
 
 template <typename SelectedUnitItemType>
@@ -50,6 +50,7 @@ protected:
 	cPushButton* selectedListDownButton;
 
 	cSignal<void (SelectedUnitItemType*)> selectedUnitSelectionChanged;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 
@@ -84,7 +85,7 @@ void cWindowAdvancedHangar<SelectedUnitItemType>::initialize()
 {
 	selectedUnitList = addChild (std::make_unique<cListView<SelectedUnitItemType>> (cBox<cPosition> (getPosition() + cPosition (330, 14), getPosition() + cPosition (330 + 130, 12 + 220))));
 	selectedUnitList->setEndMargin (cPosition (2, 9));
-	signalConnectionManager.connect (selectedUnitList->itemClicked, [this](SelectedUnitItemType& unitItem) { selectedUnitClicked (unitItem); });
+	signalConnectionManager.connect (selectedUnitList->itemClicked, [this] (SelectedUnitItemType& unitItem) { selectedUnitClicked (unitItem); });
 	signalConnectionManager.connect (selectedUnitList->selectionChanged, [this]() { handleSelectionChanged(); });
 
 	selectedListUpButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (327, 240), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
@@ -93,7 +94,7 @@ void cWindowAdvancedHangar<SelectedUnitItemType>::initialize()
 	selectedListDownButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (348, 240), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectedListDownButton->clicked, [this]() { selectedUnitList->pageDown(); });
 
-	signalConnectionManager.connect (selectionUnitClickedSecondTime, [this](const cUnitListViewItemBuy& unitItem) { handleSelectionUnitClickedSecondTime (unitItem); });
+	signalConnectionManager.connect (selectionUnitClickedSecondTime, [this] (const cUnitListViewItemBuy& unitItem) { handleSelectionUnitClickedSecondTime (unitItem); });
 }
 
 //------------------------------------------------------------------------------

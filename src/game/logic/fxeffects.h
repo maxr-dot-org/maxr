@@ -20,11 +20,11 @@
 #ifndef game_logic_fxeffectsH
 #define game_logic_fxeffectsH
 
-#include <vector>
-#include <memory>
-
-#include "utility/position.h"
 #include "game/data/units/unitdata.h"
+#include "utility/position.h"
+
+#include <memory>
+#include <vector>
 
 class cFxMuzzleBig;
 class cFxMuzzleMed;
@@ -97,6 +97,7 @@ public:
 	void push_front (std::shared_ptr<cFx> fx);
 	size_t size() const;
 	void run();
+
 private:
 	std::vector<std::shared_ptr<cFx>> fxs;
 };
@@ -106,6 +107,7 @@ class cFxMuzzle : public cFx
 public:
 	int getDir() const { return dir; }
 	const sID& getId() const { return id; }
+
 protected:
 	cFxMuzzle (const cPosition& position, int dir_, sID id);
 
@@ -148,6 +150,7 @@ protected:
 
 public:
 	int getFrames() const { return frames; }
+
 protected:
 	// TODO: frames could be calculated (frames = w / h),
 	// if the width and height of the graphics for one frame would be equal
@@ -169,6 +172,7 @@ public:
 	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 
 	bool isOnWater() const { return onWater; }
+
 private:
 	bool onWater;
 };
@@ -192,6 +196,7 @@ class cFxHit : public cFxExplo
 private:
 	bool targetHit;
 	bool big;
+
 public:
 	cFxHit (const cPosition& position, bool targetHit, bool big);
 	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
@@ -237,11 +242,11 @@ public:
 	const int alphaStart;
 	const int alphaEnd;
 	const int dir;
+
 public:
 	cFxTracks (const cPosition& position, int dir_);
 	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
-
 
 class cFxRocket : public cFx
 {
@@ -253,6 +258,7 @@ private:
 	const cPosition startPosition;
 	const cPosition endPosition;
 	const sID id;
+
 public:
 	cFxRocket (const cPosition& startPosition, const cPosition& endPosition, int dir_, bool bottom, sID id);
 	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
@@ -271,10 +277,12 @@ class cFxDarkSmoke : public cFx
 private:
 	float dx;
 	float dy;
+
 public:
 	const int alphaStart;
 	const int alphaEnd;
 	const int frames;
+
 public:
 	cFxDarkSmoke (const cPosition& position, int alpha, float windDir);
 	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }

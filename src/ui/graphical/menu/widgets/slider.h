@@ -20,9 +20,9 @@
 #ifndef ui_graphical_menu_widgets_sliderH
 #define ui_graphical_menu_widgets_sliderH
 
+#include "SDLutility/autosurface.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/menu/widgets/sliderhandle.h"
-#include "SDLutility/autosurface.h"
 #include "ui/graphical/orientation.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -58,6 +58,7 @@ public:
 	void decrease (int offset);
 
 	cSignal<void()> valueChanged;
+
 protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 

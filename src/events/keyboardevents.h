@@ -20,9 +20,9 @@
 #ifndef events_keyboardeventsH
 #define events_keyboardeventsH
 
-#include <SDL.h>
-
 #include "input/keyboard/keymodifiertype.h"
+
+#include <SDL.h>
 
 class cKeyboardEvent
 {
@@ -38,6 +38,7 @@ public:
 	SDL_Keycode getKey() const;
 	KeyModifierFlags getModifiers() const;
 	eType getType() const;
+
 public:
 	SDL_KeyboardEvent sdlEvent;
 };
@@ -48,6 +49,7 @@ public:
 	cTextInputEvent (const SDL_TextInputEvent& sdlEvent);
 
 	const char* getText() const;
+
 private:
 	SDL_TextInputEvent sdlEvent;
 };

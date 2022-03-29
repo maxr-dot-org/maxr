@@ -20,10 +20,10 @@
 #ifndef ui_graphical_game_temp_drawingcacheH
 #define ui_graphical_game_temp_drawingcacheH
 
-#include <memory>
-
-#include "game/data/units/unitdata.h"
 #include "SDLutility/autosurface.h"
+#include "game/data/units/unitdata.h"
+
+#include <memory>
 
 class cPlayer;
 class cVehicle;
@@ -113,8 +113,8 @@ public:
 	int getCacheHits() const;
 	int getCacheMisses() const;
 	int getNotCached() const;
-private:
 
+private:
 	std::shared_ptr<const cFrameCounter> frameCounter;
 	const cPlayer* player;
 

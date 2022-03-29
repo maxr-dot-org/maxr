@@ -23,8 +23,8 @@
 #include "utility/ranges.h"
 
 #include <algorithm>
-#include <functional>
 #include <cctype>
+#include <functional>
 #include <locale>
 
 static inline std::string& trim_left (std::string& s)

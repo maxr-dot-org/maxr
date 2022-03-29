@@ -35,6 +35,7 @@ public:
 	{
 		return equal (other);
 	}
+
 protected:
 	virtual bool equal (const cMouseCursor& other) const = 0;
 };

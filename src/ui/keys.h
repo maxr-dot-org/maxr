@@ -20,8 +20,8 @@
 #ifndef ui_keysH
 #define ui_keysH
 
-#include "input/keyboard/keysequence.h"
 #include "game/serialization/serialization.h"
+#include "input/keyboard/keysequence.h"
 
 enum class eMouseStyle
 {
@@ -31,11 +31,12 @@ enum class eMouseStyle
 
 namespace serialization
 {
-	template <> struct sEnumStringMapping<eMouseStyle>
+	template <>
+	struct sEnumStringMapping<eMouseStyle>
 	{
 		static const std::vector<std::pair<eMouseStyle, const char*>> m;
 	};
-}
+} // namespace serialization
 class cKeysList
 {
 public:
@@ -45,8 +46,10 @@ public:
 	void saveToFile();
 
 	eMouseStyle getMouseStyle() const;
+
 public:
 	void loadFromJsonFile (const std::string& path);
+
 public:
 	cKeySequence keyExit;
 	cKeySequence keyJumpToAction;
@@ -187,6 +190,7 @@ public:
 
 		archive & NVP (mouseStyle);
 	}
+
 private:
 	eMouseStyle mouseStyle;
 };

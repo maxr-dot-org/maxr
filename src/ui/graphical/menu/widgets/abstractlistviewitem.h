@@ -29,6 +29,7 @@ class cAbstractListViewItem : public cWidget
 {
 	template <typename T>
 	friend class cListView;
+
 public:
 	cAbstractListViewItem();
 
@@ -37,6 +38,7 @@ public:
 	cSignal<void (const cPosition&)> resized;
 
 	void handleResized (const cPosition& oldSize) override;
+
 protected:
 	void select();
 	void deselect();

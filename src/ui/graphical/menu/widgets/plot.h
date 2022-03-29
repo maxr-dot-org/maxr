@@ -43,6 +43,7 @@ public:
 
 	void setColor (cRgbColor);
 	const cRgbColor& getColor() const;
+
 private:
 	T value;
 
@@ -122,6 +123,7 @@ public:
 
 	void setMaxValue (T value);
 	T getMaxValue() const;
+
 private:
 	T minValue{};
 	T maxValue{};
@@ -214,6 +216,7 @@ public:
 	const cRgbColor& getColor() const;
 
 	U evaluate (T x) const;
+
 private:
 	std::function<U (T)> function;
 
@@ -296,6 +299,7 @@ public:
 	YMarkerType& addYMarker (U value);
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+
 private:
 	const cPosition graphBeginMargin;
 	const cPosition graphEndMargin;
@@ -375,7 +379,7 @@ typename cPlot<T, U>::GraphType& cPlot<T, U>::addGraph (std::string label, F fun
 
 //------------------------------------------------------------------------------
 template <typename T, typename U>
-typename cPlot<T, U>::XMarkerType&  cPlot<T, U>::addXMarker (T value)
+typename cPlot<T, U>::XMarkerType& cPlot<T, U>::addXMarker (T value)
 {
 	xMarkers.push_back (XMarkerType (value));
 	return xMarkers.back();
@@ -383,7 +387,7 @@ typename cPlot<T, U>::XMarkerType&  cPlot<T, U>::addXMarker (T value)
 
 //------------------------------------------------------------------------------
 template <typename T, typename U>
-typename cPlot<T, U>::YMarkerType&  cPlot<T, U>::addYMarker (U value)
+typename cPlot<T, U>::YMarkerType& cPlot<T, U>::addYMarker (U value)
 {
 	yMarkers.push_back (YMarkerType (value));
 	return yMarkers.back();

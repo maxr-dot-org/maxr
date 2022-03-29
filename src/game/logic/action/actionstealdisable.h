@@ -24,7 +24,8 @@
 
 class cUnit;
 
-enum class eInfiltratorAction {
+enum class eInfiltratorAction
+{
 	STEAL,
 	DISABLE
 };
@@ -35,10 +36,19 @@ public:
 	cActionStealDisable (const cVehicle& infiltrator, const cUnit& target, bool steal);
 	cActionStealDisable (cBinaryArchiveOut& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
 
 	void execute (cModel& model) const override;
+
 private:
 	void changeUnitOwner (cUnit& unit, cPlayer& newOwner, cModel& model) const;
 

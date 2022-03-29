@@ -30,6 +30,7 @@ public:
 	~cWindowStart();
 
 	void handleActivated (cApplication& application, bool firstTime) override;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

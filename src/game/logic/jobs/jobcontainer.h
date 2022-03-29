@@ -47,6 +47,7 @@ public:
 
 private:
 	std::vector<std::unique_ptr<cJob>>::iterator releaseJob (std::vector<std::unique_ptr<cJob>>::iterator it);
+
 private:
 	std::vector<std::unique_ptr<cJob>> jobs;
 };

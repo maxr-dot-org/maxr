@@ -31,9 +31,9 @@ struct sGraphicTile
 
 	void copySrfToTerData (SDL_Surface&, const SDL_Color (&palette_shw)[256]);
 
-	AutoSurface sf;      /** the scaled surface of the terrain */
-	AutoSurface sf_org;  /** the original surface of the terrain */
-	AutoSurface shw;     /** the scaled surface of the terrain in the fog */
+	AutoSurface sf; /** the scaled surface of the terrain */
+	AutoSurface sf_org; /** the original surface of the terrain */
+	AutoSurface shw; /** the scaled surface of the terrain in the fog */
 	AutoSurface shw_org; /** the original surface of the terrain in the fog */
 };
 
@@ -41,7 +41,8 @@ class cStaticMap;
 class cGraphicStaticMap
 {
 public:
-	cGraphicStaticMap (const cStaticMap* map) : map (map) {}
+	cGraphicStaticMap (const cStaticMap* map) :
+		map (map) {}
 
 	cGraphicStaticMap (const cGraphicStaticMap&) = delete;
 	cGraphicStaticMap& operator= (const cGraphicStaticMap&) = delete;
@@ -60,7 +61,7 @@ private:
 private:
 	const cStaticMap* map = nullptr;
 	std::vector<sGraphicTile> tiles; // The different terrain graphics.
-	SDL_Color palette[256];   // Palette with all Colors for the terrain graphics
+	SDL_Color palette[256]; // Palette with all Colors for the terrain graphics
 	SDL_Color palette_shw[256];
 };
 

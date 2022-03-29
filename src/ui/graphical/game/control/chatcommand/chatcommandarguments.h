@@ -20,13 +20,13 @@
 #ifndef ui_graphical_game_control_chatcommand_chatcommandargumentsH
 #define ui_graphical_game_control_chatcommand_chatcommandargumentsH
 
-#include <string>
+#include <exception>
 #include <iostream>
 #include <limits>
-#include <exception>
-#include <sstream>
-#include <vector>
 #include <memory>
+#include <sstream>
+#include <string>
+#include <vector>
 
 size_t getNextWordLength (const std::string& s, size_t position);
 
@@ -71,11 +71,11 @@ public:
 	std::string toString() const;
 
 	const ValueType& getValue() const;
+
 private:
 	ValueType value;
 	const ValueType defaultValue;
 };
-
 
 template <typename T>
 class cChatCommandArgumentInt : public cChatCommandArgument<cChatCommandArgumentInt<T>>
@@ -90,6 +90,7 @@ public:
 	std::string toString() const;
 
 	const ValueType& getValue() const;
+
 private:
 	std::string name;
 	ValueType value;
@@ -108,6 +109,7 @@ public:
 	std::string toString() const;
 
 	const ValueType& getValue() const;
+
 private:
 	std::vector<std::string> choices;
 	size_t currentSelection;
@@ -126,6 +128,7 @@ public:
 	std::string toString() const;
 
 	const ValueType& getValue() const;
+
 private:
 	std::string name;
 	ValueType value;
@@ -144,6 +147,7 @@ public:
 	std::string toString() const;
 
 	const ValueType& getValue() const;
+
 private:
 	ValueType value;
 	const ValueType defaultValue;
@@ -162,6 +166,7 @@ public:
 	std::string toString() const;
 
 	const ValueType& getValue() const;
+
 private:
 	ValueType value;
 	const ValueType defaultValue;
@@ -180,6 +185,7 @@ public:
 	std::string toString() const;
 
 	const ValueType& getValue() const;
+
 private:
 	ValueType value;
 	const ValueType defaultValue;
@@ -198,6 +204,7 @@ public:
 	std::string toString() const;
 
 	const ValueType& getValue() const;
+
 private:
 	ValueType value;
 	const ValueType defaultValue;

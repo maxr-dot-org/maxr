@@ -67,8 +67,8 @@ public:
 		static std::random_device rd;
 		static std::mt19937 engine (rd());
 		// Workaround for C++11 bug: uniform_int_distribution does not allow char types
-		std::uniform_int_distribution<unsigned int> distribution (0, (unsigned int)std::numeric_limits<unsigned char>::max());
-		return cRgbColor ((unsigned char)distribution (engine), (unsigned char)distribution (engine), (unsigned char)distribution (engine), alpha_);
+		std::uniform_int_distribution<unsigned int> distribution (0, (unsigned int) std::numeric_limits<unsigned char>::max());
+		return cRgbColor ((unsigned char) distribution (engine), (unsigned char) distribution (engine), (unsigned char) distribution (engine), alpha_);
 	}
 };
 

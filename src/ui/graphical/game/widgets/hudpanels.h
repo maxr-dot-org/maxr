@@ -20,12 +20,12 @@
 #ifndef ui_graphical_game_widgets_hudpanelsH
 #define ui_graphical_game_widgets_hudpanelsH
 
-#include <memory>
-
-#include "ui/graphical/widget.h"
 #include "SDLutility/autosurface.h"
-#include "utility/signal/signalconnectionmanager.h"
+#include "ui/graphical/widget.h"
 #include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
 
 class cAnimationTimer;
 
@@ -41,6 +41,7 @@ public:
 	cSignal<void()> closed;
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

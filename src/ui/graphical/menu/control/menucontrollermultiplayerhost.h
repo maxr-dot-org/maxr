@@ -20,15 +20,15 @@
 #ifndef ui_graphical_menu_control_menucontrollermultiplayerhostH
 #define ui_graphical_menu_control_menucontrollermultiplayerhostH
 
-#include <memory>
-#include <vector>
-
 #include "game/connectionmanager.h"
 #include "game/startup/lobbyclient.h"
 #include "game/startup/lobbyserver.h"
 #include "ui/graphical/menu/control/initgamepreparation.h"
 #include "utility/runnable.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
+#include <vector>
 
 class cApplication;
 class cWindowNetworkLobbyHost;
@@ -42,6 +42,7 @@ public:
 	void start();
 
 	void run() override;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

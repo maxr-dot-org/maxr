@@ -28,8 +28,8 @@
 #include <memory>
 #include <mutex>
 #include <string>
-#include <vector>
 #include <thread>
+#include <vector>
 
 //------------------------------------------------------------------------
 /** cDedicatedServerGame handles all server side tasks of one multiplayer game in a thread.

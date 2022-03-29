@@ -31,6 +31,7 @@ public:
 	~cDialogOk();
 
 	cSignal<void()> done;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

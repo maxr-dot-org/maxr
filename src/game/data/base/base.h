@@ -20,8 +20,8 @@
 #ifndef game_data_base_baseH
 #define game_data_base_baseH
 
-#include "game/data/units/unitdata.h"
 #include "game/data/miningresource.h"
+#include "game/data/units/unitdata.h"
 
 #include <memory>
 #include <vector>
@@ -104,8 +104,8 @@ public:
 	mutable cSignal<void()> metalChanged;
 	mutable cSignal<void()> oilChanged;
 	mutable cSignal<void()> goldChanged;
-private:
 
+private:
 	/**
 	* increases the energy production of the subbase by
 	* starting offline generators/stations

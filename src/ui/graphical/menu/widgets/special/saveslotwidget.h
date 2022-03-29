@@ -50,9 +50,10 @@ public:
 	cSignal<void()> doubleClicked;
 
 	cSignal<void()> nameChanged;
-protected:
 
+protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
+
 private:
 	cLabel* numberLabel;
 	cLabel* typeLabel;

@@ -20,9 +20,10 @@
 #ifndef ui_graphical_game_unitlocklistH
 #define ui_graphical_game_unitlocklistH
 
-#include <vector>
-#include <utility>
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <utility>
+#include <vector>
 
 class cUnit;
 class cMapFieldView;
@@ -43,6 +44,7 @@ public:
 	void unlockAll();
 
 	void lockUnit (const cUnit&);
+
 private:
 	std::vector<std::pair<const cUnit*, cSignalConnectionManager>> lockedUnits;
 

@@ -20,10 +20,10 @@
 #ifndef ui_graphical_game_unitselectionH
 #define ui_graphical_game_unitselectionH
 
-#include <vector>
-
-#include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+#include <vector>
 
 class cPosition;
 class cMapView;
@@ -33,7 +33,8 @@ class cUnit;
 class cVehicle;
 class cBuilding;
 class cMapFieldView;
-template <typename T> class cBox;
+template <typename T>
+class cBox;
 
 class cUnitSelection
 {
@@ -66,8 +67,8 @@ public:
 	mutable cSignal<void()> selectionChanged;
 	mutable cSignal<void()> mainSelectionChanged;
 	mutable cSignal<void()> groupSelectionChanged;
-private:
 
+private:
 	std::vector<std::pair<cUnit*, cSignalConnectionManager>> selectedUnits;
 
 	void addSelectedUnitBack (cUnit&);

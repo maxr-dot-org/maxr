@@ -20,13 +20,13 @@
 #ifndef ui_graphical_menu_control_local_hotseat_localhotseatgameH
 #define ui_graphical_menu_control_local_hotseat_localhotseatgameH
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include "game/logic/server.h"
 #include "ui/graphical/game/control/gameguicontroller.h"
 #include "ui/graphical/menu/control/game.h"
+
+#include <memory>
+#include <string>
+#include <vector>
 
 class cClient;
 

@@ -19,15 +19,14 @@
 #ifndef game_networkH
 #define game_networkH
 
-#include <SDL_net.h>
+#include "config/workaround/cpp17/optional.h"
+#include "game/networkaddress.h"
 
+#include <SDL_net.h>
 #include <atomic>
 #include <mutex>
-#include "config/workaround/cpp17/optional.h"
 #include <thread>
 #include <vector>
-
-#include "game/networkaddress.h"
 
 //this is probably the maximum of the underlying os 'select' call
 #define MAX_TCP_CONNECTIONS 64
@@ -51,7 +50,6 @@ public:
 	uint32_t length = 0;
 	unsigned char* data = nullptr;
 };
-
 
 class cSocket
 {

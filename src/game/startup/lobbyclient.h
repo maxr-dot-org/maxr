@@ -89,7 +89,7 @@ public:
 
 	cSignal<void (const std::string& playerName, const std::string& message)> onChatMessage;
 
-	cSignal<void (bool missingSettings, const std::vector<cPlayerBasicData>& notReadyPlayers, bool hostNotInSavegame, const std::vector<cPlayerBasicData>&missingPlayers)> onCannotEndLobby;
+	cSignal<void (bool missingSettings, const std::vector<cPlayerBasicData>& notReadyPlayers, bool hostNotInSavegame, const std::vector<cPlayerBasicData>& missingPlayers)> onCannotEndLobby;
 	cSignal<void()> onDisconnectNotInSavedGame;
 	cSignal<void()> onStartGamePreparation;
 	cSignal<void (const std::string& playerName)> onPlayerAbortGamePreparation;

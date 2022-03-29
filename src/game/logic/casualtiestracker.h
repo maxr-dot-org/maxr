@@ -20,16 +20,16 @@
 #ifndef game_logic_casualtiestrackerH
 #define game_logic_casualtiestrackerH
 
-#include "utility/signal/signal.h"
-#include <vector>
 #include "game/data/units/unitdata.h"
+#include "utility/signal/signal.h"
+
+#include <vector>
 
 //-------------------------------------------------------------------------------
 class cCasualtiesTracker
 {
 public:
 	cCasualtiesTracker() {}
-
 
 	void logCasualty (const cUnit& unit);
 	int getCasualtiesOfUnitType (sID unitType, int playerNr) const;
@@ -78,6 +78,5 @@ private:
 	std::vector<Casualty>& getCasualtiesOfPlayer (int playerNr) const;
 	void setCasualty (sID unitType, int numberOfLosses, int playerNr);
 };
-
 
 #endif // game_logic_casualtiestrackerH

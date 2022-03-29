@@ -85,6 +85,7 @@ public:
 
 	//callback from timeout timer
 	void handshakeTimeoutCallback (cHandshakeTimeout&);
+
 private:
 	void startTimeout (const cSocket*);
 	void stopTimeout (const cSocket*);

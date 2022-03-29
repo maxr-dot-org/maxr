@@ -20,10 +20,10 @@
 #ifndef utility_positionH
 #define utility_positionH
 
+#include "utility/fixedvector.h"
+
 #include <stdint.h>
 #include <string>
-
-#include "utility/fixedvector.h"
 
 /**
  * Fixed vector class for 2-dimensional integer positions.
@@ -87,7 +87,7 @@ public:
 /**
  * Fixed vector class for 2-dimensional float vector.
  */
-class cVector2: public cFixedVector<float, 2>
+class cVector2 : public cFixedVector<float, 2>
 {
 public:
 	cVector2()

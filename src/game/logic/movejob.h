@@ -20,11 +20,11 @@
 #ifndef game_logic_movejobs2H
 #define game_logic_movejobs2H
 
-#include <forward_list>
-
 #include "game/data/units/vehicle.h"
 #include "game/logic/endmoveaction.h"
 #include "utility/position.h"
+
+#include <forward_list>
 
 #define MOVE_SPEED 4 // maximum speed (pixel per gametime tick) of vehicle movements
 
@@ -123,8 +123,15 @@ public:
 			}
 		}
 	}
+
 private:
-	enum class eMoveJobState {Active, Waiting, Stopping, Finished};
+	enum class eMoveJobState
+	{
+		Active,
+		Waiting,
+		Stopping,
+		Finished
+	};
 
 	/**
 	* calculates the needed rotation before the next movement

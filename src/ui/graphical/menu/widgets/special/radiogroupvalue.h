@@ -20,32 +20,40 @@
 #ifndef ui_graphical_menu_widgets_special_radiogroupvalueH
 #define ui_graphical_menu_widgets_special_radiogroupvalueH
 
+#include "config/workaround/cpp17/optional.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
-
-#include "config/workaround/cpp17/optional.h"
 
 /*
 ** Similar to regular radioGroup, but handles natively an association
 ** between checkbox and value.
 */
 template <typename T>
-class cRadioGroupValue: public cWidget
+class cRadioGroupValue : public cWidget
 {
 public:
-	cRadioGroupValue() : cRadioGroupValue (false) {}
-	explicit cRadioGroupValue (bool allowUncheckAll) : allowUncheckAll (allowUncheckAll) {}
+	cRadioGroupValue() :
+		cRadioGroupValue (false) {}
+	explicit cRadioGroupValue (bool allowUncheckAll) :
+		allowUncheckAll (allowUncheckAll) {}
 
-	template <typename ... Ts>
-	cCheckBox* emplaceCheckBox (T value, Ts&&... args) { return addCheckBox (value, std::make_unique<cCheckBox> (std::forward<Ts> (args)...)); }
+	template <typename... Ts>
+	cCheckBox* emplaceCheckBox (T value, Ts&&... args)
+	{
+		return addCheckBox (value, std::make_unique<cCheckBox> (std::forward<Ts> (args)...));
+	}
 
 	template <typename TCheckBox>
 	TCheckBox* addCheckBox (T value, std::unique_ptr<TCheckBox> button);
 
 	bool selectValue (T value);
 
-	std::optional<T> getSelectedValue() const { if (currentlyCheckedButton) return value; return std::nullopt;}
+	std::optional<T> getSelectedValue() const
+	{
+		if (currentlyCheckedButton) return value;
+		return std::nullopt;
+	}
 
 	void handleMoved (const cPosition& offset);
 
@@ -74,7 +82,7 @@ CheckBox* cRadioGroupValue<T>::addCheckBox (T value, std::unique_ptr<CheckBox> n
 
 	if (currentlyCheckedButton == nullptr && !allowUncheckAll && !checkBox->isChecked()) checkBox->setChecked (true);
 
-	signalConnectionManager.connect (checkBox->toggled, [=](){ buttonToggled (*checkBox, value); });
+	signalConnectionManager.connect (checkBox->toggled, [=]() { buttonToggled (*checkBox, value); });
 	buttonToggled (*checkBox, value);
 
 	checkBoxes.emplace (value, checkBox);
@@ -123,8 +131,10 @@ void cRadioGroupValue<T>::buttonToggled (cCheckBox& button, T value)
 	{
 		if (!button.isChecked())
 		{
-			if (!allowUncheckAll) button.setChecked (true);
-			else currentlyCheckedButton = nullptr;
+			if (!allowUncheckAll)
+				button.setChecked (true);
+			else
+				currentlyCheckedButton = nullptr;
 		}
 	}
 	else

@@ -20,8 +20,8 @@
 #ifndef ui_graphical_menu_widgets_special_reportdisadvantageslistviewitemH
 #define ui_graphical_menu_widgets_special_reportdisadvantageslistviewitemH
 
-#include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 #include "game/data/units/id.h"
+#include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 
 class cReportDisadvantagesListViewItem : public cAbstractListViewItem
 {

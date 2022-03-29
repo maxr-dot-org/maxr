@@ -48,9 +48,9 @@ namespace serialization
 		return sNameValuePair<T> (name, value_nonconst);
 	}
 
-	#define NVP_QUOTE(x) #x
-	#define NVP(value) serialization::makeNvp (NVP_QUOTE (value), value)
-	#define NVP_MEMBER(obj, value) serialization::makeNvp (NVP_QUOTE (value), obj.value)
-}
+#define NVP_QUOTE(x) #x
+#define NVP(value) serialization::makeNvp (NVP_QUOTE (value), value)
+#define NVP_MEMBER(obj, value) serialization::makeNvp (NVP_QUOTE (value), obj.value)
+} // namespace serialization
 
 #endif

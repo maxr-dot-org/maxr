@@ -34,6 +34,7 @@ public:
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
 	const cSavedReport& getReport() const;
+
 protected:
 	const cSavedReport& report;
 };

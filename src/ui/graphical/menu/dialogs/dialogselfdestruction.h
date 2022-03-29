@@ -36,6 +36,7 @@ public:
 	~cDialogSelfDestruction();
 
 	cSignal<void()> triggeredDestruction;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

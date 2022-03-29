@@ -20,9 +20,9 @@
 #ifndef utility_string_tolowerH
 #define utility_string_tolowerH
 
-#include <string>
 #include <algorithm>
 #include <cctype>
+#include <string>
 
 static inline std::string& to_lower (std::string& s)
 {

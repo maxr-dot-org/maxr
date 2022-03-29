@@ -106,8 +106,8 @@ cBox<PointType>::cBox (const PointType& minCorner_, const PointType& maxCorner_)
 template <typename PointType>
 void cBox<PointType>::set (const PointType& minCorner_, const PointType& maxCorner_)
 {
-    minCorner = minCorner_;
-    maxCorner = maxCorner_;
+	minCorner = minCorner_;
+	maxCorner = maxCorner_;
 }
 
 //------------------------------------------------------------------------------
@@ -157,7 +157,9 @@ void cBox<PointType>::resize (const PointType& newSize)
 	maxCorner = minCorner + newSize;
 	if (std::is_integral<typename PointType::value_type>::value)
 	{
-		if (std::is_unsigned<typename PointType::value_type>::value) for (size_t d = 0; d < PointType::const_size::value; ++d) assert (newSize[d] != 0);
+		if (std::is_unsigned<typename PointType::value_type>::value)
+			for (size_t d = 0; d < PointType::const_size::value; ++d)
+				assert (newSize[d] != 0);
 		maxCorner -= 1;
 	}
 }
@@ -235,13 +237,13 @@ cBox<PointType> cBox<PointType>::intersection (const cBox<PointType>& other) con
 template <typename PointType>
 void cBox<PointType>::expand (const PointType& lower, const PointType& upper)
 {
-    auto& min = getMinCorner();
-    auto& max = getMaxCorner();
-    for (size_t d = 0; d < PointType::const_size::value; ++d)
-    {
-        min[d] -= fabs (lower[d]);
-        max[d] += fabs (upper[d]);
-    }
+	auto& min = getMinCorner();
+	auto& max = getMaxCorner();
+	for (size_t d = 0; d < PointType::const_size::value; ++d)
+	{
+		min[d] -= fabs (lower[d]);
+		max[d] += fabs (upper[d]);
+	}
 }
 
 #endif // utility_boxH

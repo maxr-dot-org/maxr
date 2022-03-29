@@ -20,17 +20,17 @@
 #ifndef ui_graphical_menu_widgets_labelH
 #define ui_graphical_menu_widgets_labelH
 
+#include "output/video/unifonts.h"
+#include "ui/graphical/alignment.h"
+#include "ui/graphical/menu/widgets/clickablewidget.h"
+
 #include <string>
 #include <vector>
-
-#include "output/video/unifonts.h"
-#include "ui/graphical/menu/widgets/clickablewidget.h"
-#include "ui/graphical/alignment.h"
 
 class cLabel : public cClickableWidget
 {
 public:
-	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType = eUnicodeFontType::LatinNormal, AlignmentFlags = toEnumFlag (eAlignmentType::Left)  | eAlignmentType::Top);
+	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType = eUnicodeFontType::LatinNormal, AlignmentFlags = toEnumFlag (eAlignmentType::Left) | eAlignmentType::Top);
 
 	void setText (const std::string& text);
 	const std::string& getText() const;
@@ -45,11 +45,13 @@ public:
 	void handleResized (const cPosition& oldSize) override;
 
 	cSignal<void()> clicked;
+
 protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
 	void updateDisplayInformation();
+
 private:
 	std::string text;
 	eUnicodeFontType fontType;

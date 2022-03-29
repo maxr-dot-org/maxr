@@ -20,9 +20,9 @@
 #ifndef ui_graphical_menu_widgets_colorpickerH
 #define ui_graphical_menu_widgets_colorpickerH
 
+#include "SDLutility/autosurface.h"
 #include "ui/graphical/widget.h"
 #include "utility/color.h"
-#include "SDLutility/autosurface.h"
 #include "utility/signal/signal.h"
 
 class cImage;
@@ -42,6 +42,7 @@ public:
 	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
 	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
 	void handleLooseMouseFocus (cApplication&) override;
+
 private:
 	cHsvColor currentColor;
 
@@ -65,6 +66,5 @@ private:
 	void updateColorByMousePosition (const cPosition& mousePosition);
 	void updateColorHueByMousePosition (const cPosition& mousePosition);
 };
-
 
 #endif // ui_graphical_menu_widgets_frameH

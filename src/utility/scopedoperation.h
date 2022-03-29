@@ -44,7 +44,7 @@ public:
 	{
 		other.dismissed = true;
 	}
-	cScopedOperation<FunctionType>& operator= (cScopedOperation<FunctionType> && other)
+	cScopedOperation<FunctionType>& operator= (cScopedOperation<FunctionType>&& other)
 	{
 		function = std::move (other.function);
 		dismissed = other.dismissed;
@@ -65,8 +65,8 @@ public:
 	{
 		dismissed = true;
 	}
-private:
 
+private:
 	FunctionType function;
 	bool dismissed;
 };

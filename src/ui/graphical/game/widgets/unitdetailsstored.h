@@ -20,12 +20,11 @@
 #ifndef ui_graphical_game_widgets_unitdetailsstoredH
 #define ui_graphical_game_widgets_unitdetailsstoredH
 
-#include <array>
-
-#include "ui/graphical/widget.h"
-
 #include "ui/graphical/menu/widgets/special/unitdatasymboltype.h"
+#include "ui/graphical/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <array>
 
 class cLabel;
 class cUnit;
@@ -39,6 +38,7 @@ public:
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
 	void setUnit (const cUnit*);
+
 private:
 	cSignalConnectionManager unitSignalConnectionManager;
 

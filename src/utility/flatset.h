@@ -20,8 +20,9 @@
 #ifndef utility_flatsetH
 #define utility_flatsetH
 
-#include <vector>
 #include <algorithm>
+#include <functional>
+#include <vector>
 
 /**
  * Set class based on the ideas from "AssocVector" of "Modern C++ by Andrei Alexandrescu".
@@ -49,6 +50,7 @@ template <typename Key, class Compare = std::less<Key>, class Allocator = std::a
 class cFlatSet
 {
 	using DataType = std::vector<Key, Allocator>;
+
 public:
 	using key_type = Key;
 	using value_type = Key;
@@ -143,7 +145,7 @@ public:
 	}
 	iterator insert (const_iterator hint, const value_type& value)
 	{
-		if ((hint == begin() || compare (* (hint - 1), value)) && (hint == end() || compare (value, hint)))
+		if ((hint == begin() || compare (*(hint - 1), value)) && (hint == end() || compare (value, hint)))
 		{
 			return data.insert (hint, value);
 		}
@@ -151,7 +153,7 @@ public:
 	}
 	iterator insert (const_iterator hint, value_type&& value)
 	{
-		if ((hint == begin() || compare (* (hint - 1), value)) && (hint == end() || compare (value, hint)))
+		if ((hint == begin() || compare (*(hint - 1), value)) && (hint == end() || compare (value, hint)))
 		{
 			return data.insert (hint, std::move (value));
 		}
@@ -160,7 +162,8 @@ public:
 	template <typename InputIterator>
 	void insert (InputIterator first, InputIterator last)
 	{
-		for (; first != last; ++first) insert (*first);
+		for (; first != last; ++first)
+			insert (*first);
 	}
 	//void insert (std::initializer_list<value_type> ilist);
 
@@ -205,7 +208,7 @@ public:
 	// lookup
 	iterator find (const key_type& k)
 	{
-		auto i  = lower_bound (k);
+		auto i = lower_bound (k);
 		if (i != end() && compare (k, *i))
 		{
 			i = end();

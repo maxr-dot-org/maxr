@@ -21,9 +21,9 @@
 #define output_video_videoH
 
 #include "SDLutility/autosurface.h"
+#include "settings.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "settings.h"
 
 struct SDL_Texture;
 struct SDL_Renderer;
@@ -159,7 +159,6 @@ public:
 	*/
 	void draw();
 
-
 	void takeScreenShot (const std::string& filename) const;
 
 	void applyShadow (const SDL_Rect* rect, SDL_Surface& destination);
@@ -172,7 +171,6 @@ public:
 	static SDL_Surface* buffer; // Der Bildschirm-Buffer
 
 private:
-
 	/**
 	* Checks whether our minimal needed videomode has been autodetected
 	* @return true if mininal video mode looks valid
@@ -187,6 +185,7 @@ private:
 	void initializeBuffer (int width, int height);
 
 	void detectResolutions();
+
 private:
 	SDL_Window* sdlWindow;
 	SDL_Renderer* sdlRenderer;
@@ -208,7 +207,7 @@ private:
 
 extern cVideo Video;
 
-void applySettings(cVideo&, const sVideoSettings&);
+void applySettings (cVideo&, const sVideoSettings&);
 
 /**
 * Works like SDL_BlittSurface.
@@ -242,9 +241,7 @@ SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int h
  * and scales it if necessary */
 inline void CHECK_SCALING (SDL_Surface& surface, SDL_Surface& surface_org, float factor)
 {
-	if (!cSettings::getInstance().shouldDoPrescale() &&
-		(surface.w != (int) (surface_org.w * factor) ||
-		 surface.h != (int) (surface_org.h * (factor))))
+	if (!cSettings::getInstance().shouldDoPrescale() && (surface.w != (int) (surface_org.w * factor) || surface.h != (int) (surface_org.h * (factor))))
 		scaleSurface (&surface_org, &surface, (int) (surface_org.w * factor), (int) (surface_org.h * factor));
 }
 

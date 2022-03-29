@@ -24,7 +24,8 @@
 
 class cRgbColor;
 class cPosition;
-template <typename> class cBox;
+template <typename>
+class cBox;
 
 SDL_Rect toSdlRect (const cBox<cPosition>&);
 

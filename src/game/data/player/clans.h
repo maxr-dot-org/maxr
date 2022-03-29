@@ -20,12 +20,12 @@
 #ifndef game_data_player_clansH
 #define game_data_player_clansH
 
+#include "game/data/units/unitdata.h"
+#include "game/serialization/serialization.h"
+
 #include <map>
 #include <string>
 #include <vector>
-
-#include "game/data/units/unitdata.h"
-#include "game/serialization/serialization.h"
 
 enum class eClanModification
 {
@@ -39,16 +39,18 @@ enum class eClanModification
 };
 namespace serialization
 {
-	template <> struct sEnumStringMapping<eClanModification>
+	template <>
+	struct sEnumStringMapping<eClanModification>
 	{
 		static const std::vector<std::pair<eClanModification, const char*>> m;
 	};
-}
+} // namespace serialization
 //------------------------------------------------------------------------------
 class cClanUnitStat
 {
 public:
-	cClanUnitStat (sID unitId) : unitId (unitId) {}
+	cClanUnitStat (sID unitId) :
+		unitId (unitId) {}
 	cClanUnitStat() {}
 
 	void addModification (eClanModification, int value);
@@ -74,8 +76,10 @@ private:
 class cClan
 {
 public:
-	cClan (int num) : num (num) {}
-	cClan() : num (-1) {}
+	cClan (int num) :
+		num (num) {}
+	cClan() :
+		num (-1) {}
 
 	cClan (const cClan&) = default;
 

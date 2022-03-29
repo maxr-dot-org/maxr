@@ -21,7 +21,6 @@
 #define game_logic_actionResourceDistributionH
 
 #include "action.h"
-
 #include "game/data/miningresource.h"
 
 class cUnit;
@@ -29,13 +28,22 @@ class cUnit;
 class cActionResourceDistribution : public cActionT<cAction::eActiontype::ResourceDistribution>
 {
 public:
-	cActionResourceDistribution (const cBuilding& building,	const sMiningResource&);
+	cActionResourceDistribution (const cBuilding& building, const sMiningResource&);
 	cActionResourceDistribution (cBinaryArchiveOut& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override { cAction::serialize (archive); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { cAction::serialize (archive); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		cAction::serialize (archive);
+		serializeThis (archive);
+	}
 
 	void execute (cModel& model) const override;
+
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)

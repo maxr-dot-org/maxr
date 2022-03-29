@@ -21,11 +21,11 @@
 #include "ui/graphical/game/control/chatcommand/chatcommand.h"
 
 #ifndef ui_graphical_game_control_chatcommand_chatcommandparserH
-#define ui_graphical_game_control_chatcommand_chatcommandparserH
+# define ui_graphical_game_control_chatcommand_chatcommandparserH
 
-#include <string>
-#include <tuple>
-#include <sstream>
+# include <sstream>
+# include <string>
+# include <tuple>
 
 void skipWhiteSpace (const std::string& command, size_t& position);
 
@@ -46,6 +46,7 @@ public:
 	const cChatCommand& getCommand() const;
 
 	ArgumentValueTypes getArgumentValues() const;
+
 private:
 	cChatCommand command;
 };
@@ -68,6 +69,7 @@ public:
 
 	const cChatCommand& getCommand() const;
 	ArgumentValueTypes getArgumentValues() const;
+
 private:
 	cChatCommandParser<LastArguments...> lastParser;
 	mutable Argument argument;

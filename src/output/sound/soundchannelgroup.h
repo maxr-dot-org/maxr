@@ -20,10 +20,10 @@
 #ifndef output_sound_soundchannelgroupH
 #define output_sound_soundchannelgroupH
 
-#include <vector>
-#include <memory>
-
 #include "utility/flatset.h"
+
+#include <memory>
+#include <vector>
 
 class cSoundChannel;
 
@@ -39,6 +39,7 @@ public:
 	cSoundChannel& getFreeChannel (bool haltIfNotAvailable = true);
 
 	void setVolume (int volume);
+
 private:
 	struct sChannelLess
 	{

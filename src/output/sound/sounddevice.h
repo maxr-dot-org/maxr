@@ -19,14 +19,13 @@
 #ifndef output_sound_sounddeviceH
 #define output_sound_sounddeviceH
 
-#include <string>
-#include <vector>
-#include <memory>
-#include <chrono>
+#include "output/sound/soundchannelgroup.h"
 
 #include <SDL_mixer.h>
-
-#include "output/sound/soundchannelgroup.h"
+#include <chrono>
+#include <memory>
+#include <string>
+#include <vector>
 
 class cPosition;
 class cSoundChunk;
@@ -55,6 +54,7 @@ public:
 	void setSoundEffectVolume (int volume);
 	void setVoiceVolume (int volume);
 	void setMusicVolume (int volume);
+
 private:
 	const static int soundEffectGroupTag;
 	const static int voiceGroupTag;

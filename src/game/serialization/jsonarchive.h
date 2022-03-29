@@ -23,7 +23,6 @@
 #include "serialization.h"
 #include "utility/log.h"
 
-
 #include <3rd/nlohmann/json.hpp>
 
 class cJsonArchiveOut
@@ -51,8 +50,8 @@ public:
 
 	//--------------------------------------------------------------------------
 	serialization::cPointerLoader* getPointerLoader() { return nullptr; }
-private:
 
+private:
 	//--------------------------------------------------------------------------
 	template <typename T>
 	void pushValue (const serialization::sNameValuePair<T>& nvp)
@@ -60,7 +59,7 @@ private:
 		//check invalid characters in element and attribute names
 		assert (nvp.name.find_first_of ("<>\"= []?!&") == std::string::npos);
 
-		if (json.contains(nvp.name))
+		if (json.contains (nvp.name))
 		{
 			Log.write ("Entry " + nvp.name + " already present. old data will be overwritten", cLog::eLogType::Error);
 		}
@@ -72,7 +71,7 @@ private:
 	void pushValue (const T& object)
 	{
 		json = nlohmann::json::object();
-		serialization::serialize (*this, const_cast<T&>(object));
+		serialization::serialize (*this, const_cast<T&> (object));
 	}
 
 	//--------------------------------------------------------------------------
@@ -92,7 +91,7 @@ private:
 		}
 		else
 		{
-			static_assert(sizeof (E) <= sizeof (int), "!");
+			static_assert (sizeof (E) <= sizeof (int), "!");
 			json = static_cast<int> (e);
 		}
 	}
@@ -198,7 +197,6 @@ private:
 	nlohmann::json& json;
 };
 
-
 class cJsonArchiveIn
 {
 public:
@@ -242,7 +240,6 @@ public:
 	serialization::cPointerLoader* getPointerLoader() { return pointerLoader; }
 
 private:
-
 	//--------------------------------------------------------------------------
 	template <typename T>
 	void popValue (const serialization::sNameValuePair<T>& nvp)
@@ -278,9 +275,9 @@ private:
 		}
 		else
 		{
-			static_assert(sizeof (E) <= sizeof (int), "!");
+			static_assert (sizeof (E) <= sizeof (int), "!");
 			int tmp = json;
-			e = static_cast<E>(tmp);
+			e = static_cast<E> (tmp);
 		}
 	}
 
@@ -288,9 +285,9 @@ private:
 	// pop fundamental types
 	//
 	void popValue (bool& b) { b = json; }
-	void popValue (char& c) { c = static_cast<int>(json); }
-	void popValue (signed char& c) { c = static_cast<int>(json); }
-	void popValue (unsigned char& c) { c = static_cast<int>(json); }
+	void popValue (char& c) { c = static_cast<int> (json); }
+	void popValue (signed char& c) { c = static_cast<int> (json); }
+	void popValue (unsigned char& c) { c = static_cast<int> (json); }
 	void popValue (signed short& n) { n = json; }
 	void popValue (unsigned short& n) { n = json; }
 	void popValue (signed int& n) { n = json; }
@@ -325,7 +322,7 @@ private:
 	{
 		std::size_t i = 0;
 
-		assert(json.size() == N);
+		assert (json.size() == N);
 		for (const auto& e : json)
 		{
 			cJsonArchiveIn (e, pointerLoader) >> a[i++];
@@ -352,7 +349,7 @@ private:
 		{
 			std::pair<K, V> p;
 			cJsonArchiveIn (e, pointerLoader) >> p;
-			m.insert(p);
+			m.insert (p);
 		}
 	}
 

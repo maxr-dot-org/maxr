@@ -20,11 +20,10 @@
 #ifndef game_logic_jobs_destroyjobH
 #define game_logic_jobs_destroyjobH
 
-#include "job.h"
-
 #include "game/data/units/unit.h"
 #include "game/serialization/binaryarchive.h"
 #include "game/serialization/jsonarchive.h"
+#include "job.h"
 
 class cMapField;
 class cModel;
@@ -34,15 +33,27 @@ class cDestroyJob : public cJob
 public:
 	cDestroyJob (cUnit& unit, cModel& model);
 	template <typename Archive>
-	cDestroyJob (Archive& archive) { serializeThis (archive); }
+	cDestroyJob (Archive& archive)
+	{
+		serializeThis (archive);
+	}
 
 	void run (cModel& model) override;
 	eJobType getType() const override;
 
-	void serialize (cBinaryArchiveIn& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
-	void serialize (cJsonArchiveOut& archive) override { archive << serialization::makeNvp ("type", getType()); serializeThis (archive); }
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		archive << serialization::makeNvp ("type", getType());
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		archive << serialization::makeNvp ("type", getType());
+		serializeThis (archive);
+	}
 
 	uint32_t getChecksum (uint32_t crc) const override;
+
 private:
 	void createDestroyFx (cModel& model);
 	void deleteUnit (cModel& model);

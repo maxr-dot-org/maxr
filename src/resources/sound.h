@@ -20,18 +20,19 @@
 #ifndef soundH
 #define soundH
 
-#include <string>
-#include <vector>
-#include <array>
-
 #include "game/serialization/serialization.h"
 #include "output/sound/soundchunk.h"
+
+#include <array>
+#include <string>
+#include <vector>
 
 // Sounds ////////////////////////////////////////////////////////////////////
 class cSoundData
 {
 public:
 	void load (const char* path);
+
 public:
 	// General
 	cSoundChunk SNDAbsorb;
@@ -75,6 +76,7 @@ class cVoiceData
 {
 public:
 	void load (const char* path);
+
 public:
 	std::array<cSoundChunk, 2> VOIAmmoLow;
 	std::array<cSoundChunk, 2> VOIAmmoEmpty;

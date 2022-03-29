@@ -75,7 +75,7 @@ public:
 	// Avoid that:
 	// - (no translations (which should be client side anyway))
 	// - mostly workaround for missing cMessage
-	void sendChatMessage (const std::string&, int receiverPlayerNr = -1/*, int senderPlayerNr = -1*/);
+	void sendChatMessage (const std::string&, int receiverPlayerNr = -1 /*, int senderPlayerNr = -1*/);
 #endif
 
 	cSignal<void (const cPlayerBasicData&)> onClientConnected;
@@ -90,7 +90,6 @@ public:
 	cSignal<void (cServer&, const cSaveGameInfo&)> onStartSavedGame;
 
 private:
-
 	cPlayerBasicData* getPlayer (int);
 
 	void sendNetMessage (const cNetMessage&, int receiverPlayerNr = -1);

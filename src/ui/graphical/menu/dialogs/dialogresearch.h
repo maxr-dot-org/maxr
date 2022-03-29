@@ -20,12 +20,12 @@
 #ifndef ui_graphical_menu_dialogs_dialogresearchH
 #define ui_graphical_menu_dialogs_dialogresearchH
 
-#include <array>
-
+#include "game/logic/upgradecalculator.h"
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "game/logic/upgradecalculator.h"
+
+#include <array>
 
 class cLabel;
 class cSlider;
@@ -40,6 +40,7 @@ public:
 	const std::array<int, cResearch::kNrResearchAreas>& getResearchSettings() const;
 
 	cSignal<void()> done;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

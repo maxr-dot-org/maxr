@@ -20,6 +20,10 @@
 #ifndef utility_crcH
 #define utility_crcH
 
+#include "config/workaround/cpp17/optional.h"
+#include "utility/flatset.h"
+
+#include <SDL_endian.h>
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -28,11 +32,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-
-#include "config/workaround/cpp17/optional.h"
-#include "utility/flatset.h"
-
-#include <SDL_endian.h>
 
 [[nodiscard]] uint32_t calcCheckSum (const char* data, size_t dataSize, uint32_t checksum);
 
@@ -98,31 +97,31 @@ template <typename T>
 template <typename T>
 [[nodiscard]] uint32_t calcCheckSum (const std::shared_ptr<T>& data, uint32_t crc)
 {
-    if (data)
-    {
-        return calcCheckSum (*data, crc);
-    }
-    return calcCheckSum (-1, crc);
+	if (data)
+	{
+		return calcCheckSum (*data, crc);
+	}
+	return calcCheckSum (-1, crc);
 }
 
 template <typename T>
 [[nodiscard]] uint32_t calcCheckSum (const std::unique_ptr<T>& data, uint32_t crc)
 {
-    if (data)
-    {
-        return calcCheckSum (*data, crc);
-    }
-    return calcCheckSum (-1, crc);
+	if (data)
+	{
+		return calcCheckSum (*data, crc);
+	}
+	return calcCheckSum (-1, crc);
 }
 
 template <typename T>
 [[nodiscard]] uint32_t calcCheckSum (const std::optional<T>& data, uint32_t crc)
 {
-    if (data)
-    {
-        return calcCheckSum (*data, crc);
-    }
-    return calcCheckSum (-1, crc);
+	if (data)
+	{
+		return calcCheckSum (*data, crc);
+	}
+	return calcCheckSum (-1, crc);
 }
 
 template <typename T, std::size_t N>
@@ -146,12 +145,12 @@ template <typename T>
 template <typename K, typename T>
 [[nodiscard]] uint32_t calcCheckSum (const std::map<K, T>& data, uint32_t checksum)
 {
-    for (const auto& x : data)
-    {
-        checksum = calcCheckSum (x.first, checksum);
-        checksum = calcCheckSum (x.second, checksum);
-    }
-    return checksum;
+	for (const auto& x : data)
+	{
+		checksum = calcCheckSum (x.first, checksum);
+		checksum = calcCheckSum (x.second, checksum);
+	}
+	return checksum;
 }
 
 template <typename T>

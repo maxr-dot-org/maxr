@@ -20,9 +20,9 @@
 #ifndef utility_string_toupperH
 #define utility_string_toupperH
 
-#include <string>
 #include <algorithm>
 #include <cctype>
+#include <string>
 
 static inline std::string& to_upper (std::string& s)
 {

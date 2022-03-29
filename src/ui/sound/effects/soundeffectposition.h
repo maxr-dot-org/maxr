@@ -30,6 +30,7 @@ public:
 
 	bool hasPosition() const override;
 	const cPosition& getPosition() const override;
+
 private:
 	cPosition position;
 };

@@ -22,8 +22,8 @@
 
 enum class eOrientationType
 {
-	Horizontal	= 1,
-	Vertical	= 2
+	Horizontal = 1,
+	Vertical = 2
 };
 
 #endif // ui_graphical_orientationH

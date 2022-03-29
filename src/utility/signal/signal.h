@@ -20,19 +20,18 @@
 #ifndef utility_signal_signalH
 #define utility_signal_signalH
 
+#include "utility/deref.h"
+#include "utility/listhelpers.h"
+#include "utility/scopedoperation.h"
+#include "utility/signal/signalconnection.h"
+#include "utility/signal/slot.h"
+#include "utility/thread/dummymutex.h"
+
 #include <cassert>
 #include <limits>
 #include <list>
 #include <mutex>
 #include <utility>
-
-#include "utility/deref.h"
-#include "utility/listhelpers.h"
-#include "utility/scopedoperation.h"
-#include "utility/thread/dummymutex.h"
-
-#include "utility/signal/signalconnection.h"
-#include "utility/signal/slot.h"
 
 /**
  * Basic signal class. This class should never be instantiated directly.
@@ -75,10 +74,10 @@ public:
 	{
 		return &signal == &other.signal;
 	}
+
 private:
 	cSignalBase& signal;
 };
-
 
 /**
  * Generic signal.
@@ -104,7 +103,8 @@ class cSignal<void (Args...), MutexType> : public cSignalBase
 	using SlotsContainerType = std::list<SlotType>;
 
 public:
-	cSignal() : thisReference (std::make_shared<cSignalReference> (*this)) {}
+	cSignal() :
+		thisReference (std::make_shared<cSignalReference> (*this)) {}
 	cSignal (const cSignal&) = delete;
 	cSignal& operator= (const cSignal&) = delete;
 
@@ -153,7 +153,8 @@ public:
 	 * @param ...args The arguments to call the functions with.
 	 */
 	template <typename... Args2>
-	void operator() (Args2&& ... args);
+	void operator() (Args2&&... args);
+
 private:
 	void cleanUpConnections();
 
@@ -205,8 +206,7 @@ void cSignal<void (Args...), MutexType>::disconnect (const F& f)
 			std::is_function<std::remove_pointer_t<test_type>>::value,
 			std::true_type,
 			std::false_type>,
-		std::false_type
-	>;
+		std::false_type>;
 
 	std::unique_lock<MutexType> lock (mutex);
 
@@ -251,7 +251,7 @@ void cSignal<void (Args...), MutexType>::disconnect (const cSignalConnection& co
 //------------------------------------------------------------------------------
 template <typename... Args, typename MutexType>
 template <typename... Args2>
-void cSignal<void (Args...), MutexType>::operator() (Args2&& ... args)
+void cSignal<void (Args...), MutexType>::operator() (Args2&&... args)
 {
 	std::unique_lock<MutexType> lock (mutex);
 
@@ -272,7 +272,7 @@ void cSignal<void (Args...), MutexType>::cleanUpConnections()
 {
 	if (isInvoking) return; // it is not safe to clean up yet
 
-	EraseIf (slots, [](const auto& slot){ return slot.disconnected; });
+	EraseIf (slots, [] (const auto& slot) { return slot.disconnected; });
 }
 
 #endif

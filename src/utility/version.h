@@ -21,6 +21,7 @@
 #define utility_versionH
 
 #include "game/serialization/serialization.h"
+
 #include <string>
 
 /**

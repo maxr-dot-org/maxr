@@ -20,20 +20,21 @@
 #ifndef ui_graphical_game_gameguiH
 #define ui_graphical_game_gameguiH
 
-#include <array>
-
+#include "game/logic/upgradecalculator.h"
+#include "resources/sound.h"
+#include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "resources/sound.h"
-#include "game/logic/upgradecalculator.h"
-#include "ui/graphical/game/unitselection.h"
+
+#include <array>
 
 class cHud;
 class cGameMapWidget;
 class cMiniMapWidget;
 class cGameMessageListView;
-template <typename, typename> class cChatBox;
+template <typename, typename>
+class cChatBox;
 class cLobbyChatBoxListViewItem;
 class cChatBoxPlayerListViewItem;
 class cLabel;
@@ -101,8 +102,8 @@ public:
 	void handleActivated (cApplication&, bool firstTime) override;
 	void handleDeactivated (cApplication&, bool removed) override;
 	bool wantsCentered() const override;
-protected:
 
+protected:
 	std::unique_ptr<cMouseCursor> getDefaultCursor() const override;
 
 private:
@@ -116,7 +117,8 @@ private:
 
 	void connectSelectedUnit();
 
-	template <typename Action> void addShortcut (cKeySequence, Action);
+	template <typename Action>
+	void addShortcut (cKeySequence, Action);
 	void initShortcuts();
 
 	void handleResolutionChange();

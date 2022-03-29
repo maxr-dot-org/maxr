@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
- #ifndef maxrversionH
- #define maxrversionH
+#ifndef maxrversionH
+#define maxrversionH
 
 #if HAVE_AUTOVERSION_H
 # include "autoversion.h" //include autoversion created by buildinfo.sh or cmake
@@ -27,7 +27,7 @@
 //default path to data dir only used on linux/other
 # define BUILD_DATADIR "/usr/share/maxr"
 // Builddate: Mmm DD YYYY HH:MM:SS
-# define MAX_BUILD_DATE ((std::string)__DATE__ + " " + __TIME__)
+# define MAX_BUILD_DATE ((std::string) __DATE__ + " " + __TIME__)
 # ifdef NDEBUG
 #  define PACKAGE_REV "Releaseversion"
 # else

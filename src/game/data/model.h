@@ -60,6 +60,7 @@ struct sNewTurnReport
 class cModel
 {
 	friend class cDebugOutputWidget;
+
 public:
 	cModel();
 	~cModel();
@@ -90,7 +91,7 @@ public:
 	cPlayer* getPlayer (int playerNr);
 	const cPlayer* getPlayer (int playerNr) const;
 	const cPlayer* getPlayer (std::string player) const;
-	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return /*static_cast<std::vector<std::shared_ptr<const cPlayer>>>*/(playerList); } //TODO: cast to const cPlayer
+	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return /*static_cast<std::vector<std::shared_ptr<const cPlayer>>>*/ (playerList); } //TODO: cast to const cPlayer
 	std::vector<std::shared_ptr<cPlayer>>& getPlayerList() { return playerList; }
 	void setPlayerList (const std::vector<cPlayerBasicData>&);
 	const cPlayer* getActiveTurnPlayer() const;
@@ -270,7 +271,12 @@ private:
 
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
 
-	enum class eTurnEndState {TurnActive, ExecuteRemainingMovements, ExecuteTurnStart};
+	enum class eTurnEndState
+	{
+		TurnActive,
+		ExecuteRemainingMovements,
+		ExecuteTurnStart
+	};
 	eTurnEndState turnEndState = eTurnEndState::TurnActive;
 
 	/** lists with all FX-Animation */
