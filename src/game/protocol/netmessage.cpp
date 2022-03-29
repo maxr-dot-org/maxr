@@ -56,7 +56,7 @@ namespace serialization
 		{eNetMessageType::WANT_REJOIN_GAME, "WANT_REJOIN_GAME"}
 	};
 
-}
+} // namespace serialization
 //------------------------------------------------------------------------------
 std::unique_ptr<cNetMessage> cNetMessage::createFromBuffer (const unsigned char* data, int length)
 {
@@ -71,43 +71,60 @@ std::unique_ptr<cNetMessage> cNetMessage::createFromBuffer (const unsigned char*
 	std::unique_ptr<cNetMessage> message;
 	switch (type)
 	{
-	case eNetMessageType::TCP_HELLO:
-		message = std::make_unique<cNetMessageTcpHello> (archive); break;
-	case eNetMessageType::TCP_WANT_CONNECT:
-		message = std::make_unique<cNetMessageTcpWantConnect> (archive); break;
-	case eNetMessageType::TCP_CONNECTED:
-		message = std::make_unique<cNetMessageTcpConnected> (archive); break;
-	case eNetMessageType::TCP_CONNECT_FAILED:
-		message = std::make_unique<cNetMessageTcpConnectFailed> (archive); break;
-	case eNetMessageType::ACTION:
-		message = cAction::createFromBuffer (archive); break;
-	case eNetMessageType::MULTIPLAYER_LOBBY:
-		message = cMultiplayerLobbyMessage::createFromBuffer (archive); break;
-	case eNetMessageType::GAMETIME_SYNC_SERVER:
-		message = std::make_unique<cNetMessageSyncServer> (archive); break;
-	case eNetMessageType::GAMETIME_SYNC_CLIENT:
-		message = std::make_unique<cNetMessageSyncClient> (archive); break;
-	case eNetMessageType::RANDOM_SEED:
-		message = std::make_unique<cNetMessageRandomSeed> (archive); break;
-	case eNetMessageType::FREEZE_MODES:
-		message = std::make_unique<cNetMessageFreezeModes> (archive); break;
-	case eNetMessageType::REPORT:
-		message = std::make_unique<cNetMessageReport> (archive); break;
-	case eNetMessageType::GUI_SAVE_INFO:
-		message = std::make_unique<cNetMessageGUISaveInfo> (archive); break;
-	case eNetMessageType::REQUEST_GUI_SAVE_INFO:
-		message = std::make_unique<cNetMessageRequestGUISaveInfo> (archive); break;
-	case eNetMessageType::RESYNC_MODEL:
-		message = std::make_unique<cNetMessageResyncModel> (archive); break;
-	case eNetMessageType::REQUEST_RESYNC_MODEL:
-		message = std::make_unique<cNetMessageRequestResync> (archive); break;
-	case eNetMessageType::GAME_ALREADY_RUNNING:
-		message = std::make_unique<cNetMessageGameAlreadyRunning> (archive); break;
-	case eNetMessageType::WANT_REJOIN_GAME:
-		message = std::make_unique<cNetMessageWantRejoinGame> (archive); break;
-	default:
-		throw std::runtime_error ("Unknown net message type " + std::to_string (static_cast<int> (type)));
-		break;
+		case eNetMessageType::TCP_HELLO:
+			message = std::make_unique<cNetMessageTcpHello> (archive);
+			break;
+		case eNetMessageType::TCP_WANT_CONNECT:
+			message = std::make_unique<cNetMessageTcpWantConnect> (archive);
+			break;
+		case eNetMessageType::TCP_CONNECTED:
+			message = std::make_unique<cNetMessageTcpConnected> (archive);
+			break;
+		case eNetMessageType::TCP_CONNECT_FAILED:
+			message = std::make_unique<cNetMessageTcpConnectFailed> (archive);
+			break;
+		case eNetMessageType::ACTION:
+			message = cAction::createFromBuffer (archive);
+			break;
+		case eNetMessageType::MULTIPLAYER_LOBBY:
+			message = cMultiplayerLobbyMessage::createFromBuffer (archive);
+			break;
+		case eNetMessageType::GAMETIME_SYNC_SERVER:
+			message = std::make_unique<cNetMessageSyncServer> (archive);
+			break;
+		case eNetMessageType::GAMETIME_SYNC_CLIENT:
+			message = std::make_unique<cNetMessageSyncClient> (archive);
+			break;
+		case eNetMessageType::RANDOM_SEED:
+			message = std::make_unique<cNetMessageRandomSeed> (archive);
+			break;
+		case eNetMessageType::FREEZE_MODES:
+			message = std::make_unique<cNetMessageFreezeModes> (archive);
+			break;
+		case eNetMessageType::REPORT:
+			message = std::make_unique<cNetMessageReport> (archive);
+			break;
+		case eNetMessageType::GUI_SAVE_INFO:
+			message = std::make_unique<cNetMessageGUISaveInfo> (archive);
+			break;
+		case eNetMessageType::REQUEST_GUI_SAVE_INFO:
+			message = std::make_unique<cNetMessageRequestGUISaveInfo> (archive);
+			break;
+		case eNetMessageType::RESYNC_MODEL:
+			message = std::make_unique<cNetMessageResyncModel> (archive);
+			break;
+		case eNetMessageType::REQUEST_RESYNC_MODEL:
+			message = std::make_unique<cNetMessageRequestResync> (archive);
+			break;
+		case eNetMessageType::GAME_ALREADY_RUNNING:
+			message = std::make_unique<cNetMessageGameAlreadyRunning> (archive);
+			break;
+		case eNetMessageType::WANT_REJOIN_GAME:
+			message = std::make_unique<cNetMessageWantRejoinGame> (archive);
+			break;
+		default:
+			throw std::runtime_error ("Unknown net message type " + std::to_string (static_cast<int> (type)));
+			break;
 	}
 
 	if (archive.dataLeft() > 0)

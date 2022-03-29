@@ -18,9 +18,10 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/mousemode/mousemodeselectbuildpathdestination.h"
-#include "ui/graphical/game/control/mouseaction/mouseactionselectbuildpathdestination.h"
-#include "input/mouse/mouse.h"
+
 #include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionselectbuildpathdestination.h"
 
 //------------------------------------------------------------------------------
 cMouseModeSelectBuildPathDestination::cMouseModeSelectBuildPathDestination (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :

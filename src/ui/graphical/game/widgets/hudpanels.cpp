@@ -17,8 +17,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "ui/graphical/game/widgets/hudpanels.h"
 
 #include "output/sound/soundchannel.h"
@@ -28,6 +26,7 @@
 #include "resources/uidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 
+#include <algorithm>
 #include <cassert>
 
 //------------------------------------------------------------------------------
@@ -51,7 +50,7 @@ void cHudPanels::open()
 {
 	cSoundDevice::getInstance().playSoundEffect (SoundData.SNDPanelOpen);
 
-	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this](){ doOpenStep(); });
+	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this]() { doOpenStep(); });
 }
 
 //------------------------------------------------------------------------------
@@ -86,8 +85,7 @@ void cHudPanels::doOpenStep()
 	{
 		percentClosed = std::max (0., percentClosed);
 		signalConnectionManager.disconnectAll();
-		signalConnectionManager.connect (animationTimer->triggeredFrame, [this]()
-		{
+		signalConnectionManager.connect (animationTimer->triggeredFrame, [this]() {
 			signalConnectionManager.disconnectAll();
 			opened();
 		});
@@ -100,8 +98,7 @@ void cHudPanels::doCloseStep()
 	if (percentClosed >= 100.)
 	{
 		signalConnectionManager.disconnectAll();
-		signalConnectionManager.connect (animationTimer->triggeredFrame, [this]()
-		{
+		signalConnectionManager.connect (animationTimer->triggeredFrame, [this]() {
 			signalConnectionManager.disconnectAll();
 			closed();
 		});

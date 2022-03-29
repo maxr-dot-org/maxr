@@ -19,18 +19,18 @@
 
 #include "movejob.h"
 
-#include "game/data/player/player.h"
 #include "game/data/map/map.h"
 #include "game/data/map/mapview.h"
 #include "game/data/model.h"
+#include "game/data/player/player.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/gametimer.h"
 #include "game/logic/pathcalculator.h"
 #include "utility/ranges.h"
 
 //                                 N, NE, E, SE, S, SW, W, NW
-static const int directionDx[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
-static const int directionDy[8] = { -1, -1, 0, 1, 1, 1, 0, -1 };
+static const int directionDx[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+static const int directionDy[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
 
 constexpr double MOVE_ACCELERATION = 0.08; // change of vehicle speed per tick
 
@@ -221,16 +221,13 @@ void cMoveJob::startMove (cModel& model)
 }
 
 //------------------------------------------------------------------------------
-bool cMoveJob::handleCollision (cModel &model)
+bool cMoveJob::handleCollision (cModel& model)
 {
 	const cMap& map = *model.getMap();
 
 	//do not drive onto detected enemy mines
 	const auto mine = map.getField (path.front()).getMine();
-	if (mine &&
-		mine->getOwner() != vehicle->getOwner() &&
-		vehicle->getOwner() &&
-		vehicle->getOwner()->canSeeUnit (*mine, map))
+	if (mine && mine->getOwner() != vehicle->getOwner() && vehicle->getOwner() && vehicle->getOwner()->canSeeUnit (*mine, map))
 	{
 		bool pathFound = recalculatePath (model);
 		return pathFound;
@@ -261,16 +258,17 @@ bool cMoveJob::handleCollision (cModel &model)
 }
 
 //------------------------------------------------------------------------------
-bool cMoveJob::recalculatePath (cModel &model)
+bool cMoveJob::recalculatePath (cModel& model)
 {
 	if (!vehicle->getOwner()) return false;
 	//use owners mapview to calc path
 	const auto& playerList = model.getPlayerList();
-	auto iter = ranges::find_if (playerList, [this](const std::shared_ptr<cPlayer>& player) { return player->getId() == vehicle->getOwner()->getId(); });
+	auto iter = ranges::find_if (playerList, [this] (const std::shared_ptr<cPlayer>& player) { return player->getId() == vehicle->getOwner()->getId(); });
 	const cMapView mapView (model.getMap(), *iter);
 
 	cPosition dest;
-	for (const auto& pos : path) dest = pos;
+	for (const auto& pos : path)
+		dest = pos;
 
 	cPathCalculator pc (*vehicle, mapView, dest, false);
 	auto newPath = pc.calcPath(); //TODO: don't execute path calculation on each model
@@ -316,11 +314,7 @@ void cMoveJob::moveVehicle (cModel& model)
 
 	int x = abs (vehicle->getMovementOffset().x());
 	int y = abs (vehicle->getMovementOffset().y());
-	if (vehicle->getStaticData().makeTracks && (
-		(x > 32 && x - pixelToMove / 100 <= 32) ||
-		(y > 32 && y - pixelToMove / 100 <= 32) ||
-		(x == 64 && pixelToMove / 100 >= 1) ||
-		(y == 64 && pixelToMove / 100 >= 1)))
+	if (vehicle->getStaticData().makeTracks && ((x > 32 && x - pixelToMove / 100 <= 32) || (y > 32 && y - pixelToMove / 100 <= 32) || (x == 64 && pixelToMove / 100 >= 1) || (y == 64 && pixelToMove / 100 >= 1)))
 	{
 		// this is a bit crude, but I don't know another simple way of notifying the
 		// gui, that is might wants to add a track effect.
@@ -387,10 +381,7 @@ void cMoveJob::endMove (cModel& model)
 	vehicle->detectThisUnit (map, model.getPlayerList());
 
 	cBuilding* mine = map.getField (vehicle->getPosition()).getMine();
-	if (mine &&
-		vehicle->getStaticUnitData().factorAir == 0  &&
-		mine->getOwner() != vehicle->getOwner() &&
-		mine->isManualFireActive() == false)
+	if (mine && vehicle->getStaticUnitData().factorAir == 0 && mine->getOwner() != vehicle->getOwner() && mine->isManualFireActive() == false)
 	{
 		model.addAttackJob (*mine, vehicle->getPosition());
 

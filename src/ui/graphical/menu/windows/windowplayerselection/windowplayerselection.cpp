@@ -19,21 +19,21 @@
 
 #include "ui/graphical/menu/windows/windowplayerselection/windowplayerselection.h"
 
+#include "output/video/video.h"
+#include "resources/pcx.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
-#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
+#include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 #include "ui/uidefines.h"
 #include "utility/language.h"
-#include "resources/pcx.h"
-#include "output/video/video.h"
 
 //------------------------------------------------------------------------------
 cWindowPlayerSelection::cWindowPlayerSelection() :
 	cWindow (LoadPCX (GFXOD_PLAYER_SELECT)) // 4 players
-	// cWindow (LoadPCX (GFXOD_HOTSEAT)) // 8 players
+// cWindow (LoadPCX (GFXOD_HOTSEAT)) // 8 players
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~HotSeat"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
@@ -62,8 +62,7 @@ cWindowPlayerSelection::cWindowPlayerSelection() :
 		signalConnectionManager.connect (humanPlayerImages[i]->clicked, [this, i]() { setPlayerType (i, ePlayerType::Human); });
 		aiPlayerImages[i] = addChild (std::make_unique<cImage> (getPosition() + cPosition (175 + 109, 67 + 92 * i), nullptr, &SoundData.SNDHudButton));
 		//signalConnectionManager.connect (aiPlayerImages[i]->clicked, [this, i]() { setPlayerType (i, ePlayerType::Ai); });
-		signalConnectionManager.connect (aiPlayerImages[i]->clicked, [this]()
-		{
+		signalConnectionManager.connect (aiPlayerImages[i]->clicked, [this]() {
 			const auto application = getActiveApplication();
 			if (!application) return;
 

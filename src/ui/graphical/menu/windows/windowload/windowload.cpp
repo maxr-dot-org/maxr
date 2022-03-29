@@ -19,8 +19,9 @@
 
 #include "ui/graphical/menu/windows/windowload/windowload.h"
 
-#include "game/data/savegameinfo.h"
 #include "game/data/savegame.h"
+#include "game/data/savegameinfo.h"
+#include "resources/pcx.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
@@ -31,17 +32,16 @@
 #include "utility/language.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
-#include "resources/pcx.h"
 
 //Versions prior to 1.0 are no longer compatible
-#define MINIMUM_REQUIRED_SAVE_VERSION ((std::string)"1.0")
-#define MINIMUM_REQUIRED_MAXR_VERSION ((std::string)"0.2.10")
+#define MINIMUM_REQUIRED_SAVE_VERSION ((std::string) "1.0")
+#define MINIMUM_REQUIRED_MAXR_VERSION ((std::string) "0.2.10")
 
 //------------------------------------------------------------------------------
 cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::function<std::vector<cSaveGameInfo>()> saveGamesGetter) :
 	cWindow (LoadPCX (GFXOD_SAVELOAD)),
 	page (0),
-	lastPage ((int)std::ceil ((double)maximalDisplayedSaves / (rows* columns)) - 1),
+	lastPage ((int) std::ceil ((double) maximalDisplayedSaves / (rows * columns)) - 1),
 	selectedSaveNumber (-1),
 	saveGamesGetter (saveGamesGetter)
 {
@@ -69,7 +69,7 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, s
 			const auto index = rows * x + y;
 			saveSlots[index] = addChild (std::make_unique<cSaveSlotWidget> (getPosition() + cPosition (17 + 402 * x, 45 + 76 * y)));
 			signalConnectionManager.connect (saveSlots[index]->clicked, [this, index]() { handleSlotClicked (index); });
-			signalConnectionManager.connect (saveSlots[index]->doubleClicked, [this, index]() { handleSlotDoubleClicked(index); });
+			signalConnectionManager.connect (saveSlots[index]->doubleClicked, [this, index]() { handleSlotDoubleClicked (index); });
 		}
 	}
 
@@ -126,8 +126,10 @@ void cWindowLoad::updateSlots()
 			{
 				slot->reset (saveNumber);
 			}
-			if (selectedSaveNumber == static_cast<int> (saveNumber)) slot->setSelected (true);
-			else slot->setSelected (false);
+			if (selectedSaveNumber == static_cast<int> (saveNumber))
+				slot->setSelected (true);
+			else
+				slot->setSelected (false);
 		}
 	}
 }
@@ -198,8 +200,10 @@ void cWindowLoad::selectSlot (size_t slotIndex, bool makeRenameable)
 		}
 	}
 
-	if (isEmptySlot) loadButton->lock();
-	else loadButton->unlock();
+	if (isEmptySlot)
+		loadButton->lock();
+	else
+		loadButton->unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -228,7 +232,8 @@ cSaveSlotWidget* cWindowLoad::getSaveSlotFromSaveNumber (size_t saveNumber)
 	{
 		return &getSaveSlot (selectedSaveNumber - 1 - page * (int) (rows * columns));
 	}
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 //------------------------------------------------------------------------------

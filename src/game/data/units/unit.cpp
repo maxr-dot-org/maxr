@@ -17,30 +17,28 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
 #include "game/data/units/unit.h"
 
-#include "game/logic/attackjob.h"
-#include "game/logic/client.h"
 #include "game/data/map/map.h"
-#include "game/data/player/player.h"
 #include "game/data/map/mapview.h"
-
+#include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-
-#include "utility/mathtools.h"
-#include "utility/position.h"
+#include "game/logic/attackjob.h"
+#include "game/logic/client.h"
 #include "utility/box.h"
 #include "utility/crc.h"
 #include "utility/listhelpers.h"
+#include "utility/mathtools.h"
+#include "utility/position.h"
+
+#include <algorithm>
 
 using namespace std;
 
 //------------------------------------------------------------------------------
-cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID)
-	: iID (ID),
+cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID) :
+	iID (ID),
 	staticData (staticData),
 	owner (owner)
 {
@@ -304,18 +302,26 @@ cBox<cPosition> cUnit::getArea() const
 // http://rosettacode.org/wiki/Roman_numerals/Encode#C.2B.2B
 static std::string to_roman (unsigned int value)
 {
-	struct romandata_t { unsigned int value; char const* numeral; };
-	const struct romandata_t romandata[] =
+	struct romandata_t
 	{
-		//{1000, "M"}, {900, "CM"},
-		//{500, "D"}, {400, "CD"},
-		{100, "C"}, { 90, "XC"},
-		{ 50, "L"}, { 40, "XL"},
-		{ 10, "X"}, { 9, "IX"},
-		{ 5, "V"}, { 4, "IV"},
-		{ 1, "I"},
-		{ 0, nullptr} // end marker
+		unsigned int value;
+		char const* numeral;
 	};
+	const struct romandata_t romandata[] =
+		{
+			//{1000, "M"}, {900, "CM"},
+			//{500, "D"}, {400, "CD"},
+			{100, "C"},
+			{90, "XC"},
+			{50, "L"},
+			{40, "XL"},
+			{10, "X"},
+			{9, "IX"},
+			{5, "V"},
+			{4, "IV"},
+			{1, "I"},
+			{0, nullptr} // end marker
+		};
 
 	std::string result;
 	for (const romandata_t* current = romandata; current->value > 0; ++current)
@@ -423,7 +429,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMapView& map, b
 
 	const cUnit* target = cAttackJob::selectTarget (position, staticData->canAttack, map, owner);
 
-	if (target && target->iID == iID)  // a unit cannot fire on itself
+	if (target && target->iID == iID) // a unit cannot fire on itself
 		return false;
 
 	if (!owner->canSeeAt (position) && !forceAttack)
@@ -574,14 +580,11 @@ bool cUnit::isStealthOnCurrentTerrain (const cMapField& field, const sTerrain& t
 	{
 		return true;
 	}
-	else if (staticData->factorAir > 0 &&
-		isAVehicle() &&
-		static_cast<const cVehicle*> (this)->getFlightHeight() > 0)
+	else if (staticData->factorAir > 0 && isAVehicle() && static_cast<const cVehicle*> (this)->getFlightHeight() > 0)
 	{
 		return (staticData->isStealthOn & eTerrainFlag::Air) != 0;
 	}
-	else if ((field.hasBridgeOrPlattform() && staticData->factorGround > 0) ||
-			(!terrain.coast && !terrain.water))
+	else if ((field.hasBridgeOrPlattform() && staticData->factorGround > 0) || (!terrain.coast && !terrain.water))
 	{
 		return (staticData->isStealthOn & eTerrainFlag::Ground) != 0;
 	}

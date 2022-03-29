@@ -38,9 +38,8 @@
 #include "utility/language.h"
 #include "utility/string/iequals.h"
 
-#include <functional>
-
 #include <SDL_mixer.h>
+#include <functional>
 
 //------------------------------------------------------------------------------
 cDialogPreferences::cDialogPreferences() :

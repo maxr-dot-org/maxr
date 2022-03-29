@@ -49,8 +49,10 @@ void cJobContainer::run (cModel& model)
 
 		if (!job.finished) job.run (model);
 
-		if (job.finished) it = releaseJob (it);
-		else ++it;
+		if (job.finished)
+			it = releaseJob (it);
+		else
+			++it;
 	}
 }
 
@@ -80,7 +82,7 @@ std::vector<std::unique_ptr<cJob>>::iterator cJobContainer::releaseJob (std::vec
 	cJob& job = **it;
 	if (job.unit)
 	{
-		auto nr = ranges::count_if (jobs, [&](const auto& x) {
+		auto nr = ranges::count_if (jobs, [&] (const auto& x) {
 			return x->unit == job.unit;
 		});
 		if (nr <= 1)

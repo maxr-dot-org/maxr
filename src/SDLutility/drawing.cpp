@@ -60,8 +60,10 @@ void drawLine (SDL_Surface& surface, const cPosition& start, const cPosition& en
 
 	for (int x = x0; x < x1; x++)
 	{
-		if (steep) drawPoint (surface, cPosition (y, x), color);
-		else drawPoint (surface, cPosition (x, y), color);
+		if (steep)
+			drawPoint (surface, cPosition (y, x), color);
+		else
+			drawPoint (surface, cPosition (x, y), color);
 		er -= dy;
 		if (er < 0)
 		{
@@ -139,7 +141,7 @@ Uint32 getPixel (const SDL_Surface& surface, const cPosition& position)
 {
 	int bpp = surface.format->BytesPerPixel;
 
-	Uint8* p = (Uint8*)surface.pixels + position.y() * surface.pitch + position.x() * bpp;
+	Uint8* p = (Uint8*) surface.pixels + position.y() * surface.pitch + position.x() * bpp;
 
 	switch (bpp)
 	{
@@ -148,7 +150,7 @@ Uint32 getPixel (const SDL_Surface& surface, const cPosition& position)
 			break;
 
 		case 2:
-			return * (Uint16*)p;
+			return *(Uint16*) p;
 			break;
 
 		case 3:
@@ -159,7 +161,7 @@ Uint32 getPixel (const SDL_Surface& surface, const cPosition& position)
 			break;
 
 		case 4:
-			return * (Uint32*)p;
+			return *(Uint32*) p;
 			break;
 
 		default:
@@ -171,7 +173,7 @@ Uint32 getPixel (const SDL_Surface& surface, const cPosition& position)
 void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel)
 {
 	int bpp = surface.format->BytesPerPixel;
-	Uint8* p = (Uint8*)surface.pixels + position.y() * surface.pitch + position.x() * bpp;
+	Uint8* p = (Uint8*) surface.pixels + position.y() * surface.pitch + position.x() * bpp;
 
 	switch (bpp)
 	{
@@ -180,7 +182,7 @@ void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel)
 			break;
 
 		case 2:
-			* (Uint16*)p = pixel;
+			*(Uint16*) p = pixel;
 			break;
 
 		case 3:
@@ -199,7 +201,7 @@ void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel)
 			break;
 
 		case 4:
-			* (Uint32*)p = pixel;
+			*(Uint32*) p = pixel;
 			break;
 	}
 }
@@ -219,8 +221,10 @@ void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRg
 	SDL_FillRect (&surface, nullptr, destMapped);
 	SDL_BlitSurface (temp.get(), nullptr, &surface, nullptr);
 
-	if (hadKey) SDL_SetColorKey (&surface, SDL_TRUE, key);
-	else SDL_SetColorKey (&surface, SDL_FALSE, 0);
+	if (hadKey)
+		SDL_SetColorKey (&surface, SDL_TRUE, key);
+	else
+		SDL_SetColorKey (&surface, SDL_FALSE, 0);
 
 	// The following version is to slow...
 	//

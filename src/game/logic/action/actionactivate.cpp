@@ -20,9 +20,8 @@
 #include "actionactivate.h"
 
 #include "game/data/model.h"
-
-#include "utility/log.h"
 #include "utility/listhelpers.h"
+#include "utility/log.h"
 
 //------------------------------------------------------------------------------
 cActionActivate::cActionActivate (const cUnit& containingUnit, const cVehicle& activatedVehicle, const cPosition& position) :

@@ -33,18 +33,18 @@ namespace
 
 		return lhs.toLab().deltaE (rhs.toLab()) < colorDeltaETolerance;
 	}
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 eLobbyPlayerStatus checkTakenPlayerAttributes (const std::vector<cPlayerBasicData>& players, const cPlayerBasicData& player)
 {
 	if (!player.isReady()) return eLobbyPlayerStatus::Ok;
 
-	if (ranges::find_if (players, [&](const auto& p){ return player.getNr() != p.getNr() && player.getName() == p.getName(); }) != players.end())
+	if (ranges::find_if (players, [&] (const auto& p) { return player.getNr() != p.getNr() && player.getName() == p.getName(); }) != players.end())
 	{
 		return eLobbyPlayerStatus::DuplicatedName;
 	}
-	if (ranges::find_if (players, [&](const auto& p){ return player.getNr() != p.getNr() && sameColor (player.getColor(), p.getColor()); }) != players.end())
+	if (ranges::find_if (players, [&] (const auto& p) { return player.getNr() != p.getNr() && sameColor (player.getColor(), p.getColor()); }) != players.end())
 	{
 		return eLobbyPlayerStatus::DuplicatedColor;
 	}

@@ -20,11 +20,12 @@
 #include "uimain.h"
 
 #include "3rd/mveplayer/mveplayer.h"
-
+#include "SDLutility/sdlcomponent.h"
+#include "SDLutility/sdlnetcomponent.h"
 #include "debug.h"
 #include "defines.h"
-#include "input/mouse/mouse.h"
 #include "input/keyboard/keyboard.h"
+#include "input/mouse/mouse.h"
 #include "maxrversion.h"
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
@@ -35,11 +36,7 @@
 #include "utility/log.h"
 #include "utility/thread/ismainthread.h"
 
-#include "SDLutility/sdlcomponent.h"
-#include "SDLutility/sdlnetcomponent.h"
-
 #include <SDL_mixer.h>
-
 #include <future>
 #include <thread>
 /**
@@ -55,7 +52,7 @@ static int initSound()
 		return 1;
 	}
 
-	if (SDL_Init (SDL_INIT_AUDIO) < 0)     //start sound
+	if (SDL_Init (SDL_INIT_AUDIO) < 0) //start sound
 	{
 		Log.write ("Could not init SDL_INIT_AUDIO", cLog::eLogType::Warning);
 		Log.write ("Sound won't be available!", cLog::eLogType::Warning);
@@ -93,9 +90,10 @@ static void showIntro()
 
 	Log.write ("Starting movie " + filename, cLog::eLogType::Debug);
 	const int mvereturn = MVEPlayer (filename.c_str(),
-									 Video.getResolutionX(), Video.getResolutionY(),
-									 !Video.getWindowMode(),
-									 !cSettings::getInstance().isSoundMute());
+	                                 Video.getResolutionX(),
+	                                 Video.getResolutionY(),
+	                                 !Video.getWindowMode(),
+	                                 !cSettings::getInstance().isSoundMute());
 	Log.write ("MVEPlayer returned " + std::to_string (mvereturn), cLog::eLogType::Debug);
 	//FIXME: make this case sensitive - my mve is e.g. completely lower cases -- beko
 
@@ -138,7 +136,7 @@ try
 
 	applySettings (Video, cSettings::getInstance().getVideoSettings())
 
-	CR_INIT_CRASHREPORTING();
+		CR_INIT_CRASHREPORTING();
 	is_main_thread();
 	logMAXRVersion();
 
@@ -159,7 +157,7 @@ try
 		while (SDL_PollEvent (&event))
 		{
 			if (event.type == SDL_WINDOWEVENT
-				&& event.window.event == SDL_WINDOWEVENT_EXPOSED)
+			    && event.window.event == SDL_WINDOWEVENT_EXPOSED)
 			{
 				Video.draw();
 			}

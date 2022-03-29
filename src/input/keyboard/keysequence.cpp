@@ -79,7 +79,7 @@ bool cKeySequence::operator== (const cKeySequence& other) const
 //------------------------------------------------------------------------------
 bool cKeySequence::operator!= (const cKeySequence& other) const
 {
-	return ! (*this == other);
+	return !(*this == other);
 }
 
 //------------------------------------------------------------------------------

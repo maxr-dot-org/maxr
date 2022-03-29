@@ -19,7 +19,7 @@
 
 #if __cplusplus < 201700
 
-#include "optional.h"
+# include "optional.h"
 
 namespace std
 {
@@ -27,10 +27,10 @@ namespace std
 	inline namespace compatibility_cpp17
 	{
 
-		const nullopt_t nullopt { nullopt_t::Construct::Token };
+		const nullopt_t nullopt{nullopt_t::Construct::Token};
 
-	}
+	} // namespace compatibility_cpp17
 
-}
+} // namespace std
 
 #endif

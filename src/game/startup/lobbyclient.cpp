@@ -36,15 +36,15 @@ cLobbyClient::cLobbyClient (std::shared_ptr<cConnectionManager> connectionManage
 {
 	connectionManager->setLocalClient (this, -1);
 
-	auto mapDownloadMessageHandler = std::make_unique <cMapDownloadMessageHandler>();
+	auto mapDownloadMessageHandler = std::make_unique<cMapDownloadMessageHandler>();
 
-	signalConnectionManager.connect (mapDownloadMessageHandler->onPercentChanged, [this](std::size_t percent){
+	signalConnectionManager.connect (mapDownloadMessageHandler->onPercentChanged, [this] (std::size_t percent) {
 		onDownloadMapPercentChanged (percent);
 	});
-	signalConnectionManager.connect (mapDownloadMessageHandler->onCancelled, [this](){
+	signalConnectionManager.connect (mapDownloadMessageHandler->onCancelled, [this]() {
 		onDownloadMapCancelled();
 	});
-	signalConnectionManager.connect (mapDownloadMessageHandler->onDownloaded, [this](std::shared_ptr<cStaticMap> staticMap){
+	signalConnectionManager.connect (mapDownloadMessageHandler->onDownloaded, [this] (std::shared_ptr<cStaticMap> staticMap) {
 		onDownloadMapFinished (staticMap);
 	});
 
@@ -184,7 +184,8 @@ void cLobbyClient::tryToSwitchReadyState()
 		if (!downloadingMapName.empty() && !localPlayer.isReady()) onNoMapNoReady (downloadingMapName);
 		ready = false;
 	}
-	else ready = !localPlayer.isReady();
+	else
+		ready = !localPlayer.isReady();
 	changeLocalPlayerProperties (localPlayer.getName(), localPlayer.getColor(), ready);
 }
 
@@ -198,8 +199,14 @@ void cLobbyClient::changeLocalPlayerProperties (const std::string& name, cRgbCol
 
 	switch (checkTakenPlayerAttributes (players, localPlayer))
 	{
-		case eLobbyPlayerStatus::DuplicatedColor: onDuplicatedPlayerColor(); localPlayer.setReady (false); break;
-		case eLobbyPlayerStatus::DuplicatedName: onDuplicatedPlayerName(); localPlayer.setReady (false); break;
+		case eLobbyPlayerStatus::DuplicatedColor:
+			onDuplicatedPlayerColor();
+			localPlayer.setReady (false);
+			break;
+		case eLobbyPlayerStatus::DuplicatedName:
+			onDuplicatedPlayerName();
+			localPlayer.setReady (false);
+			break;
 		case eLobbyPlayerStatus::Ok: break;
 	}
 
@@ -349,7 +356,7 @@ void cLobbyClient::handleNetMessage_TCP_HELLO (const cNetMessageTcpHello& messag
 	}
 
 	cNetMessageTcpWantConnect response;
-	response.player = { localPlayer.getName(), localPlayer.getColor()};
+	response.player = {localPlayer.getName(), localPlayer.getColor()};
 	response.ready = localPlayer.isReady();
 	sendNetMessage (response);
 }

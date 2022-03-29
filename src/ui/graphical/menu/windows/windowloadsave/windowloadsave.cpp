@@ -19,10 +19,10 @@
 
 #include "ui/graphical/menu/windows/windowloadsave/windowloadsave.h"
 
-#include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/menu/widgets/special/saveslotwidget.h"
 #include "game/data/savegame.h"
 #include "game/data/savegameinfo.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/graphical/menu/widgets/special/saveslotwidget.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

@@ -49,7 +49,7 @@ cVehicle::cVehicle (unsigned int ID) :
 	buildBigSavedPosition (0, 0),
 	tileMovementOffset (0, 0)
 {
-	DamageFXPoint = { random (7) + 26 - 3, random (7) + 26 - 3};
+	DamageFXPoint = {random (7) + 26 - 3, random (7) + 26 - 3};
 	refreshData();
 
 	clearingTurnsChanged.connect ([this]() { statusChanged(); });
@@ -66,7 +66,7 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	buildBigSavedPosition (0, 0),
 	tileMovementOffset (0, 0)
 {
-	DamageFXPoint = { random (7) + 26 - 3, random (7) + 26 - 3};
+	DamageFXPoint = {random (7) + 26 - 3, random (7) + 26 - 3};
 	refreshData();
 
 	clearingTurnsChanged.connect ([this]() { statusChanged(); });
@@ -105,7 +105,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 		//  (in which case we cancel the path building)
 		// or b) doesn't have a building type that we're trying to build.
 		cPosition nextPosition (getPosition());
-		bool found_next  = false;
+		bool found_next = false;
 
 		while (!found_next && (nextPosition != bandPosition))
 		{
@@ -149,7 +149,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 			}
 			BuildPath = false;
 			if (getOwner()) getOwner()->buildPathInterrupted (*this);
- 		}
+		}
 	}
 	else if (model.getUnitsData()->getStaticUnitData (getBuildingType()).surfacePosition != staticData->surfacePosition)
 	{
@@ -244,7 +244,7 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 		turboBuildCosts[0] = buildCosts;
 		// prevent division by zero
 		const auto needsMetal = staticData->needsMetal == 0 ? 1 : staticData->needsMetal;
-		turboBuildTurns[0] = (int)ceilf (turboBuildCosts[0] / (float) (needsMetal));
+		turboBuildTurns[0] = (int) ceilf (turboBuildCosts[0] / (float) (needsMetal));
 	}
 
 	// step 2x
@@ -352,7 +352,6 @@ bool cVehicle::canTransferTo (const cUnit& unit) const
 
 	if (unit.getOwner() != getOwner())
 		return false;
-
 
 	if (unit.isAVehicle())
 	{
@@ -496,10 +495,10 @@ bool cVehicle::doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const
 {
 	cMapView mapView (model.getMap(), nullptr);
 	if (opponentUnit->isSentryActive() == false && opponentUnit->isManualFireActive() == false
-		&& opponentUnit->canAttackObjectAt (getPosition(), mapView, true)
-		// Possible TODO: better handling of stealth units.
-		// e.g. do reaction fire, if already detected ?
-		&& (opponentUnit->isAVehicle() == false || opponentUnit->getStaticUnitData().isStealthOn == eTerrainFlag::None))
+	    && opponentUnit->canAttackObjectAt (getPosition(), mapView, true)
+	    // Possible TODO: better handling of stealth units.
+	    // e.g. do reaction fire, if already detected ?
+	    && (opponentUnit->isAVehicle() == false || opponentUnit->getStaticUnitData().isStealthOn == eTerrainFlag::None))
 	{
 		if (makeAttackOnThis (model, opponentUnit, "reaction fire"))
 			return true;
@@ -615,9 +614,12 @@ bool cVehicle::canSupply (const cMapView& map, const cPosition& position, eSuppl
 	if (map.isValidPosition (position) == false) return false;
 
 	const auto& field = map.getField (position);
-	if (field.getVehicle()) return canSupply (field.getVehicle(), supplyType);
-	else if (field.getPlane()) return canSupply (field.getPlane(), supplyType);
-	else if (field.getTopBuilding()) return canSupply (field.getTopBuilding(), supplyType);
+	if (field.getVehicle())
+		return canSupply (field.getVehicle(), supplyType);
+	else if (field.getPlane())
+		return canSupply (field.getPlane(), supplyType);
+	else if (field.getTopBuilding())
+		return canSupply (field.getTopBuilding(), supplyType);
 
 	return false;
 }
@@ -803,8 +805,10 @@ void cVehicle::setLoaded (bool value)
 	std::swap (loaded, value);
 	if (value != loaded)
 	{
-		if (loaded) stored();
-		else activated();
+		if (loaded)
+			stored();
+		else
+			activated();
 	}
 }
 

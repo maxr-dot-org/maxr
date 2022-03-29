@@ -19,16 +19,16 @@
 
 #include "settings.h"
 
-#include <iostream>
-#include <locale>
-#include <string>
-
 #include "defines.h"
 #include "game/serialization/jsonarchive.h"
 #include "maxrversion.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/string/tolower.h"
+
+#include <iostream>
+#include <locale>
+#include <string>
 
 namespace
 {
@@ -61,22 +61,22 @@ namespace
 		Log.write ("Probing for data paths using default values:", cLog::eLogType::Info);
 
 		std::string sPathArray[] =
-		{
-			// most important position holds value of configure --prefix
-			// to gamedata in %prefix%/$(datadir)/maxr or default path
-			// if autoversion.h wasn't used
-			BUILD_DATADIR,
-			"/usr/local/share/maxr",
-			"/usr/games/maxr",
-			"/usr/local/games/maxr",
-			"/usr/maxr",
-			"/usr/local/maxr",
-			"/opt/maxr",
-			"/usr/share/games/maxr",
-			"/usr/local/share/games/maxr",
-			getCurrentExeDir(), // check for gamedata in bin folder too
-			"." // last resort: local dir
-		};
+			{
+				// most important position holds value of configure --prefix
+				// to gamedata in %prefix%/$(datadir)/maxr or default path
+				// if autoversion.h wasn't used
+				BUILD_DATADIR,
+				"/usr/local/share/maxr",
+				"/usr/games/maxr",
+				"/usr/local/games/maxr",
+				"/usr/maxr",
+				"/usr/local/maxr",
+				"/opt/maxr",
+				"/usr/share/games/maxr",
+				"/usr/local/share/games/maxr",
+				getCurrentExeDir(), // check for gamedata in bin folder too
+				"." // last resort: local dir
+			};
 
 		/*
 		* Logic is:
@@ -132,7 +132,7 @@ namespace
 		return sPathToGameData;
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 cSettings cSettings::instance;
@@ -146,7 +146,7 @@ cSettings::cSettings()
 #elif __amigaos4__
 	char* user = "AmigaOS4-User";
 #else
-	char* user = getenv ("USER");  //get $USER on linux
+	char* user = getenv ("USER"); //get $USER on linux
 #endif
 
 	player.name = (user == nullptr ? "Commander" : user);
@@ -177,7 +177,7 @@ void cSettings::setPaths()
 #endif
 	homeDir += (homeDir.empty() ? "" : PATH_DELIMITER) + maxrDir + PATH_DELIMITER;
 	std::cout << "\n(II): Read home directory " << homeDir;
-	makeDirectories(homeDir);
+	makeDirectories (homeDir);
 
 	// set new place for logs
 	logPath = homeDir + "maxr.log";
@@ -232,8 +232,10 @@ void cSettings::initialize()
 	}
 
 	to_lower (global.voiceLanguage);
-	if (!global.debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.json", cLog::eLogType::Warning);
-	else Log.write ("Debugmode enabled", cLog::eLogType::Info);
+	if (!global.debug)
+		Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.json", cLog::eLogType::Warning);
+	else
+		Log.write ("Debugmode enabled", cLog::eLogType::Info);
 
 #if MAC
 	// Create saves directory, if it doesn't exist, yet.
@@ -260,7 +262,7 @@ void cSettings::saveInFile() const
 	out << *this;
 
 	std::ofstream file (homeDir + "maxr.json");
-	file << json.dump(1);
+	file << json.dump (1);
 }
 
 //------------------------------------------------------------------------------

@@ -21,7 +21,6 @@
 
 #include "game/data/model.h"
 #include "game/data/resourcetype.h"
-
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
@@ -80,20 +79,20 @@ void cActionTransfer::execute (cModel& model) const
 
 			switch (resourceType)
 			{
-			case eResourceType::None: break;
-			case eResourceType::Metal:
+				case eResourceType::None: break;
+				case eResourceType::Metal:
 				{
 					if (sourceStored.metal - transferValue > sourceMaxStored.metal || sourceStored.metal - transferValue < 0) breakSwitch = true;
 					if (!breakSwitch) sourceBuilding->subBase->addMetal (-transferValue);
 				}
 				break;
-			case eResourceType::Oil:
+				case eResourceType::Oil:
 				{
 					if (sourceStored.oil - transferValue > sourceMaxStored.oil || sourceStored.oil - transferValue < 0) breakSwitch = true;
 					if (!breakSwitch) sourceBuilding->subBase->addOil (-transferValue);
 				}
 				break;
-			case eResourceType::Gold:
+				case eResourceType::Gold:
 				{
 					if (sourceStored.gold - transferValue > sourceMaxStored.gold || sourceStored.gold - transferValue < 0) breakSwitch = true;
 					if (!breakSwitch) sourceBuilding->subBase->addGold (-transferValue);
@@ -122,20 +121,20 @@ void cActionTransfer::execute (cModel& model) const
 			bool breakSwitch = false;
 			switch (resourceType)
 			{
-			case eResourceType::None: break;
-			case eResourceType::Metal:
+				case eResourceType::None: break;
+				case eResourceType::Metal:
 				{
 					if (destinationStored.metal + transferValue > destinationMaxStored.metal || destinationStored.metal + transferValue < 0) breakSwitch = true;
 					if (!breakSwitch) destinationBuilding->subBase->addMetal (transferValue);
 				}
 				break;
-			case eResourceType::Oil:
+				case eResourceType::Oil:
 				{
 					if (destinationStored.oil + transferValue > destinationMaxStored.oil || destinationStored.oil + transferValue < 0) breakSwitch = true;
 					if (!breakSwitch) destinationBuilding->subBase->addOil (transferValue);
 				}
 				break;
-			case eResourceType::Gold:
+				case eResourceType::Gold:
 				{
 					if (destinationStored.gold + transferValue > destinationMaxStored.gold || destinationStored.gold + transferValue < 0) breakSwitch = true;
 					if (!breakSwitch) destinationBuilding->subBase->addGold (transferValue);

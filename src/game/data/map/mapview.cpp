@@ -35,8 +35,7 @@ cMapView::cMapView (std::shared_ptr<const cMap> map_, std::shared_ptr<const cPla
 
 	if (player)
 	{
-		connectionManager.connect (player->detectedStealthUnit, [this](const cUnit& unit)
-		{
+		connectionManager.connect (player->detectedStealthUnit, [this] (const cUnit& unit) {
 			// check, if the unit was in stealth mode, to prevent double 'enemy detected' report
 			if (unit.isStealthOnCurrentTerrain (map->getField (unit.getPosition()), map->staticMap->getTerrain (unit.getPosition())))
 			{
@@ -45,8 +44,7 @@ cMapView::cMapView (std::shared_ptr<const cMap> map_, std::shared_ptr<const cPla
 			}
 		});
 
-		connectionManager.connect (player->stealthUnitDissappeared, [this](const cUnit& unit)
-		{
+		connectionManager.connect (player->stealthUnitDissappeared, [this] (const cUnit& unit) {
 			if (player->canSeeAt (unit.getPosition()))
 			{
 				// unit entered stealth mode
@@ -54,8 +52,7 @@ cMapView::cMapView (std::shared_ptr<const cMap> map_, std::shared_ptr<const cPla
 			}
 		});
 
-		connectionManager.connect (player->getScanMap().positionsInRange, [this](const std::vector<cPosition>& positions)
-		{
+		connectionManager.connect (player->getScanMap().positionsInRange, [this] (const std::vector<cPosition>& positions) {
 			// scan area of player has changed
 			std::set<const cUnit*> units;
 			for (const auto& position : positions)
@@ -92,8 +89,7 @@ cMapView::cMapView (std::shared_ptr<const cMap> map_, std::shared_ptr<const cPla
 			}
 		});
 
-		connectionManager.connect (player->getScanMap().positionsOutOfRange, [this](const std::vector<cPosition>& positions)
-		{
+		connectionManager.connect (player->getScanMap().positionsOutOfRange, [this] (const std::vector<cPosition>& positions) {
 			// scan area of player has changed
 			std::set<const cUnit*> units;
 			for (const auto& position : positions)
@@ -131,8 +127,7 @@ cMapView::cMapView (std::shared_ptr<const cMap> map_, std::shared_ptr<const cPla
 		});
 	}
 
-	connectionManager.connect (map->addedUnit, [this](const cUnit& unit)
-	{
+	connectionManager.connect (map->addedUnit, [this] (const cUnit& unit) {
 		if (!player || player->canSeeUnit (unit, *map))
 		{
 			// unit unloaded or new unit exited factory
@@ -140,8 +135,7 @@ cMapView::cMapView (std::shared_ptr<const cMap> map_, std::shared_ptr<const cPla
 		}
 	});
 
-	connectionManager.connect (map->movedVehicle, [this](const cUnit& unit, const cPosition& oldPosition)
-	{
+	connectionManager.connect (map->movedVehicle, [this] (const cUnit& unit, const cPosition& oldPosition) {
 		if (!player)
 		{
 			unitMoved (unit, oldPosition);
@@ -168,8 +162,7 @@ cMapView::cMapView (std::shared_ptr<const cMap> map_, std::shared_ptr<const cPla
 		}
 	});
 
-	connectionManager.connect (map->removedUnit, [this](const cUnit& unit)
-	{
+	connectionManager.connect (map->removedUnit, [this] (const cUnit& unit) {
 		if (!player || player->canSeeUnit (unit, *map))
 		{
 			// unit loaded or unit destroyed
@@ -179,7 +172,7 @@ cMapView::cMapView (std::shared_ptr<const cMap> map_, std::shared_ptr<const cPla
 
 	if (player)
 	{
-		connectionManager.connect (player->getScanMap().changed, [this](){scanAreaChanged(); });
+		connectionManager.connect (player->getScanMap().changed, [this]() { scanAreaChanged(); });
 	}
 }
 

@@ -112,13 +112,13 @@ AutoSurface LoadPCX (const std::string& name)
 	cBufferedFile bufferedFile;
 	if (!bufferedFile.open (name.c_str(), "rb"))
 	{
-		Log.write (SDL_GetError(), cLog::eLogType::Warning);  // Image corrupted, create empty surface.
+		Log.write (SDL_GetError(), cLog::eLogType::Warning); // Image corrupted, create empty surface.
 		return AutoSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));
 	}
 	// Load the image.
 	bufferedFile.seek (8, SEEK_SET);
-	Uint16       const x = bufferedFile.readLE16() + 1;
-	Uint16       const y = bufferedFile.readLE16() + 1;
+	Uint16 const x = bufferedFile.readLE16() + 1;
+	Uint16 const y = bufferedFile.readLE16() + 1;
 	AutoSurface s (SDL_CreateRGBSurface (0, x, y, 32, 0, 0, 0, 0));
 	if (!s)
 	{
@@ -160,8 +160,7 @@ AutoSurface LoadPCX (const std::string& name)
 			k = 0;
 			++i;
 		}
-	}
-	while (i != y);
+	} while (i != y);
 
 	// Convert from palette to true colour.
 	int colors[256];

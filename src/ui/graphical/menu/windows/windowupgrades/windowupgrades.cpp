@@ -19,15 +19,15 @@
 
 #include "ui/graphical/menu/windows/windowupgrades/windowupgrades.h"
 
+#include "game/data/player/player.h"
+#include "resources/pcx.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
-#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/uidefines.h"
 #include "utility/language.h"
-#include "resources/pcx.h"
-#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<cWindowUpgradesFilterState> filterState_, std::shared_ptr<const cUnitsData> unitsData) :
@@ -190,17 +190,17 @@ void cWindowUpgrades::updateUpgradeButtons()
 void cWindowUpgrades::generateSelectionList (bool select)
 {
 	//save state of the filter button
-	filterState->TankChecked     = tankCheckBox->isChecked();
-	filterState->PlaneChecked    = planeCheckBox->isChecked();
-	filterState->ShipChecked     = shipCheckBox->isChecked();
+	filterState->TankChecked = tankCheckBox->isChecked();
+	filterState->PlaneChecked = planeCheckBox->isChecked();
+	filterState->ShipChecked = shipCheckBox->isChecked();
 	filterState->BuildingChecked = buildingCheckBox->isChecked();
-	filterState->TNTChecked      = tntCheckBox->isChecked();
+	filterState->TNTChecked = tntCheckBox->isChecked();
 
-	const bool tank  = tankCheckBox->isChecked();
+	const bool tank = tankCheckBox->isChecked();
 	const bool plane = planeCheckBox->isChecked();
-	const bool ship  = shipCheckBox->isChecked();
+	const bool ship = shipCheckBox->isChecked();
 	const bool build = buildingCheckBox->isChecked();
-	const bool tnt   = tntCheckBox->isChecked();
+	const bool tnt = tntCheckBox->isChecked();
 
 	clearSelectionUnits();
 

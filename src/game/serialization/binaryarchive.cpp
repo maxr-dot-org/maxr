@@ -32,8 +32,10 @@ void cBinaryArchiveIn::pushValue (bool value)
 //------------------------------------------------------------------------------
 void cBinaryArchiveIn::pushValue (char value)
 {
-	if (std::numeric_limits<char>::is_signed) writeToBuffer (static_cast<Sint8> (value));
-	else writeToBuffer (static_cast<Uint8> (value));
+	if (std::numeric_limits<char>::is_signed)
+		writeToBuffer (static_cast<Sint8> (value));
+	else
+		writeToBuffer (static_cast<Uint8> (value));
 }
 //------------------------------------------------------------------------------
 void cBinaryArchiveIn::pushValue (signed char value)

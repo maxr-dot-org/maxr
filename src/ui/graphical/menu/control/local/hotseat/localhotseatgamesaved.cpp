@@ -42,7 +42,7 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	{
 		clients[i] = std::make_shared<cClient> (connectionManager);
 		clients[i]->setMap (staticMap);
-		clients[i]->loadModel (saveGameNumber, i);//TODO: resync model from server
+		clients[i]->loadModel (saveGameNumber, i); //TODO: resync model from server
 	}
 
 	std::vector<INetMessageReceiver*> hotseatClients;

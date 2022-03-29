@@ -28,7 +28,6 @@ cActionChangeBuildList::cActionChangeBuildList (const cBuilding& building, const
 	repeat (repeat)
 {}
 
-
 //------------------------------------------------------------------------------
 cActionChangeBuildList::cActionChangeBuildList (cBinaryArchiveOut& archive)
 {
@@ -62,8 +61,10 @@ void cActionChangeBuildList::execute (cModel& model) const
 		}
 		else
 		{
-			if (i == 5 || i == 7) x += 3;
-			else x++;
+			if (i == 5 || i == 7)
+				x += 3;
+			else
+				x++;
 		}
 		if (map.isValidPosition (cPosition (x, y)) == false) continue;
 
@@ -97,8 +98,8 @@ void cActionChangeBuildList::execute (cModel& model) const
 		building->stopWork (false);
 	}
 
-	if (buildSpeed == 0) building->setMetalPerRound (1  * building->getStaticUnitData().needsMetal);
-	if (buildSpeed == 1) building->setMetalPerRound (4  * building->getStaticUnitData().needsMetal);
+	if (buildSpeed == 0) building->setMetalPerRound (1 * building->getStaticUnitData().needsMetal);
+	if (buildSpeed == 1) building->setMetalPerRound (4 * building->getStaticUnitData().needsMetal);
 	if (buildSpeed == 2) building->setMetalPerRound (12 * building->getStaticUnitData().needsMetal);
 
 	// if the first unit hasn't changed remember the build progress
@@ -112,7 +113,6 @@ void cActionChangeBuildList::execute (cModel& model) const
 	for (const auto& id : buildList)
 	{
 		if (!model.getUnitsData()->isValidId (id)) continue;
-
 
 		// check whether the building can build this unit
 		if (model.getUnitsData()->getStaticUnitData (id).factorSea > 0 && model.getUnitsData()->getStaticUnitData (id).factorGround == 0 && !water)

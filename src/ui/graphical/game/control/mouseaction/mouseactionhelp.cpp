@@ -19,13 +19,12 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseactionhelp.h"
 
-#include "ui/graphical/game/widgets/gamemapwidget.h"
+#include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
+#include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
-#include "game/data/map/mapfieldview.h"
-
+#include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
 bool cMouseActionHelp::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
@@ -39,10 +38,14 @@ bool cMouseActionHelp::executeLeftClick (cGameMapWidget& gameMapWidget, const cM
 	const auto overBuilding = field.getBuilding();
 	const auto overBaseBuilding = field.getBaseBuilding();
 
-	if (overPlane) unit = overPlane;
-	else if (overVehicle) unit = overVehicle;
-	else if (overBuilding) unit = overBuilding;
-	else if (overBaseBuilding) unit = overBaseBuilding;
+	if (overPlane)
+		unit = overPlane;
+	else if (overVehicle)
+		unit = overVehicle;
+	else if (overBuilding)
+		unit = overBuilding;
+	else if (overBaseBuilding)
+		unit = overBaseBuilding;
 
 	if (unit)
 	{

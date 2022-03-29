@@ -22,6 +22,15 @@
 #include "game/data/report/savedreport.h"
 #include "game/data/report/savedreportchat.h"
 #include "game/data/report/savedreportsimple.h"
+#include "game/data/report/special/savedreporthostcommand.h"
+#include "game/data/report/special/savedreportlostconnection.h"
+#include "game/data/report/special/savedreportplayerdefeated.h"
+#include "game/data/report/special/savedreportplayerendedturn.h"
+#include "game/data/report/special/savedreportplayerleft.h"
+#include "game/data/report/special/savedreportplayerwins.h"
+#include "game/data/report/special/savedreportresourcechanged.h"
+#include "game/data/report/special/savedreportturnstart.h"
+#include "game/data/report/special/savedreportupgraded.h"
 #include "game/data/report/unit/savedreportattacked.h"
 #include "game/data/report/unit/savedreportattackingenemy.h"
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
@@ -30,19 +39,9 @@
 #include "game/data/report/unit/savedreportdisabled.h"
 #include "game/data/report/unit/savedreportpathinterrupted.h"
 #include "game/data/report/unit/savedreportsurveyoraiconfused.h"
-#include "game/data/report/special/savedreporthostcommand.h"
-#include "game/data/report/special/savedreportresourcechanged.h"
-#include "game/data/report/special/savedreportlostconnection.h"
-#include "game/data/report/special/savedreportplayerendedturn.h"
-#include "game/data/report/special/savedreportplayerdefeated.h"
-#include "game/data/report/special/savedreportplayerwins.h"
-#include "game/data/report/special/savedreportplayerleft.h"
-#include "game/data/report/special/savedreportupgraded.h"
-#include "game/data/report/special/savedreportturnstart.h"
-
 #include "resources/sound.h"
-#include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"
+#include "ui/sound/soundmanager.h"
 #include "utility/random.h"
 
 namespace
@@ -65,7 +64,8 @@ namespace
 		soundManager.playSound (std::make_unique<cSoundEffectVoice> (eSoundEffectType::VoiceStolenByEnemy, VoiceData.VOIUnitStolenByEnemy));
 	}
 	//--------------------------------------------------------------------------
-	void playReportSound (cSoundManager& soundManager, const cSavedReportDestroyed&){
+	void playReportSound (cSoundManager& soundManager, const cSavedReportDestroyed&)
+	{
 		soundManager.playSound (std::make_unique<cSoundEffectVoice> (eSoundEffectType::VoiceDestroyed, getRandom (VoiceData.VOIDestroyedUs)));
 	}
 	//--------------------------------------------------------------------------
@@ -116,7 +116,7 @@ namespace
 		}
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 void playSound (cSoundManager& soundManager, const cSavedReport& report)
@@ -124,19 +124,26 @@ void playSound (cSoundManager& soundManager, const cSavedReport& report)
 	switch (report.getType())
 	{
 		case eSavedReportType::Attacked:
-			playReportSound (soundManager, static_cast<const cSavedReportAttacked&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportAttacked&> (report));
+			break;
 		case eSavedReportType::AttackingEnemy:
-			playReportSound (soundManager, static_cast<const cSavedReportAttackingEnemy&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportAttackingEnemy&> (report));
+			break;
 		case eSavedReportType::CapturedByEnemy:
-			playReportSound (soundManager, static_cast<const cSavedReportCapturedByEnemy&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportCapturedByEnemy&> (report));
+			break;
 		case eSavedReportType::Destroyed:
-			playReportSound (soundManager, static_cast<const cSavedReportDestroyed&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportDestroyed&> (report));
+			break;
 		case eSavedReportType::Detected:
-			playReportSound (soundManager, static_cast<const cSavedReportDetected&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportDetected&> (report));
+			break;
 		case eSavedReportType::Disabled:
-			playReportSound (soundManager, static_cast<const cSavedReportDisabled&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportDisabled&> (report));
+			break;
 		case eSavedReportType::TurnStart:
-			playReportSound (soundManager, static_cast<const cSavedReportTurnStart&> (report)); break;
+			playReportSound (soundManager, static_cast<const cSavedReportTurnStart&> (report));
+			break;
 		case eSavedReportType::MetalInsufficient:
 		case eSavedReportType::FuelInsufficient:
 		case eSavedReportType::GoldInsufficient:

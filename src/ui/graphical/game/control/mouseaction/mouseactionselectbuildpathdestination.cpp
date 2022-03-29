@@ -19,9 +19,9 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseactionselectbuildpathdestination.h"
 
-#include "ui/graphical/game/widgets/gamemapwidget.h"
-#include "ui/graphical/game/unitselection.h"
 #include "game/data/units/vehicle.h"
+#include "ui/graphical/game/unitselection.h"
+#include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
 bool cMouseActionSelectBuildPathDestination::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
@@ -31,8 +31,10 @@ bool cMouseActionSelectBuildPathDestination::executeLeftClick (cGameMapWidget& g
 	if (!selectedVehicle) return false;
 
 	cPosition destination;
-	if (mapPosition.x() == selectedVehicle->getPosition().x() || mapPosition.y() == selectedVehicle->getPosition().y()) destination = mapPosition;
-	else destination = cPosition (selectedVehicle->getPosition());
+	if (mapPosition.x() == selectedVehicle->getPosition().x() || mapPosition.y() == selectedVehicle->getPosition().y())
+		destination = mapPosition;
+	else
+		destination = cPosition (selectedVehicle->getPosition());
 
 	gameMapWidget.selectedBuildPathDestination (*selectedVehicle, destination);
 

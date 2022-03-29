@@ -31,8 +31,8 @@
 #include "utility/log.h"
 #include "utility/string/tolower.h"
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 using namespace std;
@@ -47,32 +47,31 @@ bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 		const char* filename;
 		int32_t checksum;
 	} maps[] =
-	{
-		{ "bottleneck.wrl"        , 344087468},
-		{ "flash point.wrl"       , 1702427970},
-		{ "freckles.wrl"          , 1401869069},
-		{ "frigia.wrl"            , 1612651246},
-		{ "great circle.wrl"      , 1041139234},
-		{ "great divide.wrl"      , 117739146},
-		{ "hammerhead.wrl"        , 1969035068},
-		{ "high impact.wrl"       , 268073155},
-		{ "ice berg.wrl"          , 1382754034},
-		{ "iron cross.wrl"        , 1704409466},
-		{ "islandia.wrl"          , 1893077128},
-		{ "long floes.wrl"        , 289119678},
-		{ "long passage.wrl"      , 231873358},
-		{ "middle sea.wrl"        , 959897984},
-		{ "new luzon.wrl"         , 1422663356},
-		{ "peak-a-boo.wrl"        , 2072925938},
-		{ "sanctuary.wrl"         , 1286420600},
-		{ "sandspit.wrl"          , 2040193020},
-		{ "snowcrab.wrl"          , 10554807},
-		{ "splatterscape.wrl"     , 486474018},
-		{ "the cooler.wrl"        , 451439582},
-		{ "three rings.wrl"       , 1682525072},
-		{ "ultima thule.wrl"      , 1397392934},
-		{ "valentine's planet.wrl", 280492815}
-	};
+		{
+			{"bottleneck.wrl", 344087468},
+			{"flash point.wrl", 1702427970},
+			{"freckles.wrl", 1401869069},
+			{"frigia.wrl", 1612651246},
+			{"great circle.wrl", 1041139234},
+			{"great divide.wrl", 117739146},
+			{"hammerhead.wrl", 1969035068},
+			{"high impact.wrl", 268073155},
+			{"ice berg.wrl", 1382754034},
+			{"iron cross.wrl", 1704409466},
+			{"islandia.wrl", 1893077128},
+			{"long floes.wrl", 289119678},
+			{"long passage.wrl", 231873358},
+			{"middle sea.wrl", 959897984},
+			{"new luzon.wrl", 1422663356},
+			{"peak-a-boo.wrl", 2072925938},
+			{"sanctuary.wrl", 1286420600},
+			{"sandspit.wrl", 2040193020},
+			{"snowcrab.wrl", 10554807},
+			{"splatterscape.wrl", 486474018},
+			{"the cooler.wrl", 451439582},
+			{"three rings.wrl", 1682525072},
+			{"ultima thule.wrl", 1397392934},
+			{"valentine's planet.wrl", 280492815}};
 
 	for (int i = 0; i != sizeof (maps) / sizeof (*maps); ++i)
 	{
@@ -126,7 +125,7 @@ uint32_t MapDownload::calculateCheckSum (const std::string& mapName)
 		std::vector<char> data (mapSize);
 		file.seekg (0, ios::beg);
 
-		file.read (data.data(), 9);  // read only header
+		file.read (data.data(), 9); // read only header
 		const int width = data[5] + data[6] * 256;
 		const int height = data[7] + data[8] * 256;
 		// the information after this is only for graphic stuff
@@ -202,8 +201,7 @@ bool cMapReceiver::finished()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cMapSender::cMapSender (cConnectionManager& connectionManager, int toPlayerNr,
-						const std::string& mapName) :
+cMapSender::cMapSender (cConnectionManager& connectionManager, int toPlayerNr, const std::string& mapName) :
 	connectionManager (connectionManager),
 	toPlayerNr (toPlayerNr),
 	mapName (mapName)
@@ -233,7 +231,7 @@ void cMapSender::runInThread()
 {
 	// the thread will quit, when it finished uploading the map
 	thread = std::thread ([this]() {
- 		try
+		try
 		{
 			run();
 		}
@@ -289,7 +287,7 @@ void cMapSender::run()
 
 		cMuMsgMapDownloadData msg;
 		int bytesToSend = sendBuffer.size() - bytesSent;
-		if (bytesToSend  > MAX_MESSAGE_SIZE)
+		if (bytesToSend > MAX_MESSAGE_SIZE)
 			bytesToSend = MAX_MESSAGE_SIZE;
 		for (int i = 0; i < bytesToSend; i++)
 			msg.data.push_back (sendBuffer[bytesSent + i]);

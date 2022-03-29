@@ -17,12 +17,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <string>
-#include <cctype>
-
 #include "ui/graphical/game/control/chatcommand/chatcommandparser.h"
 
- //------------------------------------------------------------------------------
+#include <cctype>
+#include <string>
+
+//------------------------------------------------------------------------------
 void skipWhiteSpace (const std::string& command, size_t& position)
 {
 	while (position < command.size() && std::isspace (command[position]))

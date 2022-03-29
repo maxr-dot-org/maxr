@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/animations/animationstartupbuildingsite.h"
-#include "ui/graphical/game/animations/animationtimer.h"
+
 #include "game/data/units/vehicle.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 #include "utility/box.h"
 
 //------------------------------------------------------------------------------
@@ -28,8 +29,7 @@ cAnimationStartUpBuildingSite::cAnimationStartUpBuildingSite (cAnimationTimer& a
 	vehicle (&vehicle_)
 {
 	// register the animation to build status changes
-	signalConnectionManager.connect (vehicle->buildingChanged, [this]()
-	{
+	signalConnectionManager.connect (vehicle->buildingChanged, [this]() {
 		if (vehicle->isUnitBuildingABuilding())
 		{
 			activate();
@@ -41,8 +41,7 @@ cAnimationStartUpBuildingSite::cAnimationStartUpBuildingSite (cAnimationTimer& a
 		}
 	});
 
-	signalConnectionManager.connect (vehicle->destroyed, [this]()
-	{
+	signalConnectionManager.connect (vehicle->destroyed, [this]() {
 		animationTimerConnectionManager.disconnectAll();
 		vehicle = nullptr;
 		finished = true;

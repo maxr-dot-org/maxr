@@ -19,9 +19,9 @@
 
 #include "ui/graphical/widget.h"
 
-#include "output/video/video.h"
 #include "SDLutility/drawing.h"
 #include "SDLutility/tosdl.h"
+#include "output/video/video.h"
 #include "ui/graphical/application.h"
 #include "utility/color.h"
 
@@ -36,12 +36,14 @@
 }
 
 //------------------------------------------------------------------------------
-cWidget::cWidget() : cWidget (cPosition (0, 0))
+cWidget::cWidget() :
+	cWidget (cPosition (0, 0))
 {
 }
 
 //------------------------------------------------------------------------------
-cWidget::cWidget (const cPosition& position) : cWidget ({position, position})
+cWidget::cWidget (const cPosition& position) :
+	cWidget ({position, position})
 {
 }
 

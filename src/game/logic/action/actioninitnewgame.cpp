@@ -33,10 +33,10 @@
 namespace
 {
 	// TODO: Hard coded alien units
-	const sID alienAssaultId {0, 2};
-	const sID alienPlaneId {0, 3};
-	const sID alienShipId {0, 4};
-	const sID alienTankId {0, 5};
+	const sID alienAssaultId{0, 2};
+	const sID alienPlaneId{0, 3};
+	const sID alienShipId{0, 4};
+	const sID alienTankId{0, 5};
 
 	//--------------------------------------------------------------------------
 	int getResourceDensityFactor (eGameSettingsResourceDensity density)
@@ -81,8 +81,7 @@ namespace
 		// surrounded by alien units
 		return {
 			static_cast<int> (2 + model.randomGenerator.get (model.getMap()->getSize().x() - 3)),
-			static_cast<int> (2 + model.randomGenerator.get (model.getMap()->getSize().y() - 3))
-		};
+			static_cast<int> (2 + model.randomGenerator.get (model.getMap()->getSize().y() - 3))};
 	}
 
 	//--------------------------------------------------------------------------
@@ -90,14 +89,13 @@ namespace
 	{
 		return {
 			static_cast<int> (model.randomGenerator.get (model.getMap()->getSize().x())),
-			static_cast<int> (model.randomGenerator.get (model.getMap()->getSize().y()))
-		};
+			static_cast<int> (model.randomGenerator.get (model.getMap()->getSize().y()))};
 	}
 
 	//--------------------------------------------------------------------------
 	std::vector<cPosition> toPositions (const std::vector<std::shared_ptr<cPlayer>>& players)
 	{
-		return ranges::Transform (players, [](const auto& player) { return player->getLandingPos(); });
+		return ranges::Transform (players, [] (const auto& player) { return player->getLandingPos(); });
 	}
 
 	//--------------------------------------------------------------------------
@@ -178,7 +176,7 @@ namespace
 			landAlien (model, position);
 		}
 	}
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 void placeInitialResources (cModel& model)
@@ -243,7 +241,7 @@ void placeInitialResources (cModel& model)
 		resSpotTypes[i] = static_cast<eResourceType> (((resSpots[i].y() % 2) * 2) + (resSpots[i].x() % 2));
 	}
 	// reverse orcer to ensure that player res spot are not overwritten
-	for (std::size_t i = resSpots.size(); i-- != 0; )
+	for (std::size_t i = resSpots.size(); i-- != 0;)
 	{
 		const auto& pos = resSpots[i];
 		bool hasGold = model.randomGenerator.get (100) < 40;
@@ -259,8 +257,7 @@ void placeInitialResources (cModel& model)
 				const eResourceType type = static_cast<eResourceType> ((p.y() % 2) * 2 + (p.x() % 2));
 
 				if (type != eResourceType::None && !map.isBlocked (p)
-					&& ((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold)
-					)
+				    && ((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold))
 				{
 					sResources res;
 					res.typ = type;
@@ -339,7 +336,7 @@ void cActionInitNewGame::execute (cModel& model) const
 	}
 	player.setLandingPos (updatedLandingPosition);
 
-	const bool allPlayerReady = ranges::find_if (model.getPlayerList(), [](const auto& player){ return player->getLandingPos() == cPosition {-1, -1}; }) == model.getPlayerList().end();
+	const bool allPlayerReady = ranges::find_if (model.getPlayerList(), [] (const auto& player) { return player->getLandingPos() == cPosition{-1, -1}; }) == model.getPlayerList().end();
 
 	if (allPlayerReady)
 	{
@@ -384,7 +381,7 @@ void cActionInitNewGame::execute (cModel& model) const
 			return;
 		}
 
-		auto it = ranges::find_if (initialLandingUnits, [landing](std::pair<sID, int> unit){ return unit.first == landing.unitID; });
+		auto it = ranges::find_if (initialLandingUnits, [landing] (std::pair<sID, int> unit) { return unit.first == landing.unitID; });
 		if (it != initialLandingUnits.end())
 		{
 			// landing unit is one of the initial landing units, that the player gets for free
@@ -424,8 +421,8 @@ bool cActionInitNewGame::isValidLandingPosition (cPosition position, const cStat
 		//mine
 		blockedPositions.push_back (position + cPosition (0, -1));
 		blockedPositions.push_back (position + cPosition (1, -1));
-		blockedPositions.push_back (position + cPosition (1,  0));
-		blockedPositions.push_back (position + cPosition (0,  0));
+		blockedPositions.push_back (position + cPosition (1, 0));
+		blockedPositions.push_back (position + cPosition (0, 0));
 	}
 
 	for (const auto& unit : units)
@@ -523,8 +520,7 @@ bool cActionInitNewGame::findPositionForStartMine (cPosition& position, const cU
 			for (int offX = -radius; offX <= radius; ++offX)
 			{
 				const cPosition place = position + cPosition (offX, offY);
-				if (map.possiblePlace (smallGenerator, place + cPosition (-1, 0)) &&
-					map.possiblePlace (mine, place + cPosition (0, -1)))
+				if (map.possiblePlace (smallGenerator, place + cPosition (-1, 0)) && map.possiblePlace (mine, place + cPosition (0, -1)))
 				{
 					position = place;
 					return true;

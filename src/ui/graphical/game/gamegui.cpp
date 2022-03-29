@@ -38,9 +38,9 @@
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/application.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "ui/graphical/game/hud.h"
-#include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"
 #include "ui/graphical/game/widgets/debugoutputwidget.h"
@@ -99,16 +99,15 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	hudPanels = addChild (std::make_unique<cHudPanels> (getPosition(), getSize().y(), animationTimer));
 
 	auto font = cUnicodeFont::font.get();
-	primiaryInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig))), "", eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::CenterHorizontal)  | eAlignmentType::Top));
+	primiaryInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig))), "", eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
 	primiaryInfoLabel->disable();
 	primiaryInfoLabel->hide();
 
-	additionalInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig)), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig) + font->getFontHeight (eUnicodeFontType::LatinNormal))), "", eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal)  | eAlignmentType::Top));
+	additionalInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig)), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig) + font->getFontHeight (eUnicodeFontType::LatinNormal))), "", eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
 	additionalInfoLabel->disable();
 	additionalInfoLabel->hide();
 
-	signalConnectionManager.connect (hudPanels->opened, [this]()
-	{
+	signalConnectionManager.connect (hudPanels->opened, [this]() {
 		hudPanels->disable();
 		hudPanels->hide();
 	});
@@ -130,8 +129,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	signalConnectionManager.connect (hud->lockToggled, [this]() { gameMap->setLockActive (hud->getLockActive()); });
 
 	signalConnectionManager.connect (hud->helpClicked, [this]() { gameMap->toggleHelpMode(); });
-	signalConnectionManager.connect (hud->chatToggled, [this]()
-	{
+	signalConnectionManager.connect (hud->chatToggled, [this]() {
 		if (hud->getChatActive())
 		{
 			chatBox->show();
@@ -150,25 +148,25 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	signalConnectionManager.connect (gameMap->scrolled, [this]() { resetMiniMapViewWindow(); });
 	signalConnectionManager.connect (gameMap->zoomFactorChanged, [this]() { resetMiniMapViewWindow(); });
-	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, [this](const cPosition& tilePosition)
-	{
+	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, [this] (const cPosition& tilePosition) {
 		updateHudCoordinates (tilePosition);
 		updateHudUnitName (tilePosition);
 	});
 
-	signalConnectionManager.connect (gameMap->mouseFocusReleased, [this]()
-	{
+	signalConnectionManager.connect (gameMap->mouseFocusReleased, [this]() {
 		auto mouse = getActiveMouse();
 		if (mouse)
 		{
-			if (hud->isAt (mouse->getPosition())) mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
-			else if (chatBox->isAt (mouse->getPosition())) mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
-			else gameMap->updateMouseCursor (*mouse);
+			if (hud->isAt (mouse->getPosition()))
+				mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+			else if (chatBox->isAt (mouse->getPosition()))
+				mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+			else
+				gameMap->updateMouseCursor (*mouse);
 		}
 	});
 
-	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [this]()
-	{
+	signalConnectionManager.connect (gameMap->getUnitSelection().mainSelectionChanged, [this]() {
 		auto unit = gameMap->getUnitSelection().getSelectedUnit();
 		hud->setActiveUnit (unit);
 		updateSelectedUnitSound();
@@ -190,20 +188,17 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	signalConnectionManager.connect (miniMap->focus, [this] (const cPosition& position) { gameMap->centerAt (position); });
 
-	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this]()
-	{
+	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this]() {
 		if (mouseScrollDirection != cPosition (0, 0))
 		{
 			gameMap->scroll (mouseScrollDirection);
 		}
 	});
-	signalConnectionManager.connect (animationTimer->triggered400ms, [this]()
-	{
+	signalConnectionManager.connect (animationTimer->triggered400ms, [this]() {
 		messageList->removeOldMessages();
 	});
 
-	terminated.connect ([this]()
-	{
+	terminated.connect ([this]() {
 		stopSelectedUnitSound();
 	});
 
@@ -211,8 +206,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	signalConnectionManager.connect (Video.resolutionChanged, [this]() { handleResolutionChange(); });
 
-	signalConnectionManager.connect (Video.screenShotTaken, [this] (const std::string& path)
-	{
+	signalConnectionManager.connect (Video.screenShotTaken, [this] (const std::string& path) {
 		messageList->addMessage (lngPack.i18n ("Text~Comp~Screenshot_Done", path));
 	});
 }
@@ -340,12 +334,16 @@ cDebugOutputWidget& cGameGui::getDebugOutput()
 void cGameGui::setInfoTexts (const std::string& primiaryText, const std::string& additionalText)
 {
 	primiaryInfoLabel->setText (primiaryText);
-	if (primiaryText.empty()) primiaryInfoLabel->hide();
-	else primiaryInfoLabel->show();
+	if (primiaryText.empty())
+		primiaryInfoLabel->hide();
+	else
+		primiaryInfoLabel->show();
 
 	additionalInfoLabel->setText (additionalText);
-	if (additionalText.empty()) additionalInfoLabel->hide();
-	else additionalInfoLabel->show();
+	if (additionalText.empty())
+		additionalInfoLabel->hide();
+	else
+		additionalInfoLabel->show();
 }
 
 //------------------------------------------------------------------------------
@@ -353,8 +351,7 @@ void cGameGui::exit()
 {
 	panelSignalConnectionManager.disconnectAll();
 
-	panelSignalConnectionManager.connect (hudPanels->closed, [this]()
-	{
+	panelSignalConnectionManager.connect (hudPanels->closed, [this]() {
 		close();
 	});
 	startClosePanel();
@@ -409,8 +406,10 @@ void cGameGui::restoreState (const cGameGuiState& state)
 	hud->setMiniMapZoomFactorActive (state.miniMapZoomFactorActive);
 	hud->setMiniMapAttackUnitsOnly (state.miniMapAttackUnitsOnly);
 	hud->setChatActive (state.chatActive);
-	if (state.unitVideoPlaying) hud->startUnitVideo();
-	else hud->stopUnitVideo();
+	if (state.unitVideoPlaying)
+		hud->startUnitVideo();
+	else
+		hud->stopUnitVideo();
 
 	gameMap->currentTurnResearchAreasFinished = state.currentTurnResearchAreasFinished;
 
@@ -481,10 +480,14 @@ void cGameGui::updateHudUnitName (const cPosition& tilePosition)
 		const auto& field = mapView->getField (tilePosition);
 
 		cUnit* unit = nullptr;
-		if (field.getVehicle() != nullptr) unit = field.getVehicle();
-		else if (field.getPlane() != nullptr) unit = field.getPlane();
-		else if (field.getTopBuilding() != nullptr) unit = field.getTopBuilding();
-		else if (field.getBaseBuilding() != nullptr && !field.getBaseBuilding()->isRubble()) unit = field.getBaseBuilding();
+		if (field.getVehicle() != nullptr)
+			unit = field.getVehicle();
+		else if (field.getPlane() != nullptr)
+			unit = field.getPlane();
+		else if (field.getTopBuilding() != nullptr)
+			unit = field.getTopBuilding();
+		else if (field.getBaseBuilding() != nullptr && !field.getBaseBuilding()->isRubble())
+			unit = field.getBaseBuilding();
 
 		if (unit != nullptr && unit->getOwner())
 		{
@@ -504,36 +507,33 @@ void cGameGui::connectSelectedUnit()
 
 	if (!selectedUnit) return;
 
-	selectedUnitConnectionManager.connect (selectedUnit->workingChanged, [selectedUnit, this]()
-	{
+	selectedUnitConnectionManager.connect (selectedUnit->workingChanged, [selectedUnit, this]() {
 		stopSelectedUnitSound();
 		if (selectedUnit->data.getId().isABuilding())
 		{
 			const auto& building = static_cast<const cBuilding&> (*selectedUnit);
 			auto& uiData = UnitsUiData.getBuildingUI (building);
 
-			if (building.isUnitWorking()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartWork, uiData.Start, building));
-			else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopWork, uiData.Stop, building));
+			if (building.isUnitWorking())
+				soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartWork, uiData.Start, building));
+			else
+				soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopWork, uiData.Stop, building));
 		}
 		updateSelectedUnitIdleSound();
 	});
 
-
-	selectedUnitConnectionManager.connect (selectedUnit->buildingChanged, [this]()
-	{
+	selectedUnitConnectionManager.connect (selectedUnit->buildingChanged, [this]() {
 		updateSelectedUnitIdleSound();
 	});
 
-	selectedUnitConnectionManager.connect (selectedUnit->clearingChanged, [this]()
-	{
+	selectedUnitConnectionManager.connect (selectedUnit->clearingChanged, [this]() {
 		updateSelectedUnitIdleSound();
 	});
 
 	if (selectedUnit->isAVehicle())
 	{
 		const auto selectedVehicle = static_cast<cVehicle*> (selectedUnit);
-		selectedUnitConnectionManager.connect (selectedVehicle->movingChanged, [selectedVehicle, this]()
-		{
+		selectedUnitConnectionManager.connect (selectedVehicle->movingChanged, [selectedVehicle, this]() {
 			if (selectedVehicle == gameMap->getUnitSelection().getSelectedVehicle())
 			{
 				if (selectedVehicle->isUnitMoving())
@@ -551,16 +551,17 @@ void cGameGui::connectSelectedUnit()
 						stopSelectedUnitSound();
 						auto* uiData = UnitsUiData.getVehicleUI (selectedVehicle->getStaticUnitData().ID);
 
-						if (water && selectedVehicle->getStaticUnitData().factorSea > 0) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopMove, uiData->StopWater, *selectedVehicle));
-						else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopMove, uiData->Stop, *selectedVehicle));
+						if (water && selectedVehicle->getStaticUnitData().factorSea > 0)
+							soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopMove, uiData->StopWater, *selectedVehicle));
+						else
+							soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopMove, uiData->Stop, *selectedVehicle));
 
 						updateSelectedUnitIdleSound();
 					}
 				}
 			}
 		});
-		selectedUnitConnectionManager.connect (selectedVehicle->positionChanged, [selectedVehicle, this]()
-		{
+		selectedUnitConnectionManager.connect (selectedVehicle->positionChanged, [selectedVehicle, this]() {
 			if (selectedVehicle->isUnitMoving() && selectedVehicle == gameMap->getUnitSelection().getSelectedVehicle())
 			{
 				if (!mapView) return;
@@ -572,15 +573,13 @@ void cGameGui::connectSelectedUnit()
 					water = false;
 				}
 				auto* uiData = UnitsUiData.getVehicleUI (selectedVehicle->getStaticUnitData().ID);
-				if ((water && *selectedUnitSoundLoop->getSound() == uiData->Drive) ||
-					(!water && *selectedUnitSoundLoop->getSound() == uiData->DriveWater))
+				if ((water && *selectedUnitSoundLoop->getSound() == uiData->Drive) || (!water && *selectedUnitSoundLoop->getSound() == uiData->DriveWater))
 				{
 					updateSelectedUnitMoveSound (false);
 				}
 			}
 		});
-		selectedUnitConnectionManager.connect (selectedVehicle->moveJobBlocked, [selectedVehicle, this]()
-		{
+		selectedUnitConnectionManager.connect (selectedVehicle->moveJobBlocked, [selectedVehicle, this]() {
 			if (selectedVehicle == gameMap->getUnitSelection().getSelectedVehicle())
 			{
 				soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceNoPath, getRandom (VoiceData.VOINoPath)));
@@ -608,21 +607,35 @@ bool cGameGui::handleMouseMoved (cApplication& application, cMouse& mouse, const
 	const int scrollFrameWidth = 5;
 
 	mouseScrollDirection = 0;
-	if (currentMousePosition.x() <= scrollFrameWidth) mouseScrollDirection.x() = -cSettings::getInstance().getScrollSpeed() / 4;
-	else if (currentMousePosition.x() >= getEndPosition().x() - scrollFrameWidth) mouseScrollDirection.x() = +cSettings::getInstance().getScrollSpeed() / 4;
-	if (currentMousePosition.y() <= scrollFrameWidth) mouseScrollDirection.y() = -cSettings::getInstance().getScrollSpeed() / 4;
-	else if (currentMousePosition.y() >= getEndPosition().y() - scrollFrameWidth) mouseScrollDirection.y() = +cSettings::getInstance().getScrollSpeed() / 4;
+	if (currentMousePosition.x() <= scrollFrameWidth)
+		mouseScrollDirection.x() = -cSettings::getInstance().getScrollSpeed() / 4;
+	else if (currentMousePosition.x() >= getEndPosition().x() - scrollFrameWidth)
+		mouseScrollDirection.x() = +cSettings::getInstance().getScrollSpeed() / 4;
+	if (currentMousePosition.y() <= scrollFrameWidth)
+		mouseScrollDirection.y() = -cSettings::getInstance().getScrollSpeed() / 4;
+	else if (currentMousePosition.y() >= getEndPosition().y() - scrollFrameWidth)
+		mouseScrollDirection.y() = +cSettings::getInstance().getScrollSpeed() / 4;
 
-	if (mouseScrollDirection.x() > 0 &&  mouseScrollDirection.y() == 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRight));
-	else if (mouseScrollDirection.x() < 0 &&  mouseScrollDirection.y() == 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeft));
-	else if (mouseScrollDirection.x() == 0 &&  mouseScrollDirection.y() > 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowDown));
-	else if (mouseScrollDirection.x() == 0 &&  mouseScrollDirection.y() < 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowUp));
-	else if (mouseScrollDirection.x() > 0 &&  mouseScrollDirection.y() > 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRightDown));
-	else if (mouseScrollDirection.x() > 0 &&  mouseScrollDirection.y() < 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRightUp));
-	else if (mouseScrollDirection.x() < 0 &&  mouseScrollDirection.y() > 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftDown));
-	else if (mouseScrollDirection.x() < 0 &&  mouseScrollDirection.y() < 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftUp));
-	else if (hud->isAt (currentMousePosition)) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
-	else if (chatBox->isAt (currentMousePosition)) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+	if (mouseScrollDirection.x() > 0 && mouseScrollDirection.y() == 0)
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRight));
+	else if (mouseScrollDirection.x() < 0 && mouseScrollDirection.y() == 0)
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeft));
+	else if (mouseScrollDirection.x() == 0 && mouseScrollDirection.y() > 0)
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowDown));
+	else if (mouseScrollDirection.x() == 0 && mouseScrollDirection.y() < 0)
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowUp));
+	else if (mouseScrollDirection.x() > 0 && mouseScrollDirection.y() > 0)
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRightDown));
+	else if (mouseScrollDirection.x() > 0 && mouseScrollDirection.y() < 0)
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRightUp));
+	else if (mouseScrollDirection.x() < 0 && mouseScrollDirection.y() > 0)
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftDown));
+	else if (mouseScrollDirection.x() < 0 && mouseScrollDirection.y() < 0)
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftUp));
+	else if (hud->isAt (currentMousePosition))
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+	else if (chatBox->isAt (currentMousePosition))
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 
 	return cWindow::handleMouseMoved (application, mouse, offset);
 }
@@ -671,9 +684,12 @@ void cGameGui::handleActivated (cApplication& application, bool firstTime)
 	auto mouse = getActiveMouse();
 	if (mouse)
 	{
-		if (hud->isAt (mouse->getPosition())) mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
-		else if (chatBox->isAt (mouse->getPosition())) mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
-		else gameMap->updateMouseCursor (*mouse);
+		if (hud->isAt (mouse->getPosition()))
+			mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+		else if (chatBox->isAt (mouse->getPosition()))
+			mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+		else
+			gameMap->updateMouseCursor (*mouse);
 	}
 
 	if (openPanelOnActivation)
@@ -803,8 +819,10 @@ void cGameGui::updateSelectedUnitMoveSound (bool startedNew)
 
 	if (startedNew)
 	{
-		if (water && vehicle.getStaticUnitData().factorSea != 0) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, uiData->StartWater, vehicle));
-		else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, uiData->Start, vehicle));
+		if (water && vehicle.getStaticUnitData().factorSea != 0)
+			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, uiData->StartWater, vehicle));
+		else
+			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, uiData->Start, vehicle));
 	}
 
 	if (water && vehicle.getStaticUnitData().factorSea != 0)
@@ -844,29 +862,28 @@ void cGameGui::addShortcut (cKeySequence key, Action action)
 //------------------------------------------------------------------------------
 void cGameGui::initShortcuts()
 {
-	addShortcut (KeysList.keyScroll1, [this](){ gameMap->scroll (cPosition (-cSettings::getInstance().getScrollSpeed(), +cSettings::getInstance().getScrollSpeed())); });
-	addShortcut (KeysList.keyScroll3, [this](){ gameMap->scroll (cPosition (+cSettings::getInstance().getScrollSpeed(), +cSettings::getInstance().getScrollSpeed())); });
-	addShortcut (KeysList.keyScroll7, [this](){ gameMap->scroll (cPosition (-cSettings::getInstance().getScrollSpeed(), -cSettings::getInstance().getScrollSpeed())); });
-	addShortcut (KeysList.keyScroll9, [this](){ gameMap->scroll (cPosition (+cSettings::getInstance().getScrollSpeed(), -cSettings::getInstance().getScrollSpeed())); });
+	addShortcut (KeysList.keyScroll1, [this]() { gameMap->scroll (cPosition (-cSettings::getInstance().getScrollSpeed(), +cSettings::getInstance().getScrollSpeed())); });
+	addShortcut (KeysList.keyScroll3, [this]() { gameMap->scroll (cPosition (+cSettings::getInstance().getScrollSpeed(), +cSettings::getInstance().getScrollSpeed())); });
+	addShortcut (KeysList.keyScroll7, [this]() { gameMap->scroll (cPosition (-cSettings::getInstance().getScrollSpeed(), -cSettings::getInstance().getScrollSpeed())); });
+	addShortcut (KeysList.keyScroll9, [this]() { gameMap->scroll (cPosition (+cSettings::getInstance().getScrollSpeed(), -cSettings::getInstance().getScrollSpeed())); });
 
-	auto scrollDown = [this](){ gameMap->scroll (cPosition (0, +cSettings::getInstance().getScrollSpeed())); };
+	auto scrollDown = [this]() { gameMap->scroll (cPosition (0, +cSettings::getInstance().getScrollSpeed())); };
 	addShortcut (KeysList.keyScroll2a, scrollDown);
 	addShortcut (KeysList.keyScroll2b, scrollDown);
 
-	auto scrollLeft = [this](){ gameMap->scroll (cPosition (-cSettings::getInstance().getScrollSpeed(), 0)); };
+	auto scrollLeft = [this]() { gameMap->scroll (cPosition (-cSettings::getInstance().getScrollSpeed(), 0)); };
 	addShortcut (KeysList.keyScroll4a, scrollLeft);
 	addShortcut (KeysList.keyScroll4b, scrollLeft);
 
-	auto scrollRight = [this](){ gameMap->scroll (cPosition (+cSettings::getInstance().getScrollSpeed(), 0)); };
+	auto scrollRight = [this]() { gameMap->scroll (cPosition (+cSettings::getInstance().getScrollSpeed(), 0)); };
 	addShortcut (KeysList.keyScroll6a, scrollRight);
 	addShortcut (KeysList.keyScroll6b, scrollRight);
 
-	auto scrollUp = [this](){ gameMap->scroll (cPosition (0, -cSettings::getInstance().getScrollSpeed())); };
+	auto scrollUp = [this]() { gameMap->scroll (cPosition (0, -cSettings::getInstance().getScrollSpeed())); };
 	addShortcut (KeysList.keyScroll8b, scrollUp);
 	addShortcut (KeysList.keyScroll8a, scrollUp);
 
-	addShortcut (KeysList.keyChat, [this]()
-	{
+	addShortcut (KeysList.keyChat, [this]() {
 		hud->setChatActive (true);
 		chatBox->focus();
 	});

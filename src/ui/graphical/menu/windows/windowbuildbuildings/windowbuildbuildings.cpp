@@ -19,18 +19,18 @@
 
 #include "ui/graphical/menu/windows/windowbuildbuildings/windowbuildbuildings.h"
 
-#include "game/data/units/vehicle.h"
 #include "game/data/player/player.h"
 #include "game/data/units/unitdata.h"
+#include "game/data/units/vehicle.h"
 #include "resources/pcx.h"
 #include "ui/graphical/application.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/buildspeedhandlerwidget.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
-#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/uidefines.h"
 #include "utility/language.h"
 

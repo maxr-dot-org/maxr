@@ -22,9 +22,9 @@
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "game/data/player/player.h"
-#include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
+#include "game/data/units/vehicle.h"
 #include "utility/box.h"
 #include "utility/flatset.h"
 #include "utility/listhelpers.h"
@@ -42,7 +42,7 @@ bool cUnitSelection::selectUnitAt (const cMapFieldView& field, bool base)
 		return selectUnit (*plane);
 	}
 	cVehicle* vehicle = field.getVehicle();
-	if (vehicle && ! (plane /*&& (unitMenuActive || vehicle->owner != player)*/))
+	if (vehicle && !(plane /*&& (unitMenuActive || vehicle->owner != player)*/))
 	{
 		return selectUnit (*vehicle);
 	}
@@ -72,7 +72,7 @@ void cUnitSelection::addSelectedUnitBack (cUnit& unit)
 //------------------------------------------------------------------------------
 void cUnitSelection::addSelectedUnitFront (cUnit& unit)
 {
-	auto it = selectedUnits.emplace(selectedUnits.begin());
+	auto it = selectedUnits.emplace (selectedUnits.begin());
 	it->first = &unit;
 	auto& unitSignalConnectionManager = it->second;
 	unitSignalConnectionManager.connect (unit.destroyed, [this, &unit]() { deselectUnit (unit); });
@@ -124,7 +124,7 @@ bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMapVie
 	}
 
 	if (oldSelectedUnit != getSelectedUnit()) mainSelectionChanged();
-	groupSelectionChanged();  // FIXME: call only when the group has really changed!
+	groupSelectionChanged(); // FIXME: call only when the group has really changed!
 	selectionChanged();
 	return false;
 }
@@ -142,8 +142,10 @@ bool cUnitSelection::selectUnit (cUnit& unit, bool add)
 	{
 		addSelectedUnitFront (unit);
 
-		if (selectedUnits.size() == 1) mainSelectionChanged();
-		else groupSelectionChanged();
+		if (selectedUnits.size() == 1)
+			mainSelectionChanged();
+		else
+			groupSelectionChanged();
 		selectionChanged();
 
 		return true;
@@ -202,7 +204,7 @@ cBuilding* cUnitSelection::getSelectedBuilding() const
 //------------------------------------------------------------------------------
 std::vector<cUnit*> cUnitSelection::getSelectedUnits() const
 {
-	return ranges::Transform (selectedUnits, [](const auto& p) { return p.first; });
+	return ranges::Transform (selectedUnits, [] (const auto& p) { return p.first; });
 }
 
 //------------------------------------------------------------------------------
@@ -242,13 +244,13 @@ size_t cUnitSelection::getSelectedUnitsCount() const
 //------------------------------------------------------------------------------
 size_t cUnitSelection::getSelectedVehiclesCount() const
 {
-	return ranges::count_if (selectedUnits, [](const auto& p){ return p.first->isAVehicle(); });
+	return ranges::count_if (selectedUnits, [] (const auto& p) { return p.first->isAVehicle(); });
 }
 
 //------------------------------------------------------------------------------
 size_t cUnitSelection::getSelectedBuildingsCount() const
 {
-	return ranges::count_if (selectedUnits, [](const auto& p){ return p.first->isABuilding(); });
+	return ranges::count_if (selectedUnits, [] (const auto& p) { return p.first->isABuilding(); });
 }
 
 //------------------------------------------------------------------------------
@@ -293,12 +295,7 @@ cVehicle* cUnitSelection::getNextVehicle (const cPlayer& player, const std::vect
 	for (; it != vehicles.end(); ++it)
 	{
 		const cVehicle& v = **it;
-		if (!Contains (doneList, v.getId()) &&
-			(!v.isUnitBuildingABuilding() || v.getBuildTurns() == 0) &&
-			!v.isUnitClearing() &&
-			!v.isSentryActive() &&
-			!v.isUnitLoaded() &&
-			(v.data.getSpeed() || v.data.getShots()))
+		if (!Contains (doneList, v.getId()) && (!v.isUnitBuildingABuilding() || v.getBuildTurns() == 0) && !v.isUnitClearing() && !v.isSentryActive() && !v.isUnitLoaded() && (v.data.getSpeed() || v.data.getShots()))
 		{
 			return it->get();
 		}
@@ -317,12 +314,7 @@ cBuilding* cUnitSelection::getNextBuilding (const cPlayer& player, const std::ve
 	for (; it != buildings.end(); ++it)
 	{
 		const cBuilding& b = **it;
-		if (!Contains (doneList, b.getId()) &&
-			!b.isUnitWorking() &&
-			!b.isSentryActive() &&
-			(!b.getStaticUnitData().canBuild.empty() || b.data.getShots()
-			 || b.getStaticData().canMineMaxRes > 0 || b.getStaticData().convertsGold > 0
-			 || b.getStaticData().canResearch))
+		if (!Contains (doneList, b.getId()) && !b.isUnitWorking() && !b.isSentryActive() && (!b.getStaticUnitData().canBuild.empty() || b.data.getShots() || b.getStaticData().canMineMaxRes > 0 || b.getStaticData().convertsGold > 0 || b.getStaticData().canResearch))
 		{
 			return it->get();
 		}
@@ -395,12 +387,7 @@ cVehicle* cUnitSelection::getPrevVehicle (const cPlayer& player, const std::vect
 	for (; it != vehicles.end(); --it)
 	{
 		const cVehicle& v = **it;
-		if (!Contains (doneList, v.getId()) &&
-			(!v.isUnitBuildingABuilding() || v.getBuildTurns() == 0) &&
-			!v.isUnitClearing() &&
-			!v.isSentryActive() &&
-			!v.isUnitLoaded() &&
-			(v.data.getSpeed() || v.data.getShots()))
+		if (!Contains (doneList, v.getId()) && (!v.isUnitBuildingABuilding() || v.getBuildTurns() == 0) && !v.isUnitClearing() && !v.isSentryActive() && !v.isUnitLoaded() && (v.data.getSpeed() || v.data.getShots()))
 		{
 			return it->get();
 		}
@@ -421,12 +408,7 @@ cBuilding* cUnitSelection::getPrevBuilding (const cPlayer& player, const std::ve
 	for (; it != buildings.end(); --it)
 	{
 		const cBuilding& b = **it;
-		if (!Contains (doneList, b.getId()) &&
-			!b.isUnitWorking() &&
-			!b.isSentryActive() &&
-			(!b.getStaticUnitData().canBuild.empty() || b.data.getShots()
-			 || b.getStaticData().canMineMaxRes > 0 || b.getStaticData().convertsGold > 0
-			 || b.getStaticData().canResearch))
+		if (!Contains (doneList, b.getId()) && !b.isUnitWorking() && !b.isSentryActive() && (!b.getStaticUnitData().canBuild.empty() || b.data.getShots() || b.getStaticData().canMineMaxRes > 0 || b.getStaticData().convertsGold > 0 || b.getStaticData().canResearch))
 		{
 			return it->get();
 		}

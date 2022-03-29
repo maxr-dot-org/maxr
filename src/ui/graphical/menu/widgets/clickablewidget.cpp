@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/clickablewidget.h"
-#include "ui/graphical/application.h"
+
 #include "input/mouse/mouse.h"
+#include "ui/graphical/application.h"
 
 //------------------------------------------------------------------------------
 cClickableWidget::cClickableWidget() :
@@ -48,8 +49,7 @@ cClickableWidget::cClickableWidget (const cBox<cPosition>& area) :
 cShortcut& cClickableWidget::addClickShortcut (cKeySequence keySequence, eMouseButtonType button)
 {
 	auto shortcut = addShortcut (std::make_unique<cShortcut> (keySequence));
-	signalConnectionManager.connect (shortcut->triggered, [button, this]()
-	{
+	signalConnectionManager.connect (shortcut->triggered, [button, this]() {
 		auto application = getActiveApplication();
 		auto mouse = getActiveMouse();
 
@@ -167,5 +167,6 @@ bool& cClickableWidget::getStartedClickWithin (eMouseButtonType button)
 	{
 		return startedClickWithin[button] = false;
 	}
-	else return iter->second;
+	else
+		return iter->second;
 }

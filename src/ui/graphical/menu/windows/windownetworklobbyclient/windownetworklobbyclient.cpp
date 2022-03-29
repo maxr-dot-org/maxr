@@ -32,10 +32,9 @@ cWindowNetworkLobbyClient::cWindowNetworkLobbyClient() :
 	setIsHost (false);
 
 	auto connectButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Connect")));
-	signalConnectionManager.connect (connectButton->clicked, [this](){ triggeredConnect(); });
+	signalConnectionManager.connect (connectButton->clicked, [this]() { triggeredConnect(); });
 
-	signalConnectionManager.connect (ipLineEdit->returnPressed, [this]()
-	{
+	signalConnectionManager.connect (ipLineEdit->returnPressed, [this]() {
 		triggeredConnect();
 	});
 }
@@ -45,11 +44,11 @@ void cWindowNetworkLobbyClient::bindConnections (cLobbyClient& lobbyClient)
 {
 	cWindowNetworkLobby::bindConnections (lobbyClient);
 
-	signalConnectionManager.connect (lobbyClient.onPlayersList, [this](const cPlayerBasicData& localPlayer, const std::vector<cPlayerBasicData>& players){
+	signalConnectionManager.connect (lobbyClient.onPlayersList, [this] (const cPlayerBasicData& localPlayer, const std::vector<cPlayerBasicData>& players) {
 		setIsHost (!players.empty() && localPlayer.getNr() == players[0].getNr());
 	});
 
-	signalConnectionManager.connect (triggeredConnect, [&lobbyClient, this](){
+	signalConnectionManager.connect (triggeredConnect, [&lobbyClient, this]() {
 		// Connect only if there isn't a connection yet
 		if (lobbyClient.isConnectedToServer()) return;
 

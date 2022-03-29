@@ -34,8 +34,7 @@
 cApplication::cApplication() :
 	frameCounter (std::make_shared<cFrameCounter>())
 {
-	signalConnectionManager.connect (Video.resolutionChanged, [this]()
-	{
+	signalConnectionManager.connect (Video.resolutionChanged, [this]() {
 		for (auto rit = modalWindows.rbegin(); rit != modalWindows.rend(); ++rit)
 		{
 			const auto& modalWindow = *rit;
@@ -46,13 +45,11 @@ cApplication::cApplication() :
 		}
 	});
 
-	addShortcut (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_f)), [this]()
-	{
+	addShortcut (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_f)), [this]() {
 		shouldDrawFramesPerSecond = !shouldDrawFramesPerSecond;
 	});
 
-	addShortcut (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_w)), [this]()
-	{
+	addShortcut (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_w)), [this]() {
 		cWidget::toggleDrawDebugFrames();
 	});
 }
@@ -80,7 +77,7 @@ void cApplication::execute()
 	{
 		eventManager.run();
 
-		EraseIf (runnables, [](const auto& runnable){ return runnable->wantsToTerminate(); });
+		EraseIf (runnables, [] (const auto& runnable) { return runnable->wantsToTerminate(); });
 		for (const auto& runnable : runnables)
 		{
 			runnable->run();
@@ -231,7 +228,8 @@ std::shared_ptr<cRunnable> cApplication::removeRunnable (std::shared_ptr<cRunnab
 cWindow* cApplication::getActiveWindow()
 {
 	// remove null widgets on the top if there are any
-	while (!modalWindows.empty() && modalWindows.back() == nullptr) modalWindows.pop_back();
+	while (!modalWindows.empty() && modalWindows.back() == nullptr)
+		modalWindows.pop_back();
 
 	return modalWindows.empty() ? nullptr : modalWindows.back().get();
 }
@@ -254,10 +252,10 @@ cWidget* cApplication::getMouseEventFirstTarget (const cPosition& position)
 //------------------------------------------------------------------------------
 void cApplication::registerMouse (cMouse& mouse)
 {
-	signalConnectionManager.connect (mouse.pressed, [this](cMouse& mouse, eMouseButtonType button) { mousePressed (mouse, button); });
-	signalConnectionManager.connect (mouse.released, [this](cMouse& mouse, eMouseButtonType button) { mouseReleased (mouse, button); });
-	signalConnectionManager.connect (mouse.wheelMoved, [this](cMouse& mouse, const cPosition& amount) { mouseWheelMoved (mouse, amount); });
-	signalConnectionManager.connect (mouse.moved, [this](cMouse& mouse, const cPosition& offset) { mouseMoved (mouse, offset); });
+	signalConnectionManager.connect (mouse.pressed, [this] (cMouse& mouse, eMouseButtonType button) { mousePressed (mouse, button); });
+	signalConnectionManager.connect (mouse.released, [this] (cMouse& mouse, eMouseButtonType button) { mouseReleased (mouse, button); });
+	signalConnectionManager.connect (mouse.wheelMoved, [this] (cMouse& mouse, const cPosition& amount) { mouseWheelMoved (mouse, amount); });
+	signalConnectionManager.connect (mouse.moved, [this] (cMouse& mouse, const cPosition& offset) { mouseMoved (mouse, offset); });
 
 	if (activeMouse == nullptr) activeMouse = &mouse;
 }
@@ -265,9 +263,9 @@ void cApplication::registerMouse (cMouse& mouse)
 //------------------------------------------------------------------------------
 void cApplication::registerKeyboard (cKeyboard& keyboard)
 {
-	signalConnectionManager.connect (keyboard.keyPressed, [this](cKeyboard& keyboard, SDL_Keycode key) { keyPressed (keyboard, key); });
-	signalConnectionManager.connect (keyboard.keyReleased, [this](cKeyboard& keyboard, SDL_Keycode key) { keyReleased (keyboard, key); });
-	signalConnectionManager.connect (keyboard.textEntered, [this](cKeyboard& keyboard, const char* text) { textEntered (keyboard, text); });
+	signalConnectionManager.connect (keyboard.keyPressed, [this] (cKeyboard& keyboard, SDL_Keycode key) { keyPressed (keyboard, key); });
+	signalConnectionManager.connect (keyboard.keyReleased, [this] (cKeyboard& keyboard, SDL_Keycode key) { keyReleased (keyboard, key); });
+	signalConnectionManager.connect (keyboard.textEntered, [this] (cKeyboard& keyboard, const char* text) { textEntered (keyboard, text); });
 
 	if (activeKeyboard == nullptr) activeKeyboard = &keyboard;
 }

@@ -19,10 +19,10 @@
 
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 
+#include "SDLutility/tosdl.h"
 #include "game/data/player/player.h"
 #include "game/logic/landingpositionmanager.h"
 #include "resources/uidata.h"
-#include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/playercolor.h"
@@ -91,8 +91,7 @@ void cChatBoxLandingPlayerListViewItem::setLandingPositionManager (const cLandin
 
 	updatePlayerName();
 
-	managerSignalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData& player, eLandingPositionState state)
-	{
+	managerSignalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData& player, eLandingPositionState state) {
 		if (player.getNr() == playerLandingStatus.getPlayer().getNr())
 		{
 			updatePlayerName();

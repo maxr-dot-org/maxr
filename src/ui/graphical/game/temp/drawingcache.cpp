@@ -29,8 +29,8 @@
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "settings.h"
-#include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/framecounter.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 #include "utility/mathtools.h"
 
 #include <algorithm>
@@ -60,9 +60,9 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 	//because the vehicle will drive on the bridge
 	cBuilding* building = map.getField (vehicle.getPosition()).getBaseBuilding();
 	if (vehicle.getStaticUnitData().factorGround > 0 && building
-		&& (building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea
-			|| building->getStaticUnitData().surfacePosition == eSurfacePosition::Base
-			|| building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase))
+	    && (building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea
+	        || building->getStaticUnitData().surfacePosition == eSurfacePosition::Base
+	        || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase))
 	{
 		isOnWaterAndNotCoast = false;
 	}
@@ -77,16 +77,16 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 	//determine needed size of the surface
 	auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
 	int height = (int) std::max (uiData->img_org[vehicle.dir]->h * zoom, uiData->shw_org[vehicle.dir]->h * zoom);
-	int width  = (int) std::max (uiData->img_org[vehicle.dir]->w * zoom, uiData->shw_org[vehicle.dir]->w * zoom);
+	int width = (int) std::max (uiData->img_org[vehicle.dir]->w * zoom, uiData->shw_org[vehicle.dir]->w * zoom);
 	if (vehicle.getFlightHeight() > 0)
 	{
 		int shwOff = ((int) (Round (uiData->img_org[vehicle.dir]->w * zoom) * (vehicle.getFlightHeight() / 64.0f)));
 		height += shwOff;
-		width  += shwOff;
+		width += shwOff;
 	}
 	if (vehicle.isUnitClearing() || vehicle.isUnitBuildingABuilding())
 	{
-		width  = 130;
+		width = 130;
 		height = 130;
 	}
 	surface = AutoSurface (SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
@@ -96,13 +96,13 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 
 void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned long long frameNr)
 {
-	BaseN  = building.BaseN;
+	BaseN = building.BaseN;
 	BaseBN = building.BaseBN;
-	BaseE  = building.BaseE;
+	BaseE = building.BaseE;
 	BaseBE = building.BaseBE;
-	BaseS  = building.BaseS;
+	BaseS = building.BaseS;
 	BaseBS = building.BaseBS;
-	BaseW  = building.BaseW;
+	BaseW = building.BaseW;
 	BaseBW = building.BaseBW;
 	dir = building.dir;
 	owner = building.getOwner();
@@ -115,8 +115,8 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned
 	//determine needed size of the surface
 	auto& uiData = UnitsUiData.getBuildingUI (building);
 	int height = (int) std::max (uiData.img_org->h * zoom, uiData.shw_org->h * zoom);
-	int width  = (int) std::max (uiData.img_org->w * zoom, uiData.shw_org->w * zoom);
-	if (uiData.hasFrames) width = (int)(uiData.shw_org->w * zoom);
+	int width = (int) std::max (uiData.img_org->w * zoom, uiData.shw_org->w * zoom);
+	if (uiData.hasFrames) width = (int) (uiData.shw_org->w * zoom);
 
 	surface = AutoSurface (SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
@@ -153,19 +153,12 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 		if (entry.owner != building.getOwner()) continue;
 		if (building.subBase)
 		{
-			if (building.BaseN != entry.BaseN ||
-				building.BaseE != entry.BaseE ||
-				building.BaseS != entry.BaseS ||
-				building.BaseW != entry.BaseW) continue;
+			if (building.BaseN != entry.BaseN || building.BaseE != entry.BaseE || building.BaseS != entry.BaseS || building.BaseW != entry.BaseW) continue;
 
 			if (building.getIsBig())
 			{
-				if (building.BaseBN != entry.BaseBN ||
-					building.BaseBE != entry.BaseBE ||
-					building.BaseBS != entry.BaseBS ||
-					building.BaseBW != entry.BaseBW) continue;
+				if (building.BaseBN != entry.BaseBN || building.BaseBE != entry.BaseBE || building.BaseBS != entry.BaseBS || building.BaseBW != entry.BaseBW) continue;
 			}
-
 		}
 		auto& uiData = UnitsUiData.getBuildingUI (building);
 		if (uiData.hasFrames && !uiData.staticData.isAnimated)
@@ -232,9 +225,9 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		bool isOnWaterAndNotCoast = map.isWater (vehicle.getPosition());
 		const cBuilding* building = map.getField (vehicle.getPosition()).getBaseBuilding();
 		if (vehicle.getStaticUnitData().factorGround > 0 && building
-			&& (building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea
-				|| building->getStaticUnitData().surfacePosition == eSurfacePosition::Base
-				|| building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase))
+		    && (building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea
+		        || building->getStaticUnitData().surfacePosition == eSurfacePosition::Base
+		        || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase))
 		{
 			isOnWaterAndNotCoast = false;
 		}
@@ -264,7 +257,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zo
 	if (cachedImages.size() == 0)
 		return nullptr;
 
-	if (cacheSize < cachedImages.size())   //cache hasn't reached the max size, so allocate a new entry
+	if (cacheSize < cachedImages.size()) //cache hasn't reached the max size, so allocate a new entry
 	{
 		sDrawingCacheEntry& entry = cachedImages[cacheSize];
 		cacheSize++;
@@ -285,7 +278,6 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zo
 
 	if (frameCounter->getFrame() - cachedImages[oldest].lastUsed > 5)
 	{
-
 		//entry has not been used for 5 frames. Use it for the new entry.
 		sDrawingCacheEntry& entry = cachedImages[oldest];
 
@@ -307,7 +299,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom
 	if (cachedImages.size() == 0)
 		return nullptr;
 
-	if (cacheSize < cachedImages.size())   //cache hasn't reached the max size, so allocate a new entry
+	if (cacheSize < cachedImages.size()) //cache hasn't reached the max size, so allocate a new entry
 	{
 		sDrawingCacheEntry& entry = cachedImages[cacheSize];
 
@@ -328,7 +320,6 @@ SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom
 
 	if (frameCounter->getFrame() - cachedImages[oldest].lastUsed > 5)
 	{
-
 		//entry has not been used for 5 frames. Use it for the new entry.
 		sDrawingCacheEntry& entry = cachedImages[oldest];
 
@@ -350,9 +341,7 @@ bool cDrawingCache::canCache (const cBuilding& building)
 {
 	auto& uiData = UnitsUiData.getBuildingUI (building);
 
-	if (!building.getOwner() ||
-		building.alphaEffectValue ||
-		uiData.staticData.isAnimated)
+	if (!building.getOwner() || building.alphaEffectValue || uiData.staticData.isAnimated)
 	{
 		notCached++;
 		return false;

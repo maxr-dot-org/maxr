@@ -19,10 +19,10 @@
 
 #include "ui/graphical/menu/widgets/lineedit.h"
 
+#include "SDLutility/tosdl.h"
 #include "input/keyboard/keyboard.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
-#include "SDLutility/tosdl.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/tools/validator.h"
 #include "ui/graphical/window.h"
@@ -169,9 +169,11 @@ bool cLineEdit::handleGetKeyFocus (cApplication& application)
 	if (!hadKeyFocus)
 	{
 		auto font = cUnicodeFont::font.get();
-		cursorPos = (int)text.length();
-		while (cursorPos > endOffset) doPosIncrease (endOffset, endOffset);
-		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
+		cursorPos = (int) text.length();
+		while (cursorPos > endOffset)
+			doPosIncrease (endOffset, endOffset);
+		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
+			doPosIncrease (startOffset, startOffset);
 	}
 
 	SDL_StartTextInput();
@@ -259,27 +261,31 @@ int cLineEdit::getBorderSize() const
 void cLineEdit::resetTextPosition()
 {
 	startOffset = 0;
-	endOffset = (int)text.length();
+	endOffset = (int) text.length();
 	cursorPos = endOffset;
 	auto font = cUnicodeFont::font.get();
 
-	while (endOffset > 0 && font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
+	while (endOffset > 0 && font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
+		doPosDecrease (endOffset);
 }
 
 //------------------------------------------------------------------------------
 void cLineEdit::doPosIncrease (int& value, int pos)
 {
-	if (pos < (int)text.length())
+	if (pos < (int) text.length())
 	{
 		unsigned char c = text[pos];
-		if ((c & 0xE0) == 0xE0) value += 3;
-		else if ((c & 0xC0) == 0xC0) value += 2;
-		else value += 1;
+		if ((c & 0xE0) == 0xE0)
+			value += 3;
+		else if ((c & 0xC0) == 0xC0)
+			value += 2;
+		else
+			value += 1;
 	}
 
-	if (value > (int)text.length())
+	if (value > (int) text.length())
 	{
-		value = (int)text.length();
+		value = (int) text.length();
 		Log.write ("Invalid UTF-8 string in line edit: '" + text + "'", cLog::eLogType::Warning);
 	}
 }
@@ -313,13 +319,18 @@ void cLineEdit::scrollLeft (bool changeCursor)
 
 	auto font = cUnicodeFont::font.get();
 
-	if (cursorPos > 0) while (cursorPos - 1 < startOffset) doPosDecrease (startOffset);
-	else while (cursorPos < startOffset) doPosDecrease (startOffset);
+	if (cursorPos > 0)
+		while (cursorPos - 1 < startOffset)
+			doPosDecrease (startOffset);
+	else
+		while (cursorPos < startOffset)
+			doPosDecrease (startOffset);
 
 	if (font->getTextWide (text.substr (startOffset, text.length() - startOffset), fontType) > getSize().x() - getBorderSize())
 	{
-		endOffset = (int)text.length();
-		while (endOffset > 0 && font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
+		endOffset = (int) text.length();
+		while (endOffset > 0 && font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
+			doPosDecrease (endOffset);
 	}
 }
 
@@ -327,12 +338,14 @@ void cLineEdit::scrollLeft (bool changeCursor)
 void cLineEdit::scrollRight()
 {
 	// makes the cursor go right
-	if (cursorPos < (int)text.length()) doPosIncrease (cursorPos, cursorPos);
-	assert (cursorPos <= (int)text.length());
+	if (cursorPos < (int) text.length()) doPosIncrease (cursorPos, cursorPos);
+	assert (cursorPos <= (int) text.length());
 
 	auto font = cUnicodeFont::font.get();
-	while (cursorPos > endOffset) doPosIncrease (endOffset, endOffset);
-	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
+	while (cursorPos > endOffset)
+		doPosIncrease (endOffset, endOffset);
+	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
+		doPosIncrease (startOffset, startOffset);
 }
 
 //------------------------------------------------------------------------------
@@ -365,12 +378,15 @@ void cLineEdit::deleteLeft()
 void cLineEdit::deleteRight()
 {
 	// deletes the first character right from the cursor
-	if (cursorPos < (int)text.length())
+	if (cursorPos < (int) text.length())
 	{
 		unsigned char c = text[cursorPos];
-		if ((c & 0xE0) == 0xE0) text.erase (cursorPos, 3);
-		else if ((c & 0xC0) == 0xC0) text.erase (cursorPos, 2);
-		else text.erase (cursorPos, 1);
+		if ((c & 0xE0) == 0xE0)
+			text.erase (cursorPos, 3);
+		else if ((c & 0xC0) == 0xC0)
+			text.erase (cursorPos, 2);
+		else
+			text.erase (cursorPos, 1);
 		endOffset = std::min<int> (text.length(), endOffset);
 	}
 }
@@ -401,14 +417,16 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 		case SDLK_HOME:
 			cursorPos = 0;
 			startOffset = 0;
-			endOffset = (int)text.length();
-			while (endOffset > 0 && font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
+			endOffset = (int) text.length();
+			while (endOffset > 0 && font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
+				doPosDecrease (endOffset);
 			break;
 		case SDLK_END:
-			cursorPos = (int)text.length();
+			cursorPos = (int) text.length();
 			startOffset = 0;
-			endOffset = (int)text.length();
-			while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
+			endOffset = (int) text.length();
+			while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
+				doPosIncrease (startOffset, startOffset);
 			break;
 		case SDLK_BACKSPACE:
 			deleteLeft();
@@ -431,8 +449,7 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 			}
 			break;
 		case SDLK_v:
-			if (keyboard.isAnyModifierActive (toEnumFlag (eKeyModifierType::Ctrl)) &&
-				SDL_HasClipboardText())
+			if (keyboard.isAnyModifierActive (toEnumFlag (eKeyModifierType::Ctrl)) && SDL_HasClipboardText())
 			{
 				const auto clipboardText = SDL_GetClipboardText();
 
@@ -454,7 +471,8 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 
 				endOffset = cursorPos;
 
-				while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
+				while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
+					doPosIncrease (startOffset, startOffset);
 			}
 			break;
 		default: // normal characters are handled as textInput:
@@ -481,15 +499,18 @@ void cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboar
 			resetTextPosition();
 		}
 	}
-	if (cursorPos < (int)text.length()) doPosIncrease (cursorPos, cursorPos);
+	if (cursorPos < (int) text.length()) doPosIncrease (cursorPos, cursorPos);
 	if (cursorPos >= endOffset)
 	{
 		doPosIncrease (endOffset, endOffset);
-		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosIncrease (startOffset, startOffset);
+		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
+			doPosIncrease (startOffset, startOffset);
 	}
 	else
 	{
-		if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize()) doPosDecrease (endOffset);
-		else doPosIncrease (endOffset, cursorPos);
+		if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
+			doPosDecrease (endOffset);
+		else
+			doPosIncrease (endOffset, cursorPos);
 	}
 }

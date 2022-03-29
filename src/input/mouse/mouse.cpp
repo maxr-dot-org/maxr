@@ -19,9 +19,9 @@
 
 #include "input/mouse/mouse.h"
 
-#include "input/mouse/cursor/mousecursorsimple.h"
 #include "events/eventmanager.h"
 #include "events/mouseevents.h"
+#include "input/mouse/cursor/mousecursorsimple.h"
 
 #include <algorithm>
 #include <cassert>
@@ -33,9 +33,9 @@ cMouse::cMouse() :
 {
 	setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand), true);
 
-	signalConnectionManager.connect (cEventManager::getInstance().mouseMotionEvent, [this](const cEventMouseMotion& event) { handleMouseMotionEvent (event); });
-	signalConnectionManager.connect (cEventManager::getInstance().mouseButtonEvent, [this](const cEventMouseButton& event) { handleMouseButtonEvent (event); });
-	signalConnectionManager.connect (cEventManager::getInstance().mouseWheelEvent, [this](const cEventMouseWheel& event) { handleMouseWheelEvent (event); });
+	signalConnectionManager.connect (cEventManager::getInstance().mouseMotionEvent, [this] (const cEventMouseMotion& event) { handleMouseMotionEvent (event); });
+	signalConnectionManager.connect (cEventManager::getInstance().mouseButtonEvent, [this] (const cEventMouseButton& event) { handleMouseButtonEvent (event); });
+	signalConnectionManager.connect (cEventManager::getInstance().mouseWheelEvent, [this] (const cEventMouseWheel& event) { handleMouseWheelEvent (event); });
 }
 
 //------------------------------------------------------------------------------
@@ -143,7 +143,8 @@ bool cMouse::isButtonPressed (eMouseButtonType button) const
 	{
 		return buttonPressedState[button] = false; // initialize as unpressed
 	}
-	else return iter->second;
+	else
+		return iter->second;
 }
 
 //------------------------------------------------------------------------------
@@ -154,7 +155,8 @@ unsigned int cMouse::getButtonClickCount (eMouseButtonType button) const
 	{
 		return buttonClickCount[button] = 0; // initialize with zero
 	}
-	else return iter->second;
+	else
+		return iter->second;
 }
 
 //------------------------------------------------------------------------------
@@ -165,5 +167,6 @@ std::chrono::steady_clock::time_point& cMouse::getLastClickTime (eMouseButtonTyp
 	{
 		return lastClickTime[button]; // use default initialization. Is this really correct?!
 	}
-	else return iter->second;
+	else
+		return iter->second;
 }

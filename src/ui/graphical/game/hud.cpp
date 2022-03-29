@@ -19,13 +19,13 @@
 
 #include "ui/graphical/game/hud.h"
 
+#include "SDLutility/tosdl.h"
 #include "defines.h"
 #include "game/data/units/unit.h"
 #include "game/logic/turncounter.h"
 #include "game/logic/turntimeclock.h"
 #include "output/video/video.h"
 #include "resources/pcx.h"
-#include "SDLutility/tosdl.h"
 #include "settings.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/game/widgets/unitdetailshud.h"
@@ -134,8 +134,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	signalConnectionManager.connect (zoomMinusButton->clicked, [this]() { handleZoomMinusClicked(); });
 
 	unitVideo = addChild (std::make_unique<cUnitVideoWidget> (cBox<cPosition> (cPosition (10, 29), cPosition (10 + 125, 29 + 125)), animationTimer));
-	signalConnectionManager.connect (unitVideo->clicked, [this]()
-	{
+	signalConnectionManager.connect (unitVideo->clicked, [this]() {
 		if (unitVideo->hasAnimation())
 		{
 			unitVideo->toggle();
@@ -149,8 +148,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	unitDetails = addChild (std::make_unique<cUnitDetailsHud> (cBox<cPosition> (cPosition (8, 171), cPosition (8 + 155, 171 + 48))));
 
 	unitRenameWidget = addChild (std::make_unique<cUnitRenameWidget> (cPosition (12, 30), 123));
-	signalConnectionManager.connect (unitRenameWidget->unitRenameTriggered, [this]()
-	{
+	signalConnectionManager.connect (unitRenameWidget->unitRenameTriggered, [this]() {
 		if (unitRenameWidget->getUnit())
 		{
 			triggeredRenameUnit (*unitRenameWidget->getUnit(), unitRenameWidget->getUnitName());
@@ -175,8 +173,7 @@ void cHud::setTurnClock (std::shared_ptr<const cTurnCounter> turnClock_)
 	if (turnClock != nullptr)
 	{
 		turnLabel->setText (std::to_string (turnClock->getTurn()));
-		turnClockSignalConnectionManager.connect (turnClock->turnChanged, [this]()
-		{
+		turnClockSignalConnectionManager.connect (turnClock->turnChanged, [this]() {
 			turnLabel->setText (std::to_string (turnClock->getTurn()));
 		});
 	}
@@ -302,7 +299,7 @@ AutoSurface cHud::generateSurface()
 //------------------------------------------------------------------------------
 void cHud::setMinimalZoomFactor (float zoomFactor)
 {
-	zoomSlider->setMaxValue ((int)std::ceil (100. - 100. * zoomFactor));
+	zoomSlider->setMaxValue ((int) std::ceil (100. - 100. * zoomFactor));
 }
 
 //------------------------------------------------------------------------------
@@ -314,7 +311,7 @@ void cHud::setZoomFactor (float zoomFactor)
 //------------------------------------------------------------------------------
 float cHud::getZoomFactor() const
 {
-	return 1.f - (float)zoomSlider->getValue() / 100;
+	return 1.f - (float) zoomSlider->getValue() / 100;
 }
 
 //------------------------------------------------------------------------------

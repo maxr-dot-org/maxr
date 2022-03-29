@@ -22,26 +22,26 @@
 #include "action/actionsetautomove.h"
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
-#include "game/data/report/unit/savedreportcapturedbyenemy.h"
-#include "game/data/report/unit/savedreportdisabled.h"
-#include "game/data/report/unit/savedreportdetected.h"
-#include "game/data/report/unit/savedreportpathinterrupted.h"
 #include "game/data/report/savedreportchat.h"
 #include "game/data/report/savedreportsimple.h"
 #include "game/data/report/special/savedreportplayerdefeated.h"
 #include "game/data/report/special/savedreportplayerendedturn.h"
 #include "game/data/report/special/savedreportplayerleft.h"
 #include "game/data/report/special/savedreportupgraded.h"
+#include "game/data/report/unit/savedreportcapturedbyenemy.h"
+#include "game/data/report/unit/savedreportdetected.h"
+#include "game/data/report/unit/savedreportdisabled.h"
+#include "game/data/report/unit/savedreportpathinterrupted.h"
 #include "game/data/savegame.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/action/action.h"
-#include "game/logic/turntimeclock.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
 #include "game/logic/server.h"
 #include "game/logic/surveyorai.h"
+#include "game/logic/turntimeclock.h"
 #include "game/protocol/netmessage.h"
 #include "game/serialization/jsonarchive.h"
 #include "game/startup/lobbypreparationdata.h"
@@ -133,7 +133,6 @@ void cClient::handleNetMessages()
 	std::unique_ptr<cNetMessage> message;
 	while (eventQueue.try_pop (message))
 	{
-
 		if (message->getType() != eNetMessageType::GAMETIME_SYNC_SERVER && message->getType() != eNetMessageType::RESYNC_MODEL)
 		{
 			nlohmann::json json;
@@ -144,7 +143,7 @@ void cClient::handleNetMessages()
 
 		switch (message->getType())
 		{
-		case eNetMessageType::REPORT:
+			case eNetMessageType::REPORT:
 			{
 				if (message->playerNr != -1 && model.getPlayer (message->playerNr) == nullptr) continue;
 
@@ -152,7 +151,7 @@ void cClient::handleNetMessages()
 				reportMessageReceived (chatMessage->playerNr, chatMessage->report, activePlayer->getId());
 			}
 			break;
-		case eNetMessageType::ACTION:
+			case eNetMessageType::ACTION:
 			{
 				if (model.getPlayer (message->playerNr) == nullptr) continue;
 
@@ -160,33 +159,33 @@ void cClient::handleNetMessages()
 				action->execute (model);
 			}
 			break;
-		case eNetMessageType::GAMETIME_SYNC_SERVER:
+			case eNetMessageType::GAMETIME_SYNC_SERVER:
 			{
 				const cNetMessageSyncServer* syncMessage = static_cast<cNetMessageSyncServer*> (message.get());
 				gameTimer->handleSyncMessage (*syncMessage, model.getGameTime());
 				return; //stop processing messages after receiving a sync message. Gametime needs to be increased before handling the next message.
 			}
 			break;
-		case eNetMessageType::RANDOM_SEED:
+			case eNetMessageType::RANDOM_SEED:
 			{
 				const cNetMessageRandomSeed* msg = static_cast<cNetMessageRandomSeed*> (message.get());
 				model.randomGenerator.seed (msg->seed);
 			}
 			break;
-		case eNetMessageType::REQUEST_GUI_SAVE_INFO:
+			case eNetMessageType::REQUEST_GUI_SAVE_INFO:
 			{
 				const cNetMessageRequestGUISaveInfo* msg = static_cast<cNetMessageRequestGUISaveInfo*> (message.get());
 				guiSaveInfoRequested (msg->slot, msg->savingID);
 			}
 			break;
-		case eNetMessageType::GUI_SAVE_INFO:
+			case eNetMessageType::GUI_SAVE_INFO:
 			{
 				const cNetMessageGUISaveInfo* msg = static_cast<cNetMessageGUISaveInfo*> (message.get());
 				if (msg->playerNr != activePlayer->getId()) continue;
 				guiSaveInfoReceived (*msg);
 			}
 			break;
-		case eNetMessageType::RESYNC_MODEL:
+			case eNetMessageType::RESYNC_MODEL:
 			{
 				Log.write (" Client: Received model data for resynchronization", cLog::eLogType::NetDebug);
 				const cNetMessageResyncModel* msg = static_cast<cNetMessageResyncModel*> (message.get());
@@ -205,7 +204,7 @@ void cClient::handleNetMessages()
 				freezeModeChanged();
 			}
 			break;
-		case eNetMessageType::FREEZE_MODES:
+			case eNetMessageType::FREEZE_MODES:
 			{
 				const cNetMessageFreezeModes* msg = static_cast<cNetMessageFreezeModes*> (message.get());
 
@@ -232,14 +231,14 @@ void cClient::handleNetMessages()
 				freezeModeChanged();
 			}
 			break;
-		case eNetMessageType::TCP_CLOSE:
+			case eNetMessageType::TCP_CLOSE:
 			{
 				connectionToServerLost();
 			}
 			break;
-		default:
-			Log.write (" Client: received unknown net message type", cLog::eLogType::NetWarning);
-			break;
+			default:
+				Log.write (" Client: received unknown net message type", cLog::eLogType::NetWarning);
+				break;
 		}
 	}
 }
@@ -251,7 +250,7 @@ void cClient::handleSurveyorMoveJobs()
 	{
 		job->run (*this, surveyorAiJobs);
 	}
-	EraseIf (surveyorAiJobs, [](auto& job){ return job->isFinished(); });
+	EraseIf (surveyorAiJobs, [] (auto& job) { return job->isFinished(); });
 }
 
 //------------------------------------------------------------------------------
@@ -296,8 +295,7 @@ void cClient::addSurveyorMoveJob (const cVehicle& vehicle)
 	sendNetMessage (cActionSetAutoMove (vehicle, true));
 
 	//don't add new job, if there is already one for this vehicle
-	auto it = ranges::find_if (surveyorAiJobs, [&](const std::unique_ptr<cSurveyorAi>& job)
-	{
+	auto it = ranges::find_if (surveyorAiJobs, [&] (const std::unique_ptr<cSurveyorAi>& job) {
 		return job->getVehicle().getId() == vehicle.getId();
 	});
 	if (it != surveyorAiJobs.end())
@@ -312,8 +310,7 @@ void cClient::removeSurveyorMoveJob (const cVehicle& vehicle)
 {
 	sendNetMessage (cActionSetAutoMove (vehicle, false));
 
-	auto it = ranges::find_if (surveyorAiJobs, [&](const std::unique_ptr<cSurveyorAi>& job)
-	{
+	auto it = ranges::find_if (surveyorAiJobs, [&] (const std::unique_ptr<cSurveyorAi>& job) {
 		return job->getVehicle().getId() == vehicle.getId();
 	});
 	if (it != surveyorAiJobs.end())

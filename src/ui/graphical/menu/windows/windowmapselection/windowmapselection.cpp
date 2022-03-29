@@ -19,12 +19,12 @@
 
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 
+#include "SDLutility/autosurface.h"
 #include "game/data/map/map.h"
 #include "output/video/video.h"
 #include "resources/map/mappreview.h"
 #include "resources/pcx.h"
 #include "resources/uidata.h"
-#include "SDLutility/autosurface.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
@@ -110,7 +110,7 @@ void cWindowMapSelection::downClicked()
 //------------------------------------------------------------------------------
 void cWindowMapSelection::okClicked()
 {
-	assert (static_cast<std::size_t>(selectedMapIndex) < maps.size());
+	assert (static_cast<std::size_t> (selectedMapIndex) < maps.size());
 	done (maps[selectedMapIndex]);
 }
 
@@ -123,11 +123,15 @@ void cWindowMapSelection::backClicked()
 //------------------------------------------------------------------------------
 void cWindowMapSelection::updateUpDownLocked()
 {
-	if (page == 0) upButton->lock();
-	else upButton->unlock();
+	if (page == 0)
+		upButton->lock();
+	else
+		upButton->unlock();
 
-	if (maps.size() <= (page + 1) * mapCount) downButton->lock();
-	else downButton->unlock();
+	if (maps.size() <= (page + 1) * mapCount)
+		downButton->lock();
+	else
+		downButton->unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -203,5 +207,5 @@ void cWindowMapSelection::loadMaps()
 			}
 		}
 	}
-	EraseIf (maps, [](const std::string& mapName){ return mapName.compare (mapName.length() - 3, 3, "WRL") != 0 && mapName.compare (mapName.length() - 3, 3, "wrl") != 0;});
+	EraseIf (maps, [] (const std::string& mapName) { return mapName.compare (mapName.length() - 3, 3, "WRL") != 0 && mapName.compare (mapName.length() - 3, 3, "wrl") != 0; });
 }

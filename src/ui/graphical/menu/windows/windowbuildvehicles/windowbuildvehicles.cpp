@@ -25,6 +25,7 @@
 #include "game/data/units/building.h"
 #include "resources/pcx.h"
 #include "ui/graphical/application.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/label.h"
@@ -33,7 +34,6 @@
 #include "ui/graphical/menu/widgets/special/buildspeedhandlerwidget.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuild.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
-#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/uidefines.h"
 #include "utility/language.h"
 
@@ -94,7 +94,6 @@ int cWindowBuildVehicles::getSelectedBuildSpeed() const
 	return static_cast<int> (speedHandler->getBuildSpeedIndex());
 }
 
-
 //------------------------------------------------------------------------------
 bool cWindowBuildVehicles::isRepeatActive() const
 {
@@ -137,8 +136,10 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 				x -= 3;
 				y += 1;
 			}
-			else if (j == 5 || j == 7) x += 3;
-			else x++;
+			else if (j == 5 || j == 7)
+				x += 3;
+			else
+				x++;
 
 			const cPosition position (x, y);
 
@@ -148,20 +149,25 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 			auto b_it = buildings.begin();
 			auto b_end = buildings.end();
 
-			while (b_it != b_end && ((*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Above || (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase)) ++b_it;
+			while (b_it != b_end && ((*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Above || (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase))
+				++b_it;
 
-			if (!map.isWaterOrCoast (cPosition (x, y)) || (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Base)) land = true;
+			if (!map.isWaterOrCoast (cPosition (x, y)) || (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Base))
+				land = true;
 			else if (map.isWaterOrCoast (cPosition (x, y)) && b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)
 			{
 				land = true;
 				water = true;
 				break;
 			}
-			else if (map.isWaterOrCoast (cPosition (x, y))) water = true;
+			else if (map.isWaterOrCoast (cPosition (x, y)))
+				water = true;
 		}
 
-		if (unitData.factorSea > 0 && unitData.factorGround == 0 && !water) continue;
-		else if (unitData.factorGround > 0 && unitData.factorSea == 0 && !land) continue;
+		if (unitData.factorSea > 0 && unitData.factorGround == 0 && !water)
+			continue;
+		else if (unitData.factorGround > 0 && unitData.factorSea == 0 && !land)
+			continue;
 
 		if (building.getStaticUnitData().canBuild != unitData.buildAs) continue;
 

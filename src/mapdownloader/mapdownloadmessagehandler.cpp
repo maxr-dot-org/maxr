@@ -22,7 +22,8 @@
 //------------------------------------------------------------------------------
 bool IMapDownloadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& message)
 {
-	switch (message.getType()) {
+	switch (message.getType())
+	{
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_MAP_DOWNLOAD:
 		{
 			if (state == eState::None)

@@ -49,13 +49,11 @@ cComboBox::cComboBox (const cBox<cPosition>& area) :
 	lineEdit = addChild (std::make_unique<cLineEdit> (lineEditArea));
 	lineEdit->setReadOnly (true);
 
-	signalConnectionManager.connect (lineEdit->clicked, [this, area]()
-	{
+	signalConnectionManager.connect (lineEdit->clicked, [this, area]() {
 		downButton->toggle();
 	});
 
-	signalConnectionManager.connect (downButton->toggled, [this, area]()
-	{
+	signalConnectionManager.connect (downButton->toggled, [this, area]() {
 		if (downButton->isChecked())
 		{
 			listView->show();
@@ -70,13 +68,11 @@ cComboBox::cComboBox (const cBox<cPosition>& area) :
 		}
 	});
 
-	signalConnectionManager.connect (listView->itemClicked, [this] (cTextListViewItem&)
-	{
+	signalConnectionManager.connect (listView->itemClicked, [this] (cTextListViewItem&) {
 		downButton->setChecked (false);
 	});
 
-	signalConnectionManager.connect (listView->selectionChanged, [this]()
-	{
+	signalConnectionManager.connect (listView->selectionChanged, [this]() {
 		const auto selectedItem = listView->getSelectedItem();
 		if (selectedItem)
 		{
@@ -90,7 +86,6 @@ cComboBox::cComboBox (const cBox<cPosition>& area) :
 	updateListViewSize();
 	updateLineEditBackground();
 }
-
 
 //------------------------------------------------------------------------------
 void cComboBox::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)

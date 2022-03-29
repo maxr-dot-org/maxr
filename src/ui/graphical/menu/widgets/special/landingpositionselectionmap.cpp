@@ -19,6 +19,7 @@
 
 #include "ui/graphical/menu/widgets/special/landingpositionselectionmap.h"
 
+#include "SDLutility/tosdl.h"
 #include "game/data/map/map.h"
 #include "game/data/units/landingunit.h"
 #include "game/data/units/unitdata.h"
@@ -26,7 +27,6 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
-#include "SDLutility/tosdl.h"
 
 //------------------------------------------------------------------------------
 cLandingPositionSelectionMap::cLandingPositionSelectionMap (const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map_, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData) :

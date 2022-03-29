@@ -19,12 +19,12 @@
 
 #include "ui/graphical/game/control/rightmousebuttonscroller.h"
 
+#include "SDLutility/drawing.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
-#include "SDLutility/drawing.h"
-#include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/application.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "utility/color.h"
 
@@ -36,8 +36,7 @@ cRightMouseButtonScrollerWidget::cRightMouseButtonScrollerWidget (std::shared_pt
 	cWidget (cBox<cPosition> (cPosition (0, 0), cPosition (Video.getResolutionX(), Video.getResolutionY()))),
 	animationTimer (animationTimer_)
 {
-	signalConnectionManager.connect (Video.resolutionChanged, [this]()
-	{
+	signalConnectionManager.connect (Video.resolutionChanged, [this]() {
 		resize (cPosition (Video.getResolutionX(), Video.getResolutionY()));
 	});
 
@@ -83,14 +82,22 @@ bool cRightMouseButtonScrollerWidget::handleMouseMoved (cApplication& applicatio
 		if (degrees < 0) degrees += M_PI * 2.0;
 		degrees = (degrees * 180) / M_PI;
 
-		if ((degrees >= 0 && degrees <= 20) || degrees > 350) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRight));
-		else if (degrees > 160 && degrees <= 200) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeft));
-		else if (degrees > 250 && degrees <= 290) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowUp));
-		else if (degrees > 70 && degrees <= 110) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowDown));
-		else if (degrees > 290 && degrees <= 350) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRightUp));
-		else if (degrees > 20 && degrees <= 70) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRightDown));
-		else if (degrees > 200 && degrees <= 250) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftUp));
-		else if (degrees > 110 && degrees <= 160) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftDown));
+		if ((degrees >= 0 && degrees <= 20) || degrees > 350)
+			mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRight));
+		else if (degrees > 160 && degrees <= 200)
+			mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeft));
+		else if (degrees > 250 && degrees <= 290)
+			mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowUp));
+		else if (degrees > 70 && degrees <= 110)
+			mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowDown));
+		else if (degrees > 290 && degrees <= 350)
+			mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRightUp));
+		else if (degrees > 20 && degrees <= 70)
+			mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRightDown));
+		else if (degrees > 200 && degrees <= 250)
+			mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftUp));
+		else if (degrees > 110 && degrees <= 160)
+			mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftDown));
 
 		return true;
 	}
@@ -103,8 +110,7 @@ bool cRightMouseButtonScrollerWidget::handleMousePressed (cApplication& applicat
 	if (button == eMouseButtonType::Right && !mouse.isButtonPressed (eMouseButtonType::Left) && !hasStartedScrolling)
 	{
 		startPosition = getCursorCenter (mouse);
-		animationTimerSignalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this, &mouse, &application]()
-		{
+		animationTimerSignalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this, &mouse, &application]() {
 			if (!mouse.isButtonPressed (eMouseButtonType::Right) || mouse.isButtonPressed (eMouseButtonType::Left))
 			{
 				animationTimerSignalConnectionManager.disconnectAll();

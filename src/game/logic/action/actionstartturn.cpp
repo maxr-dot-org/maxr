@@ -22,7 +22,8 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionStartTurn::cActionStartTurn(){}
+cActionStartTurn::cActionStartTurn()
+{}
 
 //------------------------------------------------------------------------------
 cActionStartTurn::cActionStartTurn (cBinaryArchiveOut&)

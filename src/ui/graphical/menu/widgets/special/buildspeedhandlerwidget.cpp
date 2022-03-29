@@ -19,8 +19,8 @@
 
 #include "ui/graphical/menu/widgets/special/buildspeedhandlerwidget.h"
 
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
+#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/radiogroup.h"
 #include "utility/language.h"
 

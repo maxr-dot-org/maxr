@@ -21,7 +21,6 @@
 
 #include "game/data/model.h"
 
-
 //------------------------------------------------------------------------------
 cActionChangeUnitName::cActionChangeUnitName (const cUnit& unit, const std::string& newName) :
 	unitId (unit.getId()),

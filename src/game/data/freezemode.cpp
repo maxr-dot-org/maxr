@@ -42,24 +42,24 @@ namespace serialization
 		{eFreezeMode::WaitForClient, "WAIT_FOR_CLIENT"},
 		{eFreezeMode::WaitForServer, "WAIT_FOR_SERVER"}
 	};
-}
+} // namespace serialization
 //------------------------------------------------------------------------------
 void cFreezeModes::enable (eFreezeMode mode)
 {
 	switch (mode)
 	{
-	case eFreezeMode::WaitForTurnend:
-		waitForTurnEnd = true;
-		return;
-	case eFreezeMode::Pause:
-		pause = true;
-		return;
-	case eFreezeMode::WaitForClient:
-		waitForClient = true;
-		return;
-	case eFreezeMode::WaitForServer:
-		waitForServer = true;
-		return;
+		case eFreezeMode::WaitForTurnend:
+			waitForTurnEnd = true;
+			return;
+		case eFreezeMode::Pause:
+			pause = true;
+			return;
+		case eFreezeMode::WaitForClient:
+			waitForClient = true;
+			return;
+		case eFreezeMode::WaitForServer:
+			waitForServer = true;
+			return;
 	}
 	assert (false);
 }
@@ -69,18 +69,18 @@ void cFreezeModes::disable (eFreezeMode mode)
 {
 	switch (mode)
 	{
-	case eFreezeMode::WaitForTurnend:
-		waitForTurnEnd = false;
-		return;
-	case eFreezeMode::Pause:
-		pause = false;
-		return;
-	case eFreezeMode::WaitForClient:
-		waitForClient = false;
-		return;
-	case eFreezeMode::WaitForServer:
-		waitForServer = false;
-		return;
+		case eFreezeMode::WaitForTurnend:
+			waitForTurnEnd = false;
+			return;
+		case eFreezeMode::Pause:
+			pause = false;
+			return;
+		case eFreezeMode::WaitForClient:
+			waitForClient = false;
+			return;
+		case eFreezeMode::WaitForServer:
+			waitForServer = false;
+			return;
 	}
 	assert (false);
 }

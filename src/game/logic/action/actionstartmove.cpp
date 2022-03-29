@@ -19,9 +19,9 @@
 
 #include "actionstartmove.h"
 
-#include "game/data/units/vehicle.h"
 #include "game/data/model.h"
-#include "../pathcalculator.h"
+#include "game/data/units/vehicle.h"
+#include "game/logic/pathcalculator.h"
 
 //------------------------------------------------------------------------------
 cActionStartMove::cActionStartMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat) :

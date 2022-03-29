@@ -52,7 +52,7 @@ int sMiningResource::total() const
 }
 
 //------------------------------------------------------------------------------
-sMiningResource& sMiningResource::operator += (const sMiningResource& rhs)
+sMiningResource& sMiningResource::operator+= (const sMiningResource& rhs)
 {
 	metal += rhs.metal;
 	oil += rhs.oil;
@@ -61,14 +61,13 @@ sMiningResource& sMiningResource::operator += (const sMiningResource& rhs)
 }
 
 //------------------------------------------------------------------------------
-sMiningResource& sMiningResource::operator -= (const sMiningResource& rhs)
+sMiningResource& sMiningResource::operator-= (const sMiningResource& rhs)
 {
 	metal -= rhs.metal;
 	oil -= rhs.oil;
 	gold -= rhs.gold;
 	return *this;
 }
-
 
 //------------------------------------------------------------------------------
 uint32_t calcCheckSum (const sMiningResource& res, uint32_t crc)

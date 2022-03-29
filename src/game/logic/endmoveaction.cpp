@@ -17,16 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #include "endmoveaction.h"
 
-#include "game/data/units/vehicle.h"
 #include "game/data/map/mapview.h"
 #include "game/data/model.h"
-#include "utility/crc.h"
+#include "game/data/units/vehicle.h"
 #include "jobs/airtransportloadjob.h"
 #include "jobs/getinjob.h"
-
+#include "utility/crc.h"
 
 cEndMoveAction::cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type) :
 	vehicleID (vehicle.getId()),
@@ -35,7 +33,7 @@ cEndMoveAction::cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, 
 {}
 
 //------------------------------------------------------------------------------
-cEndMoveAction::cEndMoveAction () :
+cEndMoveAction::cEndMoveAction() :
 	vehicleID (-1),
 	endMoveAction (eEndMoveActionType::None),
 	destID (-1)

@@ -19,9 +19,9 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseactionselectbuildposition.h"
 
-#include "ui/graphical/game/widgets/gamemapwidget.h"
-#include "ui/graphical/game/unitselection.h"
 #include "game/data/units/unit.h"
+#include "ui/graphical/game/unitselection.h"
+#include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
 cMouseActionSelectBuildPosition::cMouseActionSelectBuildPosition (sID buildId_, const cPosition& buildPosition_) :

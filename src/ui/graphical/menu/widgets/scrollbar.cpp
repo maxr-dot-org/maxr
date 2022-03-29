@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/scrollbar.h"
+
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/slider.h"
 

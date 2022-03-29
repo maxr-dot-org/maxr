@@ -19,11 +19,11 @@
 
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 
-#include "resources/uidata.h"
-#include "output/video/video.h"
 #include "input/mouse/mouse.h"
-#include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "output/sound/sounddevice.h"
+#include "output/video/video.h"
+#include "resources/uidata.h"
 #include "utility/mathtools.h"
 
 #include <cassert>
@@ -176,7 +176,7 @@ void cResourceBar::setValue (int value)
 
 	if (value < (maxValue / stepSize) * stepSize && value % stepSize != 0)
 	{
-		value = Round ((float)value / stepSize) * stepSize;
+		value = Round ((float) value / stepSize) * stepSize;
 	}
 
 	value = std::max (getFixedMinValue(), value);

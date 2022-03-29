@@ -17,18 +17,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <sstream>
-#include <iomanip>
-
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
-#include "ui/graphical/menu/widgets/label.h"
+
 #include "game/logic/turntimeclock.h"
+#include "ui/graphical/menu/widgets/label.h"
+
+#include <iomanip>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 cTurnTimeClockWidget::cTurnTimeClockWidget (const cBox<cPosition>& area) :
 	cWidget (area)
 {
-	textLabel = addChild (std::make_unique <cLabel> (area, "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	textLabel = addChild (std::make_unique<cLabel> (area, "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 }
 
 //------------------------------------------------------------------------------

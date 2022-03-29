@@ -57,8 +57,7 @@ void cUnitLockList::toggleLockAt (const cMapFieldView& field)
 	if (iter == lockedUnits.end())
 	{
 		lockedUnits.push_back (std::make_pair (unit, cSignalConnectionManager()));
-		lockedUnits.back().second.connect (unit->destroyed, [this, unit]()
-		{
+		lockedUnits.back().second.connect (unit->destroyed, [this, unit]() {
 			auto iter = ranges::find_if (lockedUnits, [unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == unit; });
 			if (iter != lockedUnits.end())
 			{
@@ -97,8 +96,7 @@ void cUnitLockList::lockUnit (const cUnit& unit)
 	if (iter == lockedUnits.end())
 	{
 		lockedUnits.push_back (std::make_pair (&unit, cSignalConnectionManager()));
-		lockedUnits.back().second.connect (unit.destroyed, [this, &unit]()
-		{
+		lockedUnits.back().second.connect (unit.destroyed, [this, &unit]() {
 			auto iter = ranges::find_if (lockedUnits, [&unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == &unit; });
 			if (iter != lockedUnits.end())
 			{

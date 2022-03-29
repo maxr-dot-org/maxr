@@ -23,9 +23,9 @@
 #include "game/logic/server.h"
 #include "game/startup/lobbyclient.h"
 #include "game/startup/lobbyutils.h"
-#include "maxrversion.h"
 #include "mapdownloader/mapdownload.h"
 #include "mapdownloader/mapuploadmessagehandler.h"
+#include "maxrversion.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
@@ -38,18 +38,15 @@ cLobbyServer::cLobbyServer (std::shared_ptr<cConnectionManager> connectionManage
 {
 	connectionManager->setLocalServer (this);
 
-	auto mapUploadMessageHandler = std::make_unique<cMapUploadMessageHandler> (connectionManager, [this]()
-	{
+	auto mapUploadMessageHandler = std::make_unique<cMapUploadMessageHandler> (connectionManager, [this]() {
 		return staticMap.get();
 	});
 
-	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this](int playerNr)
-	{
+	signalConnectionManager.connect (mapUploadMessageHandler->onRequested, [this] (int playerNr) {
 		if (auto player = getPlayer (playerNr)) onMapRequested (*player);
 	});
 
-	signalConnectionManager.connect (mapUploadMessageHandler->onFinished, [this](int playerNr)
-	{
+	signalConnectionManager.connect (mapUploadMessageHandler->onFinished, [this] (int playerNr) {
 		if (auto player = getPlayer (playerNr)) onMapUploaded (*player);
 	});
 	lobbyMessageHandlers.push_back (std::move (mapUploadMessageHandler));
@@ -168,7 +165,6 @@ void cLobbyServer::forwardMessage (const cNetMessage& message)
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
 	Log.write ("LobbyServer: forward --> " + json.dump (-1) + " from " + std::to_string (message.playerNr), cLog::eLogType::NetDebug);
-
 
 	for (auto& player : players)
 	{
@@ -440,11 +436,11 @@ namespace
 	//--------------------------------------------------------------------------
 	std::vector<cPlayerBasicData> getMissingPlayers (const cSaveGameInfo& saveGameInfo, const std::vector<cPlayerBasicData>& players)
 	{
-		auto isMissingPlayer = [&](const auto& player){ return !player.isDefeated() && ranges::find_if (players, byPlayerName (player.getName())) == players.end();};
+		auto isMissingPlayer = [&] (const auto& player) { return !player.isDefeated() && ranges::find_if (players, byPlayerName (player.getName())) == players.end(); };
 		return Filter (saveGameInfo.players, isMissingPlayer);
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message)
@@ -453,13 +449,14 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 	cMuMsgCannotEndLobby errorMessage;
 
 	errorMessage.missingSettings = (!staticMap || (!gameSettings && saveGameInfo.number < 0));
-	errorMessage.notReadyPlayers = Filter (players, [](const auto& player){ return !player.isReady(); });
+	errorMessage.notReadyPlayers = Filter (players, [] (const auto& player) { return !player.isReady(); });
 	if (saveGameInfo.number != -1)
 	{
 		errorMessage.hostNotInSavegame = !isInSaveGame (saveGameInfo, getPlayer (fromPlayer));
 		errorMessage.missingPlayers = getMissingPlayers (saveGameInfo, players);
 	}
-	if (errorMessage.missingSettings || errorMessage.hostNotInSavegame || !errorMessage.notReadyPlayers.empty() || !errorMessage.missingPlayers.empty()) {
+	if (errorMessage.missingSettings || errorMessage.hostNotInSavegame || !errorMessage.notReadyPlayers.empty() || !errorMessage.missingPlayers.empty())
+	{
 		sendNetMessage (errorMessage, fromPlayer);
 		return;
 	}
@@ -503,7 +500,7 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 		}
 		catch (const std::runtime_error& e)
 		{
-			Log.write ((std::string)"Error loading save game: " + e.what(), cLog::eLogType::NetError);
+			Log.write ((std::string) "Error loading save game: " + e.what(), cLog::eLogType::NetError);
 			server.reset();
 			onErrorLoadSavedGame (saveGameInfo.number);
 			return;
@@ -519,13 +516,11 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 
 	landingPositionManager = std::make_shared<cLandingPositionManager> (players);
 
-	signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData& player, eLandingPositionState state)
-	{
+	signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData& player, eLandingPositionState state) {
 		sendNetMessage (cMuMsgLandingState (state), player.getNr());
 	});
 
-	signalConnectionManager.connect (landingPositionManager->allPositionsValid, [this]()
-	{
+	signalConnectionManager.connect (landingPositionManager->allPositionsValid, [this]() {
 		sendNetMessage (cMuMsgStartGame());
 		auto unitsData = std::make_shared<const cUnitsData> (UnitsDataGlobal);
 		auto clanData = std::make_shared<const cClanData> (ClanDataGlobal);

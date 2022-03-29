@@ -19,8 +19,8 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseactionactivateloaded.h"
 
-#include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/graphical/game/unitselection.h"
+#include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
 cMouseActionActivateLoaded::cMouseActionActivateLoaded (int vehicleToActivateIndex_) :

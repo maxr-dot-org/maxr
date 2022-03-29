@@ -19,8 +19,8 @@
 
 #include "output/sound/sounddevice.h"
 
-#include "output/sound/soundchunk.h"
 #include "output/sound/soundchannel.h"
+#include "output/sound/soundchunk.h"
 #include "resources/sound.h"
 #include "settings.h"
 #include "utility/log.h"
@@ -31,7 +31,6 @@ const int cSoundDevice::voiceGroupTag = 1;
 
 const int cSoundDevice::soundEffectGroupSize = 5;
 const int cSoundDevice::voiceGroupSize = 5;
-
 
 //--------------------------------------------------------------------------
 cSoundDevice::cSoundDevice() :

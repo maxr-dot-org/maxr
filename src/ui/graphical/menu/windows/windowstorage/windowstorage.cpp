@@ -66,29 +66,28 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	//
 	// Units
 	//
-    const int stepX = canStorePlanes ? 227 : 156;
-    const int stepImageX = canStorePlanes ? 227 : 156;
-    const int startX = canStorePlanes ? 39 : 2;
+	const int stepX = canStorePlanes ? 227 : 156;
+	const int stepImageX = canStorePlanes ? 227 : 156;
+	const int startX = canStorePlanes ? 39 : 2;
 	const int nameLabelX = canStorePlanes ? 190 : 118;
-
 
 	for (size_t x = 0; x < columns; x++)
 	{
 		for (size_t y = 0; y < maxRows; y++)
 		{
-            const auto index = x + y * columns;
+			const auto index = x + y * columns;
 
-            activateButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), eUnicodeFontType::LatinNormal));
-            signalConnectionManager.connect (activateButtons[index]->clicked, [this, index]() { activateClicked (index); });
+			activateButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), eUnicodeFontType::LatinNormal));
+			signalConnectionManager.connect (activateButtons[index]->clicked, [this, index]() { activateClicked (index); });
 
-            reloadButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", eUnicodeFontType::LatinNormal));
-            signalConnectionManager.connect (reloadButtons[index]->clicked, [this, index]() { reloadClicked (index); });
+			reloadButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", eUnicodeFontType::LatinNormal));
+			signalConnectionManager.connect (reloadButtons[index]->clicked, [this, index]() { reloadClicked (index); });
 
-            repairButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", eUnicodeFontType::LatinNormal));
-            signalConnectionManager.connect (repairButtons[index]->clicked, [this, index]() { repairClicked (index); });
+			repairButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", eUnicodeFontType::LatinNormal));
+			signalConnectionManager.connect (repairButtons[index]->clicked, [this, index]() { repairClicked (index); });
 
-            upgradeButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", eUnicodeFontType::LatinNormal));
-            signalConnectionManager.connect (upgradeButtons[index]->clicked, [this, index]() { upgradeClicked (index); });
+			upgradeButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", eUnicodeFontType::LatinNormal));
+			signalConnectionManager.connect (upgradeButtons[index]->clicked, [this, index]() { upgradeClicked (index); });
 
 			unitImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (17 + x * stepImageX, 9 + y * 236)));
 			unitNames[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (17 + x * stepImageX + 5, 9 + y * 236 + 5), getPosition() + cPosition (17 + x * stepImageX + 5 + nameLabelX, 9 + y * 236 + 5 + 118)), ""));
@@ -108,8 +107,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 
 		metalValue = building.subBase->getResourcesStored().metal;
 
-		signalConnectionManager.connect (building.subBase->metalChanged, [&]()
-		{
+		signalConnectionManager.connect (building.subBase->metalChanged, [&]() {
 			metalBar->setValue (building.subBase->getResourcesStored().metal);
 		});
 	}
@@ -157,12 +155,18 @@ void cWindowStorage::updateUnitButtons (const cVehicle& storedUnit, size_t posit
 	const auto& upgraded = *storedUnit.getOwner()->getUnitDataCurrentVersion (storedUnit.data.getId());
 
 	activateButtons[positionIndex]->unlock();
-	if (storedUnit.data.getAmmo() != storedUnit.data.getAmmoMax() && metalBar->getValue() >= 1) reloadButtons[positionIndex]->unlock();
-	else reloadButtons[positionIndex]->lock();
-	if (storedUnit.data.getHitpoints() != storedUnit.data.getHitpointsMax() && metalBar->getValue() >= 1) repairButtons[positionIndex]->unlock();
-	else repairButtons[positionIndex]->lock();
-	if (storedUnit.data.getVersion() != upgraded.getVersion() && metalBar->getValue() >= 1) upgradeButtons[positionIndex]->unlock();
-	else upgradeButtons[positionIndex]->lock();
+	if (storedUnit.data.getAmmo() != storedUnit.data.getAmmoMax() && metalBar->getValue() >= 1)
+		reloadButtons[positionIndex]->unlock();
+	else
+		reloadButtons[positionIndex]->lock();
+	if (storedUnit.data.getHitpoints() != storedUnit.data.getHitpointsMax() && metalBar->getValue() >= 1)
+		repairButtons[positionIndex]->unlock();
+	else
+		repairButtons[positionIndex]->lock();
+	if (storedUnit.data.getVersion() != upgraded.getVersion() && metalBar->getValue() >= 1)
+		upgradeButtons[positionIndex]->unlock();
+	else
+		upgradeButtons[positionIndex]->lock();
 }
 
 //------------------------------------------------------------------------------
@@ -222,9 +226,12 @@ void cWindowStorage::updateUnitsWidgets()
 				unitNames[positionIndex]->setText ("");
 
 				SDL_Surface* srcSurface;
-				if (canStoreShips) srcSurface = GraphicsData.gfx_edock.get();
-				else if (canStorePlanes) srcSurface = GraphicsData.gfx_ehangar.get();
-				else srcSurface = GraphicsData.gfx_edepot.get();
+				if (canStoreShips)
+					srcSurface = GraphicsData.gfx_edock.get();
+				else if (canStorePlanes)
+					srcSurface = GraphicsData.gfx_ehangar.get();
+				else
+					srcSurface = GraphicsData.gfx_edepot.get();
 
 				AutoSurface surface (SDL_CreateRGBSurface (0, srcSurface->w, srcSurface->h, Video.getColDepth(), 0, 0, 0, 0));
 				SDL_BlitSurface (srcSurface, nullptr, surface.get(), nullptr);
@@ -244,8 +251,10 @@ void cWindowStorage::updateUnitsWidgets()
 //------------------------------------------------------------------------------
 void cWindowStorage::updateGlobalButtons()
 {
-	if (unit.storedUnits.empty()) activateAllButton->lock();
-	else activateAllButton->unlock();
+	if (unit.storedUnits.empty())
+		activateAllButton->lock();
+	else
+		activateAllButton->unlock();
 
 	reloadAllButton->lock();
 	repairAllButton->lock();
@@ -269,14 +278,18 @@ void cWindowStorage::updateGlobalButtons()
 //------------------------------------------------------------------------------
 void cWindowStorage::updateUpDownButtons()
 {
-	if (page > 0) upButton->unlock();
-	else upButton->lock();
+	if (page > 0)
+		upButton->unlock();
+	else
+		upButton->lock();
 
 	const auto pageSize = columns * maxRows;
 	const auto maxPage = unit.storedUnits.size() / pageSize;
 
-	if (page < maxPage) downButton->unlock();
-	else downButton->lock();
+	if (page < maxPage)
+		downButton->unlock();
+	else
+		downButton->lock();
 }
 
 //------------------------------------------------------------------------------

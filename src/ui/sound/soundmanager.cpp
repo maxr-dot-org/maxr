@@ -20,8 +20,8 @@
 #include "ui/sound/soundmanager.h"
 
 #include "game/data/model.h"
-#include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "output/sound/sounddevice.h"
 #include "settings.h"
 #include "ui/sound/effects/soundeffect.h"
 #include "utility/listhelpers.h"
@@ -140,8 +140,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 
 	if (soundConflictHandlingType != eSoundConflictHandlingType::PlayAnyway)
 	{
-		const auto isInConflict = [&sound, currentGameTime] (const sStoredSound& storedSound)
-		{
+		const auto isInConflict = [&sound, currentGameTime] (const sStoredSound& storedSound) {
 			return (!sound->hasConflictAtSameGameTimeOnly() || storedSound.startGameTime == currentGameTime) && sound->isInConflict (*storedSound.sound);
 		};
 
@@ -242,7 +241,7 @@ void cSoundManager::updateSoundPosition (cSoundEffect& sound)
 	const auto distance = offset.l2Norm();
 
 	// Fade volume down when distance comes close to the maximum listening distance
-	const auto soundDistance = static_cast<unsigned char> (std::min (static_cast<int> (distance / maxListeningDistance * std::numeric_limits<unsigned char>::max()), (int)std::numeric_limits<unsigned char>::max()));
+	const auto soundDistance = static_cast<unsigned char> (std::min (static_cast<int> (distance / maxListeningDistance * std::numeric_limits<unsigned char>::max()), (int) std::numeric_limits<unsigned char>::max()));
 
 	channel->setDistance (soundDistance);
 
@@ -261,8 +260,8 @@ void cSoundManager::updateSoundPosition (cSoundEffect& sound)
 		// just to make 100% sure that there are no overflows
 		pan = std::max (std::min (pan, 1.), -1.);
 	}
-	const auto right = std::min ((int) (std::numeric_limits<unsigned char>::max() * (pan + 1)), (int)std::numeric_limits<unsigned char>::max());
-	const auto left = std::min ((int) (std::numeric_limits<unsigned char>::max() * (-1.*pan + 1)), (int)std::numeric_limits<unsigned char>::max());
+	const auto right = std::min ((int) (std::numeric_limits<unsigned char>::max() * (pan + 1)), (int) std::numeric_limits<unsigned char>::max());
+	const auto left = std::min ((int) (std::numeric_limits<unsigned char>::max() * (-1. * pan + 1)), (int) std::numeric_limits<unsigned char>::max());
 
 	channel->setPanning (left, right);
 }

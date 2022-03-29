@@ -19,6 +19,7 @@
 
 #include "ui/graphical/menu/dialogs/dialogtransfer.h"
 
+#include "SDLutility/drawing.h"
 #include "game/data/base/base.h"
 #include "game/data/map/map.h"
 #include "game/data/units/building.h"
@@ -28,7 +29,6 @@
 #include "resources/buildinguidata.h"
 #include "resources/pcx.h"
 #include "resources/vehicleuidata.h"
-#include "SDLutility/drawing.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/image.h"
@@ -134,7 +134,7 @@ void cNewDialogTransfer::initUnitImage (cImage& image, const cUnit& unit)
 	const int unitImageWidth = 64;
 	const int unitImageHeight = 64;
 
-	const auto zoom = (float)unitImageWidth / (unit.getIsBig() ? sGraphicTile::tilePixelWidth * 2 : sGraphicTile::tilePixelWidth);
+	const auto zoom = (float) unitImageWidth / (unit.getIsBig() ? sGraphicTile::tilePixelWidth * 2 : sGraphicTile::tilePixelWidth);
 
 	AutoSurface unitImageSurface (SDL_CreateRGBSurface (0, unitImageWidth, unitImageHeight, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_FillRect (unitImageSurface.get(), nullptr, 0xFF00FF);
@@ -201,28 +201,27 @@ void cNewDialogTransfer::initCargo (int& cargo, int& maxCargo, const cUnit& unit
 namespace
 {
 
-// TODO: move function into a better file ?
-void FlipSurfaceHorizontally (SDL_Surface& surface)
-{
-	if (SDL_MUSTLOCK (&surface)) SDL_LockSurface (&surface);
+	// TODO: move function into a better file ?
+	void FlipSurfaceHorizontally (SDL_Surface& surface)
+	{
+		if (SDL_MUSTLOCK (&surface)) SDL_LockSurface (&surface);
 
-	// Assume surface format uses Uint32*
-	// TODO: check surface format (or support more format).
-	Uint32* p = static_cast<Uint32*> (surface.pixels);
+		// Assume surface format uses Uint32*
+		// TODO: check surface format (or support more format).
+		Uint32* p = static_cast<Uint32*> (surface.pixels);
 
-	for (int h = 0; h != surface.h; ++h)
-		for (int w = 0; w != surface.w / 2; ++w)
-			std::swap (p[h * surface.w + w], p[(h + 1) * surface.w - w - 1]);
+		for (int h = 0; h != surface.h; ++h)
+			for (int w = 0; w != surface.w / 2; ++w)
+				std::swap (p[h * surface.w + w], p[(h + 1) * surface.w - w - 1]);
 
-	if (SDL_MUSTLOCK (&surface)) SDL_UnlockSurface (&surface);
-}
-}
-
+		if (SDL_MUSTLOCK (&surface)) SDL_UnlockSurface (&surface);
+	}
+} // namespace
 
 //------------------------------------------------------------------------------
 int cNewDialogTransfer::getTransferValue() const
 {
-	return resourceBar->getValue() - destinationCargo;;
+	return resourceBar->getValue() - destinationCargo;
 }
 
 //------------------------------------------------------------------------------
@@ -240,7 +239,8 @@ void cNewDialogTransfer::transferValueChanged()
 	sourceUnitCargoLabel->setText (std::to_string (sourceCargo - transferValue));
 	destinationUnitCargoLabel->setText (std::to_string (destinationCargo + transferValue));
 
-	if (transferValue >= 0) arrowImage->hide();
+	if (transferValue >= 0)
+		arrowImage->hide();
 	else
 	{
 		arrowImage->show();
@@ -249,8 +249,8 @@ void cNewDialogTransfer::transferValueChanged()
 		const unsigned int w = 40;
 		const unsigned int h = 20;
 		AutoSurface arrowSurface (SDL_CreateRGBSurface (0, w, h, Video.getColDepth(), 0, 0, 0, 0));
-		const Sint16 x = arrowImage->getPosition().x() - getPosition().x();     // 140
-		const Sint16 y = arrowImage->getPosition().y() - getPosition().y();     //  77
+		const Sint16 x = arrowImage->getPosition().x() - getPosition().x(); // 140
+		const Sint16 y = arrowImage->getPosition().y() - getPosition().y(); //  77
 		SDL_Rect src = {x, y, w, h};
 		SDL_BlitSurface (getSurface(), &src, arrowSurface.get(), nullptr);
 		FlipSurfaceHorizontally (*arrowSurface);

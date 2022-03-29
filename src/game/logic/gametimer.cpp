@@ -21,8 +21,8 @@
 
 #include "game/data/model.h"
 #include "game/data/player/player.h"
-#include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/protocol/netmessage.h"
@@ -133,11 +133,11 @@ void cGameTimerServer::handleSyncMessage (const cNetMessageSyncClient& message, 
 
 	debugData.crcOK = message.crcOK;
 	const float filter = 0.1F;
-	debugData.eventCounter  = (1 - filter) * debugData.eventCounter  + filter * message.eventCounter;
-	debugData.queueSize     = (1 - filter) * debugData.queueSize     + filter * message.queueSize;
+	debugData.eventCounter = (1 - filter) * debugData.eventCounter + filter * message.eventCounter;
+	debugData.queueSize = (1 - filter) * debugData.queueSize + filter * message.queueSize;
 	debugData.ticksPerFrame = (1 - filter) * debugData.ticksPerFrame + filter * message.ticksPerFrame;
-	debugData.timeBuffer    = (1 - filter) * debugData.timeBuffer    + filter * message.timeBuffer;
-	debugData.ping          = (1 - filter) * debugData.ping          + filter * 10 * (gameTime - message.gameTime);
+	debugData.timeBuffer = (1 - filter) * debugData.timeBuffer + filter * message.timeBuffer;
+	debugData.ping = (1 - filter) * debugData.ping + filter * 10 * (gameTime - message.gameTime);
 }
 
 void cGameTimerServer::checkPlayersResponding (const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer& server)
@@ -234,8 +234,8 @@ void cGameTimerClient::run (cClient& client, cModel& model)
 
 	//collect some debug data
 	const unsigned int timeBuffer = getReceivedTime() - model.getGameTime();
-	const unsigned int tickPerFrame = std::min (timeBuffer, eventCounter);	//assumes, that this function is called once per frame
-																			//and we are not running in the maxWorkingTime limit
+	const unsigned int tickPerFrame = std::min (timeBuffer, eventCounter); //assumes, that this function is called once per frame
+	                                                                       //and we are not running in the maxWorkingTime limit
 
 	while (popEvent())
 	{
@@ -247,7 +247,6 @@ void cGameTimerClient::run (cClient& client, cModel& model)
 
 		if (syncMessageReceived)
 		{
-
 			model.advanceGameTime();
 			client.runClientJobs (model);
 

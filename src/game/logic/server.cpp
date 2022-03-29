@@ -33,8 +33,8 @@
 #include "utility/log.h"
 #include "utility/random.h"
 
-#include <cassert>
 #include <SDL_thread.h>
+#include <cassert>
 
 //------------------------------------------------------------------------------
 cServer::cServer (std::shared_ptr<cConnectionManager> connectionManager) :
@@ -44,12 +44,10 @@ cServer::cServer (std::shared_ptr<cConnectionManager> connectionManager) :
 	serverThread (nullptr),
 	exit (false)
 {
-	model.turnEnded.connect ([this]()
-	{
+	model.turnEnded.connect ([this]() {
 		enableFreezeMode (eFreezeMode::WaitForTurnend);
 	});
-	model.newTurnStarted.connect ([this](const sNewTurnReport&)
-	{
+	model.newTurnStarted.connect ([this] (const sNewTurnReport&) {
 		if (cSettings::getInstance().shouldAutosave())
 		{
 			saveGameState (10, lngPack.i18n ("Text~Comp~Turn_5") + " " + std::to_string (model.getTurnCounter()->getTurn()) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
@@ -79,7 +77,7 @@ std::string cServer::getGameState() const
 	result << "Players:" << std::endl;
 	for (auto player : model.getPlayerList())
 	{
-		result << " " << player->getName() << " (" << serialization::enumToString (playerConnectionStates.at (player->getId())) << ")" <<  std::endl;
+		result << " " << player->getName() << " (" << serialization::enumToString (playerConnectionStates.at (player->getId())) << ")" << std::endl;
 	}
 	return result.str();
 }
@@ -232,113 +230,112 @@ void cServer::run()
 				Log.write ("Server: <-- " + json.dump (-1) + " @" + std::to_string (model.getGameTime()), cLog::eLogType::NetDebug);
 			}
 
-			if (model.getPlayer (message->playerNr) == nullptr &&
-				message->getType() != eNetMessageType::TCP_WANT_CONNECT) continue;
+			if (model.getPlayer (message->playerNr) == nullptr && message->getType() != eNetMessageType::TCP_WANT_CONNECT) continue;
 
 			switch (message->getType())
 			{
-			case eNetMessageType::ACTION:
-			{
-				const cAction& action = *static_cast<cAction*> (message.get());
-
-				// filter disallowed actions
-				if (action.getType() != cAction::eActiontype::InitNewGame)
+				case eNetMessageType::ACTION:
 				{
-					if (freezeModes.isFreezed())
+					const cAction& action = *static_cast<cAction*> (message.get());
+
+					// filter disallowed actions
+					if (action.getType() != cAction::eActiontype::InitNewGame)
 					{
-						Log.write (" Server: Discarding action, because game is freezed.", cLog::eLogType::NetWarning);
+						if (freezeModes.isFreezed())
+						{
+							Log.write (" Server: Discarding action, because game is freezed.", cLog::eLogType::NetWarning);
+							break;
+						}
+						if (model.getGameSettings()->gameType == eGameSettingsGameType::Turns && message->playerNr != model.getActiveTurnPlayer()->getId())
+						{
+							Log.write (" Server: Discarding action, because it's another players turn.", cLog::eLogType::NetWarning);
+							break;
+						}
+					}
+
+					action.execute (model);
+
+					sendMessageToClients (*message);
+					break;
+				}
+				case eNetMessageType::GAMETIME_SYNC_CLIENT:
+				{
+					const cNetMessageSyncClient& syncMessage = *static_cast<cNetMessageSyncClient*> (message.get());
+					gameTimer.handleSyncMessage (syncMessage, model.getGameTime());
+					break;
+				}
+				case eNetMessageType::REPORT:
+				{
+					sendMessageToClients (*message);
+					break;
+				}
+				case eNetMessageType::GUI_SAVE_INFO:
+				{
+					const cNetMessageGUISaveInfo& saveInfo = *static_cast<cNetMessageGUISaveInfo*> (message.get());
+
+					if (savingID != saveInfo.savingID)
+					{
+						Log.write ("Received GuiSaveInfo with wrong savingID", cLog::eLogType::NetWarning);
+					}
+					else
+					{
+						cSavegame savegame;
+						savegame.saveGuiInfo (saveInfo);
+					}
+					break;
+				}
+				case eNetMessageType::REQUEST_RESYNC_MODEL:
+				{
+					const cNetMessageRequestResync& requestMessage = *static_cast<cNetMessageRequestResync*> (message.get());
+					resyncClientModel (requestMessage.playerToSync);
+					if (requestMessage.saveNumberForGuiInfo != -1)
+					{
+						sendGuiInfoToClients (requestMessage.saveNumberForGuiInfo, requestMessage.playerToSync);
+					}
+					break;
+				}
+				case eNetMessageType::TCP_WANT_CONNECT:
+				{
+					const cNetMessageTcpWantConnect& connectMessage = *static_cast<cNetMessageTcpWantConnect*> (message.get());
+					const cPlayer* player = model.getPlayer (connectMessage.player.name);
+					if (player == nullptr)
+					{
+						Log.write (" Server: Connecting player " + connectMessage.player.name + " is not part of the game", cLog::eLogType::NetWarning);
+						connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::NotPartOfTheGame);
 						break;
 					}
-					if (model.getGameSettings()->gameType == eGameSettingsGameType::Turns && message->playerNr != model.getActiveTurnPlayer()->getId())
+					if (connectionManager->isPlayerConnected (player->getId()))
 					{
-						Log.write (" Server: Discarding action, because it's another players turn.", cLog::eLogType::NetWarning);
+						Log.write (" Server: Connecting player " + connectMessage.player.name + " is already connected", cLog::eLogType::NetWarning);
+						connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::AlreadyConnected);
 						break;
 					}
-				}
 
-				action.execute (model);
+					connectionManager->acceptConnection (connectMessage.socket, player->getId());
 
-				sendMessageToClients (*message);
-				break;
-			}
-			case eNetMessageType::GAMETIME_SYNC_CLIENT:
-			{
-				const cNetMessageSyncClient& syncMessage = *static_cast<cNetMessageSyncClient*> (message.get());
-				gameTimer.handleSyncMessage (syncMessage, model.getGameTime());
-				break;
-			}
-			case eNetMessageType::REPORT:
-			{
-				sendMessageToClients (*message);
-				break;
-			}
-			case eNetMessageType::GUI_SAVE_INFO:
-			{
-				const cNetMessageGUISaveInfo& saveInfo = *static_cast<cNetMessageGUISaveInfo*> (message.get());
-
-				if (savingID != saveInfo.savingID)
-				{
-					Log.write ("Received GuiSaveInfo with wrong savingID", cLog::eLogType::NetWarning);
-				}
-				else
-				{
-					cSavegame savegame;
-					savegame.saveGuiInfo (saveInfo);
-				}
-				break;
-			}
-			case eNetMessageType::REQUEST_RESYNC_MODEL:
-			{
-				const cNetMessageRequestResync& requestMessage = *static_cast<cNetMessageRequestResync*> (message.get());
-				resyncClientModel (requestMessage.playerToSync);
-				if (requestMessage.saveNumberForGuiInfo != -1)
-				{
-					sendGuiInfoToClients (requestMessage.saveNumberForGuiInfo, requestMessage.playerToSync);
-				}
-				break;
-			}
-			case eNetMessageType::TCP_WANT_CONNECT:
-			{
-				const cNetMessageTcpWantConnect& connectMessage = *static_cast<cNetMessageTcpWantConnect*> (message.get());
-				const cPlayer* player = model.getPlayer (connectMessage.player.name);
-				if (player == nullptr)
-				{
-					Log.write (" Server: Connecting player " + connectMessage.player.name + " is not part of the game", cLog::eLogType::NetWarning);
-					connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::NotPartOfTheGame);
+					sendMessageToClients (cNetMessageGameAlreadyRunning (model), player->getId());
 					break;
 				}
-				if (connectionManager->isPlayerConnected (player->getId()))
+				case eNetMessageType::TCP_CLOSE:
 				{
-					Log.write (" Server: Connecting player " + connectMessage.player.name + " is already connected", cLog::eLogType::NetWarning);
-					connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::AlreadyConnected);
+					const cNetMessageTcpClose& msg = *static_cast<cNetMessageTcpClose*> (message.get());
+					sendMessageToClients (cNetMessageReport (std::make_unique<cSavedReportLostConnection> (*model.getPlayer (msg.playerNr))));
+					playerDisconnected (msg.playerNr);
 					break;
 				}
-
-				connectionManager->acceptConnection (connectMessage.socket, player->getId());
-
-				sendMessageToClients (cNetMessageGameAlreadyRunning (model), player->getId());
-				break;
-			}
-			case eNetMessageType::TCP_CLOSE:
-			{
-				const cNetMessageTcpClose& msg = *static_cast<cNetMessageTcpClose*> (message.get());
-				sendMessageToClients (cNetMessageReport (std::make_unique<cSavedReportLostConnection> (*model.getPlayer (msg.playerNr))));
-				playerDisconnected (msg.playerNr);
-				break;
-			}
-			case eNetMessageType::WANT_REJOIN_GAME:
-			{
-				const cNetMessageWantRejoinGame&  msg = *static_cast<cNetMessageWantRejoinGame*> (message.get());
-
-				const auto player = model.getPlayer (msg.playerNr);
-				if (player == nullptr)
+				case eNetMessageType::WANT_REJOIN_GAME:
 				{
-					Log.write (" Server: Invalid player id: " + std::to_string (msg.playerNr), cLog::eLogType::NetError);
-					break;
-				}
+					const cNetMessageWantRejoinGame& msg = *static_cast<cNetMessageWantRejoinGame*> (message.get());
 
-				resyncClientModel (message->playerNr);
-				playerConnected (msg.playerNr);
+					const auto player = model.getPlayer (msg.playerNr);
+					if (player == nullptr)
+					{
+						Log.write (" Server: Invalid player id: " + std::to_string (msg.playerNr), cLog::eLogType::NetError);
+						break;
+					}
+
+					resyncClientModel (message->playerNr);
+					playerConnected (msg.playerNr);
 
 #if 0 // Restore gamegui
 				if (savegame.getLastUsedSaveSlot() != -1)
@@ -346,11 +343,11 @@ void cServer::run()
 					savegame.loadGuiInfo (this, savegame.getLastUsedSaveSlot(), message->playerNr);
 				}
 #endif
-				break;
-			}
-			default:
-				Log.write (" Server: Can not handle net message!", cLog::eLogType::NetError);
-				break;
+					break;
+				}
+				default:
+					Log.write (" Server: Can not handle net message!", cLog::eLogType::NetError);
+					break;
 			}
 		}
 
@@ -360,7 +357,6 @@ void cServer::run()
 		SDL_Delay (10);
 	}
 }
-
 
 //------------------------------------------------------------------------------
 void cServer::initRandomGenerator()

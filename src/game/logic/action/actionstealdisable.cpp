@@ -17,13 +17,11 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-
-#include "game/data/model.h"
-
 #include "actionstealdisable.h"
-#include "actionstop.h"
-#include "game/logic/casualtiestracker.h"
 
+#include "actionstop.h"
+#include "game/data/model.h"
+#include "game/logic/casualtiestracker.h"
 
 //------------------------------------------------------------------------------
 cActionStealDisable::cActionStealDisable (const cVehicle& infiltrator, const cUnit& target, bool steal) :
@@ -59,7 +57,6 @@ void cActionStealDisable::execute (cModel& model) const
 	bool success = model.randomGenerator.get (100) < chance;
 	if (success)
 	{
-
 		// stop running movejobs, build orders, etc.
 		cActionStop (*target).execute (model);
 

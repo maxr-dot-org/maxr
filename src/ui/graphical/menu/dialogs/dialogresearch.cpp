@@ -50,28 +50,26 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
 	const std::string themeNames[rows] =
-	{
-		lngPack.i18n ("Text~Others~Attack"),
-		lngPack.i18n ("Text~Others~Shots_7"),
-		lngPack.i18n ("Text~Others~Range"),
-		lngPack.i18n ("Text~Others~Armor_7"),
-		lngPack.i18n ("Text~Others~Hitpoints_7"),
-		lngPack.i18n ("Text~Others~Speed"),
-		lngPack.i18n ("Text~Others~Scan"),
-		lngPack.i18n ("Text~Others~Costs")
-	};
+		{
+			lngPack.i18n ("Text~Others~Attack"),
+			lngPack.i18n ("Text~Others~Shots_7"),
+			lngPack.i18n ("Text~Others~Range"),
+			lngPack.i18n ("Text~Others~Armor_7"),
+			lngPack.i18n ("Text~Others~Hitpoints_7"),
+			lngPack.i18n ("Text~Others~Speed"),
+			lngPack.i18n ("Text~Others~Scan"),
+			lngPack.i18n ("Text~Others~Costs")};
 
 	const SDL_Rect themeImageSrcs[rows] =
-	{
-		{27, 109, 10, 14},
-		{37, 109, 15, 7},
-		{52, 109, 13, 13},
-		{65, 109, 11, 14},
-		{11, 109, 7, 11},
-		{0, 109, 11, 12},
-		{76, 109, 13, 13},
-		{112, 109, 13, 10}
-	};
+		{
+			{27, 109, 10, 14},
+			{37, 109, 15, 7},
+			{52, 109, 13, 13},
+			{65, 109, 11, 14},
+			{11, 109, 7, 11},
+			{0, 109, 11, 12},
+			{76, 109, 13, 13},
+			{112, 109, 13, 10}};
 
 	for (size_t i = 0; i < rows; ++i)
 	{
@@ -88,7 +86,7 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 
 		researchCenterCountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (24, 72 + 28 * i), getPosition() + cPosition (24 + 38, 72 + 28 * i + 10)), "0", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
-		percentageLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (236, 72 + 28 * i), getPosition() + cPosition (236 + 44, 72 + 28 * i + 10)), "+" + std::to_string (player.getResearchState().getCurResearchLevel (static_cast<cResearch::eResearchArea>(i))) + "%", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		percentageLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (236, 72 + 28 * i), getPosition() + cPosition (236 + 44, 72 + 28 * i + 10)), "+" + std::to_string (player.getResearchState().getCurResearchLevel (static_cast<cResearch::eResearchArea> (i))) + "%", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 		turnsLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (291, 72 + 28 * i), getPosition() + cPosition (291 + 44, 72 + 28 * i + 10)), "0", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
@@ -105,13 +103,12 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 	unusedResearchCenters = player.getResearchCentersWorkingTotal();
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 	{
-		researchSettings[i] = player.getResearchCentersWorkingOnArea ((cResearch::eResearchArea)i);
+		researchSettings[i] = player.getResearchCentersWorkingOnArea ((cResearch::eResearchArea) i);
 		unusedResearchCenters -= researchSettings[i];
 	}
 
 	updateWidgets();
 }
-
 
 //------------------------------------------------------------------------------
 const std::array<int, cResearch::kNrResearchAreas>& cDialogResearch::getResearchSettings() const
@@ -127,13 +124,17 @@ void cDialogResearch::updateWidgets()
 		researchCenterCountLabels[i]->setText (std::to_string (researchSettings[i]));
 		sliders[i]->setValue (researchSettings[i]);
 
-		turnsLabels[i]->setText (std::to_string (player.getResearchState().getRemainingTurns (static_cast<cResearch::eResearchArea>(i), researchSettings[i])));
+		turnsLabels[i]->setText (std::to_string (player.getResearchState().getRemainingTurns (static_cast<cResearch::eResearchArea> (i), researchSettings[i])));
 
-		if (unusedResearchCenters <= 0) increaseButtons[i]->lock();
-		else increaseButtons[i]->unlock();
+		if (unusedResearchCenters <= 0)
+			increaseButtons[i]->lock();
+		else
+			increaseButtons[i]->unlock();
 
-		if (researchSettings[i] <= 0) decreaseButtons[i]->lock();
-		else decreaseButtons[i]->unlock();
+		if (researchSettings[i] <= 0)
+			decreaseButtons[i]->lock();
+		else
+			decreaseButtons[i]->unlock();
 	}
 }
 

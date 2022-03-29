@@ -22,7 +22,6 @@
 #include "game/data/model.h"
 #include "game/logic/jobs/startbuildjob.h"
 
-
 cActionStartBuild::cActionStartBuild (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition) :
 	vehicleID (vehicle.getId()),
 	buildingTypeID (buildingTypeID),
@@ -77,8 +76,7 @@ void cActionStartBuild::execute (cModel& model) const
 	int buildcost = vehicle->getOwner()->getUnitDataCurrentVersion (buildingTypeID)->getBuildCost();
 	vehicle->calcTurboBuild (turboBuildRounds, turboBuildCosts, buildcost);
 
-	if (turboBuildCosts[buildSpeed] > vehicle->getStoredResources() ||
-		turboBuildRounds[buildSpeed] <= 0)
+	if (turboBuildCosts[buildSpeed] > vehicle->getStoredResources() || turboBuildRounds[buildSpeed] <= 0)
 	{
 		vehicle->getOwner()->buildErrorInsufficientMaterial();
 		return;
@@ -87,15 +85,12 @@ void cActionStartBuild::execute (cModel& model) const
 	cPosition oldPosition = vehicle->getPosition();
 	if (data.buildingData.isBig)
 	{
- 		model.sideStepStealthUnit (buildPosition, *vehicle, buildPosition);
- 		model.sideStepStealthUnit (buildPosition + cPosition (1, 0), *vehicle, buildPosition);
- 		model.sideStepStealthUnit (buildPosition + cPosition (0, 1), *vehicle, buildPosition);
- 		model.sideStepStealthUnit (buildPosition + cPosition (1, 1), *vehicle, buildPosition);
+		model.sideStepStealthUnit (buildPosition, *vehicle, buildPosition);
+		model.sideStepStealthUnit (buildPosition + cPosition (1, 0), *vehicle, buildPosition);
+		model.sideStepStealthUnit (buildPosition + cPosition (0, 1), *vehicle, buildPosition);
+		model.sideStepStealthUnit (buildPosition + cPosition (1, 1), *vehicle, buildPosition);
 
-		if (!(map.possiblePlaceBuilding (data, buildPosition, nullptr, vehicle) &&
-			map.possiblePlaceBuilding (data, buildPosition + cPosition (1, 0), nullptr, vehicle) &&
-			map.possiblePlaceBuilding (data, buildPosition + cPosition (0, 1), nullptr, vehicle) &&
-			map.possiblePlaceBuilding (data, buildPosition + cPosition (1, 1), nullptr, vehicle)))
+		if (!(map.possiblePlaceBuilding (data, buildPosition, nullptr, vehicle) && map.possiblePlaceBuilding (data, buildPosition + cPosition (1, 0), nullptr, vehicle) && map.possiblePlaceBuilding (data, buildPosition + cPosition (0, 1), nullptr, vehicle) && map.possiblePlaceBuilding (data, buildPosition + cPosition (1, 1), nullptr, vehicle)))
 		{
 			vehicle->getOwner()->buildErrorBuildPositionBlocked();
 			return;

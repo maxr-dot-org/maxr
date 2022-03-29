@@ -19,11 +19,11 @@
 
 #include "ui/graphical/menu/widgets/slider.h"
 
+#include "SDLutility/drawing.h"
+#include "SDLutility/tosdl.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
 #include "resources/uidata.h"
-#include "SDLutility/drawing.h"
-#include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/sliderhandle.h"
 #include "utility/mathtools.h"
 
@@ -34,11 +34,11 @@
 //------------------------------------------------------------------------------
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderType sliderType) :
 	cSlider (area,
-			 minValue_,
-			 maxValue_,
-			 orientation_,
-			 orientation == eOrientationType::Horizontal ? eSliderHandleType::Horizontal : eSliderHandleType::Vertical,
-			 sliderType)
+             minValue_,
+             maxValue_,
+             orientation_,
+             orientation == eOrientationType::Horizontal ? eSliderHandleType::Horizontal : eSliderHandleType::Vertical,
+             sliderType)
 {
 }
 

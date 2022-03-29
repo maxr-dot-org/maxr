@@ -19,8 +19,8 @@
 
 #include "airtransportloadjob.h"
 
-#include "game/data/units/vehicle.h"
 #include "game/data/model.h"
+#include "game/data/units/vehicle.h"
 #include "utility/crc.h"
 
 #include <cassert>
@@ -30,7 +30,7 @@ cAirTransportLoadJob::cAirTransportLoadJob (cVehicle& loadedVehicle, cUnit& load
 	vehicleToLoad (&loadedVehicle),
 	landing (true)
 {
-	connectionManager.connect (vehicleToLoad->destroyed, [this](){finished = true; });
+	connectionManager.connect (vehicleToLoad->destroyed, [this]() { finished = true; });
 }
 
 //------------------------------------------------------------------------------

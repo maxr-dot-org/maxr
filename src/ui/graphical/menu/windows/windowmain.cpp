@@ -73,8 +73,7 @@ SDL_Surface* cWindowMain::getRandomInfoImage()
 		{
 			unitShow = random (UnitsUiData.buildingUIs.size() - 1);
 			// make sure we don't show same unit twice
-		}
-		while (unitShow == lastUnitShow && UnitsUiData.buildingUIs.size() > 1);
+		} while (unitShow == lastUnitShow && UnitsUiData.buildingUIs.size() > 1);
 		surface = UnitsUiData.buildingUIs[unitShow].info.get();
 	}
 	else if (UnitsUiData.vehicleUIs.size() > 0)
@@ -84,11 +83,11 @@ SDL_Surface* cWindowMain::getRandomInfoImage()
 		{
 			unitShow = random (UnitsUiData.vehicleUIs.size() - 1);
 			// make sure we don't show same unit twice
-		}
-		while (unitShow == lastUnitShow && UnitsUiData.vehicleUIs.size() > 1);
+		} while (unitShow == lastUnitShow && UnitsUiData.vehicleUIs.size() > 1);
 		surface = UnitsUiData.vehicleUIs[unitShow].info.get();
 	}
-	else surface = nullptr;
+	else
+		surface = nullptr;
 	lastUnitShow = unitShow; //store shown unit
 	return surface;
 }

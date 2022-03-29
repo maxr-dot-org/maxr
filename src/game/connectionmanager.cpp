@@ -19,10 +19,10 @@
 
 #include "connectionmanager.h"
 
-#include "maxrversion.h"
 #include "game/network.h"
 #include "game/protocol/lobbymessage.h"
 #include "game/protocol/netmessage.h"
+#include "maxrversion.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
 
@@ -40,7 +40,7 @@ public:
 		connectionManager (connectionManager),
 		socket (socket)
 	{
-		timer = SDL_AddTimer (HANDSHAKE_TIMEOUT_MS, callback, (void*)this);
+		timer = SDL_AddTimer (HANDSHAKE_TIMEOUT_MS, callback, (void*) this);
 	}
 
 	~cHandshakeTimeout()
@@ -49,6 +49,7 @@ public:
 	}
 
 	const cSocket* getSocket() const { return socket; }
+
 private:
 	static uint32_t callback (uint32_t intervall, void* arg)
 	{
@@ -62,7 +63,6 @@ private:
 	SDL_TimerID timer;
 	const cSocket* socket = nullptr;
 };
-
 
 //------------------------------------------------------------------------------
 cConnectionManager::cConnectionManager() = default;
@@ -115,7 +115,7 @@ void cConnectionManager::acceptConnection (const cSocket* socket, int playerNr)
 
 	stopTimeout (socket);
 
-	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
+	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 	if (x == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
@@ -149,7 +149,7 @@ void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConne
 
 	stopTimeout (socket);
 
-	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
+	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 	if (x == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
@@ -163,7 +163,6 @@ void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConne
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
 	Log.write ("ConnectionManager: --> " + json.dump (-1), cLog::eLogType::NetDebug);
-
 
 	sendMessage (socket, message);
 
@@ -209,7 +208,7 @@ void cConnectionManager::changePlayerNumber (int currentNr, int newNr)
 		return;
 	}
 
-	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.second == currentNr; });
+	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.second == currentNr; });
 	if (x == clientSockets.end())
 	{
 		Log.write ("Connection Manager: Can't change playerNr. Unknown player " + std::to_string (currentNr), cLog::eLogType::NetError);
@@ -299,7 +298,7 @@ void cConnectionManager::sendToPlayer (const cNetMessage& message, int playerNr)
 	}
 	else
 	{
-		auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.second == playerNr; });
+		auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.second == playerNr; });
 		if (x == clientSockets.end())
 		{
 			Log.write ("Connection Manager: Can't send message. No connection to player " + std::to_string (playerNr), cLog::eLogType::NetError);
@@ -340,7 +339,7 @@ void cConnectionManager::disconnect (int player)
 {
 	std::unique_lock<std::recursive_mutex> tl (mutex);
 
-	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.second == player; });
+	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.second == player; });
 	if (x == clientSockets.end())
 	{
 		Log.write ("ConnectionManager: Can't disconnect player. No connection to player " + std::to_string (player), cLog::eLogType::NetError);
@@ -382,7 +381,7 @@ void cConnectionManager::connectionClosed (const cSocket* socket)
 	}
 	else
 	{
-		auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
+		auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 		if (x == clientSockets.end())
 		{
 			Log.write ("ConnectionManager: An unknown connection was closed", cLog::eLogType::NetError);
@@ -443,7 +442,7 @@ void cConnectionManager::messageReceived (const cSocket* socket, unsigned char* 
 
 	//compare the sender playerNr of the message with the playerNr that is expected behind the socket
 	int playerOnSocket = -1;
-	auto x = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& x) { return x.first == socket; });
+	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 	if (x != clientSockets.end())
 	{
 		playerOnSocket = x->second;
@@ -474,82 +473,80 @@ void cConnectionManager::messageReceived (const cSocket* socket, unsigned char* 
 	}
 }
 
-bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMessage> &message, const cSocket* socket, int playerOnSocket)
+bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMessage>& message, const cSocket* socket, int playerOnSocket)
 {
 	switch (message->getType())
 	{
-	case eNetMessageType::TCP_HELLO:
-	{
-		nlohmann::json json;
-		cJsonArchiveOut jsonarchive (json);
-		jsonarchive << *message;
-		Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
-
-		if (localServer)
+		case eNetMessageType::TCP_HELLO:
 		{
-			// server shouldn't get this message
-			return true;
-		}
+			nlohmann::json json;
+			cJsonArchiveOut jsonarchive (json);
+			jsonarchive << *message;
+			Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
 
-		//check compatible game version
-		const auto& msgTcpHello = static_cast<cNetMessageTcpHello&> (*message);
-		if (msgTcpHello.packageVersion != PACKAGE_VERSION)
+			if (localServer)
+			{
+				// server shouldn't get this message
+				return true;
+			}
+
+			//check compatible game version
+			const auto& msgTcpHello = static_cast<cNetMessageTcpHello&> (*message);
+			if (msgTcpHello.packageVersion != PACKAGE_VERSION)
+			{
+				network->close (socket);
+			}
+			return false;
+		}
+		case eNetMessageType::TCP_WANT_CONNECT:
 		{
-			network->close (socket);
+			nlohmann::json json;
+			cJsonArchiveOut jsonarchive (json);
+			jsonarchive << *message;
+			Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
+
+			if (!localServer)
+			{
+				// clients shouldn't get this message
+				return true;
+			}
+
+			if (playerOnSocket != -1)
+			{
+				Log.write ("ConnectionManager: Received TCP_WANT_CONNECT from already connected player", cLog::eLogType::NetError);
+				return true;
+			}
+
+			auto& msgTcpWantConnect = static_cast<cNetMessageTcpWantConnect&> (*message);
+			msgTcpWantConnect.socket = socket;
+
+			//check compatible game version
+			if (msgTcpWantConnect.packageVersion != PACKAGE_VERSION)
+			{
+				network->close (socket);
+				return true;
+			}
+			break;
 		}
-		return false;
-	}
-	case eNetMessageType::TCP_WANT_CONNECT:
-	{
-		nlohmann::json json;
-		cJsonArchiveOut jsonarchive (json);
-		jsonarchive << *message;
-		Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
-
-
-		if (!localServer)
+		case eNetMessageType::TCP_CONNECTED:
 		{
-			// clients shouldn't get this message
-			return true;
+			if (localServer)
+			{
+				// server shouldn't get this message
+				return true;
+			}
+			nlohmann::json json;
+			cJsonArchiveOut jsonarchive (json);
+			jsonarchive << *message;
+			Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
+
+			stopTimeout (socket);
+
+			localPlayer = message->playerNr;
+			break;
 		}
-
-		if (playerOnSocket != -1)
-		{
-			Log.write ("ConnectionManager: Received TCP_WANT_CONNECT from already connected player", cLog::eLogType::NetError);
-			return true;
-		}
-
-		auto& msgTcpWantConnect = static_cast<cNetMessageTcpWantConnect&> (*message);
-		msgTcpWantConnect.socket = socket;
-
-		//check compatible game version
-		if (msgTcpWantConnect.packageVersion != PACKAGE_VERSION)
-		{
-			network->close (socket);
-			return true;
-		}
-		break;
-	}
-	case eNetMessageType::TCP_CONNECTED:
-	{
-		if (localServer)
-		{
-			// server shouldn't get this message
-			return true;
-		}
-		nlohmann::json json;
-		cJsonArchiveOut jsonarchive (json);
-		jsonarchive << *message;
-		Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
-
-
-		stopTimeout (socket);
-
-		localPlayer = message->playerNr;
-		break;
-	}
-	default:
-		break;
+		default:
+			break;
 	}
 	return false;
 }
@@ -562,7 +559,7 @@ bool cConnectionManager::isPlayerConnected (int playerNr) const
 		return true;
 	}
 
-	auto it = ranges::find_if (clientSockets, [&](const std::pair<const cSocket*, int>& p) { return p.second == playerNr; });
+	auto it = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& p) { return p.second == playerNr; });
 	return it != clientSockets.end();
 }
 
@@ -597,7 +594,7 @@ void cConnectionManager::startTimeout (const cSocket* socket)
 //------------------------------------------------------------------------------
 void cConnectionManager::stopTimeout (const cSocket* socket)
 {
-	auto t = ranges::find_if (timeouts, [&](const auto& timer) { return timer->getSocket() == socket; });
+	auto t = ranges::find_if (timeouts, [&] (const auto& timer) { return timer->getSocket() == socket; });
 	if (t != timeouts.end())
 	{
 		timeouts.erase (t);
@@ -611,7 +608,7 @@ void cConnectionManager::handshakeTimeoutCallback (cHandshakeTimeout& timer)
 
 	Log.write ("ConnectionManager: Handshake timed out", cLog::eLogType::NetWarning);
 
-	auto it = ranges::find_if (timeouts, [&](const auto& timeout){ return timeout.get() == &timer;});
+	auto it = ranges::find_if (timeouts, [&] (const auto& timeout) { return timeout.get() == &timer; });
 	if (it != timeouts.end())
 	{
 		network->close (timer.getSocket());

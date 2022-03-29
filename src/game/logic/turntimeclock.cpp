@@ -91,8 +91,7 @@ cTurnTimeClock::cTurnTimeClock (const cModel& model) :
 {
 	std::chrono::seconds lastCheckedSeconds (0);
 	std::chrono::seconds lastTimeTillFirstDeadline (std::numeric_limits<std::chrono::seconds::rep>::max());
-	signalConnectionManager.connect (model.gameTimeChanged, [lastCheckedSeconds, lastTimeTillFirstDeadline, this]() mutable
-	{
+	signalConnectionManager.connect (model.gameTimeChanged, [lastCheckedSeconds, lastTimeTillFirstDeadline, this]() mutable {
 		const std::chrono::seconds currentSeconds (this->model.getGameTime() / 100);
 		if (currentSeconds != lastCheckedSeconds)
 		{
@@ -153,7 +152,7 @@ unsigned int cTurnTimeClock::startNewDeadlineFrom (unsigned int gameTime, const 
 //------------------------------------------------------------------------------
 void cTurnTimeClock::removeDeadline (unsigned int id)
 {
-	auto it = ranges::find_if (deadlines, [id](const auto& deadline){ return deadline.getId() == id; });
+	auto it = ranges::find_if (deadlines, [id] (const auto& deadline) { return deadline.getId() == id; });
 	if (it != deadlines.end())
 	{
 		deadlines.erase (it);
@@ -164,7 +163,7 @@ void cTurnTimeClock::removeDeadline (unsigned int id)
 //------------------------------------------------------------------------------
 void cTurnTimeClock::changeDeadline (unsigned int id, const std::chrono::seconds& duration)
 {
-	auto it = ranges::find_if (deadlines, [id](const auto& deadline){ return deadline.getId() == id; });
+	auto it = ranges::find_if (deadlines, [id] (const auto& deadline) { return deadline.getId() == id; });
 	if (it != deadlines.end())
 	{
 		it->changeDeadline (duration);
@@ -197,7 +196,7 @@ std::chrono::milliseconds cTurnTimeClock::getTimeTillFirstDeadline() const
 //------------------------------------------------------------------------------
 bool cTurnTimeClock::hasReachedAnyDeadline() const
 {
-	return ranges::find_if (deadlines, [this](const auto& deadline){ return this->getTimeTillDeadlineReached (deadline) <= std::chrono::milliseconds (0); }) != deadlines.end();
+	return ranges::find_if (deadlines, [this] (const auto& deadline) { return this->getTimeTillDeadlineReached (deadline) <= std::chrono::milliseconds (0); }) != deadlines.end();
 }
 
 //------------------------------------------------------------------------------

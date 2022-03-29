@@ -18,15 +18,16 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/mousemode/mousemodesteal.h"
+
+#include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "input/mouse/cursor/mousecursoramount.h"
+#include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionsteal.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/mapview.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
-#include "input/mouse/cursor/mousecursoramount.h"
-#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
 cMouseModeSteal::cMouseModeSteal (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
@@ -55,7 +56,8 @@ void cMouseModeSteal::setCursor (cMouse& mouse, const cPosition& mapPosition, co
 
 			mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal, selectedVehicle->getCommandoData().computeChance (unit, true)));
 		}
-		else mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal));
+		else
+			mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal));
 	}
 	else
 	{
@@ -70,7 +72,8 @@ std::unique_ptr<cMouseAction> cMouseModeSteal::getMouseAction (const cPosition& 
 	{
 		return std::make_unique<cMouseActionSteal>();
 	}
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 //------------------------------------------------------------------------------

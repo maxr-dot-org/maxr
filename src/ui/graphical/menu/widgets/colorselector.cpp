@@ -19,45 +19,42 @@
 
 #include "colorselector.h"
 
+#include <output/video/video.h>
 #include <ui/graphical/application.h>
 #include <ui/graphical/menu/dialogs/dialogcolorpicker.h>
 #include <ui/graphical/menu/widgets/image.h>
 #include <ui/graphical/menu/widgets/pushbutton.h>
 #include <ui/graphical/playercolor.h>
-#include <output/video/video.h>
 
 //------------------------------------------------------------------------------
-cColorSelector::cColorSelector (const cPosition& pos, const cRgbColor& color) : cWidget (cBox<cPosition> (pos, pos + cPosition (140, 20))), color (color)
+cColorSelector::cColorSelector (const cPosition& pos, const cRgbColor& color) :
+	cWidget (cBox<cPosition> (pos, pos + cPosition (140, 20))), color (color)
 {
 	auto prevColorButton = addChild (std::make_unique<cPushButton> (getPosition(), ePushButtonType::ArrowLeftSmall, &SoundData.SNDObjectMenu));
 	colorImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (27, 4)));
 	auto nextColorButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (118, 0), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
 	setColor (color);
-	signalConnectionManager.connect (colorImage->clicked, [this]()
-	{
+	signalConnectionManager.connect (colorImage->clicked, [this]() {
 		auto application = getActiveApplication();
 
 		if (!application) return;
 
 		auto dialog = application->show (std::make_shared<cDialogColorPicker> (this->color));
-		dialog->done.connect ([this, dialog]()
-		{
+		dialog->done.connect ([this, dialog]() {
 			setColor (dialog->getSelectedColor());
 			dialog->close();
 		});
 		dialog->canceled.connect ([dialog]() { dialog->close(); });
 	});
-	signalConnectionManager.connect (prevColorButton->clicked, [this]()
-	{
+	signalConnectionManager.connect (prevColorButton->clicked, [this]() {
 		const auto localPlayerColorIndex = (cPlayerColor::findClosestPredefinedColor (this->color) + cPlayerColor::predefinedColorsCount - 1) % cPlayerColor::predefinedColorsCount;
 		setColor (cPlayerColor::predefinedColors[localPlayerColorIndex]);
 	});
-	signalConnectionManager.connect (nextColorButton->clicked, [this]()
-	{
+	signalConnectionManager.connect (nextColorButton->clicked, [this]() {
 		const auto localPlayerColorIndex = (cPlayerColor::findClosestPredefinedColor (this->color) + 1) % cPlayerColor::predefinedColorsCount;
 		setColor (cPlayerColor::predefinedColors[localPlayerColorIndex]);
 	});
-	signalConnectionManager.connect (onColorChanged, [this](const cRgbColor& color){ setColor (color); });
+	signalConnectionManager.connect (onColorChanged, [this] (const cRgbColor& color) { setColor (color); });
 }
 
 //------------------------------------------------------------------------------

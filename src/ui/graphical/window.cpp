@@ -19,10 +19,10 @@
 
 #include "ui/graphical/window.h"
 
+#include "SDLutility/tosdl.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
-#include "SDLutility/tosdl.h"
 #include "settings.h"
 #include "ui/graphical/application.h"
 

@@ -44,8 +44,7 @@ cDialogSelfDestruction::cDialogSelfDestruction (const cUnit& unit, std::shared_p
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
 	protectionGlass = addChild (std::make_unique<cProtectionGlass> (getPosition() + cPosition (15, 13), std::move (animationTimer)));
-	signalConnectionManager.connect (protectionGlass->opened, [this]()
-	{
+	signalConnectionManager.connect (protectionGlass->opened, [this]() {
 		destroyButton->unlock();
 	});
 

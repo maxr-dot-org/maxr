@@ -19,10 +19,9 @@
 
 #include "actionrepairreload.h"
 
-#include "game/data/units/unit.h"
 #include "game/data/model.h"
+#include "game/data/units/unit.h"
 #include "utility/mathtools.h"
-
 
 //------------------------------------------------------------------------------
 cActionRepairReload::cActionRepairReload (const cUnit& sourceUnit, const cUnit& destUnit, eSupplyType supplyType) :
@@ -79,7 +78,7 @@ void cActionRepairReload::execute (cModel& model) const
 		}
 		int newHitpoints = destUnit->data.getHitpoints();
 
-		int hitpointsPerMetal = Round (((float)destUnit->data.getHitpointsMax() / destUnit->data.getBuildCost()) * 4);
+		int hitpointsPerMetal = Round (((float) destUnit->data.getHitpointsMax() / destUnit->data.getBuildCost()) * 4);
 		while (availableMetal > 0 && newHitpoints < destUnit->data.getHitpointsMax())
 		{
 			newHitpoints += hitpointsPerMetal;

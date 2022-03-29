@@ -86,8 +86,7 @@ void cMenuControllerMultiplayerHotSeat::selectGameSettings()
 
 	firstWindow = windowGameSettings;
 
-	windowGameSettings->done.connect ([this](const cGameSettings& gameSettings)
-	{
+	windowGameSettings->done.connect ([this] (const cGameSettings& gameSettings) {
 		game->setGameSettings (std::make_shared<cGameSettings> (gameSettings));
 
 		selectMap();
@@ -101,8 +100,7 @@ void cMenuControllerMultiplayerHotSeat::selectMap()
 
 	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
 
-	windowMapSelection->done.connect ([this](const std::string& mapName)
-	{
+	windowMapSelection->done.connect ([this] (const std::string& mapName) {
 		auto staticMap = std::make_shared<cStaticMap>();
 		if (!staticMap->loadMap (mapName))
 		{
@@ -122,21 +120,19 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers()
 
 	windowPlayerSelection = application.show (std::make_shared<cWindowPlayerSelection>());
 
-	windowPlayerSelection->done.connect ([=]()
-	{
+	windowPlayerSelection->done.connect ([=]() {
 		const auto& playerTypes = windowPlayerSelection->getPlayerTypes();
 
 		const std::string playerNames[] =
-		{
-			lngPack.i18n ("Text~Multiplayer~Player1"),
-			lngPack.i18n ("Text~Multiplayer~Player2"),
-			lngPack.i18n ("Text~Multiplayer~Player3"),
-			lngPack.i18n ("Text~Multiplayer~Player4"),
-			lngPack.i18n ("Text~Multiplayer~Player5"),
-			lngPack.i18n ("Text~Multiplayer~Player6"),
-			lngPack.i18n ("Text~Multiplayer~Player7"),
-			lngPack.i18n ("Text~Multiplayer~Player8")
-		};
+			{
+				lngPack.i18n ("Text~Multiplayer~Player1"),
+				lngPack.i18n ("Text~Multiplayer~Player2"),
+				lngPack.i18n ("Text~Multiplayer~Player3"),
+				lngPack.i18n ("Text~Multiplayer~Player4"),
+				lngPack.i18n ("Text~Multiplayer~Player5"),
+				lngPack.i18n ("Text~Multiplayer~Player6"),
+				lngPack.i18n ("Text~Multiplayer~Player7"),
+				lngPack.i18n ("Text~Multiplayer~Player8")};
 
 		std::vector<cPlayerBasicData> players;
 		int playerNum = 0;
@@ -154,8 +150,7 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers()
 
 		playerLandingSelectionWindows.resize (players.size());
 		landingPositionManager = std::make_unique<cLandingPositionManager> (players);
-		landingPositionManager->landingPositionStateChanged.connect ([this] (const cPlayerBasicData& player, eLandingPositionState state)
-		{
+		landingPositionManager->landingPositionStateChanged.connect ([this] (const cPlayerBasicData& player, eLandingPositionState state) {
 			if (state == eLandingPositionState::TooClose || state == eLandingPositionState::Warning)
 			{
 				for (size_t i = 0; i < game->getPlayerCount(); ++i)
@@ -177,8 +172,7 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers()
 void cMenuControllerMultiplayerHotSeat::startNextPlayerGamePreperation (size_t playerIndex)
 {
 	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", game->getPlayer (playerIndex).getName()), eWindowBackgrounds::Black));
-	dialog->done.connect ([this, playerIndex]()
-	{
+	dialog->done.connect ([this, playerIndex]() {
 		if (game->getGameSettings()->clansEnabled)
 		{
 			selectClan (playerIndex, true);
@@ -197,8 +191,7 @@ void cMenuControllerMultiplayerHotSeat::selectClan (size_t playerIndex, bool fir
 
 	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> (game->getUnitsData(), game->getClanData()));
 
-	windowClanSelection->done.connect ([=]()
-	{
+	windowClanSelection->done.connect ([=]() {
 		game->setPlayerClan (playerIndex, windowClanSelection->getSelectedClan());
 
 		selectLandingUnits (playerIndex, false);
@@ -206,8 +199,7 @@ void cMenuControllerMultiplayerHotSeat::selectClan (size_t playerIndex, bool fir
 
 	if (firstForPlayer)
 	{
-		windowClanSelection->canceled.connect ([=]()
-		{
+		windowClanSelection->canceled.connect ([=]() {
 			application.closeTill (*windowPlayerSelection);
 		});
 	}
@@ -226,8 +218,7 @@ void cMenuControllerMultiplayerHotSeat::selectLandingUnits (size_t playerIndex, 
 
 	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (game->getPlayer (playerIndex).getColor(), game->getPlayerClan (playerIndex), initialLandingUnits, game->getGameSettings()->startCredits, game->getUnitsData()));
 
-	windowLandingUnitSelection->done.connect ([=]()
-	{
+	windowLandingUnitSelection->done.connect ([=]() {
 		game->setLandingUnits (playerIndex, windowLandingUnitSelection->getLandingUnits());
 		game->setUnitUpgrades (playerIndex, windowLandingUnitSelection->getUnitUpgrades());
 
@@ -236,8 +227,7 @@ void cMenuControllerMultiplayerHotSeat::selectLandingUnits (size_t playerIndex, 
 
 	if (firstForPlayer)
 	{
-		windowLandingUnitSelection->canceled.connect ([=]()
-		{
+		windowLandingUnitSelection->canceled.connect ([=]() {
 			application.closeTill (*windowPlayerSelection);
 		});
 	}
@@ -260,9 +250,8 @@ void cMenuControllerMultiplayerHotSeat::selectLandingPosition (size_t playerInde
 
 	auto windowLandingPositionSelection = application.show (playerLandingSelectionWindows[playerIndex]);
 
-	windowLandingPositionSelection->canceled.connect ([=]() {windowLandingPositionSelection->close(); });
-	landingSelectionWindowConnections.connect (windowLandingPositionSelection->selectedPosition, [=] (cPosition landingPosition)
-	{
+	windowLandingPositionSelection->canceled.connect ([=]() { windowLandingPositionSelection->close(); });
+	landingSelectionWindowConnections.connect (windowLandingPositionSelection->selectedPosition, [=] (cPosition landingPosition) {
 		landingPositionManager->setLandingPosition (game->getPlayer (playerIndex), landingPosition);
 		game->setLandingPosition (playerIndex, landingPosition);
 
@@ -306,14 +295,12 @@ void cMenuControllerMultiplayerHotSeat::reselectLandingPosition (size_t reselect
 	auto landingState = invalidLandingPositionPlayers[reselectIndex].second;
 
 	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", game->getPlayer (playerIndex).getName()), eWindowBackgrounds::Black));
-	dialog->done.connect ([=]()
-	{
+	dialog->done.connect ([=]() {
 		auto windowLandingPositionSelection = application.show (playerLandingSelectionWindows[playerIndex]);
 
 		windowLandingPositionSelection->applyReselectionState (landingState);
 
-		landingSelectionWindowConnections.connect (windowLandingPositionSelection->selectedPosition, [=] (cPosition landingPosition)
-		{
+		landingSelectionWindowConnections.connect (windowLandingPositionSelection->selectedPosition, [=] (cPosition landingPosition) {
 			landingPositionManager->setLandingPosition (game->getPlayer (playerIndex), landingPosition);
 			game->setLandingPosition (playerIndex, landingPosition);
 

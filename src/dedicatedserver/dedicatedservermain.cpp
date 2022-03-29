@@ -19,13 +19,13 @@
 
 #include "dedicatedservermain.h"
 
+#include "SDLutility/sdlcomponent.h"
+#include "SDLutility/sdlnetcomponent.h"
 #include "debug.h"
 #include "dedicatedserver/dedicatedserver.h"
 #include "defines.h"
 #include "maxrversion.h"
 #include "resources/loaddata.h"
-#include "SDLutility/sdlcomponent.h"
-#include "SDLutility/sdlnetcomponent.h"
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------

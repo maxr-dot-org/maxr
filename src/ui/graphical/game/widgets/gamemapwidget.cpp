@@ -19,25 +19,25 @@
 
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 
+#include "SDLutility/tosdl.h"
 #include "game/data/map/map.h"
-#include "game/data/player/player.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
+#include "game/data/player/player.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 #include "game/logic/movejob.h"
 #include "game/logic/pathcalculator.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/cursor/mousecursoramount.h"
 #include "input/mouse/cursor/mousecursorattack.h"
-#include "output/sound/sounddevice.h"
+#include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
 #include "output/sound/soundchannel.h"
+#include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 #include "resources/buildinguidata.h"
-#include "resources/uidata.h"
 #include "resources/sound.h"
-#include "SDLutility/tosdl.h"
+#include "resources/uidata.h"
 #include "settings.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/animations/animation.h"
@@ -89,8 +89,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	assert (animationTimer != nullptr);
 	assert (soundManager != nullptr);
 
-	signalConnectionManager.connect (cSettings::getInstance().animationsChanged, [this]()
-	{
+	signalConnectionManager.connect (cSettings::getInstance().animationsChanged, [this]() {
 		if (cSettings::getInstance().isAnimations())
 		{
 			updateActiveAnimations();
@@ -104,8 +103,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	setMouseInputMode (std::make_unique<cMouseModeDefault> (mapView.get(), unitSelection, player.get()));
 
 	// TODO: should this really be done here?
-	signalConnectionManager.connect (animationTimer->triggered400ms, [this]()
-	{
+	signalConnectionManager.connect (animationTimer->triggered400ms, [this]() {
 		staticMap->getGraphic().generateNextAnimationFrame();
 	});
 
@@ -120,36 +118,32 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu->hide();
 
 	rightMouseButtonScrollerWidget = addChild (std::make_unique<cRightMouseButtonScrollerWidget> (animationTimer));
-	signalConnectionManager.connect (rightMouseButtonScrollerWidget->scroll, [this](const cPosition& offset) { scroll (offset); });
+	signalConnectionManager.connect (rightMouseButtonScrollerWidget->scroll, [this] (const cPosition& offset) { scroll (offset); });
 	signalConnectionManager.connect (rightMouseButtonScrollerWidget->mouseFocusReleased, [this]() { mouseFocusReleased(); });
 	signalConnectionManager.connect (rightMouseButtonScrollerWidget->stoppedScrolling, [this]() { updateMouseCursor(); });
-	rightMouseButtonScrollerWidget->disable();  // mouse events will be forwarded explicitly
+	rightMouseButtonScrollerWidget->disable(); // mouse events will be forwarded explicitly
 
 	mouseInputModeChanged.connect ([this]() { updateMouseCursor(); });
 
 	scrolled.connect ([this]() { updateUnitMenuPosition(); });
-	scrolled.connect ([this]()
-	{
+	scrolled.connect ([this]() {
 		soundManager->setListenerPosition (getMapCenterOffset());
 	});
-	tileUnderMouseChanged.connect ([this] (const cPosition& tilePosition)
-	{
+	tileUnderMouseChanged.connect ([this] (const cPosition& tilePosition) {
 		if (mouseMode)
 		{
 			mouseMode->handleMapTilePositionChanged (tilePosition);
 		}
 	});
 
-	zoomFactorChanged.connect ([this]()
-	{
+	zoomFactorChanged.connect ([this]() {
 		const auto tileDrawingRange = computeTileDrawingRange();
 		const cPosition difference = tileDrawingRange.first - tileDrawingRange.second;
 		const auto diameter = difference.l2Norm();
 		soundManager->setMaxListeningDistance ((int) (diameter * 2));
 	});
 
-	unitSelection.mainSelectionChanged.connect ([this]()
-	{
+	unitSelection.mainSelectionChanged.connect ([this]() {
 		toggleUnitContextMenu (nullptr);
 		updateActiveUnitCommandShortcuts();
 		setMouseInputMode (std::make_unique<cMouseModeDefault> (mapView.get(), unitSelection, player.get()));
@@ -231,8 +225,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu->doneClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
 
 	attackShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuAttack));
-	attackShortcut->triggered.connect ([this]()
-	{
+	attackShortcut->triggered.connect ([this]() {
 		if (cUnitContextMenuWidget::unitHasAttackEntry (unitSelection.getSelectedUnit(), player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Attack);
@@ -240,8 +233,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	buildShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuBuild));
-	buildShortcut->triggered.connect ([this]()
-	{
+	buildShortcut->triggered.connect ([this]() {
 		if (cUnitContextMenuWidget::unitHasBuildEntry (unitSelection.getSelectedUnit(), player.get()))
 		{
 			triggeredBuild (*unitSelection.getSelectedUnit());
@@ -249,8 +241,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	transferShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuTransfer));
-	transferShortcut->triggered.connect ([this]()
-	{
+	transferShortcut->triggered.connect ([this]() {
 		if (cUnitContextMenuWidget::unitHasTransferEntry (unitSelection.getSelectedUnit(), player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Transfer);
@@ -258,8 +249,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	automoveShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuAutomove));
-	automoveShortcut->triggered.connect ([this]()
-	{
+	automoveShortcut->triggered.connect ([this]() {
 		cVehicle* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasAutoEntry (vehicle, player.get()))
 		{
@@ -268,8 +258,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	startShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuStart));
-	startShortcut->triggered.connect ([this]()
-	{
+	startShortcut->triggered.connect ([this]() {
 		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasStartEntry (building, player.get()))
 		{
@@ -278,8 +267,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	stopShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuStop));
-	stopShortcut->triggered.connect ([this]()
-	{
+	stopShortcut->triggered.connect ([this]() {
 		if (cUnitContextMenuWidget::unitHasStopEntry (unitSelection.getSelectedUnit(), player.get()))
 		{
 			triggeredStopWork (*unitSelection.getSelectedUnit());
@@ -287,8 +275,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	clearShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuClear));
-	clearShortcut->triggered.connect ([this]()
-	{
+	clearShortcut->triggered.connect ([this]() {
 		auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasRemoveEntry (vehicle, player.get(), mapView.get()))
 		{
@@ -297,8 +284,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	sentryShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuSentry));
-	sentryShortcut->triggered.connect ([this]()
-	{
+	sentryShortcut->triggered.connect ([this]() {
 		if (cUnitContextMenuWidget::unitHasSentryEntry (unitSelection.getSelectedUnit(), player.get()))
 		{
 			triggeredSentry (*unitSelection.getSelectedUnit());
@@ -306,8 +292,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	manualFireShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuManualFire));
-	manualFireShortcut->triggered.connect ([this]()
-	{
+	manualFireShortcut->triggered.connect ([this]() {
 		if (cUnitContextMenuWidget::unitHasManualFireEntry (unitSelection.getSelectedUnit(), player.get()))
 		{
 			triggeredManualFire (*unitSelection.getSelectedUnit());
@@ -315,8 +300,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	activateShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuActivate));
-	activateShortcut->triggered.connect ([this]()
-	{
+	activateShortcut->triggered.connect ([this]() {
 		if (cUnitContextMenuWidget::unitHasActivateEntry (unitSelection.getSelectedUnit(), player.get()))
 		{
 			triggeredActivate (*unitSelection.getSelectedUnit());
@@ -324,8 +308,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	loadShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuLoad));
-	loadShortcut->triggered.connect ([this]()
-	{
+	loadShortcut->triggered.connect ([this]() {
 		if (cUnitContextMenuWidget::unitHasLoadEntry (unitSelection.getSelectedUnit(), player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Load);
@@ -333,8 +316,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	relaodShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuReload));
-	relaodShortcut->triggered.connect ([this]()
-	{
+	relaodShortcut->triggered.connect ([this]() {
 		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasSupplyEntry (vehicle, player.get()))
 		{
@@ -343,8 +325,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	enterShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuEnter));
-	enterShortcut->triggered.connect ([this]()
-	{
+	enterShortcut->triggered.connect ([this]() {
 		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasEnterEntry (vehicle, player.get()))
 		{
@@ -353,8 +334,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	repairShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuRepair));
-	repairShortcut->triggered.connect ([this]()
-	{
+	repairShortcut->triggered.connect ([this]() {
 		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasRepairEntry (vehicle, player.get()))
 		{
@@ -363,8 +343,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	layMineShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuLayMine));
-	layMineShortcut->triggered.connect ([this]()
-	{
+	layMineShortcut->triggered.connect ([this]() {
 		cVehicle* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasLayMinesEntry (vehicle, player.get()))
 		{
@@ -373,8 +352,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	clearMineShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuClearMine));
-	clearMineShortcut->triggered.connect ([this]()
-	{
+	clearMineShortcut->triggered.connect ([this]() {
 		cVehicle* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasCollectMinesEntry (vehicle, player.get()))
 		{
@@ -383,8 +361,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	disableShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDisable));
-	disableShortcut->triggered.connect ([this]()
-	{
+	disableShortcut->triggered.connect ([this]() {
 		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
 
 		if (cUnitContextMenuWidget::unitHasSabotageEntry (vehicle, player.get()))
@@ -394,8 +371,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	stealShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuSteal));
-	stealShortcut->triggered.connect ([this]()
-	{
+	stealShortcut->triggered.connect ([this]() {
 		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasStealEntry (vehicle, player.get()))
 		{
@@ -404,8 +380,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	infoShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuInfo));
-	infoShortcut->triggered.connect ([this]()
-	{
+	infoShortcut->triggered.connect ([this]() {
 		if (cUnitContextMenuWidget::unitHasInfoEntry (unitSelection.getSelectedUnit(), player.get()))
 		{
 			triggeredUnitHelp (*unitSelection.getSelectedUnit());
@@ -413,8 +388,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	distributeShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDistribute));
-	distributeShortcut->triggered.connect ([this]()
-	{
+	distributeShortcut->triggered.connect ([this]() {
 		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasDistributeEntry (building, player.get()))
 		{
@@ -423,8 +397,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	researchShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuResearch));
-	researchShortcut->triggered.connect ([this]()
-	{
+	researchShortcut->triggered.connect ([this]() {
 		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasResearchEntry (building, player.get()))
 		{
@@ -433,8 +406,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	upgradeShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuUpgrade));
-	upgradeShortcut->triggered.connect ([this]()
-	{
+	upgradeShortcut->triggered.connect ([this]() {
 		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasBuyEntry (building, player.get()))
 		{
@@ -443,8 +415,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	});
 
 	destroyShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDestroy));
-	destroyShortcut->triggered.connect ([this]()
-	{
+	destroyShortcut->triggered.connect ([this]() {
 		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
 		if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (building, player.get()))
 		{
@@ -469,15 +440,13 @@ void cGameMapWidget::setMapView (std::shared_ptr<const cMapView> mapView_)
 
 	if (mapView != nullptr)
 	{
-		mapViewSignalConnectionManager.connect (mapView->unitDissappeared, [this](const cUnit& unit)
-		{
+		mapViewSignalConnectionManager.connect (mapView->unitDissappeared, [this] (const cUnit& unit) {
 			if (unitSelection.isSelected (unit))
 			{
 				unitSelection.deselectUnit (unit);
 			}
 		});
-		mapViewSignalConnectionManager.connect (mapView->unitAppeared, [this](const cUnit& unit)
-		{
+		mapViewSignalConnectionManager.connect (mapView->unitAppeared, [this] (const cUnit& unit) {
 			if (!cSettings::getInstance().isAnimations()) return;
 
 			const auto tileDrawingRange = computeTileDrawingRange();
@@ -489,8 +458,7 @@ void cGameMapWidget::setMapView (std::shared_ptr<const cMapView> mapView_)
 				animations.push_back (std::make_unique<cAnimationStartUp> (*animationTimer, unit));
 			}
 		});
-		mapViewSignalConnectionManager.connect (mapView->unitMoved, [this](const cUnit& unit, const cPosition& oldPosition)
-		{
+		mapViewSignalConnectionManager.connect (mapView->unitMoved, [this] (const cUnit& unit, const cPosition& oldPosition) {
 			if (!cSettings::getInstance().isAnimations()) return;
 
 			const auto tileDrawingRange = computeTileDrawingRange();
@@ -695,7 +663,7 @@ cBox<cPosition> cGameMapWidget::getDisplayedMapArea() const
 //------------------------------------------------------------------------------
 float cGameMapWidget::getZoomFactor() const
 {
-	return (float)getZoomedTileSize().x() / sGraphicTile::tilePixelWidth;   // should make no difference if we use y instead
+	return (float) getZoomedTileSize().x() / sGraphicTile::tilePixelWidth; // should make no difference if we use y instead
 }
 
 //------------------------------------------------------------------------------
@@ -739,8 +707,7 @@ void cGameMapWidget::toggleUnitContextMenu (const cUnit* unit)
 		unitMenu->show();
 		updateUnitMenuPosition();
 
-		unitContextMenuSignalConnectionManager.connect (unit->positionChanged, [this, unit]()
-		{
+		unitContextMenuSignalConnectionManager.connect (unit->positionChanged, [this, unit]() {
 			toggleUnitContextMenu (unit);
 		});
 	}
@@ -945,8 +912,8 @@ float cGameMapWidget::computeMinimalZoomFactor() const
 	//
 	//   zoom = size_x / (map_x * tile_x)
 
-	auto xZoom = (float)getSize().x() / (staticMap->getSize().x() * sGraphicTile::tilePixelWidth);
-	auto yZoom = (float)getSize().y() / (staticMap->getSize().y() * sGraphicTile::tilePixelHeight);
+	auto xZoom = (float) getSize().x() / (staticMap->getSize().x() * sGraphicTile::tilePixelWidth);
+	auto yZoom = (float) getSize().y() / (staticMap->getSize().y() * sGraphicTile::tilePixelHeight);
 
 	// then we try to fix if round would have rounded up:
 
@@ -959,8 +926,8 @@ float cGameMapWidget::computeMinimalZoomFactor() const
 //------------------------------------------------------------------------------
 cPosition cGameMapWidget::computeMaximalPixelOffset() const
 {
-	const auto x = staticMap->getSize(). x() * sGraphicTile::tilePixelWidth - (int) (getSize().x() / getZoomFactor());
-	const auto y = staticMap->getSize(). y() * sGraphicTile::tilePixelHeight - (int) (getSize().y() / getZoomFactor());
+	const auto x = staticMap->getSize().x() * sGraphicTile::tilePixelWidth - (int) (getSize().x() / getZoomFactor());
+	const auto y = staticMap->getSize().y() * sGraphicTile::tilePixelHeight - (int) (getSize().y() / getZoomFactor());
 
 	return cPosition (x, y);
 }
@@ -991,9 +958,9 @@ std::pair<cPosition, cPosition> cGameMapWidget::computeTileDrawingRange() const
 
 	const cPosition drawingPixelRange = getSize() + getZoomedStartTilePixelOffset();
 
-	const cPosition tilesSize ((int)std::ceil (drawingPixelRange.x() / zoomedTileSize.x()), (int)std::ceil (drawingPixelRange.y() / zoomedTileSize.y()));
+	const cPosition tilesSize ((int) std::ceil (drawingPixelRange.x() / zoomedTileSize.x()), (int) std::ceil (drawingPixelRange.y() / zoomedTileSize.y()));
 
-	cPosition startTile ((int)std::floor (pixelOffset.x() / sGraphicTile::tilePixelWidth), (int)std::floor (pixelOffset.y() / sGraphicTile::tilePixelHeight));
+	cPosition startTile ((int) std::floor (pixelOffset.x() / sGraphicTile::tilePixelWidth), (int) std::floor (pixelOffset.y() / sGraphicTile::tilePixelHeight));
 	cPosition endTile (startTile + tilesSize + 1);
 
 	startTile.x() = std::max (0, startTile.x());
@@ -1063,11 +1030,10 @@ void cGameMapWidget::drawEffects (bool bottom)
 
 	const cPosition originalTileSize (sGraphicTile::tilePixelWidth, sGraphicTile::tilePixelHeight);
 
-	EraseIf (effects, [](const auto& effect){ return effect->isFinished(); });
+	EraseIf (effects, [] (const auto& effect) { return effect->isFinished(); });
 	for (const auto& effect : effects)
 	{
-		if (effect->bottom == bottom &&
-			(!player || player->canSeeAt (effect->getPixelPosition() / originalTileSize)))
+		if (effect->bottom == bottom && (!player || player->canSeeAt (effect->getPixelPosition() / originalTileSize)))
 		{
 			cPosition screenDestination;
 			screenDestination.x() = getPosition().x() + static_cast<int> ((effect->getPixelPosition().x() - pixelOffset.x()) * getZoomFactor());
@@ -1095,11 +1061,9 @@ void cGameMapWidget::drawBaseUnits()
 		{
 			if (*it == nullptr) continue; // should never happen
 
-			const auto& building = * (*it);
+			const auto& building = *(*it);
 
-			if (!building.isRubble() && (
-				building.getStaticUnitData().surfacePosition != eSurfacePosition::BeneathSea &&
-				building.getStaticUnitData().surfacePosition != eSurfacePosition::Base))
+			if (!building.isRubble() && (building.getStaticUnitData().surfacePosition != eSurfacePosition::BeneathSea && building.getStaticUnitData().surfacePosition != eSurfacePosition::Base))
 				break;
 
 			if (shouldDrawUnit (building, *i, tileDrawingRange))
@@ -1221,7 +1185,8 @@ bool cGameMapWidget::shouldDrawUnit (const cUnit& unit, const cPosition& visitin
 
 			return visitingPosition == intersectedArea.getMinCorner();
 		}
-		else return visitingPosition == unit.getPosition();
+		else
+			return visitingPosition == unit.getPosition();
 	}
 }
 
@@ -1350,14 +1315,14 @@ void cGameMapWidget::drawSelectionBox()
 	const auto zoomOffX = (int) (pixelOffset.x() * getZoomFactor());
 	const auto zoomOffY = (int) (pixelOffset.y() * getZoomFactor());
 
-	const int mouseTopX = static_cast<int> (std::min (unitSelectionBox.getBox().getMinCorner()[0], unitSelectionBox.getBox().getMaxCorner()[0]) * zoomedTileSize. x());
-	const int mouseTopY = static_cast<int> (std::min (unitSelectionBox.getBox().getMinCorner()[1], unitSelectionBox.getBox().getMaxCorner()[1]) * zoomedTileSize. y());
-	const int mouseBottomX = static_cast<int> (std::max (unitSelectionBox.getBox().getMinCorner()[0], unitSelectionBox.getBox().getMaxCorner()[0]) * zoomedTileSize. x());
-	const int mouseBottomY = static_cast<int> (std::max (unitSelectionBox.getBox().getMinCorner()[1], unitSelectionBox.getBox().getMaxCorner()[1]) * zoomedTileSize. y());
+	const int mouseTopX = static_cast<int> (std::min (unitSelectionBox.getBox().getMinCorner()[0], unitSelectionBox.getBox().getMaxCorner()[0]) * zoomedTileSize.x());
+	const int mouseTopY = static_cast<int> (std::min (unitSelectionBox.getBox().getMinCorner()[1], unitSelectionBox.getBox().getMaxCorner()[1]) * zoomedTileSize.y());
+	const int mouseBottomX = static_cast<int> (std::max (unitSelectionBox.getBox().getMinCorner()[0], unitSelectionBox.getBox().getMaxCorner()[0]) * zoomedTileSize.x());
+	const int mouseBottomY = static_cast<int> (std::max (unitSelectionBox.getBox().getMinCorner()[1], unitSelectionBox.getBox().getMaxCorner()[1]) * zoomedTileSize.y());
 	const Uint32 color = 0xFFFFFF00;
 	SDL_Rect d;
 
-	d.x = mouseTopX - zoomOffX + getPosition(). x();
+	d.x = mouseTopX - zoomOffX + getPosition().x();
 	d.y = mouseBottomY - zoomOffY + getPosition().y();
 	d.w = mouseBottomX - mouseTopX;
 	d.h = 1;
@@ -1410,8 +1375,10 @@ void cGameMapWidget::drawUnitCircles()
 		}
 		if (shouldDrawRange)
 		{
-			if (selectedVehicle->getStaticUnitData().canAttack & eTerrainFlag::Air) drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
-			else drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
+			if (selectedVehicle->getStaticUnitData().canAttack & eTerrainFlag::Air)
+				drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			else
+				drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, selectedVehicle->data.getRange() * zoomedTileSize.x() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 	}
 	else if (selectedBuilding && selectedBuilding->isDisabled() == false)
@@ -1421,28 +1388,36 @@ void cGameMapWidget::drawUnitCircles()
 		{
 			if (selectedBuilding->getIsBig())
 			{
-				drawCircle (screenPosition. x() + zoomedTileSize.x(),
-							screenPosition. y() + zoomedTileSize.y(),
-							selectedBuilding->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition.x() + zoomedTileSize.x(),
+				            screenPosition.y() + zoomedTileSize.y(),
+				            selectedBuilding->data.getScan() * zoomedTileSize.x(),
+				            SCAN_COLOR,
+				            *cVideo::buffer);
 			}
 			else
 			{
-				drawCircle (screenPosition. x() + zoomedTileSize.x() / 2,
-							screenPosition. y() + zoomedTileSize.y() / 2,
-							selectedBuilding->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition.x() + zoomedTileSize.x() / 2,
+				            screenPosition.y() + zoomedTileSize.y() / 2,
+				            selectedBuilding->data.getScan() * zoomedTileSize.x(),
+				            SCAN_COLOR,
+				            *cVideo::buffer);
 			}
 		}
 		if (shouldDrawRange && (selectedBuilding->getStaticUnitData().canAttack & eTerrainFlag::Ground) && !selectedBuilding->getStaticData().explodesOnContact)
 		{
-			drawCircle (screenPosition. x() + zoomedTileSize.x() / 2,
-						screenPosition. y() + zoomedTileSize.y() / 2,
-						selectedBuilding->data.getRange() * zoomedTileSize.x() + 2, RANGE_GROUND_COLOR, *cVideo::buffer);
+			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2,
+			            screenPosition.y() + zoomedTileSize.y() / 2,
+			            selectedBuilding->data.getRange() * zoomedTileSize.x() + 2,
+			            RANGE_GROUND_COLOR,
+			            *cVideo::buffer);
 		}
 		if (shouldDrawRange && (selectedBuilding->getStaticUnitData().canAttack & eTerrainFlag::Air))
 		{
-			drawCircle (screenPosition. x() + zoomedTileSize.x() / 2,
-						screenPosition. y() + zoomedTileSize.y() / 2,
-						selectedBuilding->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2,
+			            screenPosition.y() + zoomedTileSize.y() / 2,
+			            selectedBuilding->data.getRange() * zoomedTileSize.x() + 2,
+			            RANGE_AIR_COLOR,
+			            *cVideo::buffer);
 		}
 	}
 
@@ -1457,11 +1432,7 @@ void cGameMapWidget::drawExitPoints()
 
 	if (selectedVehicle && selectedVehicle->isDisabled() == false)
 	{
-		if (mapView && selectedVehicle->getOwner() == player.get() &&
-			(
-				(selectedVehicle->isUnitBuildingABuilding() && selectedVehicle->getBuildTurns() == 0) ||
-				(selectedVehicle->isUnitClearing() && selectedVehicle->getClearingTurns() == 0)
-			) && !selectedVehicle->BuildPath)
+		if (mapView && selectedVehicle->getOwner() == player.get() && ((selectedVehicle->isUnitBuildingABuilding() && selectedVehicle->getBuildTurns() == 0) || (selectedVehicle->isUnitClearing() && selectedVehicle->getClearingTurns() == 0)) && !selectedVehicle->BuildPath)
 		{
 			drawExitPointsIf (*selectedVehicle, [&] (const cPosition& position) { return mapView->possiblePlace (*selectedVehicle, position); });
 		}
@@ -1474,10 +1445,7 @@ void cGameMapWidget::drawExitPoints()
 	}
 	else if (selectedBuilding && selectedBuilding->isDisabled() == false)
 	{
-		if (!selectedBuilding->isBuildListEmpty() &&
-			!selectedBuilding->isUnitWorking() &&
-			selectedBuilding->getBuildListItem (0).getRemainingMetal() <= 0 &&
-			selectedBuilding->getOwner() == player.get())
+		if (!selectedBuilding->isBuildListEmpty() && !selectedBuilding->isUnitWorking() && selectedBuilding->getBuildListItem (0).getRemainingMetal() <= 0 && selectedBuilding->getOwner() == player.get())
 		{
 			auto unitToExit = unitsData->getStaticUnitData (selectedBuilding->getBuildListItem (0).getType());
 			drawExitPointsIf (*selectedBuilding, [&] (const cPosition& position) { return selectedBuilding->canExitTo (position, *mapView, unitToExit); });
@@ -1593,11 +1561,9 @@ void cGameMapWidget::drawLockList()
 				drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, unit->data.getScan() * zoomedTileSize.x(), SCAN_COLOR, *cVideo::buffer);
 		}
 		if (shouldDrawRange && (unit->getStaticUnitData().canAttack & eTerrainFlag::Ground))
-			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2,
-						unit->data.getRange() * zoomedTileSize.x() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
+			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, unit->data.getRange() * zoomedTileSize.x() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		if (shouldDrawRange && (unit->getIsBig() & eTerrainFlag::Air))
-			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2,
-						unit->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			drawCircle (screenPosition.x() + zoomedTileSize.x() / 2, screenPosition.y() + zoomedTileSize.y() / 2, unit->data.getRange() * zoomedTileSize.x() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 		//if (ammoChecked() && unit->data.canAttack)
 		//	drawMunBar (*unit, screenPos);
 		//if (hitsChecked())
@@ -1680,7 +1646,6 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 		ndest.x += mx = nextWp.x() * zoomedTileSize.x() - wp.x() * zoomedTileSize.x();
 		ndest.y += my = nextWp.y() * zoomedTileSize.y() - wp.y() * zoomedTileSize.y();
 
-
 		int costs = cPathCalculator::calcNextCost (wp, nextWp, &vehicle, mapView.get());
 		if (sp < costs)
 		{
@@ -1700,22 +1665,30 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 	ndest.x += mx;
 	ndest.y += my;
 	drawPathArrow (dest, ndest, false);
-
 }
 
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawPathArrow (SDL_Rect dest, const SDL_Rect& lastDest, bool spezialColor) const
 {
 	int index;
-	if      (dest.x >  lastDest.x && dest.y <  lastDest.y) index = 0;
-	else if (dest.x == lastDest.x && dest.y <  lastDest.y) index = 1;
-	else if (dest.x <  lastDest.x && dest.y <  lastDest.y) index = 2;
-	else if (dest.x >  lastDest.x && dest.y == lastDest.y) index = 3;
-	else if (dest.x <  lastDest.x && dest.y == lastDest.y) index = 4;
-	else if (dest.x >  lastDest.x && dest.y >  lastDest.y) index = 5;
-	else if (dest.x == lastDest.x && dest.y >  lastDest.y) index = 6;
-	else if (dest.x <  lastDest.x && dest.y >  lastDest.y) index = 7;
-	else return;
+	if (dest.x > lastDest.x && dest.y < lastDest.y)
+		index = 0;
+	else if (dest.x == lastDest.x && dest.y < lastDest.y)
+		index = 1;
+	else if (dest.x < lastDest.x && dest.y < lastDest.y)
+		index = 2;
+	else if (dest.x > lastDest.x && dest.y == lastDest.y)
+		index = 3;
+	else if (dest.x < lastDest.x && dest.y == lastDest.y)
+		index = 4;
+	else if (dest.x > lastDest.x && dest.y > lastDest.y)
+		index = 5;
+	else if (dest.x == lastDest.x && dest.y > lastDest.y)
+		index = 6;
+	else if (dest.x < lastDest.x && dest.y > lastDest.y)
+		index = 7;
+	else
+		return;
 
 	if (spezialColor)
 	{
@@ -1782,8 +1755,7 @@ bool cGameMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse,
 		tileUnderMouseChanged (cPosition (-1, -1));
 	}
 
-	if (unitSelectionBox.isValidStart() && isAt (mouse.getPosition()) &&
-		mouse.isButtonPressed (eMouseButtonType::Left) && !mouse.isButtonPressed (eMouseButtonType::Right))
+	if (unitSelectionBox.isValidStart() && isAt (mouse.getPosition()) && mouse.isButtonPressed (eMouseButtonType::Left) && !mouse.isButtonPressed (eMouseButtonType::Right))
 	{
 		const auto zoomedTileSize = getZoomedTileSize();
 
@@ -1799,8 +1771,7 @@ bool cGameMapWidget::handleMousePressed (cApplication& application, cMouse& mous
 {
 	if (rightMouseButtonScrollerWidget->handleMousePressed (application, mouse, button)) return true;
 
-	if (button == eMouseButtonType::Left && !mouse.isButtonPressed (eMouseButtonType::Right) &&
-		!unitSelectionBox.isValidStart() && isAt (mouse.getPosition()))
+	if (button == eMouseButtonType::Left && !mouse.isButtonPressed (eMouseButtonType::Right) && !unitSelectionBox.isValidStart() && isAt (mouse.getPosition()))
 	{
 		const auto zoomedTileSize = getZoomedTileSize();
 
@@ -1816,8 +1787,7 @@ bool cGameMapWidget::handleMouseReleased (cApplication& application, cMouse& mou
 {
 	if (rightMouseButtonScrollerWidget->handleMouseReleased (application, mouse, button)) return true;
 
-	if (button == eMouseButtonType::Left && !mouse.isButtonPressed (eMouseButtonType::Right) &&
-		!unitSelectionBox.isTooSmall() && mapView && player)
+	if (button == eMouseButtonType::Left && !mouse.isButtonPressed (eMouseButtonType::Right) && !unitSelectionBox.isTooSmall() && mapView && player)
 	{
 		unitSelection.selectVehiclesAt (unitSelectionBox.getCorrectedMapBox(), *mapView, *player);
 		unitSelectionBox.invalidate();
@@ -1876,10 +1846,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 	{
 		if (KeysList.getMouseStyle() == eMouseStyle::OldSchool && !mouse.isButtonPressed (eMouseButtonType::Left))
 		{
-			if (selectedUnit && (overVehicle == selectedUnit ||
-								 overPlane == selectedUnit ||
-								 overBuilding == selectedUnit ||
-								 overBaseBuilding == selectedUnit))
+			if (selectedUnit && (overVehicle == selectedUnit || overPlane == selectedUnit || overBuilding == selectedUnit || overBaseBuilding == selectedUnit))
 			{
 				triggeredUnitHelp (*selectedUnit);
 			}
@@ -1888,8 +1855,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 				unitSelection.selectUnitAt (field, true);
 			}
 		}
-		else if ((!mouse.isButtonPressed (eMouseButtonType::Left) /*&& rightMouseBox.isTooSmall()*/) ||
-				 (KeysList.getMouseStyle() == eMouseStyle::OldSchool && mouse.isButtonPressed (eMouseButtonType::Left)))
+		else if ((!mouse.isButtonPressed (eMouseButtonType::Left) /*&& rightMouseBox.isTooSmall()*/) || (KeysList.getMouseStyle() == eMouseStyle::OldSchool && mouse.isButtonPressed (eMouseButtonType::Left)))
 		{
 			if (mouseMode->getType() == eMouseModeType::Help)
 			{
@@ -1901,15 +1867,15 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 				{
 					cUnit* next = nullptr;
 
-                    auto units = field.getUnits();
+					auto units = field.getUnits();
 
-                    auto it = ranges::find (units, selectedUnit);
-                    if (it != units.end())
-                    {
-                        it++;
-                        if (it == units.end()) it = units.begin();
-                        next = *it;
-                    }
+					auto it = ranges::find (units, selectedUnit);
+					if (it != units.end())
+					{
+						it++;
+						if (it == units.end()) it = units.begin();
+						next = *it;
+					}
 
 					if (next)
 					{
@@ -2003,7 +1969,7 @@ void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPositio
 	const auto oldTileDrawingArea = cBox<cPosition> (oldTileDrawingRange.first, oldTileDrawingRange.second - cPosition (1, 1));
 
 	// delete finished animations or animations that are no longer in the visible area.
-	EraseIf (animations, [&](const auto& animation){ return animation->isFinished() || !animation->isLocatedIn (tileDrawingArea); });
+	EraseIf (animations, [&] (const auto& animation) { return animation->isFinished() || !animation->isLocatedIn (tileDrawingArea); });
 
 	// add animations for units that just entered the visible area.
 	if (mapView)
@@ -2087,7 +2053,7 @@ void cGameMapWidget::updateUnitMenuPosition()
 	if (position.y() - (menuSize.y() - unitSize.y()) / 2 <= getPosition().y())
 	{
 		position.y() -= (menuSize.y() - unitSize.y()) / 2;
-		position.y() += - (position.y() - getPosition().y());
+		position.y() += -(position.y() - getPosition().y());
 	}
 	else if (position.y() - (menuSize.y() - unitSize.y()) / 2 + menuSize.y() >= getEndPosition().y())
 	{
@@ -2323,11 +2289,9 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 	if (building.isRubble()) return;
 	auto& uiData = UnitsUiData.getBuildingUI (building);
 
-	if (uiData.staticData.hasDamageEffect &&
-		building.data.getHitpoints() < building.data.getHitpointsMax() &&
-		(building.getOwner() == player.get() || (!player || mapView->canSeeUnit (building))))
+	if (uiData.staticData.hasDamageEffect && building.data.getHitpoints() < building.data.getHitpointsMax() && (building.getOwner() == player.get() || (!player || mapView->canSeeUnit (building))))
 	{
-		int intense = (int) (200 - 200 * ((float)building.data.getHitpoints() / building.data.getHitpointsMax()));
+		int intense = (int) (200 - 200 * ((float) building.data.getHitpoints() / building.data.getHitpointsMax()));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPoint.x(), building.getPosition().y() * 64 + building.DamageFXPoint.y()), intense, windDirection));
 
 		if (building.getIsBig() && intense > 50)
@@ -2341,10 +2305,9 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 //------------------------------------------------------------------------------
 void cGameMapWidget::renewDamageEffect (const cVehicle& vehicle)
 {
-	if (vehicle.data.getHitpoints() < vehicle.data.getHitpointsMax() &&
-		(vehicle.getOwner() == player.get() || (!player || mapView->canSeeUnit (vehicle))))
+	if (vehicle.data.getHitpoints() < vehicle.data.getHitpointsMax() && (vehicle.getOwner() == player.get() || (!player || mapView->canSeeUnit (vehicle))))
 	{
-		int intense = (int) (100 - 100 * ((float)vehicle.data.getHitpoints() / vehicle.data.getHitpointsMax()));
+		int intense = (int) (100 - 100 * ((float) vehicle.data.getHitpoints() / vehicle.data.getHitpointsMax()));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (vehicle.getPosition().x() * 64 + vehicle.DamageFXPoint.x() + vehicle.getMovementOffset().x(), vehicle.getPosition().y() * 64 + vehicle.DamageFXPoint.y() + vehicle.getMovementOffset().y()), intense, windDirection));
 	}
 }
@@ -2370,15 +2333,19 @@ void cGameMapWidget::changeWindDirection()
 		nextChange = 10 + random (20);
 		dir += change;
 		setWindDirection (dir);
-		if (dir >= 360) dir -= 360;
-		else if (dir < 0) dir += 360;
+		if (dir >= 360)
+			dir -= 360;
+		else if (dir < 0)
+			dir += 360;
 
 		if (nextDirChange == 0)
 		{
 			nextDirChange = random (25) + 10;
 			change = random (11) - 5;
 		}
-		else nextDirChange--;
+		else
+			nextDirChange--;
 	}
-	else nextChange--;
+	else
+		nextChange--;
 }

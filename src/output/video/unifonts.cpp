@@ -19,11 +19,11 @@
 
 #include "unifonts.h"
 
+#include "SDLutility/autosurface.h"
+#include "SDLutility/drawing.h"
 #include "defines.h"
 #include "resources/pcx.h"
 #include "settings.h"
-#include "SDLutility/autosurface.h"
-#include "SDLutility/drawing.h"
 #include "utility/color.h"
 #include "utility/files.h"
 #include "utility/log.h"
@@ -382,8 +382,10 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 	const unsigned short* iso8859_to_uni = getIsoPage (charset);
 
 	int highcount;
-	if (charset == eUnicodeFontCharset::Iso8559_ALL) highcount = 16;
-	else highcount = 6;
+	if (charset == eUnicodeFontCharset::Iso8559_ALL)
+		highcount = 16;
+	else
+		highcount = 6;
 
 	int cellW = surface->w / 16;
 	int cellH = surface->h / highcount;
@@ -391,10 +393,10 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 	int pX = 0;
 	int pY = 0;
 
-	for (int rows = 0; rows < highcount; rows ++)
+	for (int rows = 0; rows < highcount; rows++)
 	{
 		//go through the cols
-		for (int cols = 0; cols < 16; cols ++)
+		for (int cols = 0; cols < 16; cols++)
 		{
 			// write each cell position and size into array
 			SDL_Rect Rect;
@@ -441,10 +443,13 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 			int unicodeplace = 0;
 			if (iso8859_to_uni == nullptr)
 			{
-				if (charset == eUnicodeFontCharset::Iso8559_ALL) unicodeplace = currentChar;
-				else if (charset == eUnicodeFontCharset::Iso8559_1) unicodeplace = currentChar + 128 + 2 * 16;
+				if (charset == eUnicodeFontCharset::Iso8559_ALL)
+					unicodeplace = currentChar;
+				else if (charset == eUnicodeFontCharset::Iso8559_1)
+					unicodeplace = currentChar + 128 + 2 * 16;
 			}
-			else unicodeplace = iso8859_to_uni[currentChar];
+			else
+				unicodeplace = iso8859_to_uni[currentChar];
 			chars[unicodeplace] = AutoSurface (SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0));
 
 			SDL_FillRect (chars[unicodeplace].get(), nullptr, 0xFF00FF);
@@ -504,7 +509,7 @@ cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType fonttype)
 }
 
 AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
-											  eUnicodeFontType fonttype)
+                                              eUnicodeFontType fonttype)
 {
 	// build the filename from the information
 	string filename = cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_";
@@ -537,8 +542,10 @@ AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 	filename += ".pcx";
 
 	// load the bitmap
-	if (FileExists (filename.c_str())) return LoadPCX (filename);
-	else return nullptr;
+	if (FileExists (filename.c_str()))
+		return LoadPCX (filename);
+	else
+		return nullptr;
 }
 
 const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset) const
@@ -568,14 +575,12 @@ const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset) con
 	return nullptr;
 }
 
-void cUnicodeFont::showText (SDL_Rect rDest, const string& sText,
-							 eUnicodeFontType fonttype)
+void cUnicodeFont::showText (SDL_Rect rDest, const string& sText, eUnicodeFontType fonttype)
 {
 	showText (rDest.x, rDest.y, sText, fonttype);
 }
 
-void cUnicodeFont::showText (int x, int y, const string& text,
-							 eUnicodeFontType fonttype)
+void cUnicodeFont::showText (int x, int y, const string& text, eUnicodeFontType fonttype)
 {
 	string sText (text);
 	int offX = x;
@@ -591,7 +596,8 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 		case eUnicodeFontType::LatinSmallRed:
 		case eUnicodeFontType::LatinSmallWhite:
 		case eUnicodeFontType::LatinSmallYellow:
-			for (size_t i = 0; i < sText.size(); i++) sText[i] = toupper (sText[i]);
+			for (size_t i = 0; i < sText.size(); i++)
+				sText[i] = toupper (sText[i]);
 			iSpace = 1;
 			break;
 		case eUnicodeFontType::LatinNormal:
@@ -640,14 +646,12 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 	}
 }
 
-void cUnicodeFont::showText (const cPosition& position, const string& text,
-							 eUnicodeFontType fonttype)
+void cUnicodeFont::showText (const cPosition& position, const string& text, eUnicodeFontType fonttype)
 {
 	showText (position.x(), position.y(), text, fonttype);
 }
 
-int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
-									  eUnicodeFontType fonttype)
+int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text, eUnicodeFontType fonttype)
 {
 	string sText (text);
 	string drawString = "";
@@ -661,13 +665,14 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 		{
 			lastPos = pos;
 			pos = sText.find (" ", pos + 1);
-		}
-		while (getTextWide (sText.substr (0, pos), fonttype) < rDest.w && pos != string::npos);
+		} while (getTextWide (sText.substr (0, pos), fonttype) < rDest.w && pos != string::npos);
 
 		// get the words.
 		// If there was no " " in the text we get the whole text string
-		if (lastPos != 0) drawString = sText.substr (0, lastPos);
-		else drawString = sText;
+		if (lastPos != 0)
+			drawString = sText.substr (0, lastPos);
+		else
+			drawString = sText;
 
 		// if there is only one word in the string it is possible
 		// that this word is to long.
@@ -677,7 +682,8 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 			string stringPart = drawString;
 
 			// delete as many chars as it is needed to fit into the line
-			while (getTextWide (stringPart, fonttype) + getTextWide ("-", fonttype) > rDest.w) stringPart.erase (stringPart.length() - 1, 1);
+			while (getTextWide (stringPart, fonttype) + getTextWide ("-", fonttype) > rDest.w)
+				stringPart.erase (stringPart.length() - 1, 1);
 			stringPart += "-";
 
 			// show the part of the word
@@ -704,8 +710,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 	return rDest.y;
 }
 
-int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text,
-								   eUnicodeFontType fonttype)
+int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text, eUnicodeFontType fonttype)
 {
 	string sText (text);
 	size_t k;
@@ -720,8 +725,7 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text,
 		{
 			sText.replace (k, 2, "\n");
 		}
-	}
-	while (k != string::npos);
+	} while (k != string::npos);
 
 	do
 	{
@@ -734,8 +738,7 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text,
 		{
 			sText.erase (k, 1);
 		}
-	}
-	while (k != string::npos);
+	} while (k != string::npos);
 
 	// support of linebreaks: snip text at linebreaks,
 	// do the auto linebreak for first part and proceed with second part
@@ -758,28 +761,24 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text,
 			rDest.y = drawWithBreakLines (rDest, sTmp, fonttype);
 			// += getFontHeight (eBitmapFontType); //add newline for each breakline
 		}
-	}
-	while (k != string::npos);
+	} while (k != string::npos);
 
 	// draw rest of text
 	return drawWithBreakLines (rDest, sText, fonttype);
 }
 
-void cUnicodeFont::showTextCentered (SDL_Rect rDest, const string& sText,
-									 eUnicodeFontType fonttype)
+void cUnicodeFont::showTextCentered (SDL_Rect rDest, const string& sText, eUnicodeFontType fonttype)
 {
 	showTextCentered (rDest.x, rDest.y, sText, fonttype);
 }
 
-void cUnicodeFont::showTextCentered (int x, int y, const string& sText,
-									 eUnicodeFontType fonttype)
+void cUnicodeFont::showTextCentered (int x, int y, const string& sText, eUnicodeFontType fonttype)
 {
 	SDL_Rect rTmp = getTextSize (sText, fonttype);
 	showText (x - rTmp.w / 2, y, sText, fonttype);
 }
 
-void cUnicodeFont::showTextCentered (const cPosition& position, const string& sText,
-									 eUnicodeFontType fonttype)
+void cUnicodeFont::showTextCentered (const cPosition& position, const string& sText, eUnicodeFontType fonttype)
 {
 	showTextCentered (position.x(), position.y(), sText, fonttype);
 }
@@ -805,7 +804,8 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 		case eUnicodeFontType::LatinSmallRed:
 		case eUnicodeFontType::LatinSmallWhite:
 		case eUnicodeFontType::LatinSmallYellow:
-			for (size_t i = 0; i < sText.size(); i++) sText[i] = toupper (sText[i]);
+			for (size_t i = 0; i < sText.size(); i++)
+				sText[i] = toupper (sText[i]);
 			iSpace = 1;
 			break;
 		case eUnicodeFontType::LatinNormal:
@@ -882,7 +882,6 @@ int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype) const
 	}
 }
 
-
 string cUnicodeFont::shortenStringToSize (const string& str, int size, eUnicodeFontType fonttype) const
 {
 	string res (str);
@@ -926,7 +925,6 @@ string cUnicodeFont::shortenStringToSize (const string& str, int size, eUnicodeF
 	return uni;
 }
 
-
 int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) const
 {
 	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
@@ -961,11 +959,10 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 	return 0;
 }
 
-
 //------------------------------------------------------------------------------
 std::vector<std::string> cUnicodeFont::breakText (const std::string& text, int maximalWidth, eUnicodeFontType fontType) const
 {
-	const auto isSpace = [](char c) {
+	const auto isSpace = [] (char c) {
 		return c == ' ' || c == '\f' || c == '\r' || c == '\t' || c == '\v';
 	};
 	std::vector<std::string> lines;
@@ -981,7 +978,8 @@ std::vector<std::string> cUnicodeFont::breakText (const std::string& text, int m
 		{
 			auto candidate = std::find_if (next + 1, nextLine, isSpace);
 			auto size = getTextWide ({it, candidate}, fontType);
-			if (size > maximalWidth) {
+			if (size > maximalWidth)
+			{
 				break;
 			}
 			next = candidate;

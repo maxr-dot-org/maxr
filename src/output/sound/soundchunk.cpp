@@ -18,11 +18,11 @@
  ***************************************************************************/
 
 #include "output/sound/soundchunk.h"
+
 #include "utility/log.h"
 
-
 //------------------------------------------------------------------------------
-bool cSoundChunk::operator==(const cSoundChunk& other) const
+bool cSoundChunk::operator== (const cSoundChunk& other) const
 {
 	return sdlSound == other.sdlSound;
 }

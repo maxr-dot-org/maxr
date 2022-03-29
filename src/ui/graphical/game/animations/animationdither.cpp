@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/animations/animationdither.h"
-#include "ui/graphical/game/animations/animationtimer.h"
+
 #include "game/data/units/vehicle.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 #include "utility/box.h"
 #include "utility/random.h"
 
@@ -35,8 +36,7 @@ cAnimationDither::cAnimationDither (cAnimationTimer& animationTimer_, const cVeh
 	}
 
 	// register the animation for flight height changes
-	signalConnectionManager.connect (vehicle->flightHeightChanged, [this]()
-	{
+	signalConnectionManager.connect (vehicle->flightHeightChanged, [this]() {
 		// the plane has landed: stop the animation
 		if (vehicle->getFlightHeight() == 0 && isRunning())
 		{
@@ -52,8 +52,7 @@ cAnimationDither::cAnimationDither (cAnimationTimer& animationTimer_, const cVeh
 		}
 	});
 	// make sure we stop the animation when the unit gets destroyed
-	signalConnectionManager.connect (vehicle->destroyed, [this]()
-	{
+	signalConnectionManager.connect (vehicle->destroyed, [this]() {
 		signalConnectionManager.disconnectAll();
 		vehicle = nullptr;
 		finished = true;
@@ -97,6 +96,6 @@ void cAnimationDither::run()
 	}
 	else
 	{
-		vehicle->dither = { random (2) - 1, random (2) - 1};
+		vehicle->dither = {random (2) - 1, random (2) - 1};
 	}
 }

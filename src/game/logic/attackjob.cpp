@@ -148,7 +148,7 @@ uint32_t cAttackJob::getChecksum (uint32_t crc) const
 int cAttackJob::calcFireDir()
 {
 	auto dx = (float) (targetPosition.x() - aggressor->getPosition().x());
-	auto dy = (float) - (targetPosition.y() - aggressor->getPosition().y());
+	auto dy = (float) -(targetPosition.y() - aggressor->getPosition().y());
 	auto r = std::sqrt (dx * dx + dy * dy);
 
 	int fireDir = aggressor->dir;
@@ -166,19 +166,26 @@ int cAttackJob::calcFireDir()
 		else
 			r = 180 - r;
 
-		if (r >= 337.5f || r <= 22.5f) fireDir = 0;
-		else if (r >= 22.5f && r <= 67.5f) fireDir = 1;
-		else if (r >= 67.5f && r <= 112.5f) fireDir = 2;
-		else if (r >= 112.5f && r <= 157.5f) fireDir = 3;
-		else if (r >= 157.5f && r <= 202.5f) fireDir = 4;
-		else if (r >= 202.5f && r <= 247.5f) fireDir = 5;
-		else if (r >= 247.5f && r <= 292.5f) fireDir = 6;
-		else if (r >= 292.5f && r <= 337.5f) fireDir = 7;
+		if (r >= 337.5f || r <= 22.5f)
+			fireDir = 0;
+		else if (r >= 22.5f && r <= 67.5f)
+			fireDir = 1;
+		else if (r >= 67.5f && r <= 112.5f)
+			fireDir = 2;
+		else if (r >= 112.5f && r <= 157.5f)
+			fireDir = 3;
+		else if (r >= 157.5f && r <= 202.5f)
+			fireDir = 4;
+		else if (r >= 202.5f && r <= 247.5f)
+			fireDir = 5;
+		else if (r >= 247.5f && r <= 292.5f)
+			fireDir = 6;
+		else if (r >= 292.5f && r <= 337.5f)
+			fireDir = 7;
 	}
 
 	return fireDir;
 }
-
 
 void cAttackJob::lockTarget (const cMap& map)
 {
@@ -223,7 +230,6 @@ void cAttackJob::releaseTargets (const cModel& model)
 
 void cAttackJob::fire (cModel& model)
 {
-
 	//update data
 	aggressor->data.setShots (aggressor->data.getShots() - 1);
 	aggressor->data.setAmmo (aggressor->data.getAmmo() - 1);
@@ -242,7 +248,7 @@ void cAttackJob::fire (cModel& model)
 	}
 
 	//make explosive mines explode
-	if (dynamic_cast<cBuilding*>(aggressor) && aggressor->getStaticUnitData().buildingData.explodesOnContact && aggressor->getPosition() == targetPosition)
+	if (dynamic_cast<cBuilding*> (aggressor) && aggressor->getStaticUnitData().buildingData.explodesOnContact && aggressor->getPosition() == targetPosition)
 	{
 		const cMap& map = *model.getMap();
 		if (map.isWaterOrCoast (aggressor->getPosition()))
@@ -390,7 +396,6 @@ void cAttackJob::impactCluster (cModel& model)
 	impactSingle (targetPosition + cPosition (+2, 0), clusterDamage, model, &targets);
 	impactSingle (targetPosition + cPosition (0, -2), clusterDamage, model, &targets);
 	impactSingle (targetPosition + cPosition (0, +2), clusterDamage, model, &targets);
-
 }
 
 void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cModel& model, std::vector<cUnit*>* avoidTargets)
@@ -472,7 +477,7 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 		}
 	}
 
-	if (dynamic_cast<cBuilding*>(aggressor) && aggressor->getStaticUnitData().buildingData.explodesOnContact)
+	if (dynamic_cast<cBuilding*> (aggressor) && aggressor->getStaticUnitData().buildingData.explodesOnContact)
 	{
 		model.deleteUnit (aggressor);
 		aggressor = nullptr;

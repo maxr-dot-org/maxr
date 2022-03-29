@@ -19,9 +19,9 @@
 
 #include "sdlnetcomponent.h"
 
-#include <SDL_net.h>
-
 #include "utility/log.h"
+
+#include <SDL_net.h>
 
 //------------------------------------------------------------------------------
 SDLNetComponent::SDLNetComponent()

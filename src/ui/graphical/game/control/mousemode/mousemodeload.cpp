@@ -18,14 +18,15 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/mousemode/mousemodeload.h"
+
+#include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionload.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/mapview.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
-#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
 cMouseModeLoad::cMouseModeLoad (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
@@ -60,7 +61,8 @@ std::unique_ptr<cMouseAction> cMouseModeLoad::getMouseAction (const cPosition& m
 	{
 		return std::make_unique<cMouseActionLoad>();
 	}
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -71,8 +73,7 @@ bool cMouseModeLoad::canExecuteAction (const cPosition& mapPosition) const
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	return (selectedVehicle && selectedVehicle->canLoad (mapPosition, *map, false)) ||
-		   (selectedBuilding && selectedBuilding->canLoad (mapPosition, *map, false));
+	return (selectedVehicle && selectedVehicle->canLoad (mapPosition, *map, false)) || (selectedBuilding && selectedBuilding->canLoad (mapPosition, *map, false));
 }
 
 //------------------------------------------------------------------------------

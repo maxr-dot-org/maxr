@@ -17,18 +17,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
- #include "maxrversion.h"
+#include "maxrversion.h"
 
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
 void logMAXRVersion()
 {
-	std::string sVersion = PACKAGE_NAME; sVersion += " ";
-	sVersion += PACKAGE_VERSION; sVersion += " ";
-	sVersion += PACKAGE_REV; sVersion += " ";
+	std::string sVersion = PACKAGE_NAME;
+	sVersion += " ";
+	sVersion += PACKAGE_VERSION;
+	sVersion += " ";
+	sVersion += PACKAGE_REV;
+	sVersion += " ";
 	Log.write (sVersion, cLog::eLogType::Info);
-	std::string sBuild = "Build: "; sBuild += MAX_BUILD_DATE;
+	std::string sBuild = "Build: ";
+	sBuild += MAX_BUILD_DATE;
 	Log.write (sBuild, cLog::eLogType::Info);
 	Log.mark();
 	Log.write (sVersion, cLog::eLogType::NetDebug);

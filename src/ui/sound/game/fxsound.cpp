@@ -50,8 +50,10 @@ namespace
 	class cFxSoundVisitor : public IFxVisitor
 	{
 		cSoundManager& soundManager;
+
 	public:
-		explicit cFxSoundVisitor (cSoundManager& soundManager) : soundManager (soundManager) {}
+		explicit cFxSoundVisitor (cSoundManager& soundManager) :
+			soundManager (soundManager) {}
 
 		//----------------------------------------------------------------------
 		void visit (const cFxMuzzleBig& fx) override { playSoundMuzzle (soundManager, fx); }
@@ -110,11 +112,17 @@ namespace
 				soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, UnitsUiData.getVehicleUI (id)->Attack, mapPosition));
 		}
 		//----------------------------------------------------------------------
-		void visit (const cFxCorpse&) override { /*Empty*/ }
+		void visit (const cFxCorpse&) override
+		{ /*Empty*/
+		}
 		//----------------------------------------------------------------------
-		void visit (const cFxSmoke&) override { /*Empty*/ }
+		void visit (const cFxSmoke&) override
+		{ /*Empty*/
+		}
 		//----------------------------------------------------------------------
-		void visit (const cFxDarkSmoke&) override { /*Empty*/ }
+		void visit (const cFxDarkSmoke&) override
+		{ /*Empty*/
+		}
 		//----------------------------------------------------------------------
 		void visit (const cFxHit& fx) override
 		{
@@ -132,9 +140,11 @@ namespace
 			}
 		}
 		//----------------------------------------------------------------------
-		void visit (const cFxTracks&) override { /*Empty*/ }
+		void visit (const cFxTracks&) override
+		{ /*Empty*/
+		}
 	};
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 void playEffectSound (cSoundManager& soundManager, const cFx& fx)

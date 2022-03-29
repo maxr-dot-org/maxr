@@ -17,22 +17,20 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-
 /* This file is used to enable the crash reporting form the CrashRpt library:
 *  http://crashrpt.sourceforge.net/
 */
 
-
 #ifdef USE_CRASH_RPT
 
-#include <SDL.h>
+# include "debug.h"
 
-#include "utility/log.h"
-#include "maxrversion.h"
-#include "settings.h"
-#include "output/video/video.h"
+# include "maxrversion.h"
+# include "output/video/video.h"
+# include "settings.h"
+# include "utility/log.h"
 
-#include "debug.h"
+# include <SDL.h>
 
 int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO* pInfo)
 {
@@ -44,16 +42,13 @@ int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO* pInfo)
 		{
 			std::string path = home + "\\Crashshot.bmp";
 			SDL_SaveBMP (cVideo::buffer, path.c_str());
-			crAddFile2(path.c_str(), nullptr, "Screenshot at the moment of the crash", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+			crAddFile2 (path.c_str(), nullptr, "Screenshot at the moment of the crash", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 		}
-
 	}
-
 
 	// Return CR_CB_DODEFAULT to generate error report
 	return CR_CB_DODEFAULT;
 }
-
 
 void initCrashreporting()
 {

@@ -37,7 +37,6 @@ void cActionChangeResearch::execute (cModel& model) const
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
-
 	auto player = model.getPlayer (playerNr);
 	if (player == nullptr) return;
 
@@ -69,7 +68,7 @@ void cActionChangeResearch::execute (cModel& model) const
 			if (building->getStaticData().canResearch && building->isUnitWorking())
 			{
 				researchCentersToChangeArea.push_back (building.get());
-				newAreasForResearchCenters.push_back ((cResearch::eResearchArea)newArea);
+				newAreasForResearchCenters.push_back ((cResearch::eResearchArea) newArea);
 				--centersToAssign;
 			}
 		}

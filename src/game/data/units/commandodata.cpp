@@ -76,7 +76,6 @@
 	commando.statusChanged();
 }
 
-
 //------------------------------------------------------------------------------
 /*static*/ int cCommandoData::getLevel (std::uint32_t numberOfSuccess)
 {
@@ -87,7 +86,7 @@
 	// to get to the next ranking
 	for (std::uint32_t i = 0; i != numberOfSuccess; ++i)
 	{
-		rank = rank + 1.f / (((int)rank + 5) / 5);
+		rank = rank + 1.f / (((int) rank + 5) / 5);
 	}
 	return rank;
 }
@@ -127,7 +126,7 @@ int cCommandoData::computeDisabledTurnCount (const cUnit& destUnit) const
 
 	if (destUnit.isAVehicle())
 	{
-		const int vehiclesTable[13] = { 0, 0, 0, 5, 8, 3, 3, 0, 0, 0, 1, 0, -4 };
+		const int vehiclesTable[13] = {0, 0, 0, 5, 8, 3, 3, 0, 0, 0, 1, 0, -4};
 		destTurn = destUnit.data.getBuildCost() / 3;
 		srcLevel = getLevel (successCount);
 		if (destTurn > 0 && destTurn < 13)

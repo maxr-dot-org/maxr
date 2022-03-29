@@ -19,10 +19,10 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseactionmove.h"
 
-#include "ui/graphical/game/widgets/gamemapwidget.h"
-#include "ui/graphical/game/unitselection.h"
 #include "game/data/map/mapview.h"
 #include "game/data/units/vehicle.h"
+#include "ui/graphical/game/unitselection.h"
+#include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
 bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
@@ -37,8 +37,10 @@ bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cM
 		}
 		else
 		{
-			if (unitSelection.getSelectedVehiclesCount() > 1) gameMapWidget.triggeredMoveGroup (unitSelection.getSelectedVehicles(), mapPosition);
-			else gameMapWidget.triggeredMoveSingle (*unitSelection.getSelectedVehicle(), mapPosition);
+			if (unitSelection.getSelectedVehiclesCount() > 1)
+				gameMapWidget.triggeredMoveGroup (unitSelection.getSelectedVehicles(), mapPosition);
+			else
+				gameMapWidget.triggeredMoveSingle (*unitSelection.getSelectedVehicle(), mapPosition);
 		}
 		return true;
 	}

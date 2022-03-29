@@ -89,9 +89,7 @@ cBuilding* cMapField::getTopBuilding() const
 	if (buildings.empty()) return nullptr;
 	cBuilding* building = buildings[0];
 
-	if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::Ground ||
-		 building->getStaticUnitData().surfacePosition == eSurfacePosition::Above) &&
-		!building->isRubble())
+	if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::Ground || building->getStaticUnitData().surfacePosition == eSurfacePosition::Above) && !building->isRubble())
 		return building;
 	return nullptr;
 }
@@ -100,9 +98,7 @@ cBuilding* cMapField::getBaseBuilding() const
 {
 	for (cBuilding* building : buildings)
 	{
-		if (building->getStaticUnitData().surfacePosition != eSurfacePosition::Ground &&
-			building->getStaticUnitData().surfacePosition != eSurfacePosition::Above &&
-			!building->isRubble())
+		if (building->getStaticUnitData().surfacePosition != eSurfacePosition::Ground && building->getStaticUnitData().surfacePosition != eSurfacePosition::Above && !building->isRubble())
 		{
 			return building;
 		}
@@ -130,9 +126,7 @@ bool cMapField::hasBridgeOrPlattform() const
 {
 	for (cBuilding* building : buildings)
 	{
-		if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea ||
-			building->getStaticUnitData().surfacePosition == eSurfacePosition::Base) &&
-			!building->isRubble())
+		if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea || building->getStaticUnitData().surfacePosition == eSurfacePosition::Base) && !building->isRubble())
 		{
 			return true;
 		}
@@ -195,7 +189,8 @@ void cMapField::removeAll()
 
 // cStaticMap //////////////////////////////////////////////////
 
-cStaticMap::cStaticMap() : crc (0), size (0), terrains(), graphic (this)
+cStaticMap::cStaticMap() :
+	crc (0), size (0), terrains(), graphic (this)
 {
 }
 
@@ -238,9 +233,7 @@ bool cStaticMap::possiblePlace (const cStaticUnitData& data, const cPosition& po
 	if (!isValidPosition (position)) return false;
 	if (data.ID.isABuilding() && data.buildingData.isBig)
 	{
-		if (!isValidPosition (position + cPosition (0, 1)) ||
-			!isValidPosition (position + cPosition (1, 0)) ||
-			!isValidPosition (position + cPosition (1, 1)) )
+		if (!isValidPosition (position + cPosition (0, 1)) || !isValidPosition (position + cPosition (1, 0)) || !isValidPosition (position + cPosition (1, 1)))
 		{
 			return false;
 		}
@@ -251,9 +244,7 @@ bool cStaticMap::possiblePlace (const cStaticUnitData& data, const cPosition& po
 	if (isBlocked (position)) return false;
 	if (data.ID.isABuilding() && data.buildingData.isBig)
 	{
-		if (isBlocked (position + cPosition (0, 1)) ||
-			isBlocked (position + cPosition (1, 0)) ||
-			isBlocked (position + cPosition (1, 1)) )
+		if (isBlocked (position + cPosition (0, 1)) || isBlocked (position + cPosition (1, 0)) || isBlocked (position + cPosition (1, 1)))
 		{
 			return false;
 		}
@@ -264,9 +255,7 @@ bool cStaticMap::possiblePlace (const cStaticUnitData& data, const cPosition& po
 		if (isWater (position)) return false;
 		if (data.ID.isABuilding() && data.buildingData.isBig)
 		{
-			if (isWater (position + cPosition (0, 1)) ||
-				isWater (position + cPosition (1, 0)) ||
-				isWater (position + cPosition (1, 1)) )
+			if (isWater (position + cPosition (0, 1)) || isWater (position + cPosition (1, 0)) || isWater (position + cPosition (1, 1)))
 			{
 				return false;
 			}
@@ -278,9 +267,7 @@ bool cStaticMap::possiblePlace (const cStaticUnitData& data, const cPosition& po
 		if (isCoast (position)) return false;
 		if (data.ID.isABuilding() && data.buildingData.isBig)
 		{
-			if (isCoast (position + cPosition (0, 1)) ||
-				isCoast (position + cPosition (1, 0)) ||
-				isCoast (position + cPosition (1, 1)) )
+			if (isCoast (position + cPosition (0, 1)) || isCoast (position + cPosition (1, 0)) || isCoast (position + cPosition (1, 1)))
 			{
 				return false;
 			}
@@ -292,9 +279,7 @@ bool cStaticMap::possiblePlace (const cStaticUnitData& data, const cPosition& po
 		if (isGround (position)) return false;
 		if (data.ID.isABuilding() && data.buildingData.isBig)
 		{
-			if (isGround (position + cPosition (0, 1)) ||
-				isGround (position + cPosition (1, 0)) ||
-				isGround (position + cPosition (1, 1)) )
+			if (isGround (position + cPosition (0, 1)) || isGround (position + cPosition (1, 0)) || isGround (position + cPosition (1, 1)))
 			{
 				return false;
 			}
@@ -515,7 +500,7 @@ void cMap::setResourcesFromString (const std::string& str)
 	for (size_t i = 0; i != Resources.size(); ++i)
 	{
 		sResources res;
-		res.typ   = static_cast<eResourceType> (getByteValue (str, 4 * i));
+		res.typ = static_cast<eResourceType> (getByteValue (str, 4 * i));
 		res.value = getByteValue (str, 4 * i + 2);
 
 		Resources.set (i, res);
@@ -526,7 +511,7 @@ void cMap::setResourcesFromString (const std::string& str)
 {
 	const cStaticUnitData& data = building.getStaticUnitData();
 
-	if (building.isRubble()) return 4;  // rubble
+	if (building.isRubble()) return 4; // rubble
 
 	if (data.surfacePosition == eSurfacePosition::BeneathSea) return 9; // seamine
 	if (data.surfacePosition == eSurfacePosition::AboveSea) return 7; // bridge
@@ -558,29 +543,34 @@ void cMap::addBuilding (cBuilding& building, const cPosition& position)
 	{
 		auto& field = getField (position);
 		i = 0;
-		while (i < field.getBuildings().size() && cMap::getMapLevel (*field.getBuildings()[i]) < mapLevel) i++;
+		while (i < field.getBuildings().size() && cMap::getMapLevel (*field.getBuildings()[i]) < mapLevel)
+			i++;
 		field.addBuilding (building, i);
 
 		auto& fieldEast = getField (position + cPosition (1, 0));
 		i = 0;
-		while (i < fieldEast.getBuildings().size() && cMap::getMapLevel (*fieldEast.getBuildings()[i]) < mapLevel) i++;
+		while (i < fieldEast.getBuildings().size() && cMap::getMapLevel (*fieldEast.getBuildings()[i]) < mapLevel)
+			i++;
 		fieldEast.addBuilding (building, i);
 
 		auto& fieldSouth = getField (position + cPosition (0, 1));
 		i = 0;
-		while (i < fieldSouth.getBuildings().size() && cMap::getMapLevel (*fieldSouth.getBuildings()[i]) < mapLevel) i++;
+		while (i < fieldSouth.getBuildings().size() && cMap::getMapLevel (*fieldSouth.getBuildings()[i]) < mapLevel)
+			i++;
 		fieldSouth.addBuilding (building, i);
 
 		auto& fieldSouthEast = getField (position + cPosition (1, 1));
 		i = 0;
-		while (i < fieldSouthEast.getBuildings().size() && cMap::getMapLevel (*fieldSouthEast.getBuildings()[i]) < mapLevel) i++;
+		while (i < fieldSouthEast.getBuildings().size() && cMap::getMapLevel (*fieldSouthEast.getBuildings()[i]) < mapLevel)
+			i++;
 		fieldSouthEast.addBuilding (building, i);
 	}
 	else
 	{
 		auto& field = getField (position);
 
-		while (i < field.getBuildings().size() && cMap::getMapLevel (*field.getBuildings()[i]) < mapLevel) i++;
+		while (i < field.getBuildings().size() && cMap::getMapLevel (*field.getBuildings()[i]) < mapLevel)
+			i++;
 		field.addBuilding (building, i);
 	}
 	addedUnit (building);
@@ -752,23 +742,16 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 	{
 		if (isBlocked (position)) return false;
 
-		if ((isWater (position) && vehicleData.factorSea == 0) ||
-			(isCoast (position) && vehicleData.factorCoast == 0))
+		if ((isWater (position) && vehicleData.factorSea == 0) || (isCoast (position) && vehicleData.factorCoast == 0))
 		{
 			if (player && !player->canSeeAt (position)) return false;
 
 			//vehicle can drive on water, if there is a bridge, platform or road
 			if (b_it == b_end) return false;
-			if ((*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea &&
-				(*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::Base &&
-				(*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveBase) return false;
+			if ((*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::Base && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveBase) return false;
 		}
 		//check for enemy mines
-		if (player &&
-			b_it != b_end &&
-			(*b_it)->getOwner() != player &&
-			(*b_it)->getStaticData().explodesOnContact &&
-			(*b_it)->isDetectedByPlayer (player))
+		if (player && b_it != b_end && (*b_it)->getOwner() != player && (*b_it)->getStaticData().explodesOnContact && (*b_it)->isDetectedByPlayer (player))
 		{
 			return false;
 		}
@@ -783,26 +766,17 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		{
 			// only base buildings and rubble is allowed on the same field with a vehicle
 			// (connectors have been skiped, so doesn't matter here)
-			if ((*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea &&
-				(*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::Base &&
-				(*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveBase &&
-				(*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::BeneathSea &&
-				!(*b_it)->isRubble()) return false;
+			if ((*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::Base && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveBase && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::BeneathSea && !(*b_it)->isRubble()) return false;
 		}
 	}
 	else if (vehicleData.factorSea > 0)
 	{
 		if (isBlocked (position)) return false;
 
-		if (!isWater (position) &&
-			(!isCoast (position) || vehicleData.factorCoast == 0)) return false;
+		if (!isWater (position) && (!isCoast (position) || vehicleData.factorCoast == 0)) return false;
 
 		//check for enemy mines
-		if (player &&
-			b_it != b_end &&
-			(*b_it)->getOwner() != player &&
-			(*b_it)->getStaticData().explodesOnContact &&
-			(*b_it)->isDetectedByPlayer (player))
+		if (player && b_it != b_end && (*b_it)->getOwner() != player && (*b_it)->getStaticData().explodesOnContact && (*b_it)->isDetectedByPlayer (player))
 		{
 			return false;
 		}
@@ -815,9 +789,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		}
 
 		//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
-		if (b_it != b_end &&
-			(*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea &&
-			(*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::BeneathSea)
+		if (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::BeneathSea)
 		{
 			// if the building is a landmine, we have to check whether it's on a bridge or not
 			if ((*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase)
@@ -825,7 +797,8 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 				++b_it;
 				if (b_it == b_end || (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea) return false;
 			}
-			else return false;
+			else
+				return false;
 		}
 	}
 	return true;
@@ -856,19 +829,17 @@ bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPo
 
 	for (const cBuilding* building : buildings)
 	{
-		if (buildingData.surfacePosition == building->getStaticUnitData().surfacePosition &&
-			building->getStaticData().canBeOverbuild == eOverbuildType::No) return false;
+		if (buildingData.surfacePosition == building->getStaticUnitData().surfacePosition && building->getStaticData().canBeOverbuild == eOverbuildType::No) return false;
 		switch (building->getStaticUnitData().surfacePosition)
 		{
 			case eSurfacePosition::Ground:
 			case eSurfacePosition::AboveSea: // bridge
-				if (buildingData.surfacePosition != eSurfacePosition::Above &&
-					buildingData.surfacePosition != eSurfacePosition::Base && // mine can be placed on bridge
-					buildingData.surfacePosition != eSurfacePosition::BeneathSea && // seamine can be placed under bridge
-					building->getStaticData().canBeOverbuild == eOverbuildType::No) return false;
+				if (buildingData.surfacePosition != eSurfacePosition::Above && buildingData.surfacePosition != eSurfacePosition::Base && // mine can be placed on bridge
+				    buildingData.surfacePosition != eSurfacePosition::BeneathSea && // seamine can be placed under bridge
+				    building->getStaticData().canBeOverbuild == eOverbuildType::No) return false;
 				break;
 			case eSurfacePosition::BeneathSea: // seamine
-			case eSurfacePosition::AboveBase:  // landmine
+			case eSurfacePosition::AboveBase: // landmine
 				// mine must be removed first
 				if (buildingData.surfacePosition != eSurfacePosition::Above) return false;
 				break;
@@ -880,14 +851,10 @@ bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPo
 				break;
 		}
 	}
-	if ((water && buildingData.factorSea == 0) ||
-		(coast && buildingData.factorCoast == 0) ||
-		(ground && buildingData.factorGround == 0)) return false;
+	if ((water && buildingData.factorSea == 0) || (coast && buildingData.factorCoast == 0) || (ground && buildingData.factorGround == 0)) return false;
 
 	//can not build on rubble
-	if (field.getRubble() &&
-		buildingData.surfacePosition != eSurfacePosition::Above &&
-		buildingData.surfacePosition != eSurfacePosition::AboveBase) return false;
+	if (field.getRubble() && buildingData.surfacePosition != eSurfacePosition::Above && buildingData.surfacePosition != eSurfacePosition::AboveBase) return false;
 
 	if (field.getVehicle())
 	{

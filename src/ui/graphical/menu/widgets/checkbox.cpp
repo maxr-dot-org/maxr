@@ -19,12 +19,12 @@
 
 #include "ui/graphical/menu/widgets/checkbox.h"
 
+#include "SDLutility/drawing.h"
+#include "SDLutility/tosdl.h"
 #include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 #include "resources/uidata.h"
-#include "SDLutility/drawing.h"
-#include "SDLutility/tosdl.h"
 #include "utility/color.h"
 
 #include <cassert>
@@ -112,8 +112,10 @@ void cCheckBox::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 			break;
 		case eCheckBoxType::Angular:
 			SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
-			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + 5, text, fontType);
-			else font->showTextCentered (position.x + position.w / 2, position.y + 4, text, fontType);
+			if (checked)
+				font->showTextCentered (position.x + position.w / 2, position.y + 5, text, fontType);
+			else
+				font->showTextCentered (position.x + position.w / 2, position.y + 4, text, fontType);
 			break;
 		case eCheckBoxType::HudIndex_00:
 		case eCheckBoxType::HudIndex_01:
@@ -129,8 +131,10 @@ void cCheckBox::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 		case eCheckBoxType::HudIndex_22:
 			if (textDesty != 6 && textDesty != 7) textDesty = 5;
 			SDL_BlitSurface (surface.get(), nullptr, &destination, &position);
-			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + textDesty, text, eUnicodeFontType::LatinSmallGreen);
-			else font->showTextCentered (position.x + position.w / 2, position.y + textDesty - 1, text, eUnicodeFontType::LatinSmallRed);
+			if (checked)
+				font->showTextCentered (position.x + position.w / 2, position.y + textDesty, text, eUnicodeFontType::LatinSmallGreen);
+			else
+				font->showTextCentered (position.x + position.w / 2, position.y + textDesty - 1, text, eUnicodeFontType::LatinSmallRed);
 			font->showTextCentered (position.x + position.w / 2 - 1, position.y + textDesty - 1 + (checked ? 1 : 0), text, eUnicodeFontType::LatinSmallWhite);
 			break;
 		case eCheckBoxType::UnitContextMenu:
@@ -288,7 +292,7 @@ void cCheckBox::renewSurface()
 		case eCheckBoxType::HudIndex_10:
 			size.y() = 16;
 			src.y += 18;
-			if (! (checked || isPressed)) src.x += 167;
+			if (!(checked || isPressed)) src.x += 167;
 			break;
 		case eCheckBoxType::HudIndex_02:
 			src.x += size.x();
@@ -346,9 +350,12 @@ void cCheckBox::renewSurface()
 
 		SDL_Surface* srcSurface = nullptr;
 
-		if (type >= eCheckBoxType::HudIndex_00 && type <= eCheckBoxType::HudPlayers) srcSurface = GraphicsData.gfx_hud_stuff.get();
-		else if (type == eCheckBoxType::UnitContextMenu) srcSurface = GraphicsData.gfx_context_menu.get();
-		else srcSurface = GraphicsData.gfx_menu_stuff.get();
+		if (type >= eCheckBoxType::HudIndex_00 && type <= eCheckBoxType::HudPlayers)
+			srcSurface = GraphicsData.gfx_hud_stuff.get();
+		else if (type == eCheckBoxType::UnitContextMenu)
+			srcSurface = GraphicsData.gfx_context_menu.get();
+		else
+			srcSurface = GraphicsData.gfx_menu_stuff.get();
 
 		assert (srcSurface != nullptr);
 

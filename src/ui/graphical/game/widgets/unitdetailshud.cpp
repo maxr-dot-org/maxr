@@ -19,14 +19,14 @@
 
 #include "ui/graphical/game/widgets/unitdetailshud.h"
 
+#include "SDLutility/drawing.h"
+#include "SDLutility/tosdl.h"
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "output/video/video.h"
 #include "resources/uidata.h"
-#include "SDLutility/drawing.h"
-#include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "utility/language.h"
 
@@ -113,7 +113,7 @@ void cUnitDetailsHud::reset()
 
 	if (staticData.buildingData.canScore && unit->getOwner())
 	{
-		assert (unit->isABuilding());  // currently only buildings can score
+		assert (unit->isABuilding()); // currently only buildings can score
 		const auto unitScore = static_cast<const cBuilding*> (unit)->points;
 		const auto totalScore = unit->getOwner()->getScore();
 		const auto goalScore = (gameSettings && gameSettings->victoryConditionType == eGameSettingsVictoryCondition::Points) ? gameSettings->victoryPoints : totalScore;
@@ -216,8 +216,10 @@ void cUnitDetailsHud::reset()
 	else if (staticData.needsHumans && unit->isABuilding())
 	{
 		const auto& building = static_cast<const cBuilding&> (*unit);
-		if (building.isUnitWorking()) drawRow (1, eUnitDataSymbolType::Human, staticData.needsHumans, staticData.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
-		else drawRow (1, eUnitDataSymbolType::Human, 0, staticData.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
+		if (building.isUnitWorking())
+			drawRow (1, eUnitDataSymbolType::Human, staticData.needsHumans, staticData.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
+		else
+			drawRow (1, eUnitDataSymbolType::Human, 0, staticData.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
 
 		if (unit->getOwner() == player) drawRow (2, eUnitDataSymbolType::Human, building.subBase->getHumanNeed(), building.subBase->getMaxHumanNeed(), lngPack.i18n ("Text~Others~Total"));
 	}
@@ -232,9 +234,12 @@ void cUnitDetailsHud::drawRow (size_t index, eUnitDataSymbolType symbolType, int
 	nameLabels[index]->show();
 
 	eUnicodeFontType fontType;
-	if (amount > maximalAmount / 2) fontType = eUnicodeFontType::LatinSmallGreen;
-	else if (amount > maximalAmount / 4) fontType = eUnicodeFontType::LatinSmallYellow;
-	else fontType = eUnicodeFontType::LatinSmallRed;
+	if (amount > maximalAmount / 2)
+		fontType = eUnicodeFontType::LatinSmallGreen;
+	else if (amount > maximalAmount / 4)
+		fontType = eUnicodeFontType::LatinSmallYellow;
+	else
+		fontType = eUnicodeFontType::LatinSmallRed;
 
 	amountLabels[index]->setFont (fontType);
 	amountLabels[index]->setText (std::to_string (amount) + "/" + std::to_string (maximalAmount));

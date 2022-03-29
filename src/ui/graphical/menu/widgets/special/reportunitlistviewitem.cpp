@@ -19,12 +19,12 @@
 
 #include "ui/graphical/menu/widgets/special/reportunitlistviewitem.h"
 
+#include "SDLutility/drawing.h"
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "resources/buildinguidata.h"
 #include "resources/vehicleuidata.h"
-#include "SDLutility/drawing.h"
 #include "ui/graphical/game/widgets/unitdetailshud.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
@@ -55,7 +55,8 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_, const cUnitsData
 		const float zoomFactor = unitImageSize / (building.getIsBig() ? 128.0f : 64.0f);
 		render_simple (building, *surface, dest, zoomFactor, 0);
 	}
-	else surface = nullptr;
+	else
+		surface = nullptr;
 
 	auto unitDetails = addChild (std::make_unique<cUnitDetailsHud> (cBox<cPosition> (cPosition (unitImageSize + 3 + 75 + 3, 0), cPosition (unitImageSize + 3 + 75 + 3 + 155, 48)), true));
 	unitDetails->setPlayer (unit.getOwner());

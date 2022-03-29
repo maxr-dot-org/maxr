@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/radiogroup.h"
-#include "ui/graphical/menu/widgets/checkbox.h"
 
+#include "ui/graphical/menu/widgets/checkbox.h"
 
 //------------------------------------------------------------------------------
 cRadioGroup::cRadioGroup (bool allowUncheckAll_) :
@@ -76,8 +76,10 @@ void cRadioGroup::buttonToggled (cCheckBox* button)
 	{
 		if (!button->isChecked())
 		{
-			if (!allowUncheckAll) button->setChecked (true);
-			else currentlyCheckedButton = nullptr;
+			if (!allowUncheckAll)
+				button->setChecked (true);
+			else
+				currentlyCheckedButton = nullptr;
 		}
 	}
 	else

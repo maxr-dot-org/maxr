@@ -40,7 +40,10 @@ sMapPreview loadMapPreview (const std::string& mapName)
 
 	SDL_RWseek (mapFile, 5, SEEK_SET);
 	const int size = SDL_ReadLE16 (mapFile);
-	struct { unsigned char cBlue, cGreen, cRed; } Palette[256];
+	struct
+	{
+		unsigned char cBlue, cGreen, cRed;
+	} Palette[256];
 	SDL_RWseek (mapFile, 2 + size * size * 3, SEEK_CUR);
 	short sGraphCount = SDL_ReadLE16 (mapFile);
 	SDL_RWseek (mapFile, 64 * 64 * sGraphCount, SEEK_CUR);
@@ -71,6 +74,5 @@ sMapPreview loadMapPreview (const std::string& mapName)
 		mapSurface = AutoSurface (scaleSurface (mapSurface.get(), nullptr, MAPWINSIZE, MAPWINSIZE));
 	}
 
-	return { std::move (mapSurface), {size, size} };
+	return {std::move (mapSurface), {size, size}};
 }
-

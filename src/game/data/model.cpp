@@ -22,8 +22,8 @@
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/jobs/destroyjob.h"
-#include "game/logic/pathcalculator.h"
 #include "game/logic/movejob.h"
+#include "game/logic/pathcalculator.h"
 #include "game/logic/turncounter.h"
 #include "game/logic/turntimeclock.h"
 #include "map/map.h"
@@ -44,9 +44,9 @@ namespace
 	//--------------------------------------------------------------------------
 	auto byPlayerId (int playerId)
 	{
-		return [=](const std::shared_ptr<cPlayer>& player){ return player->getId() == playerId; };
+		return [=] (const std::shared_ptr<cPlayer>& player) { return player->getId() == playerId; };
 	}
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 cModel::cModel() :
@@ -68,7 +68,8 @@ void cModel::initGameId()
 {
 	if (gameId == 0)
 	{
-		while ((gameId = randomGenerator.get()) == 0);
+		while ((gameId = randomGenerator.get()) == 0)
+			;
 	}
 }
 
@@ -209,7 +210,6 @@ cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlaye
 		neutralBuildings.insert (addedBuilding);
 	}
 	addedBuilding->initMineResourceProd (*map);
-
 
 	// if this is a top building, delete connectors, mines and roads
 	if (addedBuilding->getStaticUnitData().surfacePosition == eSurfacePosition::Ground)
@@ -526,7 +526,7 @@ std::vector<const cPlayer*> cModel::resumeMoveJobs (const cPlayer* player /*= nu
 //------------------------------------------------------------------------------
 void cModel::addAttackJob (cUnit& aggressor, const cPosition& targetPosition)
 {
-	attackJobs.push_back (std::make_unique <cAttackJob> (aggressor, targetPosition, *this));
+	attackJobs.push_back (std::make_unique<cAttackJob> (aggressor, targetPosition, *this));
 }
 
 //------------------------------------------------------------------------------
@@ -668,7 +668,7 @@ void cModel::runAttackJobs()
 	{
 		attackJob->run (*this); //this can add new items to 'attackjobs'
 	}
-	EraseIf (attackJobs, [](const auto& job){ return job->finished(); });
+	EraseIf (attackJobs, [] (const auto& job) { return job->finished(); });
 }
 
 //------------------------------------------------------------------------------
@@ -745,7 +745,7 @@ void cModel::handleTurnEnd()
 			else
 			{
 				// select next player
-				auto nextPlayerIter = ranges::find_if (playerList, [this](const std::shared_ptr<cPlayer>& player) {return player.get() == activeTurnPlayer; });
+				auto nextPlayerIter = ranges::find_if (playerList, [this] (const std::shared_ptr<cPlayer>& player) { return player.get() == activeTurnPlayer; });
 				assert (nextPlayerIter != playerList.end());
 				++nextPlayerIter;
 				//TODO: skip defeated player?
@@ -851,10 +851,7 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 			// so not all directions are allowed for the side stepping
 			if (bigOffset != -1)
 			{
-				if (currentPosition == bigOffset ||
-					currentPosition == bigOffset + cPosition (1, 0) ||
-					currentPosition == bigOffset + cPosition (0, 1) ||
-					currentPosition == bigOffset + cPosition (1, 1)) continue;
+				if (currentPosition == bigOffset || currentPosition == bigOffset + cPosition (1, 0) || currentPosition == bigOffset + cPosition (0, 1) || currentPosition == bigOffset + cPosition (1, 1)) continue;
 			}
 
 			// check whether this field is a possible destination

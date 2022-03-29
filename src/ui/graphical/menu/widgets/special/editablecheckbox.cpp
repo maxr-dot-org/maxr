@@ -19,8 +19,8 @@
 
 #include "editablecheckbox.h"
 
-#include "ui/graphical/application.h"
 #include "output/video/unifonts.h"
+#include "ui/graphical/application.h"
 
 //------------------------------------------------------------------------------
 cEditableCheckBox::cEditableCheckBox (const cBox<cPosition>& area, const std::string& prefix, const std::string& suffix, eUnicodeFontType fontType) :
@@ -32,8 +32,7 @@ cEditableCheckBox::cEditableCheckBox (const cBox<cPosition>& area, const std::st
 	lineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (area.getMinCorner() + cPosition (prefixSize, 0), area.getMaxCorner() + cPosition (-suffixSize, 0))));
 	suffixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (area.getMaxCorner().x() - suffixSize, area.getMinCorner().y()), area.getMaxCorner()), suffix, eUnicodeFontType::LatinNormal, eAlignmentType::Right));
 
-	signalConnectionManager.connect (checkBox->toggled, [this]()
-	{
+	signalConnectionManager.connect (checkBox->toggled, [this]() {
 		if (checkBox->isChecked())
 		{
 			auto* application = getActiveApplication();

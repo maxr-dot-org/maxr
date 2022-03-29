@@ -74,7 +74,7 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const cStati
 		const int row = static_cast<int> (i / maxItemsInRow);
 		const int col = static_cast<int> (i % maxItemsInRow);
 
-		auto disadvantageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * col + (row % 2 == 0 ? 15 : 0), font->getFontHeight()*row), cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * (col + 1) + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * (row + 1))), std::to_string (disadvantage), eUnicodeFontType::LatinNormal, eAlignmentType::Center));
+		auto disadvantageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * col + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * row), cPosition (nameLabel->getEndPosition().x() + casualityLabelWidth * (col + 1) + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * (row + 1))), std::to_string (disadvantage), eUnicodeFontType::LatinNormal, eAlignmentType::Center));
 		disadvantageLabel->setConsumeClick (false);
 	}
 

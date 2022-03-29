@@ -20,13 +20,13 @@
 #include "jsonarchive.h"
 
 //------------------------------------------------------------------------------
-cJsonArchiveOut::cJsonArchiveOut(nlohmann::json& json) :
-	json(json)
+cJsonArchiveOut::cJsonArchiveOut (nlohmann::json& json) :
+	json (json)
 {
 }
 //------------------------------------------------------------------------------
 cJsonArchiveIn::cJsonArchiveIn (const nlohmann::json& json, serialization::cPointerLoader* pointerLoader) :
-	json(json),
+	json (json),
 	pointerLoader (pointerLoader)
 {
 }

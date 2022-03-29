@@ -26,7 +26,6 @@
 #include "loaddata.h"
 
 #include <SDL_mixer.h>
-
 #include <iostream>
 #include <regex>
 #include <set>
@@ -39,6 +38,7 @@
 # include <unistd.h>
 #endif
 
+#include "SDLutility/autosurface.h"
 #include "debug.h"
 #include "game/data/player/clans.h"
 #include "game/data/units/building.h"
@@ -52,14 +52,13 @@
 #include "resources/sound.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
-#include "SDLutility/autosurface.h"
+#include "settings.h"
 #include "ui/keys.h"
 #include "ui/uidefines.h"
 #include "utility/files.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
-#include "settings.h"
 
 #ifdef WIN32
 # include <direct.h>
@@ -70,7 +69,8 @@ std::string getBuildVersion()
 {
 	std::string sVersion = PACKAGE_NAME;
 	sVersion += " BUILD: ";
-	sVersion += MAX_BUILD_DATE; sVersion += " ";
+	sVersion += MAX_BUILD_DATE;
+	sVersion += " ";
 	sVersion += PACKAGE_REV;
 	return sVersion;
 }
@@ -89,8 +89,8 @@ static void MakeLog (const std::string& sTxt, int ok, int pos)
 		return;
 	}
 	auto& font = *cUnicodeFont::font;
-	const SDL_Rect rDest = {22, 152, 228, Uint16 (font.getFontHeight (eUnicodeFontType::LatinBigGold)) };
-	const SDL_Rect rDest2 = {250, 152, 230, Uint16 (font.getFontHeight (eUnicodeFontType::LatinBigGold)) };
+	const SDL_Rect rDest = {22, 152, 228, Uint16 (font.getFontHeight (eUnicodeFontType::LatinBigGold))};
+	const SDL_Rect rDest2 = {250, 152, 230, Uint16 (font.getFontHeight (eUnicodeFontType::LatinBigGold))};
 
 	switch (ok)
 	{
@@ -138,7 +138,7 @@ static void LoadLanguage()
 	if (!Contains (lngPack.getAvailableLanguages(), cSettings::getInstance().getLanguage()))
 	{
 		Log.write ("Not a supported language: " + cSettings::getInstance().getLanguage() + ", defaulting to en.", cLog::eLogType::Warning);
-		cSettings::getInstance().setLanguage("en");
+		cSettings::getInstance().setLanguage ("en");
 		cSettings::getInstance().saveInFile();
 	}
 	lngPack.setCurrentLanguage (cSettings::getInstance().getLanguage());
@@ -189,9 +189,7 @@ static AutoSurface CloneSDLSurface (SDL_Surface& src)
 static void createShadowGfx()
 {
 	// TODO: reduce size once we use texture.
-	GraphicsData.gfx_shadow = AutoSurface (SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(),
-										   Video.getColDepth(),
-										   0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
+	GraphicsData.gfx_shadow = AutoSurface (SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(), Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 	SDL_FillRect (GraphicsData.gfx_shadow.get(), nullptr, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
 }
 
@@ -383,7 +381,7 @@ namespace
 			archive & NVP (graphic);
 		}
 	};
-}
+} // namespace
 /**
  * Loads the unitdata from the data.json in the unitfolder
  * @param directory Unitdirectory, relative to the main game directory
@@ -392,7 +390,7 @@ static void LoadUnitData (sInitialBuildingData& buildingData, char const* const 
 {
 	std::string path = directory;
 	path += "data.json";
-	if (!FileExists (path.c_str())) return ;
+	if (!FileExists (path.c_str())) return;
 
 	std::ifstream file (path);
 	nlohmann::json json;
@@ -400,7 +398,7 @@ static void LoadUnitData (sInitialBuildingData& buildingData, char const* const 
 	if (!(file >> json))
 	{
 		Log.write ("Can't load " + path, cLog::eLogType::Warning);
-		return ;
+		return;
 	}
 	cJsonArchiveIn in (json);
 	in >> buildingData;
@@ -414,7 +412,7 @@ static void LoadUnitData (sInitialVehicleData& vehicleData, char const* const di
 {
 	std::string path = directory;
 	path += "data.json";
-	if (!FileExists (path.c_str())) return ;
+	if (!FileExists (path.c_str())) return;
 
 	std::ifstream file (path);
 	nlohmann::json json;
@@ -422,7 +420,7 @@ static void LoadUnitData (sInitialVehicleData& vehicleData, char const* const di
 	if (!(file >> json))
 	{
 		Log.write ("Can't load " + path, cLog::eLogType::Warning);
-		return ;
+		return;
 	}
 	cJsonArchiveIn in (json);
 	in >> vehicleData;
@@ -444,7 +442,7 @@ static bool checkUniqueness (const sID& id)
 }
 
 //------------------------------------------------------------------------------
-static cDynamicUnitData createDynamicUnitData(const sID& id, const sInitialDynamicUnitData& dynamic)
+static cDynamicUnitData createDynamicUnitData (const sID& id, const sInitialDynamicUnitData& dynamic)
 {
 	cDynamicUnitData res;
 
@@ -465,7 +463,7 @@ static cDynamicUnitData createDynamicUnitData(const sID& id, const sInitialDynam
 static cStaticUnitData createStaticUnitData (const sID& id, const sStaticCommonUnitData& commonData, const std::string& name, const std::string& desc)
 {
 	cStaticUnitData res;
-	static_cast<sStaticCommonUnitData&>(res) = commonData;
+	static_cast<sStaticCommonUnitData&> (res) = commonData;
 	res.ID = id;
 	res.setDefaultName (name);
 	res.setDefaultDescription (desc);
@@ -580,7 +578,7 @@ static bool LoadUiData (const std::string& sBuildingPath, sBuildingUIData& ui)
 	if (FileExists (sTmpString.c_str()))
 	{
 		ui.shw_org = LoadPCX (sTmpString);
-		ui.shw     = CloneSDLSurface (*ui.shw_org);
+		ui.shw = CloneSDLSurface (*ui.shw_org);
 		SDL_SetSurfaceAlphaMod (ui.shw.get(), 50);
 	}
 
@@ -611,15 +609,15 @@ static bool LoadUiData (const std::string& sBuildingPath, sBuildingUIData& ui)
 	else
 	{
 		ui.eff_org = nullptr;
-		ui.eff     = nullptr;
+		ui.eff = nullptr;
 	}
 
 	// load sounds
-	LoadUnitSoundfile (ui.Wait,    sBuildingPath.c_str(), "wait.ogg");
-	LoadUnitSoundfile (ui.Start,   sBuildingPath.c_str(), "start.ogg");
+	LoadUnitSoundfile (ui.Wait, sBuildingPath.c_str(), "wait.ogg");
+	LoadUnitSoundfile (ui.Start, sBuildingPath.c_str(), "start.ogg");
 	LoadUnitSoundfile (ui.Running, sBuildingPath.c_str(), "running.ogg");
-	LoadUnitSoundfile (ui.Stop,    sBuildingPath.c_str(), "stop.ogg");
-	LoadUnitSoundfile (ui.Attack,  sBuildingPath.c_str(), "attack.ogg");
+	LoadUnitSoundfile (ui.Stop, sBuildingPath.c_str(), "stop.ogg");
+	LoadUnitSoundfile (ui.Attack, sBuildingPath.c_str(), "attack.ogg");
 
 	// Get Ptr if necessary:
 	if (ui.id == UnitsDataGlobal.getConnectorID())
@@ -641,8 +639,10 @@ static bool LoadUiData (const std::string& sBuildingPath, sBuildingUIData& ui)
 
 	// Check if there is more than one frame
 	// use 129 here because some images from the res_installer are one pixel too large
-	if (ui.img_org->w > 129 && !ui.isConnectorGraphic && !ui.staticData.hasClanLogos) ui.hasFrames = ui.img_org->w / ui.img_org->h;
-	else ui.hasFrames = 0;
+	if (ui.img_org->w > 129 && !ui.isConnectorGraphic && !ui.staticData.hasClanLogos)
+		ui.hasFrames = ui.img_org->w / ui.img_org->h;
+	else
+		ui.hasFrames = 0;
 
 	return true;
 }
@@ -748,7 +748,7 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 			else
 			{
 				ui.shw_org[n] = nullptr;
-				ui.shw[n]     = nullptr;
+				ui.shw[n] = nullptr;
 			}
 		}
 	}
@@ -803,15 +803,15 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		else
 		{
 			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
-			ui.overlay_org       = nullptr;
-			ui.overlay           = nullptr;
+			ui.overlay_org = nullptr;
+			ui.overlay = nullptr;
 			ui.staticData.hasOverlay = false;
 		}
 	}
 	else
 	{
 		ui.overlay_org = nullptr;
-		ui.overlay     = nullptr;
+		ui.overlay = nullptr;
 	}
 
 	// load buildgraphics if necessary
@@ -831,8 +831,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		else
 		{
 			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
-			ui.build_org             = nullptr;
-			ui.build                 = nullptr;
+			ui.build_org = nullptr;
+			ui.build = nullptr;
 			ui.staticData.buildUpGraphic = false;
 		}
 		// load shadow
@@ -848,17 +848,17 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		else
 		{
 			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
-			ui.build_shw_org         = nullptr;
-			ui.build_shw             = nullptr;
+			ui.build_shw_org = nullptr;
+			ui.build_shw = nullptr;
 			ui.staticData.buildUpGraphic = false;
 		}
 	}
 	else
 	{
-		ui.build_org     = nullptr;
-		ui.build         = nullptr;
+		ui.build_org = nullptr;
+		ui.build = nullptr;
 		ui.build_shw_org = nullptr;
-		ui.build_shw     = nullptr;
+		ui.build_shw = nullptr;
 	}
 	// load cleargraphics if necessary
 	if (staticData.vehicleData.canClearArea)
@@ -877,8 +877,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		else
 		{
 			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
-			ui.clear_small_org      = nullptr;
-			ui.clear_small          = nullptr;
+			ui.clear_small_org = nullptr;
+			ui.clear_small = nullptr;
 			return false;
 		}
 		// load shadow (small)
@@ -894,8 +894,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		else
 		{
 			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
-			ui.clear_small_shw_org  = nullptr;
-			ui.clear_small_shw      = nullptr;
+			ui.clear_small_shw_org = nullptr;
+			ui.clear_small_shw = nullptr;
 			return false;
 		}
 		// load image (big)
@@ -912,8 +912,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		else
 		{
 			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
-			ui.build_org            = nullptr;
-			ui.build                = nullptr;
+			ui.build_org = nullptr;
+			ui.build = nullptr;
 			return false;
 		}
 		// load shadow (big)
@@ -929,30 +929,30 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		else
 		{
 			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
-			ui.build_shw_org        = nullptr;
-			ui.build_shw            = nullptr;
+			ui.build_shw_org = nullptr;
+			ui.build_shw = nullptr;
 			return false;
 		}
 	}
 	else
 	{
-		ui.clear_small_org     = nullptr;
-		ui.clear_small         = nullptr;
+		ui.clear_small_org = nullptr;
+		ui.clear_small = nullptr;
 		ui.clear_small_shw_org = nullptr;
-		ui.clear_small_shw     = nullptr;
+		ui.clear_small_shw = nullptr;
 	}
 
 	// load sounds
 	Log.write ("Loading sounds", cLog::eLogType::Debug);
-	LoadUnitSoundfile (ui.Wait,       sVehiclePath.c_str(), "wait.ogg");
-	LoadUnitSoundfile (ui.WaitWater,  sVehiclePath.c_str(), "wait_water.ogg");
-	LoadUnitSoundfile (ui.Start,      sVehiclePath.c_str(), "start.ogg");
+	LoadUnitSoundfile (ui.Wait, sVehiclePath.c_str(), "wait.ogg");
+	LoadUnitSoundfile (ui.WaitWater, sVehiclePath.c_str(), "wait_water.ogg");
+	LoadUnitSoundfile (ui.Start, sVehiclePath.c_str(), "start.ogg");
 	LoadUnitSoundfile (ui.StartWater, sVehiclePath.c_str(), "start_water.ogg");
-	LoadUnitSoundfile (ui.Stop,       sVehiclePath.c_str(), "stop.ogg");
-	LoadUnitSoundfile (ui.StopWater,  sVehiclePath.c_str(), "stop_water.ogg");
-	LoadUnitSoundfile (ui.Drive,      sVehiclePath.c_str(), "drive.ogg");
+	LoadUnitSoundfile (ui.Stop, sVehiclePath.c_str(), "stop.ogg");
+	LoadUnitSoundfile (ui.StopWater, sVehiclePath.c_str(), "stop_water.ogg");
+	LoadUnitSoundfile (ui.Drive, sVehiclePath.c_str(), "drive.ogg");
 	LoadUnitSoundfile (ui.DriveWater, sVehiclePath.c_str(), "drive_water.ogg");
-	LoadUnitSoundfile (ui.Attack,     sVehiclePath.c_str(), "attack.ogg");
+	LoadUnitSoundfile (ui.Attack, sVehiclePath.c_str(), "attack.ogg");
 	return true;
 }
 namespace
@@ -974,8 +974,8 @@ namespace
 	//--------------------------------------------------------------------------
 	void checkDuplicateId (std::vector<sUnitDirectory>& v)
 	{
-		std::sort (v.begin(), v.end(), [](const auto& lhs, const auto& rhs){ return lhs.id < rhs.id; });
-		auto sameId = [](const auto& lhs, const auto& rhs){ return lhs.id == rhs.id; };
+		std::sort (v.begin(), v.end(), [] (const auto& lhs, const auto& rhs) { return lhs.id < rhs.id; });
+		auto sameId = [] (const auto& lhs, const auto& rhs) { return lhs.id == rhs.id; };
 		auto it = std::adjacent_find (v.begin(), v.end(), sameId);
 		while (it != v.end())
 		{
@@ -1009,7 +1009,7 @@ namespace
 		}
 	};
 
-}
+} // namespace
 /**
  * Loads all Buildings
  * @param path Directory of the Buildings
@@ -1058,17 +1058,17 @@ static int LoadBuildings()
 		if (p.id != buildingData.id.secondPart)
 		// check whether the read id is the same as the one from building.json
 		{
-			Log.write ("ID " + std::to_string(p.id) + " isn't equal with ID from directory " + sBuildingPath, cLog::eLogType::Error);
+			Log.write ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sBuildingPath, cLog::eLogType::Error);
 			return 0;
 		}
 		else
 		{
-			Log.write ("id " + std::to_string(p.id) + " verified for " + sBuildingPath, cLog::eLogType::Debug);
+			Log.write ("id " + std::to_string (p.id) + " verified for " + sBuildingPath, cLog::eLogType::Debug);
 		}
 		if (!checkUniqueness (buildingData.id)) return 0;
 
 		cStaticUnitData staticData = createStaticUnitData (buildingData.id, buildingData.commonData, buildingData.defaultName, buildingData.description);
-		cDynamicUnitData dynamicData = createDynamicUnitData(buildingData.id, buildingData.dynamicData);
+		cDynamicUnitData dynamicData = createDynamicUnitData (buildingData.id, buildingData.dynamicData);
 		staticData.buildingData = buildingData.staticBuildingData;
 
 		if (!DEDICATED_SERVER)
@@ -1154,17 +1154,17 @@ static int LoadVehicles()
 		// check whether the read id is the same as the one from vehicles.json
 		if (p.id != vehicleData.id.secondPart)
 		{
-			Log.write ("ID " + std::to_string(p.id) + " isn't equal with ID from directory " + sVehiclePath, cLog::eLogType::Error);
+			Log.write ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sVehiclePath, cLog::eLogType::Error);
 			return 0;
 		}
 		else
 		{
-			Log.write ("id " + std::to_string(p.id) + " verified for " + sVehiclePath, cLog::eLogType::Debug);
+			Log.write ("id " + std::to_string (p.id) + " verified for " + sVehiclePath, cLog::eLogType::Debug);
 		}
 		if (!checkUniqueness (vehicleData.id)) return 0;
 
 		cStaticUnitData staticData = createStaticUnitData (vehicleData.id, vehicleData.commonData, vehicleData.defaultName, vehicleData.description);
-		cDynamicUnitData dynamicData = createDynamicUnitData(vehicleData.id, vehicleData.dynamicData);
+		cDynamicUnitData dynamicData = createDynamicUnitData (vehicleData.id, vehicleData.dynamicData);
 
 		if (staticData.factorGround == 0 && staticData.factorSea == 0 && staticData.factorAir == 0 && staticData.factorCoast == 0)
 		{
@@ -1260,7 +1260,7 @@ static int LoadMusic (const char* path)
 	{
 		filename = std::string (path) + PATH_DELIMITER + filename;
 	}
-	auto it = std::stable_partition (MusicFiles.backgrounds.begin(), MusicFiles.backgrounds.end(), [](const auto& p){ return FileExists (p); });
+	auto it = std::stable_partition (MusicFiles.backgrounds.begin(), MusicFiles.backgrounds.end(), [] (const auto& p) { return FileExists (p); });
 	for (auto it2 = it; it2 != MusicFiles.backgrounds.end(); ++it2)
 	{
 		Log.write ("music files doesn't exist: " + *it2, cLog::eLogType::Warning);
@@ -1274,9 +1274,9 @@ bool loadFonts()
 {
 	const std::string& fontPath = cSettings::getInstance().getFontPath() + PATH_DELIMITER;
 	if (!FileExists ((fontPath + "latin_normal.pcx").c_str())
-		|| !FileExists ((fontPath + "latin_big.pcx").c_str())
-		|| !FileExists ((fontPath + "latin_big_gold.pcx").c_str())
-		|| !FileExists ((fontPath + "latin_small.pcx").c_str()))
+	    || !FileExists ((fontPath + "latin_big.pcx").c_str())
+	    || !FileExists ((fontPath + "latin_big_gold.pcx").c_str())
+	    || !FileExists ((fontPath + "latin_small.pcx").c_str()))
 	{
 		Log.write ("Missing a file needed for game. Check log and config! ", cLog::eLogType::Error);
 		return false;
@@ -1440,7 +1440,7 @@ eLoadingState LoadData()
  * @param filename Name of the file
  * @return 1 on success
  */
-static int LoadEffectGraphicToSurface (AutoSurface (&dest) [2], const char* directory, const char* filename)
+static int LoadEffectGraphicToSurface (AutoSurface (&dest)[2], const char* directory, const char* filename)
 {
 	std::string filepath;
 	if (strcmp (directory, ""))
@@ -1466,7 +1466,7 @@ static int LoadEffectGraphicToSurface (AutoSurface (&dest) [2], const char* dire
 
 // LoadEffectAlphacToSurface /////////////////////////////////////////////////
 // Loads a effectgraphic as alpha to the surface:
-static int LoadEffectAlphaToSurface (AutoSurface (&dest) [2], const char* directory, const char* filename, int alpha)
+static int LoadEffectAlphaToSurface (AutoSurface (&dest)[2], const char* directory, const char* filename, int alpha)
 {
 	std::string filepath;
 	if (strcmp (directory, ""))

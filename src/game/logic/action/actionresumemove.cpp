@@ -19,8 +19,8 @@
 
 #include "actionresumemove.h"
 
-#include "game/data/units/vehicle.h"
 #include "game/data/model.h"
+#include "game/data/units/vehicle.h"
 #include "game/logic/movejob.h"
 
 //------------------------------------------------------------------------------

@@ -19,6 +19,7 @@
 
 #include "ui/graphical/menu/windows/windowreports/windowreports.h"
 
+#include "SDLutility/tosdl.h"
 #include "game/data/gamesettings.h"
 #include "game/data/model.h"
 #include "game/data/player/player.h"
@@ -28,7 +29,7 @@
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/turncounter.h"
 #include "resources/pcx.h"
-#include "SDLutility/tosdl.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/frame.h"
 #include "ui/graphical/menu/widgets/image.h"
@@ -40,7 +41,6 @@
 #include "ui/graphical/menu/widgets/special/reportdisadvantageslistviewitem.h"
 #include "ui/graphical/menu/widgets/special/reportmessagelistviewitem.h"
 #include "ui/graphical/menu/widgets/special/reportunitlistviewitem.h"
-#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/uidefines.h"
 #include "utility/language.h"
 
@@ -48,25 +48,25 @@
 
 namespace
 {
-std::string plural (int n, const std::string& sing, const std::string& plu)
-{
-	// TODO: Plural rules are language dependant
-	// - Russian has 3 forms, Chinese 1 form, ...
-	//          | eng  | fre  | ...
-	// singular | == 1 | <= 1 |
-	// plural   | != 1 | 1 <  |
-	// we should have `i18n (key, n)`
-	std::stringstream ss;
-	ss << n << " ";
-	ss << lngPack.i18n (n == 1 ? sing : plu);
-	return ss.str();
-}
-}
+	std::string plural (int n, const std::string& sing, const std::string& plu)
+	{
+		// TODO: Plural rules are language dependant
+		// - Russian has 3 forms, Chinese 1 form, ...
+		//          | eng  | fre  | ...
+		// singular | == 1 | <= 1 |
+		// plural   | != 1 | 1 <  |
+		// we should have `i18n (key, n)`
+		std::stringstream ss;
+		ss << n << " ";
+		ss << lngPack.i18n (n == 1 ? sing : plu);
+		return ss.str();
+	}
+} // namespace
 
 //------------------------------------------------------------------------------
 cWindowReports::cWindowReports (const cModel& model,
-								std::shared_ptr<const cPlayer> localPlayer_,
-								const std::vector<std::unique_ptr<cSavedReport>>& reports_) :
+                                std::shared_ptr<const cPlayer> localPlayer_,
+                                const std::vector<std::unique_ptr<cSavedReport>>& reports_) :
 	cWindow (LoadPCX (GFXOD_REPORTS)),
 	model (model),
 	localPlayer (localPlayer_),
@@ -132,7 +132,7 @@ cWindowReports::cWindowReports (const cModel& model,
 	unitsList = unitsFrame->addChild (std::make_unique<cListView<cReportUnitListViewItem>> (frameArea));
 	unitsList->setBeginMargin (cPosition (5, 4));
 	unitsList->setItemDistance (6);
-	signalConnectionManager.connect (unitsList->itemClicked, [this](cReportUnitListViewItem& item) { handleUnitClicked (item); });
+	signalConnectionManager.connect (unitsList->itemClicked, [this] (cReportUnitListViewItem& item) { handleUnitClicked (item); });
 
 	const auto players = model.getPlayerList();
 	disadvantagesFrame = addChild (std::make_unique<cFrame> (frameArea));
@@ -145,7 +145,7 @@ cWindowReports::cWindowReports (const cModel& model,
 		const int row = static_cast<int> (i / cReportDisadvantagesListViewItem::maxItemsInRow);
 		const int col = static_cast<int> (i % cReportDisadvantagesListViewItem::maxItemsInRow);
 
-		disadvantagesFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (disadvantagesFrame->getPosition() + cPosition (playerNameStartXPos + cReportDisadvantagesListViewItem::casualityLabelWidth * col + (row % 2 == 0 ? 15 : 0), font->getFontHeight()*row), disadvantagesFrame->getPosition() + cPosition (playerNameStartXPos + cReportDisadvantagesListViewItem::casualityLabelWidth * (col + 1) + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * (row + 1))), player->getName(), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		disadvantagesFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (disadvantagesFrame->getPosition() + cPosition (playerNameStartXPos + cReportDisadvantagesListViewItem::casualityLabelWidth * col + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * row), disadvantagesFrame->getPosition() + cPosition (playerNameStartXPos + cReportDisadvantagesListViewItem::casualityLabelWidth * (col + 1) + (row % 2 == 0 ? 15 : 0), font->getFontHeight() * (row + 1))), player->getName(), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 	}
 
 	scoreFrame = addChild (std::make_unique<cFrame> (frameArea));
@@ -186,7 +186,7 @@ cWindowReports::cWindowReports (const cModel& model,
 	reportsFrame = addChild (std::make_unique<cFrame> (frameArea));
 	reportsList = reportsFrame->addChild (std::make_unique<cListView<cReportMessageListViewItem>> (frameArea));
 	reportsList->setItemDistance (6);
-	signalConnectionManager.connect (reportsList->itemClicked, [this](cReportMessageListViewItem& item) { handleReportClicked (item); });
+	signalConnectionManager.connect (reportsList->itemClicked, [this] (cReportMessageListViewItem& item) { handleReportClicked (item); });
 
 	updateActiveFrame();
 	initializeScorePlot();
@@ -445,10 +445,11 @@ void cWindowReports::initializeScorePlot()
 
 	if (!turnClock) return;
 
-	auto extrapolate = [] (const cPlayer& p, int c, int t)
-	{
-		if (t <= c) return p.getScore (t);
-		else return p.getScore (c) + p.getNumEcoSpheres() * (t - c);
+	auto extrapolate = [] (const cPlayer& p, int c, int t) {
+		if (t <= c)
+			return p.getScore (t);
+		else
+			return p.getScore (c) + p.getNumEcoSpheres() * (t - c);
 	};
 
 	const int displayTurns = 50;

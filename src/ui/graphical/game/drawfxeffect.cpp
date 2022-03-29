@@ -27,7 +27,7 @@
 namespace
 {
 	//--------------------------------------------------------------------------
-	void drawFxMuzzle (AutoSurface (&images) [2], float zoom, const cPosition& destination, const cFxMuzzle& fx)
+	void drawFxMuzzle (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxMuzzle& fx)
 	{
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
@@ -42,7 +42,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void drawFxExplo (AutoSurface (&images) [2], float zoom, const cPosition& destination, const cFxExplo& fx)
+	void drawFxExplo (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxExplo& fx)
 	{
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
@@ -60,7 +60,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void drawFxFade (AutoSurface (&images) [2], float zoom, const cPosition& destination, const cFxFade& fx)
+	void drawFxFade (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxFade& fx)
 	{
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
@@ -72,7 +72,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void drawFxRocket (AutoSurface (&images) [2], float zoom, const cPosition& destination, const cFxRocket& fx)
+	void drawFxRocket (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxRocket& fx)
 	{
 		//draw smoke effect
 		for (auto& subEffect : fx.getSubEffects())
@@ -96,7 +96,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void drawFxDarkSmoke (AutoSurface (&images) [2], float zoom, const cPosition& destination, const cFxDarkSmoke& fx)
+	void drawFxDarkSmoke (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxDarkSmoke& fx)
 	{
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
@@ -117,7 +117,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void drawFxTracks (AutoSurface (&images) [2], float zoom, const cPosition& destination, const cFxTracks& fx)
+	void drawFxTracks (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxTracks& fx)
 	{
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
@@ -139,8 +139,10 @@ namespace
 	{
 		float zoom;
 		const cPosition& screenPosition;
+
 	public:
-		cFxDrawerVisitor (float zoom, const cPosition& screenPosition) : zoom (zoom), screenPosition (screenPosition) {}
+		cFxDrawerVisitor (float zoom, const cPosition& screenPosition) :
+			zoom (zoom), screenPosition (screenPosition) {}
 
 		//----------------------------------------------------------------------
 		void visit (const cFxMuzzleBig& fx) override
@@ -203,7 +205,8 @@ namespace
 			drawFxFade (EffectsData.fx_smoke, zoom, screenPosition, fx);
 		}
 		//----------------------------------------------------------------------
-		void visit (const cFxDarkSmoke& fx) override {
+		void visit (const cFxDarkSmoke& fx) override
+		{
 			drawFxDarkSmoke (EffectsData.fx_dark_smoke, zoom, screenPosition, fx);
 		}
 		//----------------------------------------------------------------------
@@ -216,13 +219,12 @@ namespace
 		{
 			drawFxTracks (EffectsData.fx_tracks, zoom, screenPosition, fx);
 		}
-
 	};
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 void drawFx (const cFx& fx, float zoom, const cPosition& screenPosition)
 {
-	cFxDrawerVisitor visitor {zoom, screenPosition};
+	cFxDrawerVisitor visitor{zoom, screenPosition};
 	fx.accept (visitor);
 }

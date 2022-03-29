@@ -24,8 +24,8 @@
 #include "game/logic/landingpositionmanager.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
-#include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 #include "resources/sound.h"
 #include "resources/uidata.h"
@@ -44,7 +44,6 @@
 #include "utility/language.h"
 #include "utility/random.h"
 
-
 //------------------------------------------------------------------------------
 cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap_, bool fixedBridgeHead, const std::vector<sLandingUnit>& landingUnits, std::shared_ptr<const cUnitsData> unitsData, bool withChatBox) :
 	cWindow (nullptr),
@@ -56,7 +55,7 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 	hudImageOwned->disableAtTransparent();
 
 	mapWidget = addChild (std::make_unique<cLandingPositionSelectionMap> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImageOwned->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, fixedBridgeHead, landingUnits, unitsData));
-	signalConnectionManager.connect (mapWidget->clickedTile, [this](const cPosition& tilePos) { mapClicked (tilePos); });
+	signalConnectionManager.connect (mapWidget->clickedTile, [this] (const cPosition& tilePos) { mapClicked (tilePos); });
 
 	circlesImage = addChild (std::make_unique<cImage> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight)));
 	circlesImage->disable();
@@ -74,15 +73,13 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 	{
 		chatBox = addChild (std::make_unique<cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, hudImage->getEndPosition().y() - cHud::panelBottomHeight - 12 - 100), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
 
-		signalConnectionManager.connect (chatBox->commandEntered, [this](const std::string& message)
-		{
+		signalConnectionManager.connect (chatBox->commandEntered, [this] (const std::string& message) {
 			onCommandEntered (message);
 		});
 
 		auto toggleChatBoxButton = addChild (std::make_unique<cCheckBox> (cPosition (35, hudImage->getEndPosition().y() - 65), lngPack.i18n ("Text~Others~Chat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 		toggleChatBoxButton->setChecked (true);
-		signalConnectionManager.connect (toggleChatBoxButton->toggled, [this, toggleChatBoxButton]()
-		{
+		signalConnectionManager.connect (toggleChatBoxButton->toggled, [this, toggleChatBoxButton]() {
 			if (toggleChatBoxButton->isChecked())
 			{
 				chatBox->enable();
@@ -114,15 +111,22 @@ void cWindowLandingPositionSelection::applyReselectionState (eLandingPositionSta
 {
 	reselectionState = state;
 
-	if (state == eLandingPositionState::Clear || state == eLandingPositionState::Confirmed) lockBack();
-	else unlockBack();
+	if (state == eLandingPositionState::Clear || state == eLandingPositionState::Confirmed)
+		lockBack();
+	else
+		unlockBack();
 
-	if (state == eLandingPositionState::Warning || state == eLandingPositionState::TooClose) allowSelection();
-	else disallowSelection();
+	if (state == eLandingPositionState::Warning || state == eLandingPositionState::TooClose)
+		allowSelection();
+	else
+		disallowSelection();
 
-	if (state == eLandingPositionState::Warning) setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Warning"));
-	else if (state == eLandingPositionState::TooClose) setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
-	else setInfoMessage ("");
+	if (state == eLandingPositionState::Warning)
+		setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Warning"));
+	else if (state == eLandingPositionState::TooClose)
+		setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
+	else
+		setInfoMessage ("");
 }
 
 //------------------------------------------------------------------------------

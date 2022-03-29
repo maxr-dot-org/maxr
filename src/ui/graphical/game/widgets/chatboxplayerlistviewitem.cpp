@@ -19,9 +19,9 @@
 
 #include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"
 
+#include "SDLutility/tosdl.h"
 #include "game/data/player/player.h"
 #include "resources/uidata.h"
-#include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/playercolor.h"

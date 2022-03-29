@@ -17,120 +17,111 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <cassert>
-#include <sstream>
-
 #include "ui/graphical/game/control/gameguicontroller.h"
 
-#include "ui/graphical/game/control/chatcommand/chatcommand.h"
-#include "ui/graphical/game/control/chatcommand/chatcommandexecutor.h"
-#include "ui/graphical/game/control/chatcommand/chatcommandparser.h"
-#include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
-#include "ui/graphical/game/gamegui.h"
-#include "ui/graphical/game/hud.h"
-#include "ui/graphical/game/widgets/gamemapwidget.h"
-#include "ui/graphical/game/widgets/minimapwidget.h"
-#include "ui/graphical/game/widgets/gamemessagelistview.h"
-#include "ui/graphical/game/widgets/chatbox.h"
-#include "ui/graphical/game/widgets/debugoutputwidget.h"
-#include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"
-#include "ui/graphical/game/animations/animationtimer.h"
-#include "ui/graphical/menu/dialogs/dialogok.h"
-#include "ui/graphical/menu/dialogs/dialogyesno.h"
-#include "ui/graphical/menu/dialogs/dialogpreferences.h"
-#include "ui/graphical/menu/dialogs/dialogtransfer.h"
-#include "ui/graphical/menu/dialogs/dialogresearch.h"
-#include "ui/graphical/menu/dialogs/dialogselfdestruction.h"
-#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
-#include "ui/graphical/menu/windows/windowunitinfo/windowunitinfo.h"
-#include "ui/graphical/menu/windows/windowbuildbuildings/windowbuildbuildings.h"
-#include "ui/graphical/menu/windows/windowbuildvehicles/windowbuildvehicles.h"
-#include "ui/graphical/menu/windows/windowstorage/windowstorage.h"
-#include "ui/graphical/menu/windows/windowresourcedistribution/windowresourcedistribution.h"
-#include "ui/graphical/menu/windows/windowupgrades/windowupgrades.h"
-#include "ui/graphical/menu/windows/windowreports/windowreports.h"
-#include "ui/graphical/menu/windows/windowloadsave/windowloadsave.h"
-
-#include "ui/sound/soundmanager.h"
-#include "ui/sound/effects/soundeffect.h"
-#include "ui/sound/effects/soundeffectvoice.h"
-#include "ui/sound/effects/soundeffectunit.h"
-#include "ui/sound/game/savedreportssound.h"
-
-#include "ui/translations.h"
-
-#include "input/keyboard/keyboard.h"
-
-#include "output/sound/sounddevice.h"
-#include "output/sound/sounddevice.h"
-#include "output/sound/soundchannel.h"
-
-#include "utility/language.h"
-#include "utility/mathtools.h"
-#include "utility/random.h"
-#include "utility/position.h"
-#include "utility/listhelpers.h"
-
-#include "ui/keys.h"
-#include "game/logic/client.h"
-#include "game/logic/server.h"
-#include "game/logic/turntimeclock.h"
-#include "game/data/units/unit.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
-#include "utility/log.h"
-#include "game/logic/attackjob.h"
+#include "debug.h"
+#include "game/data/map/mapview.h"
 #include "game/data/player/player.h"
-#include "game/data/report/savedreportsimple.h"
 #include "game/data/report/savedreportchat.h"
+#include "game/data/report/savedreportsimple.h"
 #include "game/data/report/savedreportunit.h"
 #include "game/data/report/special/savedreporthostcommand.h"
-#include "game/data/resourcetype.h"
-
-#include "debug.h"
-#include "game/logic/action/actionstartwork.h"
-#include "game/logic/action/actiontransfer.h"
-#include "game/data/report/special/savedreportresourcechanged.h"
-#include "game/logic/movejob.h"
-#include "game/logic/action/actionstartmove.h"
-#include "game/logic/action/actionresumemove.h"
-#include "game/logic/turncounter.h"
-#include "game/logic/action/actionstartturn.h"
-#include "game/logic/action/actionendturn.h"
+#include "game/data/report/special/savedreportplayerdefeated.h"
 #include "game/data/report/special/savedreportplayerendedturn.h"
-#include "game/logic/turncounter.h"
+#include "game/data/report/special/savedreportplayerwins.h"
+#include "game/data/report/special/savedreportresourcechanged.h"
 #include "game/data/report/special/savedreportturnstart.h"
-#include "game/logic/action/actionselfdestroy.h"
-#include "game/data/report/unit/savedreportdestroyed.h"
+#include "game/data/report/special/savedreportupgraded.h"
 #include "game/data/report/unit/savedreportattacked.h"
-#include "game/logic/action/actionattack.h"
-#include "game/logic/action/actionchangemanualfire.h"
-#include "game/logic/action/actionchangesentry.h"
-#include "game/logic/action/actionminelayerstatus.h"
-#include "game/logic/action/actionstartbuild.h"
-#include "game/logic/action/actionstop.h"
-#include "game/logic/action/actionfinishbuild.h"
-#include "game/data/report/unit/savedreportpathinterrupted.h"
-#include "game/data/map/mapview.h"
-#include "game/logic/action/actionchangebuildlist.h"
-#include "game/logic/action/actionload.h"
-#include "game/logic/action/actionactivate.h"
+#include "game/data/report/unit/savedreportcapturedbyenemy.h"
+#include "game/data/report/unit/savedreportdestroyed.h"
 #include "game/data/report/unit/savedreportdetected.h"
+#include "game/data/report/unit/savedreportdisabled.h"
+#include "game/data/report/unit/savedreportpathinterrupted.h"
+#include "game/data/report/unit/savedreportsurveyoraiconfused.h"
+#include "game/data/resourcetype.h"
+#include "game/data/units/building.h"
+#include "game/data/units/unit.h"
+#include "game/data/units/vehicle.h"
+#include "game/logic/action/actionactivate.h"
+#include "game/logic/action/actionattack.h"
+#include "game/logic/action/actionbuyupgrades.h"
+#include "game/logic/action/actionchangebuildlist.h"
+#include "game/logic/action/actionchangemanualfire.h"
+#include "game/logic/action/actionchangeresearch.h"
+#include "game/logic/action/actionchangesentry.h"
+#include "game/logic/action/actionchangeunitname.h"
+#include "game/logic/action/actionclear.h"
+#include "game/logic/action/actionendturn.h"
+#include "game/logic/action/actionfinishbuild.h"
+#include "game/logic/action/actionload.h"
+#include "game/logic/action/actionminelayerstatus.h"
 #include "game/logic/action/actionrepairreload.h"
 #include "game/logic/action/actionresourcedistribution.h"
-#include "game/logic/action/actionclear.h"
-#include "game/data/report/unit/savedreportdisabled.h"
-#include "game/data/report/unit/savedreportcapturedbyenemy.h"
+#include "game/logic/action/actionresumemove.h"
+#include "game/logic/action/actionselfdestroy.h"
+#include "game/logic/action/actionstartbuild.h"
+#include "game/logic/action/actionstartmove.h"
+#include "game/logic/action/actionstartturn.h"
+#include "game/logic/action/actionstartwork.h"
 #include "game/logic/action/actionstealdisable.h"
-#include "game/logic/action/actionchangeresearch.h"
-#include "game/logic/action/actionchangeunitname.h"
-#include "game/logic/action/actionbuyupgrades.h"
-#include "game/data/report/special/savedreportupgraded.h"
-#include "game/logic/action/actionupgradevehicle.h"
+#include "game/logic/action/actionstop.h"
+#include "game/logic/action/actiontransfer.h"
 #include "game/logic/action/actionupgradebuilding.h"
-#include "game/data/report/unit/savedreportsurveyoraiconfused.h"
-#include "game/data/report/special/savedreportplayerdefeated.h"
-#include "game/data/report/special/savedreportplayerwins.h"
+#include "game/logic/action/actionupgradevehicle.h"
+#include "game/logic/attackjob.h"
+#include "game/logic/client.h"
+#include "game/logic/movejob.h"
+#include "game/logic/server.h"
+#include "game/logic/turncounter.h"
+#include "game/logic/turntimeclock.h"
+#include "input/keyboard/keyboard.h"
+#include "output/sound/soundchannel.h"
+#include "output/sound/sounddevice.h"
+#include "ui/graphical/game/animations/animationtimer.h"
+#include "ui/graphical/game/control/chatcommand/chatcommand.h"
+#include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
+#include "ui/graphical/game/control/chatcommand/chatcommandexecutor.h"
+#include "ui/graphical/game/control/chatcommand/chatcommandparser.h"
+#include "ui/graphical/game/gamegui.h"
+#include "ui/graphical/game/hud.h"
+#include "ui/graphical/game/widgets/chatbox.h"
+#include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"
+#include "ui/graphical/game/widgets/debugoutputwidget.h"
+#include "ui/graphical/game/widgets/gamemapwidget.h"
+#include "ui/graphical/game/widgets/gamemessagelistview.h"
+#include "ui/graphical/game/widgets/minimapwidget.h"
+#include "ui/graphical/menu/dialogs/dialogok.h"
+#include "ui/graphical/menu/dialogs/dialogpreferences.h"
+#include "ui/graphical/menu/dialogs/dialogresearch.h"
+#include "ui/graphical/menu/dialogs/dialogselfdestruction.h"
+#include "ui/graphical/menu/dialogs/dialogtransfer.h"
+#include "ui/graphical/menu/dialogs/dialogyesno.h"
+#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
+#include "ui/graphical/menu/windows/windowbuildbuildings/windowbuildbuildings.h"
+#include "ui/graphical/menu/windows/windowbuildvehicles/windowbuildvehicles.h"
+#include "ui/graphical/menu/windows/windowloadsave/windowloadsave.h"
+#include "ui/graphical/menu/windows/windowreports/windowreports.h"
+#include "ui/graphical/menu/windows/windowresourcedistribution/windowresourcedistribution.h"
+#include "ui/graphical/menu/windows/windowstorage/windowstorage.h"
+#include "ui/graphical/menu/windows/windowunitinfo/windowunitinfo.h"
+#include "ui/graphical/menu/windows/windowupgrades/windowupgrades.h"
+#include "ui/keys.h"
+#include "ui/sound/effects/soundeffect.h"
+#include "ui/sound/effects/soundeffectunit.h"
+#include "ui/sound/effects/soundeffectvoice.h"
+#include "ui/sound/game/savedreportssound.h"
+#include "ui/sound/soundmanager.h"
+#include "ui/translations.h"
+#include "utility/language.h"
+#include "utility/listhelpers.h"
+#include "utility/log.h"
+#include "utility/mathtools.h"
+#include "utility/position.h"
+#include "utility/random.h"
+
+#include <cassert>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -217,8 +208,10 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 	clients = std::move (clients_);
 
 	auto iter = ranges::find_if (clients, [=] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == activePlayerNumber; });
-	if (iter != clients.end()) setActiveClient (*iter);
-	else setActiveClient (nullptr);
+	if (iter != clients.end())
+		setActiveClient (*iter);
+	else
+		setActiveClient (nullptr);
 
 	for (size_t i = 0; i < clients.size(); ++i)
 	{
@@ -226,8 +219,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 
 		connectReportSources (*client);
 
-		allClientsSignalConnectionManager.connect (client->guiSaveInfoRequested, [this, client] (int slot, int savingId)
-		{
+		allClientsSignalConnectionManager.connect (client->guiSaveInfoRequested, [this, client] (int slot, int savingId) {
 			cNetMessageGUISaveInfo message (slot, savingId);
 			message.guiInfo = playerGameGuiStates[client->getActivePlayer().getId()];
 
@@ -238,8 +230,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 			client->sendNetMessage (message);
 		});
 
-		allClientsSignalConnectionManager.connect (client->guiSaveInfoReceived, [this, client] (const cNetMessageGUISaveInfo& guiInfo)
-		{
+		allClientsSignalConnectionManager.connect (client->guiSaveInfoReceived, [this, client] (const cNetMessageGUISaveInfo& guiInfo) {
 			if (guiInfo.playerNr != client->getActivePlayer().getId()) return;
 
 			const cMap& map = *client->getModel().getMap();
@@ -328,31 +319,26 @@ void cGameGuiController::addShortcut (cKeySequence key, Action action)
 //------------------------------------------------------------------------------
 void cGameGuiController::initShortcuts()
 {
-	addShortcut (KeysList.keyExit, [this]()
-	{
+	addShortcut (KeysList.keyExit, [this]() {
 		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Comp~End_Game")));
-		signalConnectionManager.connect (yesNoDialog->yesClicked, [this]()
-		{
+		signalConnectionManager.connect (yesNoDialog->yesClicked, [this]() {
 			gameGui->exit();
 		});
 	});
 
-	addShortcut (KeysList.keyJumpToAction, [this]()
-	{
+	addShortcut (KeysList.keyJumpToAction, [this]() {
 		if (savedReportPosition)
 		{
 			gameGui->getGameMap().centerAt (*savedReportPosition);
 		}
 	});
 
-	addShortcut (KeysList.keyUnitDoneAndNext, [this]()
-	{
+	addShortcut (KeysList.keyUnitDoneAndNext, [this]() {
 		markSelectedUnitAsDone();
 		selectNextUnit();
 	});
 
-	addShortcut (KeysList.keyAllDoneAndNext, [this]()
-	{
+	addShortcut (KeysList.keyAllDoneAndNext, [this]() {
 		resumeAllMoveJobsTriggered();
 		selectNextUnit();
 	});
@@ -374,47 +360,41 @@ void cGameGuiController::initChatCommands()
 	// TODO: translate descriptions?
 	chatCommands.push_back (
 		cChatCommand ("help", "Show this help message")
-		.setAction ([this]()
-		{
-			int maxPrefixLabelWidth = 0;
-			std::vector<cLobbyChatBoxListViewItem*> chatBoxCommandEntries;
-			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> ("Available commands:"));
-			for (const auto& commandExecutor : chatCommands)
-			{
-				const auto& command = commandExecutor->getCommand();
+			.setAction ([this]() {
+				int maxPrefixLabelWidth = 0;
+				std::vector<cLobbyChatBoxListViewItem*> chatBoxCommandEntries;
+				gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> ("Available commands:"));
+				for (const auto& commandExecutor : chatCommands)
+				{
+					const auto& command = commandExecutor->getCommand();
 
-				if (command.getIsServerOnly() && (!activeClient || !server)) continue;
+					if (command.getIsServerOnly() && (!activeClient || !server)) continue;
 
-				std::stringstream commandName;
-				commandName << command.getName();
-				commandExecutor->printArguments (commandName);
-				commandName << " ";
-				auto entry = gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (commandName.str(), command.getDescription(), false));
-				maxPrefixLabelWidth = std::max (maxPrefixLabelWidth, entry->getPrefixLabelWidth());
-				chatBoxCommandEntries.push_back (entry);
-			}
-			for (auto& entry : chatBoxCommandEntries)
-			{
-				entry->setDesiredPrefixLabelWidth (maxPrefixLabelWidth);
-			}
-		})
-	);
+					std::stringstream commandName;
+					commandName << command.getName();
+					commandExecutor->printArguments (commandName);
+					commandName << " ";
+					auto entry = gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (commandName.str(), command.getDescription(), false));
+					maxPrefixLabelWidth = std::max (maxPrefixLabelWidth, entry->getPrefixLabelWidth());
+					chatBoxCommandEntries.push_back (entry);
+				}
+				for (auto& entry : chatBoxCommandEntries)
+				{
+					entry->setDesiredPrefixLabelWidth (maxPrefixLabelWidth);
+				}
+			}));
 	gameGui->getDebugOutput().initChatCommand (chatCommands);
 	chatCommands.push_back (
 		cChatCommand ("cache size", "Set the drawing cache size")
-		.addArgument<cChatCommandArgumentInt<unsigned int>> ("size")
-		.setAction ([this](unsigned int size)
-		{
-			gameGui->getGameMap().getDrawingCache().setMaxCacheSize (size);
-		})
-	);
+			.addArgument<cChatCommandArgumentInt<unsigned int>> ("size")
+			.setAction ([this] (unsigned int size) {
+				gameGui->getGameMap().getDrawingCache().setMaxCacheSize (size);
+			}));
 	chatCommands.push_back (
 		cChatCommand ("cache flush", "Flush the drawing cache")
-		.setAction ([this]()
-		{
-			gameGui->getGameMap().getDrawingCache().flush();
-		})
-	);
+			.setAction ([this]() {
+				gameGui->getGameMap().getDrawingCache().flush();
+			}));
 #if 0 // Not implemented
 	chatCommands.push_back (
 		cChatCommand ("kick", "Remove a player from the game")
@@ -524,31 +504,25 @@ void cGameGuiController::initChatCommands()
 #endif
 	chatCommands.push_back (
 		cChatCommand ("pause", "Pause the game")
-		.setIsServerOnly (true)
-		.addArgument<cChatCommandArgumentServer> (server)
-		.setAction ([](cServer* server)
-		{
-			// FIXME: do not do changes on server data that are not synchronized with the server thread!
-			server->enableFreezeMode (eFreezeMode::Pause);
-		})
-	);
+			.setIsServerOnly (true)
+			.addArgument<cChatCommandArgumentServer> (server)
+			.setAction ([] (cServer* server) {
+				// FIXME: do not do changes on server data that are not synchronized with the server thread!
+				server->enableFreezeMode (eFreezeMode::Pause);
+			}));
 	chatCommands.push_back (
 		cChatCommand ("resume", "Resume a paused game")
-		.setIsServerOnly (true)
-		.addArgument<cChatCommandArgumentServer> (server)
-		.setAction ([](cServer* server)
-		{
-			// FIXME: do not do changes on server data that are not synchronized with the server thread!
-			server->disableFreezeMode (eFreezeMode::Pause);
-		})
-	);
+			.setIsServerOnly (true)
+			.addArgument<cChatCommandArgumentServer> (server)
+			.setAction ([] (cServer* server) {
+				// FIXME: do not do changes on server data that are not synchronized with the server thread!
+				server->disableFreezeMode (eFreezeMode::Pause);
+			}));
 	chatCommands.push_back (
 		cChatCommand ("crash", "Emulates a crash (to test the crash report utility)")
-		.setAction ([]()
-		{
-			CR_EMULATE_CRASH();
-		})
-	);
+			.setAction ([]() {
+				CR_EMULATE_CRASH();
+			}));
 #if 0
 	chatCommands.push_back (
 		cChatCommand ("disconnect", "Disconnect a player")
@@ -620,7 +594,7 @@ void cGameGuiController::connectGuiStaticCommands()
 {
 	signalConnectionManager.connect (gameGui->terminated, [this]() { terminated(); });
 
-	signalConnectionManager.connect (gameGui->getChatBox().commandEntered, [this](const std::string& text) { handleChatCommand (text); });
+	signalConnectionManager.connect (gameGui->getChatBox().commandEntered, [this] (const std::string& text) { handleChatCommand (text); });
 
 	signalConnectionManager.connect (gameGui->getHud().preferencesClicked, [this]() { showPreferencesDialog(); });
 	signalConnectionManager.connect (gameGui->getHud().filesClicked, [this]() { showFilesWindow(); });
@@ -629,8 +603,7 @@ void cGameGuiController::connectGuiStaticCommands()
 
 	signalConnectionManager.connect (gameGui->getHud().nextClicked, [this]() { selectNextUnit(); });
 	signalConnectionManager.connect (gameGui->getHud().prevClicked, [this]() { selectPreviousUnit(); });
-	signalConnectionManager.connect (gameGui->getHud().doneClicked, [this]()
-	{
+	signalConnectionManager.connect (gameGui->getHud().doneClicked, [this]() {
 		auto keyboard = application.getActiveKeyboard();
 		if (keyboard && keyboard->isAnyModifierActive (toEnumFlag (eKeyModifierType::Ctrl)))
 		{
@@ -644,10 +617,9 @@ void cGameGuiController::connectGuiStaticCommands()
 
 	signalConnectionManager.connect (gameGui->getHud().reportsClicked, [this]() { showReportsWindow(); });
 
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredUnitHelp, [this](const cUnit& unit) { showUnitHelpWindow (unit); });
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredTransfer, [this](const cUnit& source, const cUnit& dest) { showUnitTransferDialog (source, dest); });
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredBuild, [this] (const cUnit& unit)
-	{
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredUnitHelp, [this] (const cUnit& unit) { showUnitHelpWindow (unit); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredTransfer, [this] (const cUnit& source, const cUnit& dest) { showUnitTransferDialog (source, dest); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredBuild, [this] (const cUnit& unit) {
 		if (unit.isAVehicle())
 		{
 			showBuildBuildingsWindow (static_cast<const cVehicle&> (unit));
@@ -657,11 +629,11 @@ void cGameGuiController::connectGuiStaticCommands()
 			showBuildVehiclesWindow (static_cast<const cBuilding&> (unit));
 		}
 	});
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredResourceDistribution, [this](const cUnit& unit) { showResourceDistributionDialog (unit); });
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredResearchMenu, [this](const cUnit& unit) { showResearchDialog (unit); });
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradesMenu, [this](const cUnit& unit) { showUpgradesWindow (unit); });
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredActivate, [this](const cUnit& unit) { showStorageWindow (unit); });
-	signalConnectionManager.connect (gameGui->getGameMap().triggeredSelfDestruction, [this](const cBuilding& building) { showSelfDestroyDialog (building); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredResourceDistribution, [this] (const cUnit& unit) { showResourceDistributionDialog (unit); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredResearchMenu, [this] (const cUnit& unit) { showResearchDialog (unit); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradesMenu, [this] (const cUnit& unit) { showUpgradesWindow (unit); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredActivate, [this] (const cUnit& unit) { showStorageWindow (unit); });
+	signalConnectionManager.connect (gameGui->getGameMap().triggeredSelfDestruction, [this] (const cBuilding& building) { showSelfDestroyDialog (building); });
 }
 
 //------------------------------------------------------------------------------
@@ -672,97 +644,77 @@ void cGameGuiController::connectClient (cClient& client)
 	//
 	// GUI to client (action)
 	//
-	clientSignalConnectionManager.connect (transferTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType resourceType)
-	{
+	clientSignalConnectionManager.connect (transferTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType resourceType) {
 		if (transferValue != 0)
 		{
 			cActionTransfer msg (sourceUnit, destinationUnit, transferValue, resourceType);
 			client.sendNetMessage (msg);
 		}
 	});
-	clientSignalConnectionManager.connect (buildBuildingTriggered, [&] (const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed)
-	{
+	clientSignalConnectionManager.connect (buildBuildingTriggered, [&] (const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed) {
 		client.sendNetMessage (cActionStartBuild (vehicle, unitId, buildSpeed, destination));
 	});
-	clientSignalConnectionManager.connect (buildBuildingPathTriggered, [&] (const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed)
-	{
+	clientSignalConnectionManager.connect (buildBuildingPathTriggered, [&] (const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed) {
 		client.sendNetMessage (cActionStartBuild (vehicle, unitId, buildSpeed, vehicle.getPosition(), destination));
 	});
-	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&] (const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat)
-	{
+	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&] (const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat) {
 		client.sendNetMessage (cActionChangeBuildList (building, buildList, buildSpeed, repeat));
 	});
-	clientSignalConnectionManager.connect (activateAtTriggered, [&] (const cUnit& unit, size_t index, const cPosition& position)
-	{
+	clientSignalConnectionManager.connect (activateAtTriggered, [&] (const cUnit& unit, size_t index, const cPosition& position) {
 		client.sendNetMessage (cActionActivate (unit, *unit.storedUnits[index], position));
 	});
-	clientSignalConnectionManager.connect (reloadTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit)
-	{
+	clientSignalConnectionManager.connect (reloadTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
 		client.sendNetMessage (cActionRepairReload (sourceUnit, destinationUnit, eSupplyType::REARM));
 	});
-	clientSignalConnectionManager.connect (repairTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit)
-	{
+	clientSignalConnectionManager.connect (repairTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
 		client.sendNetMessage (cActionRepairReload (sourceUnit, destinationUnit, eSupplyType::REPAIR));
 	});
-	clientSignalConnectionManager.connect (upgradeTriggered, [&] (const cUnit& unit, size_t index)
-	{
+	clientSignalConnectionManager.connect (upgradeTriggered, [&] (const cUnit& unit, size_t index) {
 		if (!unit.isABuilding()) return;
 
 		client.sendNetMessage (cActionUpgradeVehicle (*static_cast<const cBuilding*> (&unit), unit.storedUnits[index]));
 	});
-	clientSignalConnectionManager.connect (upgradeAllTriggered, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (upgradeAllTriggered, [&] (const cUnit& unit) {
 		if (!unit.isABuilding()) return;
 
 		client.sendNetMessage (cActionUpgradeVehicle (*static_cast<const cBuilding*> (&unit)));
 	});
-	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&] (const cBuilding& building, const sMiningResource& production)
-	{
+	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&] (const cBuilding& building, const sMiningResource& production) {
 		client.sendNetMessage (cActionResourceDistribution (building, production));
 	});
-	clientSignalConnectionManager.connect (changeResearchSettingsTriggered, [&] (const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings)
-	{
+	clientSignalConnectionManager.connect (changeResearchSettingsTriggered, [&] (const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings) {
 		client.sendNetMessage (cActionChangeResearch (newResearchSettings));
 	});
-	clientSignalConnectionManager.connect (takeUnitUpgradesTriggered, [&] (const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
-	{
+	clientSignalConnectionManager.connect (takeUnitUpgradesTriggered, [&] (const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades) {
 		client.sendNetMessage (cActionBuyUpgrades (unitUpgrades));
 	});
-	clientSignalConnectionManager.connect (selfDestructionTriggered, [&] (const cBuilding& building)
-	{
+	clientSignalConnectionManager.connect (selfDestructionTriggered, [&] (const cBuilding& building) {
 		client.sendNetMessage (cActionSelfDestroy (building));
 	});
-	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&] (const cVehicle& vehicle)
-	{
+	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&] (const cVehicle& vehicle) {
 		client.sendNetMessage (cActionResumeMove (vehicle));
 	});
-	clientSignalConnectionManager.connect (resumeAllMoveJobsTriggered, [&]()
-	{
+	clientSignalConnectionManager.connect (resumeAllMoveJobsTriggered, [&]() {
 		client.sendNetMessage (cActionResumeMove());
 	});
-	clientSignalConnectionManager.connect (gameGui->getHud().endClicked, [&]()
-	{
+	clientSignalConnectionManager.connect (gameGui->getHud().endClicked, [&]() {
 		if (!client.getFreezeModes().isFreezed()) client.sendNetMessage (cActionEndTurn());
 	});
-	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit& unit, const std::string& name)
-	{
+	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit& unit, const std::string& name) {
 		client.sendNetMessage (cActionChangeUnitName (unit, name));
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartWork, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartWork, [&] (const cUnit& unit) {
 		cActionStartWork msg (unit);
 		client.sendNetMessage (msg);
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStopWork, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStopWork, [&] (const cUnit& unit) {
 		const auto& units = gameGui->getGameMap().getUnitSelection().getSelectedUnits();
 		for (const auto& u : units)
 		{
 			client.sendNetMessage (cActionStop (*u));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAutoMoveJob, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAutoMoveJob, [&] (const cUnit& unit) {
 		if (unit.isAVehicle())
 		{
 			auto& vehicle = static_cast<const cVehicle&> (unit);
@@ -777,50 +729,42 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartClear, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartClear, [&] (const cUnit& unit) {
 		if (unit.isAVehicle()) activeClient->sendNetMessage (cActionClear (static_cast<const cVehicle&> (unit)));
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredManualFire, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredManualFire, [&] (const cUnit& unit) {
 		activeClient->sendNetMessage (cActionChangeManualFire (unit));
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSentry, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSentry, [&] (const cUnit& unit) {
 		activeClient->sendNetMessage (cActionChangeSentry (unit));
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeThis, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeThis, [&] (const cUnit& unit) {
 		if (unit.isABuilding())
 		{
 			client.sendNetMessage (cActionUpgradeBuilding (static_cast<const cBuilding&> (unit), false));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeAll, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeAll, [&] (const cUnit& unit) {
 		if (unit.isABuilding())
 		{
 			client.sendNetMessage (cActionUpgradeBuilding (static_cast<const cBuilding&> (unit), true));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLayMines, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLayMines, [&] (const cUnit& unit) {
 		if (unit.isAVehicle())
 		{
 			auto& vehicle = *static_cast<const cVehicle*> (&unit);
 			client.sendNetMessage (cActionMinelayerStatus (vehicle, !vehicle.isUnitLayingMines(), false));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredCollectMines, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredCollectMines, [&] (const cUnit& unit) {
 		if (unit.isAVehicle())
 		{
 			auto& vehicle = *static_cast<const cVehicle*> (&unit);
 			client.sendNetMessage (cActionMinelayerStatus (vehicle, false, !vehicle.isUnitClearingMines()));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUnitDone, [this] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUnitDone, [this] (const cUnit& unit) {
 		if (unit.isAVehicle())
 		{
 			auto& vehicle = *static_cast<const cVehicle*> (&unit);
@@ -832,12 +776,10 @@ void cGameGuiController::connectClient (cClient& client)
 		playerGameGuiStates[activeClient->getActivePlayer().getId()].doneList.push_back (unit.getId());
 	});
 
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredEndBuilding, [&] (const cVehicle& vehicle, const cPosition& destination)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredEndBuilding, [&] (const cVehicle& vehicle, const cPosition& destination) {
 		client.sendNetMessage (cActionFinishBuild (vehicle, destination));
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveSingle, [&] (const cVehicle& vehicle, const cPosition& destination)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveSingle, [&] (const cVehicle& vehicle, const cPosition& destination) {
 		if (!activeClient) return;
 
 		cPathCalculator pc (vehicle, *mapView, destination, false);
@@ -851,20 +793,16 @@ void cGameGuiController::connectClient (cClient& client)
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceNoPath, getRandom (VoiceData.VOINoPath)));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveGroup, [&] (const std::vector<cVehicle*>& vehicles, const cPosition& destination)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveGroup, [&] (const std::vector<cVehicle*>& vehicles, const cPosition& destination) {
 		sendStartGroupMoveAction (vehicles, destination);
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredActivateAt, [&] (const cUnit& unit, size_t index, const cPosition& position)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredActivateAt, [&] (const cUnit& unit, size_t index, const cPosition& position) {
 		client.sendNetMessage (cActionActivate (unit, *unit.storedUnits[index], position));
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredExitFinishedUnit, [&] (const cBuilding& building, const cPosition& position)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredExitFinishedUnit, [&] (const cBuilding& building, const cPosition& position) {
 		client.sendNetMessage (cActionFinishBuild (building, position));
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLoadAt, [&] (const cUnit& unit, const cPosition& position)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLoadAt, [&] (const cUnit& unit, const cPosition& position) {
 		const auto& field = client.getModel().getMap()->getField (position);
 		auto overVehicle = field.getVehicle();
 		auto overPlane = field.getPlane();
@@ -951,7 +889,8 @@ void cGameGuiController::connectClient (cClient& client)
 					if (!path.empty())
 					{
 						cEndMoveAction emat (*overPlane, unit, eEndMoveActionType::Load);
-						activeClient->sendNetMessage (cActionStartMove (*overPlane, path, emat));;
+						activeClient->sendNetMessage (cActionStartMove (*overPlane, path, emat));
+						;
 					}
 					else
 					{
@@ -961,16 +900,13 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSupplyAmmo, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSupplyAmmo, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
 		client.sendNetMessage (cActionRepairReload (sourceUnit, destinationUnit, eSupplyType::REARM));
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredRepair, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredRepair, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
 		client.sendNetMessage (cActionRepairReload (sourceUnit, destinationUnit, eSupplyType::REPAIR));
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAttack, [&] (const cUnit& unit, const cPosition& position)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAttack, [&] (const cUnit& unit, const cPosition& position) {
 		if (unit.isAVehicle())
 		{
 			const auto& vehicle = static_cast<const cVehicle&> (unit);
@@ -1005,22 +941,19 @@ void cGameGuiController::connectClient (cClient& client)
 			activeClient->sendNetMessage (cActionAttack (building, position, target));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSteal, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSteal, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
 		if (sourceUnit.isAVehicle())
 		{
 			activeClient->sendNetMessage (cActionStealDisable (*static_cast<const cVehicle*> (&sourceUnit), destinationUnit, true));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredDisable, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit)
-	{
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredDisable, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
 		if (sourceUnit.isAVehicle())
 		{
 			activeClient->sendNetMessage (cActionStealDisable (*static_cast<const cVehicle*> (&sourceUnit), destinationUnit, false));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getMiniMap().triggeredMove, [&] (const cPosition& destination)
-	{
+	clientSignalConnectionManager.connect (gameGui->getMiniMap().triggeredMove, [&] (const cPosition& destination) {
 		const auto& unitSelection = gameGui->getGameMap().getUnitSelection();
 		const auto& selectedVehicle = *unitSelection.getSelectedVehicle();
 		const auto selectedVehiclesCount = unitSelection.getSelectedVehiclesCount();
@@ -1043,14 +976,12 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-
 	//
 	// client to GUI (reaction)
 	//
 	const cModel& model = client.getModel();
 
-	clientSignalConnectionManager.connect (model.playerFinishedTurn, [&](const cPlayer& player)
-	{
+	clientSignalConnectionManager.connect (model.playerFinishedTurn, [&] (const cPlayer& player) {
 		if (player.getId() != getActivePlayer()->getId())
 		{
 			return;
@@ -1058,8 +989,7 @@ void cGameGuiController::connectClient (cClient& client)
 		gameGui->getHud().lockEndButton();
 	});
 
-	clientSignalConnectionManager.connect (model.turnEnded, [&]()
-	{
+	clientSignalConnectionManager.connect (model.turnEnded, [&]() {
 		if (getGameSettings()->gameType == eGameSettingsGameType::HotSeat)
 		{
 			auto& player = *model.getActiveTurnPlayer();
@@ -1083,20 +1013,17 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.connectionToServerLost, [this]()
-	{
+	clientSignalConnectionManager.connect (client.connectionToServerLost, [this]() {
 		gameGui->exit();
 	});
 
-	clientSignalConnectionManager.connect (client.freezeModeChanged, [this]()
-	{
+	clientSignalConnectionManager.connect (client.freezeModeChanged, [this]() {
 		updateEndButtonState();
 		updateGuiInfoTexts();
 		updateChangeAllowed();
 	});
 
-	clientSignalConnectionManager.connect (model.newTurnStarted, [this](const sNewTurnReport&)
-	{
+	clientSignalConnectionManager.connect (model.newTurnStarted, [this] (const sNewTurnReport&) {
 		if (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get())
 		{
 			playerGameGuiStates[activeClient->getActivePlayer().getId()].doneList.clear();
@@ -1107,8 +1034,7 @@ void cGameGuiController::connectClient (cClient& client)
 		updateChangeAllowed();
 	});
 
-	clientSignalConnectionManager.connect (client.getModel().triggeredAddTracks, [&](const cVehicle& vehicle)
-	{
+	clientSignalConnectionManager.connect (client.getModel().triggeredAddTracks, [&] (const cVehicle& vehicle) {
 		if (!cSettings::getInstance().isMakeTracks()) return;
 		if (!client.getActivePlayer().canSeeUnit (vehicle, *client.getModel().getMap())) return;
 
@@ -1121,90 +1047,85 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			switch (vehicle.dir)
 			{
-			case 0:
-				map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (0, -10), 0));
-				break;
-			case 4:
-				map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (0, 10), 0));
-				break;
-			case 2:
-				map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, 0), 2));
-				break;
-			case 6:
-				map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, 0), 2));
-				break;
-			case 1:
-				map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, -10), 1));
-				break;
-			case 5:
-				map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, 10), 1));
-				break;
-			case 3:
-				map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, 10), 3));
-				break;
-			case 7:
-				map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, -10), 3));
-				break;
+				case 0:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (0, -10), 0));
+					break;
+				case 4:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (0, 10), 0));
+					break;
+				case 2:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, 0), 2));
+					break;
+				case 6:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, 0), 2));
+					break;
+				case 1:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, -10), 1));
+					break;
+				case 5:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, 10), 1));
+					break;
+				case 3:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, 10), 3));
+					break;
+				case 7:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, -10), 3));
+					break;
 			}
 		}
 		else
 		{
 			switch (vehicle.dir)
 			{
-			case 1:
-			case 5:
-				map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos, 1));
-				break;
-			case 3:
-			case 7:
-				map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos, 3));
-				break;;
+				case 1:
+				case 5:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos, 1));
+					break;
+				case 3:
+				case 7:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos, 3));
+					break;
+					;
 			}
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitStored, [this] (const cUnit& storingUnit, const cUnit& /*storedUnit*/)
-	{
+	clientSignalConnectionManager.connect (model.unitStored, [this] (const cUnit& storingUnit, const cUnit& /*storedUnit*/) {
 		if (mapView->canSeeUnit (storingUnit))
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectLoad, SoundData.SNDLoad, storingUnit));
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitActivated, [this] (const cUnit& storingUnit, const cUnit& /*storedUnit*/)
-	{
+	clientSignalConnectionManager.connect (model.unitActivated, [this] (const cUnit& storingUnit, const cUnit& /*storedUnit*/) {
 		if (mapView->canSeeUnit (storingUnit))
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectActivate, SoundData.SNDActivate, storingUnit));
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitStolen, [this] (const cUnit& source, const cUnit&, const cPlayer*)
-	{
+	clientSignalConnectionManager.connect (model.unitStolen, [this] (const cUnit& source, const cUnit&, const cPlayer*) {
 		if (source.getOwner() && source.getOwner()->getId() == getActivePlayer()->getId())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, getRandom (VoiceData.VOIUnitStolen)));
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitDisabled, [this] (const cUnit& source, const cUnit&)
-	{
+	clientSignalConnectionManager.connect (model.unitDisabled, [this] (const cUnit& source, const cUnit&) {
 		if (source.getOwner() && source.getOwner()->getId() == getActivePlayer()->getId())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, VoiceData.VOIUnitDisabled));
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitStealDisableFailed, [this] (const cUnit& source, const cUnit&)
-	{
+	clientSignalConnectionManager.connect (model.unitStealDisableFailed, [this] (const cUnit& source, const cUnit&) {
 		if (source.getOwner() && source.getOwner()->getId() == getActivePlayer()->getId())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceCommandoAction, getRandom (VoiceData.VOICommandoFailed)));
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitSuppliedWithAmmo, [this] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (model.unitSuppliedWithAmmo, [this] (const cUnit& unit) {
 		if (mapView->canSeeUnit (unit))
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectReload, SoundData.SNDReload, unit));
@@ -1215,8 +1136,7 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (model.unitRepaired, [this] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (model.unitRepaired, [this] (const cUnit& unit) {
 		if (mapView->canSeeUnit (unit))
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectRepair, SoundData.SNDRepair, unit));
@@ -1227,20 +1147,17 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.getModel().addedEffect, [this] (const std::shared_ptr<cFx>& effect)
-	{
+	clientSignalConnectionManager.connect (client.getModel().addedEffect, [this] (const std::shared_ptr<cFx>& effect) {
 		cPosition fxPos = effect->getPixelPosition();
 		cPosition mapPos = cPosition (fxPos.x() / sGraphicTile::tilePixelWidth, fxPos.y() / sGraphicTile::tilePixelHeight);
 		gameGui->getGameMap().addEffect (effect, getActivePlayer()->canSeeAt (mapPos));
 	});
 
-	clientSignalConnectionManager.connect (model.getTurnTimeClock()->alertTimeReached, [this]()
-	{
+	clientSignalConnectionManager.connect (model.getTurnTimeClock()->alertTimeReached, [this]() {
 		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceTurnAlertTimeReached, getRandom (VoiceData.VOITurnEnd20Sec)));
 	});
 
-	clientSignalConnectionManager.connect (mapView->unitAppeared, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (mapView->unitAppeared, [&] (const cUnit& unit) {
 		if (getActivePlayer().get() == unit.getOwner())
 		{
 			if (unit.data.getId() == client.getModel().getUnitsData()->getSeaMineID())
@@ -1253,22 +1170,21 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 		}
 	});
-	clientSignalConnectionManager.connect (mapView->unitDissappeared, [&] (const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (mapView->unitDissappeared, [&] (const cUnit& unit) {
 		if (getActivePlayer().get() != unit.getOwner()) return;
 
-		if (unit.data.getId() == client.getModel().getUnitsData()->getLandMineID()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
-		else if (unit.data.getId() == client.getModel().getUnitsData()->getSeaMineID()) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDSeaMineClear, unit));
+		if (unit.data.getId() == client.getModel().getUnitsData()->getLandMineID())
+			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDLandMineClear, unit));
+		else if (unit.data.getId() == client.getModel().getUnitsData()->getSeaMineID())
+			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectClearMine, SoundData.SNDSeaMineClear, unit));
 	});
-	clientSignalConnectionManager.connect (model.planeLanding, [this](const cVehicle& plane)
-	{
+	clientSignalConnectionManager.connect (model.planeLanding, [this] (const cVehicle& plane) {
 		if (mapView->canSeeUnit (plane))
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectPlaneLand, SoundData.SNDPlaneLand, plane));
 		}
 	});
-	clientSignalConnectionManager.connect (model.planeTakeoff, [this](const cVehicle& plane)
-	{
+	clientSignalConnectionManager.connect (model.planeTakeoff, [this] (const cVehicle& plane) {
 		if (mapView->canSeeUnit (plane))
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectPlaneTakeoff, SoundData.SNDPlaneTakeoff, plane));
@@ -1287,52 +1203,44 @@ void cGameGuiController::connectReportSources (cClient& client)
 	playerGameGuiStates[player.getId()].reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
 
 	//report message received from server
-	allClientsSignalConnectionManager.connect (client.reportMessageReceived, [this](int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr)
-	{
+	allClientsSignalConnectionManager.connect (client.reportMessageReceived, [this] (int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr) {
 		addSavedReport (std::move (report), toPlayerNr);
 	});
 
-	clientSignalConnectionManager.connect (client.surveyorAiConfused, [&](const cVehicle& vehicle)
-	{
+	clientSignalConnectionManager.connect (client.surveyorAiConfused, [&] (const cVehicle& vehicle) {
 		if (vehicle.getOwner() != nullptr && vehicle.getOwner()->getId() != getActivePlayer()->getId())
 		{
 			addSavedReport (std::make_unique<cSavedReportSurveyorAiConfused> (vehicle), player.getId());
 		}
 	});
-	clientSignalConnectionManager.connect (mapView->unitAppeared, [&](const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (mapView->unitAppeared, [&] (const cUnit& unit) {
 		if (unit.getOwner() != nullptr && unit.getOwner()->getId() != getActivePlayer()->getId())
 		{
 			addSavedReport (std::make_unique<cSavedReportDetected> (unit), player.getId());
 		}
 	});
-	allClientsSignalConnectionManager.connect (model.playerFinishedTurn, [&](const cPlayer& otherPlayer)
-	{
+	allClientsSignalConnectionManager.connect (model.playerFinishedTurn, [&] (const cPlayer& otherPlayer) {
 		if (otherPlayer.getId() != getActivePlayer()->getId())
 		{
 			addSavedReport (std::make_unique<cSavedReportPlayerEndedTurn> (otherPlayer), player.getId());
 		}
 	});
-	allClientsSignalConnectionManager.connect (model.unitDisabled, [&](const cUnit&, const cUnit& target)
-	{
+	allClientsSignalConnectionManager.connect (model.unitDisabled, [&] (const cUnit&, const cUnit& target) {
 		if (target.getOwner() && target.getOwner()->getId() == player.getId())
 		{
 			addSavedReport (std::make_unique<cSavedReportDisabled> (target), player.getId());
 		}
 	});
-	allClientsSignalConnectionManager.connect (model.unitStolen, [&](const cUnit&, const cUnit& target, const cPlayer* previousOwner)
-	{
+	allClientsSignalConnectionManager.connect (model.unitStolen, [&] (const cUnit&, const cUnit& target, const cPlayer* previousOwner) {
 		if (previousOwner && previousOwner->getId() == player.getId())
 		{
 			addSavedReport (std::make_unique<cSavedReportCapturedByEnemy> (target), player.getId());
 		}
 	});
-	allClientsSignalConnectionManager.connect (player.turnEndMovementsStarted, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.turnEndMovementsStarted, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::TurnAutoMove), player.getId());
 	});
-	clientSignalConnectionManager.connect (model.newTurnStarted, [&](const sNewTurnReport& newTurnReport)
-	{
+	clientSignalConnectionManager.connect (model.newTurnStarted, [&] (const sNewTurnReport& newTurnReport) {
 		if (model.getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->gameType == eGameSettingsGameType::Simultaneous)
 		{
 			const auto& report = newTurnReport.reports.at (player.getId());
@@ -1343,94 +1251,72 @@ void cGameGuiController::connectReportSources (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (player.unitDestroyed, [&](const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (player.unitDestroyed, [&] (const cUnit& unit) {
 		addSavedReport (std::make_unique<cSavedReportDestroyed> (unit), player.getId());
 	});
-	clientSignalConnectionManager.connect (player.unitAttacked, [&](const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (player.unitAttacked, [&] (const cUnit& unit) {
 		addSavedReport (std::make_unique<cSavedReportAttacked> (unit), player.getId());
 	});
-	clientSignalConnectionManager.connect (player.buildPathInterrupted, [&](const cUnit& unit)
-	{
+	clientSignalConnectionManager.connect (player.buildPathInterrupted, [&] (const cUnit& unit) {
 		addSavedReport (std::make_unique<cSavedReportPathInterrupted> (unit), player.getId());
 	});
-	clientSignalConnectionManager.connect (player.buildErrorBuildPositionBlocked, [&]()
-	{
+	clientSignalConnectionManager.connect (player.buildErrorBuildPositionBlocked, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::Producing_PositionBlocked), player.getId());
 	});
-	clientSignalConnectionManager.connect (player.buildErrorInsufficientMaterial, [&]()
-	{
+	clientSignalConnectionManager.connect (player.buildErrorInsufficientMaterial, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::Producing_InsufficientMaterial), player.getId());
 	});
-	clientSignalConnectionManager.connect (player.unitsUpgraded, [&](const sID& unitId, int unitsCount, int costs)
-	{
+	clientSignalConnectionManager.connect (player.unitsUpgraded, [&] (const sID& unitId, int unitsCount, int costs) {
 		addSavedReport (std::make_unique<cSavedReportUpgraded> (unitId, unitsCount, costs), player.getId());
 	});
 
 	//reports from the players base:
-	allClientsSignalConnectionManager.connect (player.base.forcedResourceProductionChance, [&](eResourceType resourceType, int amount, bool increase)
-	{
+	allClientsSignalConnectionManager.connect (player.base.forcedResourceProductionChance, [&] (eResourceType resourceType, int amount, bool increase) {
 		addSavedReport (std::make_unique<cSavedReportResourceChanged> (resourceType, amount, increase), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.fuelInsufficient, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.fuelInsufficient, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::FuelInsufficient), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.metalLow, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.metalLow, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::MetalLow), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.goldLow, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.goldLow, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::GoldLow), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.teamLow, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.teamLow, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::TeamLow), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.energyLow, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.energyLow, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::EnergyLow), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.fuelLow, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.fuelLow, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::FuelLow), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.teamInsufficient, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.teamInsufficient, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::TeamInsufficient), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.goldInsufficient, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.goldInsufficient, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::GoldInsufficient), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.metalInsufficient, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.metalInsufficient, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::MetalInsufficient), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.energyInsufficient, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.energyInsufficient, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::EnergyInsufficient), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.energyToLow, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.energyToLow, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::EnergyToLow), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (player.base.energyIsNeeded, [&]()
-	{
+	allClientsSignalConnectionManager.connect (player.base.energyIsNeeded, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::EnergyIsNeeded), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (model.playerHasLost, [&](const cPlayer& looser)
-	{
+	allClientsSignalConnectionManager.connect (model.playerHasLost, [&] (const cPlayer& looser) {
 		addSavedReport (std::make_unique<cSavedReportPlayerDefeated> (looser), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (model.playerHasWon, [&](const cPlayer& winner)
-	{
+	allClientsSignalConnectionManager.connect (model.playerHasWon, [&] (const cPlayer& winner) {
 		addSavedReport (std::make_unique<cSavedReportPlayerWins> (winner), player.getId());
 	});
-	allClientsSignalConnectionManager.connect (model.suddenDeathMode, [&]()
-	{
+	allClientsSignalConnectionManager.connect (model.suddenDeathMode, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::SuddenDeath), player.getId());
 	});
 }
@@ -1440,8 +1326,7 @@ void cGameGuiController::showNextPlayerDialog()
 {
 	soundManager->mute();
 	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", activeClient->getActivePlayer().getName()), eWindowBackgrounds::Black));
-	signalConnectionManager.connect (dialog->done, [this]()
-	{
+	signalConnectionManager.connect (dialog->done, [this]() {
 		soundManager->unmute();
 		activeClient->sendNetMessage (cActionStartTurn{});
 	});
@@ -1451,22 +1336,18 @@ void cGameGuiController::showNextPlayerDialog()
 void cGameGuiController::showFilesWindow()
 {
 	auto loadSaveWindow = application.show (std::make_shared<cWindowLoadSave> (getTurnTimeClock()));
-	loadSaveWindow->exit.connect ([this, loadSaveWindow]()
-	{
+	loadSaveWindow->exit.connect ([this, loadSaveWindow]() {
 		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Comp~End_Game")));
-		signalConnectionManager.connect (yesNoDialog->yesClicked, [&, loadSaveWindow]()
-		{
+		signalConnectionManager.connect (yesNoDialog->yesClicked, [&, loadSaveWindow]() {
 			loadSaveWindow->close();
 			gameGui->exit();
 		});
 	});
-	loadSaveWindow->load.connect ([this, loadSaveWindow] (const cSaveGameInfo& saveInfo)
-	{
+	loadSaveWindow->load.connect ([this, loadSaveWindow] (const cSaveGameInfo& saveInfo) {
 		// loading games while game is running is not yet implemented
 		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented")));
 	});
-	loadSaveWindow->save.connect ([this, loadSaveWindow] (int saveNumber, const std::string& name)
-	{
+	loadSaveWindow->save.connect ([this, loadSaveWindow] (int saveNumber, const std::string& name) {
 		try
 		{
 			if (server == nullptr)
@@ -1500,15 +1381,13 @@ void cGameGuiController::showReportsWindow()
 
 	auto reportsWindow = application.show (std::make_shared<cWindowReports> (activeClient->getModel(), getActivePlayer(), getSavedReports (getActivePlayer()->getId())));
 
-	signalConnectionManager.connect (reportsWindow->unitClickedSecondTime, [this, reportsWindow] (cUnit& unit)
-	{
+	signalConnectionManager.connect (reportsWindow->unitClickedSecondTime, [this, reportsWindow] (cUnit& unit) {
 		gameGui->getGameMap().getUnitSelection().selectUnit (unit);
 		gameGui->getGameMap().centerAt (unit.getPosition());
 		reportsWindow->close();
 	});
 
-	signalConnectionManager.connect (reportsWindow->reportClickedSecondTime, [this, reportsWindow] (const cSavedReport& report)
-	{
+	signalConnectionManager.connect (reportsWindow->reportClickedSecondTime, [this, reportsWindow] (const cSavedReport& report) {
 		if (auto position = report.getPosition())
 		{
 			gameGui->getGameMap().centerAt (*position);
@@ -1527,8 +1406,7 @@ void cGameGuiController::showUnitHelpWindow (const cUnit& unit)
 void cGameGuiController::showUnitTransferDialog (const cUnit& sourceUnit, const cUnit& destinationUnit)
 {
 	auto transferDialog = application.show (std::make_shared<cNewDialogTransfer> (sourceUnit, destinationUnit));
-	transferDialog->done.connect ([&, transferDialog]()
-	{
+	transferDialog->done.connect ([&, transferDialog]() {
 		transferTriggered (sourceUnit, destinationUnit, transferDialog->getTransferValue(), transferDialog->getResourceType());
 		transferDialog->close();
 	});
@@ -1540,8 +1418,7 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 	auto buildWindow = application.show (std::make_shared<cWindowBuildBuildings> (vehicle, getTurnTimeClock(), getUnitsData()));
 
 	buildWindow->canceled.connect ([buildWindow]() { buildWindow->close(); });
-	buildWindow->done.connect ([&, buildWindow]()
-	{
+	buildWindow->done.connect ([&, buildWindow]() {
 		if (buildWindow->getSelectedUnitId())
 		{
 			const sID buildingId = *buildWindow->getSelectedUnitId();
@@ -1559,8 +1436,7 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 				auto buildSpeed = buildWindow->getSelectedBuildSpeed();
 
 				buildPositionSelectionConnectionManager.disconnectAll();
-				buildPositionSelectionConnectionManager.connect (gameGui->getGameMap().selectedBuildPosition, [this, buildingId, buildSpeed] (const cVehicle& selectedVehicle, const cPosition& destination)
-				{
+				buildPositionSelectionConnectionManager.connect (gameGui->getGameMap().selectedBuildPosition, [this, buildingId, buildSpeed] (const cVehicle& selectedVehicle, const cPosition& destination) {
 					buildBuildingTriggered (selectedVehicle, destination, buildingId, buildSpeed);
 					buildPositionSelectionConnectionManager.disconnectAll();
 				});
@@ -1572,8 +1448,7 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 		}
 		buildWindow->close();
 	});
-	buildWindow->donePath.connect ([&, buildWindow]()
-	{
+	buildWindow->donePath.connect ([&, buildWindow]() {
 		if (buildWindow->getSelectedUnitId())
 		{
 			gameGui->getGameMap().startFindPathBuildPosition();
@@ -1581,8 +1456,7 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 			auto buildSpeed = buildWindow->getSelectedBuildSpeed();
 
 			buildPositionSelectionConnectionManager.disconnectAll();
-			buildPositionSelectionConnectionManager.connect (gameGui->getGameMap().selectedBuildPathDestination, [this, buildType, buildSpeed] (const cVehicle& selectedVehicle, const cPosition& destination)
-			{
+			buildPositionSelectionConnectionManager.connect (gameGui->getGameMap().selectedBuildPathDestination, [this, buildType, buildSpeed] (const cVehicle& selectedVehicle, const cPosition& destination) {
 				buildBuildingPathTriggered (selectedVehicle, destination, buildType, buildSpeed);
 				buildPositionSelectionConnectionManager.disconnectAll();
 			});
@@ -1599,8 +1473,7 @@ void cGameGuiController::showBuildVehiclesWindow (const cBuilding& building)
 	auto buildWindow = application.show (std::make_shared<cWindowBuildVehicles> (building, *mapView, getUnitsData(), getTurnTimeClock()));
 
 	buildWindow->canceled.connect ([buildWindow]() { buildWindow->close(); });
-	buildWindow->done.connect ([&, buildWindow]()
-	{
+	buildWindow->done.connect ([&, buildWindow]() {
 		buildVehiclesTriggered (building, buildWindow->getBuildList(), buildWindow->getSelectedBuildSpeed(), buildWindow->isRepeatActive());
 		buildWindow->close();
 	});
@@ -1614,8 +1487,7 @@ void cGameGuiController::showResourceDistributionDialog (const cUnit& unit)
 	const auto& building = static_cast<const cBuilding&> (unit);
 
 	auto resourceDistributionWindow = application.show (std::make_shared<cWindowResourceDistribution> (building, getTurnTimeClock()));
-	resourceDistributionWindow->done.connect ([&, resourceDistributionWindow]()
-	{
+	resourceDistributionWindow->done.connect ([&, resourceDistributionWindow]() {
 		changeResourceDistributionTriggered (building, resourceDistributionWindow->getProduction());
 		resourceDistributionWindow->close();
 	});
@@ -1631,8 +1503,7 @@ void cGameGuiController::showResearchDialog (const cUnit& unit)
 	gameGui->getGameMap().currentTurnResearchAreasFinished.clear();
 
 	auto researchDialog = application.show (std::make_shared<cDialogResearch> (*player));
-	researchDialog->done.connect ([&, researchDialog]()
-	{
+	researchDialog->done.connect ([&, researchDialog]() {
 		changeResearchSettingsTriggered (researchDialog->getResearchSettings());
 		researchDialog->close();
 	});
@@ -1647,10 +1518,8 @@ void cGameGuiController::showUpgradesWindow (const cUnit& unit)
 
 	auto upgradesWindow = application.show (std::make_shared<cWindowUpgrades> (*player, getTurnTimeClock(), upgradesFilterState, getUnitsData()));
 
-
 	upgradesWindow->canceled.connect ([upgradesWindow]() { upgradesWindow->close(); });
-	upgradesWindow->done.connect ([&, upgradesWindow]()
-	{
+	upgradesWindow->done.connect ([&, upgradesWindow]() {
 		takeUnitUpgradesTriggered (upgradesWindow->getUnitUpgrades());
 		upgradesWindow->close();
 	});
@@ -1660,8 +1529,7 @@ void cGameGuiController::showUpgradesWindow (const cUnit& unit)
 void cGameGuiController::showStorageWindow (const cUnit& unit)
 {
 	auto storageWindow = application.show (std::make_shared<cWindowStorage> (unit, getTurnTimeClock()));
-	storageWindow->activate.connect ([&, storageWindow] (size_t index)
-	{
+	storageWindow->activate.connect ([&, storageWindow] (size_t index) {
 		if (unit.isAVehicle() && unit.getStaticUnitData().factorAir > 0)
 		{
 			activateAtTriggered (unit, index, unit.getPosition());
@@ -1672,20 +1540,16 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 		}
 		storageWindow->close();
 	});
-	storageWindow->reload.connect ([&] (size_t index)
-	{
+	storageWindow->reload.connect ([&] (size_t index) {
 		reloadTriggered (unit, *unit.storedUnits[index]);
 	});
-	storageWindow->repair.connect ([&] (size_t index)
-	{
+	storageWindow->repair.connect ([&] (size_t index) {
 		repairTriggered (unit, *unit.storedUnits[index]);
 	});
-	storageWindow->upgrade.connect ([&] (size_t index)
-	{
+	storageWindow->upgrade.connect ([&] (size_t index) {
 		upgradeTriggered (unit, index);
 	});
-	storageWindow->activateAll.connect ([&, storageWindow]()
-	{
+	storageWindow->activateAll.connect ([&, storageWindow]() {
 		if (mapView)
 		{
 			std::array<bool, 16> hasCheckedPlace;
@@ -1705,8 +1569,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 
 						if (xpos < 0 || xpos >= mapView->getSize().x()) continue;
 
-						if (((ypos == unit.getPosition().y() && unit.getStaticUnitData().factorAir == 0) || (ypos == unit.getPosition().y() + 1 && unit.getIsBig())) &&
-							((xpos == unit.getPosition().x() && unit.getStaticUnitData().factorAir == 0) || (xpos == unit.getPosition().x() + 1 && unit.getIsBig()))) continue;
+						if (((ypos == unit.getPosition().y() && unit.getStaticUnitData().factorAir == 0) || (ypos == unit.getPosition().y() + 1 && unit.getIsBig())) && ((xpos == unit.getPosition().x() && unit.getStaticUnitData().factorAir == 0) || (xpos == unit.getPosition().x() + 1 && unit.getIsBig()))) continue;
 
 						if (unit.canExitTo (cPosition (xpos, ypos), *mapView, storedUnit.getStaticUnitData()))
 						{
@@ -1723,8 +1586,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 
 		storageWindow->close();
 	});
-	storageWindow->reloadAll.connect ([&, storageWindow]()
-	{
+	storageWindow->reloadAll.connect ([&, storageWindow]() {
 		if (!unit.isABuilding()) return;
 		auto remainingResources = static_cast<const cBuilding&> (unit).subBase->getResourcesStored().metal;
 		for (size_t i = 0; i < unit.storedUnits.size() && remainingResources > 0; ++i)
@@ -1738,8 +1600,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 			}
 		}
 	});
-	storageWindow->repairAll.connect ([&, storageWindow]()
-	{
+	storageWindow->repairAll.connect ([&, storageWindow]() {
 		if (!unit.isABuilding()) return;
 		auto remainingResources = static_cast<const cBuilding&> (unit).subBase->getResourcesStored().metal;
 		for (size_t i = 0; i < unit.storedUnits.size() && remainingResources > 0; ++i)
@@ -1753,14 +1614,13 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 				auto value = storedUnit.data.getHitpoints();
 				while (value < storedUnit.data.getHitpointsMax() && remainingResources > 0)
 				{
-					value += Round (((float)storedUnit.data.getHitpointsMax() / storedUnit.data.getBuildCost()) * 4);
+					value += Round (((float) storedUnit.data.getHitpointsMax() / storedUnit.data.getBuildCost()) * 4);
 					remainingResources--;
 				}
 			}
 		}
 	});
-	storageWindow->upgradeAll.connect ([&, storageWindow]()
-	{
+	storageWindow->upgradeAll.connect ([&, storageWindow]() {
 		upgradeAllTriggered (unit);
 	});
 }
@@ -1771,8 +1631,7 @@ void cGameGuiController::showSelfDestroyDialog (const cBuilding& building)
 	if (building.getStaticData().canSelfDestroy)
 	{
 		auto selfDestroyDialog = application.show (std::make_shared<cDialogSelfDestruction> (building, animationTimer));
-		signalConnectionManager.connect (selfDestroyDialog->triggeredDestruction, [this, selfDestroyDialog, &building]()
-		{
+		signalConnectionManager.connect (selfDestroyDialog->triggeredDestruction, [this, selfDestroyDialog, &building]() {
 			selfDestructionTriggered (building);
 			selfDestroyDialog->close();
 		});
@@ -1964,7 +1823,7 @@ std::shared_ptr<const cPlayer> cGameGuiController::getActivePlayer() const
 
 	auto iter = ranges::find_if (clientPlayerList, [this] (const std::shared_ptr<cPlayer>& player) { return player->getId() == activeClient->getActivePlayer().getId(); });
 
-	if (iter == clientPlayerList.end()) return nullptr;  // should never happen; just to be on the safe side
+	if (iter == clientPlayerList.end()) return nullptr; // should never happen; just to be on the safe side
 
 	return *iter;
 }
@@ -2069,9 +1928,7 @@ void cGameGuiController::updateEndButtonState()
 	const cFreezeModes& freezeModes = activeClient->getFreezeModes();
 	const auto& model = activeClient->getModel();
 
-	if (freezeModes.isEnabled (eFreezeMode::WaitForTurnend) ||
-	   (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->gameType == eGameSettingsGameType::Turns) ||
-	    getActivePlayer()->getHasFinishedTurn())
+	if (freezeModes.isEnabled (eFreezeMode::WaitForTurnend) || (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->gameType == eGameSettingsGameType::Turns) || getActivePlayer()->getHasFinishedTurn())
 	{
 		gameGui->getHud().lockEndButton();
 	}

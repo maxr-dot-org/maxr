@@ -83,7 +83,7 @@ void cGraphicStaticMap::loadPalette (SDL_RWops* fpMapFile, std::size_t paletteOf
 }
 
 //------------------------------------------------------------------------------
-/*static*/AutoSurface cGraphicStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
+/*static*/ AutoSurface cGraphicStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
 {
 	// Create new surface and copy palette
 	AutoSurface surface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
@@ -120,7 +120,7 @@ void cGraphicStaticMap::generateNextAnimationFrame()
 	//change palettes to display next frame
 	SDL_Color temp = palette[127];
 	memmove (palette + 97, palette + 96, 32 * sizeof (SDL_Color));
-	palette[96]  = palette[103];
+	palette[96] = palette[103];
 	palette[103] = palette[110];
 	palette[110] = palette[117];
 	palette[117] = palette[123];
@@ -128,7 +128,7 @@ void cGraphicStaticMap::generateNextAnimationFrame()
 
 	temp = palette_shw[127];
 	memmove (palette_shw + 97, palette_shw + 96, 32 * sizeof (SDL_Color));
-	palette_shw[96]  = palette_shw[103];
+	palette_shw[96] = palette_shw[103];
 	palette_shw[103] = palette_shw[110];
 	palette_shw[110] = palette_shw[117];
 	palette_shw[117] = palette_shw[123];
@@ -162,9 +162,9 @@ AutoSurface cGraphicStaticMap::createBigSurface (int sizex, int sizey) const
 			const int offsety = ((y * size) % mapSurface->h) * 64 / mapSurface->h;
 
 			const sGraphicTile& t = getTile (map->getTileIndex (cPosition (terrainx, terrainy)));
-			unsigned int ColorNr = * (static_cast<const unsigned char*> (t.sf_org->pixels) + (offsetx + offsety * 64));
+			unsigned int ColorNr = *(static_cast<const unsigned char*> (t.sf_org->pixels) + (offsetx + offsety * 64));
 
-			unsigned char* pixel = reinterpret_cast<unsigned char*> (&static_cast<Uint32*> (mapSurface->pixels) [x + y * mapSurface->w]);
+			unsigned char* pixel = reinterpret_cast<unsigned char*> (&static_cast<Uint32*> (mapSurface->pixels)[x + y * mapSurface->w]);
 			pixel[0] = palette[ColorNr].b;
 			pixel[1] = palette[ColorNr].g;
 			pixel[2] = palette[ColorNr].r;

@@ -42,7 +42,7 @@ bool cRgbColor::operator== (const cRgbColor& other) const
 //------------------------------------------------------------------------------
 bool cRgbColor::operator!= (const cRgbColor& other) const
 {
-	return ! (*this == other);
+	return !(*this == other);
 }
 
 //------------------------------------------------------------------------------
@@ -85,19 +85,25 @@ cHsvColor cRgbColor::toHsv() const
 	const auto delta = maxValue - minValue;
 
 	short hTemp = 0;
-	if (maxValue == minValue) hTemp = 0;
-	else if (maxValue == r) hTemp = (60 * ((int)g - b) / delta);
-	else if (maxValue == g) hTemp = (120 + 60 * ((int)b - r) / delta);
-	else if (maxValue == b) hTemp = (240 + 60 * ((int)r - g) / delta);
+	if (maxValue == minValue)
+		hTemp = 0;
+	else if (maxValue == r)
+		hTemp = (60 * ((int) g - b) / delta);
+	else if (maxValue == g)
+		hTemp = (120 + 60 * ((int) b - r) / delta);
+	else if (maxValue == b)
+		hTemp = (240 + 60 * ((int) r - g) / delta);
 
 	if (hTemp < 0) hTemp += 360;
 
 	cHsvColor result;
 
-	result.h = (unsigned short)hTemp;
+	result.h = (unsigned short) hTemp;
 
-	if (maxValue == 0) result.s = 0;
-	else result.s = delta * 100 / maxValue;
+	if (maxValue == 0)
+		result.s = 0;
+	else
+		result.s = delta * 100 / maxValue;
 
 	result.v = maxValue * 100 / 255;
 
@@ -116,12 +122,18 @@ cLabColor cRgbColor::toLab() const
 	auto g2 = (g / 255.0);
 	auto b2 = (b / 255.0);
 
-	if (r2 > 0.04045) r2 = std::pow (((r2 + 0.055) / 1.055), 2.4);
-	else r2 = r2 / 12.92;
-	if (g2 > 0.04045) g2 = std::pow (((g2 + 0.055) / 1.055), 2.4);
-	else g2 = g2 / 12.92;
-	if (b2 > 0.04045) b2 = std::pow (((b2 + 0.055) / 1.055), 2.4);
-	else b2 = b2 / 12.92;
+	if (r2 > 0.04045)
+		r2 = std::pow (((r2 + 0.055) / 1.055), 2.4);
+	else
+		r2 = r2 / 12.92;
+	if (g2 > 0.04045)
+		g2 = std::pow (((g2 + 0.055) / 1.055), 2.4);
+	else
+		g2 = g2 / 12.92;
+	if (b2 > 0.04045)
+		b2 = std::pow (((b2 + 0.055) / 1.055), 2.4);
+	else
+		b2 = b2 / 12.92;
 
 	const auto x = r2 * 0.4124 + g2 * 0.3576 + b2 * 0.1805;
 	const auto y = r2 * 0.2126 + g2 * 0.7152 + b2 * 0.0722;
@@ -132,12 +144,18 @@ cLabColor cRgbColor::toLab() const
 	auto y2 = y / 1.;
 	auto z2 = z / 1.08883;
 
-	if (x2 > 0.008856) x2 = std::cbrt (x2);
-	else x2 = (7.787 * x2) + (16. / 116.);
-	if (y2 > 0.008856) y2 = std::cbrt (y2);
-	else y2 = (7.787 * y2) + (16. / 116.);
-	if (z2 > 0.008856) z2 = std::cbrt (z2);
-	else z2 = (7.787 * z2) + (16. / 116.);
+	if (x2 > 0.008856)
+		x2 = std::cbrt (x2);
+	else
+		x2 = (7.787 * x2) + (16. / 116.);
+	if (y2 > 0.008856)
+		y2 = std::cbrt (y2);
+	else
+		y2 = (7.787 * y2) + (16. / 116.);
+	if (z2 > 0.008856)
+		z2 = std::cbrt (z2);
+	else
+		z2 = (7.787 * z2) + (16. / 116.);
 
 	return cLabColor ((116 * y2) - 16, 500 * (x2 - y2), 200 * (y2 - z2));
 }
@@ -159,7 +177,7 @@ bool cHsvColor::operator== (const cHsvColor& other) const
 //------------------------------------------------------------------------------
 bool cHsvColor::operator!= (const cHsvColor& other) const
 {
-	return ! (*this == other);
+	return !(*this == other);
 }
 
 //------------------------------------------------------------------------------
@@ -172,12 +190,12 @@ cRgbColor cHsvColor::toRgb() const
 	cRgbColor result;
 	if (s == 0)
 	{
-		result.r = result.g = result.b = (unsigned char)v * 255 / 100;
+		result.r = result.g = result.b = (unsigned char) v * 255 / 100;
 	}
 	else
 	{
-		const auto hh = (double)h / 60;
-		const auto i = (int)hh;
+		const auto hh = (double) h / 60;
+		const auto i = (int) hh;
 
 		const auto f = hh - i;
 
@@ -189,34 +207,34 @@ cRgbColor cHsvColor::toRgb() const
 		{
 			default:
 			case 0:
-				result.r = (unsigned char)v * 255 / 100;
-				result.g = (unsigned char)t;
-				result.b = (unsigned char)p;
+				result.r = (unsigned char) v * 255 / 100;
+				result.g = (unsigned char) t;
+				result.b = (unsigned char) p;
 				break;
 			case 1:
-				result.r = (unsigned char)q;
-				result.g = (unsigned char)v * 255 / 100;
-				result.b = (unsigned char)p;
+				result.r = (unsigned char) q;
+				result.g = (unsigned char) v * 255 / 100;
+				result.b = (unsigned char) p;
 				break;
 			case 2:
-				result.r = (unsigned char)p;
-				result.g = (unsigned char)v * 255 / 100;
-				result.b = (unsigned char)t;
+				result.r = (unsigned char) p;
+				result.g = (unsigned char) v * 255 / 100;
+				result.b = (unsigned char) t;
 				break;
 			case 3:
-				result.r = (unsigned char)p;
-				result.g = (unsigned char)q;
-				result.b = (unsigned char)v * 255 / 100;
+				result.r = (unsigned char) p;
+				result.g = (unsigned char) q;
+				result.b = (unsigned char) v * 255 / 100;
 				break;
 			case 4:
-				result.r = (unsigned char)t;
-				result.g = (unsigned char)p;
-				result.b = (unsigned char)v * 255 / 100;
+				result.r = (unsigned char) t;
+				result.g = (unsigned char) p;
+				result.b = (unsigned char) v * 255 / 100;
 				break;
 			case 5:
-				result.r = (unsigned char)v * 255 / 100;
-				result.g = (unsigned char)p;
-				result.b = (unsigned char)q;
+				result.r = (unsigned char) v * 255 / 100;
+				result.g = (unsigned char) p;
+				result.b = (unsigned char) q;
 				break;
 		}
 	}
@@ -239,7 +257,7 @@ bool cLabColor::operator== (const cLabColor& other) const
 //------------------------------------------------------------------------------
 bool cLabColor::operator!= (const cLabColor& other) const
 {
-	return ! (*this == other);
+	return !(*this == other);
 }
 
 //------------------------------------------------------------------------------

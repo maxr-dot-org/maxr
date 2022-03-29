@@ -18,6 +18,7 @@
 ***************************************************************************/
 
 #include "utility/position.h"
+
 #include "crc.h"
 
 uint32_t cPosition::getChecksum (uint32_t crc) const

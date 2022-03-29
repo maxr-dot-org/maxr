@@ -19,6 +19,7 @@
 
 #include "ui/graphical/game/temp/unitdrawingengine.h"
 
+#include "SDLutility/drawing.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
@@ -27,7 +28,6 @@
 #include "resources/buildinguidata.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
-#include "SDLutility/drawing.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "ui/graphical/game/unitselection.h"
@@ -120,8 +120,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 
 	// draw the mark, when a build order is finished
-	if (building.getOwner() == player && ((!building.isBuildListEmpty() && !building.isUnitWorking() && building.getBuildListItem (0).getRemainingMetal() <= 0) ||
-		(building.getStaticData().canResearch && Contains (currentTurnResearchAreasFinished, building.getResearchArea()))))
+	if (building.getOwner() == player && ((!building.isBuildListEmpty() && !building.isUnitWorking() && building.getBuildListItem (0).getRemainingMetal() <= 0) || (building.getStaticData().canResearch && Contains (currentTurnResearchAreasFinished, building.getResearchArea()))))
 	{
 		const cRgbColor finishedMarkColor = cRgbColor::green();
 		const cBox<cPosition> d (cPosition (dest.x + 2, dest.y + 2), cPosition (dest.x + 2 + (building.getIsBig() ? 2 * destination.w - 3 : destination.w - 3), dest.y + 2 + (building.getIsBig() ? 2 * destination.h - 3 : destination.h - 3)));
@@ -147,7 +146,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	// draw the selected-unit-flash-frame for buildings
 	if (unitSelection && &building == unitSelection->getSelectedBuilding())
 	{
-		Uint16 maxX = building.getIsBig() ? destination.w  * 2 : destination.w;
+		Uint16 maxX = building.getIsBig() ? destination.w * 2 : destination.w;
 		Uint16 maxY = building.getIsBig() ? destination.h * 2 : destination.h;
 		const int len = maxX / 4;
 		maxX -= 3;
@@ -297,7 +296,6 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	{
 		drawStatus (vehicle, destination);
 	}
-
 }
 
 //--------------------------------------------------------------------------

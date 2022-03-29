@@ -17,17 +17,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <functional>
-
 #include "ui/graphical/menu/windows/windowmultiplayer.h"
-#include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/menu/windows/windowload/windowload.h"
-#include "ui/graphical/menu/control/menucontrollermultiplayerhost.h"
-#include "ui/graphical/menu/control/menucontrollermultiplayerclient.h"
-#include "ui/graphical/menu/control/menucontrollermultiplayerhotseat.h"
+
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/control/local/hotseat/localhotseatgamesaved.h"
+#include "ui/graphical/menu/control/menucontrollermultiplayerclient.h"
+#include "ui/graphical/menu/control/menucontrollermultiplayerhost.h"
+#include "ui/graphical/menu/control/menucontrollermultiplayerhotseat.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/graphical/menu/windows/windowload/windowload.h"
 #include "utility/language.h"
+
+#include <functional>
 
 //------------------------------------------------------------------------------
 cWindowMultiPlayer::cWindowMultiPlayer() :
@@ -90,8 +91,7 @@ void cWindowMultiPlayer::loadHotSeatClicked()
 	auto application = getActiveApplication();
 
 	auto windowLoad = getActiveApplication()->show (std::make_shared<cWindowLoad>());
-	windowLoad->load.connect ([=] (const cSaveGameInfo& saveInfo)
-	{
+	windowLoad->load.connect ([=] (const cSaveGameInfo& saveInfo) {
 		auto game = std::make_shared<cLocalHotSeatGameSaved>();
 		game->setSaveGameNumber (saveInfo.number);
 		game->start (*application);

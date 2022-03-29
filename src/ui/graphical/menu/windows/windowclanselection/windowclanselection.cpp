@@ -22,9 +22,9 @@
 #include "game/data/player/clans.h"
 #include "resources/pcx.h"
 #include "resources/uidata.h"
+#include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/menu/widgets/image.h"
 #include "ui/translations.h"
 #include "ui/uidefines.h"
 #include "utility/language.h"
@@ -106,7 +106,7 @@ void cWindowClanSelection::clanClicked (const cImage* clanImage)
 		{
 			if (i != selectedClan)
 			{
-  				clanTitles[selectedClan]->setText (getClanName (clanData->getClans()[selectedClan]));
+				clanTitles[selectedClan]->setText (getClanName (clanData->getClans()[selectedClan]));
 				clanTitles[i]->setText (">" + getClanName (clanData->getClans()[i]) + "<");
 				selectedClan = i;
 				updateClanDescription();

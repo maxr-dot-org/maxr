@@ -35,7 +35,7 @@ namespace
 		// __DATE__ format is Mmm dd yyyy
 		return __DATE__ + 7;
 	}
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 cDialogLicense::cDialogLicense() :
@@ -91,11 +91,15 @@ void cDialogLicense::pageUp()
 //------------------------------------------------------------------------------
 void cDialogLicense::updatePageButtons()
 {
-	if (currentPage <= 0) upButton->lock();
-	else upButton->unlock();
+	if (currentPage <= 0)
+		upButton->lock();
+	else
+		upButton->unlock();
 
-	if (currentPage >= maxPage) downButton->lock();
-	else downButton->unlock();
+	if (currentPage >= maxPage)
+		downButton->lock();
+	else
+		downButton->unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -123,7 +127,8 @@ void cDialogLicense::readAuthors()
 			authors += line;
 		}
 	}
-	else authors = "Couldn't read AUTHORS"; //missing file - naughty
+	else
+		authors = "Couldn't read AUTHORS"; //missing file - naughty
 }
 
 //------------------------------------------------------------------------------

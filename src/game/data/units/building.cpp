@@ -38,7 +38,6 @@
 
 using namespace std;
 
-
 //--------------------------------------------------------------------------
 cBuildListItem::cBuildListItem()
 {}
@@ -118,7 +117,8 @@ uint32_t cBuildListItem::getChecksum (uint32_t crc) const
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-cBuilding::cBuilding (unsigned int ID) : cBuilding (nullptr, nullptr, nullptr, ID)
+cBuilding::cBuilding (unsigned int ID) :
+	cBuilding (nullptr, nullptr, nullptr, ID)
 {
 }
 
@@ -130,13 +130,13 @@ cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData*
 
 	if (isBig)
 	{
-		DamageFXPoint  = { random (64) + 32, random (64) + 32 };
-		DamageFXPoint2 = { random (64) + 32, random (64) + 32 };
+		DamageFXPoint = {random (64) + 32, random (64) + 32};
+		DamageFXPoint2 = {random (64) + 32, random (64) + 32};
 	}
 	else
 	{
-		DamageFXPoint = { random (64 - 24), random (64 - 24) };
-		DamageFXPoint2 = { 0, 0 };
+		DamageFXPoint = {random (64 - 24), random (64 - 24)};
+		DamageFXPoint2 = {0, 0};
 	}
 
 	refreshData();
@@ -187,21 +187,21 @@ void cBuilding::updateNeighbours (const cMap& map)
 	if (!getOwner()) return;
 	if (!isBig)
 	{
-		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 0, -1), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 1,  0), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 0,  1), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1,  0), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, -1), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, 0), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, 1), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 0), *this, map);
 	}
 	else
 	{
-		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 0, -1), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 1, -1), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 2,  0), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 2,  1), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 0,  2), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition ( 1,  2), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1,  0), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1,  1), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, -1), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, -1), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (2, 0), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (2, 1), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, 2), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, 2), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 0), *this, map);
+		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 1), *this, map);
 	}
 	CheckNeighbours (map);
 }
@@ -222,20 +222,20 @@ void cBuilding::CheckNeighbours (const cMap& map)
 
 	if (!isBig)
 	{
-		CHECK_NEIGHBOUR (getPosition().x()    , getPosition().y() - 1, BaseN)
-		CHECK_NEIGHBOUR (getPosition().x() + 1, getPosition().y()    , BaseE)
-		CHECK_NEIGHBOUR (getPosition().x()    , getPosition().y() + 1, BaseS)
-		CHECK_NEIGHBOUR (getPosition().x() - 1, getPosition().y()    , BaseW)
+		CHECK_NEIGHBOUR (getPosition().x(), getPosition().y() - 1, BaseN)
+		CHECK_NEIGHBOUR (getPosition().x() + 1, getPosition().y(), BaseE)
+		CHECK_NEIGHBOUR (getPosition().x(), getPosition().y() + 1, BaseS)
+		CHECK_NEIGHBOUR (getPosition().x() - 1, getPosition().y(), BaseW)
 	}
 	else
 	{
-		CHECK_NEIGHBOUR (getPosition().x()    , getPosition().y() - 1, BaseN)
+		CHECK_NEIGHBOUR (getPosition().x(), getPosition().y() - 1, BaseN)
 		CHECK_NEIGHBOUR (getPosition().x() + 1, getPosition().y() - 1, BaseBN)
-		CHECK_NEIGHBOUR (getPosition().x() + 2, getPosition().y()    , BaseE)
+		CHECK_NEIGHBOUR (getPosition().x() + 2, getPosition().y(), BaseE)
 		CHECK_NEIGHBOUR (getPosition().x() + 2, getPosition().y() + 1, BaseBE)
-		CHECK_NEIGHBOUR (getPosition().x()    , getPosition().y() + 2, BaseS)
+		CHECK_NEIGHBOUR (getPosition().x(), getPosition().y() + 2, BaseS)
 		CHECK_NEIGHBOUR (getPosition().x() + 1, getPosition().y() + 2, BaseBS)
-		CHECK_NEIGHBOUR (getPosition().x() - 1, getPosition().y()    , BaseW)
+		CHECK_NEIGHBOUR (getPosition().x() - 1, getPosition().y(), BaseW)
 		CHECK_NEIGHBOUR (getPosition().x() - 1, getPosition().y() + 1, BaseBW)
 	}
 }
@@ -321,7 +321,6 @@ bool cBuilding::canTransferTo (const cUnit& unit) const
 	if (&unit == this)
 		return false;
 
-
 	if (unit.isAVehicle())
 	{
 		const cVehicle* v = static_cast<const cVehicle*> (&unit);
@@ -377,8 +376,10 @@ bool cBuilding::canLoad (const cPosition& position, const cMapView& map, bool ch
 {
 	if (map.isValidPosition (position) == false) return false;
 
-	if (canLoad (map.getField (position).getPlane(), checkPosition)) return true;
-	else return canLoad (map.getField (position).getVehicle(), checkPosition);
+	if (canLoad (map.getField (position).getPlane(), checkPosition))
+		return true;
+	else
+		return canLoad (map.getField (position).getVehicle(), checkPosition);
 }
 
 //--------------------------------------------------------------------------
@@ -419,20 +420,20 @@ bool cBuilding::canSupply (const cUnit* unit, eSupplyType supplyType) const
 
 	switch (supplyType)
 	{
-	case eSupplyType::REARM:
-		if (unit->getStaticUnitData().canAttack == false || unit->data.getAmmo() >= unit->data.getAmmoMax())
+		case eSupplyType::REARM:
+			if (unit->getStaticUnitData().canAttack == false || unit->data.getAmmo() >= unit->data.getAmmoMax())
+				return false;
+			if (!staticData->canRearm)
+				return false;
+			break;
+		case eSupplyType::REPAIR:
+			if (unit->data.getHitpoints() >= unit->data.getHitpointsMax())
+				return false;
+			if (!staticData->canRepair)
+				return false;
+			break;
+		default:
 			return false;
-		if (!staticData->canRearm)
-			return false;
-		break;
-	case eSupplyType::REPAIR:
-		if (unit->data.getHitpoints() >= unit->data.getHitpointsMax())
-			return false;
-		if (!staticData->canRepair)
-			return false;
-		break;
-	default:
-		return false;
 	}
 
 	return true;
@@ -521,26 +522,26 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 	{
 		float WorkedRounds;
 
-		switch (buildSpeed)  // BuildSpeed here is the previous build speed
+		switch (buildSpeed) // BuildSpeed here is the previous build speed
 		{
 			case 0:
 				WorkedRounds = (turboBuildCosts[0] - remainingMetal) / (1.f * staticData->needsMetal);
-				turboBuildCosts[0] -= (int) (1     *  1 * staticData->needsMetal * WorkedRounds);
-				turboBuildCosts[1] -= (int) (0.5f  *  4 * staticData->needsMetal * WorkedRounds);
+				turboBuildCosts[0] -= (int) (1 * 1 * staticData->needsMetal * WorkedRounds);
+				turboBuildCosts[1] -= (int) (0.5f * 4 * staticData->needsMetal * WorkedRounds);
 				turboBuildCosts[2] -= (int) (0.25f * 12 * staticData->needsMetal * WorkedRounds);
 				break;
 
 			case 1:
-				WorkedRounds = (turboBuildCosts[1] - remainingMetal) / (float)(4 * staticData->needsMetal);
-				turboBuildCosts[0] -= (int) (2    *  1 * staticData->needsMetal * WorkedRounds);
-				turboBuildCosts[1] -= (int) (1    *  4 * staticData->needsMetal * WorkedRounds);
+				WorkedRounds = (turboBuildCosts[1] - remainingMetal) / (float) (4 * staticData->needsMetal);
+				turboBuildCosts[0] -= (int) (2 * 1 * staticData->needsMetal * WorkedRounds);
+				turboBuildCosts[1] -= (int) (1 * 4 * staticData->needsMetal * WorkedRounds);
 				turboBuildCosts[2] -= (int) (0.5f * 12 * staticData->needsMetal * WorkedRounds);
 				break;
 
 			case 2:
-				WorkedRounds = (turboBuildCosts[2] - remainingMetal) / (float)(12 * staticData->needsMetal);
-				turboBuildCosts[0] -= (int) (4 *  1 * staticData->needsMetal * WorkedRounds);
-				turboBuildCosts[1] -= (int) (2 *  4 * staticData->needsMetal * WorkedRounds);
+				WorkedRounds = (turboBuildCosts[2] - remainingMetal) / (float) (12 * staticData->needsMetal);
+				turboBuildCosts[0] -= (int) (4 * 1 * staticData->needsMetal * WorkedRounds);
+				turboBuildCosts[1] -= (int) (2 * 4 * staticData->needsMetal * WorkedRounds);
 				turboBuildCosts[2] -= (int) (1 * 12 * staticData->needsMetal * WorkedRounds);
 				break;
 		}
@@ -577,7 +578,7 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 bool cBuilding::buildingCanBeStarted() const
 {
 	return (getStaticData().canWork && isUnitWorking() == false
-		&& (!buildList.empty() || staticData->canBuild.empty()));
+	        && (!buildList.empty() || staticData->canBuild.empty()));
 }
 
 //-----------------------------------------------------------------------------

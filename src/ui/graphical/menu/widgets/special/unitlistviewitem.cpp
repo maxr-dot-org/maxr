@@ -19,13 +19,13 @@
 
 #include "ui/graphical/menu/widgets/special/unitlistviewitem.h"
 
+#include "SDLutility/drawing.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "resources/buildinguidata.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
-#include "SDLutility/drawing.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/translations.h"
@@ -54,7 +54,8 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 		const auto& uiData = *UnitsUiData.getBuildingUI (unitId);
 		uiData.render_simple (*surface, dest, zoomFactor, &owner);
 	}
-	else surface = nullptr;
+	else
+		surface = nullptr;
 
 	unitImage = addChild (std::make_unique<cImage> (cPosition (0, 0), surface.get()));
 	unitImage->setConsumeClick (false);

@@ -19,6 +19,7 @@
 
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 
+#include "config/workaround/cpp17/clamp.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
 #include "resources/pcx.h"
@@ -34,7 +35,6 @@
 #include "utility/language.h"
 
 #include <algorithm>
-#include "config/workaround/cpp17/clamp.h"
 
 //------------------------------------------------------------------------------
 cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold, std::shared_ptr<const cUnitsData> unitsData) :
@@ -126,7 +126,7 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	updateUpgradeButtons();
 	handleSelectedUnitSelectionChanged (nullptr);
 
-	signalConnectionManager.connect (selectedUnitSelectionChanged, [this](cUnitListViewItemCargo* unitItem) { handleSelectedUnitSelectionChanged (unitItem); });
+	signalConnectionManager.connect (selectedUnitSelectionChanged, [this] (cUnitListViewItemCargo* unitItem) { handleSelectedUnitSelectionChanged (unitItem); });
 }
 
 //------------------------------------------------------------------------------
@@ -419,8 +419,7 @@ void cWindowLandingUnitSelection::upgradeDecreaseClicked (size_t index)
 //------------------------------------------------------------------------------
 void cWindowLandingUnitSelection::handleSelectedUnitSelectionChanged (cUnitListViewItemCargo* unitItem)
 {
-	if (unitItem == nullptr || ! (unitsData->getStaticUnitData (unitItem->getUnitId()).storeResType == eResourceType::Metal ||
-								  unitsData->getStaticUnitData (unitItem->getUnitId()).storeResType == eResourceType::Oil))
+	if (unitItem == nullptr || !(unitsData->getStaticUnitData (unitItem->getUnitId()).storeResType == eResourceType::Metal || unitsData->getStaticUnitData (unitItem->getUnitId()).storeResType == eResourceType::Oil))
 	{
 		selectedCargoUnit = nullptr;
 		metalBar->setValue (0);

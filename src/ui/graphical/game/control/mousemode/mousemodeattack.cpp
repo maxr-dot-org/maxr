@@ -18,15 +18,16 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/mousemode/mousemodeattack.h"
+
+#include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "input/mouse/cursor/mousecursorattack.h"
+#include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionattack.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/mapview.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
-#include "input/mouse/cursor/mousecursorattack.h"
-#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
 cMouseModeAttack::cMouseModeAttack (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
@@ -70,7 +71,8 @@ std::unique_ptr<cMouseAction> cMouseModeAttack::getMouseAction (const cPosition&
 	{
 		return std::make_unique<cMouseActionAttack>();
 	}
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -81,8 +83,7 @@ bool cMouseModeAttack::canExecuteAction (const cPosition& mapPosition) const
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
-	return (selectedVehicle && (selectedVehicle->getStaticUnitData().muzzleType != eMuzzleType::Torpedo || map->isWaterOrCoast (mapPosition))) ||
-		   (selectedBuilding && selectedBuilding->isInRange (mapPosition));
+	return (selectedVehicle && (selectedVehicle->getStaticUnitData().muzzleType != eMuzzleType::Torpedo || map->isWaterOrCoast (mapPosition))) || (selectedBuilding && selectedBuilding->isInRange (mapPosition));
 }
 
 //------------------------------------------------------------------------------

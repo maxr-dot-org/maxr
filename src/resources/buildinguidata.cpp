@@ -110,7 +110,7 @@ namespace
 		}
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, const cPlayer* owner, int frameNr, int alpha) const
@@ -131,8 +131,10 @@ void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest,
 	}
 
 	// blit the players color and building graphic
-	if (staticData.hasPlayerColor && owner) SDL_BlitSurface (cPlayerColor::getTexture (owner->getColor()), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
-	else SDL_FillRect (GraphicsData.gfx_tmp.get(), nullptr, 0x00FF00FF);
+	if (staticData.hasPlayerColor && owner)
+		SDL_BlitSurface (cPlayerColor::getTexture (owner->getColor()), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
+	else
+		SDL_FillRect (GraphicsData.gfx_tmp.get(), nullptr, 0x00FF00FF);
 
 	if (hasFrames)
 	{
@@ -232,8 +234,10 @@ void sBuildingUIData::drawConnectors (SDL_Surface& surface, SDL_Rect dest, float
 	CHECK_SCALING (*UnitsUiData.ptr_connector, *UnitsUiData.ptr_connector_org, zoomFactor);
 	CHECK_SCALING (*UnitsUiData.ptr_connector_shw, *UnitsUiData.ptr_connector_shw_org, zoomFactor);
 
-	if (building.alphaEffectValue) SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_connector, building.alphaEffectValue);
-	else SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_connector, 254);
+	if (building.alphaEffectValue)
+		SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_connector, building.alphaEffectValue);
+	else
+		SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_connector, 254);
 
 	src.y = 0;
 	src.x = 0;
@@ -253,9 +257,12 @@ void sBuildingUIData::drawConnectors (SDL_Surface& surface, SDL_Rect dest, float
 		// make connector stubs of big buildings.
 		// upper left field
 		src.x = 0;
-		if (BaseN &&  BaseW) src.x = 7;
-		else if (BaseN && !BaseW) src.x = 1;
-		else if (!BaseN &&  BaseW) src.x = 4;
+		if (BaseN && BaseW)
+			src.x = 7;
+		else if (BaseN && !BaseW)
+			src.x = 1;
+		else if (!BaseN && BaseW)
+			src.x = 4;
 		src.x *= src.h;
 
 		if (src.x != 0)
@@ -269,9 +276,12 @@ void sBuildingUIData::drawConnectors (SDL_Surface& surface, SDL_Rect dest, float
 		// upper right field
 		src.x = 0;
 		dest.x += Round (64.0f * zoomFactor);
-		if (BaseBN &&  BaseE) src.x = 8;
-		else if (BaseBN && !BaseE) src.x = 1;
-		else if (!BaseBN &&  BaseE) src.x = 2;
+		if (BaseBN && BaseE)
+			src.x = 8;
+		else if (BaseBN && !BaseE)
+			src.x = 1;
+		else if (!BaseBN && BaseE)
+			src.x = 2;
 		src.x *= src.h;
 
 		if (src.x != 0)
@@ -285,9 +295,12 @@ void sBuildingUIData::drawConnectors (SDL_Surface& surface, SDL_Rect dest, float
 		// lower right field
 		src.x = 0;
 		dest.y += Round (64.0f * zoomFactor);
-		if (BaseBE && BaseBS) src.x = 9;
-		else if (BaseBE && !BaseBS) src.x = 2;
-		else if (!BaseBE && BaseBS) src.x = 3;
+		if (BaseBE && BaseBS)
+			src.x = 9;
+		else if (BaseBE && !BaseBS)
+			src.x = 2;
+		else if (!BaseBE && BaseBS)
+			src.x = 3;
 		src.x *= src.h;
 
 		if (src.x != 0)
@@ -301,9 +314,12 @@ void sBuildingUIData::drawConnectors (SDL_Surface& surface, SDL_Rect dest, float
 		// lower left field
 		src.x = 0;
 		dest.x -= Round (64.0f * zoomFactor);
-		if (BaseS && BaseBW) src.x = 10;
-		else if (BaseS && !BaseBW) src.x = 3;
-		else if (!BaseS && BaseBW) src.x = 4;
+		if (BaseS && BaseBW)
+			src.x = 10;
+		else if (BaseS && !BaseBW)
+			src.x = 3;
+		else if (!BaseS && BaseBW)
+			src.x = 4;
 		src.x *= src.h;
 
 		if (src.x != 0)
@@ -316,22 +332,38 @@ void sBuildingUIData::drawConnectors (SDL_Surface& surface, SDL_Rect dest, float
 	}
 	else
 	{
-		if (BaseN &&  BaseE &&  BaseS &&  BaseW) src.x = 15;
-		else if (BaseN &&  BaseE &&  BaseS && !BaseW) src.x = 13;
-		else if (BaseN &&  BaseE && !BaseS &&  BaseW) src.x = 12;
-		else if (BaseN &&  BaseE && !BaseS && !BaseW) src.x =  8;
-		else if (BaseN && !BaseE &&  BaseS &&  BaseW) src.x = 11;
-		else if (BaseN && !BaseE &&  BaseS && !BaseW) src.x =  5;
-		else if (BaseN && !BaseE && !BaseS &&  BaseW) src.x =  7;
-		else if (BaseN && !BaseE && !BaseS && !BaseW) src.x =  1;
-		else if (!BaseN &&  BaseE &&  BaseS &&  BaseW) src.x = 14;
-		else if (!BaseN &&  BaseE &&  BaseS && !BaseW) src.x =  9;
-		else if (!BaseN &&  BaseE && !BaseS &&  BaseW) src.x =  6;
-		else if (!BaseN &&  BaseE && !BaseS && !BaseW) src.x =  2;
-		else if (!BaseN && !BaseE &&  BaseS &&  BaseW) src.x = 10;
-		else if (!BaseN && !BaseE &&  BaseS && !BaseW) src.x =  3;
-		else if (!BaseN && !BaseE && !BaseS &&  BaseW) src.x =  4;
-		else if (!BaseN && !BaseE && !BaseS && !BaseW) src.x =  0;
+		if (BaseN && BaseE && BaseS && BaseW)
+			src.x = 15;
+		else if (BaseN && BaseE && BaseS && !BaseW)
+			src.x = 13;
+		else if (BaseN && BaseE && !BaseS && BaseW)
+			src.x = 12;
+		else if (BaseN && BaseE && !BaseS && !BaseW)
+			src.x = 8;
+		else if (BaseN && !BaseE && BaseS && BaseW)
+			src.x = 11;
+		else if (BaseN && !BaseE && BaseS && !BaseW)
+			src.x = 5;
+		else if (BaseN && !BaseE && !BaseS && BaseW)
+			src.x = 7;
+		else if (BaseN && !BaseE && !BaseS && !BaseW)
+			src.x = 1;
+		else if (!BaseN && BaseE && BaseS && BaseW)
+			src.x = 14;
+		else if (!BaseN && BaseE && BaseS && !BaseW)
+			src.x = 9;
+		else if (!BaseN && BaseE && !BaseS && BaseW)
+			src.x = 6;
+		else if (!BaseN && BaseE && !BaseS && !BaseW)
+			src.x = 2;
+		else if (!BaseN && !BaseE && BaseS && BaseW)
+			src.x = 10;
+		else if (!BaseN && !BaseE && BaseS && !BaseW)
+			src.x = 3;
+		else if (!BaseN && !BaseE && !BaseS && BaseW)
+			src.x = 4;
+		else if (!BaseN && !BaseE && !BaseS && !BaseW)
+			src.x = 0;
 		src.x *= src.h;
 
 		if (src.x != 0 || isConnectorGraphic)

@@ -19,17 +19,17 @@
 
 #include "mapfieldview.h"
 
-#include "map.h"
 #include "game/data/player/player.h"
+#include "map.h"
 #include "utility/listhelpers.h"
 
 namespace
 {
 	auto makeFilterUnitSeenByPlayer (const cPlayer& player, const cMapField& mapField, const sTerrain& terrain)
 	{
-		return [&](const cUnit* unit){ return player.canSeeUnit (*unit, mapField, terrain); };
+		return [&] (const cUnit* unit) { return player.canSeeUnit (*unit, mapField, terrain); };
 	}
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 cMapFieldView::cMapFieldView (const cMapField& mapField, const sTerrain& terrain, const cPlayer* player) :
@@ -85,9 +85,7 @@ cBuilding* cMapFieldView::getTopBuilding() const
 	{
 		if (!player || player->canSeeUnit (*building, mapField, terrain))
 		{
-			if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::Ground ||
-				 building->getStaticUnitData().surfacePosition == eSurfacePosition::Above) &&
-				!building->isRubble())
+			if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::Ground || building->getStaticUnitData().surfacePosition == eSurfacePosition::Above) && !building->isRubble())
 			{
 				return building;
 			}
@@ -107,9 +105,7 @@ cBuilding* cMapFieldView::getBaseBuilding() const
 	{
 		if (!player || player->canSeeUnit (*building, mapField, terrain))
 		{
-			if (building->getStaticUnitData().surfacePosition != eSurfacePosition::Ground &&
-				building->getStaticUnitData().surfacePosition != eSurfacePosition::Above &&
-				!building->isRubble())
+			if (building->getStaticUnitData().surfacePosition != eSurfacePosition::Ground && building->getStaticUnitData().surfacePosition != eSurfacePosition::Above && !building->isRubble())
 			{
 				return building;
 			}
@@ -157,9 +153,7 @@ bool cMapFieldView::hasBridgeOrPlattform() const
 	{
 		if (!player || player->canSeeUnit (*building, mapField, terrain))
 		{
-			if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea ||
-				building->getStaticUnitData().surfacePosition == eSurfacePosition::Base) &&
-				!building->isRubble())
+			if ((building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea || building->getStaticUnitData().surfacePosition == eSurfacePosition::Base) && !building->isRubble())
 			{
 				return true;
 			}

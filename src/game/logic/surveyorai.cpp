@@ -22,11 +22,11 @@
 #include "action/actionresumemove.h"
 #include "action/actionsetautomove.h"
 #include "action/actionstartmove.h"
-#include "game/logic/client.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/report/unit/savedreportsurveyoraiconfused.h"
 #include "game/data/units/vehicle.h"
+#include "game/logic/client.h"
 #include "utility/listhelpers.h"
 #include "utility/mathtools.h"
 #include "utility/ranges.h"
@@ -41,10 +41,10 @@ static const float FIELD_BLOCKED = -10000.f;
 static const int ACTION_TIMEOUT = 50;
 
 //main tuning knobs of the AI:
-static const float A = 1.5f;   //how important is it, to survey as much fields as possible with each move
-static const float B = 1.3f;   //how important is it, to stay near the operation point
-static const float C = 9.0f;   //how important is it, to hold a distance to other surveyors
-static const float G = 2.0f;   //how important is to go to directions where resources has been found already
+static const float A = 1.5f; //how important is it, to survey as much fields as possible with each move
+static const float B = 1.3f; //how important is it, to stay near the operation point
+static const float C = 9.0f; //how important is it, to hold a distance to other surveyors
+static const float G = 2.0f; //how important is to go to directions where resources has been found already
 static const float EXP = -1.f; //a negative integer; the influence of other surveyors is falling over the distance with x^EXP
 
 // when there are no fields to survey next to the surveyor,
@@ -66,8 +66,8 @@ cSurveyorAi::cSurveyorAi (const cVehicle& vehicle) :
 	counter (0),
 	operationPoint (vehicle.getPosition())
 {
-	connectionManager.connect (vehicle.destroyed, [this]() {finished = true; });
-	connectionManager.connect (vehicle.ownerChanged, [this]() {finished = true; });
+	connectionManager.connect (vehicle.destroyed, [this]() { finished = true; });
+	connectionManager.connect (vehicle.ownerChanged, [this]() { finished = true; });
 }
 
 //------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 }
 
 //------------------------------------------------------------------------------
- void cSurveyorAi::planMove (std::forward_list<cPosition>& path, int remainingMovePoints, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const
+void cSurveyorAi::planMove (std::forward_list<cPosition>& path, int remainingMovePoints, const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cMap& map) const
 {
 	cPosition position = path.front();
 
@@ -171,9 +171,9 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 		path.push_front (bestNextPosition);
 		planMove (path, remainingMovePoints - bestNextMoveCosts, jobs, map);
 	}
- }
+}
 
- //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 float cSurveyorAi::calcScoreDistToOtherSurveyor (const std::vector<std::unique_ptr<cSurveyorAi>>& jobs, const cPosition& position, float e) const
 {
 	float res = 0;
@@ -214,7 +214,7 @@ float cSurveyorAi::calcFactor (const cPosition& position, const std::forward_lis
 			const cPosition position (x, y);
 			if (positionHasBeenSurveyedByPath (position, path)) continue;
 
-			if (!owner.hasResourceExplored (position))  //&& !map.isBlocked (position))
+			if (!owner.hasResourceExplored (position)) //&& !map.isBlocked (position))
 			{
 				nrSurvFields++;
 				if (hasAdjacentResources (position, map))
@@ -272,7 +272,7 @@ void cSurveyorAi::planLongMove (const std::vector<std::unique_ptr<cSurveyorAi>>&
 
 			// calculate the distance to other surveyors
 			const float distancesSurv = calcScoreDistToOtherSurveyor (jobs, currentPosition, EXP2);
-			const float distanceOP   = static_cast<float> ((currentPosition - operationPoint).l2Norm());
+			const float distanceOP = static_cast<float> ((currentPosition - operationPoint).l2Norm());
 			const float distanceSurv = static_cast<float> ((currentPosition - vehicle.getPosition()).l2Norm());
 			// TODO: take into account the length of the path to
 			// the coordinates too
@@ -298,7 +298,7 @@ void cSurveyorAi::planLongMove (const std::vector<std::unique_ptr<cSurveyorAi>>&
 	{
 		//use owners mapview to calc path
 		const auto& playerList = model.getPlayerList();
-		auto iter = ranges::find_if (playerList, [&](const std::shared_ptr<cPlayer>& p) {
+		auto iter = ranges::find_if (playerList, [&] (const std::shared_ptr<cPlayer>& p) {
 			return p->getId() == player.getId();
 		});
 		const cMapView mapView (model.getMap(), *iter);

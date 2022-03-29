@@ -22,8 +22,8 @@
 #include "game/logic/casualtiestracker.h"
 
 #include "game/data/player/player.h"
-#include "game/data/units/unitdata.h"
 #include "game/data/units/unit.h"
+#include "game/data/units/unitdata.h"
 #include "utility/log.h"
 
 using namespace std;

@@ -17,14 +17,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
+
+#include "game/logic/client.h"
+#include "game/logic/server.h"
+
 #include <algorithm>
 #include <cassert>
 #include <cctype>
 #include <functional>
-
-#include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
-#include "game/logic/client.h"
-#include "game/logic/server.h"
 
 /*static*/ const char* const cChatCommandArgumentBool::trueName = "on";
 /*static*/ const char* const cChatCommandArgumentBool::falseName = "off";

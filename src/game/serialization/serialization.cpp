@@ -91,4 +91,4 @@ namespace serialization
 		return &model.getUnitsData()->getRubbleSmallData();
 	}
 
-}
+} // namespace serialization

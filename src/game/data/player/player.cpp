@@ -56,7 +56,7 @@ void sNewTurnPlayerReport::addUnitBuilt (const sID& unitTypeId)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cPlayer::cPlayer () :
+cPlayer::cPlayer() :
 	base (*this)
 {
 }
@@ -265,7 +265,7 @@ void cPlayer::removeAllUnits()
 //------------------------------------------------------------------------------
 cVehicle* cPlayer::getVehicleFromId (unsigned int id) const
 {
-	auto iter =  vehicles.find (id);
+	auto iter = vehicles.find (id);
 	return iter == vehicles.end() ? nullptr : (*iter).get();
 }
 
@@ -402,9 +402,7 @@ bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
 	if (canSeeAt (unit.getPosition())) return true;
 	if (!unit.getIsBig()) return false;
 
-	return canSeeAt (unit.getPosition() + cPosition (0, 1)) ||
-		   canSeeAt (unit.getPosition() + cPosition (1, 1)) ||
-		   canSeeAt (unit.getPosition() + cPosition (1, 0));
+	return canSeeAt (unit.getPosition() + cPosition (0, 1)) || canSeeAt (unit.getPosition() + cPosition (1, 1)) || canSeeAt (unit.getPosition() + cPosition (1, 0));
 }
 
 //------------------------------------------------------------------------------
@@ -463,7 +461,7 @@ bool cPlayer::hasUnits() const
 void cPlayer::startAResearch (cResearch::eResearchArea researchArea)
 {
 	++researchCentersWorkingTotal;
-	++researchCentersWorkingOnArea[static_cast<int>(researchArea)];
+	++researchCentersWorkingOnArea[static_cast<int> (researchArea)];
 
 	researchCentersWorkingOnAreaChanged (researchArea);
 	researchCentersWorkingTotalChanged();
@@ -475,9 +473,9 @@ void cPlayer::startAResearch (cResearch::eResearchArea researchArea)
 void cPlayer::stopAResearch (cResearch::eResearchArea researchArea)
 {
 	--researchCentersWorkingTotal;
-	if (researchCentersWorkingOnArea[static_cast<int>(researchArea)] > 0)
+	if (researchCentersWorkingOnArea[static_cast<int> (researchArea)] > 0)
 	{
-		--researchCentersWorkingOnArea[static_cast<int>(researchArea)];
+		--researchCentersWorkingOnArea[static_cast<int> (researchArea)];
 		researchCentersWorkingOnAreaChanged (researchArea);
 	}
 	researchCentersWorkingTotalChanged();
@@ -492,8 +490,7 @@ std::vector<cResearch::eResearchArea> cPlayer::doResearch (const cUnitsData& uni
 
 	for (int area = 0; area < cResearch::kNrResearchAreas; ++area)
 	{
-		if (researchCentersWorkingOnArea[area] > 0 &&
-			researchState.doResearch (researchCentersWorkingOnArea[area], static_cast<cResearch::eResearchArea>(area)))
+		if (researchCentersWorkingOnArea[area] > 0 && researchState.doResearch (researchCentersWorkingOnArea[area], static_cast<cResearch::eResearchArea> (area)))
 		{
 			// next level reached
 			areasReachingNextLevel.push_back (cResearch::eResearchArea (area));
@@ -586,10 +583,8 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::eResearchArea>& are
 			if (unitData.getId().isABuilding()) unitType = cUpgradeCalculator::eUnitType::Building;
 			if (originalUnitsData.getStaticUnitData (unitData.getId()).vehicleData.isHuman) unitType = cUpgradeCalculator::eUnitType::Infantry;
 
-			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel - 10,
-								   researchArea == cResearch::eResearchArea::CostResearch ? std::make_optional(cUpgradeCalculator::eUpgradeType::Cost) : std::nullopt, unitType);
-			int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel,
-								   researchArea == cResearch::eResearchArea::CostResearch ? std::make_optional(cUpgradeCalculator::eUpgradeType::Cost) : std::nullopt, unitType);
+			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel - 10, researchArea == cResearch::eResearchArea::CostResearch ? std::make_optional (cUpgradeCalculator::eUpgradeType::Cost) : std::nullopt, unitType);
+			int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel, researchArea == cResearch::eResearchArea::CostResearch ? std::make_optional (cUpgradeCalculator::eUpgradeType::Cost) : std::nullopt, unitType);
 
 			if (oldResearchBonus != newResearchBonus)
 			{
@@ -604,7 +599,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::eResearchArea>& are
 					case cResearch::eResearchArea::SpeedResearch: unitData.setSpeedMax (unitData.getSpeedMax() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::eResearchArea::CostResearch: unitData.setBuildCost (unitData.getBuildCost() + newResearchBonus - oldResearchBonus); break;
 				}
-				if (researchArea != cResearch::eResearchArea::CostResearch)   // don't increment the version, if the only change are the costs
+				if (researchArea != cResearch::eResearchArea::CostResearch) // don't increment the version, if the only change are the costs
 					incrementVersion = true;
 			}
 		}
@@ -629,7 +624,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	{
 		if (building->getStaticData().canResearch && building->isUnitWorking())
 		{
-			researchCentersWorkingOnArea[static_cast<int>(building->getResearchArea())] += 1;
+			researchCentersWorkingOnArea[static_cast<int> (building->getResearchArea())] += 1;
 			newResearchCount++;
 		}
 	}
@@ -639,7 +634,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	{
 		if (oldResearchCentersWorkingOnArea[i] != researchCentersWorkingOnArea[i])
 		{
-			researchCentersWorkingOnAreaChanged ((cResearch::eResearchArea)i);
+			researchCentersWorkingOnAreaChanged ((cResearch::eResearchArea) i);
 		}
 	}
 	if (researchCentersWorkingTotal != newResearchCount) researchCentersWorkingTotalChanged();
@@ -789,7 +784,7 @@ int cPlayer::getResearchCentersWorkingTotal() const
 //------------------------------------------------------------------------------
 int cPlayer::getResearchCentersWorkingOnArea (cResearch::eResearchArea area) const
 {
-	return researchCentersWorkingOnArea[static_cast<int>(area)];
+	return researchCentersWorkingOnArea[static_cast<int> (area)];
 }
 
 //------------------------------------------------------------------------------

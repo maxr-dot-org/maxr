@@ -19,8 +19,8 @@
 
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 
-#include "resources/pcx.h"
 #include "SDLutility/tosdl.h"
+#include "resources/pcx.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/colorpicker.h"
 #include "ui/graphical/menu/widgets/image.h"
@@ -42,8 +42,7 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 	selectedColorImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (210, 35)));
 	selectedColorImage->setImage (createSelectedColorSurface().get());
 
-	signalConnectionManager.connect (colorPicker->selectedColorChanged, [this]()
-	{
+	signalConnectionManager.connect (colorPicker->selectedColorChanged, [this]() {
 		selectedColorImage->setImage (createSelectedColorSurface().get());
 
 		const auto color = colorPicker->getSelectedColor();
@@ -67,23 +66,19 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 	greenValueLineEdit->setText (std::to_string (color.g));
 	blueValueLineEdit->setText (std::to_string (color.b));
 
-	signalConnectionManager.connect (redValueLineEdit->returnPressed, [this]()
-	{
+	signalConnectionManager.connect (redValueLineEdit->returnPressed, [this]() {
 		auto application = getActiveApplication();
 		if (application) application->releaseKeyFocus (*redValueLineEdit);
 	});
-	signalConnectionManager.connect (greenValueLineEdit->returnPressed, [this]()
-	{
+	signalConnectionManager.connect (greenValueLineEdit->returnPressed, [this]() {
 		auto application = getActiveApplication();
 		if (application) application->releaseKeyFocus (*redValueLineEdit);
 	});
-	signalConnectionManager.connect (blueValueLineEdit->returnPressed, [this]()
-	{
+	signalConnectionManager.connect (blueValueLineEdit->returnPressed, [this]() {
 		auto application = getActiveApplication();
 		if (application) application->releaseKeyFocus (*redValueLineEdit);
 	});
-	signalConnectionManager.connect (redValueLineEdit->editingFinished, [this] (eValidatorState)
-	{
+	signalConnectionManager.connect (redValueLineEdit->editingFinished, [this] (eValidatorState) {
 		const auto color = colorPicker->getSelectedColor();
 		const auto newRed = atoi (redValueLineEdit->getText().c_str());
 		if (newRed != color.r)
@@ -91,8 +86,7 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 			colorPicker->setSelectedColor (color.exchangeRed (newRed));
 		}
 	});
-	signalConnectionManager.connect (greenValueLineEdit->editingFinished, [this] (eValidatorState)
-	{
+	signalConnectionManager.connect (greenValueLineEdit->editingFinished, [this] (eValidatorState) {
 		const auto color = colorPicker->getSelectedColor();
 		const auto newGreen = atoi (greenValueLineEdit->getText().c_str());
 		if (newGreen != color.g)
@@ -100,8 +94,7 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 			colorPicker->setSelectedColor (color.exchangeGreen (newGreen));
 		}
 	});
-	signalConnectionManager.connect (blueValueLineEdit->editingFinished, [this] (eValidatorState)
-	{
+	signalConnectionManager.connect (blueValueLineEdit->editingFinished, [this] (eValidatorState) {
 		const auto color = colorPicker->getSelectedColor();
 		const auto newBlue = atoi (blueValueLineEdit->getText().c_str());
 		if (newBlue != color.b)

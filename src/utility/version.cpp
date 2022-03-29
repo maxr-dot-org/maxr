@@ -20,11 +20,11 @@
 #include "utility/version.h"
 
 #ifdef major
-#	undef major
+# undef major
 #endif
 
 #ifdef minor
-#	undef minor
+# undef minor
 #endif
 
 //------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ void cVersion::parseFromString (const std::string& string)
 //------------------------------------------------------------------------------
 std::string cVersion::toString() const
 {
-	return std::to_string (major) + "."  + std::to_string (minor) + "." + std::to_string (revision);
+	return std::to_string (major) + "." + std::to_string (minor) + "." + std::to_string (revision);
 }
 
 //------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ bool cVersion::operator== (const cVersion& other) const
 //------------------------------------------------------------------------------
 bool cVersion::operator!= (const cVersion& other) const
 {
-	return ! (*this == other);
+	return !(*this == other);
 }
 
 //------------------------------------------------------------------------------

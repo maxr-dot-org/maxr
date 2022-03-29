@@ -19,8 +19,8 @@
 
 #include "lobbymessage.h"
 
-#include "game/data/units/unitdata.h"
 #include "game/data/player/clans.h"
+#include "game/data/units/unitdata.h"
 
 #include <cassert>
 
@@ -51,7 +51,7 @@ namespace serialization
 		{cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION, "MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION"},
 		{cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION, "MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION"}
 	};
-}
+} // namespace serialization
 std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBuffer (cBinaryArchiveOut& archive)
 {
 	eMessageType type;
@@ -60,51 +60,72 @@ std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBu
 	std::unique_ptr<cMultiplayerLobbyMessage> message;
 	switch (type)
 	{
-	case eMessageType::MU_MSG_CHAT:
-		message = std::make_unique<cMuMsgChat> (archive); break;
-	case eMessageType::MU_MSG_IDENTIFIKATION:
-		message = std::make_unique<cMuMsgIdentification> (archive); break;
-	case eMessageType::MU_MSG_PLAYER_NUMBER:
-		message = std::make_unique<cMuMsgPlayerNr> (archive); break;
-	case eMessageType::MU_MSG_PLAYERLIST:
-		message = std::make_unique<cMuMsgPlayerList> (archive); break;
-	case eMessageType::MU_MSG_OPTIONS:
-		message = std::make_unique<cMuMsgOptions> (archive); break;
-	case eMessageType::MU_MSG_SAVESLOTS:
-		message = std::make_unique<cMuMsgSaveSlots> (archive); break;
-	case eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY:
-		message = std::make_unique<cMuMsgAskToFinishLobby> (archive); break;
-	case eMessageType::MU_MSG_CANNOT_END_LOBBY:
-		message = std::make_unique<cMuMsgCannotEndLobby> (archive); break;
-	case eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME:
-		message = std::make_unique<cMuMsgDisconnectNotInSavedGame> (archive); break;
-	case eMessageType::MU_MSG_START_GAME_PREPARATIONS:
-		message = std::make_unique<cMuMsgStartGamePreparations> (archive); break;
-	case eMessageType::MU_MSG_START_MAP_DOWNLOAD:
-		message = std::make_unique<cMuMsgStartMapDownload> (archive); break;
-	case eMessageType::MU_MSG_MAP_DOWNLOAD_DATA:
-		message = std::make_unique<cMuMsgMapDownloadData> (archive); break;
-	case eMessageType::MU_MSG_CANCELED_MAP_DOWNLOAD:
-		message = std::make_unique<cMuMsgCanceledMapDownload> (archive); break;
-	case eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD:
-		message = std::make_unique<cMuMsgFinishedMapDownload> (archive); break;
-	case eMessageType::MU_MSG_REQUEST_MAP:
-		message = std::make_unique<cMuMsgRequestMap> (archive); break;
-	case eMessageType::MU_MSG_LANDING_STATE:
-		message = std::make_unique<cMuMsgLandingState> (archive); break;
-	case eMessageType::MU_MSG_LANDING_POSITION:
-		message = std::make_unique<cMuMsgLandingPosition> (archive); break;
-	case eMessageType::MU_MSG_START_GAME:
-		message = std::make_unique<cMuMsgStartGame> (archive); break;
-	case eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
-		message = std::make_unique<cMuMsgInLandingPositionSelectionStatus> (archive); break;
-	case eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION:
-		message = std::make_unique<cMuMsgPlayerHasSelectedLandingPosition> (archive); break;
-	case eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION:
-		message = std::make_unique<cMuMsgPlayerAbortedGamePreparations> (archive); break;
+		case eMessageType::MU_MSG_CHAT:
+			message = std::make_unique<cMuMsgChat> (archive);
+			break;
+		case eMessageType::MU_MSG_IDENTIFIKATION:
+			message = std::make_unique<cMuMsgIdentification> (archive);
+			break;
+		case eMessageType::MU_MSG_PLAYER_NUMBER:
+			message = std::make_unique<cMuMsgPlayerNr> (archive);
+			break;
+		case eMessageType::MU_MSG_PLAYERLIST:
+			message = std::make_unique<cMuMsgPlayerList> (archive);
+			break;
+		case eMessageType::MU_MSG_OPTIONS:
+			message = std::make_unique<cMuMsgOptions> (archive);
+			break;
+		case eMessageType::MU_MSG_SAVESLOTS:
+			message = std::make_unique<cMuMsgSaveSlots> (archive);
+			break;
+		case eMessageType::MU_MSG_ASK_TO_FINISH_LOBBY:
+			message = std::make_unique<cMuMsgAskToFinishLobby> (archive);
+			break;
+		case eMessageType::MU_MSG_CANNOT_END_LOBBY:
+			message = std::make_unique<cMuMsgCannotEndLobby> (archive);
+			break;
+		case eMessageType::MU_MSG_DISCONNECT_NOT_IN_SAVED_GAME:
+			message = std::make_unique<cMuMsgDisconnectNotInSavedGame> (archive);
+			break;
+		case eMessageType::MU_MSG_START_GAME_PREPARATIONS:
+			message = std::make_unique<cMuMsgStartGamePreparations> (archive);
+			break;
+		case eMessageType::MU_MSG_START_MAP_DOWNLOAD:
+			message = std::make_unique<cMuMsgStartMapDownload> (archive);
+			break;
+		case eMessageType::MU_MSG_MAP_DOWNLOAD_DATA:
+			message = std::make_unique<cMuMsgMapDownloadData> (archive);
+			break;
+		case eMessageType::MU_MSG_CANCELED_MAP_DOWNLOAD:
+			message = std::make_unique<cMuMsgCanceledMapDownload> (archive);
+			break;
+		case eMessageType::MU_MSG_FINISHED_MAP_DOWNLOAD:
+			message = std::make_unique<cMuMsgFinishedMapDownload> (archive);
+			break;
+		case eMessageType::MU_MSG_REQUEST_MAP:
+			message = std::make_unique<cMuMsgRequestMap> (archive);
+			break;
+		case eMessageType::MU_MSG_LANDING_STATE:
+			message = std::make_unique<cMuMsgLandingState> (archive);
+			break;
+		case eMessageType::MU_MSG_LANDING_POSITION:
+			message = std::make_unique<cMuMsgLandingPosition> (archive);
+			break;
+		case eMessageType::MU_MSG_START_GAME:
+			message = std::make_unique<cMuMsgStartGame> (archive);
+			break;
+		case eMessageType::MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS:
+			message = std::make_unique<cMuMsgInLandingPositionSelectionStatus> (archive);
+			break;
+		case eMessageType::MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION:
+			message = std::make_unique<cMuMsgPlayerHasSelectedLandingPosition> (archive);
+			break;
+		case eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION:
+			message = std::make_unique<cMuMsgPlayerAbortedGamePreparations> (archive);
+			break;
 
-	default:
-		throw std::runtime_error ("Unknown multiplayer lobby message: " + std::to_string (static_cast<int> (type)));
+		default:
+			throw std::runtime_error ("Unknown multiplayer lobby message: " + std::to_string (static_cast<int> (type)));
 	}
 
 	return message;
@@ -178,7 +199,8 @@ void cMuMsgOptions::serialize (cBinaryArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgSaveSlots::cMuMsgSaveSlots(){}
+cMuMsgSaveSlots::cMuMsgSaveSlots()
+{}
 
 cMuMsgSaveSlots::cMuMsgSaveSlots (cBinaryArchiveOut& archive)
 {
@@ -218,9 +240,11 @@ void cMuMsgPlayerList::serialize (cBinaryArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby() {}
+cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby()
+{}
 
-cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby (cBinaryArchiveOut& archive) {}
+cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby (cBinaryArchiveOut& archive)
+{}
 
 //------------------------------------------------------------------------------
 cMuMsgCannotEndLobby::cMuMsgCannotEndLobby()
@@ -238,8 +262,10 @@ void cMuMsgCannotEndLobby::serialize (cBinaryArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame() {}
-cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame (cBinaryArchiveOut& archive) {}
+cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame()
+{}
+cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame (cBinaryArchiveOut& archive)
+{}
 
 //------------------------------------------------------------------------------
 cMuMsgStartGamePreparations::cMuMsgStartGamePreparations (std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData) :
@@ -308,16 +334,22 @@ void cMuMsgLandingState::serialize (cBinaryArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgStartGame::cMuMsgStartGame() {}
-cMuMsgStartGame::cMuMsgStartGame (cBinaryArchiveOut& archive) {}
+cMuMsgStartGame::cMuMsgStartGame()
+{}
+cMuMsgStartGame::cMuMsgStartGame (cBinaryArchiveOut& archive)
+{}
 
 //------------------------------------------------------------------------------
-cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations() {}
-cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations (cBinaryArchiveOut& archive) {}
+cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations()
+{}
+cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations (cBinaryArchiveOut& archive)
+{}
 
 //------------------------------------------------------------------------------
-cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload() {}
-cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload (cBinaryArchiveOut& archive) {}
+cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload()
+{}
+cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload (cBinaryArchiveOut& archive)
+{}
 
 //------------------------------------------------------------------------------
 cMuMsgLandingPosition::cMuMsgLandingPosition (const cPosition& position) :
@@ -384,8 +416,10 @@ void cMuMsgMapDownloadData::serialize (cBinaryArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload() {}
-cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload (cBinaryArchiveOut& archive) {}
+cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload()
+{}
+cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload (cBinaryArchiveOut& archive)
+{}
 
 //------------------------------------------------------------------------------
 cMuMsgIdentification::cMuMsgIdentification (const cPlayerBasicData& player) :

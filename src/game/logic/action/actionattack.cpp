@@ -27,7 +27,7 @@
 cActionAttack::cActionAttack (const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit) :
 	agressorId (aggressor.getId()),
 	targetPosition (targetPosition),
-	targetId (targetUnit? targetUnit->getId() : 0)
+	targetId (targetUnit ? targetUnit->getId() : 0)
 {}
 
 //------------------------------------------------------------------------------

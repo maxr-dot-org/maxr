@@ -19,20 +19,20 @@
 
 #include "ui/graphical/menu/windows/windowhangar/windowhangar.h"
 
-#include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
 #include "game/data/player/player.h"
 #include "game/data/player/playerbasicdata.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 #include "resources/buildinguidata.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
+#include "ui/graphical/menu/widgets/image.h"
+#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/listview.h"
-#include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
+#include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "ui/translations.h"
 #include "utility/language.h"
 
@@ -73,7 +73,7 @@ void cWindowHangar::initialize()
 
 	selectionUnitList = addChild (std::make_unique<cListView<cUnitListViewItemBuy>> (cBox<cPosition> (getPosition() + cPosition (477, 50), getPosition() + cPosition (477 + 154, 50 + 326))));
 	selectionUnitList->setEndMargin (cPosition (2, 10));
-	signalConnectionManager.connect (selectionUnitList->itemClicked, [this](cUnitListViewItemBuy& unitItem) { selectionUnitClicked (unitItem); });
+	signalConnectionManager.connect (selectionUnitList->itemClicked, [this] (cUnitListViewItemBuy& unitItem) { selectionUnitClicked (unitItem); });
 	signalConnectionManager.connect (selectionUnitList->selectionChanged, [this]() { handleSelectionChanged(); });
 
 	selectionListUpButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (471, 387), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
@@ -81,7 +81,6 @@ void cWindowHangar::initialize()
 
 	selectionListDownButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (491, 387), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectionListDownButton->clicked, [this]() { selectionUnitList->pageDown(); });
-
 
 	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
@@ -111,8 +110,10 @@ void cWindowHangar::backClicked()
 //------------------------------------------------------------------------------
 void cWindowHangar::infoCheckBoxToggled()
 {
-	if (infoTextCheckBox->isChecked()) infoLabel->show();
-	else infoLabel->hide();
+	if (infoTextCheckBox->isChecked())
+		infoLabel->show();
+	else
+		infoLabel->hide();
 }
 
 //------------------------------------------------------------------------------

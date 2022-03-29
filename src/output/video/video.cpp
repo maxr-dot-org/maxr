@@ -19,14 +19,6 @@
 
 #include "video.h"
 
-#include <algorithm>
-#include <cassert>
-#include <ctime>
-#include <functional>
-#include <vector>
-
-#include <SDL.h>
-
 #include "input/keyboard/keyboard.h"
 #include "maxrversion.h"
 #include "output/video/unifonts.h"
@@ -34,9 +26,16 @@
 #include "resources/uidata.h"
 #include "ui/uidefines.h"
 #include "utility/files.h"
-#include "utility/mathtools.h"
 #include "utility/log.h"
+#include "utility/mathtools.h"
 #include "utility/thread/ismainthread.h"
+
+#include <SDL.h>
+#include <algorithm>
+#include <cassert>
+#include <ctime>
+#include <functional>
+#include <vector>
 
 cVideo Video;
 
@@ -57,7 +56,7 @@ cVideo::cVideo() :
 	colorDepth (COLOURDEPTH),
 	windowMode (false)
 {
-	signalConnectionManager.connect (cKeyboard::getInstance().keyPressed, [this](cKeyboard& keyboard, SDL_Keycode key) { keyPressed (keyboard, key);} );
+	signalConnectionManager.connect (cKeyboard::getInstance().keyPressed, [this] (cKeyboard& keyboard, SDL_Keycode key) { keyPressed (keyboard, key); });
 }
 
 cVideo::~cVideo()
@@ -85,9 +84,11 @@ void cVideo::init()
 	const auto title = PACKAGE_NAME " " PACKAGE_VERSION " " PACKAGE_REV " ";
 
 	sdlWindow = SDL_CreateWindow (title,
-								  SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex()), SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex()),
-								  MINWIDTH, MINHEIGHT,
-								  SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
+	                              SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex()),
+	                              SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex()),
+	                              MINWIDTH,
+	                              MINHEIGHT,
+	                              SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
 
 	{
 		auto icon = AutoSurface (SDL_LoadBMP (MAXR_ICON));
@@ -141,9 +142,10 @@ void cVideo::initializeBuffer (int width, int height)
 
 	if (sdlTexture) SDL_DestroyTexture (sdlTexture);
 	sdlTexture = SDL_CreateTexture (sdlRenderer,
-									SDL_PIXELFORMAT_ARGB8888,
-									SDL_TEXTUREACCESS_STREAMING,
-									width, height);
+	                                SDL_PIXELFORMAT_ARGB8888,
+	                                SDL_TEXTUREACCESS_STREAMING,
+	                                width,
+	                                height);
 
 	SDL_RenderSetLogicalSize (sdlRenderer, width, height);
 }
@@ -265,7 +267,6 @@ void cVideo::clearBuffer()
 	SDL_FillRect (buffer, nullptr, SDL_MapRGB (buffer->format, 0, 0, 0));
 }
 
-
 void cVideo::detectResolutions()
 {
 	const auto numVideoDislplays = SDL_GetNumVideoDisplays();
@@ -288,8 +289,8 @@ void cVideo::detectResolutions()
 
 			resolutions.push_back (std::make_pair (mode.w, mode.h));
 		}
-		std::sort (resolutions.begin(), resolutions.end());   // lexicographic order
-		resolutions.erase (std::unique (resolutions.begin(), resolutions.end()), resolutions.end());    // make sure there are no double entries
+		std::sort (resolutions.begin(), resolutions.end()); // lexicographic order
+		resolutions.erase (std::unique (resolutions.begin(), resolutions.end()), resolutions.end()); // make sure there are no double entries
 
 		for (size_t i = 0; i < resolutions.size(); ++i)
 		{
@@ -374,8 +375,7 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 			{
 				counter += 1;
 				screenshotfile = getUserScreenshotsDir() + "screenie_" + timestr + "_" + std::to_string (counter) + ".bmp";
-			}
-			while (FileExists (screenshotfile.c_str()));
+			} while (FileExists (screenshotfile.c_str()));
 			Log.write ("Screenshot saved to " + screenshotfile, cLog::eLogType::Info);
 			takeScreenShot (screenshotfile);
 
@@ -388,8 +388,8 @@ void cVideo::applyShadow (const SDL_Rect* rect, SDL_Surface& destination)
 {
 	const SDL_Rect fullscreen = {0, 0, getResolutionX(), getResolutionY()};
 	if (rect == nullptr) rect = &fullscreen;
-	SDL_Rect src = { rect->x, rect->y, rect->w, rect->h };
-	SDL_Rect dest = { rect->x, rect->y, 0, 0 };
+	SDL_Rect src = {rect->x, rect->y, rect->w, rect->h};
+	SDL_Rect dest = {rect->x, rect->y, 0, 0};
 	SDL_BlitSurface (GraphicsData.gfx_shadow.get(), &src, &destination, &dest);
 }
 
@@ -419,7 +419,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 		dstrect->y = 0;
 	}
 
-	int width  = srcrect->w;
+	int width = srcrect->w;
 	int height = srcrect->h;
 
 	//clip source rect to the source surface
@@ -433,7 +433,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 		height += srcrect->y;
 		srcrect->y = 0;
 	}
-	width  = std::min (src->w - srcrect->x, width);
+	width = std::min (src->w - srcrect->x, width);
 	height = std::min (src->h - srcrect->y, height);
 
 	// clip the dest rect to the destination clip rect
@@ -449,7 +449,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 		srcrect->y += dst->clip_rect.y - dstrect->y;
 		dstrect->y = dst->clip_rect.y;
 	}
-	width  = std::min (dst->clip_rect.x + dst->clip_rect.w - dstrect->x, width);
+	width = std::min (dst->clip_rect.x + dst->clip_rect.w - dstrect->x, width);
 	height = std::min (dst->clip_rect.y + dst->clip_rect.h - dstrect->y, height);
 
 	if (width <= 0 || height <= 0)
@@ -576,8 +576,7 @@ drawpixel:
 		{
 			i -= destWidth;
 			srcPixelData++;
-		}
-		while (i >= destWidth);
+		} while (i >= destWidth);
 	}
 }
 
@@ -591,7 +590,8 @@ SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int h
 	if (height > scr->h && dest) height = scr->h;
 
 	// generate new surface if necessary
-	if (dest == nullptr) surface = SDL_CreateRGBSurface (0, width, height, scr->format->BitsPerPixel, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);
+	if (dest == nullptr)
+		surface = SDL_CreateRGBSurface (0, width, height, scr->format->BitsPerPixel, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);
 	else
 	{
 		// else set the size of the old one
@@ -662,8 +662,7 @@ drawline:
 		{
 			i -= surface->h;
 			srcRow++;
-		}
-		while (i >= surface->h);
+		} while (i >= surface->h);
 	}
 
 	if (SDL_MUSTLOCK (scr)) SDL_UnlockSurface (scr);
@@ -682,14 +681,22 @@ static void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surfac
 	int dx = x2 - x1;
 	int dy = y2 - y1;
 	int dir = 1;
-	if (dy < 0) {dy = -dy; dir = -1;}
+	if (dy < 0)
+	{
+		dy = -dy;
+		dir = -1;
+	}
 	int error = 0;
 	Uint32* ptr = static_cast<Uint32*> (sf.pixels);
 	if (dx > dy)
 	{
 		for (; x1 != x2; x1++, error += dy)
 		{
-			if (error > dx) {error -= dx; y1 += dir;}
+			if (error > dx)
+			{
+				error -= dx;
+				y1 += dir;
+			}
 			if (x1 < sf.w && x1 >= 0 && y1 >= 0 && y1 < sf.h)
 				ptr[x1 + y1 * sf.w] = color;
 		}
@@ -697,7 +704,11 @@ static void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surfac
 	}
 	for (; y1 != y2; y1 += dir, error += dx)
 	{
-		if (error > dy) {error -= dy; x1++;}
+		if (error > dy)
+		{
+			error -= dy;
+			x1++;
+		}
 		if (x1 < sf.w && x1 >= 0 && y1 >= 0 && y1 < sf.h)
 			ptr[x1 + y1 * sf.w] = color;
 	}
@@ -732,16 +743,14 @@ static void setPixel (SDL_Surface& surface, int x, int y, int iColor)
 	// check the surface size
 	if (x < 0 || x >= surface.w || y < 0 || y >= surface.h) return;
 	// check the clip rect
-	if (x < surface.clip_rect.x || x >= surface.clip_rect.x + surface.clip_rect.w ||
-		y < surface.clip_rect.y || y >= surface.clip_rect.y + surface.clip_rect.h) return;
+	if (x < surface.clip_rect.x || x >= surface.clip_rect.x + surface.clip_rect.w || y < surface.clip_rect.y || y >= surface.clip_rect.y + surface.clip_rect.h) return;
 
-	static_cast<Uint32*> (surface.pixels) [x + y * surface.w] = iColor;
+	static_cast<Uint32*> (surface.pixels)[x + y * surface.w] = iColor;
 }
 
 void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface& surface)
 {
-	if (iX + iRadius < 0 || iX - iRadius > Video.getResolutionX() ||
-		iY + iRadius < 0 || iY - iRadius > Video.getResolutionY()) return;
+	if (iX + iRadius < 0 || iX - iRadius > Video.getResolutionX() || iY + iRadius < 0 || iY - iRadius > Video.getResolutionY()) return;
 	SDL_LockSurface (&surface);
 
 	int d = 0;
@@ -778,7 +787,7 @@ void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface& surface)
 //------------------------------------------------------------------------------
 void applySettings (cVideo& video, const sVideoSettings& videoSettings)
 {
-	auto resolution = videoSettings.resolution.value_or(cPosition(video.getMinW(), video.getMinH()));
+	auto resolution = videoSettings.resolution.value_or (cPosition (video.getMinW(), video.getMinH()));
 	video.setResolution (resolution.x(), resolution.y(), false);
 	video.setColDepth (videoSettings.colourDepth);
 	video.setWindowMode (videoSettings.windowMode);

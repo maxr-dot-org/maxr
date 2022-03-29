@@ -18,23 +18,24 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/mousemode/mousemodedefault.h"
-#include "ui/graphical/game/control/mouseaction/mouseactionattack.h"
-#include "ui/graphical/game/control/mouseaction/mouseactionsteal.h"
-#include "ui/graphical/game/control/mouseaction/mouseactiondisable.h"
-#include "ui/graphical/game/control/mouseaction/mouseactionselect.h"
-#include "ui/graphical/game/control/mouseaction/mouseactionmove.h"
-#include "ui/graphical/game/control/mouseaction/mouseactionactivatefinished.h"
-#include "ui/graphical/game/unitselection.h"
+
+#include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
-#include "ui/keys.h"
-#include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
+#include "game/data/units/vehicle.h"
+#include "input/keyboard/keyboard.h"
 #include "input/mouse/cursor/mousecursoramount.h"
 #include "input/mouse/cursor/mousecursorattack.h"
-#include "input/keyboard/keyboard.h"
-#include "game/data/map/mapfieldview.h"
+#include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionactivatefinished.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionattack.h"
+#include "ui/graphical/game/control/mouseaction/mouseactiondisable.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionmove.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionselect.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionsteal.h"
+#include "ui/graphical/game/unitselection.h"
+#include "ui/keys.h"
 
 #include <cassert>
 
@@ -44,7 +45,7 @@ cMouseModeDefault::cMouseModeDefault (const cMapView* map_, const cUnitSelection
 {
 	establishUnitSelectionConnections();
 	cKeyboard& keyboard = cKeyboard::getInstance();
-	keyboardConnectionManager.connect (keyboard.modifierChanged, [this]() {needRefresh(); });
+	keyboardConnectionManager.connect (keyboard.modifierChanged, [this]() { needRefresh(); });
 }
 
 //------------------------------------------------------------------------------
@@ -70,7 +71,8 @@ void cMouseModeDefault::setCursor (cMouse& mouse, const cPosition& mapPosition, 
 
 				mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal, selectedVehicle->getCommandoData().computeChance (unit, true)));
 			}
-			else mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal));
+			else
+				mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal));
 		}
 		break;
 		case eActionType::Disable:
@@ -84,7 +86,8 @@ void cMouseModeDefault::setCursor (cMouse& mouse, const cPosition& mapPosition, 
 
 				mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable, selectedVehicle->getCommandoData().computeChance (unit, false)));
 			}
-			else mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable));
+			else
+				mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable));
 		}
 		break;
 		case eActionType::Attack:
@@ -317,12 +320,10 @@ void cMouseModeDefault::establishUnitSelectionConnections()
 	if (selectedBuilding)
 	{
 		assert (selectedBuilding == selectedUnit);
-		selectedUnitSignalConnectionManager.connect (selectedBuilding->buildListChanged, [this]()
-		{
+		selectedUnitSignalConnectionManager.connect (selectedBuilding->buildListChanged, [this]() {
 			needRefresh();
 		});
-		selectedUnitSignalConnectionManager.connect (selectedBuilding->buildListFirstItemDataChanged, [this]()
-		{
+		selectedUnitSignalConnectionManager.connect (selectedBuilding->buildListFirstItemDataChanged, [this]() {
 			needRefresh();
 		});
 	}
@@ -331,8 +332,7 @@ void cMouseModeDefault::establishUnitSelectionConnections()
 //------------------------------------------------------------------------------
 void cMouseModeDefault::establishMapFieldConnections (const cMapFieldView& field)
 {
-	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, field]()
-	{
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, field]() {
 		updateFieldUnitConnections (field);
 		needRefresh();
 	});

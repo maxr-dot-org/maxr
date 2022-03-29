@@ -19,11 +19,11 @@
 
 #include "ui/graphical/game/widgets/unitdetailsstored.h"
 
+#include "SDLutility/tosdl.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "output/video/video.h"
-#include "SDLutility/tosdl.h"
 #include "ui/graphical/game/widgets/unitdetailshud.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "utility/language.h"
@@ -108,9 +108,12 @@ void cUnitDetailsStored::drawRow (size_t index, eUnitDataSymbolType symbolType, 
 	nameLabels[index]->show();
 
 	eUnicodeFontType fontType;
-	if (amount > maximalAmount / 2) fontType = eUnicodeFontType::LatinSmallGreen;
-	else if (amount > maximalAmount / 4) fontType = eUnicodeFontType::LatinSmallYellow;
-	else fontType = eUnicodeFontType::LatinSmallRed;
+	if (amount > maximalAmount / 2)
+		fontType = eUnicodeFontType::LatinSmallGreen;
+	else if (amount > maximalAmount / 4)
+		fontType = eUnicodeFontType::LatinSmallYellow;
+	else
+		fontType = eUnicodeFontType::LatinSmallRed;
 
 	amountLabels[index]->setFont (fontType);
 	amountLabels[index]->setText (std::to_string (amount) + "/" + std::to_string (maximalAmount));

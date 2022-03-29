@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ui/sound/effects/soundeffect.h"
+
 #include "output/sound/soundchannel.h"
 #include "utility/position.h"
 
@@ -68,8 +69,7 @@ void cSoundEffect::play (cSoundChannel& channel_, bool loop)
 
 		channel->play (*sound, loop);
 
-		signalConnectionManager.connect (channel->stopped, [this]()
-		{
+		signalConnectionManager.connect (channel->stopped, [this]() {
 			bool hadChannel = false;
 			{
 				std::unique_lock<std::recursive_mutex> lock (channelMutex);
@@ -142,7 +142,7 @@ bool cSoundEffect::isInConflict (const cSoundEffect& other) const
 }
 
 //--------------------------------------------------------------------------
-bool  cSoundEffect::hasConflictAtSameGameTimeOnly()
+bool cSoundEffect::hasConflictAtSameGameTimeOnly()
 {
 	switch (type)
 	{

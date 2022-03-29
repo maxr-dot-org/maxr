@@ -26,7 +26,7 @@
 //------------------------------------------------------------------------------
 /*static*/ cPlayerBasicData cPlayerBasicData::fromSettings()
 {
-	return { cSettings::getInstance().getPlayerSettings(), -1, false };
+	return {cSettings::getInstance().getPlayerSettings(), -1, false};
 }
 
 //------------------------------------------------------------------------------
@@ -63,12 +63,12 @@ cPlayerBasicData& cPlayerBasicData::operator= (const cPlayerBasicData& other)
 }
 
 //------------------------------------------------------------------------------
-bool cPlayerBasicData::operator == (const cPlayerBasicData& rhs) const
+bool cPlayerBasicData::operator== (const cPlayerBasicData& rhs) const
 {
 	return player == rhs.player
-		&& nr == rhs.nr
-		&& ready == rhs.ready
-		&& defeated == rhs.defeated;
+	    && nr == rhs.nr
+	    && ready == rhs.ready
+	    && defeated == rhs.defeated;
 }
 
 //------------------------------------------------------------------------------

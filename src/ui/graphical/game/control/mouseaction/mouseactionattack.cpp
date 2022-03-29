@@ -19,10 +19,10 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseactionattack.h"
 
-#include "ui/graphical/game/widgets/gamemapwidget.h"
-#include "ui/graphical/game/unitselection.h"
-#include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "ui/graphical/game/unitselection.h"
+#include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
 bool cMouseActionAttack::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const

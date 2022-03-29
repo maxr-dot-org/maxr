@@ -19,8 +19,8 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseactionactivatefinished.h"
 
-#include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/graphical/game/unitselection.h"
+#include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
 bool cMouseActionActivateFinished::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const

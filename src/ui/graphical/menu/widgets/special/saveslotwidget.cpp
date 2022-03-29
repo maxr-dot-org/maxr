@@ -55,8 +55,10 @@ const std::string& cSaveSlotWidget::getName() const
 //------------------------------------------------------------------------------
 void cSaveSlotWidget::setSelected (bool selected)
 {
-	if (selected) numberLabel->setFont (eUnicodeFontType::LatinBigGold);
-	else numberLabel->setFont (eUnicodeFontType::LatinBig);
+	if (selected)
+		numberLabel->setFont (eUnicodeFontType::LatinBigGold);
+	else
+		numberLabel->setFont (eUnicodeFontType::LatinBig);
 }
 
 //------------------------------------------------------------------------------

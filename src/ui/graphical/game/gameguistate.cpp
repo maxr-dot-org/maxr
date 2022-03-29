@@ -20,8 +20,8 @@
 #include "gameguistate.h"
 
 #include "game/data/units/unit.h"
-#include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitlocklist.h"
+#include "ui/graphical/game/unitselection.h"
 
 //------------------------------------------------------------------------------
 void cGameGuiState::setSelectedUnits (const cUnitSelection& unitSelection)

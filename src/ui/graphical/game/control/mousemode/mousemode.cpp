@@ -18,9 +18,10 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/mousemode/mousemode.h"
-#include "ui/graphical/game/unitselection.h"
-#include "game/data/map/mapview.h"
+
 #include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
+#include "ui/graphical/game/unitselection.h"
 
 //------------------------------------------------------------------------------
 cMouseMode::cMouseMode (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :

@@ -38,16 +38,16 @@ namespace
 		ss << id;
 		return ss.str();
 	}
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 void cLog::write (const std::string& msg, eLogType type)
 {
 	if ((type == eLogType::Debug || type == eLogType::NetDebug) && !cSettings::getInstance().isDebug())
- 	{
+	{
 		//in case debug is disabled we skip message
- 		return;
- 	}
+		return;
+	}
 	std::unique_lock<std::mutex> l (mutex);
 
 	checkOpenFile (type);
@@ -64,7 +64,8 @@ void cLog::write (const std::string& msg, eLogType type)
 		case eLogType::NetError:
 		case eLogType::Error:
 			tmp = threadId + ": (EE): " + msg;
-			std::cout << tmp << "\n"; break;
+			std::cout << tmp << "\n";
+			break;
 		case eLogType::NetDebug:
 		case eLogType::Debug:
 			tmp = threadId + ": (DD): " + msg;
@@ -112,7 +113,7 @@ void cLog::checkOpenFile (eLogType type)
 
 		//append time stamp to log file name
 		time_t tTime = time (nullptr);
-#if defined (_MSC_VER)
+#if defined(_MSC_VER)
 		tm tm_;
 		tm* tmTime = &tm_;
 		localtime_s (tmTime, &tTime);
@@ -150,7 +151,7 @@ void cLog::checkOpenFile (eLogType type)
 }
 
 //------------------------------------------------------------------------------
-void cLog::writeToFile (const std::string &msg, std::ofstream& file)
+void cLog::writeToFile (const std::string& msg, std::ofstream& file)
 {
 	file.write (msg.c_str(), msg.length());
 	file.flush();

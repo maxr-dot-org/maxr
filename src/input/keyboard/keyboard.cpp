@@ -17,18 +17,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <cassert>
-
 #include "input/keyboard/keyboard.h"
 
 #include "events/eventmanager.h"
 #include "events/keyboardevents.h"
 
+#include <cassert>
+
 //------------------------------------------------------------------------------
 cKeyboard::cKeyboard()
 {
-	signalConnectionManager.connect (cEventManager::getInstance().keyboardEvent, [this](const cKeyboardEvent& event) { handleKeyboardEvent (event); });
-	signalConnectionManager.connect (cEventManager::getInstance().textInputEvent, [this](const cTextInputEvent& event) { handleTextInputEvent (event); });
+	signalConnectionManager.connect (cEventManager::getInstance().keyboardEvent, [this] (const cKeyboardEvent& event) { handleKeyboardEvent (event); });
+	signalConnectionManager.connect (cEventManager::getInstance().textInputEvent, [this] (const cTextInputEvent& event) { handleTextInputEvent (event); });
 }
 
 //------------------------------------------------------------------------------
@@ -67,7 +67,6 @@ void cKeyboard::updateModifiersFromKeyPress (const cKeyboardEvent& event)
 		currentModifiers |= eKeyModifierType::Caps;
 	else if (key == SDLK_MODE)
 		currentModifiers |= eKeyModifierType::Mode;
-
 }
 
 //------------------------------------------------------------------------------

@@ -19,9 +19,9 @@
 
 #include "ui/graphical/menu/widgets/special/unitlistviewitemcargo.h"
 
+#include "game/data/player/player.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
-#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData& unitsData) :
@@ -64,11 +64,16 @@ void cUnitListViewItemCargo::updateCargoLabel()
 {
 	if (cargoLabel)
 	{
-		if (cargo == 0) cargoLabel->setText ("(empty)");
-		else cargoLabel->setText ("(" + std::to_string (cargo) + "/" + std::to_string (unitData->storageResMax) + ")");
+		if (cargo == 0)
+			cargoLabel->setText ("(empty)");
+		else
+			cargoLabel->setText ("(" + std::to_string (cargo) + "/" + std::to_string (unitData->storageResMax) + ")");
 
-		if (cargo <= unitData->storageResMax / 4) cargoLabel->setFont (eUnicodeFontType::LatinSmallRed);
-		else if (cargo <= unitData->storageResMax / 2) cargoLabel->setFont (eUnicodeFontType::LatinSmallYellow);
-		else cargoLabel->setFont (eUnicodeFontType::LatinSmallGreen);
+		if (cargo <= unitData->storageResMax / 4)
+			cargoLabel->setFont (eUnicodeFontType::LatinSmallRed);
+		else if (cargo <= unitData->storageResMax / 2)
+			cargoLabel->setFont (eUnicodeFontType::LatinSmallYellow);
+		else
+			cargoLabel->setFont (eUnicodeFontType::LatinSmallGreen);
 	}
 }

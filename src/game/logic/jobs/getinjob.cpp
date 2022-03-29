@@ -19,8 +19,8 @@
 
 #include "getinjob.h"
 
-#include "game/data/units/vehicle.h"
 #include "game/data/model.h"
+#include "game/data/units/vehicle.h"
 #include "utility/crc.h"
 
 #include <cassert>
@@ -31,7 +31,7 @@ cGetInJob::cGetInJob (cVehicle& loadedVehicle, cUnit& loadingUnit) :
 	counter (32),
 	startFlightHeight (loadedVehicle.getFlightHeight())
 {
-	connectionManager.connect (loadingUnit.destroyed, [this](){finished = true; });
+	connectionManager.connect (loadingUnit.destroyed, [this]() { finished = true; });
 	unit->alphaEffectValue = 254;
 }
 

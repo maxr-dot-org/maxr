@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/animations/animationstartup.h"
-#include "ui/graphical/game/animations/animationtimer.h"
+
 #include "game/data/units/unit.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 #include "utility/box.h"
 
 //------------------------------------------------------------------------------
@@ -34,8 +35,7 @@ cAnimationStartUp::cAnimationStartUp (cAnimationTimer& animationTimer_, const cU
 	animationTimerConnectionManager.connect (animationTimer.triggered100ms, [this]() { run(); });
 
 	// make sure the animation does not run on a destroyed unit
-	signalConnectionManager.connect (unit->destroyed, [this]()
-	{
+	signalConnectionManager.connect (unit->destroyed, [this]() {
 		animationTimerConnectionManager.disconnectAll();
 		unit = nullptr;
 		finished = true;

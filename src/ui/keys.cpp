@@ -35,7 +35,7 @@ namespace serialization
 		{eMouseStyle::Modern, "Modern"},
 		{eMouseStyle::OldSchool, "OldSchool"}
 	};
-}
+} // namespace serialization
 //------------------------------------------------------------------------------
 cKeysList::cKeysList() :
 	keyExit (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)),
@@ -165,12 +165,12 @@ void cKeysList::loadFromFile()
 void cKeysList::saveToFile()
 {
 	nlohmann::json json;
-	cJsonArchiveOut archive(json);
+	cJsonArchiveOut archive (json);
 
 	serialize (archive);
 
 	std::ofstream file (cSettings::getInstance().getHomeDir() + "keys.json");
-	file << json.dump(0);
+	file << json.dump (0);
 }
 
 //------------------------------------------------------------------------------

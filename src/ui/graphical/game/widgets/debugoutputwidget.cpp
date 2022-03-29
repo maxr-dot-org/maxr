@@ -27,12 +27,12 @@
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
 #include "resources/uidata.h"
+#include "ui/graphical/game/animations/animation.h"
 #include "ui/graphical/game/control/chatcommand/chatcommand.h"
+#include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
 #include "ui/graphical/game/control/chatcommand/chatcommandexecutor.h"
 #include "ui/graphical/game/control/chatcommand/chatcommandparser.h"
-#include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
-#include "ui/graphical/game/animations/animation.h"
 #include "ui/graphical/playercolor.h"
 #include "ui/translations.h"
 #include "utility/indexiterator.h"
@@ -57,8 +57,7 @@ namespace
 		strStream << x;
 		return "0x" + strStream.str();
 	}
-}
-
+} // namespace
 
 //------------------------------------------------------------------------------
 cDebugOutputWidget::cDebugOutputWidget (const cBox<cPosition>& area) :
@@ -88,104 +87,86 @@ void cDebugOutputWidget::initChatCommand (std::vector<std::unique_ptr<cChatComma
 {
 	chatCommands.push_back (
 		cChatCommand ("base", "Enable/disable debug information about bases")
-		.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"client", "server", "off"})
-		.setAction ([this](const std::string& value)
-		{
-			if (value == "server")
-			{
-				debugBaseServer = true;
-				debugBaseClient = false;
-			}
-			else if (value == "client")
-			{
-				debugBaseServer = false;
-				debugBaseClient = true;
-			}
-			else
-			{
-				debugBaseServer = false;
-				debugBaseClient = false;
-			}
-		})
-	);
+			.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"client", "server", "off"})
+			.setAction ([this] (const std::string& value) {
+				if (value == "server")
+				{
+					debugBaseServer = true;
+					debugBaseClient = false;
+				}
+				else if (value == "client")
+				{
+					debugBaseServer = false;
+					debugBaseClient = true;
+				}
+				else
+				{
+					debugBaseServer = false;
+					debugBaseClient = false;
+				}
+			}));
 	chatCommands.push_back (
 		cChatCommand ("sentry", "Enable/disable debug information about the sentry status")
-		.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"server", "off"})
-		.setAction ([this](const std::string& value)
-		{
-			debugSentry = (value == "server");
-		})
-	);
+			.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"server", "off"})
+			.setAction ([this] (const std::string& value) {
+				debugSentry = (value == "server");
+			}));
 	chatCommands.push_back (
 		cChatCommand ("fx", "Enable/disable debug information about effects")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction ([this](bool flag)
-		{
-			debugFX = flag;
-		})
-	);
+			.addArgument<cChatCommandArgumentBool>()
+			.setAction ([this] (bool flag) {
+				debugFX = flag;
+			}));
 	chatCommands.push_back (
 		cChatCommand ("trace", "Enable/disable debug information about the unit currently under the cursor")
-		.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"client", "server", "off"})
-		.setAction ([this](const std::string& value)
-		{
-			if (value == "server")
-			{
-				debugTraceServer = true;
-				debugTraceClient = false;
-			}
-			else if (value == "client")
-			{
-				debugTraceServer = false;
-				debugTraceClient = true;
-			}
-			else
-			{
-				debugTraceServer = false;
-				debugTraceClient = false;
-			}
-		})
-	);
+			.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"client", "server", "off"})
+			.setAction ([this] (const std::string& value) {
+				if (value == "server")
+				{
+					debugTraceServer = true;
+					debugTraceClient = false;
+				}
+				else if (value == "client")
+				{
+					debugTraceServer = false;
+					debugTraceClient = true;
+				}
+				else
+				{
+					debugTraceServer = false;
+					debugTraceClient = false;
+				}
+			}));
 	chatCommands.push_back (
 		cChatCommand ("ajobs", "Enable/disable debug information about attack jobs")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction ([this](bool flag)
-		{
-			debugAjobs = flag;
-		})
-	);
+			.addArgument<cChatCommandArgumentBool>()
+			.setAction ([this] (bool flag) {
+				debugAjobs = flag;
+			}));
 	chatCommands.push_back (
 		cChatCommand ("players", "Enable/disable debug information about players")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction ([this](bool flag)
-		{
-			debugPlayers = flag;
-		})
-	);
+			.addArgument<cChatCommandArgumentBool>()
+			.setAction ([this] (bool flag) {
+				debugPlayers = flag;
+			}));
 	chatCommands.push_back (
 		cChatCommand ("cache debug", "Enable/disable debug information about the drawing cache")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction ([this](bool flag)
-		{
-			debugCache = flag;
-		})
-	);
+			.addArgument<cChatCommandArgumentBool>()
+			.setAction ([this] (bool flag) {
+				debugCache = flag;
+			}));
 	chatCommands.push_back (
 		cChatCommand ("sync debug", "Enable/disable debug information about the sync state of the game data")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction ([this](bool flag)
-		{
-			debugSync = flag;
-		})
-	);
+			.addArgument<cChatCommandArgumentBool>()
+			.setAction ([this] (bool flag) {
+				debugSync = flag;
+			}));
 	chatCommands.push_back (
 		cChatCommand ("debug stealth", "Enable/disable debug information about the stealth state of units")
-		.addArgument<cChatCommandArgumentBool>()
-		.setAction ([this](bool flag)
-		{
-			debugStealth = flag;
-		})
-	);
+			.addArgument<cChatCommandArgumentBool>()
+			.setAction ([this] (bool flag) {
+				debugStealth = flag;
+			}));
 }
 
 //------------------------------------------------------------------------------
@@ -207,8 +188,8 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 
 		SDL_Rect rDest = {drawPosition.x(), drawPosition.y(), 20, 10};
 		SDL_Rect rSrc = {0, 0, 20, 10};
-		SDL_Rect rDotDest  = {drawPosition.x() - 10, drawPosition.y(), 10, 10};
-		SDL_Rect rBlackOut = {drawPosition.x() + 20, drawPosition.y(),  0, 10};
+		SDL_Rect rDotDest = {drawPosition.x() - 10, drawPosition.y(), 10, 10};
+		SDL_Rect rBlackOut = {drawPosition.x() + 20, drawPosition.y(), 0, 10};
 		const auto& playerList = client->model.getPlayerList();
 		for (size_t i = 0; i != playerList.size(); ++i)
 		{
@@ -331,32 +312,31 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 				font->showText (drawPosition.x() + 110, drawPosition.y(), std::to_string (server->gameTimer.receivedTime.at (player->getId())), eUnicodeFontType::LatinSmallWhite);
 				drawPosition.y() += font->getFontHeight (eUnicodeFontType::LatinSmallWhite);
 
-
 				if (server->gameTimer.clientDebugData.at (player->getId()).crcOK)
 					font->showText (drawPosition.x() + 10, drawPosition.y(), "Sync OK", eUnicodeFontType::LatinSmallGreen);
 				else
 					font->showText (drawPosition.x() + 10, drawPosition.y(), "Out of Sync!", eUnicodeFontType::LatinSmallRed);
 				drawPosition.y() += font->getFontHeight (eUnicodeFontType::LatinSmallWhite);
 
-				const auto& debugData= server->gameTimer.clientDebugData.at (player->getId());
+				const auto& debugData = server->gameTimer.clientDebugData.at (player->getId());
 				font->showText (drawPosition.x() + 10, drawPosition.y(), "Timebuffer: ", eUnicodeFontType::LatinSmallWhite);
-				font->showText (drawPosition.x() + 110, drawPosition.y(), std::to_string ((int)debugData.timeBuffer), eUnicodeFontType::LatinSmallWhite);
+				font->showText (drawPosition.x() + 110, drawPosition.y(), std::to_string ((int) debugData.timeBuffer), eUnicodeFontType::LatinSmallWhite);
 				drawPosition.y() += font->getFontHeight (eUnicodeFontType::LatinSmallWhite);
 
 				font->showText (drawPosition.x() + 10, drawPosition.y(), "Ticks per Frame: ", eUnicodeFontType::LatinSmallWhite);
-				font->showText (drawPosition.x() + 110, drawPosition.y(), std::to_string ((int)debugData.ticksPerFrame), eUnicodeFontType::LatinSmallWhite);
+				font->showText (drawPosition.x() + 110, drawPosition.y(), std::to_string ((int) debugData.ticksPerFrame), eUnicodeFontType::LatinSmallWhite);
 				drawPosition.y() += font->getFontHeight (eUnicodeFontType::LatinSmallWhite);
 
 				font->showText (drawPosition.x() + 10, drawPosition.y(), "Queue Size: ", eUnicodeFontType::LatinSmallWhite);
-				font->showText (drawPosition.x() + 110, drawPosition.y(), std::to_string ((int)debugData.queueSize), eUnicodeFontType::LatinSmallWhite);
+				font->showText (drawPosition.x() + 110, drawPosition.y(), std::to_string ((int) debugData.queueSize), eUnicodeFontType::LatinSmallWhite);
 				drawPosition.y() += font->getFontHeight (eUnicodeFontType::LatinSmallWhite);
 
 				font->showText (drawPosition.x() + 10, drawPosition.y(), "Event counter: ", eUnicodeFontType::LatinSmallWhite);
-				font->showText (drawPosition.x() + 110, drawPosition.y(), std::to_string ((int)debugData.eventCounter), eUnicodeFontType::LatinSmallWhite);
+				font->showText (drawPosition.x() + 110, drawPosition.y(), std::to_string ((int) debugData.eventCounter), eUnicodeFontType::LatinSmallWhite);
 				drawPosition.y() += font->getFontHeight (eUnicodeFontType::LatinSmallWhite);
 
 				font->showText (drawPosition.x() + 10, drawPosition.y(), "Ping (ms): ", eUnicodeFontType::LatinSmallWhite);
-				font->showText (drawPosition.x() + 110, drawPosition.y(), std::to_string ((int)debugData.ping), eUnicodeFontType::LatinSmallWhite);
+				font->showText (drawPosition.x() + 110, drawPosition.y(), std::to_string ((int) debugData.ping), eUnicodeFontType::LatinSmallWhite);
 				drawPosition.y() += font->getFontHeight (eUnicodeFontType::LatinSmallWhite);
 			}
 		}
@@ -453,12 +433,21 @@ void cDebugOutputWidget::trace()
 
 	cPosition drawingPosition = getPosition() + cPosition (0, 0);
 
-	if (field->getVehicle()) { traceVehicle (*field->getVehicle(), drawingPosition); drawingPosition.y() += 20; }
-	if (field->getPlane()) { traceVehicle (*field->getPlane(), drawingPosition); drawingPosition.y() += 20; }
+	if (field->getVehicle())
+	{
+		traceVehicle (*field->getVehicle(), drawingPosition);
+		drawingPosition.y() += 20;
+	}
+	if (field->getPlane())
+	{
+		traceVehicle (*field->getPlane(), drawingPosition);
+		drawingPosition.y() += 20;
+	}
 
 	for (const auto* building : field->getBuildings())
 	{
-		traceBuilding (*building, drawingPosition); drawingPosition.y() += 20;
+		traceBuilding (*building, drawingPosition);
+		drawingPosition.y() += 20;
 	}
 }
 
@@ -501,7 +490,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 	font->showText (drawPosition, tmpString, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
-	tmpString = " stored_vehicles_count: " + std::to_string ((int)vehicle.storedUnits.size());
+	tmpString = " stored_vehicles_count: " + std::to_string ((int) vehicle.storedUnits.size());
 	font->showText (drawPosition, tmpString, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
@@ -528,7 +517,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	font->showText (drawPosition, s, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
-	s= "dir: " + std::to_string (building.dir) + " on sentry: +" + std::to_string (building.isSentryActive()) + " sub_base: " + pToStr (building.subBase);
+	s = "dir: " + std::to_string (building.dir) + " on sentry: +" + std::to_string (building.isSentryActive()) + " sub_base: " + pToStr (building.subBase);
 	font->showText (drawPosition, s, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
@@ -537,8 +526,8 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	drawPosition.y() += 8;
 
 	s = " production: {" + std::to_string (building.prod.metal) + "/" + std::to_string (building.maxProd.metal)
-		+ ", " + std::to_string (building.prod.oil) + "/" + std::to_string (building.maxProd.oil)
-		+ ", " + std::to_string (building.prod.gold) + "/" + std::to_string (building.maxProd.gold) + "}";
+	  + ", " + std::to_string (building.prod.oil) + "/" + std::to_string (building.maxProd.oil)
+	  + ", " + std::to_string (building.prod.gold) + "/" + std::to_string (building.maxProd.gold) + "}";
 	font->showText (drawPosition, s, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
@@ -546,7 +535,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	font->showText (drawPosition, s, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
-	s = " stored_vehicles_count: " + std::to_string ((int)building.storedUnits.size());
+	s = " stored_vehicles_count: " + std::to_string ((int) building.storedUnits.size());
 	font->showText (drawPosition, s, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
@@ -558,9 +547,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	}
 
 	const size_t buildingBuildListSize = building.getBuildListSize();
-	s = "build_speed: "        + std::to_string (building.getBuildSpeed()) +
-		" repeat_build: "      + std::to_string (building.getRepeatBuild()) +
-		" build_list_count: +" + std::to_string ((int)buildingBuildListSize);
+	s = "build_speed: " + std::to_string (building.getBuildSpeed()) + " repeat_build: " + std::to_string (building.getRepeatBuild()) + " build_list_count: +" + std::to_string ((int) buildingBuildListSize);
 	font->showText (drawPosition, s, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
@@ -614,8 +601,8 @@ void cDebugOutputWidget::drawDetectedByPlayerList()
 		if (vehicle == nullptr) continue;
 
 		auto drawDestination = gameMap->computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, vehicle->getPosition());
-		drawDestination.x += (int)(4 + vehicle->getMovementOffset().x() * gameMap->getZoomFactor());
-		drawDestination.y += (int)(4 + vehicle->getMovementOffset().y() * gameMap->getZoomFactor());
+		drawDestination.x += (int) (4 + vehicle->getMovementOffset().x() * gameMap->getZoomFactor());
+		drawDestination.y += (int) (4 + vehicle->getMovementOffset().y() * gameMap->getZoomFactor());
 
 		for (const auto& playerId : vehicle->detectedByPlayerList)
 		{
@@ -652,7 +639,7 @@ void cDebugOutputWidget::drawDetectionMaps()
 		for (const auto& player : client->getModel().getPlayerList())
 		{
 			std::string s;
-			s += player->hasSeaDetection (*i)  ? "S" : " ";
+			s += player->hasSeaDetection (*i) ? "S" : " ";
 			s += player->hasLandDetection (*i) ? "L" : " ";
 			s += player->hasMineDetection (*i) ? "M" : " ";
 			if (s != "   ")
@@ -683,7 +670,7 @@ void cDebugOutputWidget::drawSentryMaps()
 		for (const auto& player : client->getModel().getPlayerList())
 		{
 			std::string s;
-			s += player->hasSentriesGround (*i)  ? "G" : " ";
+			s += player->hasSentriesGround (*i) ? "G" : " ";
 			s += player->hasSentriesAir (*i) ? "A" : " ";
 			if (s != "  ")
 			{

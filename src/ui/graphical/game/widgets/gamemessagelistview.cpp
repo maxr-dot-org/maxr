@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/widgets/gamemessagelistview.h"
+
 #include "ui/graphical/menu/widgets/listview.h"
 
 //------------------------------------------------------------------------------

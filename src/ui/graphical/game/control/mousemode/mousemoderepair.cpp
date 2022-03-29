@@ -18,14 +18,15 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/mousemode/mousemoderepair.h"
+
+#include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionrepair.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/mapview.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
-#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
 cMouseModeRepair::cMouseModeRepair (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
@@ -60,7 +61,8 @@ std::unique_ptr<cMouseAction> cMouseModeRepair::getMouseAction (const cPosition&
 	{
 		return std::make_unique<cMouseActionRepair>();
 	}
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 //------------------------------------------------------------------------------

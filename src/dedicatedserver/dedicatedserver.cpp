@@ -21,8 +21,8 @@
 
 #include "dedicatedserver/dedicatedservergame.h"
 #include "defines.h"
-#include "utility/listhelpers.h"
 #include "utility/files.h"
+#include "utility/listhelpers.h"
 
 #include <algorithm>
 #include <iostream>
@@ -91,10 +91,11 @@ namespace
 	}
 	void printHelpExit()
 	{
-		std::cout << "Quits without bothering to stop a running server before." << std::endl << "You should call stop before." << std::endl;
+		std::cout << "Quits without bothering to stop a running server before." << std::endl
+				  << "You should call stop before." << std::endl;
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------
 // cDedicatedServer implementation
@@ -120,8 +121,8 @@ void cDedicatedServer::run()
 	while (true)
 	{
 		std::string input;
-		std::getline (std::cin, input);  // waits for user input in the terminal
-		if (std::cin.good() == false)   // happens during debugging
+		std::getline (std::cin, input); // waits for user input in the terminal
+		if (std::cin.good() == false) // happens during debugging
 			std::cin.clear();
 		if (handleInput (input) == false)
 			break;
@@ -139,16 +140,26 @@ bool cDedicatedServer::handleInput (const std::string& command)
 		return true;
 	if (tokens.at (0) == "help")
 	{
-		if (tokens.size() == 1) printHelpGeneral();
-		else if (tokens.at (1) == "newGame") printHelpNewGame();
-		else if (tokens.at (1) == "loadGame") printHelpLoadGame();
-		else if (tokens.at (1) == "saveGame") printHelpSaveGame();
-		else if (tokens.at (1) == "stop") printHelpStop();
-		else if (tokens.at (1) == "games") printHelpGames();
-		else if (tokens.at (1) == "maps") printHelpMaps();
-		else if (tokens.at (1) == "set") printHelpSet();
-		else if (tokens.at (1) == "printconfig") printHelpPrintConfig();
-		else if (tokens.at (1) == "exit") printHelpExit();
+		if (tokens.size() == 1)
+			printHelpGeneral();
+		else if (tokens.at (1) == "newGame")
+			printHelpNewGame();
+		else if (tokens.at (1) == "loadGame")
+			printHelpLoadGame();
+		else if (tokens.at (1) == "saveGame")
+			printHelpSaveGame();
+		else if (tokens.at (1) == "stop")
+			printHelpStop();
+		else if (tokens.at (1) == "games")
+			printHelpGames();
+		else if (tokens.at (1) == "maps")
+			printHelpMaps();
+		else if (tokens.at (1) == "set")
+			printHelpSet();
+		else if (tokens.at (1) == "printconfig")
+			printHelpPrintConfig();
+		else if (tokens.at (1) == "exit")
+			printHelpExit();
 		// ...
 	}
 	else if (tokens.at (0) == "newGame")
@@ -198,7 +209,7 @@ bool cDedicatedServer::handleInput (const std::string& command)
 //------------------------------------------------------------------------
 bool cDedicatedServer::startServer (int saveGameNumber)
 {
-	if (ranges::find_if (games, [=](const auto& game) { return game->getPort() == port; }) != games.end())
+	if (ranges::find_if (games, [=] (const auto& game) { return game->getPort() == port; }) != games.end())
 	{
 		std::cout << "WARNING: Server is already open." << std::endl;
 		return true;
@@ -212,8 +223,8 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 		std::cout << "Setting up new game..." << std::endl;
 	}
 	auto game = std::make_unique<cDedicatedServerGame> (saveGameNumber);
-	game->getGamesString = [this](){ return getGamesString(); };
-	game->getAvailableMapsString = [this](){ return getAvailableMapsString(); };
+	game->getGamesString = [this]() { return getGamesString(); };
+	game->getAvailableMapsString = [this]() { return getAvailableMapsString(); };
 
 	std::cout << "Starting server on port " << port << "..." << std::endl;
 	switch (game->startServer (port))
@@ -320,7 +331,7 @@ std::string cDedicatedServer::getAvailableMapsString() const
 	{
 		std::string mapFilename = maps[i];
 		if (mapFilename.compare (mapFilename.length() - 3, 3, "WRL") == 0
-			|| mapFilename.compare (mapFilename.length() - 3, 3, "wrl") == 0)
+		    || mapFilename.compare (mapFilename.length() - 3, 3, "wrl") == 0)
 		{
 			oss << mapFilename << std::endl;
 		}

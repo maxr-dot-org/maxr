@@ -23,12 +23,18 @@
 #include "game/data/model.h"
 #include "game/data/player/clans.h"
 #include "game/data/player/player.h"
-#include "game/data/units/building.h"
-#include "game/data/units/commandodata.h"
-#include "game/data/units/vehicle.h"
 #include "game/data/report/savedreport.h"
 #include "game/data/report/savedreportchat.h"
 #include "game/data/report/savedreportsimple.h"
+#include "game/data/report/special/savedreporthostcommand.h"
+#include "game/data/report/special/savedreportlostconnection.h"
+#include "game/data/report/special/savedreportplayerdefeated.h"
+#include "game/data/report/special/savedreportplayerendedturn.h"
+#include "game/data/report/special/savedreportplayerleft.h"
+#include "game/data/report/special/savedreportplayerwins.h"
+#include "game/data/report/special/savedreportresourcechanged.h"
+#include "game/data/report/special/savedreportturnstart.h"
+#include "game/data/report/special/savedreportupgraded.h"
 #include "game/data/report/unit/savedreportattacked.h"
 #include "game/data/report/unit/savedreportattackingenemy.h"
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
@@ -37,15 +43,9 @@
 #include "game/data/report/unit/savedreportdisabled.h"
 #include "game/data/report/unit/savedreportpathinterrupted.h"
 #include "game/data/report/unit/savedreportsurveyoraiconfused.h"
-#include "game/data/report/special/savedreporthostcommand.h"
-#include "game/data/report/special/savedreportresourcechanged.h"
-#include "game/data/report/special/savedreportlostconnection.h"
-#include "game/data/report/special/savedreportplayerendedturn.h"
-#include "game/data/report/special/savedreportplayerdefeated.h"
-#include "game/data/report/special/savedreportplayerwins.h"
-#include "game/data/report/special/savedreportplayerleft.h"
-#include "game/data/report/special/savedreportupgraded.h"
-#include "game/data/report/special/savedreportturnstart.h"
+#include "game/data/units/building.h"
+#include "game/data/units/commandodata.h"
+#include "game/data/units/vehicle.h"
 #include "game/logic/endmoveaction.h"
 #include "game/logic/movejob.h"
 #include "output/video/unifonts.h"
@@ -73,12 +73,18 @@ namespace
 		const auto level = cCommandoData::getLevel (commandoData.getSuccessCount());
 		const std::string suffix = (level > 0) ? " +" + std::to_string (level) : "";
 
-		if (level < 1) return lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn") + suffix;
-		else if (level < 3) return lngPack.i18n ("Text~Comp~CommandoRank_Average") + suffix;
-		else if (level < 6) return lngPack.i18n ("Text~Comp~CommandoRank_Veteran") + suffix;
-		else if (level < 11) return lngPack.i18n ("Text~Comp~CommandoRank_Expert") + suffix;
-		else if (level < 19) return lngPack.i18n ("Text~Comp~CommandoRank_Elite") + suffix;
-		else return lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster") + suffix;
+		if (level < 1)
+			return lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn") + suffix;
+		else if (level < 3)
+			return lngPack.i18n ("Text~Comp~CommandoRank_Average") + suffix;
+		else if (level < 6)
+			return lngPack.i18n ("Text~Comp~CommandoRank_Veteran") + suffix;
+		else if (level < 11)
+			return lngPack.i18n ("Text~Comp~CommandoRank_Expert") + suffix;
+		else if (level < 19)
+			return lngPack.i18n ("Text~Comp~CommandoRank_Elite") + suffix;
+		else
+			return lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster") + suffix;
 	}
 
 	//--------------------------------------------------------------------------
@@ -120,7 +126,7 @@ namespace
 		}
 		return res;
 	}
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 std::string toTranslatedString (eGameSettingsResourceAmount amount)
@@ -221,15 +227,15 @@ std::string getClanStatsDescription (const cClanUnitStat& clanUnitStat, const cU
 		std::string text;
 		int originalValue;
 	} t[] =
-	{
-		// ToDo / Fixme if #756 fixed, use the non "_7" version of the text files
-		{eClanModification::Damage, lngPack.i18n ("Text~Others~Attack_7"), data->getDamage()},
-		{eClanModification::Range, lngPack.i18n ("Text~Others~Range"), data->getRange()},
-		{eClanModification::Armor, lngPack.i18n ("Text~Others~Armor_7"), data->getArmor()},
-		{eClanModification::Hitpoints, lngPack.i18n ("Text~Others~Hitpoints_7"), data->getHitpointsMax()},
-		{eClanModification::Scan, lngPack.i18n ("Text~Others~Scan_7"), data->getScan()},
-		{eClanModification::Speed, lngPack.i18n ("Text~Others~Speed_7"), data->getSpeedMax() / 4},
-	};
+		{
+			// ToDo / Fixme if #756 fixed, use the non "_7" version of the text files
+			{eClanModification::Damage, lngPack.i18n ("Text~Others~Attack_7"), data->getDamage()},
+			{eClanModification::Range, lngPack.i18n ("Text~Others~Range"), data->getRange()},
+			{eClanModification::Armor, lngPack.i18n ("Text~Others~Armor_7"), data->getArmor()},
+			{eClanModification::Hitpoints, lngPack.i18n ("Text~Others~Hitpoints_7"), data->getHitpointsMax()},
+			{eClanModification::Scan, lngPack.i18n ("Text~Others~Scan_7"), data->getScan()},
+			{eClanModification::Speed, lngPack.i18n ("Text~Others~Speed_7"), data->getSpeedMax() / 4},
+		};
 
 	for (int i = 0; i != sizeof (t) / sizeof (*t); ++i)
 	{
@@ -333,7 +339,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 			{
 				int iRound;
 
-				iRound = (int) ceilf (buildListItem.getRemainingMetal() / (float)building.getMetalPerRound());
+				iRound = (int) ceilf (buildListItem.getRemainingMetal() / (float) building.getMetalPerRound());
 				sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n ("Text~Punctuation~Colon");
 				sText += unitName + " (";
 				sText += std::to_string (iRound) + ")";
@@ -366,7 +372,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 		// Research Center
 		if (building.getStaticData().canResearch && building.getOwner() == whoWantsToKnow && building.getOwner())
 		{
-			return lngPack.i18n ("Text~Comp~Working") + "\n" +  getResearchAreaStatus (*building.getOwner());
+			return lngPack.i18n ("Text~Comp~Working") + "\n" + getResearchAreaStatus (*building.getOwner());
 		}
 
 		// Goldraffinerie:
@@ -493,7 +499,8 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 			sTmp = lngPack.i18n ("Text~Comp~ReactionFireOff");
 		else if (vehicle.isSentryActive())
 			sTmp = lngPack.i18n ("Text~Comp~Sentry");
-		else sTmp = lngPack.i18n ("Text~Comp~Waits");
+		else
+			sTmp = lngPack.i18n ("Text~Comp~Waits");
 
 		// extra info only for infiltrators
 		// TODO should it be original behavior (as it is now) or
@@ -650,8 +657,10 @@ namespace
 			// singular | == 1 | <= 1 |
 			// plural   | != 1 | 1 <  |
 			// we should have `i18n (key, n)`
-			if (totalUnitsCount == 1) message += " " + lngPack.i18n ("Text~Comp~Finished") + ".";
-			else if (totalUnitsCount > 1) message += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";
+			if (totalUnitsCount == 1)
+				message += " " + lngPack.i18n ("Text~Comp~Finished") + ".";
+			else if (totalUnitsCount > 1)
+				message += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";
 		}
 
 		if (!report.researchAreas.empty())
@@ -660,30 +669,29 @@ namespace
 			message += lngPack.i18n ("Text~Others~Research") + " " + lngPack.i18n ("Text~Comp~Finished") + lngPack.i18n ("Text~Punctuation~Colon");
 
 			const std::string themeNames[8] =
-			{
-				lngPack.i18n ("Text~Others~Attack"),
-				lngPack.i18n ("Text~Others~Shots"),
-				lngPack.i18n ("Text~Others~Range"),
-				lngPack.i18n ("Text~Others~Armor"),
-				lngPack.i18n ("Text~Others~Hitpoints"),
-				lngPack.i18n ("Text~Others~Speed"),
-				lngPack.i18n ("Text~Others~Scan"),
-				lngPack.i18n ("Text~Others~Costs")
-			};
+				{
+					lngPack.i18n ("Text~Others~Attack"),
+					lngPack.i18n ("Text~Others~Shots"),
+					lngPack.i18n ("Text~Others~Range"),
+					lngPack.i18n ("Text~Others~Armor"),
+					lngPack.i18n ("Text~Others~Hitpoints"),
+					lngPack.i18n ("Text~Others~Speed"),
+					lngPack.i18n ("Text~Others~Scan"),
+					lngPack.i18n ("Text~Others~Costs")};
 
 			const char* sep = "";
 			for (const auto researchArea : report.researchAreas)
 			{
 				message += sep;
 				sep = ", ";
-				message += themeNames[static_cast<int>(researchArea)];
+				message += themeNames[static_cast<int> (researchArea)];
 			}
 		}
 
 		return message;
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 std::string getMessage (const cSavedReport& report, const cModel& model)
@@ -758,4 +766,3 @@ std::string getMessage (const cSavedReport& report, const cModel& model)
 	}
 	return "";
 }
-

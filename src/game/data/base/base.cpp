@@ -70,7 +70,7 @@ namespace
 		return maxProd;
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 cSubBase::cSubBase (cBase& base) :
@@ -186,7 +186,7 @@ bool cSubBase::increaseEnergyProd (int value)
 	// calc the optimum amount of energy stations and generators
 	const int energy = energyProd + value;
 
-	int stations   = std::min ((energy + 3) / 6, availableStations);
+	int stations = std::min ((energy + 3) / 6, availableStations);
 	int generators = std::max (energy - stations * 6, 0);
 
 	if (generators > availableGenerators)
@@ -398,7 +398,7 @@ bool cSubBase::checkOil()
 	const int availableGenerators = onlineGenerators.size() + offlineGenerators.size();
 
 	// calc the optimum amount of energy stations and generators
-	int stations   = std::min ((energyNeed + 3) / 6, availableStations);
+	int stations = std::min ((energyNeed + 3) / 6, availableStations);
 	int generators = std::max (energyNeed - stations * 6, 0);
 
 	if (generators > availableGenerators)
@@ -472,9 +472,7 @@ bool cSubBase::checkEnergy()
 		if (!building.getStaticUnitData().needsEnergy || !building.isUnitWorking()) continue;
 
 		// do not shut down resource producers in the first run
-		if (building.getMaxProd().get (eResourceType::Metal) > 0 ||
-			building.getMaxProd().get (eResourceType::Gold) > 0 ||
-			building.getMaxProd().get (eResourceType::Oil) > 0) continue;
+		if (building.getMaxProd().get (eResourceType::Metal) > 0 || building.getMaxProd().get (eResourceType::Gold) > 0 || building.getMaxProd().get (eResourceType::Oil) > 0) continue;
 
 		building.stopWork (false);
 
@@ -586,12 +584,12 @@ void cSubBase::makeTurnStartRepairs (cBuilding& building)
 {
 	// repair (do not repair buildings that have been attacked in this turn):
 	if (building.data.getHitpoints() >= building.data.getHitpointsMax()
-		|| stored.metal <= 0 || building.hasBeenAttacked())
+	    || stored.metal <= 0 || building.hasBeenAttacked())
 	{
 		return;
 	}
 	// calc new hitpoints
-	const auto newHitPoints = building.data.getHitpoints() + Round (((float)building.data.getHitpointsMax() / building.data.getBuildCost()) * 4);
+	const auto newHitPoints = building.data.getHitpoints() + Round (((float) building.data.getHitpointsMax() / building.data.getBuildCost()) * 4);
 	building.data.setHitpoints (std::min (building.data.getHitpointsMax(), newHitPoints));
 	addMetal (-1);
 }
@@ -621,7 +619,7 @@ void cSubBase::makeTurnStartBuild (cBuilding& building, sNewTurnPlayerReport& re
 		// in the next round can change
 		// so we first subtract the old value from needed.metal and
 		// then add the new one, to hold the base up to date
-		needed.metal-= building.getMetalPerRound();
+		needed.metal -= building.getMetalPerRound();
 
 		auto value = buildListItem.getRemainingMetal() - building.getMetalPerRound();
 		value = std::max (value, 0);

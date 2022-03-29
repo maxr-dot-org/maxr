@@ -69,7 +69,7 @@ namespace serialization
 		{eStorageUnitsImageType::Human, "Human"}
 	};
 
-}
+} // namespace serialization
 //------------------------------------------------------------------------------
 uint32_t sStaticCommonUnitData::computeChecksum (uint32_t crc) const
 {
@@ -355,8 +355,10 @@ uint32_t cStaticUnitData::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (description, crc);
 
 	crc = sStaticCommonUnitData::computeChecksum (crc);
-	if (ID.isABuilding()) crc = buildingData.computeChecksum (crc);
-	else crc = vehicleData.computeChecksum (crc);
+	if (ID.isABuilding())
+		crc = buildingData.computeChecksum (crc);
+	else
+		crc = vehicleData.computeChecksum (crc);
 
 	return crc;
 }
@@ -642,9 +644,9 @@ uint32_t cDynamicUnitData::getChecksum (uint32_t crc) const
 //------------------------------------------------------------------------------
 void cDynamicUnitData::setMaximumCurrentValues()
 {
-	speedCur     = speedMax;
-	ammoCur      = ammoMax;
-	shotsCur     = shotsMax;
+	speedCur = speedMax;
+	ammoCur = ammoMax;
+	shotsCur = shotsMax;
 	hitpointsCur = hitpointsMax;
 
 	crcCache = std::nullopt;

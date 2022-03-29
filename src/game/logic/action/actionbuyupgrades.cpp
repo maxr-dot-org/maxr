@@ -17,10 +17,9 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "game/data/model.h"
-
 #include "actionbuyupgrades.h"
 
+#include "game/data/model.h"
 
 //------------------------------------------------------------------------------
 cActionBuyUpgrades::cActionBuyUpgrades (const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades) :
@@ -48,7 +47,7 @@ void cActionBuyUpgrades::execute (cModel& model) const
 		const auto& unitType = unitUpgrades[i].first;
 		const auto& upgradesForUnit = unitUpgrades[i].second;
 
-		if (!unitsdata.isValidId (unitType)) return;;
+		if (!unitsdata.isValidId (unitType)) return;
 
 		// check costs for upgrading this unit
 		const auto& originalUnitData = unitsdata.getDynamicUnitData (unitType, player->getClan());

@@ -17,14 +17,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #include "savegameinfo.h"
 
-cSaveGameInfo::cSaveGameInfo() : cSaveGameInfo (-1) {}
+cSaveGameInfo::cSaveGameInfo() :
+	cSaveGameInfo (-1)
+{}
 
 cSaveGameInfo::cSaveGameInfo (int number) :
 	saveVersion ("0.0"),
 	type (eGameType::Single),
 	number (number)
-	//turn (0)
+//turn (0)
 {}

@@ -53,7 +53,7 @@ namespace
 			std::string command = chatText.substr (serverStringPos + 9);
 			std::vector<std::string> tokens;
 			std::istringstream iss (command);
-			std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string> > (tokens));
+			std::copy (std::istream_iterator<std::string> (iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string>> (tokens));
 			handleChatCommand (message.playerNr, tokens);
 			return true;
 		}
@@ -75,40 +75,36 @@ namespace
 		return oss.str();
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 cDedicatedServerGame::cDedicatedServerGame (int saveGameNumber) :
 	lobbyServer (std::make_shared<cConnectionManager>())
 {
-	lobbyServer.addLobbyMessageHandler (std::make_unique<cDedicatedServerChatMessageHandler> ([this](int playerId, const std::vector<std::string>& tokens) { handleChatCommand (playerId, tokens); }));
+	lobbyServer.addLobbyMessageHandler (std::make_unique<cDedicatedServerChatMessageHandler> ([this] (int playerId, const std::vector<std::string>& tokens) { handleChatCommand (playerId, tokens); }));
 
-	signalConnectionManager.connect (lobbyServer.onClientConnected, [this](const cPlayerBasicData& player)
-	{
+	signalConnectionManager.connect (lobbyServer.onClientConnected, [this] (const cPlayerBasicData& player) {
 		lobbyServer.sendChatMessage ("type --server help for dedicated server help", player.getNr());
 	});
-	signalConnectionManager.connect (lobbyServer.onDifferentVersion, [](const std::string& version, const std::string& revision)
-	{
+	signalConnectionManager.connect (lobbyServer.onDifferentVersion, [] (const std::string& version, const std::string& revision) {
 		std::cout << "player connects with different version:" << version << " " << revision << std::endl;
 	});
 
-	signalConnectionManager.connect (lobbyServer.onMapRequested, [](const cPlayerBasicData& player)
-	{
+	signalConnectionManager.connect (lobbyServer.onMapRequested, [] (const cPlayerBasicData& player) {
 		std::cout << player.getName() << " requests map." << std::endl;
 	});
-	signalConnectionManager.connect (lobbyServer.onMapUploaded, [](const cPlayerBasicData& player)
-	{
+	signalConnectionManager.connect (lobbyServer.onMapUploaded, [] (const cPlayerBasicData& player) {
 		std::cout << player.getName() << " finished to download map." << std::endl;
 	});
 
-	signalConnectionManager.connect (lobbyServer.onErrorLoadSavedGame, [] (int slot){
+	signalConnectionManager.connect (lobbyServer.onErrorLoadSavedGame, [] (int slot) {
 		std::cout << "Cannot load savegame " << slot << std::endl;
 	});
 
-	signalConnectionManager.connect (lobbyServer.onStartNewGame, [this] (cServer& server){
+	signalConnectionManager.connect (lobbyServer.onStartNewGame, [this] (cServer& server) {
 		this->server = &server;
 	});
-	signalConnectionManager.connect (lobbyServer.onStartSavedGame, [this] (cServer& server, const cSaveGameInfo&){
+	signalConnectionManager.connect (lobbyServer.onStartSavedGame, [this] (cServer& server, const cSaveGameInfo&) {
 		this->server = &server;
 	});
 
@@ -129,7 +125,7 @@ cDedicatedServerGame::cDedicatedServerGame (int saveGameNumber) :
 cDedicatedServerGame::~cDedicatedServerGame()
 {
 	canceled = true;
-	if (thread.joinable()) { thread.join();}
+	if (thread.joinable()) { thread.join(); }
 }
 
 //------------------------------------------------------------------------------
@@ -148,7 +144,7 @@ std::string cDedicatedServerGame::getGameState() const
 //------------------------------------------------------------------------------
 void cDedicatedServerGame::runInThread()
 {
-	thread = std::thread ([this](){
+	thread = std::thread ([this]() {
 		try
 		{
 			run();

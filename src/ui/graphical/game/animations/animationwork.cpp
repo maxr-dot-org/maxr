@@ -39,8 +39,7 @@ cAnimationWork::cAnimationWork (cAnimationTimer& animationTimer_, const cBuildin
 
 	if (!uiData.staticData.powerOnGraphic)
 	{
-		signalConnectionManager.connect (building->workingChanged, [this]()
-		{
+		signalConnectionManager.connect (building->workingChanged, [this]() {
 			if (!building->isUnitWorking())
 			{
 				running = false;
@@ -52,8 +51,7 @@ cAnimationWork::cAnimationWork (cAnimationTimer& animationTimer_, const cBuildin
 			}
 		});
 	}
-	signalConnectionManager.connect (building->destroyed, [this]()
-	{
+	signalConnectionManager.connect (building->destroyed, [this]() {
 		signalConnectionManager.disconnectAll();
 		building = nullptr;
 		finished = true;

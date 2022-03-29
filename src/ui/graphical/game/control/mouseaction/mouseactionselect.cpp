@@ -19,14 +19,14 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseactionselect.h"
 
-#include "ui/graphical/game/widgets/gamemapwidget.h"
-#include "ui/graphical/game/unitselection.h"
+#include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
-#include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "ui/graphical/game/unitselection.h"
+#include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/keys.h"
 #include "utility/listhelpers.h"
-#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
 bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
@@ -44,15 +44,7 @@ bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const 
 	{
 		/*do nothing here*/
 	}
-	else if (KeysList.getMouseStyle() == eMouseStyle::Modern &&
-			 (
-				 !changeAllowed ||
-				 (
-					 (!selectedVehicle || (!Contains (field.getPlanes(), selectedVehicle) && selectedVehicle != overVehicle)) &&
-					 (!selectedBuilding || (overBaseBuilding != selectedBuilding && overBuilding != selectedBuilding))
-				 )
-			 ) &&
-			 unitSelection.selectUnitAt (field, true))
+	else if (KeysList.getMouseStyle() == eMouseStyle::Modern && (!changeAllowed || ((!selectedVehicle || (!Contains (field.getPlanes(), selectedVehicle) && selectedVehicle != overVehicle)) && (!selectedBuilding || (overBaseBuilding != selectedBuilding && overBuilding != selectedBuilding)))) && unitSelection.selectUnitAt (field, true))
 	{
 		/*do nothing here*/
 	}

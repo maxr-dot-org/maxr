@@ -32,7 +32,7 @@
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
-cSocket::cSocket (TCPsocket socket):
+cSocket::cSocket (TCPsocket socket) :
 	sdlSocket (socket)
 {}
 
@@ -69,18 +69,16 @@ void cDataBuffer::deleteFront (uint32_t n)
 	length -= n;
 }
 
-
 //------------------------------------------------------------------------
 // cNetwork implementation
 //------------------------------------------------------------------------
-
 
 cNetwork::cNetwork (cConnectionManager& connectionManager, std::recursive_mutex& mutex) :
 	tcpMutex (mutex),
 	serverSocket (nullptr),
 	socketSet (SDLNet_AllocSocketSet (MAX_TCP_CONNECTIONS)),
 	connectionManager (connectionManager),
-	tcpHandleThread ([this](){
+	tcpHandleThread ([this]() {
 		try
 		{
 			handleNetworkThread();
@@ -271,14 +269,14 @@ void cNetwork::handleNetworkThread()
 						// log
 						IPaddress* remoteAddress = SDLNet_TCP_GetPeerAddress (sdlSocket);
 						std::string ip = std::to_string (remoteAddress->host & 0xFF) + '.';
-						ip += std::to_string ((remoteAddress->host >>  8) & 0xFF) + '.';
+						ip += std::to_string ((remoteAddress->host >> 8) & 0xFF) + '.';
 						ip += std::to_string ((remoteAddress->host >> 16) & 0xFF) + '.';
 						ip += std::to_string ((remoteAddress->host >> 24) & 0xFF);
 
 						Log.write ("Network: Incoming connection from " + ip, cLog::eLogType::NetDebug);
 					}
 
-					if (sockets.size() + 1 >= MAX_TCP_CONNECTIONS ) // +1 for serverSocket
+					if (sockets.size() + 1 >= MAX_TCP_CONNECTIONS) // +1 for serverSocket
 					{
 						SDLNet_TCP_Close (sdlSocket);
 						Log.write ("Network: Maximum number of tcp connections reached. Connection closed.", cLog::eLogType::NetWarning);

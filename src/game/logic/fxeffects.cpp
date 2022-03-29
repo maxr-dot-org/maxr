@@ -65,7 +65,7 @@ void cFxContainer::run()
 	{
 		fx->run();
 	}
-	EraseIf (fxs, [](const auto& fx) { return fx->isFinished(); });
+	EraseIf (fxs, [] (const auto& fx) { return fx->isFinished(); });
 }
 
 //------------------------------------------------------------------------------
@@ -206,7 +206,7 @@ void cFxRocket::run()
 	{
 		subEffect->run();
 	}
-	EraseIf (subEffects, [](const auto& subEffect){ return subEffect->isFinished(); });
+	EraseIf (subEffects, [] (const auto& subEffect) { return subEffect->isFinished(); });
 	//add new smoke
 	if (tick >= length) return;
 	if (cSettings::getInstance().isAlphaEffects())
@@ -238,13 +238,12 @@ cFxDarkSmoke::cFxDarkSmoke (const cPosition& position_, int alpha, float windDir
 	const float ay = abs (cosf (windDir));
 	if (ax > ay)
 	{
-		dx = (ax +  random (5)       / 20.0f) / 2.f;
+		dx = (ax + random (5) / 20.0f) / 2.f;
 		dy = (ay + (random (15) - 7) / 28.0f) / 2.f;
 	}
 	else
 	{
 		dx = (ax + (random (15) - 7) / 28.0f) / 2.f;
-		dy = (ay +  random (5)       / 20.0f) / 2.f;
+		dy = (ay + random (5) / 20.0f) / 2.f;
 	}
 }
-

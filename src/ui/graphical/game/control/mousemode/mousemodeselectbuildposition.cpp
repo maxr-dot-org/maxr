@@ -18,12 +18,13 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/mousemode/mousemodeselectbuildposition.h"
-#include "ui/graphical/game/control/mouseaction/mouseactionselectbuildposition.h"
-#include "ui/graphical/game/unitselection.h"
+
 #include "game/data/map/mapview.h"
 #include "game/data/units/unit.h"
-#include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionselectbuildposition.h"
+#include "ui/graphical/game/unitselection.h"
 
 //------------------------------------------------------------------------------
 cMouseModeSelectBuildPosition::cMouseModeSelectBuildPosition (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_, sID buildId_) :
@@ -66,29 +67,29 @@ std::optional<cPosition> cMouseModeSelectBuildPosition::findNextBuildPosition (c
 	//check, which positions are available
 	const auto& unitData = unitsData.getStaticUnitData (buildId);
 	if (map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() - 1, sourcePosition.y() - 1))
-		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x(), sourcePosition.y() - 1))
-		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() - 1, sourcePosition.y())))
+	    && map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x(), sourcePosition.y() - 1))
+	    && map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() - 1, sourcePosition.y())))
 	{
 		pos[0] = true;
 	}
 
 	if (map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x(), sourcePosition.y() - 1))
-		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() + 1, sourcePosition.y() - 1))
-		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() + 1, sourcePosition.y())))
+	    && map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() + 1, sourcePosition.y() - 1))
+	    && map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() + 1, sourcePosition.y())))
 	{
 		pos[1] = true;
 	}
 
 	if (map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() + 1, sourcePosition.y()))
-		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() + 1, sourcePosition.y() + 1))
-		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x(), sourcePosition.y() + 1)))
+	    && map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() + 1, sourcePosition.y() + 1))
+	    && map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x(), sourcePosition.y() + 1)))
 	{
 		pos[2] = true;
 	}
 
 	if (map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() - 1, sourcePosition.y()))
-		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() - 1, sourcePosition.y() + 1))
-		&& map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x(), sourcePosition.y() + 1)))
+	    && map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x() - 1, sourcePosition.y() + 1))
+	    && map->possiblePlaceBuilding (unitData, cPosition (sourcePosition.x(), sourcePosition.y() + 1)))
 	{
 		pos[3] = true;
 	}

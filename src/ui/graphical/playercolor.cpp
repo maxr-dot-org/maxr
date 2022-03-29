@@ -27,15 +27,15 @@
 
 //------------------------------------------------------------------------------
 const cRgbColor cPlayerColor::predefinedColors[predefinedColorsCount] =
-{
-	cRgbColor (0xFF, 0x00, 0x00), // red
-	cRgbColor (0x00, 0xFF, 0x00), // green
-	cRgbColor (0x00, 0x00, 0xFF), // blue
-	cRgbColor (0x7F, 0x7F, 0x7F), // gray
-	cRgbColor (0xFF, 0x7F, 0x00), // orange
-	cRgbColor (0xFF, 0xFF, 0x00), // yellow
-	cRgbColor (0xFF, 0x00, 0xFE), // purple
-	cRgbColor (0x00, 0xFF, 0xFF)  // aqua
+	{
+		cRgbColor (0xFF, 0x00, 0x00), // red
+		cRgbColor (0x00, 0xFF, 0x00), // green
+		cRgbColor (0x00, 0x00, 0xFF), // blue
+		cRgbColor (0x7F, 0x7F, 0x7F), // gray
+		cRgbColor (0xFF, 0x7F, 0x00), // orange
+		cRgbColor (0xFF, 0xFF, 0x00), // yellow
+		cRgbColor (0xFF, 0x00, 0xFE), // purple
+		cRgbColor (0x00, 0xFF, 0xFF) // aqua
 };
 
 //------------------------------------------------------------------------------
@@ -84,18 +84,23 @@ namespace
 				unsigned short changedH;
 				unsigned char changedS, changedV;
 
-				if ((int) (hsvColor.h) + hChange >= 360 || ((int) (hsvColor.h) - hChange >= 0 && randomBernoulli())) changedH = hsvColor.h - (unsigned short)hChange;
-				else changedH = hsvColor.h + (unsigned short)hChange;
+				if ((int) (hsvColor.h) + hChange >= 360 || ((int) (hsvColor.h) - hChange >= 0 && randomBernoulli()))
+					changedH = hsvColor.h - (unsigned short) hChange;
+				else
+					changedH = hsvColor.h + (unsigned short) hChange;
 
-				if ((int) (hsvColor.s) + sChange > 100 || ((int) (hsvColor.s) - sChange >= 0 && randomBernoulli())) changedS = hsvColor.s - (unsigned char)sChange;
-				else changedS = hsvColor.s + (unsigned char)sChange;
+				if ((int) (hsvColor.s) + sChange > 100 || ((int) (hsvColor.s) - sChange >= 0 && randomBernoulli()))
+					changedS = hsvColor.s - (unsigned char) sChange;
+				else
+					changedS = hsvColor.s + (unsigned char) sChange;
 
-				if ((int) (hsvColor.v) + vChange > 100 || ((int) (hsvColor.v) - vChange >= 0 && randomBernoulli())) changedV = hsvColor.v - (unsigned char)vChange;
-				else changedV = hsvColor.v + (unsigned char)vChange;
+				if ((int) (hsvColor.v) + vChange > 100 || ((int) (hsvColor.v) - vChange >= 0 && randomBernoulli()))
+					changedV = hsvColor.v - (unsigned char) vChange;
+				else
+					changedV = hsvColor.v + (unsigned char) vChange;
 
 				randomColors[i] = cHsvColor (changedH, changedS, changedV).toRgb();
-			}
-			while (randomColors[i] == cRgbColor (0xFF, 0, 0xFF)); // 0xFF00FF is our "transparent color". Hence we do not want to select this color as player color.
+			} while (randomColors[i] == cRgbColor (0xFF, 0, 0xFF)); // 0xFF00FF is our "transparent color". Hence we do not want to select this color as player color.
 		}
 
 		for (size_t j = 0; j < boxes; ++j)
@@ -122,7 +127,7 @@ namespace
 		return texture;
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 /*static*/ SDL_Surface* cPlayerColor::getTexture (const cRgbColor& color)

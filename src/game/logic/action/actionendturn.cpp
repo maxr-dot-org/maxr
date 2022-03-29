@@ -18,14 +18,16 @@
 ***************************************************************************/
 
 #include "actionendturn.h"
+
 #include "game/data/model.h"
 
+//------------------------------------------------------------------------------
+cActionEndTurn::cActionEndTurn()
+{}
 
 //------------------------------------------------------------------------------
-cActionEndTurn::cActionEndTurn() {}
-
-//------------------------------------------------------------------------------
-cActionEndTurn::cActionEndTurn (cBinaryArchiveOut& archive) {}
+cActionEndTurn::cActionEndTurn (cBinaryArchiveOut& archive)
+{}
 
 //------------------------------------------------------------------------------
 void cActionEndTurn::execute (cModel& model) const

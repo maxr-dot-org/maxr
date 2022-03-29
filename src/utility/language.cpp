@@ -24,9 +24,9 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 
-#include <libintl.h>
 #include <cstdlib>
 #include <iomanip>
+#include <libintl.h>
 #include <mutex>
 
 cLanguage lngPack;
@@ -43,7 +43,7 @@ namespace
 	std::mutex putenv_mutex;
 
 	//------------------------------------------------------------------------------
-	void setLanguageEnv(const char* lang)
+	void setLanguageEnv (const char* lang)
 	{
 		// putenv(char*) is some system, even if string is unchanged
 		// it even seems that pointer should still be alive
@@ -52,7 +52,7 @@ namespace
 		putenv (buffer);
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 void cLanguage::setLanguagesFolder (const std::string& path)
@@ -171,8 +171,8 @@ std::string cLanguage::getUnitName (const sID& id) const
 	std::stringstream ss;
 
 	ss << (id.isABuilding() ? "Building" : "Vehicle")
-		<< std::setfill ('0') << std::setw (2) << id.secondPart
-		<< "_Name";
+	   << std::setfill ('0') << std::setw (2) << id.secondPart
+	   << "_Name";
 
 	return dGetText (unitsDomain, ss.str().c_str());
 }
@@ -183,8 +183,8 @@ std::string cLanguage::getUnitDescription (const sID& id) const
 	std::stringstream ss;
 
 	ss << (id.isABuilding() ? "Building" : "Vehicle")
-		<< std::setfill ('0') << std::setw (2) << id.secondPart
-		<< "_Desc";
+	   << std::setfill ('0') << std::setw (2) << id.secondPart
+	   << "_Desc";
 
 	return dGetText (unitsDomain, ss.str().c_str());
 }

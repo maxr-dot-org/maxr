@@ -18,15 +18,16 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/control/mousemode/mousemodedisable.h"
+
+#include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "input/mouse/cursor/mousecursoramount.h"
+#include "input/mouse/cursor/mousecursorsimple.h"
+#include "input/mouse/mouse.h"
 #include "ui/graphical/game/control/mouseaction/mouseactiondisable.h"
 #include "ui/graphical/game/unitselection.h"
-#include "game/data/map/mapview.h"
-#include "game/data/units/vehicle.h"
-#include "game/data/units/building.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
-#include "input/mouse/cursor/mousecursoramount.h"
-#include "game/data/map/mapfieldview.h"
 
 //------------------------------------------------------------------------------
 cMouseModeDisable::cMouseModeDisable (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
@@ -56,7 +57,8 @@ void cMouseModeDisable::setCursor (cMouse& mouse, const cPosition& mapPosition, 
 
 			mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable, selectedVehicle->getCommandoData().computeChance (unit, false)));
 		}
-		else mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable));
+		else
+			mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable));
 	}
 	else
 	{
@@ -71,7 +73,8 @@ std::unique_ptr<cMouseAction> cMouseModeDisable::getMouseAction (const cPosition
 	{
 		return std::make_unique<cMouseActionDisable>();
 	}
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 //------------------------------------------------------------------------------

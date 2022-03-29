@@ -20,7 +20,6 @@
 #include "crc.h"
 
 #include <SDL_endian.h>
-
 #include <climits>
 
 uint32_t calcCheckSum (const char* data, size_t dataSize, uint32_t checksum)
@@ -152,7 +151,7 @@ uint32_t calcCheckSumGenericIEEE754 (T1 value, uint32_t checksum)
 	const T2 significand = T2 (norm * ((1LL << SIGNIFICANTBITS) + 0.5f));
 
 	// get the biased exponent
-	const T2 exp = shift + ((1 << (EXPBITS - 1)) - 1);  // shift + bias
+	const T2 exp = shift + ((1 << (EXPBITS - 1)) - 1); // shift + bias
 
 	return calcCheckSum (T2 ((sign << (BITS - 1)) | (exp << (BITS - EXPBITS - 1)) | significand), checksum);
 }

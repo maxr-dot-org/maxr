@@ -27,19 +27,19 @@
 #include "game/logic/server.h"
 #include "game/logic/turntimeclock.h"
 #include "game/protocol/netmessage.h"
-#include "game/serialization/serialization.h"
 #include "game/serialization/jsonarchive.h"
+#include "game/serialization/serialization.h"
 #include "maxrversion.h"
 #include "settings.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
 
-#include <ctime>
 #include <config/workaround/cpp17/optional.h>
+#include <ctime>
 #include <regex>
 
-#define SAVE_FORMAT_VERSION ((std::string)"1.0")
+#define SAVE_FORMAT_VERSION ((std::string) "1.0")
 
 namespace
 {
@@ -96,13 +96,13 @@ namespace
 			type = eGameType::Hotseat;
 
 		cJsonArchiveOut archive (json["header"]);
-		archive << serialization::makeNvp ("gameVersion", std::string (PACKAGE_VERSION  " "  PACKAGE_REV));
+		archive << serialization::makeNvp ("gameVersion", std::string (PACKAGE_VERSION " " PACKAGE_REV));
 		archive << serialization::makeNvp ("gameName", saveName);
 		archive << serialization::makeNvp ("type", type);
 		archive << serialization::makeNvp ("date", std::string (timestr));
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 void cSavegame::save (const cModel& model, int slot, const std::string& saveName)
@@ -120,7 +120,7 @@ void cSavegame::save (const cModel& model, int slot, const std::string& saveName
 	makeDirectories (cSettings::getInstance().getSavesPath());
 	{
 		std::ofstream file (getFileName (slot));
-		file << json.dump(2);
+		file << json.dump (2);
 	}
 #if 1
 	if (cSettings::getInstance().isDebug()) // Check Save/Load consistency
@@ -152,7 +152,7 @@ void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 	makeDirectories (cSettings::getInstance().getSavesPath());
 	int loadedSlot = guiInfo.slot;
 	std::ofstream file (getFileName (loadedSlot));
-	file << json->dump(2);
+	file << json->dump (2);
 }
 
 //------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 
 	try
 	{
-		cJsonArchiveIn header (json->at("header"));
+		cJsonArchiveIn header (json->at ("header"));
 
 		header >> serialization::makeNvp ("gameVersion", info.gameVersion);
 		header >> serialization::makeNvp ("gameName", info.gameName);
@@ -185,7 +185,7 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 		header >> serialization::makeNvp ("date", info.date);
 
 		int numPlayers = 0;
-		for (auto& playerJson : json->at("model").at("players"))
+		for (auto& playerJson : json->at ("model").at ("players"))
 		{
 			cJsonArchiveIn archive (playerJson);
 			sPlayerSettings player;
@@ -198,11 +198,11 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 
 			info.players.emplace_back (cPlayerBasicData (player, id, isDefeated));
 		}
-		cJsonArchiveIn mapArchive (json->at("model").at("map").at("mapFile"));
+		cJsonArchiveIn mapArchive (json->at ("model").at ("map").at ("mapFile"));
 		mapArchive >> serialization::makeNvp ("filename", info.mapName);
 		mapArchive >> serialization::makeNvp ("crc", info.mapCrc);
 
-		cJsonArchiveIn turnArchive (json->at("model").at("turnCounter"));
+		cJsonArchiveIn turnArchive (json->at ("model").at ("turnCounter"));
 		turnArchive >> serialization::makeNvp ("turn", info.turn);
 	}
 	catch (const std::runtime_error& e)
@@ -278,7 +278,7 @@ void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 		throw std::runtime_error ("Could not load savegame file " + std::to_string (slot));
 	}
 
-	for (const auto& player : json->at("GuiInfo"))
+	for (const auto& player : json->at ("GuiInfo"))
 	{
 		cJsonArchiveIn archive (player);
 		cNetMessageGUISaveInfo guiInfo (slot, -1);
@@ -308,7 +308,7 @@ void fillSaveGames (std::size_t minIndex, std::size_t maxIndex, std::vector<cSav
 
 		if (number <= minIndex || number > maxIndex) continue;
 
-		if (ranges::find_if (saveGames, [=](const cSaveGameInfo& save) { return std::size_t (save.number) == number; }) != saveGames.end()) continue;
+		if (ranges::find_if (saveGames, [=] (const cSaveGameInfo& save) { return std::size_t (save.number) == number; }) != saveGames.end()) continue;
 
 		// read the information and add it to the saves list
 		cSaveGameInfo saveInfo = savegame.loadSaveInfo (number);

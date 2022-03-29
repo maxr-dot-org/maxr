@@ -142,7 +142,6 @@ void cDestroyJob::deleteUnit (cModel& model)
 	if ((topBuilding && topBuilding->getIsBig()) || unit->getIsBig())
 		bigUnit = true;
 
-
 	//delete unit
 	int rubbleValue = 0;
 	if (!unit->getStaticUnitData().vehicleData.isHuman)

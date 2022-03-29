@@ -19,8 +19,6 @@
 
 #include "windowsingleplayer.h"
 
-#include <functional>
-
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
 #include "game/data/savegameinfo.h"
@@ -44,6 +42,8 @@
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "utility/language.h"
 #include "utility/log.h"
+
+#include <functional>
 
 //------------------------------------------------------------------------------
 cWindowSinglePlayer::cWindowSinglePlayer() :
@@ -75,14 +75,12 @@ void cWindowSinglePlayer::newGameClicked()
 	auto windowGameSettings = getActiveApplication()->show (std::make_shared<cWindowGameSettings>());
 	windowGameSettings->applySettings (cGameSettings());
 
-	windowGameSettings->done.connect ([=](const cGameSettings& gameSettings)
-	{
+	windowGameSettings->done.connect ([=] (const cGameSettings& gameSettings) {
 		game->setGameSettings (gameSettings);
 
 		auto windowMapSelection = application->show (std::make_shared<cWindowMapSelection>());
 
-		windowMapSelection->done.connect ([=](const std::string& mapName)
-		{
+		windowMapSelection->done.connect ([=] (const std::string& mapName) {
 			game->selectMapName (mapName);
 			game->runGamePreparation (*application);
 			windowMapSelection->close();
@@ -99,8 +97,7 @@ void cWindowSinglePlayer::loadGameClicked()
 	auto application = getActiveApplication();
 
 	auto windowLoad = getActiveApplication()->show (std::make_shared<cWindowLoad>());
-	windowLoad->load.connect ([=] (const cSaveGameInfo& saveInfo)
-	{
+	windowLoad->load.connect ([=] (const cSaveGameInfo& saveInfo) {
 		auto game = std::make_shared<cLocalSingleplayerGameSaved>();
 		game->setSaveGameNumber (saveInfo.number);
 		try
@@ -114,7 +111,6 @@ void cWindowSinglePlayer::loadGameClicked()
 			application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Loading")));
 			return;
 		}
-
 
 		windowLoad->close();
 	});

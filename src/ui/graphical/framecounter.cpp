@@ -43,7 +43,7 @@ unsigned int cFrameCounter::getFramesPerSecond()
 
 		const auto framesSinceLastCheck = frames - lastFrames;
 
-		framesPerSecond = static_cast<unsigned int> (Round ((float)framesSinceLastCheck / passedSeconds));
+		framesPerSecond = static_cast<unsigned int> (Round ((float) framesSinceLastCheck / passedSeconds));
 
 		lastFrames = frames;
 		lastCheckTime = now;

@@ -19,8 +19,8 @@
 
 #include "initgamepreparation.h"
 
-#include "game/startup/lobbyclient.h"
 #include "game/startup/gamepreparation.h"
+#include "game/startup/lobbyclient.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
@@ -43,7 +43,7 @@ cInitGamePreparation::cInitGamePreparation (cApplication& application, cLobbyCli
 //------------------------------------------------------------------------------
 void cInitGamePreparation::bindConnections (cLobbyClient& lobbyClient)
 {
-	signalConnectionManager.connect (lobbyClient.onPlayerEnterLeaveLandingSelectionRoom, [this](const cPlayerBasicData& player, bool isIn){
+	signalConnectionManager.connect (lobbyClient.onPlayerEnterLeaveLandingSelectionRoom, [this] (const cPlayerBasicData& player, bool isIn) {
 		if (isIn)
 		{
 			playersLandingStatus.push_back (std::make_unique<cPlayerLandingStatus> (player));
@@ -56,7 +56,7 @@ void cInitGamePreparation::bindConnections (cLobbyClient& lobbyClient)
 		}
 	});
 
-	signalConnectionManager.connect (lobbyClient.onPlayerSelectLandingPosition, [this](const cPlayerBasicData& player){
+	signalConnectionManager.connect (lobbyClient.onPlayerSelectLandingPosition, [this] (const cPlayerBasicData& player) {
 		auto it = ranges::find_if (playersLandingStatus, [&] (const std::unique_ptr<cPlayerLandingStatus>& entry) { return entry->getPlayer().getNr() == player.getNr(); });
 
 		if (it == playersLandingStatus.end()) return;
@@ -66,12 +66,11 @@ void cInitGamePreparation::bindConnections (cLobbyClient& lobbyClient)
 		playerLandingStatus.setHasSelectedPosition (true);
 	});
 
-	signalConnectionManager.connect (lobbyClient.onLandingDone, [this](eLandingPositionState state){
+	signalConnectionManager.connect (lobbyClient.onLandingDone, [this] (eLandingPositionState state) {
 		if (!windowLandingPositionSelection) return;
 
 		windowLandingPositionSelection->applyReselectionState (state);
 	});
-
 }
 
 //------------------------------------------------------------------------------
@@ -103,8 +102,7 @@ void cInitGamePreparation::startClanSelection()
 	windows.push_back (windowClanSelection);
 
 	signalConnectionManager.connect (windowClanSelection->canceled, [this]() { back(); });
-	signalConnectionManager.connect (windowClanSelection->done, [this, windowClanSelection]()
-	{
+	signalConnectionManager.connect (windowClanSelection->done, [this, windowClanSelection]() {
 		initPlayerData.clan = windowClanSelection->getSelectedClan();
 
 		startLandingUnitSelection();
@@ -122,8 +120,7 @@ void cInitGamePreparation::startLandingUnitSelection()
 	windows.push_back (windowLandingUnitSelection);
 
 	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [this]() { back(); });
-	signalConnectionManager.connect (windowLandingUnitSelection->done, [this, windowLandingUnitSelection]()
-	{
+	signalConnectionManager.connect (windowLandingUnitSelection->done, [this, windowLandingUnitSelection]() {
 		initPlayerData.landingUnits = windowLandingUnitSelection->getLandingUnits();
 		initPlayerData.unitUpgrades = windowLandingUnitSelection->getUnitUpgrades();
 
@@ -147,28 +144,24 @@ void cInitGamePreparation::startLandingPositionSelection()
 	{
 		windowLandingPositionSelection->addChatPlayerEntry (*status);
 	}
-	signalConnectionManager.connect (windowLandingPositionSelection->opened, [this]()
-	{
+	signalConnectionManager.connect (windowLandingPositionSelection->opened, [this]() {
 		lobbyClient.enterLandingSelection();
 	});
 	// nothing for windowLandingPositionSelection->closed (see `canceled` below)
 
-	signalConnectionManager.connect (windowLandingPositionSelection->canceled, [this]()
-	{
+	signalConnectionManager.connect (windowLandingPositionSelection->canceled, [this]() {
 		// Call `exitLandingSelection` only when "back" is clicked.
 		// not in `closed` which is also called when window is auto-closed
 		// once game **starts**.
 		lobbyClient.exitLandingSelection();
 		back();
 	});
-	signalConnectionManager.connect (windowLandingPositionSelection->selectedPosition, [this] (cPosition landingPosition)
-	{
+	signalConnectionManager.connect (windowLandingPositionSelection->selectedPosition, [this] (cPosition landingPosition) {
 		initPlayerData.landingPosition = landingPosition;
 		lobbyClient.selectLandingPosition (landingPosition);
 	});
 
-	signalConnectionManager.connect (windowLandingPositionSelection->onCommandEntered, [this] (const std::string& text)
-	{
+	signalConnectionManager.connect (windowLandingPositionSelection->onCommandEntered, [this] (const std::string& text) {
 		const std::string& playerName = lobbyClient.getLocalPlayer().getName();
 		windowLandingPositionSelection->addChatEntry (playerName, text);
 		cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
@@ -197,8 +190,7 @@ void cInitGamePreparation::checkReallyWantsToQuit()
 {
 	auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> ("Are you sure you want to abort the game preparation?")); // TODO: translate
 
-	signalConnectionManager.connect (yesNoDialog->yesClicked, [this]()
-	{
+	signalConnectionManager.connect (yesNoDialog->yesClicked, [this]() {
 		lobbyClient.abortGamePreparation();
 		close();
 		windowLandingPositionSelection.reset();

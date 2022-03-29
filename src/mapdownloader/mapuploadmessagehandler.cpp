@@ -31,7 +31,8 @@ bool IMapUploadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& me
 
 	auto& state = states[message.playerNr];
 
-	switch (message.getType()) {
+	switch (message.getType())
+	{
 		case cMultiplayerLobbyMessage::eMessageType::MU_MSG_REQUEST_MAP:
 		{
 			if (state == eState::None)
@@ -66,7 +67,6 @@ bool IMapUploadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& me
 		default: return false;
 	}
 }
-
 
 //------------------------------------------------------------------------------
 cMapUploadMessageHandler::cMapUploadMessageHandler (std::shared_ptr<cConnectionManager> connectionManager, std::function<const cStaticMap*()> mapProvider) :

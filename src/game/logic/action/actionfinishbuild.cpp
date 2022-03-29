@@ -55,7 +55,7 @@ void cActionFinishBuild::execute (cModel& model) const
 }
 
 //------------------------------------------------------------------------------
-void cActionFinishBuild::finishABuilding (cModel &model, cVehicle& vehicle) const
+void cActionFinishBuild::finishABuilding (cModel& model, cVehicle& vehicle) const
 {
 	auto map = model.getMap();
 
@@ -88,7 +88,7 @@ void cActionFinishBuild::finishABuilding (cModel &model, cVehicle& vehicle) cons
 }
 
 //------------------------------------------------------------------------------
-void cActionFinishBuild::finishAVehicle (cModel &model, cBuilding& building) const
+void cActionFinishBuild::finishAVehicle (cModel& model, cBuilding& building) const
 {
 	auto map = model.getMap();
 

@@ -67,12 +67,15 @@ void cLocalSingleplayerGameNew::run()
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameNew::runGamePreparation (cApplication& application)
 {
-	run(); lobbyClient.tryToSwitchReadyState(); run();
-	lobbyClient.askToFinishLobby(); run();
+	run();
+	lobbyClient.tryToSwitchReadyState();
+	run();
+	lobbyClient.askToFinishLobby();
+	run();
 
 	initGamePreparation = std::make_unique<cInitGamePreparation> (application, lobbyClient);
 
-	signalConnectionManager.connect (lobbyServer.onStartNewGame, [&, this] (cServer& server){
+	signalConnectionManager.connect (lobbyServer.onStartNewGame, [&, this] (cServer& server) {
 		initGamePreparation->close();
 		start (application, server);
 	});

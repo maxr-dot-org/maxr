@@ -55,8 +55,10 @@ void cGameMessageListViewItem::draw (SDL_Surface& destination, const cBox<cPosit
 	{
 		auto rect = toSdlRect (getArea());
 
-		if (background != nullptr) SDL_BlitSurface (background.get(), nullptr, &destination, &rect);
-		else Video.applyShadow (&rect, destination);
+		if (background != nullptr)
+			SDL_BlitSurface (background.get(), nullptr, &destination, &rect);
+		else
+			Video.applyShadow (&rect, destination);
 	}
 
 	cWidget::draw (destination, clipRect);

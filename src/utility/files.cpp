@@ -19,27 +19,26 @@
 
 #include "utility/files.h"
 
-#include <iostream>
-
-#include <SDL.h>
-#include <SDL_endian.h>
-
 #include "defines.h"
 #include "settings.h"
 #include "utility/log.h"
 
+#include <SDL.h>
+#include <SDL_endian.h>
+#include <iostream>
+
 #ifdef _WIN32
-# include <io.h>
 # include <direct.h>
+# include <io.h>
 #else
 # include <dirent.h>
 #endif
 
 #ifdef WIN32
-# include <sys/types.h>
-# include <sys/stat.h>
-# include <shlobj.h>
 # include <direct.h>
+# include <shlobj.h>
+# include <sys/stat.h>
+# include <sys/types.h>
 #else
 # include <sys/stat.h>
 # include <unistd.h>
@@ -102,10 +101,13 @@ bool DirExists (const std::string& path)
 		struct stat status;
 		stat (path.c_str(), &status);
 
-		if (status.st_mode & S_IFDIR) return true;
-		else return false; // The path is not a directory
+		if (status.st_mode & S_IFDIR)
+			return true;
+		else
+			return false; // The path is not a directory
 	}
-	else return false;
+	else
+		return false;
 #else
 	return FileExists (path.c_str()); // on linux everything is a file
 #endif
@@ -123,10 +125,9 @@ std::vector<std::string> getFilesOfDirectory (const std::string& sDirectory)
 		do
 		{
 			if (DataFile.attrib & _A_SUBDIR) continue;
-			if (DataFile.name[0] == '.')     continue;
+			if (DataFile.name[0] == '.') continue;
 			List.push_back (DataFile.name);
-		}
-		while (_findnext (lFile, &DataFile) == 0);
+		} while (_findnext (lFile, &DataFile) == 0);
 		_findclose (lFile);
 	}
 #else
@@ -167,8 +168,8 @@ std::string getUserScreenshotsDir()
 {
 #ifdef __amigaos4__
 	return "";
-#elif defined (MAC)
-	char* cHome = getenv ("HOME");  //get $HOME on mac
+#elif defined(MAC)
+	char* cHome = getenv ("HOME"); //get $HOME on mac
 	if (cHome == nullptr)
 		return "";
 	std::string homeFolder = cHome;
@@ -207,7 +208,7 @@ std::string getHomeDir()
 #elif __amigaos4__
 	return "";
 #elif MAC
-	char* cHome = getenv ("HOME");  //get $HOME on mac
+	char* cHome = getenv ("HOME"); //get $HOME on mac
 	return cHome != nullptr ? cHome : "";
 #else
 	char* cHome = getenv ("HOME"); // get $HOME on linux
@@ -226,11 +227,11 @@ std::string getCurrentExeDir()
 	HMODULE hModule = GetModuleHandle (nullptr);
 
 	GetModuleFileName (hModule, szPath, MAX_PATH);
-#ifdef UNICODE
+# ifdef UNICODE
 	std::wstring exe = szPath;
-#else
+# else
 	std::string exe = szPath;
-#endif
+# endif
 	exe.erase (exe.rfind ("\\"), std::string::npos);
 	return std::string (exe.begin(), exe.end());
 #elif __amigaos4__
@@ -304,8 +305,8 @@ std::string getUserLogDir()
 {
 #ifdef __amigaos4__
 	return "";
-#elif defined (MAC)
-	char* cHome = getenv ("HOME");  //get $HOME on mac
+#elif defined(MAC)
+	char* cHome = getenv ("HOME"); //get $HOME on mac
 	if (cHome == nullptr)
 		return "";
 	std::string homeFolder = cHome;
@@ -350,5 +351,5 @@ void copyFile (const std::string& source, const std::string& dest)
 	buffer.clear();
 
 	if (sourceFile) SDL_RWclose (sourceFile);
-	if (destFile)   SDL_RWclose (destFile);
+	if (destFile) SDL_RWclose (destFile);
 }

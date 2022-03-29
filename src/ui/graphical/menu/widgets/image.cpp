@@ -19,10 +19,10 @@
 
 #include "ui/graphical/menu/widgets/image.h"
 
+#include "SDLutility/drawing.h"
 #include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
-#include "SDLutility/drawing.h"
 
 //------------------------------------------------------------------------------
 cImage::cImage (const cPosition& position, SDL_Surface* image_, cSoundChunk* clickSound_) :

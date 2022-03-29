@@ -22,8 +22,8 @@
 #include "game/data/map/map.h"
 #include "game/data/units/unit.h"
 #include "game/logic/attackjob.h"
-#include "resources/uidata.h"
 #include "output/video/video.h"
+#include "resources/uidata.h"
 #include "utility/position.h"
 
 #include <cassert>

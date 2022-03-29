@@ -48,7 +48,7 @@ namespace
 		blittAlphaSurface (&src, srcrect, &dest, destrect);
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 void sVehicleUIData::render_shadow (const cVehicle& vehicle, const cMapView& map, SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor) const

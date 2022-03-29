@@ -17,14 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
+#include "events/eventmanager.h"
+
+#include "events/keyboardevents.h"
+#include "events/mouseevents.h"
+#include "output/video/video.h"
 
 #include <SDL.h>
-
-#include "events/eventmanager.h"
-#include "events/mouseevents.h"
-#include "events/keyboardevents.h"
-#include "output/video/video.h"
+#include <algorithm>
 
 //------------------------------------------------------------------------------
 cEventManager::cEventManager()

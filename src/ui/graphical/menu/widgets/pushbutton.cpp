@@ -19,14 +19,14 @@
 
 #include "ui/graphical/menu/widgets/pushbutton.h"
 
+#include "SDLutility/drawing.h"
+#include "SDLutility/tosdl.h"
 #include "input/mouse/mouse.h"
 #include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "output/video/unifonts.h"
 #include "output/video/video.h"
 #include "resources/uidata.h"
-#include "SDLutility/drawing.h"
-#include "SDLutility/tosdl.h"
 #include "ui/graphical/application.h"
 
 #include <cassert>
@@ -113,11 +113,14 @@ void cPushButton::draw (SDL_Surface& destination, const cBox<cPosition>& clipRec
 		auto font = cUnicodeFont::font.get();
 		if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
 		{
-			if (isPressed || isLocked) font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset(), text, eUnicodeFontType::LatinSmallGreen);
-			else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset() - 1, text, eUnicodeFontType::LatinSmallRed);
+			if (isPressed || isLocked)
+				font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset(), text, eUnicodeFontType::LatinSmallGreen);
+			else
+				font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset() - 1, text, eUnicodeFontType::LatinSmallRed);
 			font->showTextCentered (position.x + position.w / 2 - 1, position.y + getTextYOffset() - 1 + (isPressed || isLocked ? 1 : 0), text, eUnicodeFontType::LatinSmallWhite);
 		}
-		else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset(), text, fontType);
+		else
+			font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset(), text, fontType);
 	}
 
 	cWidget::draw (destination, clipRect);
@@ -360,10 +363,14 @@ void cPushButton::renewSurface()
 
 	SDL_Surface* srcSurface = nullptr;
 
-	if (buttonType >= ePushButtonType::HudHelp && buttonType <= ePushButtonType::HudStop) srcSurface = GraphicsData.gfx_hud_stuff.get();
-	else if (buttonType == ePushButtonType::UnitContextMenu) srcSurface = GraphicsData.gfx_context_menu.get();
-	else if (buttonType == ePushButtonType::Destroy) srcSurface = (isPressed || isLocked) ? GraphicsData.gfx_hud_stuff.get() : GraphicsData.gfx_destruction.get();
-	else srcSurface = GraphicsData.gfx_menu_stuff.get();
+	if (buttonType >= ePushButtonType::HudHelp && buttonType <= ePushButtonType::HudStop)
+		srcSurface = GraphicsData.gfx_hud_stuff.get();
+	else if (buttonType == ePushButtonType::UnitContextMenu)
+		srcSurface = GraphicsData.gfx_context_menu.get();
+	else if (buttonType == ePushButtonType::Destroy)
+		srcSurface = (isPressed || isLocked) ? GraphicsData.gfx_hud_stuff.get() : GraphicsData.gfx_destruction.get();
+	else
+		srcSurface = GraphicsData.gfx_menu_stuff.get();
 
 	assert (srcSurface != nullptr);
 
@@ -395,15 +402,19 @@ int cPushButton::getTextYOffset() const
 		case ePushButtonType::ArrowDownBar:
 			return -1;
 		case ePushButtonType::Angular:
-			if (isPressed || isLocked) return 5;
-			else return 4;
+			if (isPressed || isLocked)
+				return 5;
+			else
+				return 4;
 		case ePushButtonType::HudNext:
 		case ePushButtonType::HudPrev:
 		case ePushButtonType::HudDone:
 			return 9;
 		case ePushButtonType::HudEnd:
-			if (isPressed || isLocked) return 3;
-			else return 2;
+			if (isPressed || isLocked)
+				return 3;
+			else
+				return 2;
 		case ePushButtonType::HudReport:
 		case ePushButtonType::HudChat:
 		case ePushButtonType::HudPreferences:

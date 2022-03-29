@@ -98,7 +98,7 @@ void cStartBuildJob::run (cModel& model)
 //------------------------------------------------------------------------------
 eJobType cStartBuildJob::getType() const
 {
-		return eJobType::START_BUILD;
+	return eJobType::START_BUILD;
 }
 
 //------------------------------------------------------------------------------

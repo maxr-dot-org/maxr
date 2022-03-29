@@ -30,11 +30,10 @@ std::vector<std::pair<sID, int>> computeInitialLandingUnits (int clan, const cGa
 	const auto engineerID = unitsData.getEngineerData().ID;
 	const auto surveyorID = unitsData.getSurveyorData().ID;
 
-	std::vector<std::pair<sID, int>> initialLandingUnits {
+	std::vector<std::pair<sID, int>> initialLandingUnits{
 		{constructorID, 40},
 		{engineerID, 20},
-		{surveyorID, 0}
-	};
+		{surveyorID, 0}};
 
 	if (clan == 7)
 	{

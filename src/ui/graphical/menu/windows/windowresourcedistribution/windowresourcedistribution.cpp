@@ -45,7 +45,7 @@ namespace
 		text += std::to_string (perTurn) + " / " + lngPack.i18n ("Text~Comp~Turn_5") + ")";
 		return text;
 	}
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& building_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
@@ -76,27 +76,34 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 		noneBars[i]->setValue (0);
 
 		std::string resourceName;
-		if (i == 0) resourceName = lngPack.i18n ("Text~Title~Metal");
-		else if (i == 1) resourceName = lngPack.i18n ("Text~Title~Oil");
-		else resourceName = lngPack.i18n ("Text~Title~Gold");
+		if (i == 0)
+			resourceName = lngPack.i18n ("Text~Title~Metal");
+		else if (i == 1)
+			resourceName = lngPack.i18n ("Text~Title~Oil");
+		else
+			resourceName = lngPack.i18n ("Text~Title~Gold");
 
 		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 121 * i + 10)), resourceName, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 + 121 * i + 10)), lngPack.i18n ("Text~Others~Usage_7"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 * 2 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 * 2 + 121 * i + 10)), lngPack.i18n ("Text~Comp~Reserve"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 		auto decreaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (139, 70 + 120 * i), ePushButtonType::ArrowLeftBig));
-		signalConnectionManager.connect (decreaseButton->clicked, [this, i]()
-		{
-			if (i == 0) metalBars[0]->decrease (1);
-			else if (i == 1) oilBars[0]->decrease (1);
-			else if (i == 2) goldBars[0]->decrease (1);
+		signalConnectionManager.connect (decreaseButton->clicked, [this, i]() {
+			if (i == 0)
+				metalBars[0]->decrease (1);
+			else if (i == 1)
+				oilBars[0]->decrease (1);
+			else if (i == 2)
+				goldBars[0]->decrease (1);
 		});
 		auto increaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (421, 70 + 120 * i), ePushButtonType::ArrowRightBig));
-		signalConnectionManager.connect (increaseButton->clicked, [this, i]()
-		{
-			if (i == 0 && metalBars[0]->getValue() + noneBars[i]->getValue() < metalBars[0]->getMaxValue()) metalBars[0]->increase (1);
-			else if (i == 1 && oilBars[0]->getValue() + noneBars[i]->getValue() < oilBars[0]->getMaxValue()) oilBars[0]->increase (1);
-			else if (i == 2 && goldBars[0]->getValue() + noneBars[i]->getValue() < goldBars[0]->getMaxValue()) goldBars[0]->increase (1);
+		signalConnectionManager.connect (increaseButton->clicked, [this, i]() {
+			if (i == 0 && metalBars[0]->getValue() + noneBars[i]->getValue() < metalBars[0]->getMaxValue())
+				metalBars[0]->increase (1);
+			else if (i == 1 && oilBars[0]->getValue() + noneBars[i]->getValue() < oilBars[0]->getMaxValue())
+				oilBars[0]->increase (1);
+			else if (i == 2 && goldBars[0]->getValue() + noneBars[i]->getValue() < goldBars[0]->getMaxValue())
+				goldBars[0]->increase (1);
 		});
 	}
 
@@ -130,9 +137,9 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	setBarValues();
 	setBarLabels();
 
-	signalConnectionManager.connect (metalBars[0]->valueChanged, [this](){ handleMetalChanged(); });
-	signalConnectionManager.connect (oilBars[0]->valueChanged, [this](){ handleOilChanged(); });
-	signalConnectionManager.connect (goldBars[0]->valueChanged, [this](){ handleGoldChanged(); });
+	signalConnectionManager.connect (metalBars[0]->valueChanged, [this]() { handleMetalChanged(); });
+	signalConnectionManager.connect (oilBars[0]->valueChanged, [this]() { handleOilChanged(); });
+	signalConnectionManager.connect (goldBars[0]->valueChanged, [this]() { handleGoldChanged(); });
 
 	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (514, 430), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Done")));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
@@ -141,15 +148,13 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	//close window, when the mine, from which this menu was called, gets destroyed.
 	signalConnectionManager.connect (building.destroyed, [this]() { closeOnUnitDestruction(); });
 	//update subbase values, when any other building in the subbase gets destroyed
-	if (building.getOwner()) signalConnectionManager.connect (building.getOwner()->base.onSubbaseConfigurationChanged, [this](const std::vector<cBuilding*>& buildings){ updateOnSubbaseChanged (buildings); });
+	if (building.getOwner()) signalConnectionManager.connect (building.getOwner()->base.onSubbaseConfigurationChanged, [this] (const std::vector<cBuilding*>& buildings) { updateOnSubbaseChanged (buildings); });
 }
-
 
 sMiningResource cWindowResourceDistribution::getProduction() const
 {
-	return { metalBars[0]->getValue(), oilBars[0]->getValue(), goldBars[0]->getValue()};
+	return {metalBars[0]->getValue(), oilBars[0]->getValue(), goldBars[0]->getValue()};
 }
-
 
 void cWindowResourceDistribution::updateOnSubbaseChanged (const std::vector<cBuilding*>& buildings)
 {
@@ -237,7 +242,7 @@ void cWindowResourceDistribution::handleMetalChanged()
 	{
 		metalBars[0]->setValue (metalBars[0]->getMaxValue() - noneBars[1]->getValue());
 	}
-//	else
+	//	else
 	{
 		setBarValues();
 		setBarLabels();
@@ -253,7 +258,7 @@ void cWindowResourceDistribution::handleOilChanged()
 	{
 		oilBars[0]->setValue (oilBars[0]->getMaxValue() - noneBars[1]->getValue());
 	}
-//	else
+	//	else
 	{
 		setBarValues();
 		setBarLabels();

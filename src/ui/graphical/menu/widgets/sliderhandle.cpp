@@ -19,10 +19,10 @@
 
 #include "ui/graphical/menu/widgets/sliderhandle.h"
 
+#include "SDLutility/tosdl.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
 #include "resources/uidata.h"
-#include "SDLutility/tosdl.h"
 #include "ui/graphical/application.h"
 
 #include <algorithm>
@@ -91,8 +91,10 @@ void cSliderHandle::createSurface (eSliderHandleType sliderHandleType)
 	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 
-	if (sliderHandleType == eSliderHandleType::HudZoom) SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), nullptr);
-	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &srcRect, surface.get(), nullptr);
+	if (sliderHandleType == eSliderHandleType::HudZoom)
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), nullptr);
+	else
+		SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &srcRect, surface.get(), nullptr);
 	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
 	resize (size);

@@ -21,10 +21,10 @@
 
 #include "utility/listhelpers.h"
 
-#include <limits>
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
+#include <limits>
 
 cValidatorInt::cValidatorInt() :
 	minValue (std::numeric_limits<int>::min()),

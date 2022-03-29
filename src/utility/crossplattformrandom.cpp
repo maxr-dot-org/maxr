@@ -51,8 +51,7 @@ uint32_t cCrossPlattformRandom::get (uint32_t interval)
 	do
 	{
 		r = get();
-	}
-	while (r >= limit);
+	} while (r >= limit);
 
 	return r / buckets;
 }

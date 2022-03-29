@@ -22,14 +22,14 @@
 namespace
 {
 
-//--------------------------------------------------------------------------
-Uint32 timerCallback (Uint32 interval, void* arg)
-{
-	static_cast<cAnimationTimer*> (arg)->increaseTimer();
-	return interval;
-}
+	//----------------------------------------------------------------------
+	Uint32 timerCallback (Uint32 interval, void* arg)
+	{
+		static_cast<cAnimationTimer*> (arg)->increaseTimer();
+		return interval;
+	}
 
-}
+} // namespace
 
 //--------------------------------------------------------------------------
 cAnimationTimer::cAnimationTimer() :
@@ -81,8 +81,7 @@ void cAnimationTimer::run()
 				nextTrigger10msTime = timerTime + 10 / sdlTimerInterval;
 				break;
 			}
-		}
-		while ((nextTrigger10msTime += 10 / sdlTimerInterval) < timerTime);
+		} while ((nextTrigger10msTime += 10 / sdlTimerInterval) < timerTime);
 	}
 	if (timerTime >= nextTrigger50msTime)
 	{
@@ -96,8 +95,7 @@ void cAnimationTimer::run()
 				nextTrigger10msTime = timerTime + 50 / sdlTimerInterval;
 				break;
 			}
-		}
-		while ((nextTrigger50msTime += 50 / sdlTimerInterval) < timerTime);
+		} while ((nextTrigger50msTime += 50 / sdlTimerInterval) < timerTime);
 	}
 	if (timerTime >= nextTrigger100msTime)
 	{
@@ -111,8 +109,7 @@ void cAnimationTimer::run()
 				nextTrigger10msTime = timerTime + 100 / sdlTimerInterval;
 				break;
 			}
-		}
-		while ((nextTrigger100msTime += 100 / sdlTimerInterval) < timerTime);
+		} while ((nextTrigger100msTime += 100 / sdlTimerInterval) < timerTime);
 	}
 	if (timerTime >= nextTrigger400msTime)
 	{
@@ -126,7 +123,6 @@ void cAnimationTimer::run()
 				nextTrigger10msTime = timerTime + 400 / sdlTimerInterval;
 				break;
 			}
-		}
-		while ((nextTrigger400msTime += 400 / sdlTimerInterval) < timerTime);
+		} while ((nextTrigger400msTime += 400 / sdlTimerInterval) < timerTime);
 	}
 }

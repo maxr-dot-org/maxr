@@ -17,9 +17,9 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "game/data/model.h"
-
 #include "actionupgradebuilding.h"
+
+#include "game/data/model.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
@@ -52,8 +52,7 @@ void cActionUpgradeBuilding::execute (cModel& model) const
 	const int upgradeCost = uc.getMaterialCostForUpgrading (upgradedData.getBuildCost());
 
 	// first update the selected building
-	if (availableMetal >= upgradeCost &&
-		building->data.getVersion() < upgradedData.getVersion())
+	if (availableMetal >= upgradeCost && building->data.getVersion() < upgradedData.getVersion())
 	{
 		upgradedBuildings.push_back (building);
 		totalCosts += upgradeCost;

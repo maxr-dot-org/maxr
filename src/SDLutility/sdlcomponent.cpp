@@ -19,9 +19,9 @@
 
 #include "sdlcomponent.h"
 
-#include <SDL.h>
-
 #include "utility/log.h"
+
+#include <SDL.h>
 
 //------------------------------------------------------------------------------
 SDLComponent::SDLComponent (bool withVideo)

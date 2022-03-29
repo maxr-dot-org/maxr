@@ -20,10 +20,9 @@
 #include "actionload.h"
 
 #include "game/data/model.h"
-
-#include "utility/log.h"
-#include "game/logic/jobs/getinjob.h"
 #include "game/logic/jobs/airtransportloadjob.h"
+#include "game/logic/jobs/getinjob.h"
+#include "utility/log.h"
 
 //------------------------------------------------------------------------------
 cActionLoad::cActionLoad (const cUnit& loadingUnit, const cVehicle& loadedVehicle) :

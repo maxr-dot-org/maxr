@@ -19,11 +19,11 @@
 
 #include "pathcalculator.h"
 
+#include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/data/map/mapfieldview.h"
-#include "game/data/map/mapview.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/mathtools.h"
@@ -143,7 +143,6 @@ std::forward_list<cPosition> cPathCalculator::calcPath()
 		// generate waypoints when destination has been reached
 		if (destHandler->hasReachedDestination (CurrentNode->position))
 		{
-
 			sPathNode* pathNode = CurrentNode;
 
 			cPosition waypoint;
@@ -188,13 +187,16 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				{
 					// get the blocking unit
 					cVehicle* blockingUnit;
-					if (Vehicle->getStaticUnitData().factorAir > 0) blockingUnit = Map->getField (currentPosition).getPlane();
-					else blockingUnit = Map->getField (currentPosition).getVehicle();
+					if (Vehicle->getStaticUnitData().factorAir > 0)
+						blockingUnit = Map->getField (currentPosition).getPlane();
+					else
+						blockingUnit = Map->getField (currentPosition).getVehicle();
 					// check whether the blocking unit is the group
 					bool isInGroup = Contains (*group, blockingUnit);
 					if (!isInGroup) continue;
 				}
-				else continue;
+				else
+					continue;
 			}
 			if (closedList[Map->getOffset (currentPosition)] != nullptr) continue;
 
@@ -274,7 +276,8 @@ void cPathCalculator::insertToHeap (sPathNode* Node, bool exists)
 			std::swap (nodesHeap[i / 2], nodesHeap[i]);
 			i = i / 2;
 		}
-		else break;
+		else
+			break;
 	}
 }
 
@@ -302,7 +305,7 @@ void cPathCalculator::deleteFirstFromHeap()
 		{
 			std::swap (nodesHeap[u], nodesHeap[v]);
 		}
-		else break;
+		else
+			break;
 	}
 }
-

@@ -21,7 +21,15 @@
 
 #include "game/data/report/savedreportchat.h"
 #include "game/data/report/savedreportsimple.h"
-
+#include "game/data/report/special/savedreporthostcommand.h"
+#include "game/data/report/special/savedreportlostconnection.h"
+#include "game/data/report/special/savedreportplayerdefeated.h"
+#include "game/data/report/special/savedreportplayerendedturn.h"
+#include "game/data/report/special/savedreportplayerleft.h"
+#include "game/data/report/special/savedreportplayerwins.h"
+#include "game/data/report/special/savedreportresourcechanged.h"
+#include "game/data/report/special/savedreportturnstart.h"
+#include "game/data/report/special/savedreportupgraded.h"
 #include "game/data/report/unit/savedreportattacked.h"
 #include "game/data/report/unit/savedreportattackingenemy.h"
 #include "game/data/report/unit/savedreportcapturedbyenemy.h"
@@ -30,16 +38,6 @@
 #include "game/data/report/unit/savedreportdisabled.h"
 #include "game/data/report/unit/savedreportpathinterrupted.h"
 #include "game/data/report/unit/savedreportsurveyoraiconfused.h"
-
-#include "game/data/report/special/savedreporthostcommand.h"
-#include "game/data/report/special/savedreportresourcechanged.h"
-#include "game/data/report/special/savedreportlostconnection.h"
-#include "game/data/report/special/savedreportplayerendedturn.h"
-#include "game/data/report/special/savedreportplayerdefeated.h"
-#include "game/data/report/special/savedreportplayerwins.h"
-#include "game/data/report/special/savedreportplayerleft.h"
-#include "game/data/report/special/savedreportupgraded.h"
-#include "game/data/report/special/savedreportturnstart.h"
 
 #include <cassert>
 
@@ -51,63 +49,63 @@ std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (Archive& archive)
 
 	switch (type)
 	{
-	case eSavedReportType::Chat:
-		return std::make_unique<cSavedReportChat> (archive);
-	case eSavedReportType::Attacked:
-		return std::make_unique<cSavedReportAttacked> (archive);
-	case eSavedReportType::AttackingEnemy:
-		return std::make_unique<cSavedReportAttackingEnemy> (archive);
-	case eSavedReportType::CapturedByEnemy:
-		return std::make_unique<cSavedReportCapturedByEnemy> (archive);
-	case eSavedReportType::Destroyed:
-		return std::make_unique<cSavedReportDestroyed> (archive);
-	case eSavedReportType::Detected:
-		return std::make_unique<cSavedReportDetected> (archive);
-	case eSavedReportType::Disabled:
-		return std::make_unique<cSavedReportDisabled> (archive);
-	case eSavedReportType::PathInterrupted:
-		return std::make_unique<cSavedReportPathInterrupted> (archive);
-	case eSavedReportType::SurveyorAiConfused:
-		return std::make_unique<cSavedReportSurveyorAiConfused> (archive);
-	case eSavedReportType::HostCommand:
-		return std::make_unique<cSavedReportHostCommand> (archive);
-	case eSavedReportType::ResourceChanged:
-		return std::make_unique<cSavedReportResourceChanged> (archive);
-	case eSavedReportType::PlayerEndedTurn:
-		return std::make_unique<cSavedReportPlayerEndedTurn> (archive);
-	case eSavedReportType::LostConnection:
-		return std::make_unique<cSavedReportLostConnection> (archive);
-	case eSavedReportType::PlayerDefeated:
-		return std::make_unique<cSavedReportPlayerDefeated> (archive);
-	case eSavedReportType::PlayerWins:
-		return std::make_unique<cSavedReportPlayerWins> (archive);
-	case eSavedReportType::PlayerLeft:
-		return std::make_unique<cSavedReportPlayerLeft> (archive);
-	case eSavedReportType::Upgraded:
-		return std::make_unique<cSavedReportUpgraded> (archive);
-	case eSavedReportType::TurnStart:
-		return std::make_unique<cSavedReportTurnStart> (archive);
-	case eSavedReportType::MetalInsufficient:
-	case eSavedReportType::FuelInsufficient:
-	case eSavedReportType::GoldInsufficient:
-	case eSavedReportType::EnergyInsufficient:
-	case eSavedReportType::TeamInsufficient:
-	case eSavedReportType::MetalLow:
-	case eSavedReportType::FuelLow:
-	case eSavedReportType::GoldLow:
-	case eSavedReportType::EnergyLow:
-	case eSavedReportType::TeamLow:
-	case eSavedReportType::EnergyToLow:
-	case eSavedReportType::EnergyIsNeeded:
-	case eSavedReportType::BuildingDisabled:
-	case eSavedReportType::Producing_InsufficientMaterial:
-	case eSavedReportType::Producing_PositionBlocked:
-	case eSavedReportType::TurnWait:
-	case eSavedReportType::TurnAutoMove:
-		return std::make_unique<cSavedReportSimple> (type);
-	default:
-		assert (false);
-		return nullptr;
+		case eSavedReportType::Chat:
+			return std::make_unique<cSavedReportChat> (archive);
+		case eSavedReportType::Attacked:
+			return std::make_unique<cSavedReportAttacked> (archive);
+		case eSavedReportType::AttackingEnemy:
+			return std::make_unique<cSavedReportAttackingEnemy> (archive);
+		case eSavedReportType::CapturedByEnemy:
+			return std::make_unique<cSavedReportCapturedByEnemy> (archive);
+		case eSavedReportType::Destroyed:
+			return std::make_unique<cSavedReportDestroyed> (archive);
+		case eSavedReportType::Detected:
+			return std::make_unique<cSavedReportDetected> (archive);
+		case eSavedReportType::Disabled:
+			return std::make_unique<cSavedReportDisabled> (archive);
+		case eSavedReportType::PathInterrupted:
+			return std::make_unique<cSavedReportPathInterrupted> (archive);
+		case eSavedReportType::SurveyorAiConfused:
+			return std::make_unique<cSavedReportSurveyorAiConfused> (archive);
+		case eSavedReportType::HostCommand:
+			return std::make_unique<cSavedReportHostCommand> (archive);
+		case eSavedReportType::ResourceChanged:
+			return std::make_unique<cSavedReportResourceChanged> (archive);
+		case eSavedReportType::PlayerEndedTurn:
+			return std::make_unique<cSavedReportPlayerEndedTurn> (archive);
+		case eSavedReportType::LostConnection:
+			return std::make_unique<cSavedReportLostConnection> (archive);
+		case eSavedReportType::PlayerDefeated:
+			return std::make_unique<cSavedReportPlayerDefeated> (archive);
+		case eSavedReportType::PlayerWins:
+			return std::make_unique<cSavedReportPlayerWins> (archive);
+		case eSavedReportType::PlayerLeft:
+			return std::make_unique<cSavedReportPlayerLeft> (archive);
+		case eSavedReportType::Upgraded:
+			return std::make_unique<cSavedReportUpgraded> (archive);
+		case eSavedReportType::TurnStart:
+			return std::make_unique<cSavedReportTurnStart> (archive);
+		case eSavedReportType::MetalInsufficient:
+		case eSavedReportType::FuelInsufficient:
+		case eSavedReportType::GoldInsufficient:
+		case eSavedReportType::EnergyInsufficient:
+		case eSavedReportType::TeamInsufficient:
+		case eSavedReportType::MetalLow:
+		case eSavedReportType::FuelLow:
+		case eSavedReportType::GoldLow:
+		case eSavedReportType::EnergyLow:
+		case eSavedReportType::TeamLow:
+		case eSavedReportType::EnergyToLow:
+		case eSavedReportType::EnergyIsNeeded:
+		case eSavedReportType::BuildingDisabled:
+		case eSavedReportType::Producing_InsufficientMaterial:
+		case eSavedReportType::Producing_PositionBlocked:
+		case eSavedReportType::TurnWait:
+		case eSavedReportType::TurnAutoMove:
+			return std::make_unique<cSavedReportSimple> (type);
+		default:
+			assert (false);
+			return nullptr;
 	}
 }
 

@@ -53,17 +53,17 @@ std::unique_ptr<cJob> cJob::createFromImpl (Archive& archive)
 
 	switch (type)
 	{
-	case eJobType::START_BUILD:
-		return std::make_unique<cStartBuildJob> (archive);
-	case eJobType::PLANE_TAKEOFF:
-		return std::make_unique<cPlaneTakeoffJob> (archive);
-	case eJobType::DESTROY:
-		return std::make_unique<cDestroyJob> (archive);
-	case eJobType::GET_IN:
-		return std::make_unique<cGetInJob> (archive);
-	case eJobType::AIR_TRANSPORT_LOAD:
-		return std::make_unique<cAirTransportLoadJob> (archive);
-	default:
-		throw std::runtime_error ("Unknown job type " + std::to_string (static_cast<int> (type)));
+		case eJobType::START_BUILD:
+			return std::make_unique<cStartBuildJob> (archive);
+		case eJobType::PLANE_TAKEOFF:
+			return std::make_unique<cPlaneTakeoffJob> (archive);
+		case eJobType::DESTROY:
+			return std::make_unique<cDestroyJob> (archive);
+		case eJobType::GET_IN:
+			return std::make_unique<cGetInJob> (archive);
+		case eJobType::AIR_TRANSPORT_LOAD:
+			return std::make_unique<cAirTransportLoadJob> (archive);
+		default:
+			throw std::runtime_error ("Unknown job type " + std::to_string (static_cast<int> (type)));
 	}
 }

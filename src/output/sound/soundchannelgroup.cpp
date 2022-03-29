@@ -17,14 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <cassert>
-
-#include <SDL_mixer.h>
-
 #include "output/sound/soundchannelgroup.h"
 
 #include "output/sound/soundchannel.h"
 #include "utility/log.h"
+
+#include <SDL_mixer.h>
+#include <cassert>
 
 //--------------------------------------------------------------------------
 cSoundChannelGroup::cSoundChannelGroup (int sdlGroupTag_) :

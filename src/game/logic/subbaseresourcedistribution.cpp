@@ -20,17 +20,17 @@
 #include "subbaseresourcedistribution.h"
 
 #include "game/data/base/base.h"
-#include "game/data/units/building.h"
 #include "game/data/miningresource.h"
+#include "game/data/units/building.h"
 #include "utility/listhelpers.h"
 #include "utility/ranges.h"
 
 namespace
 {
 
-	[[nodiscard]]std::vector<cBuilding*> ExtractOnLineMiningStations (std::vector<cBuilding*> buildings)
+	[[nodiscard]] std::vector<cBuilding*> ExtractOnLineMiningStations (std::vector<cBuilding*> buildings)
 	{
-		return Filter (buildings, [](const cBuilding* building){ return building->getStaticData().canMineMaxRes > 0 && building->isUnitWorking(); });
+		return Filter (buildings, [] (const cBuilding* building) { return building->getStaticData().canMineMaxRes > 0 && building->isUnitWorking(); });
 	}
 
 	struct sResourcesLimit
@@ -119,20 +119,20 @@ namespace
 	//--------------------------------------------------------------------------
 	auto canDecreaseRes (eResourceType res)
 	{
-		return [=](const cBuilding* b){ return 0 < b->prod.get (res); };
+		return [=] (const cBuilding* b) { return 0 < b->prod.get (res); };
 	}
 
 	//--------------------------------------------------------------------------
 	auto canIncreaseRes (eResourceType res)
 	{
-		return [=](const cBuilding* b){ return b->prod.get (res) < b->getMaxProd().get (res); };
+		return [=] (const cBuilding* b) { return b->prod.get (res) < b->getMaxProd().get (res); };
 	}
 
 	//--------------------------------------------------------------------------
 	template <typename F1, typename F2>
 	auto combine (F1 f1, F2 f2)
 	{
-		return [=](auto&& e){ return f1 (e) && f2 (e); };
+		return [=] (auto&& e) { return f1 (e) && f2 (e); };
 	}
 
 	//--------------------------------------------------------------------------
@@ -215,7 +215,7 @@ namespace
 		}
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 sMiningResource computeMaxAllowedProduction (const cSubBase& subBase, const sMiningResource& prod)
@@ -242,7 +242,7 @@ sMiningResource setBuildingsProduction (std::vector<cBuilding*>& buildings, sMin
 {
 	auto mines = ExtractOnLineMiningStations (buildings);
 	const auto limits = computeResourcesLimit (mines);
-	auto newProd = adjustResourceToMaxAllowed (limits, wanted, {eResourceType::Metal, eResourceType::Oil, eResourceType::Gold });
+	auto newProd = adjustResourceToMaxAllowed (limits, wanted, {eResourceType::Metal, eResourceType::Oil, eResourceType::Gold});
 	setMinesProduction (mines, newProd);
 	return newProd;
 }
