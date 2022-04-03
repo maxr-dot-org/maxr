@@ -17,18 +17,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windowstart.h"
+#include "windowstart.h"
 
 #include "defines.h"
 #include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "settings.h"
-#include "ui/graphical/application.h"
 #include "ui/graphical/menu/dialogs/dialoglicense.h"
 #include "ui/graphical/menu/dialogs/dialogpreferences.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/windows/windowmultiplayer.h"
 #include "ui/graphical/menu/windows/windowsingleplayer.h"
+#include "ui/widgets/application.h"
 #include "utility/language.h"
 
 #include <functional>

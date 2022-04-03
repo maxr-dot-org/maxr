@@ -25,9 +25,9 @@
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 #include "resources/sound.h"
-#include "ui/graphical/application.h"
-#include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/menu/widgets/scrollbar.h"
+#include "ui/widgets/application.h"
+#include "ui/widgets/clickablewidget.h"
 #include "utility/ranges.h"
 #include "utility/signal/signalconnectionmanager.h"
 

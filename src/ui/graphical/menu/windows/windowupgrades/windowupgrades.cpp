@@ -17,16 +17,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windowupgrades/windowupgrades.h"
+#include "windowupgrades.h"
 
 #include "game/data/player/player.h"
 #include "resources/pcx.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

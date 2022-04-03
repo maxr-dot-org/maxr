@@ -20,8 +20,8 @@
 #include "ui/graphical/menu/widgets/special/unitlistviewitemcargo.h"
 
 #include "game/data/player/player.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 
 //------------------------------------------------------------------------------
 cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData& unitsData) :

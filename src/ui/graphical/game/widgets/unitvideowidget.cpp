@@ -25,7 +25,7 @@
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"
-#include "ui/graphical/menu/widgets/image.h"
+#include "ui/widgets/image.h"
 #include "utility/files.h"
 
 //------------------------------------------------------------------------------

@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_control_rightmousebuttonscrollerH
 #define ui_graphical_game_control_rightmousebuttonscrollerH
 
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"

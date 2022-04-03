@@ -17,17 +17,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/dialogs/dialogresearch.h"
+#include "dialogresearch.h"
 
 #include "game/data/player/player.h"
 #include "output/video/video.h"
 #include "resources/pcx.h"
 #include "resources/uidata.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/slider.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

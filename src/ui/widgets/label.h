@@ -17,23 +17,50 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_widgets_tools_validatorintH
-#define ui_graphical_widgets_tools_validatorintH
+#ifndef ui_widgets_labelH
+#define ui_widgets_labelH
 
-#include "ui/graphical/menu/widgets/tools/validator.h"
+#include "output/video/unifonts.h"
+#include "ui/widgets/alignment.h"
+#include "ui/widgets/clickablewidget.h"
 
-class cValidatorInt : public cValidator
+#include <string>
+#include <vector>
+
+class cLabel : public cClickableWidget
 {
 public:
-	cValidatorInt();
-	cValidatorInt (int minValue, int maxValue);
+	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType = eUnicodeFontType::LatinNormal, AlignmentFlags = toEnumFlag (eAlignmentType::Left) | eAlignmentType::Top);
 
-	eValidatorState validate (const std::string& text) const override;
-	void fixup (std::string& text) const override;
+	void setText (const std::string& text);
+	const std::string& getText() const;
+
+	void setFont (eUnicodeFontType);
+	void setAlignment (AlignmentFlags);
+	void setWordWrap (bool wordWrap);
+
+	void resizeToTextHeight();
+
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+	void handleResized (const cPosition& oldSize) override;
+
+	cSignal<void()> clicked;
+
+protected:
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
-	int minValue;
-	int maxValue;
+	void updateDisplayInformation();
+
+private:
+	std::string text;
+	eUnicodeFontType fontType;
+	AlignmentFlags alignment;
+	bool wordWrap;
+
+	std::vector<std::string> drawLines;
+
+	AutoSurface surface;
 };
 
-#endif // ui_graphical_widgets_tools_validatorintH
+#endif

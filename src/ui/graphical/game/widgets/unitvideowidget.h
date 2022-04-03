@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_widgets_unitvideowidgetH
 #define ui_graphical_game_widgets_unitvideowidgetH
 
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <3rd/SDL_flic/SDL_flic.h>

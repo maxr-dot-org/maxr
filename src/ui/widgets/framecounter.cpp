@@ -17,24 +17,26 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#include "ui/graphical/framecounter.h"
+#include "framecounter.h"
 
 #include "utility/mathtools.h"
 
+//------------------------------------------------------------------------------
 void cFrameCounter::frameDrawn()
 {
 	++frames;
 }
 
+//------------------------------------------------------------------------------
 unsigned long long cFrameCounter::getFrame() const
 {
 	return frames;
 }
 
+//------------------------------------------------------------------------------
 unsigned int cFrameCounter::getFramesPerSecond()
 {
 	const auto now = std::chrono::steady_clock::now();
-
 	const auto timeSinceLastCheck = now - lastCheckTime;
 
 	if (timeSinceLastCheck > std::chrono::seconds (1))

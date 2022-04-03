@@ -17,15 +17,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windowmultiplayer.h"
+#include "windowmultiplayer.h"
 
-#include "ui/graphical/application.h"
 #include "ui/graphical/menu/control/local/hotseat/localhotseatgamesaved.h"
 #include "ui/graphical/menu/control/menucontrollermultiplayerclient.h"
 #include "ui/graphical/menu/control/menucontrollermultiplayerhost.h"
 #include "ui/graphical/menu/control/menucontrollermultiplayerhotseat.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/windows/windowload/windowload.h"
+#include "ui/widgets/application.h"
 #include "utility/language.h"
 
 #include <functional>

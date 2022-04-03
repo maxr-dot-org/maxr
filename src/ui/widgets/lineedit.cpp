@@ -17,16 +17,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/widgets/lineedit.h"
+#include "lineedit.h"
 
 #include "SDLutility/tosdl.h"
 #include "input/keyboard/keyboard.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
-#include "ui/graphical/application.h"
-#include "ui/graphical/menu/widgets/tools/validator.h"
-#include "ui/graphical/window.h"
 #include "ui/keys.h"
+#include "ui/widgets/application.h"
+#include "ui/widgets/validators/validator.h"
+#include "ui/widgets/window.h"
 #include "utility/log.h"
 
 #include <algorithm>

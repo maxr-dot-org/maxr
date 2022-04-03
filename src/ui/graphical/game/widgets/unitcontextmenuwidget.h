@@ -21,7 +21,7 @@
 #define ui_graphical_game_widgets_unitcontextmenuwidgetH
 
 #include "ui/graphical/game/control/mousemode/mousemodetype.h"
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"
 
 class cBuilding;

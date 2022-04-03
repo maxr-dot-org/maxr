@@ -22,8 +22,8 @@
 #include "SDLutility/drawing.h"
 #include "SDLutility/tosdl.h"
 #include "input/mouse/mouse.h"
-#include "ui/graphical/application.h"
-#include "ui/graphical/menu/widgets/image.h"
+#include "ui/widgets/application.h"
+#include "ui/widgets/image.h"
 
 //------------------------------------------------------------------------------
 cRgbColorPicker::cRgbColorPicker (const cBox<cPosition>& area, const cRgbColor& color) :

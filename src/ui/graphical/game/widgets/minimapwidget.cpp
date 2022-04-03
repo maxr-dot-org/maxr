@@ -28,7 +28,7 @@
 #include "game/data/units/vehicle.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 #include "ui/uidefines.h"
 
 //------------------------------------------------------------------------------

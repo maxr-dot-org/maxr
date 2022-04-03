@@ -21,7 +21,7 @@
 #define ui_graphical_menu_widgets_special_landingpositionselectionmapH
 
 #include "SDLutility/autosurface.h"
-#include "ui/graphical/menu/widgets/clickablewidget.h"
+#include "ui/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"
 
 class cStaticMap;

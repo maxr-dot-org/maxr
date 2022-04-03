@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/dialogs/dialogpreferences.h"
+#include "dialogpreferences.h"
 
 #include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
@@ -28,13 +28,13 @@
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/colorselector.h"
 #include "ui/graphical/menu/widgets/combobox.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/slider.h"
 #include "ui/graphical/menu/widgets/special/textlistviewitem.h"
-#include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/label.h"
+#include "ui/widgets/lineedit.h"
+#include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
 #include "utility/string/iequals.h"
 

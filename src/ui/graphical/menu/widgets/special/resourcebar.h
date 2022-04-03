@@ -22,8 +22,8 @@
 
 #include "SDLutility/autosurface.h"
 #include "resources/sound.h"
-#include "ui/graphical/menu/widgets/clickablewidget.h"
-#include "ui/graphical/orientation.h"
+#include "ui/widgets/clickablewidget.h"
+#include "ui/widgets/orientation.h"
 #include "utility/signal/signal.h"
 
 enum class eResourceBarType

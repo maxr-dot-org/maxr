@@ -21,7 +21,7 @@
 #define ui_graphical_menu_widgets_colorpickerH
 
 #include "SDLutility/autosurface.h"
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 #include "utility/color.h"
 #include "utility/signal/signal.h"
 

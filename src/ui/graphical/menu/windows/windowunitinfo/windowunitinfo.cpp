@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windowunitinfo/windowunitinfo.h"
+#include "windowunitinfo.h"
 
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
@@ -25,12 +25,12 @@
 #include "resources/pcx.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
 #include "ui/translations.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

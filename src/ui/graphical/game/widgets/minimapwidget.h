@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_widgets_minimapwidgetH
 #define ui_graphical_game_widgets_minimapwidgetH
 
-#include "ui/graphical/menu/widgets/clickablewidget.h"
+#include "ui/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

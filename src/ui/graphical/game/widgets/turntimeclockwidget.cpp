@@ -20,7 +20,7 @@
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 
 #include "game/logic/turntimeclock.h"
-#include "ui/graphical/menu/widgets/label.h"
+#include "ui/widgets/label.h"
 
 #include <iomanip>
 #include <sstream>

@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_widgets_special_buildspeedhandlerwidgetH
 #define ui_graphical_menu_widgets_special_buildspeedhandlerwidgetH
 
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 
 #include <array>
 

@@ -17,14 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/widgets/combobox.h"
+#include "combobox.h"
 
 #include "SDLutility/drawing.h"
 #include "SDLutility/tosdl.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/special/textlistviewitem.h"
+#include "ui/widgets/lineedit.h"
 #include "utility/color.h"
 
 //------------------------------------------------------------------------------

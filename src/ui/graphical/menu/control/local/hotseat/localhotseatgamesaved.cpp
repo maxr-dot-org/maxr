@@ -24,7 +24,7 @@
 #include "game/data/report/savedreport.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 
 //------------------------------------------------------------------------------
 void cLocalHotSeatGameSaved::start (cApplication& application)

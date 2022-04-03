@@ -17,12 +17,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_widgetH
-#define ui_graphical_widgetH
+#ifndef ui_widgets_widgetH
+#define ui_widgets_widgetH
 
 #include "SDLutility/autosurface.h"
 #include "input/mouse/mousebuttontype.h"
-#include "ui/graphical/shortcut.h"
+#include "ui/widgets/shortcut.h"
 #include "utility/box.h"
 #include "utility/position.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -447,4 +447,4 @@ WidgetType* cWidget::addChild (std::unique_ptr<WidgetType> child)
 	return static_cast<WidgetType*> (children.back().get());
 }
 
-#endif // ui_graphical_widgetH
+#endif // ui_widgets_widgetH

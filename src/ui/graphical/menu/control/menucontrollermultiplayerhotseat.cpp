@@ -26,7 +26,7 @@
 #include "game/logic/upgradecalculator.h"
 #include "game/startup/gamepreparation.h"
 #include "resources/uidata.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 #include "ui/graphical/menu/control/local/hotseat/localhotseatgamenew.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"

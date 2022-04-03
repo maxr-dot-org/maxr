@@ -21,7 +21,7 @@
 #define ui_graphical_menu_windows_windownetworklobby_windownetworklobbyH
 
 #include "game/data/savegameinfo.h"
-#include "ui/graphical/window.h"
+#include "ui/widgets/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

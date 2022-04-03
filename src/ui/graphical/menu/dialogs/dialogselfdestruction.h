@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_dialogs_dialogselfdestructionH
 #define ui_graphical_menu_dialogs_dialogselfdestructionH
 
-#include "ui/graphical/window.h"
+#include "ui/widgets/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

@@ -17,20 +17,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
+#include "windowgamesettings.h"
 
 #include "game/data/gamesettings.h"
 #include "game/startup/lobbyclient.h"
 #include "resources/pcx.h"
-#include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/editablecheckbox.h"
 #include "ui/graphical/menu/widgets/special/radiogroupvalue.h"
-#include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/application.h"
+#include "ui/widgets/label.h"
+#include "ui/widgets/lineedit.h"
+#include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
 
 namespace

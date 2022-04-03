@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/hud.h"
+#include "hud.h"
 
 #include "SDLutility/tosdl.h"
 #include "defines.h"
@@ -32,11 +32,11 @@
 #include "ui/graphical/game/widgets/unitrenamewidget.h"
 #include "ui/graphical/game/widgets/unitvideowidget.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/slider.h"
 #include "ui/keys.h"
+#include "ui/widgets/label.h"
+#include "ui/widgets/lineedit.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

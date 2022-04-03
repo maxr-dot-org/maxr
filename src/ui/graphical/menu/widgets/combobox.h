@@ -21,7 +21,7 @@
 #define ui_graphical_menu_widgets_comboboxH
 
 #include "SDLutility/autosurface.h"
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

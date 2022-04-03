@@ -21,10 +21,10 @@
 #define ui_graphical_menu_widgets_special_ediatblecheckboxH
 
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/lineedit.h"
-#include "ui/graphical/menu/widgets/tools/validator.h"
-#include "ui/graphical/widget.h"
+#include "ui/widgets/label.h"
+#include "ui/widgets/lineedit.h"
+#include "ui/widgets/validators/validator.h"
+#include "ui/widgets/widget.h"
 
 class cEditableCheckBox : public cWidget
 {

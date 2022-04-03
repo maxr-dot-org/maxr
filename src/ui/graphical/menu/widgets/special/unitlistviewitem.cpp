@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/widgets/special/unitlistviewitem.h"
+#include "unitlistviewitem.h"
 
 #include "SDLutility/drawing.h"
 #include "game/data/player/player.h"
@@ -26,9 +26,9 @@
 #include "resources/buildinguidata.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/translations.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 
 //------------------------------------------------------------------------------
 cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, const cPlayer& owner, const cUnitsData& unitsData) :

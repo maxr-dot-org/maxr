@@ -17,12 +17,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/widget.h"
+#include "widget.h"
 
 #include "SDLutility/drawing.h"
 #include "SDLutility/tosdl.h"
 #include "output/video/video.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 #include "utility/color.h"
 
 /*static*/ bool cWidget::drawDebugFrames = false;

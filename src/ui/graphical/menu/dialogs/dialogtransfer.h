@@ -22,7 +22,7 @@
 
 #include "game/data/units/unit.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
-#include "ui/graphical/window.h"
+#include "ui/widgets/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

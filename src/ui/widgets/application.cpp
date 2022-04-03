@@ -24,9 +24,9 @@
 #include "input/mouse/mouse.h"
 #include "output/video/unifonts.h"
 #include "output/video/video.h"
-#include "ui/graphical/framecounter.h"
-#include "ui/graphical/widget.h"
-#include "ui/graphical/window.h"
+#include "ui/widgets/framecounter.h"
+#include "ui/widgets/widget.h"
+#include "ui/widgets/window.h"
 #include "utility/listhelpers.h"
 #include "utility/runnable.h"
 

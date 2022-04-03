@@ -21,7 +21,7 @@
 #define ui_graphical_menu_widgets_plotH
 
 #include "SDLutility/drawing.h"
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 #include "utility/color.h"
 
 #include <cassert>

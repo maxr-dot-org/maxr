@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_windows_windowhangar_windowhangarH
 #define ui_graphical_menu_windows_windowhangar_windowhangarH
 
-#include "ui/graphical/window.h"
+#include "ui/widgets/window.h"
 #include "utility/color.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"

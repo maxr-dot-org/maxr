@@ -28,7 +28,6 @@
 #include "game/logic/server.h"
 #include "game/startup/gamepreparation.h"
 #include "resources/uidata.h"
-#include "ui/graphical/application.h"
 #include "ui/graphical/game/gamegui.h"
 #include "ui/graphical/menu/control/local/singleplayer/localsingleplayergamenew.h"
 #include "ui/graphical/menu/control/local/singleplayer/localsingleplayergamesaved.h"
@@ -40,6 +39,7 @@
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "ui/graphical/menu/windows/windowload/windowload.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
+#include "ui/widgets/application.h"
 #include "utility/language.h"
 #include "utility/log.h"
 

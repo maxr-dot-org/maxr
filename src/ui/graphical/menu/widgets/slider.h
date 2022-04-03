@@ -21,9 +21,9 @@
 #define ui_graphical_menu_widgets_sliderH
 
 #include "SDLutility/autosurface.h"
-#include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/menu/widgets/sliderhandle.h"
-#include "ui/graphical/orientation.h"
+#include "ui/widgets/clickablewidget.h"
+#include "ui/widgets/orientation.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

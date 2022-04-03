@@ -21,14 +21,14 @@
 
 #include "SDLutility/tosdl.h"
 #include "resources/pcx.h"
-#include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/colorpicker.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/application.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
+#include "ui/widgets/lineedit.h"
+#include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

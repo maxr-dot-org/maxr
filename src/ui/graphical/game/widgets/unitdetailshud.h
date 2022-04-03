@@ -21,7 +21,7 @@
 #define ui_graphical_game_widgets_unitdetailshudH
 
 #include "ui/graphical/menu/widgets/special/unitdatasymboltype.h"
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 
 #include <array>
 

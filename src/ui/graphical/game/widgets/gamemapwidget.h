@@ -27,7 +27,7 @@
 #include "ui/graphical/game/unitlocklist.h"
 #include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitselectionbox.h"
-#include "ui/graphical/menu/widgets/clickablewidget.h"
+#include "ui/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"
 
 #include <map>

@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/widgets/special/reportmessagelistviewitem.h"
+#include "reportmessagelistviewitem.h"
 
 #include "SDLutility/drawing.h"
 #include "game/data/model.h"
@@ -28,9 +28,9 @@
 #include "resources/buildinguidata.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/translations.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 #include "utility/color.h"
 
 //------------------------------------------------------------------------------

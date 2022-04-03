@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
+#include "windowmapselection.h"
 
 #include "SDLutility/autosurface.h"
 #include "game/data/map/map.h"
@@ -25,10 +25,10 @@
 #include "resources/map/mappreview.h"
 #include "resources/pcx.h"
 #include "resources/uidata.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 #include "utility/files.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"

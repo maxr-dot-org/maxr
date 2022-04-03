@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/widgets/label.h"
+#include "label.h"
 
 #include "SDLutility/drawing.h"
 

@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/gamegui.h"
+#include "gamegui.h"
 
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
@@ -37,7 +37,6 @@
 #include "resources/sound.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
-#include "ui/graphical/application.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/game/gameguistate.h"
 #include "ui/graphical/game/hud.h"
@@ -49,7 +48,6 @@
 #include "ui/graphical/game/widgets/hudpanels.h"
 #include "ui/graphical/game/widgets/minimapwidget.h"
 #include "ui/graphical/game/widgets/unitcontextmenuwidget.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/keys.h"
 #include "ui/sound/effects/soundeffect.h"
@@ -58,6 +56,8 @@
 #include "ui/sound/game/unitreport.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/translations.h"
+#include "ui/widgets/application.h"
+#include "ui/widgets/label.h"
 #include "utility/indexiterator.h"
 #include "utility/language.h"
 #include "utility/log.h"

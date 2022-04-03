@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windownetworklobby/windownetworklobby.h"
+#include "windownetworklobby.h"
 
 #include "game/data/gamesettings.h"
 #include "game/data/map/map.h"
@@ -31,17 +31,17 @@
 #include "resources/uidata.h"
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 #include "ui/graphical/menu/widgets/colorselector.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/widgets/special/lobbyplayerlistviewitem.h"
-#include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "ui/graphical/playercolor.h"
 #include "ui/translations.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
+#include "ui/widgets/lineedit.h"
+#include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

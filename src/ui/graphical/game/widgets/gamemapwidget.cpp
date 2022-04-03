@@ -39,7 +39,7 @@
 #include "resources/sound.h"
 #include "resources/uidata.h"
 #include "settings.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 #include "ui/graphical/game/animations/animation.h"
 #include "ui/graphical/game/animations/animationdither.h"
 #include "ui/graphical/game/animations/animationstartup.h"

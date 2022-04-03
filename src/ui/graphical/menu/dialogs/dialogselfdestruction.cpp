@@ -21,7 +21,7 @@
 
 #include "game/data/units/unit.h"
 #include "resources/pcx.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/protectionglass.h"

@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_windows_windowclanselection_windowclanselectionH
 #define ui_graphical_menu_windows_windowclanselection_windowclanselectionH
 
-#include "ui/graphical/window.h"
+#include "ui/widgets/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

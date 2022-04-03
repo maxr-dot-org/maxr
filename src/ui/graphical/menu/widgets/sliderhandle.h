@@ -21,8 +21,8 @@
 #define ui_graphical_menu_widgets_sliderhandleH
 
 #include "SDLutility/autosurface.h"
-#include "ui/graphical/orientation.h"
-#include "ui/graphical/widget.h"
+#include "ui/widgets/orientation.h"
+#include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"
 
 struct SDL_Surface;

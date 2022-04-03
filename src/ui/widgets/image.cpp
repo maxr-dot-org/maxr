@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/widgets/image.h"
+#include "image.h"
 
 #include "SDLutility/drawing.h"
 #include "output/sound/soundchannel.h"
@@ -27,8 +27,7 @@
 //------------------------------------------------------------------------------
 cImage::cImage (const cPosition& position, SDL_Surface* image_, cSoundChunk* clickSound_) :
 	cClickableWidget (position),
-	clickSound (clickSound_),
-	disabledAtTransparent (false)
+	clickSound (clickSound_)
 {
 	setImage (image_);
 }

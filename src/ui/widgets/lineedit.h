@@ -17,13 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_menu_widgets_lineeditH
-#define ui_graphical_menu_widgets_lineeditH
+#ifndef ui_widgets_lineeditH
+#define ui_widgets_lineeditH
 
 #include "SDLutility/autosurface.h"
 #include "output/video/unifonts.h"
-#include "ui/graphical/menu/widgets/clickablewidget.h"
-#include "ui/graphical/menu/widgets/tools/validatorstate.h"
+#include "ui/widgets/clickablewidget.h"
+#include "ui/widgets/validators/validatorstate.h"
 #include "utility/signal/signal.h"
 
 #include <chrono>
@@ -105,4 +105,4 @@ private:
 	void finishEditingInternal();
 };
 
-#endif // ui_graphical_menu_widgets_lineeditH
+#endif

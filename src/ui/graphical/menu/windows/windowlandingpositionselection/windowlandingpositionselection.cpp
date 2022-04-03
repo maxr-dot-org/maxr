@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
+#include "windowlandingpositionselection.h"
 
 #include "game/data/map/map.h"
 #include "game/data/units/landingunit.h"
@@ -29,18 +29,18 @@
 #include "output/video/video.h"
 #include "resources/sound.h"
 #include "resources/uidata.h"
-#include "ui/graphical/application.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/game/hud.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 #include "ui/graphical/menu/widgets/special/landingpositionselectionmap.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/application.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 #include "utility/random.h"
 

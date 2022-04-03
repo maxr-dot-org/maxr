@@ -17,60 +17,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/widgets/tools/validatorint.h"
+#ifndef ui_widgets_imageH
+#define ui_widgets_imageH
 
-#include "utility/listhelpers.h"
+#include "SDLutility/autosurface.h"
+#include "resources/sound.h"
+#include "ui/widgets/clickablewidget.h"
+#include "utility/signal/signal.h"
 
-#include <algorithm>
-#include <cctype>
-#include <cstdlib>
-#include <limits>
-
-cValidatorInt::cValidatorInt() :
-	minValue (std::numeric_limits<int>::min()),
-	maxValue (std::numeric_limits<int>::max())
-{}
-
-cValidatorInt::cValidatorInt (int minValue_, int maxValue_) :
-	minValue (minValue_),
-	maxValue (maxValue_)
-{}
-
-eValidatorState cValidatorInt::validate (const std::string& text) const
+class cImage : public cClickableWidget
 {
-	if (text.empty()) return eValidatorState::Intermediate;
+public:
+	cImage (const cPosition&, SDL_Surface* image = nullptr, cSoundChunk* clickSound = nullptr);
 
-	for (size_t i = 0; i < text.size(); ++i)
-	{
-		if (!std::isdigit (text[i])) return eValidatorState::Invalid;
-	}
+	void setImage (SDL_Surface* image);
 
-	int value = std::atoi (text.c_str());
+	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+	bool isAt (const cPosition&) const override;
 
-	if (value < minValue || value > maxValue) return eValidatorState::Intermediate;
+	cSignal<void()> clicked;
 
-	return eValidatorState::Valid;
-}
+	void disableAtTransparent();
+	void enableAtTransparent();
 
-void cValidatorInt::fixup (std::string& text) const
-{
-	EraseIf (text, [] (char c) { return !std::isdigit (c); });
+protected:
+	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
-	if (text.empty())
-	{
-		text = std::to_string (std::max (std::min (0, maxValue), minValue));
-	}
-	else
-	{
-		int value = std::atoi (text.c_str());
+private:
+	AutoSurface image;
+	cSoundChunk* clickSound;
+	bool disabledAtTransparent = false;
+};
 
-		if (value < minValue)
-		{
-			text = std::to_string (minValue);
-		}
-		else if (value > maxValue)
-		{
-			text = std::to_string (maxValue);
-		}
-	}
-}
+#endif

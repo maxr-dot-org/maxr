@@ -17,16 +17,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/widgets/special/reportdisadvantageslistviewitem.h"
+#include "reportdisadvantageslistviewitem.h"
 
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "resources/buildinguidata.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/translations.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 
 const int cReportDisadvantagesListViewItem::unitImageWidth = 32;
 const int cReportDisadvantagesListViewItem::unitImageHeight = 32;

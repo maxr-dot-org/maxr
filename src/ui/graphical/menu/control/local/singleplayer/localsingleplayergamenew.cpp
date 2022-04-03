@@ -27,7 +27,7 @@
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/startup/lobbypreparationdata.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 
 //------------------------------------------------------------------------------
 cLocalSingleplayerGameNew::cLocalSingleplayerGameNew() :

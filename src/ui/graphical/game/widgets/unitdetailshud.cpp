@@ -27,7 +27,7 @@
 #include "game/data/units/unit.h"
 #include "output/video/video.h"
 #include "resources/uidata.h"
-#include "ui/graphical/menu/widgets/label.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 
 #include <cassert>

@@ -21,7 +21,7 @@
 
 #include "game/logic/action/actioninitnewgame.h"
 #include "game/logic/client.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 
 //------------------------------------------------------------------------------
 cNetworkGame::~cNetworkGame()

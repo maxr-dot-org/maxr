@@ -23,9 +23,9 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
-#include "ui/graphical/application.h"
 #include "ui/graphical/game/animations/animationtimer.h"
-#include "ui/graphical/menu/widgets/image.h"
+#include "ui/widgets/application.h"
+#include "ui/widgets/image.h"
 #include "utility/color.h"
 
 const double cRightMouseButtonScrollerWidget::factor = 0.05;

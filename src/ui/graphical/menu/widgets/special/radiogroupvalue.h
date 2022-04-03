@@ -22,7 +22,7 @@
 
 #include "config/workaround/cpp17/optional.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 /*

@@ -20,7 +20,7 @@
 #include "ui/graphical/game/widgets/gamemessagelistviewitem.h"
 
 #include "SDLutility/tosdl.h"
-#include "ui/graphical/menu/widgets/label.h"
+#include "ui/widgets/label.h"
 
 //------------------------------------------------------------------------------
 cGameMessageListViewItem::cGameMessageListViewItem (const std::string& message, eGameMessageListViewItemBackgroundColor backgroundColor_) :

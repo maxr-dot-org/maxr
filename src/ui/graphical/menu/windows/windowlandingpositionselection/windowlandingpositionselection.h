@@ -21,7 +21,7 @@
 #define ui_graphical_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH
 
 #include "game/logic/landingpositionstate.h"
-#include "ui/graphical/window.h"
+#include "ui/widgets/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

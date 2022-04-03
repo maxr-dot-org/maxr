@@ -22,9 +22,9 @@
 #include "SDLutility/tosdl.h"
 #include "game/data/player/player.h"
 #include "resources/uidata.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/playercolor.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 
 //------------------------------------------------------------------------------
 cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) :

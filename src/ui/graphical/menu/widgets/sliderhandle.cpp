@@ -23,7 +23,7 @@
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
 #include "resources/uidata.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 
 #include <algorithm>
 

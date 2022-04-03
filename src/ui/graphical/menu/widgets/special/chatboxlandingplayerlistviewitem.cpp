@@ -17,15 +17,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
+#include "chatboxlandingplayerlistviewitem.h"
 
 #include "SDLutility/tosdl.h"
 #include "game/data/player/player.h"
 #include "game/logic/landingpositionmanager.h"
 #include "resources/uidata.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/playercolor.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 
 //------------------------------------------------------------------------------
 cPlayerLandingStatus::cPlayerLandingStatus (const cPlayerBasicData& player) :

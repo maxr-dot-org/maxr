@@ -21,8 +21,8 @@
 
 #include "game/data/player/playerbasicdata.h"
 #include "resources/uidata.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 #include "ui/graphical/playercolor.h"
 
 #include <cassert>

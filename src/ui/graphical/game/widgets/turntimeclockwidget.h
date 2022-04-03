@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_widgets_turntimeclockwidgetH
 #define ui_graphical_game_widgets_turntimeclockwidgetH
 
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <chrono>

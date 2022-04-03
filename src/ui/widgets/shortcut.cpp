@@ -17,30 +17,41 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_shortcut_H
-#define ui_graphical_shortcut_H
+#include "shortcut.h"
 
-#include "input/keyboard/keysequence.h"
-#include "utility/signal/signal.h"
+//------------------------------------------------------------------------------
+cShortcut::cShortcut (cKeySequence keySequence_) :
+	keySequence (keySequence_),
+	active (true)
+{}
 
-class cShortcut
+//------------------------------------------------------------------------------
+void cShortcut::activate()
 {
-public:
-	explicit cShortcut (cKeySequence);
+	active = true;
+}
 
-	const cKeySequence& getKeySequence() const { return keySequence; }
+//------------------------------------------------------------------------------
+void cShortcut::deactivate()
+{
+	active = false;
+}
 
-	void activate();
-	void deactivate();
-	bool isActive() const { return active; }
+//------------------------------------------------------------------------------
+bool cShortcut::hit (const cKeySequence& currentKeySequence)
+{
+	if (!isActive()) return false;
 
-	bool hit (const cKeySequence&);
+	if (keySequence.length() > currentKeySequence.length()) return false;
 
-	cSignal<void()> triggered;
+	for (size_t j = 1; j <= keySequence.length(); ++j)
+	{
+		if (!currentKeySequence[currentKeySequence.length() - j].matches (keySequence[keySequence.length() - j]))
+		{
+			return false;
+		}
+	}
 
-private:
-	cKeySequence keySequence;
-	bool active = true;
-};
-
-#endif // ui_graphical_shortcut_H
+	triggered();
+	return true;
+}

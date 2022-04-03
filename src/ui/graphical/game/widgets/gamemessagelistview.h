@@ -21,7 +21,7 @@
 #define ui_graphical_game_widgets_gamemessagelistviewH
 
 #include "ui/graphical/game/widgets/gamemessagelistviewitem.h"
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 
 template <typename>
 class cListView;

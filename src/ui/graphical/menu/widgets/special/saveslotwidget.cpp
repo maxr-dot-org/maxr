@@ -24,9 +24,9 @@
 #include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "resources/sound.h"
-#include "ui/graphical/application.h"
-#include "ui/graphical/menu/widgets/label.h"
-#include "ui/graphical/menu/widgets/lineedit.h"
+#include "ui/widgets/application.h"
+#include "ui/widgets/label.h"
+#include "ui/widgets/lineedit.h"
 
 //------------------------------------------------------------------------------
 cSaveSlotWidget::cSaveSlotWidget (const cPosition& position) :

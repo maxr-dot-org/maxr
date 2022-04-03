@@ -17,14 +17,64 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/widgets/frame.h"
+#include "validatorint.h"
+
+#include "utility/listhelpers.h"
+
+#include <algorithm>
+#include <cctype>
+#include <cstdlib>
+#include <limits>
 
 //------------------------------------------------------------------------------
-cFrame::cFrame() :
-	cWidget()
+cValidatorInt::cValidatorInt() :
+	minValue (std::numeric_limits<int>::min()),
+	maxValue (std::numeric_limits<int>::max())
 {}
 
 //------------------------------------------------------------------------------
-cFrame::cFrame (const cBox<cPosition>& area) :
-	cWidget (area)
+cValidatorInt::cValidatorInt (int minValue_, int maxValue_) :
+	minValue (minValue_),
+	maxValue (maxValue_)
 {}
+
+//------------------------------------------------------------------------------
+eValidatorState cValidatorInt::validate (const std::string& text) const
+{
+	if (text.empty()) return eValidatorState::Intermediate;
+
+	for (size_t i = 0; i < text.size(); ++i)
+	{
+		if (!std::isdigit (text[i])) return eValidatorState::Invalid;
+	}
+
+	int value = std::atoi (text.c_str());
+
+	if (value < minValue || value > maxValue) return eValidatorState::Intermediate;
+
+	return eValidatorState::Valid;
+}
+
+//------------------------------------------------------------------------------
+void cValidatorInt::fixup (std::string& text) const
+{
+	EraseIf (text, [] (char c) { return !std::isdigit (c); });
+
+	if (text.empty())
+	{
+		text = std::to_string (std::max (std::min (0, maxValue), minValue));
+	}
+	else
+	{
+		int value = std::atoi (text.c_str());
+
+		if (value < minValue)
+		{
+			text = std::to_string (minValue);
+		}
+		else if (value > maxValue)
+		{
+			text = std::to_string (maxValue);
+		}
+	}
+}

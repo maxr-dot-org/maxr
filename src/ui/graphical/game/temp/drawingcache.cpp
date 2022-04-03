@@ -29,8 +29,8 @@
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "settings.h"
-#include "ui/graphical/framecounter.h"
 #include "ui/graphical/game/animations/animationtimer.h"
+#include "ui/widgets/framecounter.h"
 #include "utility/mathtools.h"
 
 #include <algorithm>

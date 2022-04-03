@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_windows_windowmainH
 #define ui_graphical_menu_windows_windowmainH
 
-#include "ui/graphical/window.h"
+#include "ui/widgets/window.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 struct SDL_Surface;

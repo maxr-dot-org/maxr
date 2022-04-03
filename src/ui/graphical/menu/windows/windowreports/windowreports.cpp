@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windowreports/windowreports.h"
+#include "windowreports.h"
 
 #include "SDLutility/tosdl.h"
 #include "game/data/gamesettings.h"
@@ -31,9 +31,6 @@
 #include "resources/pcx.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/menu/widgets/frame.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/plot.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
@@ -42,6 +39,9 @@
 #include "ui/graphical/menu/widgets/special/reportmessagelistviewitem.h"
 #include "ui/graphical/menu/widgets/special/reportunitlistviewitem.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/frame.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 
 #include <sstream>

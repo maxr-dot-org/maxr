@@ -20,7 +20,7 @@
 #include "editablecheckbox.h"
 
 #include "output/video/unifonts.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 
 //------------------------------------------------------------------------------
 cEditableCheckBox::cEditableCheckBox (const cBox<cPosition>& area, const std::string& prefix, const std::string& suffix, eUnicodeFontType fontType) :

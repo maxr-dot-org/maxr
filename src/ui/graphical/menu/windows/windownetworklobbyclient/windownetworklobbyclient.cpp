@@ -17,12 +17,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windownetworklobbyclient/windownetworklobbyclient.h"
+#include "windownetworklobbyclient.h"
 
 #include "game/networkaddress.h"
 #include "game/startup/lobbyclient.h"
-#include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/widgets/lineedit.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

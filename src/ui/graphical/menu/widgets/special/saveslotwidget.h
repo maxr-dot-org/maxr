@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_widgets_special_saveslotwidgetH
 #define ui_graphical_menu_widgets_special_saveslotwidgetH
 
-#include "ui/graphical/menu/widgets/clickablewidget.h"
+#include "ui/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"
 
 class cLabel;

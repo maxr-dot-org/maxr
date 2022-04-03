@@ -19,7 +19,7 @@
 
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 
-#include "ui/graphical/menu/widgets/label.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

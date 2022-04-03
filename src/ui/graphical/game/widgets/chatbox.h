@@ -21,9 +21,9 @@
 #define ui_graphical_game_widgets_chatboxH
 
 #include "SDLutility/tosdl.h"
-#include "ui/graphical/menu/widgets/lineedit.h"
 #include "ui/graphical/menu/widgets/listview.h"
-#include "ui/graphical/widget.h"
+#include "ui/widgets/lineedit.h"
+#include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

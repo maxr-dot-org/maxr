@@ -17,41 +17,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/shortcut.h"
+#ifndef ui_widgets_frameH
+#define ui_widgets_frameH
 
-//------------------------------------------------------------------------------
-cShortcut::cShortcut (cKeySequence keySequence_) :
-	keySequence (keySequence_),
-	active (true)
-{}
+#include "ui/widgets/widget.h"
 
-//------------------------------------------------------------------------------
-void cShortcut::activate()
+class cFrame : public cWidget
 {
-	active = true;
-}
+public:
+	cFrame();
+	explicit cFrame (const cBox<cPosition>& area);
 
-//------------------------------------------------------------------------------
-void cShortcut::deactivate()
-{
-	active = false;
-}
+	using cWidget::addChild;
+};
 
-//------------------------------------------------------------------------------
-bool cShortcut::hit (const cKeySequence& currentKeySequence)
-{
-	if (!isActive()) return false;
-
-	if (keySequence.length() > currentKeySequence.length()) return false;
-
-	for (size_t j = 1; j <= keySequence.length(); ++j)
-	{
-		if (!currentKeySequence[currentKeySequence.length() - j].matches (keySequence[keySequence.length() - j]))
-		{
-			return false;
-		}
-	}
-
-	triggered();
-	return true;
-}
+#endif

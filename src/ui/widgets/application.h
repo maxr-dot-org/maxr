@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_applicationH
-#define ui_graphical_applicationH
+#ifndef ui_widgets_applicationH
+#define ui_widgets_applicationH
 
 #include "input/keyboard/keysequence.h"
 #include "input/mouse/mousebuttontype.h"
@@ -149,4 +149,4 @@ WindowType* cApplication::show (std::shared_ptr<WindowType> window)
 	return static_cast<WindowType*> (modalWindows.back().get());
 }
 
-#endif // ui_graphical_applicationH
+#endif // ui_widgets_applicationH

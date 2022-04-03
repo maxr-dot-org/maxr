@@ -25,7 +25,7 @@
 #include "game/data/units/unit.h"
 #include "output/video/video.h"
 #include "ui/graphical/game/widgets/unitdetailshud.h"
-#include "ui/graphical/menu/widgets/label.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

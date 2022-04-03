@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_alignmentH
-#define ui_graphical_alignmentH
+#ifndef ui_widgets_alignmentH
+#define ui_widgets_alignmentH
 
 #include "utility/enumflag.h"
 
@@ -48,4 +48,4 @@ enum class eAlignmentType
 
 using AlignmentFlags = cEnumFlag<eAlignmentType>;
 
-#endif // ui_graphical_alignmentH
+#endif

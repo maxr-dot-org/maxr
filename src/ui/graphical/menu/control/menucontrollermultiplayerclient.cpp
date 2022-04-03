@@ -23,7 +23,7 @@
 #include "game/logic/action/actioninitnewgame.h"
 #include "game/logic/client.h"
 #include "game/startup/gamepreparation.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/menu/control/network/networkgame.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"

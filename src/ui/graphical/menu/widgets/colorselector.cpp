@@ -19,12 +19,12 @@
 
 #include "colorselector.h"
 
-#include <output/video/video.h>
-#include <ui/graphical/application.h>
-#include <ui/graphical/menu/dialogs/dialogcolorpicker.h>
-#include <ui/graphical/menu/widgets/image.h>
-#include <ui/graphical/menu/widgets/pushbutton.h>
-#include <ui/graphical/playercolor.h>
+#include "output/video/video.h"
+#include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/graphical/playercolor.h"
+#include "ui/widgets/application.h"
+#include "ui/widgets/image.h"
 
 //------------------------------------------------------------------------------
 cColorSelector::cColorSelector (const cPosition& pos, const cRgbColor& color) :

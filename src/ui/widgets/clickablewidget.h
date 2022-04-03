@@ -17,10 +17,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_menu_widgets_clickablewidgetH
-#define ui_graphical_menu_widgets_clickablewidgetH
+#ifndef ui_widgets_clickablewidgetH
+#define ui_widgets_clickablewidgetH
 
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <map>
@@ -66,4 +66,4 @@ private:
 	bool& getStartedClickWithin (eMouseButtonType);
 };
 
-#endif // ui_graphical_menu_widgets_clickablewidgetH
+#endif

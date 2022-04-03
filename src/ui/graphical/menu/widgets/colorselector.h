@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_widgets_colorselectorH
 #define ui_graphical_menu_widgets_colorselectorH
 
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 #include "utility/color.h"
 #include "utility/signal/signalconnectionmanager.h"
 

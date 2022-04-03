@@ -17,14 +17,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_widgets_tools_validatorstateH
-#define ui_graphical_widgets_tools_validatorstateH
+#ifndef ui_widgets_validators_validatorH
+#define ui_widgets_validators_validatorH
 
-enum class eValidatorState
+#include "ui/widgets/validators/validatorstate.h"
+
+#include <string>
+
+class cValidator
 {
-	Invalid,
-	Intermediate,
-	Valid
+public:
+	virtual ~cValidator() = default;
+
+	virtual eValidatorState validate (const std::string& text) const = 0;
+	virtual void fixup (std::string& text) const {}
 };
 
-#endif // ui_graphical_widgets_tools_validatorstateH
+#endif

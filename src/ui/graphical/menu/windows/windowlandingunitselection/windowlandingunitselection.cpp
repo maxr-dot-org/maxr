@@ -17,14 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
+#include "windowlandingunitselection.h"
 
 #include "config/workaround/cpp17/clamp.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
 #include "resources/pcx.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/radiogroup.h"
@@ -32,6 +31,7 @@
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitemcargo.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 
 #include <algorithm>

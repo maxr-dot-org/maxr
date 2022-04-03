@@ -21,7 +21,7 @@
 
 #include "game/startup/gamepreparation.h"
 #include "game/startup/lobbyclient.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"

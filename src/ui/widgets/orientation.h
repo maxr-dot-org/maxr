@@ -17,18 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_menu_widgets_frameH
-#define ui_graphical_menu_widgets_frameH
+#ifndef ui_widgets_orientationH
+#define ui_widgets_orientationH
 
-#include "ui/graphical/widget.h"
-
-class cFrame : public cWidget
+enum class eOrientationType
 {
-public:
-	cFrame();
-	explicit cFrame (const cBox<cPosition>& area);
-
-	using cWidget::addChild;
+	Horizontal = 1,
+	Vertical = 2
 };
 
-#endif // ui_graphical_menu_widgets_frameH
+#endif

@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/dialogs/dialogtransfer.h"
+#include "dialogtransfer.h"
 
 #include "SDLutility/drawing.h"
 #include "game/data/base/base.h"
@@ -29,13 +29,13 @@
 #include "resources/buildinguidata.h"
 #include "resources/pcx.h"
 #include "resources/vehicleuidata.h"
-#include "ui/graphical/application.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
-#include "ui/graphical/menu/widgets/image.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/translations.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/application.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

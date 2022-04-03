@@ -21,7 +21,7 @@
 #define ui_graphical_menu_windows_windowunitinfo_windowunitinfoH
 
 #include "game/data/units/unitdata.h"
-#include "ui/graphical/window.h"
+#include "ui/widgets/window.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 class cPlayer;

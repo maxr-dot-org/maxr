@@ -17,37 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_menu_widgets_imageH
-#define ui_graphical_menu_widgets_imageH
+#ifndef ui_widgets_validators_validatorstateH
+#define ui_widgets_validators_validatorstateH
 
-#include "SDLutility/autosurface.h"
-#include "resources/sound.h"
-#include "ui/graphical/menu/widgets/clickablewidget.h"
-#include "utility/signal/signal.h"
-
-class cImage : public cClickableWidget
+enum class eValidatorState
 {
-public:
-	cImage (const cPosition&, SDL_Surface* image = nullptr, cSoundChunk* clickSound = nullptr);
-
-	void setImage (SDL_Surface* image);
-
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
-	bool isAt (const cPosition&) const override;
-
-	cSignal<void()> clicked;
-
-	void disableAtTransparent();
-	void enableAtTransparent();
-
-protected:
-	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
-
-private:
-	AutoSurface image;
-	cSoundChunk* clickSound;
-
-	bool disabledAtTransparent;
+	Invalid,
+	Intermediate,
+	Valid
 };
 
-#endif // ui_graphical_menu_widgets_imageH
+#endif

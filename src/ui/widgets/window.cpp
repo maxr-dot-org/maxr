@@ -17,14 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/window.h"
+#include "window.h"
 
 #include "SDLutility/tosdl.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
 #include "settings.h"
-#include "ui/graphical/application.h"
+#include "ui/widgets/application.h"
 
 #include <cassert>
 

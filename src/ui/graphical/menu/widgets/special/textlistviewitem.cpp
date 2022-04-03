@@ -19,7 +19,7 @@
 
 #include "ui/graphical/menu/widgets/special/textlistviewitem.h"
 
-#include "ui/graphical/menu/widgets/label.h"
+#include "ui/widgets/label.h"
 
 //------------------------------------------------------------------------------
 cTextListViewItem::cTextListViewItem (const std::string& text) :

@@ -17,50 +17,30 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_menu_widgets_labelH
-#define ui_graphical_menu_widgets_labelH
+#ifndef ui_widgets_shortcutH
+#define ui_widgets_shortcutH
 
-#include "output/video/unifonts.h"
-#include "ui/graphical/alignment.h"
-#include "ui/graphical/menu/widgets/clickablewidget.h"
+#include "input/keyboard/keysequence.h"
+#include "utility/signal/signal.h"
 
-#include <string>
-#include <vector>
-
-class cLabel : public cClickableWidget
+class cShortcut
 {
 public:
-	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType = eUnicodeFontType::LatinNormal, AlignmentFlags = toEnumFlag (eAlignmentType::Left) | eAlignmentType::Top);
+	explicit cShortcut (cKeySequence);
 
-	void setText (const std::string& text);
-	const std::string& getText() const;
+	const cKeySequence& getKeySequence() const { return keySequence; }
 
-	void setFont (eUnicodeFontType);
-	void setAlignment (AlignmentFlags);
-	void setWordWrap (bool wordWrap);
+	void activate();
+	void deactivate();
+	bool isActive() const { return active; }
 
-	void resizeToTextHeight();
+	bool hit (const cKeySequence&);
 
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
-	void handleResized (const cPosition& oldSize) override;
-
-	cSignal<void()> clicked;
-
-protected:
-	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
+	cSignal<void()> triggered;
 
 private:
-	void updateDisplayInformation();
-
-private:
-	std::string text;
-	eUnicodeFontType fontType;
-	AlignmentFlags alignment;
-	bool wordWrap;
-
-	std::vector<std::string> drawLines;
-
-	AutoSurface surface;
+	cKeySequence keySequence;
+	bool active = true;
 };
 
-#endif // ui_graphical_menu_widgets_labelH
+#endif // ui_widgets_shortcutH

@@ -17,11 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_windowH
-#define ui_graphical_windowH
+#ifndef ui_widgets_windowH
+#define ui_widgets_windowH
 
 #include "SDLutility/autosurface.h"
-#include "ui/graphical/widget.h"
+#include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"
 
 #include <utility>
@@ -216,4 +216,4 @@ private:
 	bool hasBeenDrawnOnce = false;
 };
 
-#endif // ui_graphical_windowH
+#endif // ui_widgets_windowH

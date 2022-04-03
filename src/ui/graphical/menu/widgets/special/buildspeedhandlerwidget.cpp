@@ -17,11 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/menu/widgets/special/buildspeedhandlerwidget.h"
+#include "buildspeedhandlerwidget.h"
 
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/radiogroup.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 
 #include <cassert>

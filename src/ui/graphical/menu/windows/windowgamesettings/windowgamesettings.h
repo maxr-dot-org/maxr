@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_windows_windowgamesettings_windowgamesettingsH
 #define ui_graphical_menu_windows_windowgamesettings_windowgamesettingsH
 
-#include "ui/graphical/window.h"
+#include "ui/widgets/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
