@@ -19,12 +19,12 @@
 
 #include "ui/graphical/game/control/mousemode/mousemodeselectbuildposition.h"
 
+#include "game/data/gui/unitselection.h"
 #include "game/data/map/mapview.h"
 #include "game/data/units/unit.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionselectbuildposition.h"
-#include "ui/graphical/game/unitselection.h"
 
 //------------------------------------------------------------------------------
 cMouseModeSelectBuildPosition::cMouseModeSelectBuildPosition (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_, sID buildId_) :

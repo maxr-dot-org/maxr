@@ -17,38 +17,41 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_unitlocklistH
-#define ui_graphical_game_unitlocklistH
+#include "gameguistate.h"
 
-#include "utility/signal/signalconnectionmanager.h"
+#include "game/data/gui/unitlocklist.h"
+#include "game/data/gui/unitselection.h"
+#include "game/data/units/unit.h"
 
-#include <utility>
-#include <vector>
-
-class cUnit;
-class cMapFieldView;
-class cPlayer;
-
-class cUnitLockList
+//------------------------------------------------------------------------------
+void cGameGuiState::setSelectedUnits (const cUnitSelection& unitSelection)
 {
-public:
-	cUnitLockList() = default;
+	selectedUnitIds.clear();
+	const auto selectedUnits = unitSelection.getSelectedUnits();
+	for (size_t i = 0; i < selectedUnits.size(); ++i)
+	{
+		selectedUnitIds.push_back (selectedUnits[i]->iID);
+	}
+}
 
-	void setPlayer (const cPlayer*);
+//------------------------------------------------------------------------------
+const std::vector<unsigned int>& cGameGuiState::getSelectedUnitIds() const
+{
+	return selectedUnitIds;
+}
 
-	void toggleLockAt (const cMapFieldView&);
+//------------------------------------------------------------------------------
+void cGameGuiState::setLockedUnits (const cUnitLockList& unitLockList)
+{
+	lockedUnitIds.clear();
+	for (size_t i = 0; i < unitLockList.getLockedUnitsCount(); ++i)
+	{
+		lockedUnitIds.push_back (unitLockList.getLockedUnit (i)->iID);
+	}
+}
 
-	size_t getLockedUnitsCount() const;
-	const cUnit* getLockedUnit (size_t index) const;
-
-	void unlockAll();
-
-	void lockUnit (const cUnit&);
-
-private:
-	std::vector<std::pair<const cUnit*, cSignalConnectionManager>> lockedUnits;
-
-	const cPlayer* player = nullptr;
-};
-
-#endif // ui_graphical_game_unitlocklistH
+//------------------------------------------------------------------------------
+const std::vector<unsigned int>& cGameGuiState::getLockedUnitIds() const
+{
+	return lockedUnitIds;
+}

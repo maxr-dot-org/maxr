@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/unitselection.h"
+#include "unitselection.h"
 
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"

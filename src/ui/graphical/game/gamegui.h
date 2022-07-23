@@ -22,7 +22,7 @@
 
 #include "game/logic/upgradecalculator.h"
 #include "resources/sound.h"
-#include "ui/graphical/game/unitselection.h"
+#include "game/data/gui/unitselection.h"
 #include "ui/widgets/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"

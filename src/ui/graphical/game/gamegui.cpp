@@ -19,6 +19,7 @@
 
 #include "gamegui.h"
 
+#include "game/data/gui/gameguistate.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/report/savedreportchat.h"
@@ -38,7 +39,6 @@
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"
-#include "ui/graphical/game/gameguistate.h"
 #include "ui/graphical/game/hud.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"

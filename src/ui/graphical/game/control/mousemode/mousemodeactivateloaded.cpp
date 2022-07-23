@@ -19,6 +19,7 @@
 
 #include "ui/graphical/game/control/mousemode/mousemodeactivateloaded.h"
 
+#include "game/data/gui/unitselection.h"
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "game/data/units/building.h"
@@ -26,7 +27,6 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionactivateloaded.h"
-#include "ui/graphical/game/unitselection.h"
 
 //------------------------------------------------------------------------------
 cMouseModeActivateLoaded::cMouseModeActivateLoaded (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_, int vehicleToActivateIndex_) :

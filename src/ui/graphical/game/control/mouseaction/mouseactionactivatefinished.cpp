@@ -19,7 +19,7 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseactionactivatefinished.h"
 
-#include "ui/graphical/game/unitselection.h"
+#include "game/data/gui/unitselection.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------

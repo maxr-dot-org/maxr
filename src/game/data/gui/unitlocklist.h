@@ -17,41 +17,38 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "gameguistate.h"
+#ifndef game_data_gui_unitlocklistH
+#define game_data_gui_unitlocklistH
 
-#include "game/data/units/unit.h"
-#include "ui/graphical/game/unitlocklist.h"
-#include "ui/graphical/game/unitselection.h"
+#include "utility/signal/signalconnectionmanager.h"
 
-//------------------------------------------------------------------------------
-void cGameGuiState::setSelectedUnits (const cUnitSelection& unitSelection)
+#include <utility>
+#include <vector>
+
+class cUnit;
+class cMapFieldView;
+class cPlayer;
+
+class cUnitLockList
 {
-	selectedUnitIds.clear();
-	const auto selectedUnits = unitSelection.getSelectedUnits();
-	for (size_t i = 0; i < selectedUnits.size(); ++i)
-	{
-		selectedUnitIds.push_back (selectedUnits[i]->iID);
-	}
-}
+public:
+	cUnitLockList() = default;
 
-//------------------------------------------------------------------------------
-const std::vector<unsigned int>& cGameGuiState::getSelectedUnitIds() const
-{
-	return selectedUnitIds;
-}
+	void setPlayer (const cPlayer*);
 
-//------------------------------------------------------------------------------
-void cGameGuiState::setLockedUnits (const cUnitLockList& unitLockList)
-{
-	lockedUnitIds.clear();
-	for (size_t i = 0; i < unitLockList.getLockedUnitsCount(); ++i)
-	{
-		lockedUnitIds.push_back (unitLockList.getLockedUnit (i)->iID);
-	}
-}
+	void toggleLockAt (const cMapFieldView&);
 
-//------------------------------------------------------------------------------
-const std::vector<unsigned int>& cGameGuiState::getLockedUnitIds() const
-{
-	return lockedUnitIds;
-}
+	size_t getLockedUnitsCount() const;
+	const cUnit* getLockedUnit (size_t index) const;
+
+	void unlockAll();
+
+	void lockUnit (const cUnit&);
+
+private:
+	std::vector<std::pair<const cUnit*, cSignalConnectionManager>> lockedUnits;
+
+	const cPlayer* player = nullptr;
+};
+
+#endif

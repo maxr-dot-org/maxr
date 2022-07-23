@@ -19,6 +19,7 @@
 
 #include "ui/graphical/game/control/mousemode/mousemodedefault.h"
 
+#include "game/data/gui/unitselection.h"
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "game/data/units/building.h"
@@ -34,7 +35,6 @@
 #include "ui/graphical/game/control/mouseaction/mouseactionmove.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionselect.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionsteal.h"
-#include "ui/graphical/game/unitselection.h"
 #include "ui/keys.h"
 
 #include <cassert>

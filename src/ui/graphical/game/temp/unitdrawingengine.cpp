@@ -20,6 +20,8 @@
 #include "ui/graphical/game/temp/unitdrawingengine.h"
 
 #include "SDLutility/drawing.h"
+#include "game/data/gui/gameguistate.h"
+#include "game/data/gui/unitselection.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
@@ -29,8 +31,6 @@
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"
-#include "ui/graphical/game/gameguistate.h"
-#include "ui/graphical/game/unitselection.h"
 #include "utility/box.h"
 #include "utility/listhelpers.h"
 #include "utility/random.h"

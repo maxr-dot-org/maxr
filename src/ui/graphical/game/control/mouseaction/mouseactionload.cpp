@@ -19,8 +19,8 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseactionload.h"
 
+#include "game/data/gui/unitselection.h"
 #include "game/data/units/unit.h"
-#include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------

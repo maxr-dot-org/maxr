@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_gameguistateH
-#define ui_graphical_game_gameguistateH
+#ifndef game_data_gui_gameguistateH
+#define game_data_gui_gameguistateH
 
 #include "game/logic/upgradecalculator.h"
 #include "game/serialization/serialization.h"

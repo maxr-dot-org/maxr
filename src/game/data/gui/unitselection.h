@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_unitselectionH
-#define ui_graphical_game_unitselectionH
+#ifndef game_data_gui_unitselectionH
+#define game_data_gui_unitselectionH
 
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -88,4 +88,4 @@ private:
 	cUnit* getPrevUnit (const cPlayer&, const std::vector<unsigned int>& doneList, cUnit* start) const;
 };
 
-#endif // ui_graphical_game_unitselectionH
+#endif

@@ -20,12 +20,12 @@
 #ifndef ui_graphical_game_widgets_gamemapwidgetH
 #define ui_graphical_game_widgets_gamemapwidgetH
 
+#include "game/data/gui/unitlocklist.h"
+#include "game/data/gui/unitselection.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/upgradecalculator.h"
 #include "ui/graphical/game/control/mousemode/mousemodetype.h"
 #include "ui/graphical/game/temp/unitdrawingengine.h"
-#include "ui/graphical/game/unitlocklist.h"
-#include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitselectionbox.h"
 #include "ui/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"

@@ -19,10 +19,10 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseactionsteal.h"
 
+#include "game/data/gui/unitselection.h"
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "game/data/units/vehicle.h"
-#include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------

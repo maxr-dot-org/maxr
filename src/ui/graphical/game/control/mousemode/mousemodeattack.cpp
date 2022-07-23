@@ -19,6 +19,7 @@
 
 #include "ui/graphical/game/control/mousemode/mousemodeattack.h"
 
+#include "game/data/gui/unitselection.h"
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "game/data/units/building.h"
@@ -27,7 +28,6 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionattack.h"
-#include "ui/graphical/game/unitselection.h"
 
 //------------------------------------------------------------------------------
 cMouseModeAttack::cMouseModeAttack (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :

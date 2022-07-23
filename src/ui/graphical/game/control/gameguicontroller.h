@@ -21,8 +21,9 @@
 #define ui_graphical_game_control_gameguicontrollerH
 
 #include "config/workaround/cpp17/optional.h"
+#include "game/data/gui/gameguistate.h"
+#include "game/data/gui/playerguiinfo.h"
 #include "game/logic/upgradecalculator.h"
-#include "ui/graphical/game/gameguistate.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -62,23 +63,6 @@ enum class eResourceType;
 
 struct sID;
 struct sMiningResource;
-
-struct sPlayerGuiInfo
-{
-	template <typename Archive>
-	void serialize (Archive& archive)
-	{
-		archive & NVP (gameGuiState);
-		archive & serialization::makeNvp ("reports", *reports);
-		archive & NVP (savedPositions);
-		archive & NVP (doneList);
-	}
-
-	cGameGuiState gameGuiState;
-	std::shared_ptr<std::vector<std::unique_ptr<cSavedReport>>> reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
-	std::array<std::optional<cPosition>, 4> savedPositions;
-	std::vector<unsigned int> doneList;
-};
 
 class cGameGuiController
 {
