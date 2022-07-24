@@ -21,13 +21,13 @@
 #define protocol_netmessageH
 
 #include "game/data/freezemode.h"
+#include "game/data/gui/playerguiinfo.h"
 #include "game/data/player/playerbasicdata.h"
 #include "game/data/report/savedreport.h"
 #include "game/logic/gametimer.h"
 #include "game/serialization/binaryarchive.h"
 #include "game/serialization/jsonarchive.h"
 #include "game/serialization/serialization.h"
-#include "ui/graphical/game/control/gameguicontroller.h"
 #include "utility/color.h"
 
 #include <memory>
