@@ -211,11 +211,12 @@ std::vector<cUnit*> cUnitSelection::getSelectedUnits() const
 std::vector<cVehicle*> cUnitSelection::getSelectedVehicles() const
 {
 	std::vector<cVehicle*> result;
-	for (auto it = selectedUnits.begin(); it != selectedUnits.end(); ++it)
+	for (const auto& p : selectedUnits)
 	{
-		if (it->first->isAVehicle())
+		auto* unit = p.first;
+		if (unit->isAVehicle())
 		{
-			result.push_back (static_cast<cVehicle*> (it->first));
+			result.push_back (static_cast<cVehicle*> (unit));
 		}
 	}
 	return result;
@@ -225,11 +226,12 @@ std::vector<cVehicle*> cUnitSelection::getSelectedVehicles() const
 std::vector<cBuilding*> cUnitSelection::getSelectedBuildings() const
 {
 	std::vector<cBuilding*> result;
-	for (auto it = selectedUnits.begin(); it != selectedUnits.end(); ++it)
+	for (const auto& p : selectedUnits)
 	{
-		if (it->first->isABuilding())
+		auto* unit = p.first;
+		if (unit->isABuilding())
 		{
-			result.push_back (static_cast<cBuilding*> (it->first));
+			result.push_back (static_cast<cBuilding*> (unit));
 		}
 	}
 	return result;
