@@ -39,7 +39,6 @@
 #include <string>
 #include <vector>
 
-class cHud;
 class cMapField;
 class cUnit;
 class cPosition;
