@@ -54,16 +54,19 @@ class cSignal;
 class cSignalBase
 {
 public:
-	virtual ~cSignalBase() {}
+	virtual ~cSignalBase() = default;
 	virtual void disconnect (const cSignalConnection& connection) = 0;
 };
 
 class cSignalReference
 {
 public:
-	cSignalReference (cSignalBase& signal_) :
+	explicit cSignalReference (cSignalBase& signal_) :
 		signal (signal_)
 	{}
+
+	cSignalReference (const cSignalReference&) = delete;
+	cSignalReference& operator= (const cSignalReference&) = delete;
 
 	cSignalBase& getSignal()
 	{
