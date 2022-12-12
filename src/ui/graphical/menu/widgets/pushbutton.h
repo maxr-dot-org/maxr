@@ -84,6 +84,8 @@ public:
 	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
 	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
 
+	void setText (const std::string&);
+
 	void lock();
 	void unlock();
 

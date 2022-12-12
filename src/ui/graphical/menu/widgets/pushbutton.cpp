@@ -164,6 +164,12 @@ void cPushButton::setPressed (bool pressed)
 }
 
 //------------------------------------------------------------------------------
+void cPushButton::setText (const std::string& newText)
+{
+	text = newText;
+}
+
+//------------------------------------------------------------------------------
 void cPushButton::lock()
 {
 	isLocked = true;

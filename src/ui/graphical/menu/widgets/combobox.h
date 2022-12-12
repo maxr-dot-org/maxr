@@ -54,6 +54,8 @@ public:
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
+	cSignal<void (const std::string&)> onItemChanged;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
 

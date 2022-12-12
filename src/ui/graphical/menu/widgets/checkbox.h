@@ -79,6 +79,8 @@ public:
 
 	void toggle();
 
+	void setText (const std::string&);
+
 	void lock();
 	void unlock();
 

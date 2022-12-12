@@ -77,6 +77,7 @@ cComboBox::cComboBox (const cBox<cPosition>& area) :
 		if (selectedItem)
 		{
 			lineEdit->setText (selectedItem->getText());
+			onItemChanged (selectedItem->getText());
 		}
 	});
 

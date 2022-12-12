@@ -186,6 +186,12 @@ void cCheckBox::toggle()
 }
 
 //------------------------------------------------------------------------------
+void cCheckBox::setText (const std::string& newText)
+{
+	text = newText;
+}
+
+//------------------------------------------------------------------------------
 void cCheckBox::lock()
 {
 	isLocked = true;
