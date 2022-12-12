@@ -40,7 +40,7 @@ public:
 		PlaneChecked (true),
 		ShipChecked (true),
 		BuildingChecked (true),
-		TNTChecked (false){}
+		TNTChecked (false) {}
 	bool TankChecked;
 	bool PlaneChecked;
 	bool ShipChecked;
@@ -54,6 +54,8 @@ class cWindowUpgrades : public cWindowHangar
 public:
 	explicit cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<cWindowUpgradesFilterState> filterState, std::shared_ptr<const cUnitsData> unitsData);
 
+	void retranslate() override;
+
 	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades() const;
 
 protected:
@@ -62,15 +64,18 @@ protected:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cCheckBox* tankCheckBox;
-	cCheckBox* planeCheckBox;
-	cCheckBox* shipCheckBox;
-	cCheckBox* buildingCheckBox;
-	cCheckBox* tntCheckBox;
+	cLabel* titleLabel = nullptr;
+	cLabel* creditLabel = nullptr;
+
+	cCheckBox* tankCheckBox = nullptr;
+	cCheckBox* planeCheckBox = nullptr;
+	cCheckBox* shipCheckBox = nullptr;
+	cCheckBox* buildingCheckBox = nullptr;
+	cCheckBox* tntCheckBox = nullptr;
 	std::shared_ptr<cWindowUpgradesFilterState> filterState;
 
-	cResourceBar* goldBar;
-	cLabel* goldBarAmountLabel;
+	cResourceBar* goldBar = nullptr;
+	cLabel* goldBarAmountLabel = nullptr;
 
 	static const size_t maxUpgradeButtons = 8;
 

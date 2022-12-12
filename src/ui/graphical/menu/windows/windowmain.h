@@ -26,6 +26,7 @@
 struct SDL_Surface;
 
 class cImage;
+class cLabel;
 
 class cWindowMain : public cWindow
 {
@@ -33,11 +34,18 @@ public:
 	cWindowMain (const std::string& title);
 	~cWindowMain();
 
+	void retranslate() override;
+
+protected:
+	void setTitle (const std::string&);
+
 protected:
 	static const int buttonSpace = 35;
 
 private:
-	cImage* infoImage;
+	cLabel* titleLabel = nullptr;
+	cLabel* creditLabel = nullptr;
+	cImage* infoImage = nullptr;
 
 	cSignalConnectionManager signalConnectionManager;
 

@@ -26,15 +26,18 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-class cUnit;
 class cImage;
 class cLabel;
+class cPushButton;
 class cResourceBar;
+class cUnit;
 
 class cNewDialogTransfer : public cWindow
 {
 public:
 	cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& destinationUnit);
+
+	void retranslate() override;
 
 	int getTransferValue() const;
 
@@ -51,14 +54,17 @@ private:
 	void initUnitImage (cImage& image, const cUnit& unit);
 	void initCargo (int& cargo, int& maxCargo, const cUnit& sourceUnit, const cUnit& destinationUnit);
 
-	cResourceBar* resourceBar;
+	cPushButton* doneButton = nullptr;
+	cPushButton* cancelButton = nullptr;
 
-	cLabel* transferLabel;
+	cResourceBar* resourceBar = nullptr;
 
-	cImage* arrowImage;
+	cLabel* transferLabel = nullptr;
 
-	cLabel* sourceUnitCargoLabel;
-	cLabel* destinationUnitCargoLabel;
+	cImage* arrowImage = nullptr;
+
+	cLabel* sourceUnitCargoLabel = nullptr;
+	cLabel* destinationUnitCargoLabel = nullptr;
 
 	const eResourceType resourceType;
 

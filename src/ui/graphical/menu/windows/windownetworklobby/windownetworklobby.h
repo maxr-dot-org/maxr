@@ -46,6 +46,10 @@ class cWindowNetworkLobby : public cWindow
 public:
 	explicit cWindowNetworkLobby (const std::string title, bool disableIp);
 
+	void retranslate() override;
+
+	void setTitle (const std::string&);
+
 	void bindConnections (cLobbyClient&);
 	void bindConnections (cLobbyServer&);
 
@@ -97,6 +101,8 @@ public:
 protected:
 	cSignalConnectionManager signalConnectionManager;
 
+	cLabel* titleLabel = nullptr;
+	cPushButton* sendButton = nullptr;
 	cImage* mapImage = nullptr;
 	cLabel* mapNameLabel = nullptr;
 
@@ -111,11 +117,17 @@ protected:
 
 	cListView<cLobbyPlayerListViewItem>* playersList = nullptr;
 
+	cLabel* ipLabel = nullptr;
+	cLabel* portLabel = nullptr;
+	cLabel* playerNameLabel = nullptr;
+	cLabel* colorLabel = nullptr;
+
 	cLineEdit* ipLineEdit = nullptr;
 	cLineEdit* portLineEdit = nullptr;
 	cImage* restoreDefaultPortButton = nullptr;
 
 	cPushButton* okButton = nullptr;
+	cPushButton* backButton = nullptr;
 
 protected:
 	std::shared_ptr<cPlayerBasicData> localPlayer;

@@ -23,8 +23,9 @@
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 
 class cImage;
-class cUnitsData;
+class cLabel;
 class cUnit;
+class cUnitsData;
 
 class cReportUnitListViewItem : public cAbstractListViewItem
 {
@@ -34,11 +35,13 @@ public:
 	cUnit& getUnit() const;
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
+	void retranslate() override;
 
 protected:
-	cImage* unitImage;
-
+	cImage* unitImage = nullptr;
+	cLabel* statusLabel = nullptr;
 	cUnit& unit;
+	const cUnitsData& unitsData;
 };
 
 #endif // ui_graphical_menu_widgets_special_reportunitlistviewitemH

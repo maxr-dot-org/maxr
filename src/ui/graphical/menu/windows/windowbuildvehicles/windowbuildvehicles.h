@@ -24,19 +24,22 @@
 
 #include <vector>
 
-class cCheckBox;
-class cBuilding;
-class cMapView;
-class cBuildSpeedHandlerWidget;
-class cUnitListViewItemBuild;
-class cTurnTimeClock;
 class cBuildListItem;
+class cBuildSpeedHandlerWidget;
+class cBuilding;
+class cCheckBox;
+class cLabel;
+class cMapView;
+class cTurnTimeClock;
+class cUnitListViewItemBuild;
 class cUnitsData;
 
 class cWindowBuildVehicles : public cWindowAdvancedHangar<cUnitListViewItemBuild>
 {
 public:
 	cWindowBuildVehicles (const cBuilding& building, const cMapView& map, std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
+
+	void retranslate() override;
 
 	std::vector<sID> getBuildList() const;
 	int getSelectedBuildSpeed() const;
@@ -50,9 +53,10 @@ private:
 
 	const cBuilding& building;
 
-	cBuildSpeedHandlerWidget* speedHandler;
+	cBuildSpeedHandlerWidget* speedHandler = nullptr;
 
-	cCheckBox* repeatCheckBox;
+	cLabel* titleLabel = nullptr;
+	cCheckBox* repeatCheckBox = nullptr;
 
 	void generateSelectionList (const cBuilding& building, const cMapView& map, const cUnitsData& unitsData);
 	void generateBuildList (const cBuilding& building);

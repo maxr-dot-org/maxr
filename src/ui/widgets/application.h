@@ -47,6 +47,8 @@ public:
 
 	void execute();
 
+	void retranslate();
+
 	template <typename WindowType>
 	WindowType* show (std::shared_ptr<WindowType> window);
 

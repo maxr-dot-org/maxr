@@ -63,11 +63,11 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 	auto decreaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (17, 159), ePushButtonType::ArrowLeftSmall));
 	signalConnectionManager.connect (decreaseButton->clicked, [this]() { resourceBar->decrease (1); });
 
-	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (159, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
+	doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (159, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
-	auto cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (71, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal));
+	cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (71, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal));
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
@@ -92,6 +92,15 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 
 	signalConnectionManager.connect (sourceUnit.destroyed, [this]() { closeOnUnitDestruction(); });
 	signalConnectionManager.connect (destinationUnit.destroyed, [this]() { closeOnUnitDestruction(); });
+}
+
+//------------------------------------------------------------------------------
+void cNewDialogTransfer::retranslate()
+{
+	cWindow::retranslate();
+
+	doneButton->setText (lngPack.i18n ("Text~Others~Done"));
+	cancelButton->setText (lngPack.i18n ("Text~Others~Cancel"));
 }
 
 //------------------------------------------------------------------------------

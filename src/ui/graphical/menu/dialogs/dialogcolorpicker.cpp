@@ -113,18 +113,25 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 	greenValueLineEdit->disable();
 	blueValueLineEdit->disable();
 
-	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (200, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), eUnicodeFontType::LatinNormal));
+	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (200, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), eUnicodeFontType::LatinNormal));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { done(); });
 
-	auto cencelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal));
-	cencelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
-	signalConnectionManager.connect (cencelButton->clicked, [this]() { canceled(); });
+	cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal));
+	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
+	signalConnectionManager.connect (cancelButton->clicked, [this]() { canceled(); });
 }
 
 //------------------------------------------------------------------------------
 cDialogColorPicker::~cDialogColorPicker()
 {}
+
+//------------------------------------------------------------------------------
+void cDialogColorPicker::retranslate()
+{
+	okButton->setText (lngPack.i18n ("Text~Others~OK"));
+	cancelButton->setText (lngPack.i18n ("Text~Others~Cancel"));
+}
 
 //------------------------------------------------------------------------------
 cRgbColor cDialogColorPicker::getSelectedColor() const

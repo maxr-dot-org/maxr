@@ -51,6 +51,7 @@ public:
 	const std::string& getUnitName() const;
 
 	bool isAt (const cPosition&) const override;
+	void retranslate() override;
 
 	cSignal<void()> unitRenameTriggered;
 
@@ -63,6 +64,7 @@ private:
 	cSignalConnectionManager unitSignalConnectionManager;
 
 	const cUnit* activeUnit = nullptr;
+	const cUnitsData* unitsData = nullptr;
 	const cPlayer* player = nullptr;
 };
 

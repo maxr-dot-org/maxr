@@ -42,7 +42,7 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), unitsData, *building_.getOwner()),
 	building (building_)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10))));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
@@ -73,6 +73,15 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 	repeatCheckBox->setChecked (building.getRepeatBuild());
 
 	signalConnectionManager.connect (building.destroyed, [this]() { closeOnUnitDestruction(); });
+}
+
+//------------------------------------------------------------------------------
+void cWindowBuildVehicles::retranslate()
+{
+	cWindowAdvancedHangar<cUnitListViewItemBuild>::retranslate();
+
+	titleLabel->setText (lngPack.i18n ("Text~Title~Build_Factory"));
+	repeatCheckBox->setText (lngPack.i18n ("Text~Comp~Repeat"));
 }
 
 //------------------------------------------------------------------------------

@@ -21,11 +21,11 @@
 
 #include "game/data/units/unit.h"
 #include "resources/pcx.h"
-#include "ui/widgets/application.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/protectionglass.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/application.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ cDialogSelfDestruction::cDialogSelfDestruction (const cUnit& unit, std::shared_p
 	destroyButton->lock();
 	signalConnectionManager.connect (destroyButton->clicked, [this]() { triggeredDestruction(); });
 
-	auto cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (88, 46), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal));
+	cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (88, 46), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal));
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
@@ -54,6 +54,15 @@ cDialogSelfDestruction::cDialogSelfDestruction (const cUnit& unit, std::shared_p
 //------------------------------------------------------------------------------
 cDialogSelfDestruction::~cDialogSelfDestruction()
 {}
+
+//------------------------------------------------------------------------------
+void cDialogSelfDestruction::retranslate()
+{
+	cWindow::retranslate();
+
+	armButton->setText (lngPack.i18n ("Text~Others~Hot"));
+	cancelButton->setText (lngPack.i18n ("Text~Others~Cancel"));
+}
 
 //------------------------------------------------------------------------------
 void cDialogSelfDestruction::armcClicked()

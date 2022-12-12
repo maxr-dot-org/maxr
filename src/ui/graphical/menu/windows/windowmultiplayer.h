@@ -23,19 +23,30 @@
 #include "ui/graphical/menu/windows/windowmain.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+class cPushButton;
+
 class cWindowMultiPlayer : public cWindowMain
 {
 public:
 	cWindowMultiPlayer();
 
-private:
-	cSignalConnectionManager signalConnectionManager;
+	void retranslate() override;
 
+private:
 	void tcpHostClicked();
 	void tcpClientClicked();
 	void newHotSeatClicked();
 	void loadHotSeatClicked();
 	void backClicked();
+
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	cPushButton* hostButton = nullptr;
+	cPushButton* clientButton = nullptr;
+	cPushButton* newHotSeatButton = nullptr;
+	cPushButton* loadHotSeatButton = nullptr;
+	cPushButton* backButton = nullptr;
 };
 
 #endif

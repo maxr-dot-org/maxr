@@ -26,6 +26,15 @@
 cWindowNetworkLobbyHost::cWindowNetworkLobbyHost() :
 	cWindowNetworkLobby (lngPack.i18n ("Text~Others~TCPIP_Host"), true)
 {
-	auto startButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Host_Start")));
+	startButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Host_Start")));
 	signalConnectionManager.connect (startButton->clicked, [this]() { triggeredStartHost(); });
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobbyHost::retranslate()
+{
+	cWindowNetworkLobby::retranslate();
+
+	setTitle (lngPack.i18n ("Text~Others~TCPIP_Host"));
+	startButton->setText (lngPack.i18n ("Text~Others~Host_Start"));
 }

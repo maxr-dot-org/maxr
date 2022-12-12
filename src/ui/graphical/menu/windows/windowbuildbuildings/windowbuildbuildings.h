@@ -32,6 +32,8 @@ class cWindowBuildBuildings : public cWindowHangar
 public:
 	cWindowBuildBuildings (const cVehicle& vehicle, std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::shared_ptr<const cUnitsData> unitsData);
 
+	void retranslate() override;
+
 	const sID* getSelectedUnitId() const;
 	int getSelectedBuildSpeed() const;
 
@@ -46,6 +48,8 @@ private:
 	const cVehicle& vehicle;
 
 	cBuildSpeedHandlerWidget* speedHandler;
+	cLabel* titleLabel = nullptr;
+	cPushButton* pathButton = nullptr;
 
 	void generateSelectionList (const cVehicle& vehicle, const cUnitsData& unitsData);
 

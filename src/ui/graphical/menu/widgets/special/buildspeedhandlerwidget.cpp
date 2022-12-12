@@ -34,8 +34,7 @@ cBuildSpeedHandlerWidget::cBuildSpeedHandlerWidget (const cPosition& position) :
 	auto speedGroup = addChild (std::make_unique<cRadioGroup>());
 	for (size_t i = 0; i < elementsCount; ++i)
 	{
-		int factor = i + 1;
-		if (i == 2) factor = 4;
+		const auto factor = 1 << i;
 		turnLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (80, 5 + 25 * i), getPosition() + cPosition (80 + 35, 5 + 25 * i + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 		costLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (120, 5 + 25 * i), getPosition() + cPosition (120 + 35, 5 + 25 * i + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 		buttons[i] = speedGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (0, 25 * i), lngPack.i18n ("Text~Others~Build_7") + " x" + std::to_string (factor), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
@@ -46,6 +45,16 @@ cBuildSpeedHandlerWidget::cBuildSpeedHandlerWidget (const cPosition& position) :
 
 	area.add (speedGroup->getArea());
 	resize (area.getSize());
+}
+
+//------------------------------------------------------------------------------
+void cBuildSpeedHandlerWidget::retranslate()
+{
+	for (size_t i = 0; i != elementsCount; ++i)
+	{
+		const auto factor = 1 << i;
+		buttons[i]->setText (lngPack.i18n ("Text~Others~Build_7") + " x" + std::to_string (factor));
+	}
 }
 
 //------------------------------------------------------------------------------

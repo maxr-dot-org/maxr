@@ -389,6 +389,15 @@ bool cWidget::hitShortcuts (const cKeySequence& keySequence)
 }
 
 //------------------------------------------------------------------------------
+void cWidget::retranslate()
+{
+	for (auto& child : children)
+	{
+		child->retranslate();
+	}
+}
+
+//------------------------------------------------------------------------------
 void cWidget::releaseFocusRecursive (cApplication& application)
 {
 	if (application.hasKeyFocus (*this)) application.releaseKeyFocus (*this);

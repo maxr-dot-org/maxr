@@ -24,17 +24,24 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+class cPushButton;
+
 class cDialogYesNo : public cWindow
 {
 public:
 	cDialogYesNo (const std::string& text);
 	~cDialogYesNo();
 
+	void retranslate() override;
+
 	cSignal<void()> yesClicked;
 	cSignal<void()> noClicked;
 
 private:
 	cSignalConnectionManager signalConnectionManager;
+
+	cPushButton* yesButton = nullptr;
+	cPushButton* noButton = nullptr;
 };
 
 #endif // ui_graphical_menu_dialogs_dialogyesnoH

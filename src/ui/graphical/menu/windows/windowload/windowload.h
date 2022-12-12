@@ -28,6 +28,7 @@
 #include <functional>
 #include <vector>
 
+class cLabel;
 class cPushButton;
 class cSaveGameInfo;
 class cSaveSlotWidget;
@@ -38,6 +39,8 @@ class cWindowLoad : public cWindow
 public:
 	explicit cWindowLoad (std::shared_ptr<const cTurnTimeClock> = nullptr, std::function<std::vector<cSaveGameInfo>()> = {});
 	~cWindowLoad();
+
+	void retranslate() override;
 
 	void update();
 
@@ -72,7 +75,9 @@ private:
 
 	cSignalConnectionManager signalConnectionManager;
 
-	cPushButton* loadButton;
+	cLabel* titleLabel = nullptr;
+	cPushButton* loadButton = nullptr;
+	cPushButton* backButton = nullptr;
 
 	std::array<cSaveSlotWidget*, rows * columns> saveSlots;
 

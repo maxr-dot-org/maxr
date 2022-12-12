@@ -26,16 +26,19 @@
 
 #include <array>
 
+class cClanData;
 class cImage;
 class cLabel;
+class cPushButton;
 class cUnitsData;
-class cClanData;
 
 class cWindowClanSelection : public cWindow
 {
 public:
 	cWindowClanSelection (std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData);
 	~cWindowClanSelection();
+
+	void retranslate() override;
 
 	cSignal<void()> done;
 	cSignal<void()> canceled;
@@ -52,9 +55,13 @@ private:
 	std::array<cImage*, clanCount> clanImages;
 	std::array<cLabel*, clanCount> clanTitles;
 
-	cLabel* clanDescription1;
-	cLabel* clanDescription2;
-	cLabel* clanShortDescription;
+	cLabel* titleLabel = nullptr;
+	cPushButton* okButton = nullptr;
+	cPushButton* backButton = nullptr;
+
+	cLabel* clanDescription1 = nullptr;
+	cLabel* clanDescription2 = nullptr;
+	cLabel* clanShortDescription = nullptr;
 
 	std::shared_ptr<const cUnitsData> unitsData;
 	std::shared_ptr<const cClanData> clanData;

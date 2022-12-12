@@ -77,9 +77,9 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 			onCommandEntered (message);
 		});
 
-		auto toggleChatBoxButton = addChild (std::make_unique<cCheckBox> (cPosition (35, hudImage->getEndPosition().y() - 65), lngPack.i18n ("Text~Others~Chat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+		toggleChatBoxButton = addChild (std::make_unique<cCheckBox> (cPosition (35, hudImage->getEndPosition().y() - 65), lngPack.i18n ("Text~Others~Chat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 		toggleChatBoxButton->setChecked (true);
-		signalConnectionManager.connect (toggleChatBoxButton->toggled, [this, toggleChatBoxButton]() {
+		signalConnectionManager.connect (toggleChatBoxButton->toggled, [this]() {
 			if (toggleChatBoxButton->isChecked())
 			{
 				chatBox->enable();
@@ -105,6 +105,18 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 //------------------------------------------------------------------------------
 cWindowLandingPositionSelection::~cWindowLandingPositionSelection()
 {}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::retranslate()
+{
+	cWindow::retranslate();
+
+	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+	if (toggleChatBoxButton)
+	{
+		toggleChatBoxButton->setText (lngPack.i18n ("Text~Others~Chat"));
+	}
+}
 
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::applyReselectionState (eLandingPositionState state)

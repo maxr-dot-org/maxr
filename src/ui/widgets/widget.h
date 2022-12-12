@@ -355,6 +355,11 @@ public:
 	 */
 	virtual bool hitShortcuts (const cKeySequence& keySequence);
 
+	/**
+	 * Called to retranslate to current language.
+	 */
+	virtual void retranslate();
+
 protected:
 	/**
 	 * Adds a new child

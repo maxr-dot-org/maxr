@@ -22,11 +22,11 @@
 #include "game/data/player/clans.h"
 #include "resources/pcx.h"
 #include "resources/uidata.h"
-#include "ui/widgets/image.h"
-#include "ui/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/translations.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/label.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 	clanData (clanData),
 	selectedClan (0)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	//
 	// Clan Images
@@ -78,10 +78,10 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 	//
 	// Buttons
 	//
-	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
+	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
 	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
-	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
+	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	updateClanDescription();
@@ -90,6 +90,16 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 //------------------------------------------------------------------------------
 cWindowClanSelection::~cWindowClanSelection()
 {}
+
+//------------------------------------------------------------------------------
+void cWindowClanSelection::retranslate()
+{
+	cWindow::retranslate();
+
+	titleLabel->setText (lngPack.i18n ("Text~Title~Choose_Clan"));
+	okButton->setText (lngPack.i18n ("Text~Others~OK"));
+	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+}
 
 //------------------------------------------------------------------------------
 unsigned int cWindowClanSelection::getSelectedClan() const

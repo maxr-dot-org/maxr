@@ -23,18 +23,27 @@
 #include "ui/graphical/menu/windows/windowmain.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+class cPushButton;
+
 class cWindowSinglePlayer : public cWindowMain
 {
 public:
 	cWindowSinglePlayer();
 	~cWindowSinglePlayer();
 
-private:
-	cSignalConnectionManager signalConnectionManager;
+	void retranslate() override;
 
+private:
 	void newGameClicked();
 	void loadGameClicked();
 	void backClicked();
+
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	cPushButton* newGameButton = nullptr;
+	cPushButton* loadGameButton = nullptr;
+	cPushButton* backButton = nullptr;
 };
 
 #endif // ui_graphical_menu_windows_windowsingleplayerH

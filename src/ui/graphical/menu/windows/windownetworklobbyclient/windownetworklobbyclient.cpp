@@ -31,12 +31,21 @@ cWindowNetworkLobbyClient::cWindowNetworkLobbyClient() :
 {
 	setIsHost (false);
 
-	auto connectButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Connect")));
+	connectButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Connect")));
 	signalConnectionManager.connect (connectButton->clicked, [this]() { triggeredConnect(); });
 
 	signalConnectionManager.connect (ipLineEdit->returnPressed, [this]() {
 		triggeredConnect();
 	});
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobbyClient::retranslate()
+{
+	cWindowNetworkLobby::retranslate();
+	setTitle (lngPack.i18n ("Text~Others~TCPIP_Client"));
+
+	connectButton->setText (lngPack.i18n ("Text~Title~Connect"));
 }
 
 //------------------------------------------------------------------------------

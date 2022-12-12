@@ -23,11 +23,13 @@
 #include "ui/widgets/window.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-class cSlider;
-class cLineEdit;
 class cCheckBox;
 class cColorSelector;
 class cComboBox;
+class cLabel;
+class cLineEdit;
+class cPushButton;
+class cSlider;
 
 class cDialogPreferences : public cWindow
 {
@@ -35,8 +37,24 @@ public:
 	cDialogPreferences();
 	~cDialogPreferences();
 
+	void retranslate() override;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
+
+	cLabel* titleLabel = nullptr;
+	cLabel* volumeLabel = nullptr;
+	cLabel* musicLabel = nullptr;
+	cLabel* effectsLabel = nullptr;
+	cLabel* voicesLabel = nullptr;
+	cLabel* playerNameLabel = nullptr;
+	cLabel* colorLabel = nullptr;
+	cLabel* scrollSpeedLabel = nullptr;
+	cLabel* languageLabel = nullptr;
+	cLabel* resolutionLabel = nullptr;
+
+	cPushButton* doneButton = nullptr;
+	cPushButton* cancelButton = nullptr;
 
 	cSlider* musicVolumeSlider = nullptr;
 	cSlider* effectsVolumeSlider = nullptr;
@@ -66,6 +84,8 @@ private:
 
 	cComboBox* languagesComboBox = nullptr;
 	cComboBox* resolutionsComboBox = nullptr;
+
+	std::string storedLanguage;
 
 	int storedMusicVolume;
 	int storedEffectsVolume;

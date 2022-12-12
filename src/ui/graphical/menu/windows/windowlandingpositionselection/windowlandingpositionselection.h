@@ -29,6 +29,7 @@
 
 class cAnimationTimer;
 class cChatBoxLandingPlayerListViewItem;
+class cCheckBox;
 class cImage;
 class cLabel;
 class cLandingPositionSelectionMap;
@@ -50,6 +51,8 @@ class cWindowLandingPositionSelection : public cWindow
 public:
 	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap>, bool fixedBridgeHead, const std::vector<sLandingUnit>&, std::shared_ptr<const cUnitsData>, bool withChatBox);
 	~cWindowLandingPositionSelection();
+
+	void retranslate() override;
 
 	void applyReselectionState (eLandingPositionState);
 
@@ -94,6 +97,7 @@ private:
 	bool selectionAllowed = true;
 	eLandingPositionState reselectionState = eLandingPositionState::Unknown;
 
+	cCheckBox* toggleChatBoxButton = nullptr;
 	cPushButton* backButton = nullptr;
 	cLabel* infoLabel = nullptr;
 	cImage* circlesImage = nullptr;

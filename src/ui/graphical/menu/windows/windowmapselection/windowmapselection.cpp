@@ -37,7 +37,7 @@
 cWindowMapSelection::cWindowMapSelection() :
 	cWindow (LoadPCX (GFXOD_PLANET_SELECT))
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Planet"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Planet"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	//
 	// Map Images
@@ -68,13 +68,22 @@ cWindowMapSelection::cWindowMapSelection() :
 	okButton->lock();
 	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
-	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
+	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	loadMaps();
 	updateMaps();
 
 	updateUpDownLocked();
+}
+
+//------------------------------------------------------------------------------
+void cWindowMapSelection::retranslate()
+{
+	cWindow::retranslate();
+	titleLabel->setText (lngPack.i18n ("Text~Title~Choose_Planet"));
+	okButton->setText (lngPack.i18n ("Text~Others~OK"));
+	backButton->setText (lngPack.i18n ("Text~Others~Back"));
 }
 
 //------------------------------------------------------------------------------

@@ -34,6 +34,8 @@ class cBuildSpeedHandlerWidget : public cWidget
 public:
 	cBuildSpeedHandlerWidget (const cPosition&);
 
+	void retranslate() override;
+
 	void setValues (const std::array<int, elementsCount>& turns, const std::array<int, elementsCount>& costs);
 
 	void setBuildSpeedIndex (size_t speedIndex);

@@ -24,7 +24,9 @@
 #include "ui/widgets/window.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+class cLabel;
 class cPlayer;
+class cPushButton;
 class cUnitsData;
 
 class cWindowUnitInfo : public cWindow
@@ -32,8 +34,13 @@ class cWindowUnitInfo : public cWindow
 public:
 	cWindowUnitInfo (const cDynamicUnitData&, const cPlayer* owner, const cUnitsData&);
 
+	void retranslate() override;
+
 private:
 	cSignalConnectionManager signalConnectionManager;
+
+	cLabel* titleLabel = nullptr;
+	cPushButton* okButton = nullptr;
 };
 
 #endif // ui_graphical_menu_windows_windowunitinfo_windowunitinfoH

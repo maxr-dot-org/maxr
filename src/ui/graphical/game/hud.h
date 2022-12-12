@@ -52,6 +52,8 @@ public:
 
 	cHud (std::shared_ptr<cAnimationTimer> animationTimer);
 
+	void retranslate() override;
+
 	void setPlayer (std::shared_ptr<const cPlayer>);
 	void setTurnClock (std::shared_ptr<const cTurnCounter>);
 	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock>);
@@ -174,6 +176,8 @@ private:
 	cSignalConnectionManager turnClockSignalConnectionManager;
 
 	cPushButton* endButton = nullptr;
+	cPushButton* preferencesButton = nullptr;
+	cPushButton* filesButton = nullptr;
 
 	cSlider* zoomSlider = nullptr;
 
@@ -188,6 +192,9 @@ private:
 	cCheckBox* fogButton = nullptr;
 	cCheckBox* lockButton = nullptr;
 	cCheckBox* chatButton = nullptr;
+
+	cPushButton* reportsButton = nullptr;
+	cPushButton* doneButton = nullptr;
 
 	cShortcut* surveyShortcut = nullptr;
 	cShortcut* hitsShortcut = nullptr;

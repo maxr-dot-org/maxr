@@ -58,6 +58,16 @@ cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsD
 }
 
 //------------------------------------------------------------------------------
+void cWindowHangar::retranslate()
+{
+	cWindow::retranslate();
+
+	infoTextCheckBox->setText (lngPack.i18n ("Text~Comp~Description"));
+	okButton->setText (lngPack.i18n ("Text~Others~Done"));
+	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+}
+
+//------------------------------------------------------------------------------
 void cWindowHangar::initialize()
 {
 	infoImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (11, 13)));

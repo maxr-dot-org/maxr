@@ -35,14 +35,17 @@ public:
 	cDialogSelfDestruction (const cUnit& unit, std::shared_ptr<cAnimationTimer> animationTimer);
 	~cDialogSelfDestruction();
 
+	void retranslate() override;
+
 	cSignal<void()> triggeredDestruction;
 
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cPushButton* armButton;
-	cPushButton* destroyButton;
-	cProtectionGlass* protectionGlass;
+	cPushButton* armButton = nullptr;
+	cPushButton* destroyButton = nullptr;
+	cPushButton* cancelButton = nullptr;
+	cProtectionGlass* protectionGlass = nullptr;
 
 	void armcClicked();
 

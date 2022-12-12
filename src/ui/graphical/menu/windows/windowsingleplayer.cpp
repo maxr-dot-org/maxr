@@ -49,19 +49,30 @@
 cWindowSinglePlayer::cWindowSinglePlayer() :
 	cWindowMain (lngPack.i18n ("Text~Others~Single_Player"))
 {
-	auto newGameButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_New")));
+	newGameButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_New")));
 	signalConnectionManager.connect (newGameButton->clicked, [this]() { newGameClicked(); });
 
-	auto loadGameButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_Load")));
+	loadGameButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_Load")));
 	signalConnectionManager.connect (loadGameButton->clicked, [this]() { loadGameClicked(); });
 
-	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back")));
+	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 }
 
 //------------------------------------------------------------------------------
 cWindowSinglePlayer::~cWindowSinglePlayer()
 {}
+
+//------------------------------------------------------------------------------
+void cWindowSinglePlayer::retranslate()
+{
+	cWindowMain::retranslate();
+	setTitle (lngPack.i18n ("Text~Others~Single_Player"));
+
+	newGameButton->setText (lngPack.i18n ("Text~Others~Game_New"));
+	loadGameButton->setText (lngPack.i18n ("Text~Others~Game_Load"));
+	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+}
 
 //------------------------------------------------------------------------------
 void cWindowSinglePlayer::newGameClicked()

@@ -45,12 +45,12 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, s
 	selectedSaveNumber (-1),
 	saveGamesGetter (saveGamesGetter)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 12), getPosition() + cPosition (getArea().getMaxCorner().x(), 12 + 10)), lngPack.i18n ("Text~Title~Load"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 12), getPosition() + cPosition (getArea().getMaxCorner().x(), 12 + 10)), lngPack.i18n ("Text~Title~Load"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (525, 16), cPosition (525 + 60, 16 + 10))));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
-	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (353, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Back")));
+	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (353, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, [this]() { close(); });
 
 	loadButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (514, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Load")));
@@ -79,6 +79,16 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, s
 //------------------------------------------------------------------------------
 cWindowLoad::~cWindowLoad()
 {
+}
+
+//------------------------------------------------------------------------------
+void cWindowLoad::retranslate()
+{
+	cWindow::retranslate();
+
+	titleLabel->setText (lngPack.i18n ("Text~Title~Load"));
+	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+	loadButton->setText (lngPack.i18n ("Text~Others~Load"));
 }
 
 //------------------------------------------------------------------------------

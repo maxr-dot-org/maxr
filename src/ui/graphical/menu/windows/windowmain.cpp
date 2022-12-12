@@ -38,9 +38,9 @@
 cWindowMain::cWindowMain (const std::string& title) :
 	cWindow (LoadPCX (GFXOD_MAIN))
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 147), getPosition() + cPosition (getArea().getMaxCorner().x(), 157)), title, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 147), getPosition() + cPosition (getArea().getMaxCorner().x(), 157)), title, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 465), getPosition() + cPosition (getArea().getMaxCorner().x(), 475)), lngPack.i18n ("Text~Main~Credits_Reloaded") + " " + PACKAGE_VERSION, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	creditLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 465), getPosition() + cPosition (getArea().getMaxCorner().x(), 475)), lngPack.i18n ("Text~Main~Credits_Reloaded") + " " + PACKAGE_VERSION, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	infoImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (16, 182), getRandomInfoImage(), &SoundData.SNDHudButton));
 	signalConnectionManager.connect (infoImage->clicked, [this]() { infoImageClicked(); });
@@ -49,6 +49,18 @@ cWindowMain::cWindowMain (const std::string& title) :
 //------------------------------------------------------------------------------
 cWindowMain::~cWindowMain()
 {}
+
+//------------------------------------------------------------------------------
+void cWindowMain::retranslate()
+{
+	creditLabel->setText (lngPack.i18n ("Text~Main~Credits_Reloaded") + " " + PACKAGE_VERSION);
+}
+
+//------------------------------------------------------------------------------
+void cWindowMain::setTitle (const std::string& title)
+{
+	titleLabel->setText (title);
+}
 
 //------------------------------------------------------------------------------
 void cWindowMain::infoImageClicked()

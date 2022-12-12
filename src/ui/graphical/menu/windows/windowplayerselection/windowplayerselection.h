@@ -28,6 +28,7 @@
 #include <array>
 
 class cImage;
+class cLabel;
 class cPushButton;
 
 enum class ePlayerType
@@ -44,6 +45,8 @@ class cWindowPlayerSelection : public cWindow
 public:
 	cWindowPlayerSelection();
 
+	void retranslate() override;
+
 	const std::array<ePlayerType, maxPlayers>& getPlayerTypes() const;
 
 	cSignal<void()> done;
@@ -51,7 +54,14 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cPushButton* okButton;
+	cLabel* titleLabel = nullptr;
+	cLabel* teamLabel = nullptr;
+	cLabel* humanLabel = nullptr;
+	cLabel* computerLabel = nullptr;
+	cLabel* nobodyLabel = nullptr;
+
+	cPushButton* okButton = nullptr;
+	cPushButton* backButton = nullptr;
 
 	std::array<ePlayerType, maxPlayers> playerTypes;
 

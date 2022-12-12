@@ -51,9 +51,9 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	endButton->addClickShortcut (KeysList.keyEndTurn);
 	signalConnectionManager.connect (endButton->clicked, [this]() { endClicked(); });
 
-	auto preferencesButton = addChild (std::make_unique<cPushButton> (cPosition (86, 4), ePushButtonType::HudPreferences, lngPack.i18n ("Text~Others~Settings"), eUnicodeFontType::LatinSmallWhite));
+	preferencesButton = addChild (std::make_unique<cPushButton> (cPosition (86, 4), ePushButtonType::HudPreferences, lngPack.i18n ("Text~Others~Settings"), eUnicodeFontType::LatinSmallWhite));
 	signalConnectionManager.connect (preferencesButton->clicked, [this]() { preferencesClicked(); });
-	auto filesButton = addChild (std::make_unique<cPushButton> (cPosition (17, 3), ePushButtonType::HudFiles, lngPack.i18n ("Text~Others~Files"), eUnicodeFontType::LatinSmallWhite));
+	filesButton = addChild (std::make_unique<cPushButton> (cPosition (17, 3), ePushButtonType::HudFiles, lngPack.i18n ("Text~Others~Files"), eUnicodeFontType::LatinSmallWhite));
 	signalConnectionManager.connect (filesButton->clicked, [this]() { filesClicked(); });
 
 	surveyButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296), lngPack.i18n ("Text~Others~Survey"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_00, false, &SoundData.SNDHudSwitch));
@@ -106,7 +106,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	centerButton->addClickShortcut (KeysList.keyCenterUnit);
 	signalConnectionManager.connect (centerButton->clicked, [this]() { centerClicked(); });
 
-	auto reportsButton = addChild (std::make_unique<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Text~Others~Log")));
+	reportsButton = addChild (std::make_unique<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Text~Others~Log")));
 	signalConnectionManager.connect (reportsButton->clicked, [this]() { reportsClicked(); });
 	chatButton = addChild (std::make_unique<cCheckBox> (cPosition (51, 252), lngPack.i18n ("Text~Others~Chat"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudChat));
 	signalConnectionManager.connect (chatButton->toggled, [this]() { chatToggled(); });
@@ -117,7 +117,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	auto prevButton = addChild (std::make_unique<cPushButton> (cPosition (60, 227), ePushButtonType::HudPrev, "<<"));
 	prevButton->addClickShortcut (KeysList.keyUnitPrev);
 	signalConnectionManager.connect (prevButton->clicked, [this]() { prevClicked(); });
-	auto doneButton = addChild (std::make_unique<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed_4")));
+	doneButton = addChild (std::make_unique<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed_4")));
 	doneButton->addClickShortcut (KeysList.keyUnitDone);
 	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
@@ -154,6 +154,28 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 			triggeredRenameUnit (*unitRenameWidget->getUnit(), unitRenameWidget->getUnitName());
 		}
 	});
+}
+
+//------------------------------------------------------------------------------
+void cHud::retranslate()
+{
+	cWidget::retranslate();
+
+	endButton->setText (lngPack.i18n ("Text~Others~End"));
+	preferencesButton->setText (lngPack.i18n ("Text~Others~Settings"));
+	filesButton->setText (lngPack.i18n ("Text~Others~Files"));
+	surveyButton->setText (lngPack.i18n ("Text~Others~Survey"));
+	hitsButton->setText (lngPack.i18n ("Text~Others~Hitpoints_7"));
+	scanButton->setText (lngPack.i18n ("Text~Others~Scan"));
+	statusButton->setText (lngPack.i18n ("Text~Others~Status"));
+	ammoButton->setText (lngPack.i18n ("Text~Others~Ammo"));
+	gridButton->setText (lngPack.i18n ("Text~Others~Grid"));
+	colorButton->setText (lngPack.i18n ("Text~Others~Color"));
+	rangeButton->setText (lngPack.i18n ("Text~Others~Range"));
+	fogButton->setText (lngPack.i18n ("Text~Others~Fog"));
+	reportsButton->setText (lngPack.i18n ("Text~Others~Log"));
+	chatButton->setText (lngPack.i18n ("Text~Others~Chat"));
+	doneButton->setText (lngPack.i18n ("Text~Others~Proceed_4"));
 }
 
 //------------------------------------------------------------------------------

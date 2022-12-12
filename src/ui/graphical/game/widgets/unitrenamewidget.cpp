@@ -20,10 +20,10 @@
 #include "ui/graphical/game/widgets/unitrenamewidget.h"
 
 #include "game/data/units/unit.h"
+#include "ui/translations.h"
 #include "ui/widgets/application.h"
 #include "ui/widgets/label.h"
 #include "ui/widgets/lineedit.h"
-#include "ui/translations.h"
 
 //------------------------------------------------------------------------------
 cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
@@ -65,6 +65,7 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 void cUnitRenameWidget::setUnit (const cUnit* unit, const cUnitsData& unitsData)
 {
 	activeUnit = unit;
+	this->unitsData = &unitsData;
 	unitSignalConnectionManager.disconnectAll();
 
 	if (unit)
@@ -126,7 +127,19 @@ const std::string& cUnitRenameWidget::getUnitName() const
 	return selectedUnitNameEdit->getText();
 }
 
+//------------------------------------------------------------------------------
 bool cUnitRenameWidget::isAt (const cPosition& position) const
 {
 	return selectedUnitNameEdit->isAt (position);
+}
+
+//------------------------------------------------------------------------------
+void cUnitRenameWidget::retranslate()
+{
+	cWidget::retranslate();
+
+	if (activeUnit && unitsData)
+	{
+		selectedUnitStatusLabel->setText (getStatusStr (*activeUnit, player, *unitsData));
+	}
 }

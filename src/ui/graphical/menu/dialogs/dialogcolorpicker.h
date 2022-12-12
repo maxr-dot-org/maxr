@@ -24,17 +24,19 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-class cRgbColorPicker;
 class cImage;
 class cLineEdit;
-
+class cPushButton;
 class cRgbColor;
+class cRgbColorPicker;
 
 class cDialogColorPicker : public cWindow
 {
 public:
 	explicit cDialogColorPicker (const cRgbColor& color, eWindowBackgrounds backgroundType = eWindowBackgrounds::Alpha);
 	~cDialogColorPicker();
+
+	void retranslate() override;
 
 	cRgbColor getSelectedColor() const;
 
@@ -44,12 +46,15 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cRgbColorPicker* colorPicker;
-	cImage* selectedColorImage;
+	cPushButton* okButton = nullptr;
+	cPushButton* cancelButton = nullptr;
 
-	cLineEdit* redValueLineEdit;
-	cLineEdit* greenValueLineEdit;
-	cLineEdit* blueValueLineEdit;
+	cRgbColorPicker* colorPicker = nullptr;
+	cImage* selectedColorImage = nullptr;
+
+	cLineEdit* redValueLineEdit = nullptr;
+	cLineEdit* greenValueLineEdit = nullptr;
+	cLineEdit* blueValueLineEdit = nullptr;
 
 	AutoSurface createSelectedColorSurface();
 };

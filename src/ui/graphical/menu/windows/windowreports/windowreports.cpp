@@ -48,6 +48,7 @@
 
 namespace
 {
+	//--------------------------------------------------------------------------
 	std::string plural (int n, const std::string& sing, const std::string& plu)
 	{
 		// TODO: Plural rules are language dependant
@@ -60,6 +61,21 @@ namespace
 		ss << n << " ";
 		ss << lngPack.i18n (n == 1 ? sing : plu);
 		return ss.str();
+	}
+
+	//--------------------------------------------------------------------------
+	std::string getVictoryString (const cGameSettings& gameSettings)
+	{
+		switch (gameSettings.victoryConditionType)
+		{
+			case eGameSettingsVictoryCondition::Turns:
+				return lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings.victoryTurns, "Text~Comp~Turn_5", "Text~Comp~Turns");
+			case eGameSettingsVictoryCondition::Points:
+				return lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings.victoryPoints, "Text~Comp~Point", "Text~Comp~Points");
+			case eGameSettingsVictoryCondition::Death:
+				return lngPack.i18n ("Text~Comp~NoLimit");
+		}
+		return "";
 	}
 } // namespace
 
@@ -88,7 +104,7 @@ cWindowReports::cWindowReports (const cModel& model,
 	signalConnectionManager.connect (scoreRadioButton->toggled, [this]() { updateActiveFrame(); });
 	signalConnectionManager.connect (reportsRadioButton->toggled, [this]() { updateActiveFrame(); });
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 207), getPosition() + cPosition (497 + 100, 207 + font->getFontHeight())), lngPack.i18n ("Text~Others~Included")));
+	includedLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 207), getPosition() + cPosition (497 + 100, 207 + font->getFontHeight())), lngPack.i18n ("Text~Others~Included")));
 
 	planesCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218), lngPack.i18n ("Text~Others~Air_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 	groundCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 218 + 18), lngPack.i18n ("Text~Others~Ground_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
@@ -105,7 +121,7 @@ cWindowReports::cWindowReports (const cModel& model,
 	signalConnectionManager.connect (seaCheckBox->toggled, [this]() { handleFilterChanged(); });
 	signalConnectionManager.connect (stationaryCheckBox->toggled, [this]() { handleFilterChanged(); });
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 299), getPosition() + cPosition (497 + 100, 299 + font->getFontHeight())), lngPack.i18n ("Text~Others~Limited_To")));
+	limitedToLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 299), getPosition() + cPosition (497 + 100, 299 + font->getFontHeight())), lngPack.i18n ("Text~Others~Limited_To")));
 
 	produceCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312), lngPack.i18n ("Text~Others~Produce_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 	fightCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (496, 312 + 18), lngPack.i18n ("Text~Others~Fight_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
@@ -117,7 +133,7 @@ cWindowReports::cWindowReports (const cModel& model,
 	signalConnectionManager.connect (damagedCheckBox->toggled, [this]() { handleFilterChanged(); });
 	signalConnectionManager.connect (stealthCheckBox->toggled, [this]() { handleFilterChanged(); });
 
-	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (524, 395), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
+	doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (524, 395), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { close(); });
 
@@ -153,20 +169,8 @@ cWindowReports::cWindowReports (const cModel& model,
 	const auto gameSettings = model.getGameSettings();
 	if (gameSettings)
 	{
-		std::string gameEndString;
-		switch (gameSettings->victoryConditionType)
-		{
-			case eGameSettingsVictoryCondition::Turns:
-				gameEndString = lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings->victoryTurns, "Text~Comp~Turn_5", "Text~Comp~Turns");
-				break;
-			case eGameSettingsVictoryCondition::Points:
-				gameEndString = lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings->victoryPoints, "Text~Comp~Point", "Text~Comp~Points");
-				break;
-			case eGameSettingsVictoryCondition::Death:
-				gameEndString = lngPack.i18n ("Text~Comp~NoLimit");
-				break;
-		}
-		scoreFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (scoreFrame->getPosition() + cPosition (5, 5), scoreFrame->getPosition() + cPosition (5 + 450, 5 + font->getFontHeight())), gameEndString));
+		const std::string gameEndString = getVictoryString (*gameSettings);
+		victoryLabel = scoreFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (scoreFrame->getPosition() + cPosition (5, 5), scoreFrame->getPosition() + cPosition (5 + 450, 5 + font->getFontHeight())), gameEndString));
 	}
 	const auto turnClock = model.getTurnCounter();
 	for (size_t i = 0; i < players.size(); ++i)
@@ -179,7 +183,7 @@ cWindowReports::cWindowReports (const cModel& model,
 		SDL_FillRect (colorSurface.get(), nullptr, toMappedSdlRGBAColor (player->getColor(), colorSurface->format));
 		scoreFrame->addChild (std::make_unique<cImage> (scoreFrame->getPosition() + cPosition (5, 20 + font->getFontHeight() * i), colorSurface.get()));
 
-		scoreFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (scoreFrame->getPosition() + cPosition (16, 20 + font->getFontHeight() * i), scoreFrame->getPosition() + cPosition (16 + 435, 20 + font->getFontHeight() * (i + 1))), playerText));
+		ecosphereLabels.emplace_back (scoreFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (scoreFrame->getPosition() + cPosition (16, 20 + font->getFontHeight() * i), scoreFrame->getPosition() + cPosition (16 + 435, 20 + font->getFontHeight() * (i + 1))), playerText)));
 	}
 	scorePlot = scoreFrame->addChild (std::make_unique<cPlot<int, int>> (cBox<cPosition> (scoreFrame->getPosition() + cPosition (0, 20 + font->getFontHeight() * players.size()), scoreFrame->getEndPosition())));
 
@@ -190,6 +194,50 @@ cWindowReports::cWindowReports (const cModel& model,
 
 	updateActiveFrame();
 	initializeScorePlot();
+}
+
+//------------------------------------------------------------------------------
+void cWindowReports::retranslate()
+{
+	cWindow::retranslate();
+
+	unitsRadioButton->setText (lngPack.i18n ("Text~Others~Units"));
+	disadvantagesRadioButton->setText (lngPack.i18n ("Text~Others~Disadvantages_8cut"));
+	scoreRadioButton->setText (lngPack.i18n ("Text~Others~Score"));
+	reportsRadioButton->setText (lngPack.i18n ("Text~Others~Reports"));
+
+	includedLabel->setText (lngPack.i18n ("Text~Others~Included"));
+
+	planesCheckBox->setText (lngPack.i18n ("Text~Others~Air_Units"));
+	groundCheckBox->setText (lngPack.i18n ("Text~Others~Ground_Units"));
+	seaCheckBox->setText (lngPack.i18n ("Text~Others~Sea_Units"));
+	stationaryCheckBox->setText (lngPack.i18n ("Text~Others~Stationary_Units"));
+
+	limitedToLabel->setText (lngPack.i18n ("Text~Others~Limited_To"));
+
+	produceCheckBox->setText (lngPack.i18n ("Text~Others~Produce_Units"));
+	fightCheckBox->setText (lngPack.i18n ("Text~Others~Fight_Units"));
+	damagedCheckBox->setText (lngPack.i18n ("Text~Others~Damaged_Units"));
+	stealthCheckBox->setText (lngPack.i18n ("Text~Others~Stealth_Units"));
+
+	doneButton->setText (lngPack.i18n ("Text~Others~Done"));
+
+	const auto gameSettings = model.getGameSettings();
+	if (gameSettings)
+	{
+		std::string gameEndString = getVictoryString (*gameSettings);
+		victoryLabel->setText (gameEndString);
+	}
+	const auto players = model.getPlayerList();
+	const auto turnClock = model.getTurnCounter();
+	for (size_t i = 0; i < players.size(); ++i)
+	{
+		const auto& player = players[i];
+
+		std::string playerText = player->getName() + lngPack.i18n ("Text~Punctuation~Colon") + plural (player->getScore (turnClock->getTurn()), "Text~Comp~Point", "Text~Comp~Points") + ", " + plural (player->getNumEcoSpheres(), "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
+
+		ecosphereLabels[i]->setText (playerText);
+	}
 }
 
 //------------------------------------------------------------------------------

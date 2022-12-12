@@ -47,6 +47,8 @@ public:
 	cWindowHangar (AutoSurface, std::shared_ptr<const cUnitsData>, const cPlayer&);
 	~cWindowHangar();
 
+	void retranslate() override;
+
 	cSignal<void()> done;
 	cSignal<void()> canceled;
 

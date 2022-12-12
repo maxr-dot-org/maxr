@@ -66,6 +66,15 @@ cApplication::~cApplication()
 }
 
 //------------------------------------------------------------------------------
+void cApplication::retranslate()
+{
+	for (auto& window : modalWindows)
+	{
+		window->retranslate();
+	}
+}
+
+//------------------------------------------------------------------------------
 void cApplication::execute()
 {
 	cWindow* lastActiveWindow = nullptr;

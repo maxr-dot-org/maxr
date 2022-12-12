@@ -32,9 +32,10 @@
 #include "utility/color.h"
 
 //------------------------------------------------------------------------------
-cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_, const cUnitsData& unitsData) :
+cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_, const cUnitsData& unitsData_) :
 	cAbstractListViewItem(),
-	unit (unit_)
+	unit (unit_),
+	unitsData (unitsData_)
 {
 	const int unitImageSize = 32;
 	AutoSurface surface (SDL_CreateRGBSurface (0, unitImageSize, unitImageSize, Video.getColDepth(), 0, 0, 0, 0));
@@ -72,7 +73,7 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_, const cUnitsData
 	auto positionLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitDetails->getEndPosition().x() + 5, 0), cPosition (unitDetails->getEndPosition().x() + 5 + 50, unitDetails->getEndPosition().y())), std::to_string (unit.getPosition().x()) + "," + std::to_string (unit.getPosition().y()), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::CenterVerical));
 	positionLabel->setConsumeClick (false);
 
-	auto statusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (positionLabel->getEndPosition().x(), 0), cPosition (positionLabel->getEndPosition().x() + 120, unitDetails->getEndPosition().y())), getStatusStr (unit, unit.getOwner(), unitsData), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	statusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (positionLabel->getEndPosition().x(), 0), cPosition (positionLabel->getEndPosition().x() + 120, unitDetails->getEndPosition().y())), getStatusStr (unit, unit.getOwner(), unitsData), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 	statusLabel->setConsumeClick (false);
 
 	fitToChildren();
@@ -90,6 +91,13 @@ void cReportUnitListViewItem::draw (SDL_Surface& destination, const cBox<cPositi
 		dest.getMaxCorner() += cPosition (1, 1);
 		drawSelectionCorner (destination, dest, cRgbColor (224, 224, 224), 8, cBox<cPosition> (clipRect.getMinCorner() - 1, clipRect.getMaxCorner() + 1));
 	}
+}
+
+//------------------------------------------------------------------------------
+void cReportUnitListViewItem::retranslate()
+{
+	cAbstractListViewItem::retranslate();
+	statusLabel->setText (getStatusStr (unit, unit.getOwner(), unitsData));
 }
 
 //------------------------------------------------------------------------------

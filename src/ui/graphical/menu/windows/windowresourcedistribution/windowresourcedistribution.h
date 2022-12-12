@@ -27,14 +27,17 @@
 
 #include <array>
 
-class cResourceBar;
 class cLabel;
+class cPushButton;
+class cResourceBar;
 class cTurnTimeClock;
 
 class cWindowResourceDistribution : public cWindow
 {
 public:
 	cWindowResourceDistribution (const cBuilding& building, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
+
+	void retranslate() override;
 
 	sMiningResource getProduction() const;
 
@@ -66,6 +69,13 @@ private:
 	std::array<cLabel*, 3> metalLabels;
 	std::array<cLabel*, 3> oilLabels;
 	std::array<cLabel*, 3> goldLabels;
+
+	std::array<cLabel*, 3> resourceLabels{};
+	std::array<cLabel*, 3> usageLabels{};
+	std::array<cLabel*, 3> reserveLabels{};
+
+	cLabel* titleLabel = nullptr;
+	cPushButton* doneButton = nullptr;
 };
 
 #endif // ui_graphical_menu_windows_windowresourcedistribution_windowresourcedistributionH

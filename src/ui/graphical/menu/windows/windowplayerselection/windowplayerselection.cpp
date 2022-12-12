@@ -35,18 +35,18 @@ cWindowPlayerSelection::cWindowPlayerSelection() :
 	cWindow (LoadPCX (GFXOD_PLAYER_SELECT)) // 4 players
 // cWindow (LoadPCX (GFXOD_HOTSEAT)) // 8 players
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~HotSeat"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~HotSeat"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (65, 35), getPosition() + cPosition (65 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Team"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (165, 35), getPosition() + cPosition (165 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Human"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (275, 35), getPosition() + cPosition (275 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Computer"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (385, 35), getPosition() + cPosition (385 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Nobody"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	teamLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (65, 35), getPosition() + cPosition (65 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Team"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	humanLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (165, 35), getPosition() + cPosition (165 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Human"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	computerLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (275, 35), getPosition() + cPosition (275 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Computer"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	nobodyLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (385, 35), getPosition() + cPosition (385 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Nobody"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 	//addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 35), getPosition() + cPosition (500 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Clan"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
 	signalConnectionManager.connect (okButton->clicked, [this]() { done(); });
 
-	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
+	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, [this]() { close(); });
 
 	humanPlayerSurface = AutoSurface (LoadPCX (GFXOD_PLAYER_HUMAN));
@@ -73,6 +73,22 @@ cWindowPlayerSelection::cWindowPlayerSelection() :
 
 		setPlayerType (i, i == 0 || i == 1 ? ePlayerType::Human : ePlayerType::None);
 	}
+}
+
+//------------------------------------------------------------------------------
+void cWindowPlayerSelection::retranslate()
+{
+	cWindow::retranslate();
+
+	titleLabel->setText (lngPack.i18n ("Text~Title~HotSeat"));
+
+	teamLabel->setText (lngPack.i18n ("Text~Title~Team"));
+	humanLabel->setText (lngPack.i18n ("Text~Title~Human"));
+	computerLabel->setText (lngPack.i18n ("Text~Title~Computer"));
+	nobodyLabel->setText (lngPack.i18n ("Text~Title~Nobody"));
+
+	okButton->setText (lngPack.i18n ("Text~Others~OK"));
+	backButton->setText (lngPack.i18n ("Text~Others~Back"));
 }
 
 //------------------------------------------------------------------------------

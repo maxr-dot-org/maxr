@@ -38,6 +38,8 @@ class cWindowMapSelection : public cWindow
 public:
 	cWindowMapSelection();
 
+	void retranslate() override;
+
 	cSignal<void (const std::string& mapName)> done;
 
 private:
@@ -64,9 +66,11 @@ private:
 	std::array<cLabel*, mapCount> mapTitles;
 	std::array<cImage*, mapCount> mapImages;
 
+	cLabel* titleLabel = nullptr;
 	cPushButton* upButton = nullptr;
 	cPushButton* downButton = nullptr;
 	cPushButton* okButton = nullptr;
+	cPushButton* backButton = nullptr;
 
 	std::vector<std::string> maps;
 	int selectedMapIndex = -1;

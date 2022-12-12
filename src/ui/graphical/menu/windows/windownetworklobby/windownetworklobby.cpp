@@ -50,7 +50,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	localPlayer (std::make_shared<cPlayerBasicData> (cPlayerBasicData::fromSettings())),
 	saveGameInfo (-1)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), title, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), title, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	mapImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (33, 106)));
 	mapNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (90 - 70, 65), getPosition() + cPosition (90 + 70, 65 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
@@ -60,7 +60,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 
 	chatLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (20, 424), getPosition() + cPosition (20 + 430, 424 + 10))));
 	signalConnectionManager.connect (chatLineEdit->returnPressed, [this]() { triggerChatMessage (true); });
-	auto sendButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 416), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Send")));
+	sendButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 416), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Send")));
 	signalConnectionManager.connect (sendButton->clicked, [this]() { triggerChatMessage (false); });
 	chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition() + cPosition (14, 284), getPosition() + cPosition (14 + 439, 284 + 124)), eScrollBarStyle::Classic));
 	chatList->disableSelectable();
@@ -68,10 +68,10 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	chatList->setEndMargin (cPosition (10, 10));
 	chatList->setScrollOffset (cUnicodeFont::font->getFontHeight() + 3);
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 245), getPosition() + cPosition (20 + 170, 245 + 10)), lngPack.i18n ("Text~Title~IP"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (228, 245), getPosition() + cPosition (228 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Port"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (352, 245), getPosition() + cPosition (352 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 245), getPosition() + cPosition (500 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	ipLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 245), getPosition() + cPosition (20 + 170, 245 + 10)), lngPack.i18n ("Text~Title~IP"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	portLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (228, 245), getPosition() + cPosition (228 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Port"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (352, 245), getPosition() + cPosition (352 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	colorLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 245), getPosition() + cPosition (500 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
 
 	ipLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (20, 260), getPosition() + cPosition (20 + 178, 260 + 10))));
 	if (disableIp)
@@ -129,6 +129,34 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	updateMap();
 
 	addPlayer (localPlayer);
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::retranslate()
+{
+	cWindow::retranslate();
+
+	sendButton->setText (lngPack.i18n ("Text~Title~Send"));
+
+	ipLabel->setText (lngPack.i18n ("Text~Title~IP"));
+	portLabel->setText (lngPack.i18n ("Text~Title~Port"));
+	playerNameLabel->setText (lngPack.i18n ("Text~Title~Player_Name"));
+	colorLabel->setText (lngPack.i18n ("Text~Title~Color"));
+
+	mapButton->setText (lngPack.i18n ("Text~Title~Choose_Planet"));
+	settingsButton->setText (lngPack.i18n ("Text~Title~Options"));
+	loadButton->setText (lngPack.i18n ("Text~Others~Game_Load"));
+
+	okButton->setText (lngPack.i18n ("Text~Others~OK"));
+	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+
+	updateSettingsText();
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::setTitle (const std::string& title)
+{
+	titleLabel->setText (title);
 }
 
 //------------------------------------------------------------------------------

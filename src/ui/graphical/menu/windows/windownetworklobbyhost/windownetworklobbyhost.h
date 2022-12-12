@@ -29,10 +29,14 @@ class cWindowNetworkLobbyHost : public cWindowNetworkLobby
 public:
 	cWindowNetworkLobbyHost();
 
+	void retranslate() override;
+
 	cSignal<void()> triggeredStartHost;
 
 private:
 	cSignalConnectionManager signalConnectionManager;
+
+	cPushButton* startButton = nullptr;
 };
 
 #endif // ui_graphical_menu_windows_windownetworklobbyhost_windownetworklobbyhostH

@@ -30,6 +30,8 @@ class cWindowLoadSave : public cWindowLoad
 public:
 	explicit cWindowLoadSave (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
+	void retranslate() override;
+
 	cSignal<void (int, const std::string&)> save;
 	cSignal<void()> exit;
 
@@ -40,7 +42,8 @@ protected:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cPushButton* saveButton;
+	cPushButton* saveButton = nullptr;
+	cPushButton* exitButton = nullptr;
 
 	void handleSaveClicked();
 };

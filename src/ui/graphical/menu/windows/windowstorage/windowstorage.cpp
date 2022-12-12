@@ -138,7 +138,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	upgradeAllButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 246 + 25 * 3), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", eUnicodeFontType::LatinNormal));
 	signalConnectionManager.connect (upgradeAllButton->clicked, [this]() { upgradeAllClicked(); });
 
-	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 371), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
+	doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 371), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
 	updateUnitsWidgets();
@@ -146,6 +146,34 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	updateUpDownButtons();
 
 	signalConnectionManager.connect (unit.destroyed, [this]() { closeOnUnitDestruction(); });
+}
+
+//------------------------------------------------------------------------------
+void cWindowStorage::retranslate()
+{
+	cWindow::retranslate();
+
+	for (auto* activateButton : activateButtons)
+	{
+		activateButton->setText (lngPack.i18n ("Text~Others~Active"));
+	}
+	for (auto* reloadButton : reloadButtons)
+	{
+		reloadButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "");
+	}
+	for (auto* repairButton : repairButtons)
+	{
+		repairButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "");
+	}
+	for (auto* upgradeButton : upgradeButtons)
+	{
+		upgradeButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "");
+	}
+	activateAllButton->setText (lngPack.i18n ("Text~Others~Active"));
+	reloadAllButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "");
+	repairAllButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "");
+	upgradeAllButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "");
+	doneButton->setText (lngPack.i18n ("Text~Others~Done"));
 }
 
 //------------------------------------------------------------------------------

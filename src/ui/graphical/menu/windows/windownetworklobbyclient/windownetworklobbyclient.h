@@ -31,6 +31,8 @@ class cWindowNetworkLobbyClient : public cWindowNetworkLobby
 public:
 	cWindowNetworkLobbyClient();
 
+	void retranslate() override;
+
 	void bindConnections (cLobbyClient&);
 
 	cSignal<void()> triggeredConnect;
@@ -40,6 +42,7 @@ private:
 
 private:
 	cSignalConnectionManager signalConnectionManager;
+	cPushButton* connectButton = nullptr;
 };
 
 #endif // ui_graphical_menu_windows_windownetworklobbyclient_windownetworklobbyclientH

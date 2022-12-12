@@ -37,7 +37,7 @@
 cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const cPlayer* owner, const cUnitsData& unitsData) :
 	cWindow (LoadPCX (GFXOD_HELP), eWindowBackgrounds::Black)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Unitinfo"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Unitinfo"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	auto infoImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (11, 13)));
 
@@ -66,4 +66,12 @@ cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const
 	infoLabel->setText (getStaticUnitDescription (unitsData.getStaticUnitData (currentUnitData.getId())));
 
 	unitDetails->setUnit (currentUnitData.getId(), owner, unitsData, &currentUnitData);
+}
+
+//------------------------------------------------------------------------------
+void cWindowUnitInfo::retranslate()
+{
+	cWindow::retranslate();
+	titleLabel->setText (lngPack.i18n ("Text~Title~Unitinfo"));
+	okButton->setText (lngPack.i18n ("Text~Others~Done"));
 }

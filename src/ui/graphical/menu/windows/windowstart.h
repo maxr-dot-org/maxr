@@ -23,16 +23,26 @@
 #include "ui/graphical/menu/windows/windowmain.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+class cPushButton;
+
 class cWindowStart : public cWindowMain
 {
 public:
 	cWindowStart();
 	~cWindowStart();
 
+	void retranslate() override;
+
 	void handleActivated (cApplication& application, bool firstTime) override;
 
 private:
 	cSignalConnectionManager signalConnectionManager;
+
+	cPushButton* singlePlayerButton = nullptr;
+	cPushButton* multiPlayerButton = nullptr;
+	cPushButton* preferencesButton = nullptr;
+	cPushButton* licenseButton = nullptr;
+	cPushButton* exitButton = nullptr;
 
 	void singlePlayerClicked();
 	void multiPlayerClicked();

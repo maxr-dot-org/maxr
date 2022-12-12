@@ -37,25 +37,38 @@
 cWindowStart::cWindowStart() :
 	cWindowMain (lngPack.i18n ("Text~Title~MainMenu"))
 {
-	auto singlePlayerButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Single_Player")));
+	singlePlayerButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Single_Player")));
 	signalConnectionManager.connect (singlePlayerButton->clicked, [this]() { singlePlayerClicked(); });
 
-	auto multiPlayerButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Multi_Player")));
+	multiPlayerButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Multi_Player")));
 	signalConnectionManager.connect (multiPlayerButton->clicked, [this]() { multiPlayerClicked(); });
 
-	auto preferencesButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Settings~Preferences")));
+	preferencesButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Settings~Preferences")));
 	signalConnectionManager.connect (preferencesButton->clicked, [this]() { preferencesClicked(); });
 
-	auto licenseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani")));
+	licenseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani")));
 	signalConnectionManager.connect (licenseButton->clicked, [this]() { licenceClicked(); });
 
-	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
+	exitButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
 	signalConnectionManager.connect (exitButton->clicked, [this]() { exitClicked(); });
 }
 
 //------------------------------------------------------------------------------
 cWindowStart::~cWindowStart()
 {}
+
+//------------------------------------------------------------------------------
+void cWindowStart::retranslate()
+{
+	cWindowMain::retranslate();
+	setTitle (lngPack.i18n ("Text~Title~MainMenu"));
+
+	singlePlayerButton->setText (lngPack.i18n ("Text~Others~Single_Player"));
+	multiPlayerButton->setText (lngPack.i18n ("Text~Others~Multi_Player"));
+	preferencesButton->setText (lngPack.i18n ("Text~Settings~Preferences"));
+	licenseButton->setText (lngPack.i18n ("Text~Others~Mani"));
+	exitButton->setText (lngPack.i18n ("Text~Others~Exit"));
+}
 
 //------------------------------------------------------------------------------
 void cWindowStart::handleActivated (cApplication& application, bool firstTime)

@@ -83,9 +83,9 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 		else
 			resourceName = lngPack.i18n ("Text~Title~Gold");
 
-		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 121 * i + 10)), resourceName, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 + 121 * i + 10)), lngPack.i18n ("Text~Others~Usage_7"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 * 2 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 * 2 + 121 * i + 10)), lngPack.i18n ("Text~Comp~Reserve"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		resourceLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 121 * i + 10)), resourceName, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		usageLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 + 121 * i + 10)), lngPack.i18n ("Text~Others~Usage_7"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		reserveLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 * 2 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 * 2 + 121 * i + 10)), lngPack.i18n ("Text~Comp~Reserve"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 		auto decreaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (139, 70 + 120 * i), ePushButtonType::ArrowLeftBig));
 		signalConnectionManager.connect (decreaseButton->clicked, [this, i]() {
@@ -141,7 +141,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	signalConnectionManager.connect (oilBars[0]->valueChanged, [this]() { handleOilChanged(); });
 	signalConnectionManager.connect (goldBars[0]->valueChanged, [this]() { handleGoldChanged(); });
 
-	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (514, 430), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Done")));
+	doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (514, 430), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Done")));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
@@ -149,6 +149,26 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	signalConnectionManager.connect (building.destroyed, [this]() { closeOnUnitDestruction(); });
 	//update subbase values, when any other building in the subbase gets destroyed
 	if (building.getOwner()) signalConnectionManager.connect (building.getOwner()->base.onSubbaseConfigurationChanged, [this] (const std::vector<cBuilding*>& buildings) { updateOnSubbaseChanged (buildings); });
+}
+
+//------------------------------------------------------------------------------
+void cWindowResourceDistribution::retranslate()
+{
+	cWindow::retranslate();
+
+	titleLabel->setText (lngPack.i18n ("Text~Title~Mine"));
+
+	resourceLabels[0]->setText (lngPack.i18n ("Text~Title~Metal"));
+	resourceLabels[1]->setText (lngPack.i18n ("Text~Title~Oil"));
+	resourceLabels[2]->setText (lngPack.i18n ("Text~Title~Gold"));
+	for (size_t i = 0; i < 3; ++i)
+	{
+		usageLabels[i]->setText (lngPack.i18n ("Text~Others~Usage_7"));
+		reserveLabels[i]->setText (lngPack.i18n ("Text~Comp~Reserve"));
+	}
+	setBarLabels();
+
+	doneButton->setText (lngPack.i18n ("Text~Others~Done"));
 }
 
 sMiningResource cWindowResourceDistribution::getProduction() const

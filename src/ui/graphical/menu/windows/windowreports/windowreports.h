@@ -27,6 +27,7 @@
 class cCasualtiesTracker;
 class cCheckBox;
 class cFrame;
+class cLabel;
 class cModel;
 class cPlayer;
 class cPushButton;
@@ -50,6 +51,8 @@ public:
 	cWindowReports (const cModel&,
 	                std::shared_ptr<const cPlayer> localPlayer,
 	                const std::vector<std::unique_ptr<cSavedReport>>& reports);
+
+	void retranslate() override;
 
 	cSignal<void (cUnit&)> unitClickedSecondTime;
 	cSignal<void (const cSavedReport&)> reportClickedSecondTime;
@@ -75,6 +78,12 @@ private:
 
 private:
 	cSignalConnectionManager signalConnectionManager;
+
+	cLabel* includedLabel = nullptr;
+	cPushButton* doneButton = nullptr;
+	cLabel* limitedToLabel = nullptr;
+	cLabel* victoryLabel = nullptr;
+	std::vector<cLabel*> ecosphereLabels;
 
 	cCheckBox* unitsRadioButton = nullptr;
 	cCheckBox* disadvantagesRadioButton = nullptr;

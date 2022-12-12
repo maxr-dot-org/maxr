@@ -40,6 +40,8 @@ class cWindowStorage : public cWindow
 public:
 	cWindowStorage (const cUnit& unit, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
+	void retranslate() override;
+
 	cSignal<void()> activateAll;
 	cSignal<void()> reloadAll;
 	cSignal<void()> repairAll;
@@ -57,16 +59,17 @@ private:
 
 	cSignalConnectionManager unitsSignalConnectionManager;
 
-	cPushButton* upButton;
-	cPushButton* downButton;
+	cPushButton* upButton = nullptr;
+	cPushButton* downButton = nullptr;
 
-	cPushButton* activateAllButton;
-	cPushButton* reloadAllButton;
-	cPushButton* repairAllButton;
-	cPushButton* upgradeAllButton;
+	cPushButton* activateAllButton = nullptr;
+	cPushButton* reloadAllButton = nullptr;
+	cPushButton* repairAllButton = nullptr;
+	cPushButton* upgradeAllButton = nullptr;
+	cPushButton* doneButton = nullptr;
 
-	cLabel* metalBarAmountLabel;
-	cResourceBar* metalBar;
+	cLabel* metalBarAmountLabel = nullptr;
+	cResourceBar* metalBar = nullptr;
 
 	const bool canRepairReloadUpgrade;
 	const bool canStorePlanes;

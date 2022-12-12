@@ -41,6 +41,8 @@ public:
 	cWindowLandingUnitSelection (cRgbColor playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold, std::shared_ptr<const cUnitsData> unitsData);
 	~cWindowLandingUnitSelection();
 
+	void retranslate() override;
+
 	std::vector<sLandingUnit> getLandingUnits() const;
 
 	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades() const;
@@ -76,24 +78,27 @@ private:
 	static const int metalBarSteps = 5;
 	static const int singleCreditResourceAmount = 5;
 
-	cCheckBox* tankCheckBox;
-	cCheckBox* planeCheckBox;
-	cCheckBox* shipCheckBox;
-	cCheckBox* buildingCheckBox;
-	cCheckBox* tntCheckBox;
+	cCheckBox* tankCheckBox = nullptr;
+	cCheckBox* planeCheckBox = nullptr;
+	cCheckBox* shipCheckBox = nullptr;
+	cCheckBox* buildingCheckBox = nullptr;
+	cCheckBox* tntCheckBox = nullptr;
 
-	cCheckBox* buyCheckBox;
-	cCheckBox* upgradeCheckBox;
+	cLabel* titleLabel = nullptr;
+	cLabel* cargoLabel = nullptr;
+	cLabel* creditLabel = nullptr;
+	cCheckBox* buyCheckBox = nullptr;
+	cCheckBox* upgradeCheckBox = nullptr;
 
-	cResourceBar* metalBar;
-	cLabel* metalBarAmountLabel;
-	cPushButton* metalBarUpButton;
-	cPushButton* metalBarDownButton;
+	cResourceBar* metalBar = nullptr;
+	cLabel* metalBarAmountLabel = nullptr;
+	cPushButton* metalBarUpButton = nullptr;
+	cPushButton* metalBarDownButton = nullptr;
 
-	cResourceBar* goldBar;
-	cLabel* goldBarAmountLabel;
+	cResourceBar* goldBar = nullptr;
+	cLabel* goldBarAmountLabel = nullptr;
 
-	cUnitListViewItemCargo* selectedCargoUnit;
+	cUnitListViewItemCargo* selectedCargoUnit = nullptr;
 
 	std::map<const cUnitListViewItemCargo*, int> fixedSelectedUnits;
 
