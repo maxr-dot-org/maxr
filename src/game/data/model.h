@@ -82,7 +82,7 @@ public:
 	void setGameSettings (const cGameSettings&);
 
 	std::shared_ptr<const cMap> getMap() const { return map; }
-	std::shared_ptr<cMap> getMap() { return map; }
+	const std::shared_ptr<cMap>& getMap() { return map; }
 	void setMap (std::shared_ptr<cStaticMap>);
 
 	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker() { return casualtiesTracker; }

@@ -183,7 +183,8 @@ void placeInitialResources (cModel& model)
 {
 	auto& map = *model.getMap()->staticMap;
 	const auto& playerList = model.getPlayerList();
-	const auto& gameSettings = *model.getGameSettings();
+	const std::shared_ptr<const cGameSettings>& gameSettingsPtr = model.getGameSettings();
+	const auto& gameSettings = *gameSettingsPtr;
 
 	std::vector<eResourceType> resSpotTypes (playerList.size(), eResourceType::Metal);
 	std::vector<cPosition> resSpots;
@@ -298,7 +299,8 @@ void cActionInitNewGame::execute (cModel& model) const
 	model.initGameId();
 
 	cPlayer& player = *model.getPlayer (playerNr);
-	const cUnitsData& unitsdata = *model.getUnitsData();
+	const std::shared_ptr<const cUnitsData>& unitsdataPtr = model.getUnitsData();
+	const cUnitsData& unitsdata = *unitsdataPtr;
 
 	player.removeAllUnits();
 	Log.write (" GameId: " + std::to_string (model.getGameId()), cLog::eLogType::NetDebug);

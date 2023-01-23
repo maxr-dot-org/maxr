@@ -344,8 +344,10 @@ void cMoveJob::updateSpeed (const cMap& map)
 	{
 		maxSpeed = 100 * MOVE_SPEED;
 		const cBuilding* building = map.getField (vehicle->getPosition()).getBaseBuilding();
-		if (building && building->getStaticData().modifiesSpeed)
-			maxSpeed /= building->getStaticData().modifiesSpeed;
+		if (building && static_cast<int> (building->getStaticData().modifiesSpeed))
+		{
+			maxSpeed /= static_cast<int> (building->getStaticData().modifiesSpeed);
+		}
 	}
 	else if (vehicle->getStaticUnitData().factorAir > 0)
 	{

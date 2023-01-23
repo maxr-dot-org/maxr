@@ -40,7 +40,7 @@ cWindowLoadSave::cWindowLoadSave (std::shared_ptr<const cTurnTimeClock> turnTime
 //------------------------------------------------------------------------------
 void cWindowLoadSave::retranslate()
 {
-	cWindowLoadSave::retranslate();
+	cWindowLoad::retranslate();
 
 	exitButton->setText (lngPack.i18n ("Text~Others~Exit"));
 	saveButton->setText (lngPack.i18n ("Text~Others~Save"));

@@ -229,10 +229,12 @@ std::string getCurrentExeDir()
 	GetModuleFileName (hModule, szPath, MAX_PATH);
 # ifdef UNICODE
 	std::wstring exe = szPath;
+	const auto backslashString = L"\\";
 # else
 	std::string exe = szPath;
+	const auto backslashString = "\\";
 # endif
-	exe.erase (exe.rfind ("\\"), std::string::npos);
+	exe.erase (exe.rfind (backslashString), std::string::npos);
 	return std::string (exe.begin(), exe.end());
 #elif __amigaos4__
 	return "";
