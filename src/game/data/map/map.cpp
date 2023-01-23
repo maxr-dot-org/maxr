@@ -478,7 +478,7 @@ const cMapField& cMap::getField (const cPosition& position) const
 bool cMap::isWaterOrCoast (const cPosition& position) const
 {
 	const sTerrain& terrainType = staticMap->getTerrain (position);
-	return terrainType.water | terrainType.coast;
+	return terrainType.water || terrainType.coast;
 }
 
 //--------------------------------------------------------------------------

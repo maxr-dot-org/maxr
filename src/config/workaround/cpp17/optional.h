@@ -74,7 +74,7 @@ namespace std
 				if (valid) new (&u.data) T (rhs.u.data);
 				return *this;
 			}
-			optional& operator= (optional&& rhs)
+			optional& operator= (optional&& rhs) noexcept
 			{
 				deconstruct();
 				valid = rhs.valid;

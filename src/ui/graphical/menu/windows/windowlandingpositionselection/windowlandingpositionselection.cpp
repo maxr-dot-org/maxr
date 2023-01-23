@@ -299,7 +299,7 @@ void cWindowLandingPositionSelection::startCircleAnimation (const cPosition& til
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::runCircleAnimation (const cPosition& tilePosition)
 {
-	const float circleAnimationStep = 0.02;
+	const float circleAnimationStep = 0.02f;
 
 	circleAnimationState += circleAnimationStep;
 
