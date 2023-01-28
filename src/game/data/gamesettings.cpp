@@ -26,8 +26,8 @@
 #include <algorithm>
 
 // Might be constexpr inline in C++17
-/* static */ const int cGameSettings::defaultVictoryTurnsOptions[3]{100, 200, 400};
-/* static */ const int cGameSettings::defaultVictoryPointsOptions[3]{200, 400, 800};
+/* static */ const unsigned int cGameSettings::defaultVictoryTurnsOptions[3]{100, 200, 400};
+/* static */ const unsigned int cGameSettings::defaultVictoryPointsOptions[3]{200, 400, 800};
 
 const std::chrono::seconds cGameSettings::defaultTurnLimitOption0 (60);
 const std::chrono::seconds cGameSettings::defaultTurnLimitOption1 (120);
