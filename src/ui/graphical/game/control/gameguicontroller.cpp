@@ -1711,8 +1711,8 @@ void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report
 			gameGui->getGameMessageList().addMessage (getMessage (report, activeClient->getModel()), report.isAlert() ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
 		if (report.isAlert()) soundManager->playSound (std::make_shared<cSoundEffect> (eSoundEffectType::EffectAlert, SoundData.SNDQuitsch));
 	}
-
-	playSound (*soundManager, report);
+	if (activeClient)
+		playSound (*soundManager, activeClient->getModel(), report);
 
 	if (cSettings::getInstance().isDebug() && activeClient) Log.write (getMessage (report, activeClient->getModel()), cLog::eLogType::Debug);
 }

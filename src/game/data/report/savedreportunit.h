@@ -51,8 +51,7 @@ public:
 		serializeThis (archive);
 	}
 
-	const cUnit& getUnit() const { return *unit; }
-	sID getUnitTypeId() const { return unit->data.getId(); }
+	int getUnitId() const { return unitId; }
 
 	std::optional<cPosition> getPosition() const override;
 
@@ -60,11 +59,11 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & NVP (unit);
+		archive & NVP (unitId);
 		archive & NVP (position);
 	}
 
-	const cUnit* unit;
+	int unitId;
 	cPosition position;
 };
 

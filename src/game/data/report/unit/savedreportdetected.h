@@ -22,6 +22,8 @@
 
 #include "game/data/report/savedreportunit.h"
 
+class cModel;
+
 class cSavedReportDetected : public cSavedReportUnit
 {
 public:
@@ -34,7 +36,7 @@ public:
 	}
 
 	eSavedReportType getType() const override;
-	bool isSubmarine() const;
+	bool isSubmarine (const cModel&) const;
 };
 
 #endif

@@ -19,6 +19,7 @@
 
 #include "game/data/report/unit/savedreportdetected.h"
 
+#include "game/data/model.h"
 #include "game/data/units/unit.h"
 
 //------------------------------------------------------------------------------
@@ -33,7 +34,10 @@ eSavedReportType cSavedReportDetected::getType() const
 }
 
 //------------------------------------------------------------------------------
-bool cSavedReportDetected::isSubmarine() const
+bool cSavedReportDetected::isSubmarine (const cModel& model) const
 {
-	return getUnit().getStaticUnitData().isStealthOn & eTerrainFlag::Sea && getUnit().getStaticUnitData().canAttack;
+	const auto* unit = model.getUnitFromID (getUnitId());
+	assert (unit != nullptr);
+	const auto& staticUnitData = unit->getStaticUnitData();
+	return (staticUnitData.isStealthOn & eTerrainFlag::Sea) && staticUnitData.canAttack;
 }

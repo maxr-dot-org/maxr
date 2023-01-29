@@ -64,13 +64,6 @@ namespace serialization
 			Log.write ("Unit with id " + std::to_string (id) + " not found.", cLog::eLogType::NetError);
 	}
 
-	void cPointerLoader::get (int id, const cUnit*& value) const
-	{
-		value = model.getUnitFromID (id);
-		if (value == nullptr && id != -1)
-			Log.write ("Unit with id " + std::to_string (id) + " not found.", cLog::eLogType::NetError);
-	}
-
 	void cPointerLoader::get (sID id, const cStaticUnitData*& value) const
 	{
 		if (!model.getUnitsData()->isValidId (id))

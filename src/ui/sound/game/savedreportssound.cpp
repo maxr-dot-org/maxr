@@ -69,9 +69,9 @@ namespace
 		soundManager.playSound (std::make_unique<cSoundEffectVoice> (eSoundEffectType::VoiceDestroyed, getRandom (VoiceData.VOIDestroyedUs)));
 	}
 	//--------------------------------------------------------------------------
-	void playReportSound (cSoundManager& soundManager, const cSavedReportDetected& report)
+	void playReportSound (cSoundManager& soundManager, const cModel& model, const cSavedReportDetected& report)
 	{
-		if (report.isSubmarine())
+		if (report.isSubmarine (model))
 		{
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceDetected, VoiceData.VOISubDetected));
 		}
@@ -119,7 +119,7 @@ namespace
 } // namespace
 
 //------------------------------------------------------------------------------
-void playSound (cSoundManager& soundManager, const cSavedReport& report)
+void playSound (cSoundManager& soundManager, const cModel& model, const cSavedReport& report)
 {
 	switch (report.getType())
 	{
@@ -136,7 +136,7 @@ void playSound (cSoundManager& soundManager, const cSavedReport& report)
 			playReportSound (soundManager, static_cast<const cSavedReportDestroyed&> (report));
 			break;
 		case eSavedReportType::Detected:
-			playReportSound (soundManager, static_cast<const cSavedReportDetected&> (report));
+			playReportSound (soundManager, model, static_cast<const cSavedReportDetected&> (report));
 			break;
 		case eSavedReportType::Disabled:
 			playReportSound (soundManager, static_cast<const cSavedReportDisabled&> (report));

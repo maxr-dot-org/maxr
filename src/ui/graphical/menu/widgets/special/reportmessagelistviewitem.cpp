@@ -46,7 +46,9 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 
 	if (const auto* unitReport = dynamic_cast<const cSavedReportUnit*> (&report))
 	{
-		const auto& unitId = unitReport->getUnitTypeId();
+		const auto unit = model.getUnitFromID (unitReport->getUnitId());
+		assert (unit != nullptr);
+		const auto& unitId = unit->data.getId();
 
 		const auto totalHeight = std::max (unitImageSize, textLabel->getSize().y());
 

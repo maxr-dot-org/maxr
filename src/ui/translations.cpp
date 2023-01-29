@@ -699,9 +699,10 @@ std::string getMessage (const cSavedReport& report, const cModel& model)
 	if (auto* savedReportUnit = dynamic_cast<const cSavedReportUnit*> (&report))
 	{
 		auto pos = *savedReportUnit->getPosition();
-		const auto& unit = savedReportUnit->getUnit();
+		const auto* unit = model.getUnitFromID (savedReportUnit->getUnitId());
+		assert(unit != nullptr);
 
-		return "[" + std::to_string (pos.x()) + ", " + std::to_string (pos.y()) + "] " + getText (unit, *savedReportUnit);
+		return "[" + std::to_string (pos.x()) + ", " + std::to_string (pos.y()) + "] " + getText (*unit, *savedReportUnit);
 	}
 
 	switch (report.getType())

@@ -20,9 +20,10 @@
 #ifndef ui_sound_game_savedreportssoundH
 #define ui_sound_game_savedreportssoundH
 
+class cModel;
 class cSavedReport;
 class cSoundManager;
 
-void playSound (cSoundManager&, const cSavedReport&);
+void playSound (cSoundManager&, const cModel&, const cSavedReport&);
 
 #endif

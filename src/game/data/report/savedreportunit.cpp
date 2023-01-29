@@ -21,7 +21,7 @@
 
 //------------------------------------------------------------------------------
 cSavedReportUnit::cSavedReportUnit (const cUnit& unit) :
-	unit (&unit),
+	unitId (unit.getId()),
 	position (unit.getPosition())
 {}
 
