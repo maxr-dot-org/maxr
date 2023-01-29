@@ -50,16 +50,16 @@ public:
 
 	bool isAlert() const override;
 
-	const cPlayer& getPlayer() const { return *player; }
+	int getPlayerId() const { return playerId; }
 
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & NVP (player);
+		archive & NVP (playerId);
 	}
 
-	const cPlayer* player;
+	int playerId;
 };
 
 #endif // game_data_reports_special_savedreportplayerdefeatedH

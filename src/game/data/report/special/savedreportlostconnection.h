@@ -49,16 +49,16 @@ public:
 
 	bool isAlert() const override;
 
-	const std::string& getPlayerName() const { return player->getName(); }
+	int getPlayerId() const { return playerId; }
 
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & NVP (player);
+		archive & NVP (playerId);
 	}
 
-	const cPlayer* player;
+	int playerId;
 };
 
 #endif

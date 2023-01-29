@@ -23,7 +23,7 @@
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerWins::cSavedReportPlayerWins (const cPlayer& player) :
-	player (&player)
+	playerId (player.getId())
 {}
 
 //------------------------------------------------------------------------------

@@ -21,7 +21,7 @@
 
 //------------------------------------------------------------------------------
 cSavedReportLostConnection::cSavedReportLostConnection (const cPlayer& player) :
-	player (&player)
+	playerId (player.getId())
 {}
 
 //------------------------------------------------------------------------------
