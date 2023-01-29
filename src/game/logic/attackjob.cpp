@@ -40,7 +40,7 @@
 
 //--------------------------------------------------------------------------
 cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const cModel& model) :
-	aggressor (&aggressor),
+	aggressorId (aggressor.getId()),
 	targetPosition (targetPosition),
 	fireDir (0),
 	counter (10),
@@ -49,9 +49,9 @@ cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const
 	Log.write (" cAttackJob: Started attack, aggressor: " + aggressor.getDisplayName (aggressor.getStaticUnitData().getDefaultName()) + ", ID: " + std::to_string (aggressor.getId()) + " @" + std::to_string (model.getGameTime()), cLog::eLogType::NetDebug);
 	assert (!aggressor.isAVehicle() || !static_cast<cVehicle&> (aggressor).isUnitMoving());
 
-	fireDir = calcFireDir();
+	fireDir = calcFireDir (aggressor);
 
-	lockTarget (*model.getMap());
+	lockTarget (*model.getMap(), aggressor);
 
 	//lock aggressor
 	aggressor.setAttacking (true);
@@ -75,12 +75,13 @@ void cAttackJob::run (cModel& model)
 {
 	if (counter > 0) counter--;
 
-	if (aggressor == nullptr)
+	if (aggressorId == -1)
 	{
 		releaseTargets (model);
 		state = eAJState::Finished;
 	}
-
+	auto* aggressor = model.getUnitFromID(aggressorId);
+	assert(aggressor != nullptr);
 	switch (state)
 	{
 		case eAJState::Rotating:
@@ -123,16 +124,16 @@ bool cAttackJob::finished() const
 //------------------------------------------------------------------------------
 void cAttackJob::onRemoveUnit (const cUnit& unit)
 {
-	if (aggressor == &unit)
+	if (aggressorId == unit.getId())
 	{
-		aggressor = nullptr;
+		aggressorId = -1;
 	}
 }
 
 //------------------------------------------------------------------------------
 uint32_t cAttackJob::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum (aggressor, crc);
+	crc = calcCheckSum (aggressorId, crc);
 	crc = calcCheckSum (targetPosition, crc);
 	crc = calcCheckSum (lockedTargets, crc);
 	crc = calcCheckSum (fireDir, crc);
@@ -145,13 +146,13 @@ uint32_t cAttackJob::getChecksum (uint32_t crc) const
 //------------------------------------------------------------------------------
 // private functions
 
-int cAttackJob::calcFireDir()
+int cAttackJob::calcFireDir (const cUnit& aggressor)
 {
-	auto dx = (float) (targetPosition.x() - aggressor->getPosition().x());
-	auto dy = (float) -(targetPosition.y() - aggressor->getPosition().y());
+	auto dx = (float) (targetPosition.x() - aggressor.getPosition().x());
+	auto dy = (float) -(targetPosition.y() - aggressor.getPosition().y());
 	auto r = std::sqrt (dx * dx + dy * dy);
 
-	int fireDir = aggressor->dir;
+	int fireDir = aggressor.dir;
 	if (r > 0.001f)
 	{
 		// 360 / (2 * PI) = 57.29577951f;
@@ -187,11 +188,9 @@ int cAttackJob::calcFireDir()
 	return fireDir;
 }
 
-void cAttackJob::lockTarget (const cMap& map)
+void cAttackJob::lockTarget (const cMap& map, const cUnit& aggressor)
 {
-	int range = 0;
-	if (aggressor->getStaticUnitData().muzzleType == eMuzzleType::RocketCluster)
-		range = 2;
+	const int range = aggressor.getStaticUnitData().muzzleType == eMuzzleType::RocketCluster ? 2 : 0;
 
 	for (int x = -range; x <= range; x++)
 	{
@@ -199,7 +198,7 @@ void cAttackJob::lockTarget (const cMap& map)
 		{
 			if (abs (x) + abs (y) <= range && map.isValidPosition (targetPosition + cPosition (x, y)))
 			{
-				cUnit* target = selectTarget (targetPosition + cPosition (x, y), aggressor->getStaticUnitData().canAttack, map, aggressor->getOwner());
+				cUnit* target = selectTarget (targetPosition + cPosition (x, y), aggressor.getStaticUnitData().canAttack, map, aggressor.getOwner());
 				if (target)
 				{
 					target->setIsBeeinAttacked (true);
@@ -230,13 +229,15 @@ void cAttackJob::releaseTargets (const cModel& model)
 
 void cAttackJob::fire (cModel& model)
 {
+	auto* aggressor = model.getUnitFromID (aggressorId);
+	assert (aggressor != nullptr);
 	//update data
 	aggressor->data.setShots (aggressor->data.getShots() - 1);
 	aggressor->data.setAmmo (aggressor->data.getAmmo() - 1);
 	if (aggressor->isAVehicle() && aggressor->getStaticUnitData().vehicleData.canDriveAndFire == false)
 		aggressor->data.setSpeed (aggressor->data.getSpeed() - (int) (((float) aggressor->data.getSpeedMax()) / aggressor->data.getShotsMax()));
 
-	auto muzzle = createMuzzleFx();
+	auto muzzle = createMuzzleFx (*aggressor);
 	if (muzzle)
 	{
 		//set timer for next state
@@ -262,15 +263,15 @@ void cAttackJob::fire (cModel& model)
 	}
 }
 
-std::unique_ptr<cFx> cAttackJob::createMuzzleFx()
+std::unique_ptr<cFx> cAttackJob::createMuzzleFx (const cUnit& aggressor)
 {
 	//TODO: this shouldn't be in the attackjob class.
 
-	const sID id = aggressor->data.getId();
-	const cPosition aggressorPosition = aggressor->getPosition();
+	const sID id = aggressor.data.getId();
+	const cPosition aggressorPosition = aggressor.getPosition();
 
 	cPosition offset (0, 0);
-	switch (aggressor->getStaticUnitData().muzzleType)
+	switch (aggressor.getStaticUnitData().muzzleType)
 	{
 		case eMuzzleType::Big:
 			switch (fireDir)
@@ -346,7 +347,7 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx()
 					offset.y() = -12;
 					break;
 			}
-			if (aggressor->getStaticUnitData().muzzleType == eMuzzleType::Med)
+			if (aggressor.getStaticUnitData().muzzleType == eMuzzleType::Med)
 				return std::make_unique<cFxMuzzleMed> (aggressorPosition * 64 + offset, fireDir, id);
 			else
 				return std::make_unique<cFxMuzzleMedLong> (aggressorPosition * 64 + offset, fireDir, id);
@@ -362,6 +363,9 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx()
 
 void cAttackJob::impact (cModel& model)
 {
+	auto* aggressor = model.getUnitFromID (aggressorId);
+	assert (aggressor != nullptr);
+
 	if (aggressor->getStaticUnitData().muzzleType == eMuzzleType::RocketCluster)
 		impactCluster (model);
 	else
@@ -372,6 +376,8 @@ void cAttackJob::impactCluster (cModel& model)
 {
 	std::vector<cUnit*> targets;
 
+	auto* aggressor = model.getUnitFromID (aggressorId);
+	assert (aggressor != nullptr);
 	//full damage
 	int clusterDamage = aggressor->data.getDamage();
 	impactSingle (targetPosition, clusterDamage, model, &targets);
@@ -404,6 +410,8 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 
 	if (!map.isValidPosition (position))
 		return;
+	auto* aggressor = model.getUnitFromID (aggressorId);
+	assert (aggressor != nullptr);
 
 	cUnit* target = selectTarget (position, aggressor->getStaticUnitData().canAttack, map, aggressor->getOwner());
 

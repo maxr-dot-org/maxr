@@ -63,7 +63,7 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & NVP (aggressor);
+		archive & NVP (aggressorId);
 		archive & NVP (targetPosition);
 		archive & NVP (lockedTargets);
 		archive & NVP (fireDir);
@@ -72,17 +72,17 @@ public:
 	}
 
 private:
-	int calcFireDir();
-	void lockTarget (const cMap& map);
+	int calcFireDir (const cUnit& aggressor);
+	void lockTarget (const cMap& map, const cUnit& aggressor);
 	void releaseTargets (const cModel& model);
 	void fire (cModel& model);
-	std::unique_ptr<cFx> createMuzzleFx();
+	std::unique_ptr<cFx> createMuzzleFx (const cUnit& aggressor);
 	void impact (cModel& model);
 	void impactCluster (cModel& model);
 	void impactSingle (const cPosition& position, int attackPoints, cModel& model, std::vector<cUnit*>* avoidTargets = nullptr);
 
 private:
-	cUnit* aggressor = nullptr;
+	int aggressorId = -1;
 	cPosition targetPosition;
 	std::vector<int> lockedTargets;
 	int fireDir = 0;
