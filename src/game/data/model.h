@@ -177,7 +177,8 @@ public:
 		archive << NVP (turnEndDeadline);
 		archive << NVP (turnLimitDeadline);
 		archive << NVP (turnEndState);
-		archive << NVP (activeTurnPlayer);
+		const auto activeTurnPlayerId = activeTurnPlayer->getId();
+		archive << NVP (activeTurnPlayerId);
 		archive << NVP (helperJobs);
 		archive << serialization::makeNvp ("casualtiesTracker", *casualtiesTracker);
 		//TODO: serialize effectList
@@ -221,7 +222,11 @@ public:
 		archive >> NVP (turnEndDeadline);
 		archive >> NVP (turnLimitDeadline);
 		archive >> NVP (turnEndState);
-		archive >> NVP (activeTurnPlayer);
+
+		int activeTurnPlayerId;
+		archive >> NVP (activeTurnPlayerId);
+		activeTurnPlayer = getPlayer(activeTurnPlayerId);
+
 		archive >> NVP (helperJobs);
 		archive >> serialization::makeNvp ("casualtiesTracker", *casualtiesTracker);
 		//TODO: clear effect list, deserialize effects, call addedEffect()

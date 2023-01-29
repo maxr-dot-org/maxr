@@ -438,7 +438,6 @@ namespace serialization
 	public:
 		cPointerLoader (cModel& model);
 
-		void get (int id, cPlayer*& value) const;
 		void get (int id, cBuilding*& value) const;
 		void get (int id, cVehicle*& value) const;
 		void get (int id, cUnit*& value) const;

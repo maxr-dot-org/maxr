@@ -29,13 +29,6 @@ namespace serialization
 		model (model)
 	{}
 
-	void cPointerLoader::get (int id, cPlayer*& value) const
-	{
-		value = model.getPlayer (id);
-		if (value == nullptr && id != -1)
-			Log.write ("Player with id " + std::to_string (id) + " not found.", cLog::eLogType::NetError);
-	}
-
 	void cPointerLoader::get (int id, cBuilding*& value) const
 	{
 		value = model.getBuildingFromID (id);
