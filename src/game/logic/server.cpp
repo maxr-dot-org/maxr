@@ -70,7 +70,8 @@ std::string cServer::getGameState() const
 
 	result << "Map: " << model.getMap()->getName() << std::endl;
 	result << "Turn: " << model.getTurnCounter()->getTurn() << std::endl;
-	const auto& turnTimeClock = *model.getTurnTimeClock();
+	const auto turnTimeClockPtr = model.getTurnTimeClock();
+	const auto& turnTimeClock = *turnTimeClockPtr;
 	const auto time = turnTimeClock.hasDeadline() ? turnTimeClock.getTimeTillFirstDeadline() : turnTimeClock.getTimeSinceStart();
 	result << "Time: " << to_MM_ss (time) << (turnTimeClock.hasDeadline() ? " (deadline)" : "") << std::endl;
 
