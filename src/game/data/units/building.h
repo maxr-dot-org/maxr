@@ -93,8 +93,6 @@ public:
 
 	const sStaticBuildingData& getStaticData() const { return getStaticUnitData().buildingData; }
 
-	int playStream();
-
 	void refreshData();
 	void updateNeighbours (const cMap& map);
 	void CheckNeighbours (const cMap& Map);
