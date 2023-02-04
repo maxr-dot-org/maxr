@@ -31,11 +31,28 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/position.h"
+#include "utility/ranges.h"
 #include "utility/string/toString.h"
 
 #include <cassert>
 
 static constexpr int MAX_PLANES_PER_FIELD = 5;
+
+namespace
+{
+	//--------------------------------------------------------------------------
+	std::vector<cPosition> getPositions (const cPosition& pos, bool isBig)
+	{
+		if (isBig)
+		{
+			return {pos, pos.relative (1, 0), pos.relative (0, 1), pos.relative (1, 1)};
+		}
+		else
+		{
+			return {pos};
+		}
+	}
+} // namespace
 
 //------------------------------------------------------------------------------
 cMapField::cMapField()
@@ -230,61 +247,16 @@ bool cStaticMap::isGround (const cPosition& position) const
 
 bool cStaticMap::possiblePlace (const cStaticUnitData& data, const cPosition& position) const
 {
-	if (!isValidPosition (position)) return false;
-	if (data.ID.isABuilding() && data.buildingData.isBig)
-	{
-		if (!isValidPosition (position + cPosition (0, 1)) || !isValidPosition (position + cPosition (1, 0)) || !isValidPosition (position + cPosition (1, 1)))
-		{
-			return false;
-		}
-	}
+	const auto positions = getPositions (position, data.ID.isABuilding() && data.buildingData.isBig);
 
+	if (!ranges::all_of (positions, [this] (const auto& pos) { return isValidPosition (pos); })) return false;
 	if (data.factorAir > 0) return true;
 
-	if (isBlocked (position)) return false;
-	if (data.ID.isABuilding() && data.buildingData.isBig)
-	{
-		if (isBlocked (position + cPosition (0, 1)) || isBlocked (position + cPosition (1, 0)) || isBlocked (position + cPosition (1, 1)))
-		{
-			return false;
-		}
-	}
+	if (ranges::any_of (positions, [this] (const auto& pos) { return isBlocked (pos); })) return false;
 
-	if (data.factorSea == 0)
-	{
-		if (isWater (position)) return false;
-		if (data.ID.isABuilding() && data.buildingData.isBig)
-		{
-			if (isWater (position + cPosition (0, 1)) || isWater (position + cPosition (1, 0)) || isWater (position + cPosition (1, 1)))
-			{
-				return false;
-			}
-		}
-	}
-
-	if (data.factorCoast == 0)
-	{
-		if (isCoast (position)) return false;
-		if (data.ID.isABuilding() && data.buildingData.isBig)
-		{
-			if (isCoast (position + cPosition (0, 1)) || isCoast (position + cPosition (1, 0)) || isCoast (position + cPosition (1, 1)))
-			{
-				return false;
-			}
-		}
-	}
-
-	if (data.factorGround == 0)
-	{
-		if (isGround (position)) return false;
-		if (data.ID.isABuilding() && data.buildingData.isBig)
-		{
-			if (isGround (position + cPosition (0, 1)) || isGround (position + cPosition (1, 0)) || isGround (position + cPosition (1, 1)))
-			{
-				return false;
-			}
-		}
-	}
+	if (data.factorSea == 0 && ranges::any_of (positions, [this] (const auto& pos) { return isWater (pos); })) return false;
+	if (data.factorCoast == 0 && ranges::any_of (positions, [this] (const auto& pos) { return isCoast (pos); })) return false;
+	if (data.factorGround == 0 && ranges::any_of (positions, [this] (const auto& pos) { return isGround (pos); })) return false;
 
 	return true;
 }
@@ -537,40 +509,15 @@ void cMap::addBuilding (cBuilding& building, const cPosition& position)
 	if (building.getStaticUnitData().surfacePosition != eSurfacePosition::Ground && building.getIsBig() && !building.isRubble()) return;
 
 	const int mapLevel = cMap::getMapLevel (building);
-	size_t i = 0;
 
-	if (building.getIsBig())
+	for (const auto& pos : getPositions (position, building.getIsBig()))
 	{
-		auto& field = getField (position);
-		i = 0;
+		auto& field = getField (pos);
+		std::size_t i = 0;
 		while (i < field.getBuildings().size() && cMap::getMapLevel (*field.getBuildings()[i]) < mapLevel)
+		{
 			i++;
-		field.addBuilding (building, i);
-
-		auto& fieldEast = getField (position + cPosition (1, 0));
-		i = 0;
-		while (i < fieldEast.getBuildings().size() && cMap::getMapLevel (*fieldEast.getBuildings()[i]) < mapLevel)
-			i++;
-		fieldEast.addBuilding (building, i);
-
-		auto& fieldSouth = getField (position + cPosition (0, 1));
-		i = 0;
-		while (i < fieldSouth.getBuildings().size() && cMap::getMapLevel (*fieldSouth.getBuildings()[i]) < mapLevel)
-			i++;
-		fieldSouth.addBuilding (building, i);
-
-		auto& fieldSouthEast = getField (position + cPosition (1, 1));
-		i = 0;
-		while (i < fieldSouthEast.getBuildings().size() && cMap::getMapLevel (*fieldSouthEast.getBuildings()[i]) < mapLevel)
-			i++;
-		fieldSouthEast.addBuilding (building, i);
-	}
-	else
-	{
-		auto& field = getField (position);
-
-		while (i < field.getBuildings().size() && cMap::getMapLevel (*field.getBuildings()[i]) < mapLevel)
-			i++;
+		}
 		field.addBuilding (building, i);
 	}
 	addedUnit (building);
@@ -598,13 +545,9 @@ void cMap::addVehicle (cVehicle& vehicle, const cPosition& position)
 
 void cMap::deleteBuilding (const cBuilding& building)
 {
-	getField (building.getPosition()).removeBuilding (building);
-
-	if (building.getIsBig())
+	for (const auto& position : building.getPositions())
 	{
-		getField (building.getPosition() + cPosition (1, 0)).removeBuilding (building);
-		getField (building.getPosition() + cPosition (1, 1)).removeBuilding (building);
-		getField (building.getPosition() + cPosition (0, 1)).removeBuilding (building);
+		getField (position).removeBuilding (building);
 	}
 	removedUnit (building);
 }
@@ -617,13 +560,9 @@ void cMap::deleteVehicle (const cVehicle& vehicle)
 	}
 	else
 	{
-		getField (vehicle.getPosition()).removeVehicle (vehicle);
-
-		if (vehicle.getIsBig())
+		for (const auto& position : vehicle.getPositions())
 		{
-			getField (vehicle.getPosition() + cPosition (1, 0)).removeVehicle (vehicle);
-			getField (vehicle.getPosition() + cPosition (1, 1)).removeVehicle (vehicle);
-			getField (vehicle.getPosition() + cPosition (0, 1)).removeVehicle (vehicle);
+			getField (position).removeVehicle (vehicle);
 		}
 	}
 	removedUnit (vehicle);
@@ -656,18 +595,11 @@ void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height
 	}
 	else
 	{
-		getField (oldPosition).removeVehicle (vehicle);
-
-		//check, whether the vehicle is centered on 4 map fields
-		if (vehicle.getIsBig())
+		for (const auto& pos : getPositions (oldPosition, vehicle.getIsBig()))
 		{
-			getField (oldPosition + cPosition (1, 0)).removeVehicle (vehicle);
-			getField (oldPosition + cPosition (1, 1)).removeVehicle (vehicle);
-			getField (oldPosition + cPosition (0, 1)).removeVehicle (vehicle);
-
-			vehicle.setIsBig (false);
+			getField (pos).removeVehicle (vehicle);
 		}
-
+		vehicle.setIsBig (false);
 		getField (position).addVehicle (vehicle, 0);
 	}
 	movedVehicle (vehicle, oldPosition);

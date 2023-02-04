@@ -178,6 +178,19 @@ void cUnit::setPosition (cPosition position_)
 }
 
 //------------------------------------------------------------------------------
+std::vector<cPosition> cUnit::getPositions() const
+{
+	if (getIsBig())
+	{
+		return {position, position.relative (1, 0), position.relative (0, 1), position.relative (1, 1)};
+	}
+	else
+	{
+		return {position};
+	}
+}
+
+//------------------------------------------------------------------------------
 std::vector<cPosition> cUnit::getAdjacentPositions() const
 {
 	std::vector<cPosition> adjacentPositions;

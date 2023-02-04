@@ -70,6 +70,15 @@ namespace
 		return maxProd;
 	}
 
+	//--------------------------------------------------------------------------
+	std::vector<cPosition> getSurroundingPositions (const cPosition& pos, bool isBig)
+	{
+		if (isBig) {
+			return {pos.relative (0, -1), pos.relative (1, -1), pos.relative (2, 0), pos.relative (2, 1), pos.relative (0, 2), pos.relative (1, 2), pos.relative (-1, 0), pos.relative (-1, 1)};
+		}
+		return {pos.relative (0, -1), pos.relative (1, 0), pos.relative (0, 1), pos.relative (-1, 0)};
+	}
+
 } // namespace
 
 //------------------------------------------------------------------------------
@@ -967,28 +976,11 @@ void cBase::addBuilding (cBuilding& building, const cMap& map)
 void cBase::addBuilding (cBuilding& building, const cMap& map, bool signalChange)
 {
 	if (!building.getStaticData().connectsToBase) return;
-	std::vector<cSubBase*> NeighbourList;
 
-	// find all neighbouring subbases
-	if (building.getIsBig())
+	std::vector<cSubBase*> NeighbourList;
+	for (const auto& position : getSurroundingPositions (building.getPosition(), building.getIsBig()))
 	{
-		// big building
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (0, -1), building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (1, -1), building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (2, 0), building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (2, 1), building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (0, 2), building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (1, 2), building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (-1, 0), building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (-1, 1), building, map)) NeighbourList.push_back (SubBase);
-	}
-	else
-	{
-		// small building
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (0, -1), building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (1, 0), building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (0, 1), building, map)) NeighbourList.push_back (SubBase);
-		if (cSubBase* SubBase = checkNeighbour (building.getPosition() + cPosition (-1, 0), building, map)) NeighbourList.push_back (SubBase);
+		if (cSubBase* subBase = checkNeighbour (position, building, map)) NeighbourList.push_back (subBase);
 	}
 	building.CheckNeighbours (map);
 

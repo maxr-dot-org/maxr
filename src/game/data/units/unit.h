@@ -88,6 +88,8 @@ public:
 	const cPosition& getPosition() const;
 	void setPosition (cPosition);
 
+	std::vector<cPosition> getPositions() const;
+
 	cBox<cPosition> getArea() const;
 
 	std::vector<cPosition> getAdjacentPositions() const;
