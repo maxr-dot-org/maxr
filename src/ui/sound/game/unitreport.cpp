@@ -80,15 +80,15 @@ namespace
 				// removing dirt
 				soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIClearing));
 			}
-			else if (vehicle.getStaticUnitData().canAttack && vehicle.data.getAmmo() <= vehicle.data.getAmmoMax() / 4 && vehicle.data.getAmmo() != 0)
-			{
-				// red ammo-status but still ammo left
-				soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAmmoLow)));
-			}
 			else if (vehicle.getStaticUnitData().canAttack && vehicle.data.getAmmo() == 0)
 			{
 				// no ammo left
 				soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAmmoEmpty)));
+			}
+			else if (vehicle.getStaticUnitData().canAttack && vehicle.data.getAmmo() <= vehicle.data.getAmmoMax() / 4)
+			{
+				// red ammo-status but still ammo left
+				soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAmmoLow)));
 			}
 			else if (vehicle.isSentryActive())
 			{
