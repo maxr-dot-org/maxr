@@ -303,32 +303,19 @@ void cSubBase::addResource (eResourceType storeResType, int value)
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		cBuilding& b = *buildings[i];
-		if (b.getStaticUnitData().storeResType != storeResType) continue;
+		const cStaticUnitData& unitData = b.getStaticUnitData();
+		if (unitData.storeResType != storeResType) continue;
 		if (value < 0)
 		{
-			if (b.getStoredResources() > -value)
-			{
-				b.setStoredResources (b.getStoredResources() + value);
-				value = 0;
-			}
-			else
-			{
-				value += b.getStoredResources();
-				b.setStoredResources (0);
-			}
+			const int transferValue = std::min (-value, b.getStoredResources());
+			value += transferValue;
+			b.setStoredResources (b.getStoredResources() - transferValue);
 		}
 		else
 		{
-			if (b.getStaticUnitData().storageResMax - b.getStoredResources() > value)
-			{
-				b.setStoredResources (b.getStoredResources() + value);
-				value = 0;
-			}
-			else
-			{
-				value -= b.getStaticUnitData().storageResMax - b.getStoredResources();
-				b.setStoredResources (b.getStaticUnitData().storageResMax);
-			}
+			const int transferValue = std::min (value, unitData.storageResMax - b.getStoredResources());
+			value -= transferValue;
+			b.setStoredResources (b.getStoredResources() + transferValue);
 		}
 
 		if (value == 0) break;
@@ -698,77 +685,79 @@ void cSubBase::addBuilding (cBuilding& b)
 	buildings.push_back (&b);
 	b.subBase = this;
 
+	const cStaticUnitData& staticUnitData = b.getStaticUnitData();
 	// calculate storage level
-	switch (b.getStaticUnitData().storeResType)
+	switch (staticUnitData.storeResType)
 	{
 		case eResourceType::Metal:
-			maxStored.metal += b.getStaticUnitData().storageResMax;
+			maxStored.metal += staticUnitData.storageResMax;
 			setMetal (stored.metal + b.getStoredResources());
 			break;
 		case eResourceType::Oil:
-			maxStored.oil += b.getStaticUnitData().storageResMax;
+			maxStored.oil += staticUnitData.storageResMax;
 			setOil (stored.oil + b.getStoredResources());
 			break;
 		case eResourceType::Gold:
-			maxStored.gold += b.getStaticUnitData().storageResMax;
+			maxStored.gold += staticUnitData.storageResMax;
 			setGold (stored.gold + b.getStoredResources());
 			break;
 		case eResourceType::None:
 			break;
 	}
 	// calculate energy
-	if (b.getStaticUnitData().produceEnergy)
+	if (staticUnitData.produceEnergy)
 	{
-		maxEnergyProd += b.getStaticUnitData().produceEnergy;
-		maxNeeded.oil += b.getStaticUnitData().needsOil;
+		maxEnergyProd += staticUnitData.produceEnergy;
+		maxNeeded.oil += staticUnitData.needsOil;
 		if (b.isUnitWorking())
 		{
-			energyProd += b.getStaticUnitData().produceEnergy;
-			needed.oil += b.getStaticUnitData().needsOil;
+			energyProd += staticUnitData.produceEnergy;
+			needed.oil += staticUnitData.needsOil;
 		}
 	}
-	else if (b.getStaticUnitData().needsEnergy)
+	else if (staticUnitData.needsEnergy)
 	{
-		maxEnergyNeed += b.getStaticUnitData().needsEnergy;
+		maxEnergyNeed += staticUnitData.needsEnergy;
 		if (b.isUnitWorking())
 		{
-			energyNeed += b.getStaticUnitData().needsEnergy;
+			energyNeed += staticUnitData.needsEnergy;
 		}
 	}
 	// calculate resource consumption
-	if (b.getStaticUnitData().needsMetal)
+	if (staticUnitData.needsMetal)
 	{
-		maxNeeded.metal += b.getStaticUnitData().needsMetal * 12;
+		maxNeeded.metal += staticUnitData.needsMetal * 12;
 		if (b.isUnitWorking())
 		{
 			needed.metal += std::min (b.getMetalPerRound(), b.getBuildListItem (0).getRemainingMetal());
 		}
 	}
+	const sStaticBuildingData& staticBuildingData = b.getStaticData();
 	// calculate gold
-	if (b.getStaticData().convertsGold)
+	if (staticBuildingData.convertsGold)
 	{
-		maxNeeded.gold += b.getStaticData().convertsGold;
+		maxNeeded.gold += staticBuildingData.convertsGold;
 		if (b.isUnitWorking())
 		{
-			needed.gold += b.getStaticData().convertsGold;
+			needed.gold += staticBuildingData.convertsGold;
 		}
 	}
 	// calculate resource production
-	if (b.getStaticData().canMineMaxRes > 0 && b.isUnitWorking())
+	if (staticBuildingData.canMineMaxRes > 0 && b.isUnitWorking())
 	{
 		prod += b.prod;
 	}
 	// calculate humans
-	if (b.getStaticUnitData().produceHumans)
+	if (staticUnitData.produceHumans)
 	{
-		humanProd += b.getStaticUnitData().produceHumans;
+		humanProd += staticUnitData.produceHumans;
 	}
-	if (b.getStaticUnitData().needsHumans)
+	if (staticUnitData.needsHumans)
 	{
-		maxHumanNeed += b.getStaticUnitData().needsHumans;
+		maxHumanNeed += staticUnitData.needsHumans;
 		if (b.isUnitWorking())
 		{
-			humanNeed += b.getStaticUnitData().needsHumans;
+			humanNeed += staticUnitData.needsHumans;
 		}
 	}
 }

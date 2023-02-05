@@ -316,7 +316,9 @@ cBuilding* cUnitSelection::getNextBuilding (const cPlayer& player, const std::ve
 	for (; it != buildings.end(); ++it)
 	{
 		const cBuilding& b = **it;
-		if (!Contains (doneList, b.getId()) && !b.isUnitWorking() && !b.isSentryActive() && (!b.getStaticUnitData().canBuild.empty() || b.data.getShots() || b.getStaticData().canMineMaxRes > 0 || b.getStaticData().convertsGold > 0 || b.getStaticData().canResearch))
+		const auto& unitData = b.getStaticUnitData();
+		const auto& buildingData = unitData.buildingData;
+		if (!Contains (doneList, b.getId()) && !b.isUnitWorking() && !b.isSentryActive() && (!unitData.canBuild.empty() || b.data.getShots() || buildingData.canMineMaxRes > 0 || buildingData.convertsGold > 0 || buildingData.canResearch))
 		{
 			return it->get();
 		}
@@ -410,7 +412,9 @@ cBuilding* cUnitSelection::getPrevBuilding (const cPlayer& player, const std::ve
 	for (; it != buildings.end(); --it)
 	{
 		const cBuilding& b = **it;
-		if (!Contains (doneList, b.getId()) && !b.isUnitWorking() && !b.isSentryActive() && (!b.getStaticUnitData().canBuild.empty() || b.data.getShots() || b.getStaticData().canMineMaxRes > 0 || b.getStaticData().convertsGold > 0 || b.getStaticData().canResearch))
+		const auto& unitData = b.getStaticUnitData();
+		const auto& buildingData = unitData.buildingData;
+		if (!Contains (doneList, b.getId()) && !b.isUnitWorking() && !b.isSentryActive() && (!unitData.canBuild.empty() || b.data.getShots() || buildingData.canMineMaxRes > 0 || buildingData.convertsGold > 0 || buildingData.canResearch))
 		{
 			return it->get();
 		}

@@ -145,27 +145,28 @@ int cPathCalculator::calcNextCost (const cPosition& source, const cPosition& des
 
 	int costs = 4;
 	// select base movement factor
-	if (vehicle->getStaticUnitData().factorAir > 0)
+	const auto& unitData = vehicle->getStaticUnitData();
+	if (unitData.factorAir > 0)
 	{
-		costs = (int) (4 * vehicle->getStaticUnitData().factorAir);
+		costs = (int) (4 * unitData.factorAir);
 	}
-	else if (map->isWater (destination) && !(map->getField (destination).hasBridgeOrPlattform() && vehicle->getStaticUnitData().factorGround > 0))
+	else if (map->isWater (destination) && !(map->getField (destination).hasBridgeOrPlattform() && unitData.factorGround > 0))
 	{
-		costs = (int) (4 * vehicle->getStaticUnitData().factorSea);
+		costs = (int) (4 * unitData.factorSea);
 	}
-	else if (map->isCoast (destination) && !(map->getField (destination).hasBridgeOrPlattform() && vehicle->getStaticUnitData().factorGround > 0))
+	else if (map->isCoast (destination) && !(map->getField (destination).hasBridgeOrPlattform() && unitData.factorGround > 0))
 	{
-		costs = (int) (4 * vehicle->getStaticUnitData().factorCoast);
+		costs = (int) (4 * unitData.factorCoast);
 	}
 	else
 	{
-		costs = (int) (4 * vehicle->getStaticUnitData().factorGround);
+		costs = (int) (4 * unitData.factorGround);
 	}
 
 	// moving on a road is cheaper
 	// assuming, only speed of ground units can be modified
 	const cBuilding* building = map->getField (destination).getBaseBuilding();
-	if (building && building->getStaticData().modifiesSpeed != 0 && vehicle->getStaticUnitData().factorGround > 0)
+	if (building && building->getStaticData().modifiesSpeed != 0 && unitData.factorGround > 0)
 	{
 		costs = (int) (costs * building->getStaticData().modifiesSpeed);
 	}
