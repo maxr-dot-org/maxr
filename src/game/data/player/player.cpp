@@ -88,12 +88,6 @@ void cPlayer::setClan (int newClan, const cUnitsData& unitsData)
 }
 
 //------------------------------------------------------------------------------
-int cPlayer::getCredits() const
-{
-	return credits;
-}
-
-//------------------------------------------------------------------------------
 void cPlayer::setCredits (int credits_)
 {
 	std::swap (credits, credits_);
@@ -135,11 +129,6 @@ void cPlayer::initMaps (const cPosition& mapSize)
 	detectMinesMap.resize (mapSize);
 }
 
-const cPosition& cPlayer::getMapSize() const
-{
-	return mapSize;
-}
-
 //------------------------------------------------------------------------------
 void cPlayer::addToScan (const cUnit& unit)
 {
@@ -148,15 +137,16 @@ void cPlayer::addToScan (const cUnit& unit)
 	const int size = unit.getIsBig() ? 2 : 1;
 
 	scanMap.add (unit.data.getScan(), unit.getPosition(), size);
-	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Ground)
+	const auto canDetectStealthOn = unit.getStaticUnitData().canDetectStealthOn;
+	if (canDetectStealthOn & eTerrainFlag::Ground)
 	{
 		detectLandMap.add (unit.data.getScan(), unit.getPosition(), size);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Sea)
+	if (canDetectStealthOn & eTerrainFlag::Sea)
 	{
 		detectSeaMap.add (unit.data.getScan(), unit.getPosition(), size);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::AreaExpMine)
+	if (canDetectStealthOn & eTerrainFlag::AreaExpMine)
 	{
 		// mines can only be detected on directly adjacent fields
 		detectMinesMap.add (1, unit.getPosition(), size, true);
@@ -171,15 +161,16 @@ void cPlayer::updateScan (const cUnit& unit, const cPosition& newPosition, bool 
 	const int oldSize = unit.getIsBig() ? 2 : 1;
 	const int newSize = newIsBig ? 2 : 1;
 	scanMap.update (unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
-	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Ground)
+	const auto canDetectStealthOn = unit.getStaticUnitData().canDetectStealthOn;
+	if (canDetectStealthOn & eTerrainFlag::Ground)
 	{
 		detectLandMap.update (unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Sea)
+	if (canDetectStealthOn & eTerrainFlag::Sea)
 	{
 		detectSeaMap.update (unit.data.getScan(), unit.getPosition(), newPosition, oldSize, newSize);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::AreaExpMine)
+	if (canDetectStealthOn & eTerrainFlag::AreaExpMine)
 	{
 		// mines can only be detected on directly adjacent fields
 		detectMinesMap.update (1, unit.getPosition(), newPosition, oldSize, newSize, true);
@@ -193,11 +184,12 @@ void cPlayer::updateScan (const cUnit& unit, int newScanRange)
 
 	const int size = unit.getIsBig() ? 2 : 1;
 	scanMap.update (unit.data.getScan(), newScanRange, unit.getPosition(), size);
-	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Ground)
+	const auto canDetectStealthOn = unit.getStaticUnitData().canDetectStealthOn;
+	if (canDetectStealthOn & eTerrainFlag::Ground)
 	{
 		detectLandMap.update (unit.data.getScan(), newScanRange, unit.getPosition(), size);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Sea)
+	if (canDetectStealthOn & eTerrainFlag::Sea)
 	{
 		detectSeaMap.update (unit.data.getScan(), newScanRange, unit.getPosition(), size);
 	}
@@ -210,25 +202,20 @@ void cPlayer::removeFromScan (const cUnit& unit)
 	const int size = unit.getIsBig() ? 2 : 1;
 
 	scanMap.remove (unit.data.getScan(), unit.getPosition(), size);
-	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Ground)
+	const auto canDetectStealthOn = unit.getStaticUnitData().canDetectStealthOn;
+	if (canDetectStealthOn & eTerrainFlag::Ground)
 	{
 		detectLandMap.remove (unit.data.getScan(), unit.getPosition(), size);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::Sea)
+	if (canDetectStealthOn & eTerrainFlag::Sea)
 	{
 		detectSeaMap.remove (unit.data.getScan(), unit.getPosition(), size);
 	}
-	if (unit.getStaticUnitData().canDetectStealthOn & eTerrainFlag::AreaExpMine)
+	if (canDetectStealthOn & eTerrainFlag::AreaExpMine)
 	{
 		// mines can only be detected on directly adjacent fields
 		detectMinesMap.remove (1, unit.getPosition(), size, true);
 	}
-}
-
-//------------------------------------------------------------------------------
-const cRangeMap& cPlayer::getScanMap() const
-{
-	return scanMap;
 }
 
 //------------------------------------------------------------------------------
@@ -277,28 +264,17 @@ cBuilding* cPlayer::getBuildingFromId (unsigned int id) const
 }
 
 //------------------------------------------------------------------------------
-const cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>>& cPlayer::getVehicles() const
-{
-	return vehicles;
-}
-
-//------------------------------------------------------------------------------
-const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& cPlayer::getBuildings() const
-{
-	return buildings;
-}
-
-//------------------------------------------------------------------------------
 void cPlayer::addToSentryMap (const cUnit& u)
 {
 	assert (u.isSentryActive());
 
 	const int size = u.getIsBig() ? 2 : 1;
-	if (u.getStaticUnitData().canAttack & eTerrainFlag::Air)
+	const auto canAttack = u.getStaticUnitData().canAttack;
+	if (canAttack & eTerrainFlag::Air)
 	{
 		sentriesMapAir.add (u.data.getRange(), u.getPosition(), size);
 	}
-	if (u.getStaticUnitData().canAttack & (eTerrainFlag::Ground | eTerrainFlag::Sea))
+	else if (canAttack & (eTerrainFlag::Ground | eTerrainFlag::Sea))
 	{
 		sentriesMapGround.add (u.data.getRange(), u.getPosition(), size);
 	}
@@ -308,11 +284,12 @@ void cPlayer::addToSentryMap (const cUnit& u)
 void cPlayer::removeFromSentryMap (const cUnit& u)
 {
 	const int size = u.getIsBig() ? 2 : 1;
-	if (u.getStaticUnitData().canAttack & eTerrainFlag::Air)
+	const auto canAttack = u.getStaticUnitData().canAttack;
+	if (canAttack & eTerrainFlag::Air)
 	{
 		sentriesMapAir.remove (u.data.getRange(), u.getPosition(), size);
 	}
-	else if (u.getStaticUnitData().canAttack & (eTerrainFlag::Ground | eTerrainFlag::Sea))
+	else if (canAttack & (eTerrainFlag::Ground | eTerrainFlag::Sea))
 	{
 		sentriesMapGround.remove (u.data.getRange(), u.getPosition(), size);
 	}
@@ -324,11 +301,12 @@ void cPlayer::updateSentry (const cUnit& u, int newRange)
 	if (!u.isSentryActive()) return;
 
 	const int size = u.getIsBig() ? 2 : 1;
-	if (u.getStaticUnitData().canAttack & eTerrainFlag::Air)
+	const auto canAttack = u.getStaticUnitData().canAttack;
+	if (canAttack & eTerrainFlag::Air)
 	{
 		sentriesMapAir.update (u.data.getRange(), newRange, u.getPosition(), size);
 	}
-	else if (u.getStaticUnitData().canAttack & (eTerrainFlag::Ground | eTerrainFlag::Sea))
+	else if (canAttack & (eTerrainFlag::Ground | eTerrainFlag::Sea))
 	{
 		sentriesMapGround.update (u.data.getRange(), newRange, u.getPosition(), size);
 	}
@@ -399,10 +377,7 @@ void cPlayer::revealResource()
 //------------------------------------------------------------------------------
 bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
 {
-	if (canSeeAt (unit.getPosition())) return true;
-	if (!unit.getIsBig()) return false;
-
-	return canSeeAt (unit.getPosition() + cPosition (0, 1)) || canSeeAt (unit.getPosition() + cPosition (1, 1)) || canSeeAt (unit.getPosition() + cPosition (1, 0));
+	return ranges::any_of (unit.getPositions(), [this] (const auto& position) { return canSeeAt (position); });
 }
 
 //------------------------------------------------------------------------------
@@ -432,7 +407,7 @@ bool cPlayer::canSeeUnit (const cUnit& unit, const cMapField& field, const sTerr
 std::string cPlayer::resourceMapToString() const
 {
 	std::string str;
-	str.reserve (resourceMap.size() + 1);
+	str.reserve (2 * resourceMap.size());
 	for (size_t i = 0; i != resourceMap.size(); ++i)
 	{
 		str += getHexValue (resourceMap[i]);
@@ -522,14 +497,7 @@ void cPlayer::accumulateScore()
 //------------------------------------------------------------------------------
 int cPlayer::getNumEcoSpheres() const
 {
-	int numEcos = 0;
-
-	for (const auto& building : buildings)
-	{
-		if (building->getStaticData().canScore && building->isUnitWorking())
-			++numEcos;
-	}
-	return numEcos;
+	return ranges::count_if (buildings, [] (const auto& building) { return building->getStaticData().canScore && building->isUnitWorking(); });
 }
 
 //------------------------------------------------------------------------------
@@ -611,15 +579,10 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::eResearchArea>& are
 //------------------------------------------------------------------------------
 void cPlayer::refreshResearchCentersWorkingOnArea()
 {
-	int oldResearchCentersWorkingOnArea[cResearch::kNrResearchAreas];
+	const auto oldResearchCentersWorkingOnArea = researchCentersWorkingOnArea;
+	researchCentersWorkingOnArea = {};
 
 	int newResearchCount = 0;
-	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
-	{
-		oldResearchCentersWorkingOnArea[i] = researchCentersWorkingOnArea[i];
-		researchCentersWorkingOnArea[i] = 0;
-	}
-
 	for (const auto& building : buildings)
 	{
 		if (building->getStaticData().canResearch && building->isUnitWorking())
@@ -752,33 +715,11 @@ uint32_t cPlayer::getChecksum (uint32_t crc) const
 //------------------------------------------------------------------------------
 bool cPlayer::mayHaveOffensiveUnit() const
 {
-	for (const auto& vehicle : vehicles)
-	{
-		if (vehicle->getStaticUnitData().canAttack || !vehicle->getStaticUnitData().canBuild.empty()) return true;
-	}
-	for (const auto& building : buildings)
-	{
-		if (building->getStaticUnitData().canAttack || !building->getStaticUnitData().canBuild.empty()) return true;
-	}
-	return false;
-}
-
-//------------------------------------------------------------------------------
-const cResearch& cPlayer::getResearchState() const
-{
-	return researchState;
-}
-
-//------------------------------------------------------------------------------
-cResearch& cPlayer::getResearchState()
-{
-	return researchState;
-}
-
-//------------------------------------------------------------------------------
-int cPlayer::getResearchCentersWorkingTotal() const
-{
-	return researchCentersWorkingTotal;
+	const auto canAttackOrBuild = [] (const auto& unit) {
+		const auto& staticUnitData = unit->getStaticUnitData();
+		return staticUnitData.canAttack || !staticUnitData.canBuild.empty();
+	};
+	return ranges::any_of (vehicles, canAttackOrBuild) || ranges::any_of (buildings, canAttackOrBuild);
 }
 
 //------------------------------------------------------------------------------
@@ -793,12 +734,6 @@ bool cPlayer::canSeeAt (const cPosition& position) const
 	if (isDefeated) return true;
 
 	return scanMap.get (position);
-}
-
-//------------------------------------------------------------------------------
-bool cPlayer::getHasFinishedTurn() const
-{
-	return hasFinishedTurn;
 }
 
 //------------------------------------------------------------------------------

@@ -90,7 +90,7 @@ public:
 
 	int getId() const { return id; }
 
-	int getCredits() const;
+	int getCredits() const { return credits; }
 	void setCredits (int credits);
 
 	/** Get the most modern version of a unit (including all his upgrades). */
@@ -101,7 +101,7 @@ public:
 	const cPosition& getLandingPos() const { return landingPos; }
 
 	void initMaps (const cPosition& mapSize);
-	const cPosition& getMapSize() const;
+	const cPosition& getMapSize() const { return mapSize; }
 
 	/**
 	* Update the scan and detection maps of the player. These maps control,
@@ -112,7 +112,7 @@ public:
 	void updateScan (const cUnit&, int newScanRange);
 	void removeFromScan (const cUnit&);
 
-	const cRangeMap& getScanMap() const;
+	const cRangeMap& getScanMap() const { return scanMap; }
 
 	void revealResource();
 	unsigned int getOffset (const cPosition& pos) const { return pos.x() + pos.y() * mapSize.x(); }
@@ -144,8 +144,8 @@ public:
 	cVehicle* getVehicleFromId (unsigned int id) const;
 	cBuilding* getBuildingFromId (unsigned int id) const;
 
-	const cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>>& getVehicles() const;
-	const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& getBuildings() const;
+	const cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>>& getVehicles() const { return vehicles; }
+	const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& getBuildings() const { return buildings; }
 
 	bool hasUnits() const;
 
@@ -167,7 +167,7 @@ public:
 	void setClan (int newClan, const cUnitsData&);
 	int getClan() const { return clan; }
 
-	bool getHasFinishedTurn() const;
+	bool getHasFinishedTurn() const { return hasFinishedTurn; }
 	void setHasFinishedTurn (bool value);
 
 	void exploreResource (const cPosition& pos) { resourceMap.set (getOffset (pos), 1); }
@@ -184,10 +184,10 @@ public:
 
 	bool mayHaveOffensiveUnit() const;
 
-	const cResearch& getResearchState() const;
-	cResearch& getResearchState();
+	const cResearch& getResearchState() const { return researchState; }
+	cResearch& getResearchState() { return researchState; }
 
-	int getResearchCentersWorkingTotal() const;
+	int getResearchCentersWorkingTotal() const { return researchCentersWorkingTotal; }
 	int getResearchCentersWorkingOnArea (cResearch::eResearchArea) const;
 
 	void startAResearch (cResearch::eResearchArea);
@@ -242,9 +242,9 @@ public:
 				[&] (const auto& vehicle) { return hasStoredUnits (vehicle) && ranges::none_of (vehicle->storedUnits, hasStoredUnits); },
 				[&] (const auto& vehicle) { return hasStoredUnits (vehicle) && ranges::any_of (vehicle->storedUnits, hasStoredUnits); }};
 		std::vector<std::shared_ptr<cVehicle>> orderedVehicles;
-		for (auto filter : filters)
+		for (const auto& filter : filters)
 		{
-			for (auto vehicle : vehicles)
+			for (const auto& vehicle : vehicles)
 			{
 				if (filter (vehicle))
 				{
