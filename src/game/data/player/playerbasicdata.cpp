@@ -85,12 +85,6 @@ void cPlayerBasicData::setName (std::string name_)
 }
 
 //------------------------------------------------------------------------------
-int cPlayerBasicData::getNr() const
-{
-	return nr;
-}
-
-//------------------------------------------------------------------------------
 void cPlayerBasicData::setNr (int newNr)
 {
 	std::swap (newNr, nr);
@@ -111,20 +105,8 @@ void cPlayerBasicData::setReady (bool ready_)
 }
 
 //------------------------------------------------------------------------------
-bool cPlayerBasicData::isReady() const
-{
-	return ready;
-}
-
-//------------------------------------------------------------------------------
 void cPlayerBasicData::setDefeated (bool defeated_)
 {
 	std::swap (defeated_, defeated);
 	if (defeated != defeated_) isDefeatedChanged();
-}
-
-//------------------------------------------------------------------------------
-bool cPlayerBasicData::isDefeated() const
-{
-	return defeated;
 }

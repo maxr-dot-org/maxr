@@ -44,12 +44,12 @@ public:
 	void setName (std::string);
 	const cRgbColor& getColor() const { return player.color; }
 	void setColor (cRgbColor);
-	int getNr() const;
+	int getNr() const { return nr; }
 	void setNr (int index);
 	void setReady (bool ready);
-	bool isReady() const;
+	bool isReady() const { return ready; }
 	void setDefeated (bool defeated);
-	bool isDefeated() const;
+	bool isDefeated() const { return defeated; }
 
 	bool operator== (const cPlayerBasicData&) const;
 	bool operator!= (const cPlayerBasicData& rhs) const { return !(*this == rhs); }
