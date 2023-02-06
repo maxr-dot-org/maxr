@@ -211,6 +211,15 @@ public:
 		archive >> serialization::makeNvp ("players", playerList);
 
 		archive >> NVP (moveJobs);
+		for (auto& moveJob : moveJobs)
+		{
+			if (moveJob->getVehicleId())
+			{
+				auto* vehicle = getVehicleFromID (*moveJob->getVehicleId());
+				assert (vehicle);
+				vehicle->setMoveJob (moveJob.get());
+			}
+		}
 		archive >> NVP (attackJobs);
 
 		archive >> NVP (neutralBuildings);

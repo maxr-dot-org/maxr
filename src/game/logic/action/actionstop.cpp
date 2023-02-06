@@ -53,7 +53,7 @@ void cActionStop::execute (cModel& model) const
 
 		if (vehicle->getMoveJob())
 		{
-			vehicle->getMoveJob()->stop();
+			vehicle->getMoveJob()->stop (*vehicle);
 		}
 		else if (vehicle->isUnitBuildingABuilding())
 		{

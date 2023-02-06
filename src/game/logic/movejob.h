@@ -20,15 +20,17 @@
 #ifndef game_logic_movejobs2H
 #define game_logic_movejobs2H
 
-#include "game/data/units/vehicle.h"
+#include "config/workaround/cpp17/optional.h"
 #include "game/logic/endmoveaction.h"
 #include "utility/position.h"
 
 #include <forward_list>
+#include <memory>
 
 #define MOVE_SPEED 4 // maximum speed (pixel per gametime tick) of vehicle movements
 
 class cMap;
+class cVehicle;
 
 class cMoveJob
 {
@@ -43,7 +45,7 @@ public:
 	/**
 	* return the moved vehicle
 	*/
-	cVehicle* getVehicle() const { return vehicle; }
+	std::optional<int> getVehicleId() const { return vehicleId; }
 	/**
 	* return the amount of saved movement points. These are saved at turn end and added to the
 	* vehicles movement points in the next turn. This is done to prevent that the player looses
@@ -76,7 +78,7 @@ public:
 	* If the job is active, the state of the job is set to eMoveJobState::Stopping
 	* and the job will be halted when the unit reaches the next field.
 	*/
-	void stop();
+	void stop (cVehicle&);
 	/**
 	* Resume execution of a waiting movejob.
 	*/
@@ -103,7 +105,7 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
-		archive & NVP (vehicle);
+		archive & NVP (vehicleId);
 		archive & NVP (path);
 		archive & NVP (state);
 		archive & NVP (savedSpeed);
@@ -114,14 +116,6 @@ public:
 		archive & NVP (pixelToMove);
 		archive & NVP (endMoveAction);
 		archive & NVP (stopOnDetectResource);
-
-		if (!Archive::isWriter)
-		{
-			if (vehicle != nullptr)
-			{
-				vehicle->setMoveJob (this);
-			}
-		}
 	}
 
 private:
@@ -136,44 +130,44 @@ private:
 	/**
 	* calculates the needed rotation before the next movement
 	*/
-	void calcNextDir();
+	void calcNextDir (const cVehicle&);
 	/**
 	* moves the vehicle by 'offset' pixel in direction of 'nextDir'
 	*/
-	void changeVehicleOffset (int offset) const;
+	void changeVehicleOffset (cVehicle&, int offset) const;
 	/**
 	* triggers all actions, that need to be done before starting a movement step
 	*/
-	void startMove (cModel& model);
+	void startMove (cModel&, cVehicle&);
 
 	/**
 	* check, weather the next field is free and make the necessary actions if it is not.
 	* Return true, if the movement can be continued.
 	*/
-	bool handleCollision (cModel& model);
+	bool handleCollision (cModel&, cVehicle&);
 
-	bool recalculatePath (cModel& model);
+	bool recalculatePath (cModel&, cVehicle&);
 
 	/**
 	* check, if the unit finished the current movement step
 	*/
-	bool reachedField() const;
+	bool reachedField (cVehicle&) const;
 	/**
 	* actually execute the movement
 	*/
-	void moveVehicle (cModel& model);
+	void moveVehicle (cModel&, cVehicle&);
 	/**
 	* updates the current speed of the vehicle (for accelerating and breaking)
 	*/
-	void updateSpeed (const cMap& map);
+	void updateSpeed (cVehicle&, const cMap&);
 	/**
 	* triggers all actions, that need to be done after finishing a movement step
 	*/
-	void endMove (cModel& model);
+	void endMove (cModel&, cVehicle&);
 
 private:
 	/** the vehicle to move */
-	cVehicle* vehicle = nullptr;
+	std::optional<int> vehicleId;
 	/** list of positions. First element is the next field, that the unit will drive to after the current one. */
 	std::forward_list<cPosition> path;
 	eMoveJobState state = eMoveJobState::Active;

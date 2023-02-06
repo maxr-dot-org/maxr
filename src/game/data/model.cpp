@@ -370,7 +370,7 @@ void cModel::deleteUnit (cUnit* unit)
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
 		if (vehicle->getMoveJob())
 		{
-			assert (vehicle->getMoveJob()->getVehicle() == vehicle);
+			assert (vehicle->getMoveJob()->getVehicleId() == vehicle->getId());
 			vehicle->getMoveJob()->removeVehicle();
 		}
 	}
@@ -446,7 +446,7 @@ cMoveJob* cModel::addMoveJob (cVehicle& vehicle, const std::forward_list<cPositi
 		else
 		{
 			// a waiting movejob can be replaced by new one
-			currentMoveJob->stop();
+			currentMoveJob->stop (vehicle);
 			currentMoveJob->removeVehicle();
 		}
 	}
@@ -464,14 +464,16 @@ std::vector<const cPlayer*> cModel::resumeMoveJobs (const cPlayer* player /*= nu
 	std::vector<const cPlayer*> players;
 	for (const auto& moveJob : moveJobs)
 	{
-		if ((player && moveJob->getVehicle()->getOwner() != player) || !moveJob->getVehicle())
+		cVehicle* vehicle = moveJob->getVehicleId() ? getVehicleFromID (*moveJob->getVehicleId()) : nullptr;
+
+		if (!vehicle || (player && vehicle->getOwner() != player))
 		{
 			continue;
 		}
-		if (moveJob->isWaiting() && moveJob->getVehicle() && moveJob->getVehicle()->data.getSpeed() > 0)
+		if (moveJob->isWaiting() && vehicle->data.getSpeed() > 0)
 		{
 			moveJob->resume();
-			players.push_back (moveJob->getVehicle()->getOwner());
+			players.push_back (vehicle->getOwner());
 		}
 	}
 	RemoveDuplicates (players);
@@ -606,7 +608,7 @@ void cModel::runMoveJobs()
 		moveJob->run (*this); //this can add new items to 'moveJobs'
 		if (moveJob->isFinished())
 		{
-			cVehicle* vehicle = moveJob->getVehicle();
+			cVehicle* vehicle = moveJob->getVehicleId() ? getVehicleFromID (*moveJob->getVehicleId()) : nullptr;
 			if (vehicle != nullptr && vehicle->getMoveJob() == moveJob.get())
 			{
 				vehicle->setMoveJob (nullptr);

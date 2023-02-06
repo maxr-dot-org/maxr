@@ -125,5 +125,5 @@ void cActionStartBuild::execute (cModel& model) const
 
 	model.addJob (std::make_unique<cStartBuildJob> (*vehicle, oldPosition, data.buildingData.isBig));
 
-	if (vehicle->getMoveJob()) vehicle->getMoveJob()->stop();
+	if (vehicle->getMoveJob()) vehicle->getMoveJob()->stop (*vehicle);
 }

@@ -88,7 +88,7 @@ void cUnit::storeVehicle (cVehicle& vehicle, cMap& map)
 		vehicle.setSentryActive (false);
 	}
 
-	if (vehicle.getMoveJob()) vehicle.getMoveJob()->stop();
+	if (vehicle.getMoveJob()) vehicle.getMoveJob()->stop (vehicle);
 	vehicle.setManualFireActive (false);
 
 	vehicle.setLoaded (true);
