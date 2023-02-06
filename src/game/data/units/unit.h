@@ -66,7 +66,7 @@ public:
 	virtual bool isAVehicle() const = 0;
 	virtual bool isABuilding() const = 0;
 
-	cPlayer* getOwner() const;
+	cPlayer* getOwner() const { return owner; }
 	void setOwner (cPlayer* owner);
 
 	virtual bool canTransferTo (const cPosition&, const cMapView&) const = 0;
@@ -85,7 +85,7 @@ public:
 		return dummy;
 	}
 
-	const cPosition& getPosition() const;
+	const cPosition& getPosition() const { return position; }
 	void setPosition (cPosition);
 
 	std::vector<cPosition> getPositions() const;
@@ -142,20 +142,20 @@ public:
 	void setIsBeeinAttacked (bool value);
 	void setHasBeenAttacked (bool value);
 
-	int getDisabledTurns() const;
-	bool isSentryActive() const;
-	bool isManualFireActive() const;
-	bool isAttacking() const;
-	bool isBeeingAttacked() const;
-	bool hasBeenAttacked() const;
+	int getDisabledTurns() const { return turnsDisabled; }
+	bool isSentryActive() const { return sentryActive; }
+	bool isManualFireActive() const { return manualFireActive; }
+	bool isAttacking() const { return attacking; }
+	bool isBeeingAttacked() const { return beeingAttacked; }
+	bool hasBeenAttacked() const { return beenAttacked; }
 
-	int getStoredResources() const;
+	int getStoredResources() const { return storageResCur; }
 	void setStoredResources (int value);
 
 	//protected:
 	virtual bool canBeStoppedViaUnitMenu() const = 0;
 
-	bool getIsBig() const;
+	bool getIsBig() const { return isBig; }
 	void setIsBig (bool value);
 
 	virtual uint32_t getChecksum (uint32_t crc) const;

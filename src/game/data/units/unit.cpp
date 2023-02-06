@@ -70,12 +70,6 @@ cUnit::~cUnit()
 }
 
 //------------------------------------------------------------------------------
-cPlayer* cUnit::getOwner() const
-{
-	return owner;
-}
-
-//------------------------------------------------------------------------------
 void cUnit::setOwner (cPlayer* owner_)
 {
 	std::swap (owner, owner_);
@@ -165,12 +159,6 @@ void cUnit::clearDetectedInThisTurnPlayerList()
 }
 
 //------------------------------------------------------------------------------
-const cPosition& cUnit::getPosition() const
-{
-	return position;
-}
-
-//------------------------------------------------------------------------------
 void cUnit::setPosition (cPosition position_)
 {
 	std::swap (position, position_);
@@ -193,35 +181,34 @@ std::vector<cPosition> cUnit::getPositions() const
 //------------------------------------------------------------------------------
 std::vector<cPosition> cUnit::getAdjacentPositions() const
 {
-	std::vector<cPosition> adjacentPositions;
-
 	if (isBig)
 	{
-		adjacentPositions.push_back (position + cPosition (-1, -1));
-		adjacentPositions.push_back (position + cPosition (0, -1));
-		adjacentPositions.push_back (position + cPosition (1, -1));
-		adjacentPositions.push_back (position + cPosition (2, -1));
-		adjacentPositions.push_back (position + cPosition (-1, 0));
-		adjacentPositions.push_back (position + cPosition (2, 0));
-		adjacentPositions.push_back (position + cPosition (-1, 1));
-		adjacentPositions.push_back (position + cPosition (2, 1));
-		adjacentPositions.push_back (position + cPosition (-1, 2));
-		adjacentPositions.push_back (position + cPosition (0, 2));
-		adjacentPositions.push_back (position + cPosition (1, 2));
-		adjacentPositions.push_back (position + cPosition (2, 2));
+		return {
+			position.relative (-1, -1),
+			position.relative (0, -1),
+			position.relative (1, -1),
+			position.relative (2, -1),
+			position.relative (-1, 0),
+			position.relative (2, 0),
+			position.relative (-1, 1),
+			position.relative (2, 1),
+			position.relative (-1, 2),
+			position.relative (0, 2),
+			position.relative (1, 2),
+			position.relative (2, 2)};
 	}
 	else
 	{
-		adjacentPositions.push_back (position + cPosition (-1, -1));
-		adjacentPositions.push_back (position + cPosition (0, -1));
-		adjacentPositions.push_back (position + cPosition (1, -1));
-		adjacentPositions.push_back (position + cPosition (-1, 0));
-		adjacentPositions.push_back (position + cPosition (1, 0));
-		adjacentPositions.push_back (position + cPosition (-1, 1));
-		adjacentPositions.push_back (position + cPosition (0, 1));
-		adjacentPositions.push_back (position + cPosition (1, 1));
+		return {
+			position.relative (-1, -1),
+			position.relative (0, -1),
+			position.relative (1, -1),
+			position.relative (-1, 0),
+			position.relative (1, 0),
+			position.relative (-1, 1),
+			position.relative (0, 1),
+			position.relative (1, 1)};
 	}
-	return adjacentPositions;
 }
 
 //------------------------------------------------------------------------------
@@ -268,18 +255,13 @@ bool cUnit::isAbove (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::getIsBig() const
-{
-	return isBig;
-}
-
-//------------------------------------------------------------------------------
 void cUnit::setIsBig (bool value)
 {
 	std::swap (isBig, value);
 	if (isBig != value) isBigChanged();
 }
 
+//------------------------------------------------------------------------------
 uint32_t cUnit::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (data, crc);
@@ -312,6 +294,7 @@ cBox<cPosition> cUnit::getArea() const
 	return cBox<cPosition> (position, position + (isBig ? cPosition (1, 1) : cPosition (0, 0)));
 }
 
+//------------------------------------------------------------------------------
 // http://rosettacode.org/wiki/Roman_numerals/Encode#C.2B.2B
 static std::string to_roman (unsigned int value)
 {
@@ -535,47 +518,6 @@ void cUnit::setHasBeenAttacked (bool value)
 {
 	std::swap (beenAttacked, value);
 	if (value != beenAttacked) beenAttackedChanged();
-}
-
-//------------------------------------------------------------------------------
-int cUnit::getDisabledTurns() const
-{
-	return turnsDisabled;
-}
-
-//------------------------------------------------------------------------------
-bool cUnit::isSentryActive() const
-{
-	return sentryActive;
-}
-
-//------------------------------------------------------------------------------
-bool cUnit::isManualFireActive() const
-{
-	return manualFireActive;
-}
-
-//------------------------------------------------------------------------------
-bool cUnit::isAttacking() const
-{
-	return attacking;
-}
-
-//------------------------------------------------------------------------------
-bool cUnit::isBeeingAttacked() const
-{
-	return beeingAttacked;
-}
-
-//------------------------------------------------------------------------------
-bool cUnit::hasBeenAttacked() const
-{
-	return beenAttacked;
-}
-//------------------------------------------------------------------------------
-int cUnit::getStoredResources() const
-{
-	return storageResCur;
 }
 
 //------------------------------------------------------------------------------
