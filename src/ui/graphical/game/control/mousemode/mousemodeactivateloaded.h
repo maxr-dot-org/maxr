@@ -32,7 +32,7 @@ public:
 	void setCursor (cMouse&, const cPosition& mapPosition, const cUnitsData&) const override;
 	std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition, const cUnitsData&) const override;
 
-	size_t getVehicleToActivateIndex() const;
+	size_t getVehicleToActivateIndex() const { return vehicleToActivateIndex; }
 
 protected:
 	void establishUnitSelectionConnections() override;

@@ -45,14 +45,8 @@ eMouseModeType cMouseModeActivateLoaded::getType() const
 //------------------------------------------------------------------------------
 void cMouseModeActivateLoaded::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
 {
-	if (canExecuteAction (mapPosition))
-	{
-		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Activate));
-	}
-	else
-	{
-		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
-	}
+	const auto cursorType = canExecuteAction (mapPosition) ? eMouseCursorSimpleType::Activate : eMouseCursorSimpleType::No;
+	mouse.setCursor (std::make_unique<cMouseCursorSimple> (cursorType));
 }
 
 //------------------------------------------------------------------------------
@@ -62,8 +56,7 @@ std::unique_ptr<cMouseAction> cMouseModeActivateLoaded::getMouseAction (const cP
 	{
 		return std::make_unique<cMouseActionActivateLoaded> (vehicleToActivateIndex);
 	}
-	else
-		return nullptr;
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -71,16 +64,10 @@ bool cMouseModeActivateLoaded::canExecuteAction (const cPosition& mapPosition) c
 {
 	if (!map) return false;
 
-	const auto selectedVehicle = unitSelection.getSelectedVehicle();
-	const auto selectedBuilding = unitSelection.getSelectedBuilding();
+	const auto* selectedUnit = unitSelection.getSelectedUnit();
 
-	return (selectedVehicle && !selectedVehicle->isDisabled() && selectedVehicle->canExitTo (mapPosition, *map, selectedVehicle->storedUnits[vehicleToActivateIndex]->getStaticUnitData())) || (selectedBuilding && !selectedBuilding->isDisabled() && selectedBuilding->canExitTo (mapPosition, *map, selectedBuilding->storedUnits[vehicleToActivateIndex]->getStaticUnitData()));
-}
-
-//------------------------------------------------------------------------------
-size_t cMouseModeActivateLoaded::getVehicleToActivateIndex() const
-{
-	return vehicleToActivateIndex;
+	if (selectedUnit == nullptr || selectedUnit->isDisabled()) return false;
+	return selectedUnit->canExitTo (mapPosition, *map, selectedUnit->storedUnits[vehicleToActivateIndex]->getStaticUnitData());
 }
 
 //------------------------------------------------------------------------------
