@@ -39,14 +39,9 @@
 #include <typeinfo>
 #include <vector>
 
-class cBuilding;
-class cJob;
 class cModel;
-class cPlayer;
-class cStaticUnitData;
 class cUnit;
 class cVehicle;
-struct sID;
 
 //used to constrain a template definition to use with out-archive types only
 #define ENABLE_ARCHIVE_OUT std::enable_if_t<Archive::isWriter == false, int> = 0
@@ -440,10 +435,6 @@ namespace serialization
 
 		void get (int id, cVehicle*& value) const;
 		void get (int id, cUnit*& value) const;
-		void get (sID id, const cStaticUnitData*& value) const;
-
-		const cStaticUnitData* getBigRubbleData() const;
-		const cStaticUnitData* getSmallRubbleData() const;
 
 	private:
 		cModel& model;

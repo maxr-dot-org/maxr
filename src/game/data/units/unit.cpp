@@ -70,6 +70,21 @@ cUnit::~cUnit()
 }
 
 //------------------------------------------------------------------------------
+void cUnit::postLoad(cModel& model)
+{
+	if (data.getId() != sID (0, 0))
+	{
+		//restore pointer to static unit data
+		if (!model.getUnitsData()->isValidId (data.getId()))
+		{
+			Log.write ("Static unit data for sID " + data.getId().getText() + " not found.", cLog::eLogType::NetError);
+			throw std::runtime_error ("Error restoring pointer to static unitdata");
+		}
+		staticData = &model.getUnitsData()->getStaticUnitData (data.getId());
+	}
+}
+
+//------------------------------------------------------------------------------
 void cUnit::setOwner (cPlayer* owner_)
 {
 	std::swap (owner, owner_);

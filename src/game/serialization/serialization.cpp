@@ -43,24 +43,4 @@ namespace serialization
 			Log.write ("Unit with id " + std::to_string (id) + " not found.", cLog::eLogType::NetError);
 	}
 
-	void cPointerLoader::get (sID id, const cStaticUnitData*& value) const
-	{
-		if (!model.getUnitsData()->isValidId (id))
-		{
-			Log.write ("Static unit data for sID " + id.getText() + " not found.", cLog::eLogType::NetError);
-			throw std::runtime_error ("Error restoring pointer to static unitdata");
-		}
-		value = &model.getUnitsData()->getStaticUnitData (id);
-	}
-
-	const cStaticUnitData* cPointerLoader::getBigRubbleData() const
-	{
-		return &model.getUnitsData()->getRubbleBigData();
-	}
-
-	const cStaticUnitData* cPointerLoader::getSmallRubbleData() const
-	{
-		return &model.getUnitsData()->getRubbleSmallData();
-	}
-
 } // namespace serialization

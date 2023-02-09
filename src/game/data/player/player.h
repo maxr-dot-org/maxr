@@ -300,13 +300,11 @@ public:
 		archive & NVP (credits);
 		archive & NVP (hasFinishedTurn);
 		archive & NVP (researchState);
-
-		hasFinishedTurnChanged(); //FIXME: deserialization does not trigger signals on changed data members. But this signal is needed for the gui after loading a save game...
-		refreshScanMaps();
-		refreshSentryMaps();
-		refreshResearchCentersWorkingOnArea();
 	}
+
 	SERIALIZATION_SPLIT_MEMBER()
+
+	void postLoad (cModel&);
 private:
 	void upgradeUnitTypes (const std::vector<cResearch::eResearchArea>&, const cUnitsData& originalUnitsData);
 

@@ -209,6 +209,10 @@ public:
 		//TODO: check UIData available
 
 		archive >> serialization::makeNvp ("players", playerList);
+		for (auto& player : playerList)
+		{
+			player->postLoad (*this);
+		}
 
 		archive >> NVP (moveJobs);
 		for (auto& moveJob : moveJobs)
@@ -223,7 +227,15 @@ public:
 		archive >> NVP (attackJobs);
 
 		archive >> NVP (neutralBuildings);
+		for (auto& building : neutralBuildings)
+		{
+			building->postLoad (*this);
+		}
 		archive >> NVP (neutralVehicles);
+		for (auto& vehicle : neutralVehicles)
+		{
+			vehicle->postLoad (*this);
+		}
 
 		archive >> NVP (nextUnitId);
 		archive >> serialization::makeNvp ("turnCounter", *turnCounter);

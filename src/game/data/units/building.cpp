@@ -171,6 +171,19 @@ void cBuilding::refreshData()
 }
 
 //------------------------------------------------------------------------------
+void cBuilding::postLoad (cModel& model)
+{
+	cUnit::postLoad (model);
+	if (isRubble())
+	{
+		const auto& unitsData = model.getUnitsData();
+		staticData = isBig ? &unitsData->getRubbleBigData() : &unitsData->getRubbleSmallData();
+	}
+	registerOwnerEvents();
+	connectFirstBuildListItem();
+}
+
+//------------------------------------------------------------------------------
 void cBuilding::connectFirstBuildListItem()
 {
 	buildListFirstItemSignalConnectionManager.disconnectAll();

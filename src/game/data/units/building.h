@@ -191,24 +191,9 @@ public:
 		archive & NVP (isWorking);
 		archive & NVP (researchArea);
 		archive & NVP (buildList);
-
-		if (!Archive::isWriter)
-		{
-			if (isRubble())
-			{
-				if (isBig)
-				{
-					staticData = archive.getPointerLoader()->getBigRubbleData();
-				}
-				else
-				{
-					staticData = archive.getPointerLoader()->getSmallRubbleData();
-				}
-			}
-			registerOwnerEvents();
-			connectFirstBuildListItem();
-		}
 	}
+
+	void postLoad (cModel& model);
 
 private:
 	void connectFirstBuildListItem();

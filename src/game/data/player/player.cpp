@@ -75,6 +75,24 @@ cPlayer::~cPlayer()
 {}
 
 //------------------------------------------------------------------------------
+void cPlayer::postLoad (cModel& model)
+{
+	for (auto& building : getBuildings())
+	{
+		building->postLoad (model);
+	}
+	for (auto& vehicle : getVehicles())
+	{
+		vehicle->postLoad (model);
+	}
+
+	hasFinishedTurnChanged(); //FIXME: deserialization does not trigger signals on changed data members. But this signal is needed for the gui after loading a save game...
+	refreshScanMaps();
+	refreshSentryMaps();
+	refreshResearchCentersWorkingOnArea();
+}
+
+//------------------------------------------------------------------------------
 void cPlayer::setClan (int newClan, const cUnitsData& unitsData)
 {
 	if (newClan < -1)

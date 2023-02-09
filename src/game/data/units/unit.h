@@ -217,13 +217,9 @@ public:
 		archive & NVP (isBig);
 		archive & NVP (storageResCur);
 		archive & NVP (jobActive);
-
-		if (!Archive::isWriter && data.getId() != sID (0, 0))
-		{
-			//restore pointer to static unit data
-			archive.getPointerLoader()->get (data.getId(), staticData);
-		}
 	}
+
+	void postLoad (cModel&);
 
 public: // TODO: make protected/private and make getters/setters
 	const cStaticUnitData& getStaticUnitData() const;
