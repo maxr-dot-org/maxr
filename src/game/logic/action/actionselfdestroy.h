@@ -22,6 +22,8 @@
 
 #include "action.h"
 
+class cBuilding;
+
 class cActionSelfDestroy : public cActionT<cAction::eActiontype::SelfDestroy>
 {
 public:

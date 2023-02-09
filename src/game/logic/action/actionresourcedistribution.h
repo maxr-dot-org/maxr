@@ -23,6 +23,7 @@
 #include "action.h"
 #include "game/data/miningresource.h"
 
+class cBuilding;
 class cUnit;
 
 class cActionResourceDistribution : public cActionT<cAction::eActiontype::ResourceDistribution>

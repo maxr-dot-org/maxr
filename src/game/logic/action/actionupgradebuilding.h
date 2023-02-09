@@ -22,6 +22,7 @@
 
 #include "action.h"
 
+class cBuilding;
 class cSubBase;
 
 class cActionUpgradeBuilding : public cActionT<cAction::eActiontype::UpgradeBuilding>

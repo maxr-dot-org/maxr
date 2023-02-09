@@ -22,7 +22,9 @@
 
 #include "action.h"
 
+class cBuilding;
 class cSubBase;
+class cVehicle;
 
 class cActionUpgradeVehicle : public cActionT<cAction::eActiontype::UpgradeVehicle>
 {

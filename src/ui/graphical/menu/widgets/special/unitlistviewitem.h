@@ -25,6 +25,8 @@
 
 class cImage;
 class cLabel;
+class cPlayer;
+struct sID;
 
 class cUnitListViewItem : public cAbstractListViewItem
 {

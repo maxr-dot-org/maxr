@@ -21,6 +21,10 @@
 #define game_logic_actionFinishBuildH
 
 #include "action.h"
+#include "utility/position.h"
+
+class cBuilding;
+class cVehicle;
 
 class cActionFinishBuild : public cActionT<cAction::eActiontype::FinishBuild>
 {

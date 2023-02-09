@@ -27,11 +27,12 @@
 #include <SDL.h>
 #include <vector>
 
-class cPlayer;
+class cBuilding;
+class cClanData;
 class cLanguage;
+class cPlayer;
 struct sBuildingUIData;
 struct sVehicleUIData;
-class cClanData;
 
 // GraphicsData - Class containing all normal graphic surfaces ////////////////
 class cGraphicsData

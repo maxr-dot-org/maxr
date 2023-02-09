@@ -27,6 +27,9 @@
 
 #include <SDL.h>
 
+class cBuilding;
+class cPlayer;
+
 //------------------------------------------------------------------------------
 struct sBuildingUIStaticData
 {

@@ -30,6 +30,8 @@
 #include <string>
 
 class cMapView;
+class cPlayer;
+class cVehicle;
 struct sStaticVehicleData;
 
 struct sVehicleUIStaticData

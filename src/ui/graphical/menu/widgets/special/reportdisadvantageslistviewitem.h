@@ -23,6 +23,8 @@
 #include "game/data/units/id.h"
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 
+class cStaticUnitData;
+
 class cReportDisadvantagesListViewItem : public cAbstractListViewItem
 {
 public:

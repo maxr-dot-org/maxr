@@ -27,6 +27,7 @@
 #include <array>
 
 class cLabel;
+class cPlayer;
 class cUnitUpgrade;
 struct sID;
 

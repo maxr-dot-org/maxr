@@ -22,6 +22,8 @@
 
 #include "ui/graphical/menu/widgets/special/unitlistviewitem.h"
 
+class cPlayer;
+
 class cUnitListViewItemCargo : public cUnitListViewItem
 {
 public:
