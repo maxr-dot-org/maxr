@@ -118,8 +118,6 @@ void cLocalSingleplayerGameNew::start (cApplication& application, cServer& serve
 
 	resetTerminating();
 
-	application.addRunnable (shared_from_this());
-
 	signalConnectionManager.connect (gameGuiController->terminated, [this]() { exit(); });
 }
 
