@@ -70,6 +70,9 @@ public:
 	cGameGuiController (cApplication&, std::shared_ptr<const cStaticMap>);
 	~cGameGuiController();
 
+	cGameGuiController (const cGameGuiController&) = delete;
+	cGameGuiController& operator= (const cGameGuiController&) = delete;
+
 	void start();
 
 	void addPlayerGameGuiState (int playerNr, cGameGuiState playerGameGuiState);
