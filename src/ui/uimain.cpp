@@ -193,9 +193,7 @@ try
 	application.registerMouse (mouse);
 	application.registerKeyboard (keyboard);
 
-	auto startWindow = std::make_shared<cWindowStart>();
-
-	application.show (startWindow);
+	application.show (std::make_shared<cWindowStart>());
 	mouse.show();
 	application.execute();
 
