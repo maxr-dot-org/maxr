@@ -41,6 +41,9 @@ public:
 	cAnimationTimer();
 	~cAnimationTimer();
 
+	cAnimationTimer (const cAnimationTimer&) = delete;
+	cAnimationTimer& operator= (const cAnimationTimer&) = delete;
+
 	/**
 	 * Increases the internal timer.
 	 *
