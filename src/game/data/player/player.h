@@ -315,7 +315,6 @@ private:
 
 public:
 	std::vector<cDynamicUnitData> dynamicUnitsData; // Current version of vehicles.
-	cBase base; // the base (groups of connected buildings) of the player
 	bool isDefeated = false; // true if the player has been defeated
 	int numEcos = 0; // number of ecospheres. call countEcoSpheres to update.
 
@@ -326,6 +325,10 @@ private:
 	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> vehicles;
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> buildings;
 
+public:
+	cBase base; // the base (groups of connected buildings) of the player
+
+private:
 	cPosition landingPos{-1, -1};
 	cPosition mapSize; // Width and Height of the map.
 
