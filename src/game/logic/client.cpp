@@ -19,6 +19,7 @@
 
 #include "game/logic/client.h"
 
+#include "action/actionactivate.h"
 #include "action/actionsetautomove.h"
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
@@ -349,4 +350,10 @@ void cClient::loadModel (int saveGameNumber, int playerNr)
 void cClient::run()
 {
 	gameTimer->run (*this, model);
+}
+
+//------------------------------------------------------------------------------
+void cClient::activateUnit (const cUnit& containingUnit, const cVehicle& activatedVehicle, const cPosition& position)
+{
+	sendNetMessage (cActionActivate (containingUnit, activatedVehicle, position));
 }

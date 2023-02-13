@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionactivate.h"
 #include "game/logic/action/actionattack.h"
 #include "game/logic/action/actionbuyupgrades.h"
 #include "game/logic/action/actionchangebuildlist.h"
@@ -661,7 +660,7 @@ void cGameGuiController::connectClient (cClient& client)
 		client.sendNetMessage (cActionChangeBuildList (building, buildList, buildSpeed, repeat));
 	});
 	clientSignalConnectionManager.connect (activateAtTriggered, [&] (const cUnit& unit, size_t index, const cPosition& position) {
-		client.sendNetMessage (cActionActivate (unit, *unit.storedUnits[index], position));
+		client.activateUnit (unit, *unit.storedUnits[index], position);
 	});
 	clientSignalConnectionManager.connect (reloadTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
 		client.sendNetMessage (cActionRepairReload (sourceUnit, destinationUnit, eSupplyType::REARM));
@@ -797,7 +796,7 @@ void cGameGuiController::connectClient (cClient& client)
 		sendStartGroupMoveAction (vehicles, destination);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredActivateAt, [&] (const cUnit& unit, size_t index, const cPosition& position) {
-		client.sendNetMessage (cActionActivate (unit, *unit.storedUnits[index], position));
+		client.activateUnit (unit, *unit.storedUnits[index], position);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredExitFinishedUnit, [&] (const cBuilding& building, const cPosition& position) {
 		client.sendNetMessage (cActionFinishBuild (building, position));

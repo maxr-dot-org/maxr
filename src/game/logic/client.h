@@ -80,6 +80,8 @@ public:
 	void removeSurveyorMoveJob (const cVehicle&);
 	void recreateSurveyorMoveJobs();
 
+	void activateUnit (const cUnit& containingUnit, const cVehicle& activatedVehicle, const cPosition&);
+
 	/**
 	* sends a serialized copy of the netmessage to the server.
 	*/
