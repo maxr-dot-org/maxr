@@ -87,6 +87,7 @@ public:
 	void changeManualFire (const cUnit&);
 	void changeResearch (const std::array<int, cResearch::kNrResearchAreas>&);
 	void changeSentry (const cUnit&);
+	void changeUnitName (const cUnit&, const std::string&);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

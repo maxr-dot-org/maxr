@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionchangeunitname.h"
 #include "game/logic/action/actionclear.h"
 #include "game/logic/action/actionendturn.h"
 #include "game/logic/action/actionfinishbuild.h"
@@ -694,7 +693,7 @@ void cGameGuiController::connectClient (cClient& client)
 		if (!client.getFreezeModes().isFreezed()) client.sendNetMessage (cActionEndTurn());
 	});
 	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit& unit, const std::string& name) {
-		client.sendNetMessage (cActionChangeUnitName (unit, name));
+		client.changeUnitName (unit, name);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartWork, [&] (const cUnit& unit) {
 		cActionStartWork msg (unit);
