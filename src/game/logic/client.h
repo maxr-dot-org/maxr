@@ -88,6 +88,7 @@ public:
 	void changeResearch (const std::array<int, cResearch::kNrResearchAreas>&);
 	void changeSentry (const cUnit&);
 	void changeUnitName (const cUnit&, const std::string&);
+	void startClearRubbles (const cVehicle&);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

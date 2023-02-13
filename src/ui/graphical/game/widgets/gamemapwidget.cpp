@@ -183,7 +183,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu->startClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredStartWork (*unitMenu->getUnit()); });
 	unitMenu->stopClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredStopWork (*unitMenu->getUnit()); });
 	unitMenu->autoToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredAutoMoveJob (*unitMenu->getUnit()); });
-	unitMenu->removeClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredStartClear (*unitMenu->getUnit()); });
+	unitMenu->removeClicked.connect ([this]() { if (unitMenu->getVehicle()) triggeredStartClear (*unitMenu->getVehicle()); });
 	unitMenu->manualFireToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredManualFire (*unitMenu->getUnit()); });
 	unitMenu->sentryToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredSentry (*unitMenu->getUnit()); });
 	unitMenu->activateClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredActivate (*unitMenu->getUnit()); });

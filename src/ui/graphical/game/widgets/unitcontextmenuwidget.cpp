@@ -299,9 +299,21 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 }
 
 //------------------------------------------------------------------------------
-const cUnit* cUnitContextMenuWidget::getUnit()
+const cUnit* cUnitContextMenuWidget::getUnit() const
 {
 	return unit;
+}
+
+//------------------------------------------------------------------------------
+const cBuilding* cUnitContextMenuWidget::getBuilding() const
+{
+	return dynamic_cast<const cBuilding*> (unit);
+}
+
+//------------------------------------------------------------------------------
+const cVehicle* cUnitContextMenuWidget::getVehicle() const
+{
+	return dynamic_cast<const cVehicle*> (unit);
 }
 
 //------------------------------------------------------------------------------

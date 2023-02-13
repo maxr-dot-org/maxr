@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionclear.h"
 #include "game/logic/action/actionendturn.h"
 #include "game/logic/action/actionfinishbuild.h"
 #include "game/logic/action/actionload.h"
@@ -721,8 +720,8 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartClear, [&] (const cUnit& unit) {
-		if (unit.isAVehicle()) activeClient->sendNetMessage (cActionClear (static_cast<const cVehicle&> (unit)));
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartClear, [&] (const cVehicle& vehicle) {
+		activeClient->startClearRubbles (vehicle);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredManualFire, [&] (const cUnit& unit) {
 		activeClient->changeManualFire (unit);

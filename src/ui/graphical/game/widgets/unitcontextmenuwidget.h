@@ -36,7 +36,9 @@ public:
 	cUnitContextMenuWidget();
 
 	void setUnit (const cUnit*, eMouseModeType mouseInputMode, const cPlayer*, const cMapView*);
-	const cUnit* getUnit();
+	const cUnit* getUnit() const;
+	const cBuilding* getBuilding() const;
+	const cVehicle* getVehicle() const;
 
 	static bool unitHasAttackEntry (const cUnit*, const cPlayer*);
 	static bool unitHasBuildEntry (const cUnit*, const cPlayer*);

@@ -44,6 +44,7 @@
 #include "game/logic/action/actionchangeresearch.h"
 #include "game/logic/action/actionchangesentry.h"
 #include "game/logic/action/actionchangeunitname.h"
+#include "game/logic/action/actionclear.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
@@ -405,4 +406,10 @@ void cClient::changeSentry (const cUnit& unit)
 void cClient::changeUnitName(const cUnit& unit, const std::string& name)
 {
 	sendNetMessage (cActionChangeUnitName (unit, name));
+}
+
+//------------------------------------------------------------------------------
+void cClient::startClearRubbles (const cVehicle& vehicle)
+{
+	sendNetMessage (cActionClear (vehicle));
 }
