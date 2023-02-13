@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionchangebuildlist.h"
 #include "game/logic/action/actionchangemanualfire.h"
 #include "game/logic/action/actionchangeresearch.h"
 #include "game/logic/action/actionchangesentry.h"
@@ -655,7 +654,7 @@ void cGameGuiController::connectClient (cClient& client)
 		client.sendNetMessage (cActionStartBuild (vehicle, unitId, buildSpeed, vehicle.getPosition(), destination));
 	});
 	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&] (const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat) {
-		client.sendNetMessage (cActionChangeBuildList (building, buildList, buildSpeed, repeat));
+		client.changeBuildList (building, buildList, buildSpeed, repeat);
 	});
 	clientSignalConnectionManager.connect (activateAtTriggered, [&] (const cUnit& unit, size_t index, const cPosition& position) {
 		client.activateUnit (unit, *unit.storedUnits[index], position);

@@ -38,6 +38,7 @@
 #include "game/logic/action/actionactivate.h"
 #include "game/logic/action/actionattack.h"
 #include "game/logic/action/actionbuyupgrades.h"
+#include "game/logic/action/actionchangebuildlist.h"
 #include "game/logic/action/actionsetautomove.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
@@ -370,4 +371,10 @@ void cClient::attack (const cUnit& aggressor, const cPosition& targetPosition, c
 void cClient::buyUpgrades (const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
 {
 	sendNetMessage (cActionBuyUpgrades (unitUpgrades));
+}
+
+//------------------------------------------------------------------------------
+void cClient::changeBuildList(const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat)
+{
+	sendNetMessage (cActionChangeBuildList (building, buildList, buildSpeed, repeat));
 }

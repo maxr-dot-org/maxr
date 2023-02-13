@@ -83,6 +83,7 @@ public:
 	void activateUnit (const cUnit& containingUnit, const cVehicle& activatedVehicle, const cPosition&);
 	void attack (const cUnit& aggressor, const cPosition& targetPosition, const cUnit* targetUnit);
 	void buyUpgrades (const std::vector<std::pair<sID, cUnitUpgrade>>&);
+	void changeBuildList (const cBuilding&, const std::vector<sID>& buildList, int buildSpeed, bool repeat);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.
