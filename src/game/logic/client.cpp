@@ -42,6 +42,7 @@
 #include "game/logic/action/actionsetautomove.h"
 #include "game/logic/action/actionchangemanualfire.h"
 #include "game/logic/action/actionchangeresearch.h"
+#include "game/logic/action/actionchangesentry.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
@@ -391,4 +392,10 @@ void cClient::changeManualFire(const cUnit& unit)
 void cClient::changeResearch(const std::array<int, cResearch::kNrResearchAreas>& researchAreas)
 {
 	sendNetMessage (cActionChangeResearch (researchAreas));
+}
+
+//------------------------------------------------------------------------------
+void cClient::changeSentry (const cUnit& unit)
+{
+	sendNetMessage (cActionChangeSentry (unit));
 }
