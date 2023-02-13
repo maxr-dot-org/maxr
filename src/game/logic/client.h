@@ -89,6 +89,7 @@ public:
 	void changeSentry (const cUnit&);
 	void changeUnitName (const cUnit&, const std::string&);
 	void startClearRubbles (const cVehicle&);
+	void endTurn();
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

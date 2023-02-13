@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionendturn.h"
 #include "game/logic/action/actionfinishbuild.h"
 #include "game/logic/action/actionload.h"
 #include "game/logic/action/actionminelayerstatus.h"
@@ -688,9 +687,7 @@ void cGameGuiController::connectClient (cClient& client)
 	clientSignalConnectionManager.connect (resumeAllMoveJobsTriggered, [&]() {
 		client.sendNetMessage (cActionResumeMove());
 	});
-	clientSignalConnectionManager.connect (gameGui->getHud().endClicked, [&]() {
-		if (!client.getFreezeModes().isFreezed()) client.sendNetMessage (cActionEndTurn());
-	});
+	clientSignalConnectionManager.connect (gameGui->getHud().endClicked, [&]() { client.endTurn(); });
 	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit& unit, const std::string& name) {
 		client.changeUnitName (unit, name);
 	});

@@ -39,12 +39,13 @@
 #include "game/logic/action/actionattack.h"
 #include "game/logic/action/actionbuyupgrades.h"
 #include "game/logic/action/actionchangebuildlist.h"
-#include "game/logic/action/actionsetautomove.h"
 #include "game/logic/action/actionchangemanualfire.h"
 #include "game/logic/action/actionchangeresearch.h"
 #include "game/logic/action/actionchangesentry.h"
 #include "game/logic/action/actionchangeunitname.h"
 #include "game/logic/action/actionclear.h"
+#include "game/logic/action/actionendturn.h"
+#include "game/logic/action/actionsetautomove.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
@@ -379,19 +380,19 @@ void cClient::buyUpgrades (const std::vector<std::pair<sID, cUnitUpgrade>>& unit
 }
 
 //------------------------------------------------------------------------------
-void cClient::changeBuildList(const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat)
+void cClient::changeBuildList (const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat)
 {
 	sendNetMessage (cActionChangeBuildList (building, buildList, buildSpeed, repeat));
 }
 
 //------------------------------------------------------------------------------
-void cClient::changeManualFire(const cUnit& unit)
+void cClient::changeManualFire (const cUnit& unit)
 {
 	sendNetMessage (cActionChangeManualFire (unit));
 }
 
 //------------------------------------------------------------------------------
-void cClient::changeResearch(const std::array<int, cResearch::kNrResearchAreas>& researchAreas)
+void cClient::changeResearch (const std::array<int, cResearch::kNrResearchAreas>& researchAreas)
 {
 	sendNetMessage (cActionChangeResearch (researchAreas));
 }
@@ -403,7 +404,7 @@ void cClient::changeSentry (const cUnit& unit)
 }
 
 //------------------------------------------------------------------------------
-void cClient::changeUnitName(const cUnit& unit, const std::string& name)
+void cClient::changeUnitName (const cUnit& unit, const std::string& name)
 {
 	sendNetMessage (cActionChangeUnitName (unit, name));
 }
@@ -412,4 +413,10 @@ void cClient::changeUnitName(const cUnit& unit, const std::string& name)
 void cClient::startClearRubbles (const cVehicle& vehicle)
 {
 	sendNetMessage (cActionClear (vehicle));
+}
+
+//------------------------------------------------------------------------------
+void cClient::endTurn()
+{
+	if (!getFreezeModes().isFreezed()) sendNetMessage (cActionEndTurn());
 }
