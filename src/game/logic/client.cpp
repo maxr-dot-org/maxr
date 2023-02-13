@@ -19,8 +19,6 @@
 
 #include "game/logic/client.h"
 
-#include "action/actionactivate.h"
-#include "action/actionsetautomove.h"
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
 #include "game/data/report/savedreportchat.h"
@@ -37,6 +35,9 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/action/action.h"
+#include "game/logic/action/actionactivate.h"
+#include "game/logic/action/actionattack.h"
+#include "game/logic/action/actionsetautomove.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
@@ -356,4 +357,10 @@ void cClient::run()
 void cClient::activateUnit (const cUnit& containingUnit, const cVehicle& activatedVehicle, const cPosition& position)
 {
 	sendNetMessage (cActionActivate (containingUnit, activatedVehicle, position));
+}
+
+//------------------------------------------------------------------------------
+void cClient::attack (const cUnit& aggressor, const cPosition& targetPosition, const cUnit* targetUnit)
+{
+	sendNetMessage (cActionAttack (aggressor, targetPosition, targetUnit));
 }

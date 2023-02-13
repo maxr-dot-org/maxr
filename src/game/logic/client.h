@@ -81,6 +81,7 @@ public:
 	void recreateSurveyorMoveJobs();
 
 	void activateUnit (const cUnit& containingUnit, const cVehicle& activatedVehicle, const cPosition&);
+	void attack (const cUnit& aggressor, const cPosition& targetPosition, const cUnit* targetUnit);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

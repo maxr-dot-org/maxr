@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionattack.h"
 #include "game/logic/action/actionbuyupgrades.h"
 #include "game/logic/action/actionchangebuildlist.h"
 #include "game/logic/action/actionchangemanualfire.h"
@@ -914,7 +913,7 @@ void cGameGuiController::connectClient (cClient& client)
 
 			if (vehicle.isInRange (position))
 			{
-				activeClient->sendNetMessage (cActionAttack (vehicle, position, target));
+				activeClient->attack (vehicle, position, target);
 			}
 			else if (target)
 			{
@@ -934,10 +933,9 @@ void cGameGuiController::connectClient (cClient& client)
 		else if (unit.isABuilding())
 		{
 			const auto& building = static_cast<const cBuilding&> (unit);
-
 			cUnit* target = cAttackJob::selectTarget (position, building.getStaticUnitData().canAttack, *mapView, building.getOwner());
 
-			activeClient->sendNetMessage (cActionAttack (building, position, target));
+			activeClient->attack (building, position, target);
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSteal, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
