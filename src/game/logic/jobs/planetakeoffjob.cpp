@@ -25,6 +25,7 @@
 
 #include <cassert>
 
+//------------------------------------------------------------------------------
 cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle) :
 	cJob (vehicle)
 {
@@ -32,10 +33,24 @@ cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle) :
 }
 
 //------------------------------------------------------------------------------
+void cPlaneTakeoffJob::postLoad (const cModel& model)
+{
+	auto* unit = model.getVehicleFromID (unitId);
+
+	if (unit == nullptr)
+	{
+		finished = true;
+		return;
+	}
+	unit->jobActive = true;
+	connectionManager.connect (unit->destroyed, [this]() { finished = true; });
+}
+
+//------------------------------------------------------------------------------
 void cPlaneTakeoffJob::run (cModel& model)
 {
-	assert (unit->isAVehicle());
-	cVehicle* plane = static_cast<cVehicle*> (unit);
+	cVehicle* plane = model.getVehicleFromID (unitId);
+	assert (plane);
 
 	if (plane->canLand (*model.getMap()))
 	{
@@ -75,7 +90,7 @@ eJobType cPlaneTakeoffJob::getType() const
 uint32_t cPlaneTakeoffJob::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (getType(), crc);
-	crc = calcCheckSum (unit ? unit->getId() : 0, crc);
+	crc = calcCheckSum (unitId, crc);
 
 	return crc;
 }

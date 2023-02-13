@@ -35,8 +35,12 @@ class cAirTransportLoadJob : public cJob
 {
 public:
 	cAirTransportLoadJob (cVehicle& loadedVehicle, cUnit& loadingUnit);
+
 	template <typename Archive>
-	cAirTransportLoadJob (Archive&);
+	explicit cAirTransportLoadJob (Archive& archive)
+	{
+		serializeThis (archive);
+	}
 
 	void run (cModel& model) override;
 	eJobType getType() const override;
@@ -51,6 +55,7 @@ public:
 		archive << serialization::makeNvp ("type", getType());
 		serializeThis (archive);
 	}
+	void postLoad (const cModel& model) override;
 
 	uint32_t getChecksum (uint32_t crc) const override;
 
@@ -58,27 +63,14 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & NVP (unit);
-		archive & NVP (vehicleToLoad);
+		archive & NVP (unitId);
+		archive & NVP (vehicleToLoadId);
 		archive & NVP (landing);
 	}
 
-	cVehicle* vehicleToLoad;
+	int vehicleToLoadId;
 	cSignalConnectionManager connectionManager;
 	bool landing;
 };
-
-template <typename Archive>
-cAirTransportLoadJob::cAirTransportLoadJob (Archive& archive)
-{
-	serializeThis (archive);
-	if (!unit || !vehicleToLoad)
-	{
-		finished = true;
-		return;
-	}
-	connectionManager.connect (vehicleToLoad->destroyed, [this]() { finished = true; });
-	unit->jobActive = true;
-}
 
 #endif

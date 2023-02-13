@@ -25,6 +25,7 @@
 
 #include <cassert>
 
+//------------------------------------------------------------------------------
 cStartBuildJob::cStartBuildJob (cVehicle& vehicle_, const cPosition& org_, bool big_) :
 	cJob (vehicle_),
 	org (org_),
@@ -34,10 +35,21 @@ cStartBuildJob::cStartBuildJob (cVehicle& vehicle_, const cPosition& org_, bool 
 }
 
 //------------------------------------------------------------------------------
+void cStartBuildJob::postLoad (const cModel& model)
+{
+	auto* unit = model.getVehicleFromID (unitId);
+
+	if (unit != nullptr)
+	{
+		unit->jobActive = true;
+	}
+}
+
+//------------------------------------------------------------------------------
 void cStartBuildJob::run (cModel& model)
 {
-	assert (unit->isAVehicle());
-	cVehicle* vehicle = static_cast<cVehicle*> (unit);
+	cVehicle* vehicle = model.getVehicleFromID (unitId);
+	assert (vehicle);
 
 	if (!vehicle->isUnitBuildingABuilding() && !vehicle->isUnitClearing())
 	{
@@ -105,7 +117,7 @@ eJobType cStartBuildJob::getType() const
 uint32_t cStartBuildJob::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (getType(), crc);
-	crc = calcCheckSum (unit ? unit->getId() : 0, crc);
+	crc = calcCheckSum (unitId, crc);
 	crc = calcCheckSum (org, crc);
 	crc = calcCheckSum (big, crc);
 

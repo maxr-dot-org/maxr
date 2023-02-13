@@ -19,6 +19,7 @@
 
 #include "job.h"
 
+#include "game/data/units/unit.h"
 #include "game/logic/jobs/airtransportloadjob.h"
 #include "game/logic/jobs/destroyjob.h"
 #include "game/logic/jobs/getinjob.h"
@@ -28,8 +29,8 @@
 #include "game/serialization/jsonarchive.h"
 
 //------------------------------------------------------------------------------
-cJob::cJob (cUnit& unit) :
-	unit (&unit)
+cJob::cJob (const cUnit& unit) :
+	unitId (unit.getId())
 {}
 
 //------------------------------------------------------------------------------

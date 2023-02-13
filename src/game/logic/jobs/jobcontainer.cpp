@@ -19,6 +19,7 @@
 
 #include "jobcontainer.h"
 
+#include "game/data/model.h"
 #include "game/data/units/unit.h"
 #include "job.h"
 #include "utility/crc.h"
@@ -28,16 +29,21 @@
 #include <algorithm>
 
 //------------------------------------------------------------------------------
-cJobContainer::~cJobContainer()
+void cJobContainer::addJob (cModel& model, std::unique_ptr<cJob> job)
 {
-	clear();
+	auto* unit = model.getUnitFromID (job->unitId);
+
+	unit->jobActive = true;
+	jobs.push_back (std::move (job));
 }
 
 //------------------------------------------------------------------------------
-void cJobContainer::addJob (std::unique_ptr<cJob> job)
+void cJobContainer::postLoad (const cModel& model)
 {
-	job->unit->jobActive = true;
-	jobs.push_back (std::move (job));
+	for (auto& job : jobs)
+	{
+		job->postLoad (model);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -50,23 +56,10 @@ void cJobContainer::run (cModel& model)
 		if (!job.finished) job.run (model);
 
 		if (job.finished)
-			it = releaseJob (it);
+			it = releaseJob (model, it);
 		else
 			++it;
 	}
-}
-
-//------------------------------------------------------------------------------
-void cJobContainer::clear()
-{
-	for (auto& job : jobs)
-	{
-		if (job->unit)
-		{
-			job->unit->jobActive = false;
-		}
-	}
-	jobs.clear();
 }
 
 //------------------------------------------------------------------------------
@@ -76,31 +69,33 @@ uint32_t cJobContainer::getChecksum (uint32_t crc) const
 }
 
 //------------------------------------------------------------------------------
-std::vector<std::unique_ptr<cJob>>::iterator cJobContainer::releaseJob (std::vector<std::unique_ptr<cJob>>::iterator it)
+std::vector<std::unique_ptr<cJob>>::iterator cJobContainer::releaseJob (const cModel& model, std::vector<std::unique_ptr<cJob>>::iterator it)
 {
 	if (it == jobs.end()) return jobs.end();
 	cJob& job = **it;
-	if (job.unit)
+	auto* unit = model.getUnitFromID (job.unitId);
+
+	if (unit)
 	{
 		auto nr = ranges::count_if (jobs, [&] (const auto& x) {
-			return x->unit == job.unit;
+			return x->unitId == unit->getId();
 		});
 		if (nr <= 1)
 		{
-			job.unit->jobActive = false;
+			unit->jobActive = false;
 		}
 	}
 	return jobs.erase (it);
 }
 
 //------------------------------------------------------------------------------
-void cJobContainer::onRemoveUnit (cUnit* unit)
+void cJobContainer::onRemoveUnit (const cUnit& unit)
 {
 	for (auto& job : jobs)
 	{
-		if (job->unit == unit)
+		if (job->unitId == unit.getId())
 		{
-			job->unit = nullptr;
+			job->unitId = -1;
 			job->finished = true;
 		}
 	}

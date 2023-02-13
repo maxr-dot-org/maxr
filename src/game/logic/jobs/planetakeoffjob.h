@@ -52,24 +52,15 @@ public:
 		serializeThis (archive);
 	}
 
+	void postLoad (const cModel&) override;
+
 	uint32_t getChecksum (uint32_t crc) const override;
 
 private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & NVP (unit);
-
-		if (!Archive::isWriter)
-		{
-			if (unit == nullptr)
-			{
-				finished = true;
-				return;
-			}
-			unit->jobActive = true;
-			connectionManager.connect (unit->destroyed, [this]() { finished = true; });
-		}
+		archive & NVP (unitId);
 	}
 
 	cSignalConnectionManager connectionManager;

@@ -27,15 +27,33 @@
 
 cAirTransportLoadJob::cAirTransportLoadJob (cVehicle& loadedVehicle, cUnit& loadingUnit) :
 	cJob (loadingUnit),
-	vehicleToLoad (&loadedVehicle),
+	vehicleToLoadId (loadedVehicle.getId()),
 	landing (true)
 {
+	connectionManager.connect (loadedVehicle.destroyed, [this]() { finished = true; });
+}
+
+//------------------------------------------------------------------------------
+void cAirTransportLoadJob::postLoad (const cModel& model)
+{
+	auto* unit = model.getUnitFromID (unitId);
+	auto* vehicleToLoad = model.getVehicleFromID (vehicleToLoadId);
+
+	if (!unit || !vehicleToLoad)
+	{
+		finished = true;
+		return;
+	}
 	connectionManager.connect (vehicleToLoad->destroyed, [this]() { finished = true; });
+	unit->jobActive = true;
 }
 
 //------------------------------------------------------------------------------
 void cAirTransportLoadJob::run (cModel& model)
 {
+	auto* unit = model.getUnitFromID (unitId);
+	auto* vehicleToLoad = model.getVehicleFromID (vehicleToLoadId);
+
 	assert (unit->isAVehicle());
 	cVehicle* vehicle = static_cast<cVehicle*> (unit);
 
@@ -78,8 +96,8 @@ eJobType cAirTransportLoadJob::getType() const
 uint32_t cAirTransportLoadJob::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (getType(), crc);
-	crc = calcCheckSum (unit, crc);
-	crc = calcCheckSum (vehicleToLoad, crc);
+	crc = calcCheckSum (unitId, crc);
+	crc = calcCheckSum (vehicleToLoadId, crc);
 	crc = calcCheckSum (landing, crc);
 
 	return crc;

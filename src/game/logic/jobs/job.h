@@ -51,7 +51,7 @@ class cJob
 
 protected:
 	cJob() = default;
-	explicit cJob (cUnit&);
+	explicit cJob (const cUnit&);
 
 public:
 	virtual ~cJob() = default;
@@ -64,11 +64,13 @@ public:
 	virtual void serialize (cBinaryArchiveIn&) = 0;
 	virtual void serialize (cJsonArchiveOut&) = 0;
 
+	virtual void postLoad (const cModel&) {}
+
 	virtual uint32_t getChecksum (uint32_t crc) const = 0;
 
 protected:
 	bool finished = false;
-	cUnit* unit = nullptr;
+	int unitId = -1;
 
 private:
 	template <typename Archive>

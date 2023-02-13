@@ -51,6 +51,7 @@ public:
 		archive << serialization::makeNvp ("type", getType());
 		serializeThis (archive);
 	}
+	void postLoad (const cModel&) override;
 
 	uint32_t getChecksum (uint32_t crc) const override;
 
@@ -62,16 +63,8 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & NVP (unit);
+		archive & NVP (unitId);
 		archive & NVP (counter);
-
-		if (!Archive::isWriter)
-		{
-			if (unit != nullptr)
-			{
-				unit->jobActive = true;
-			}
-		}
 	}
 
 	int counter;

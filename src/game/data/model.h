@@ -249,6 +249,8 @@ public:
 		activeTurnPlayer = getPlayer(activeTurnPlayerId);
 
 		archive >> NVP (helperJobs);
+		helperJobs.postLoad (*this);
+
 		archive >> serialization::makeNvp ("casualtiesTracker", *casualtiesTracker);
 		//TODO: clear effect list, deserialize effects, call addedEffect()
 

@@ -33,6 +33,17 @@ cDestroyJob::cDestroyJob (cUnit& unit, cModel& model) :
 }
 
 //------------------------------------------------------------------------------
+void cDestroyJob::postLoad(const cModel& model)
+{
+	auto* unit = model.getUnitFromID (unitId);
+
+	if (unit != nullptr)
+	{
+		unit->jobActive = true;
+	}
+}
+
+//------------------------------------------------------------------------------
 void cDestroyJob::run (cModel& model)
 {
 	if (counter > 0)
@@ -56,7 +67,7 @@ eJobType cDestroyJob::getType() const
 uint32_t cDestroyJob::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (getType(), crc);
-	crc = calcCheckSum (unit ? unit->getId() : 0, crc);
+	crc = calcCheckSum (unitId, crc);
 	crc = calcCheckSum (counter, crc);
 
 	return crc;
@@ -66,6 +77,7 @@ uint32_t cDestroyJob::getChecksum (uint32_t crc) const
 void cDestroyJob::createDestroyFx (cModel& model)
 {
 	const cMap& map = *model.getMap();
+	auto* unit = model.getUnitFromID (unitId);
 
 	std::shared_ptr<cFx> fx;
 	if (unit->isAVehicle())
@@ -119,6 +131,7 @@ void cDestroyJob::createDestroyFx (cModel& model)
 //------------------------------------------------------------------------------
 void cDestroyJob::deleteUnit (cModel& model)
 {
+	auto* unit = model.getUnitFromID (unitId);
 	bool isVehicle = false;
 	const auto position = unit->getPosition();
 	auto& map = *model.getMap();

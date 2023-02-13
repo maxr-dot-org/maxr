@@ -27,17 +27,34 @@
 
 cGetInJob::cGetInJob (cVehicle& loadedVehicle, cUnit& loadingUnit) :
 	cJob (loadedVehicle),
-	loadingUnit (&loadingUnit),
+	loadingUnitId (loadingUnit.getId()),
 	counter (32),
 	startFlightHeight (loadedVehicle.getFlightHeight())
 {
 	connectionManager.connect (loadingUnit.destroyed, [this]() { finished = true; });
-	unit->alphaEffectValue = 254;
+	loadingUnit.alphaEffectValue = 254;
+}
+
+//------------------------------------------------------------------------------
+void cGetInJob::postLoad (const cModel& model)
+{
+	auto* unit = model.getVehicleFromID (unitId);
+	auto* loadingUnit = model.getUnitFromID (loadingUnitId);
+	if (!unit || !loadingUnit)
+	{
+		finished = true;
+		return;
+	}
+	connectionManager.connect (loadingUnit->destroyed, [this]() { finished = true; });
+	unit->jobActive = true;
 }
 
 //------------------------------------------------------------------------------
 void cGetInJob::run (cModel& model)
 {
+	auto* unit = model.getVehicleFromID (unitId);
+	auto* loadingUnit = model.getUnitFromID (loadingUnitId);
+
 	assert (unit->isAVehicle());
 	cVehicle* vehicle = static_cast<cVehicle*> (unit);
 
@@ -78,8 +95,8 @@ eJobType cGetInJob::getType() const
 uint32_t cGetInJob::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (getType(), crc);
-	crc = calcCheckSum (unit, crc);
-	crc = calcCheckSum (loadingUnit, crc);
+	crc = calcCheckSum (unitId, crc);
+	crc = calcCheckSum (loadingUnitId, crc);
 	crc = calcCheckSum (counter, crc);
 	crc = calcCheckSum (startFlightHeight, crc);
 

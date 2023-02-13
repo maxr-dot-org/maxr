@@ -49,6 +49,7 @@ public:
 		archive << serialization::makeNvp ("type", getType());
 		serializeThis (archive);
 	}
+	void postLoad (const cModel&) override;
 
 	uint32_t getChecksum (uint32_t crc) const override;
 
@@ -56,17 +57,9 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
-		archive & NVP (unit);
+		archive & NVP (unitId);
 		archive & NVP (org);
 		archive & NVP (big);
-
-		if (!Archive::isWriter)
-		{
-			if (unit != nullptr)
-			{
-				unit->jobActive = true;
-			}
-		}
 	}
 	cPosition org;
 	bool big;

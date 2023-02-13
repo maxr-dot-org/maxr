@@ -362,7 +362,7 @@ void cModel::deleteUnit (cUnit* unit)
 			owningPtr = owner->removeUnit (*vehicle);
 		}
 	}
-	helperJobs.onRemoveUnit (unit);
+	helperJobs.onRemoveUnit (*unit);
 
 	// detach from move job
 	if (unit->isAVehicle())
@@ -524,7 +524,7 @@ void cModel::addFx (std::shared_ptr<cFx> fx)
 //------------------------------------------------------------------------------
 void cModel::addJob (std::unique_ptr<cJob> job)
 {
-	helperJobs.addJob (std::move (job));
+	helperJobs.addJob (*this, std::move (job));
 }
 
 //------------------------------------------------------------------------------

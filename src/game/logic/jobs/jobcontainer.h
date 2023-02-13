@@ -32,11 +32,9 @@ class cModel;
 class cJobContainer
 {
 public:
-	~cJobContainer();
-	void addJob (std::unique_ptr<cJob>);
-	void onRemoveUnit (cUnit*);
+	void addJob (cModel&, std::unique_ptr<cJob>);
+	void onRemoveUnit (const cUnit&);
 	void run (cModel&);
-	void clear();
 	uint32_t getChecksum (uint32_t crc) const;
 
 	template <typename Archive>
@@ -45,8 +43,10 @@ public:
 		archive & NVP (jobs);
 	}
 
+	void postLoad (const cModel&);
+
 private:
-	std::vector<std::unique_ptr<cJob>>::iterator releaseJob (std::vector<std::unique_ptr<cJob>>::iterator it);
+	std::vector<std::unique_ptr<cJob>>::iterator releaseJob (const cModel&, std::vector<std::unique_ptr<cJob>>::iterator it);
 
 private:
 	std::vector<std::unique_ptr<cJob>> jobs;
