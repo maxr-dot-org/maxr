@@ -84,6 +84,7 @@ public:
 	void attack (const cUnit& aggressor, const cPosition& targetPosition, const cUnit* targetUnit);
 	void buyUpgrades (const std::vector<std::pair<sID, cUnitUpgrade>>&);
 	void changeBuildList (const cBuilding&, const std::vector<sID>& buildList, int buildSpeed, bool repeat);
+	void changeManualFire (const cUnit&);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

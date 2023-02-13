@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionchangemanualfire.h"
 #include "game/logic/action/actionchangeresearch.h"
 #include "game/logic/action/actionchangesentry.h"
 #include "game/logic/action/actionchangeunitname.h"
@@ -729,7 +728,7 @@ void cGameGuiController::connectClient (cClient& client)
 		if (unit.isAVehicle()) activeClient->sendNetMessage (cActionClear (static_cast<const cVehicle&> (unit)));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredManualFire, [&] (const cUnit& unit) {
-		activeClient->sendNetMessage (cActionChangeManualFire (unit));
+		activeClient->changeManualFire (unit);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSentry, [&] (const cUnit& unit) {
 		activeClient->sendNetMessage (cActionChangeSentry (unit));

@@ -40,6 +40,7 @@
 #include "game/logic/action/actionbuyupgrades.h"
 #include "game/logic/action/actionchangebuildlist.h"
 #include "game/logic/action/actionsetautomove.h"
+#include "game/logic/action/actionchangemanualfire.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
@@ -377,4 +378,10 @@ void cClient::buyUpgrades (const std::vector<std::pair<sID, cUnitUpgrade>>& unit
 void cClient::changeBuildList(const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat)
 {
 	sendNetMessage (cActionChangeBuildList (building, buildList, buildSpeed, repeat));
+}
+
+//------------------------------------------------------------------------------
+void cClient::changeManualFire(const cUnit& unit)
+{
+	sendNetMessage (cActionChangeManualFire (unit));
 }
