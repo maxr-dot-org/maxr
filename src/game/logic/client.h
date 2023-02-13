@@ -85,6 +85,7 @@ public:
 	void buyUpgrades (const std::vector<std::pair<sID, cUnitUpgrade>>&);
 	void changeBuildList (const cBuilding&, const std::vector<sID>& buildList, int buildSpeed, bool repeat);
 	void changeManualFire (const cUnit&);
+	void changeResearch (const std::array<int, cResearch::kNrResearchAreas>&);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.
