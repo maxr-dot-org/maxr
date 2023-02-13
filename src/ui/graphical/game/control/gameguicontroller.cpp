@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionbuyupgrades.h"
 #include "game/logic/action/actionchangebuildlist.h"
 #include "game/logic/action/actionchangemanualfire.h"
 #include "game/logic/action/actionchangeresearch.h"
@@ -684,7 +683,7 @@ void cGameGuiController::connectClient (cClient& client)
 		client.sendNetMessage (cActionChangeResearch (newResearchSettings));
 	});
 	clientSignalConnectionManager.connect (takeUnitUpgradesTriggered, [&] (const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades) {
-		client.sendNetMessage (cActionBuyUpgrades (unitUpgrades));
+		client.buyUpgrades (unitUpgrades);
 	});
 	clientSignalConnectionManager.connect (selfDestructionTriggered, [&] (const cBuilding& building) {
 		client.sendNetMessage (cActionSelfDestroy (building));
