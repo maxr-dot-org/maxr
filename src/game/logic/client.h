@@ -99,6 +99,7 @@ public:
 	void changeResourceDistribution (const cBuilding&, const sMiningResource&);
 	void resumeMoveJob (const cVehicle&);
 	void resumeAllMoveJobs();
+	void selfDestroy (const cBuilding&);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

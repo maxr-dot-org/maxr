@@ -52,6 +52,7 @@
 #include "game/logic/action/actionrepairreload.h"
 #include "game/logic/action/actionresourcedistribution.h"
 #include "game/logic/action/actionresumemove.h"
+#include "game/logic/action/actionselfdestroy.h"
 #include "game/logic/action/actionsetautomove.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
@@ -486,4 +487,10 @@ void cClient::resumeMoveJob (const cVehicle& vehicle)
 void cClient::resumeAllMoveJobs()
 {
 	sendNetMessage (cActionResumeMove());
+}
+
+//------------------------------------------------------------------------------
+void cClient::selfDestroy (const cBuilding& building)
+{
+	sendNetMessage (cActionSelfDestroy (building));
 }

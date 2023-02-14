@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionselfdestroy.h"
 #include "game/logic/action/actionstartbuild.h"
 #include "game/logic/action/actionstartmove.h"
 #include "game/logic/action/actionstartturn.h"
@@ -673,7 +672,7 @@ void cGameGuiController::connectClient (cClient& client)
 		client.buyUpgrades (unitUpgrades);
 	});
 	clientSignalConnectionManager.connect (selfDestructionTriggered, [&] (const cBuilding& building) {
-		client.sendNetMessage (cActionSelfDestroy (building));
+		client.selfDestroy (building);
 	});
 	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&] (const cVehicle& vehicle) {
 		client.resumeMoveJob (vehicle);
