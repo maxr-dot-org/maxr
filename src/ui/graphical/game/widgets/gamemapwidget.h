@@ -158,8 +158,8 @@ public:
 	cSignal<void (const cUnit&)> triggeredActivate;
 	cSignal<void (const cUnit&)> triggeredResearchMenu;
 	cSignal<void (const cUnit&)> triggeredUpgradesMenu;
-	cSignal<void (const cUnit&)> triggeredUpgradeThis;
-	cSignal<void (const cUnit&)> triggeredUpgradeAll;
+	cSignal<void (const cBuilding&)> triggeredUpgradeThis;
+	cSignal<void (const cBuilding&)> triggeredUpgradeAll;
 	cSignal<void (const cBuilding&)> triggeredSelfDestruction;
 	cSignal<void (const cVehicle&)> triggeredLayMines;
 	cSignal<void (const cVehicle&)> triggeredCollectMines;

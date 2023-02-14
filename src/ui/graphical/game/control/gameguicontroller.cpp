@@ -44,7 +44,6 @@
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/action/actionstartmove.h"
-#include "game/logic/action/actionupgradebuilding.h"
 #include "game/logic/action/actionupgradevehicle.h"
 #include "game/logic/attackjob.h"
 #include "game/logic/client.h"
@@ -704,17 +703,11 @@ void cGameGuiController::connectClient (cClient& client)
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSentry, [&] (const cUnit& unit) {
 		activeClient->changeSentry (unit);
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeThis, [&] (const cUnit& unit) {
-		if (unit.isABuilding())
-		{
-			client.sendNetMessage (cActionUpgradeBuilding (static_cast<const cBuilding&> (unit), false));
-		}
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeThis, [&] (const cBuilding& building) {
+		client.upgradeBuilding (building);
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeAll, [&] (const cUnit& unit) {
-		if (unit.isABuilding())
-		{
-			client.sendNetMessage (cActionUpgradeBuilding (static_cast<const cBuilding&> (unit), true));
-		}
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUpgradeAll, [&] (const cBuilding& building) {
+		client.upgradeAllBuildings (building);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLayMines, [&] (const cVehicle& vehicle) {
 		client.toggleLayMines (vehicle);

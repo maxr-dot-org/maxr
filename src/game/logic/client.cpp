@@ -60,6 +60,7 @@
 #include "game/logic/action/actionstealdisable.h"
 #include "game/logic/action/actionstop.h"
 #include "game/logic/action/actiontransfer.h"
+#include "game/logic/action/actionupgradebuilding.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
@@ -550,4 +551,16 @@ void cClient::transfer (const cUnit& sourceUnit, const cUnit& destinationUnit, i
 	{
 		sendNetMessage (cActionTransfer (sourceUnit, destinationUnit, transferValue, resourceType));
 	}
+}
+
+//------------------------------------------------------------------------------
+void cClient::upgradeAllBuildings (const cBuilding& building)
+{
+	sendNetMessage (cActionUpgradeBuilding (building, true));
+}
+
+//------------------------------------------------------------------------------
+void cClient::upgradeBuilding (const cBuilding& building)
+{
+	sendNetMessage (cActionUpgradeBuilding (building, false));
 }
