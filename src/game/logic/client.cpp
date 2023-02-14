@@ -616,3 +616,16 @@ void cClient::report (std::unique_ptr<cSavedReport> report)
 {
 	sendNetMessage (cNetMessageReport (std::move (report)));
 }
+
+//------------------------------------------------------------------------------
+void cClient::sendGUISaveInfo(int slot, int savingId, const sPlayerGuiInfo& guiInfo, std::optional<cGameGuiState> gameGuiState)
+{
+	cNetMessageGUISaveInfo message (slot, savingId);
+	message.guiInfo = guiInfo;
+
+	if (gameGuiState)
+	{
+		message.guiInfo.gameGuiState = *gameGuiState;
+	}
+	sendNetMessage (std::move (message));
+}

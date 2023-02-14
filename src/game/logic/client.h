@@ -120,6 +120,8 @@ public:
 
 	void report (std::unique_ptr<cSavedReport>);
 
+	void sendGUISaveInfo (int slot, int savingId, const sPlayerGuiInfo&, std::optional<cGameGuiState>);
+
 	/**
 	* sends a serialized copy of the netmessage to the server.
 	*/
