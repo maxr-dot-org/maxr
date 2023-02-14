@@ -161,8 +161,8 @@ public:
 	cSignal<void (const cUnit&)> triggeredUpgradeThis;
 	cSignal<void (const cUnit&)> triggeredUpgradeAll;
 	cSignal<void (const cBuilding&)> triggeredSelfDestruction;
-	cSignal<void (const cUnit&)> triggeredLayMines;
-	cSignal<void (const cUnit&)> triggeredCollectMines;
+	cSignal<void (const cVehicle&)> triggeredLayMines;
+	cSignal<void (const cVehicle&)> triggeredCollectMines;
 	cSignal<void (const cUnit&)> triggeredUnitDone;
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;

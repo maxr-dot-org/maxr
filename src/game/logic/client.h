@@ -92,6 +92,8 @@ public:
 	void finishBuild (const cUnit&, const cPosition& escapePosition);
 	void initNewGame (const sInitPlayerData&);
 	void load (const cUnit& loadingUnit, const cVehicle& loadedVehicle);
+	void toggleLayMines (const cVehicle&);
+	void toggleCollectMines (const cVehicle&);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

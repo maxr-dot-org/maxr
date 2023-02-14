@@ -192,8 +192,8 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu->upgradeThisClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUpgradeThis (*unitMenu->getUnit()); });
 	unitMenu->upgradeAllClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUpgradeAll (*unitMenu->getUnit()); });
 	unitMenu->selfDestroyClicked.connect ([this]() { const auto* building = dynamic_cast<const cBuilding*> (unitMenu->getUnit()); if (building) triggeredSelfDestruction (*building); });
-	unitMenu->layMinesToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredLayMines (*unitMenu->getUnit()); });
-	unitMenu->collectMinesToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredCollectMines (*unitMenu->getUnit()); });
+	unitMenu->layMinesToggled.connect ([this]() { if (unitMenu->getVehicle()) triggeredLayMines (*unitMenu->getVehicle()); });
+	unitMenu->collectMinesToggled.connect ([this]() { if (unitMenu->getVehicle()) triggeredCollectMines (*unitMenu->getVehicle()); });
 	unitMenu->infoClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUnitHelp (*unitMenu->getUnit()); });
 	unitMenu->doneClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUnitDone (*unitMenu->getUnit()); });
 

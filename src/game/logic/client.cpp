@@ -48,6 +48,7 @@
 #include "game/logic/action/actionfinishbuild.h"
 #include "game/logic/action/actioninitnewgame.h"
 #include "game/logic/action/actionload.h"
+#include "game/logic/action/actionminelayerstatus.h"
 #include "game/logic/action/actionsetautomove.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
@@ -437,7 +438,19 @@ void cClient::initNewGame (const sInitPlayerData& initPlayerData)
 }
 
 //------------------------------------------------------------------------------
-void cClient::load(const cUnit& loadingUnit, const cVehicle& loadedVehicle)
+void cClient::load (const cUnit& loadingUnit, const cVehicle& loadedVehicle)
 {
 	sendNetMessage (cActionLoad (loadingUnit, loadedVehicle));
+}
+
+//------------------------------------------------------------------------------
+void cClient::toggleLayMines (const cVehicle& vehicle)
+{
+	sendNetMessage (cActionMinelayerStatus (vehicle, !vehicle.isUnitLayingMines(), false));
+}
+
+//------------------------------------------------------------------------------
+void cClient::toggleCollectMines (const cVehicle& vehicle)
+{
+	sendNetMessage (cActionMinelayerStatus (vehicle, false, !vehicle.isUnitClearingMines()));
 }

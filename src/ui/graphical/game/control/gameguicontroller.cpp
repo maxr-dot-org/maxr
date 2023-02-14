@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionminelayerstatus.h"
 #include "game/logic/action/actionrepairreload.h"
 #include "game/logic/action/actionresourcedistribution.h"
 #include "game/logic/action/actionresumemove.h"
@@ -736,19 +735,11 @@ void cGameGuiController::connectClient (cClient& client)
 			client.sendNetMessage (cActionUpgradeBuilding (static_cast<const cBuilding&> (unit), true));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLayMines, [&] (const cUnit& unit) {
-		if (unit.isAVehicle())
-		{
-			auto& vehicle = *static_cast<const cVehicle*> (&unit);
-			client.sendNetMessage (cActionMinelayerStatus (vehicle, !vehicle.isUnitLayingMines(), false));
-		}
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLayMines, [&] (const cVehicle& vehicle) {
+		client.toggleLayMines (vehicle);
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredCollectMines, [&] (const cUnit& unit) {
-		if (unit.isAVehicle())
-		{
-			auto& vehicle = *static_cast<const cVehicle*> (&unit);
-			client.sendNetMessage (cActionMinelayerStatus (vehicle, false, !vehicle.isUnitClearingMines()));
-		}
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredCollectMines, [&] (const cVehicle& vehicle) {
+		client.toggleCollectMines (vehicle);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUnitDone, [this] (const cUnit& unit) {
 		if (unit.isAVehicle())
