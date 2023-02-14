@@ -102,6 +102,7 @@ public:
 	void selfDestroy (const cBuilding&);
 	void startBuild (const cVehicle&, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition);
 	void startBuildPath (const cVehicle&, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition);
+	void startTurn();
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

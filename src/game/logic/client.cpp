@@ -55,6 +55,7 @@
 #include "game/logic/action/actionselfdestroy.h"
 #include "game/logic/action/actionsetautomove.h"
 #include "game/logic/action/actionstartbuild.h"
+#include "game/logic/action/actionstartturn.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
@@ -506,4 +507,10 @@ void cClient::startBuild (const cVehicle& vehicle, sID buildingTypeID, int build
 void cClient::startBuildPath (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition)
 {
 	sendNetMessage (cActionStartBuild (vehicle, buildingTypeID, buildSpeed, buildPosition, pathEndPosition));
+}
+
+//------------------------------------------------------------------------------
+void cClient::startTurn()
+{
+	sendNetMessage (cActionStartTurn{});
 }

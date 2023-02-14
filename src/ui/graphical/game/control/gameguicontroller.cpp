@@ -44,7 +44,6 @@
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/action/actionstartmove.h"
-#include "game/logic/action/actionstartturn.h"
 #include "game/logic/action/actionstartwork.h"
 #include "game/logic/action/actionstealdisable.h"
 #include "game/logic/action/actionstop.h"
@@ -1298,7 +1297,7 @@ void cGameGuiController::showNextPlayerDialog()
 	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", activeClient->getActivePlayer().getName()), eWindowBackgrounds::Black));
 	signalConnectionManager.connect (dialog->done, [this]() {
 		soundManager->unmute();
-		activeClient->sendNetMessage (cActionStartTurn{});
+		activeClient->startTurn();
 	});
 }
 
