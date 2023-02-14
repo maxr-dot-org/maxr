@@ -741,7 +741,7 @@ void cGameGui::resetMiniMapViewWindow()
 //------------------------------------------------------------------------------
 void cGameGui::updateSelectedUnitSound()
 {
-	auto selectedUnit = dynamic_cast<const cVehicle*> (gameMap->getUnitSelection().getSelectedUnit());
+	auto selectedUnit = gameMap->getUnitSelection().getSelectedVehicle();
 	if (selectedUnit && selectedUnit->isUnitMoving())
 	{
 		updateSelectedUnitMoveSound (false);

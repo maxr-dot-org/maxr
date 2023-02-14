@@ -178,24 +178,24 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu->sabotageToggled.connect ([this]() { toggleMouseInputMode (eMouseModeType::Disable); });
 	unitMenu->stealToggled.connect ([this]() { toggleMouseInputMode (eMouseModeType::Steal); });
 
-	unitMenu->buildClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredBuild (*unitMenu->getUnit()); });
-	unitMenu->distributeClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredResourceDistribution (*unitMenu->getUnit()); });
-	unitMenu->startClicked.connect ([this]() { if (unitMenu->getBuilding()) triggeredStartWork (*unitMenu->getBuilding()); });
-	unitMenu->stopClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredStopWork (*unitMenu->getUnit()); });
-	unitMenu->autoToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredAutoMoveJob (*unitMenu->getUnit()); });
-	unitMenu->removeClicked.connect ([this]() { if (unitMenu->getVehicle()) triggeredStartClear (*unitMenu->getVehicle()); });
-	unitMenu->manualFireToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredManualFire (*unitMenu->getUnit()); });
-	unitMenu->sentryToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredSentry (*unitMenu->getUnit()); });
-	unitMenu->activateClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredActivate (*unitMenu->getUnit()); });
-	unitMenu->researchClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredResearchMenu (*unitMenu->getUnit()); });
-	unitMenu->buyUpgradesClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUpgradesMenu (*unitMenu->getUnit()); });
-	unitMenu->upgradeThisClicked.connect ([this]() { if (unitMenu->getBuilding()) triggeredUpgradeThis (*unitMenu->getBuilding()); });
-	unitMenu->upgradeAllClicked.connect ([this]() { if (unitMenu->getBuilding()) triggeredUpgradeAll (*unitMenu->getBuilding()); });
-	unitMenu->selfDestroyClicked.connect ([this]() { const auto* building = dynamic_cast<const cBuilding*> (unitMenu->getUnit()); if (building) triggeredSelfDestruction (*building); });
-	unitMenu->layMinesToggled.connect ([this]() { if (unitMenu->getVehicle()) triggeredLayMines (*unitMenu->getVehicle()); });
-	unitMenu->collectMinesToggled.connect ([this]() { if (unitMenu->getVehicle()) triggeredCollectMines (*unitMenu->getVehicle()); });
-	unitMenu->infoClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUnitHelp (*unitMenu->getUnit()); });
-	unitMenu->doneClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredUnitDone (*unitMenu->getUnit()); });
+	unitMenu->buildClicked.connect ([this]() { if (const auto* unit = unitMenu->getUnit()) triggeredBuild (*unit); });
+	unitMenu->distributeClicked.connect ([this]() { if (const auto* unit = unitMenu->getUnit()) triggeredResourceDistribution (*unit); });
+	unitMenu->startClicked.connect ([this]() { if (const auto* building = unitMenu->getBuilding()) triggeredStartWork (*building); });
+	unitMenu->stopClicked.connect ([this]() { if (const auto* unit = unitMenu->getUnit()) triggeredStopWork (*unit); });
+	unitMenu->autoToggled.connect ([this]() { if (const auto* unit = unitMenu->getUnit()) triggeredAutoMoveJob (*unit); });
+	unitMenu->removeClicked.connect ([this]() { if (const auto* vehicle = unitMenu->getVehicle()) triggeredStartClear (*vehicle); });
+	unitMenu->manualFireToggled.connect ([this]() { if (const auto* unit = unitMenu->getUnit()) triggeredManualFire (*unit); });
+	unitMenu->sentryToggled.connect ([this]() { if (const auto* unit = unitMenu->getUnit()) triggeredSentry (*unit); });
+	unitMenu->activateClicked.connect ([this]() { if (const auto* unit = unitMenu->getUnit()) triggeredActivate (*unit); });
+	unitMenu->researchClicked.connect ([this]() { if (const auto* unit = unitMenu->getUnit()) triggeredResearchMenu (*unit); });
+	unitMenu->buyUpgradesClicked.connect ([this]() { if (const auto* unit = unitMenu->getUnit()) triggeredUpgradesMenu (*unit); });
+	unitMenu->upgradeThisClicked.connect ([this]() { if (const auto* building = unitMenu->getBuilding()) triggeredUpgradeThis (*building); });
+	unitMenu->upgradeAllClicked.connect ([this]() { if (const auto* building = unitMenu->getBuilding()) triggeredUpgradeAll (*building); });
+	unitMenu->selfDestroyClicked.connect ([this]() { if (const auto* building = unitMenu->getBuilding()) triggeredSelfDestruction (*building); });
+	unitMenu->layMinesToggled.connect ([this]() { if (const auto* vehicle = unitMenu->getVehicle()) triggeredLayMines (*vehicle); });
+	unitMenu->collectMinesToggled.connect ([this]() { if (const auto* vehicle = unitMenu->getVehicle()) triggeredCollectMines (*vehicle); });
+	unitMenu->infoClicked.connect ([this]() { if (const auto* unit = unitMenu->getUnit()) triggeredUnitHelp (*unit); });
+	unitMenu->doneClicked.connect ([this]() { if (const auto* unit = unitMenu->getUnit()) triggeredUnitDone (*unit); });
 
 	unitMenu->attackToggled.connect ([this]() { toggleUnitContextMenu (nullptr); });
 	unitMenu->buildClicked.connect ([this]() { toggleUnitContextMenu (nullptr); });
@@ -250,7 +250,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	automoveShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuAutomove));
 	automoveShortcut->triggered.connect ([this]() {
-		cVehicle* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		const cVehicle* vehicle = unitSelection.getSelectedVehicle();
 		if (cUnitContextMenuWidget::unitHasAutoEntry (vehicle, player.get()))
 		{
 			triggeredAutoMoveJob (*vehicle);
@@ -259,7 +259,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	startShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuStart));
 	startShortcut->triggered.connect ([this]() {
-		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
+		const auto* building = unitSelection.getSelectedBuilding();
 		if (cUnitContextMenuWidget::unitHasStartEntry (building, player.get()))
 		{
 			triggeredStartWork (*building);
@@ -279,7 +279,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	clearShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuClear));
 	clearShortcut->triggered.connect ([this]() {
-		auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		const auto* vehicle = unitSelection.getSelectedVehicle();
 		if (cUnitContextMenuWidget::unitHasRemoveEntry (vehicle, player.get(), mapView.get()))
 		{
 			triggeredStartClear (*vehicle);
@@ -320,7 +320,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	relaodShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuReload));
 	relaodShortcut->triggered.connect ([this]() {
-		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		const auto* vehicle = unitSelection.getSelectedVehicle();
 		if (cUnitContextMenuWidget::unitHasSupplyEntry (vehicle, player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::SupplyAmmo);
@@ -329,7 +329,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	enterShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuEnter));
 	enterShortcut->triggered.connect ([this]() {
-		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		const auto* vehicle = unitSelection.getSelectedVehicle();
 		if (cUnitContextMenuWidget::unitHasEnterEntry (vehicle, player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Enter);
@@ -338,7 +338,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	repairShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuRepair));
 	repairShortcut->triggered.connect ([this]() {
-		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		const auto* vehicle = unitSelection.getSelectedVehicle();
 		if (cUnitContextMenuWidget::unitHasRepairEntry (vehicle, player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Repair);
@@ -347,7 +347,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	layMineShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuLayMine));
 	layMineShortcut->triggered.connect ([this]() {
-		cVehicle* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		const cVehicle* vehicle = unitSelection.getSelectedVehicle();
 		if (cUnitContextMenuWidget::unitHasLayMinesEntry (vehicle, player.get()))
 		{
 			triggeredLayMines (*vehicle);
@@ -356,7 +356,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	clearMineShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuClearMine));
 	clearMineShortcut->triggered.connect ([this]() {
-		cVehicle* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		const cVehicle* vehicle = unitSelection.getSelectedVehicle();
 		if (cUnitContextMenuWidget::unitHasCollectMinesEntry (vehicle, player.get()))
 		{
 			triggeredCollectMines (*vehicle);
@@ -365,7 +365,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	disableShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDisable));
 	disableShortcut->triggered.connect ([this]() {
-		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		const auto* vehicle = unitSelection.getSelectedVehicle();
 
 		if (cUnitContextMenuWidget::unitHasSabotageEntry (vehicle, player.get()))
 		{
@@ -375,7 +375,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	stealShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuSteal));
 	stealShortcut->triggered.connect ([this]() {
-		const auto* vehicle = dynamic_cast<cVehicle*> (unitSelection.getSelectedUnit());
+		const auto* vehicle = unitSelection.getSelectedVehicle();
 		if (cUnitContextMenuWidget::unitHasStealEntry (vehicle, player.get()))
 		{
 			toggleMouseInputMode (eMouseModeType::Steal);
@@ -392,7 +392,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	distributeShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDistribute));
 	distributeShortcut->triggered.connect ([this]() {
-		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
+		const auto* building = unitSelection.getSelectedBuilding();
 		if (cUnitContextMenuWidget::unitHasDistributeEntry (building, player.get()))
 		{
 			triggeredResourceDistribution (*building);
@@ -401,7 +401,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	researchShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuResearch));
 	researchShortcut->triggered.connect ([this]() {
-		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
+		const auto* building = unitSelection.getSelectedBuilding();
 		if (cUnitContextMenuWidget::unitHasResearchEntry (building, player.get()))
 		{
 			triggeredResearchMenu (*building);
@@ -410,7 +410,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	upgradeShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuUpgrade));
 	upgradeShortcut->triggered.connect ([this]() {
-		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
+		const auto* building = unitSelection.getSelectedBuilding();
 		if (cUnitContextMenuWidget::unitHasBuyEntry (building, player.get()))
 		{
 			triggeredUpgradesMenu (*building);
@@ -419,7 +419,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	destroyShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDestroy));
 	destroyShortcut->triggered.connect ([this]() {
-		auto* building = dynamic_cast<cBuilding*> (unitSelection.getSelectedUnit());
+		const auto* building = unitSelection.getSelectedBuilding();
 		if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (building, player.get()))
 		{
 			triggeredSelfDestruction (*building);
