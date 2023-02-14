@@ -55,9 +55,9 @@ public:
 
 private:
 	void executeLoadAction (cModel&);
-	void executeGetInAction (cModel&);
 	void executeAttackAction (cModel&);
 
+private:
 	int vehicleID;
 	eEndMoveActionType endMoveAction;
 	int destID;
