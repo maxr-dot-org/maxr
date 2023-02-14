@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionstartbuild.h"
 #include "game/logic/action/actionstartmove.h"
 #include "game/logic/action/actionstartturn.h"
 #include "game/logic/action/actionstartwork.h"
@@ -635,10 +634,10 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 	clientSignalConnectionManager.connect (buildBuildingTriggered, [&] (const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed) {
-		client.sendNetMessage (cActionStartBuild (vehicle, unitId, buildSpeed, destination));
+		client.startBuild (vehicle, unitId, buildSpeed, destination);
 	});
 	clientSignalConnectionManager.connect (buildBuildingPathTriggered, [&] (const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed) {
-		client.sendNetMessage (cActionStartBuild (vehicle, unitId, buildSpeed, vehicle.getPosition(), destination));
+		client.startBuildPath (vehicle, unitId, buildSpeed, vehicle.getPosition(), destination);
 	});
 	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&] (const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat) {
 		client.changeBuildList (building, buildList, buildSpeed, repeat);
