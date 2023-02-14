@@ -128,7 +128,7 @@ void cClient::pushMessage (std::unique_ptr<cNetMessage> message)
 }
 
 //------------------------------------------------------------------------------
-void cClient::sendNetMessage (cNetMessage& message) const
+void cClient::sendNetMessage (cNetMessage&& message) const
 {
 	message.playerNr = activePlayer->getId();
 
@@ -143,12 +143,6 @@ void cClient::sendNetMessage (cNetMessage& message) const
 }
 
 //------------------------------------------------------------------------------
-void cClient::sendNetMessage (cNetMessage&& message) const
-{
-	sendNetMessage (static_cast<cNetMessage&> (message));
-}
-
-//------------------------------------------------------------------------------
 void cClient::sendSyncMessage (unsigned int gameTime, bool crcOK, unsigned int timeBuffer, unsigned int ticksPerFrame, unsigned int eventCounter) const
 {
 	cNetMessageSyncClient message;
@@ -156,7 +150,7 @@ void cClient::sendSyncMessage (unsigned int gameTime, bool crcOK, unsigned int t
 	message.crcOK = crcOK;
 	message.timeBuffer = timeBuffer;
 	message.ticksPerFrame = ticksPerFrame;
-	message.queueSize = getNetMessageQueueSize();
+	message.queueSize = static_cast<unsigned int> (eventQueue.safe_size());
 	message.eventCounter = eventCounter;
 
 	sendNetMessage (std::move (message));

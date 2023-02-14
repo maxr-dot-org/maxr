@@ -65,7 +65,6 @@ public:
 	void setMap (std::shared_ptr<cStaticMap>);
 	void setPlayers (const std::vector<cPlayerBasicData>&, size_t activePlayerNr);
 
-	unsigned int getNetMessageQueueSize() const { return static_cast<unsigned int> (eventQueue.safe_size()); }
 	void pushMessage (std::unique_ptr<cNetMessage>) override;
 
 	//
@@ -122,12 +121,6 @@ public:
 
 	void sendGUISaveInfo (int slot, int savingId, const sPlayerGuiInfo&, std::optional<cGameGuiState>);
 
-	/**
-	* sends a serialized copy of the netmessage to the server.
-	*/
-	void sendNetMessage (cNetMessage&) const;
-	void sendNetMessage (cNetMessage&&) const;
-
 	void handleNetMessages();
 
 	void runClientJobs (const cModel&);
@@ -146,6 +139,11 @@ public:
 	void run();
 
 private:
+	/**
+	* sends a serialized copy of the netmessage to the server.
+	*/
+	void sendNetMessage (cNetMessage&&) const;
+
 	void handleSurveyorMoveJobs();
 
 private:
