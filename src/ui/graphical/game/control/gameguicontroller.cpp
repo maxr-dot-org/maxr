@@ -44,7 +44,6 @@
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/action/actionstartmove.h"
-#include "game/logic/action/actionupgradevehicle.h"
 #include "game/logic/attackjob.h"
 #include "game/logic/client.h"
 #include "game/logic/movejob.h"
@@ -641,15 +640,11 @@ void cGameGuiController::connectClient (cClient& client)
 	clientSignalConnectionManager.connect (repairTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
 		client.repair (sourceUnit, destinationUnit);
 	});
-	clientSignalConnectionManager.connect (upgradeTriggered, [&] (const cUnit& unit, size_t index) {
-		if (!unit.isABuilding()) return;
-
-		client.sendNetMessage (cActionUpgradeVehicle (*static_cast<const cBuilding*> (&unit), unit.storedUnits[index]));
+	clientSignalConnectionManager.connect (upgradeTriggered, [&] (const cBuilding& building, size_t index) {
+		client.upgradeVehicle (building, *building.storedUnits[index]);
 	});
-	clientSignalConnectionManager.connect (upgradeAllTriggered, [&] (const cUnit& unit) {
-		if (!unit.isABuilding()) return;
-
-		client.sendNetMessage (cActionUpgradeVehicle (*static_cast<const cBuilding*> (&unit)));
+	clientSignalConnectionManager.connect (upgradeAllTriggered, [&] (const cBuilding& building) {
+		client.upgradeAllVehicles (building);
 	});
 	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&] (const cBuilding& building, const sMiningResource& production) {
 		client.changeResourceDistribution (building, production);
@@ -1483,15 +1478,6 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 		}
 		storageWindow->close();
 	});
-	storageWindow->reload.connect ([&] (size_t index) {
-		reloadTriggered (unit, *unit.storedUnits[index]);
-	});
-	storageWindow->repair.connect ([&] (size_t index) {
-		repairTriggered (unit, *unit.storedUnits[index]);
-	});
-	storageWindow->upgrade.connect ([&] (size_t index) {
-		upgradeTriggered (unit, index);
-	});
 	storageWindow->activateAll.connect ([&, storageWindow]() {
 		if (mapView)
 		{
@@ -1529,43 +1515,54 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 
 		storageWindow->close();
 	});
-	storageWindow->reloadAll.connect ([&, storageWindow]() {
-		if (!unit.isABuilding()) return;
-		auto remainingResources = static_cast<const cBuilding&> (unit).subBase->getResourcesStored().metal;
-		for (size_t i = 0; i < unit.storedUnits.size() && remainingResources > 0; ++i)
-		{
-			const auto& storedUnit = *unit.storedUnits[i];
+	if (const auto* building = dynamic_cast<const cBuilding*> (&unit))
+	{
+		storageWindow->reload.connect ([building, this] (size_t index) {
+			reloadTriggered (*building, *building->storedUnits[index]);
+		});
+		storageWindow->repair.connect ([building, this] (size_t index) {
+			repairTriggered (*building, *building->storedUnits[index]);
+		});
+		storageWindow->upgrade.connect ([building, this] (size_t index) {
+			upgradeTriggered (*building, index);
+		});
 
-			if (storedUnit.data.getAmmo() < storedUnit.data.getAmmoMax())
+		storageWindow->reloadAll.connect ([building, this]() {
+			auto remainingResources = building->subBase->getResourcesStored().metal;
+			for (size_t i = 0; i < building->storedUnits.size() && remainingResources > 0; ++i)
 			{
-				reloadTriggered (unit, storedUnit);
-				remainingResources--;
-			}
-		}
-	});
-	storageWindow->repairAll.connect ([&, storageWindow]() {
-		if (!unit.isABuilding()) return;
-		auto remainingResources = static_cast<const cBuilding&> (unit).subBase->getResourcesStored().metal;
-		for (size_t i = 0; i < unit.storedUnits.size() && remainingResources > 0; ++i)
-		{
-			const auto& storedUnit = *unit.storedUnits[i];
+				const auto& storedUnit = *building->storedUnits[i];
 
-			if (storedUnit.data.getHitpoints() < storedUnit.data.getHitpointsMax())
-			{
-				repairTriggered (unit, storedUnit);
-				//TODO: don't decide, which units can be repaired in the GUI code
-				auto value = storedUnit.data.getHitpoints();
-				while (value < storedUnit.data.getHitpointsMax() && remainingResources > 0)
+				if (storedUnit.data.getAmmo() < storedUnit.data.getAmmoMax())
 				{
-					value += Round (((float) storedUnit.data.getHitpointsMax() / storedUnit.data.getBuildCost()) * 4);
+					reloadTriggered (*building, storedUnit);
 					remainingResources--;
 				}
 			}
-		}
-	});
-	storageWindow->upgradeAll.connect ([&, storageWindow]() {
-		upgradeAllTriggered (unit);
-	});
+		});
+		storageWindow->repairAll.connect ([building, this]() {
+			auto remainingResources = building->subBase->getResourcesStored().metal;
+			for (size_t i = 0; i < building->storedUnits.size() && remainingResources > 0; ++i)
+			{
+				const auto& storedUnit = *building->storedUnits[i];
+
+				if (storedUnit.data.getHitpoints() < storedUnit.data.getHitpointsMax())
+				{
+					repairTriggered (*building, storedUnit);
+					//TODO: don't decide, which units can be repaired in the GUI code
+					auto value = storedUnit.data.getHitpoints();
+					while (value < storedUnit.data.getHitpointsMax() && remainingResources > 0)
+					{
+						value += Round (((float) storedUnit.data.getHitpointsMax() / storedUnit.data.getBuildCost()) * 4);
+						remainingResources--;
+					}
+				}
+			}
+		});
+		storageWindow->upgradeAll.connect ([building, this]() {
+			upgradeAllTriggered (*building);
+		});
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -61,6 +61,7 @@
 #include "game/logic/action/actionstop.h"
 #include "game/logic/action/actiontransfer.h"
 #include "game/logic/action/actionupgradebuilding.h"
+#include "game/logic/action/actionupgradevehicle.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
@@ -563,4 +564,16 @@ void cClient::upgradeAllBuildings (const cBuilding& building)
 void cClient::upgradeBuilding (const cBuilding& building)
 {
 	sendNetMessage (cActionUpgradeBuilding (building, false));
+}
+
+//------------------------------------------------------------------------------
+void cClient::upgradeAllVehicles (const cBuilding& containingBuilding)
+{
+	sendNetMessage (cActionUpgradeVehicle (containingBuilding));
+}
+
+//------------------------------------------------------------------------------
+void cClient::upgradeVehicle (const cBuilding& containingBuilding, const cVehicle& vehicle)
+{
+	sendNetMessage (cActionUpgradeVehicle (containingBuilding, &vehicle));
 }

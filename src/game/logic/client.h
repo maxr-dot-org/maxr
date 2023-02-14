@@ -110,6 +110,8 @@ public:
 	void transfer (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType);
 	void upgradeAllBuildings (const cBuilding&);
 	void upgradeBuilding (const cBuilding&);
+	void upgradeAllVehicles (const cBuilding& containingBuilding);
+	void upgradeVehicle (const cBuilding& containingBuilding, const cVehicle&);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.
