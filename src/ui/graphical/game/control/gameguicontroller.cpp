@@ -44,7 +44,6 @@
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/action/actionstartmove.h"
-#include "game/logic/action/actionstealdisable.h"
 #include "game/logic/action/actionstop.h"
 #include "game/logic/action/actiontransfer.h"
 #include "game/logic/action/actionupgradebuilding.h"
@@ -908,17 +907,11 @@ void cGameGuiController::connectClient (cClient& client)
 			activeClient->attack (building, position, target);
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSteal, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
-		if (sourceUnit.isAVehicle())
-		{
-			activeClient->sendNetMessage (cActionStealDisable (*static_cast<const cVehicle*> (&sourceUnit), destinationUnit, true));
-		}
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSteal, [&] (const cVehicle& infiltrator, const cUnit& destinationUnit) {
+		client.steal (infiltrator, destinationUnit);
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredDisable, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
-		if (sourceUnit.isAVehicle())
-		{
-			activeClient->sendNetMessage (cActionStealDisable (*static_cast<const cVehicle*> (&sourceUnit), destinationUnit, false));
-		}
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredDisable, [&] (const cVehicle& infiltrator, const cUnit& destinationUnit) {
+		client.disable (infiltrator, destinationUnit);
 	});
 	clientSignalConnectionManager.connect (gameGui->getMiniMap().triggeredMove, [&] (const cPosition& destination) {
 		const auto& unitSelection = gameGui->getGameMap().getUnitSelection();

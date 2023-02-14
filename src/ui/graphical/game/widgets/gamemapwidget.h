@@ -144,8 +144,8 @@ public:
 	cSignal<void (const cUnit&, const cUnit&)> triggeredSupplyAmmo;
 	cSignal<void (const cUnit&, const cUnit&)> triggeredRepair;
 	cSignal<void (const cUnit&, const cPosition&)> triggeredAttack;
-	cSignal<void (const cUnit&, const cUnit&)> triggeredSteal;
-	cSignal<void (const cUnit&, const cUnit&)> triggeredDisable;
+	cSignal<void (const cVehicle&, const cUnit&)> triggeredSteal;
+	cSignal<void (const cVehicle&, const cUnit&)> triggeredDisable;
 
 	cSignal<void (const cUnit&)> triggeredBuild;
 	cSignal<void (const cUnit&)> triggeredResourceDistribution;

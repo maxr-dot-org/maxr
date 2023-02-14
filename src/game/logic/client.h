@@ -104,6 +104,8 @@ public:
 	void startBuildPath (const cVehicle&, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition);
 	void startTurn();
 	void startWork (const cBuilding&);
+	void disable (const cVehicle& infiltrator, const cUnit& target);
+	void steal (const cVehicle& infiltrator, const cUnit& target);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.
