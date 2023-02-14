@@ -58,6 +58,7 @@
 #include "game/logic/action/actionstartturn.h"
 #include "game/logic/action/actionstartwork.h"
 #include "game/logic/action/actionstealdisable.h"
+#include "game/logic/action/actionstop.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
@@ -533,4 +534,10 @@ void cClient::disable (const cVehicle& infiltrator, const cUnit& target)
 void cClient::steal (const cVehicle& infiltrator, const cUnit& target)
 {
 	sendNetMessage (cActionStealDisable (infiltrator, target, true));
+}
+
+//------------------------------------------------------------------------------
+void cClient::stopWork (const cUnit& unit)
+{
+	sendNetMessage (cActionStop (unit));
 }

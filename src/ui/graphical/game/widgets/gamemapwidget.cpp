@@ -268,9 +268,12 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	stopShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuStop));
 	stopShortcut->triggered.connect ([this]() {
-		if (cUnitContextMenuWidget::unitHasStopEntry (unitSelection.getSelectedUnit(), player.get()))
+		for (const auto& unit : unitSelection.getSelectedUnits())
 		{
-			triggeredStopWork (*unitSelection.getSelectedUnit());
+			if (cUnitContextMenuWidget::unitHasStopEntry (unit, player.get()))
+			{
+				triggeredStopWork (*unit);
+			}
 		}
 	});
 

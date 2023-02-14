@@ -44,7 +44,6 @@
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/action/actionstartmove.h"
-#include "game/logic/action/actionstop.h"
 #include "game/logic/action/actiontransfer.h"
 #include "game/logic/action/actionupgradebuilding.h"
 #include "game/logic/action/actionupgradevehicle.h"
@@ -684,11 +683,7 @@ void cGameGuiController::connectClient (cClient& client)
 		client.startWork (building);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStopWork, [&] (const cUnit& unit) {
-		const auto& units = gameGui->getGameMap().getUnitSelection().getSelectedUnits();
-		for (const auto& u : units)
-		{
-			client.sendNetMessage (cActionStop (*u));
-		}
+		client.stopWork (unit);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAutoMoveJob, [&] (const cUnit& unit) {
 		if (unit.isAVehicle())
