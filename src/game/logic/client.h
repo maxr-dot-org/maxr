@@ -75,6 +75,8 @@ public:
 	const std::map<int, ePlayerConnectionState>& getPlayerConnectionStates() const;
 	//
 
+	void sendSyncMessage (unsigned int gameTime, bool crcOK, unsigned int timeBuffer, unsigned int ticksPerFrame, unsigned int eventCounter) const;
+
 	void addSurveyorMoveJob (const cVehicle&);
 	void removeSurveyorMoveJob (const cVehicle&);
 	void recreateSurveyorMoveJobs();

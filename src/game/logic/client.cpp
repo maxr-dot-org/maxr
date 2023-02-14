@@ -149,6 +149,20 @@ void cClient::sendNetMessage (cNetMessage&& message) const
 }
 
 //------------------------------------------------------------------------------
+void cClient::sendSyncMessage (unsigned int gameTime, bool crcOK, unsigned int timeBuffer, unsigned int ticksPerFrame, unsigned int eventCounter) const
+{
+	cNetMessageSyncClient message;
+	message.gameTime = gameTime;
+	message.crcOK = crcOK;
+	message.timeBuffer = timeBuffer;
+	message.ticksPerFrame = ticksPerFrame;
+	message.queueSize = getNetMessageQueueSize();
+	message.eventCounter = eventCounter;
+
+	sendNetMessage (std::move (message));
+}
+
+//------------------------------------------------------------------------------
 void cClient::runClientJobs (const cModel& model)
 {
 	// run surveyor AI

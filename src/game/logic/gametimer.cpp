@@ -25,7 +25,6 @@
 #include "game/data/units/vehicle.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
-#include "game/protocol/netmessage.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 
@@ -276,16 +275,7 @@ void cGameTimerClient::run (cClient& client, cModel& model)
 	}
 }
 
-void cGameTimerClient::sendSyncMessage (const cClient& client, unsigned int gameTime, unsigned int tickPerFrame, unsigned int timeBuffer)
+void cGameTimerClient::sendSyncMessage (const cClient& client, unsigned int gameTime, unsigned int ticksPerFrame, unsigned int timeBuffer)
 {
-	cNetMessageSyncClient message;
-	message.gameTime = gameTime;
-	//add debug data (only for displaying in 'sync debug' on the host
-	message.crcOK = (localChecksum == remoteChecksum);
-	message.eventCounter = eventCounter;
-	message.queueSize = client.getNetMessageQueueSize();
-	message.ticksPerFrame = tickPerFrame;
-	message.timeBuffer = timeBuffer;
-
-	client.sendNetMessage (message);
+	client.sendSyncMessage (gameTime, localChecksum == remoteChecksum, timeBuffer, ticksPerFrame, eventCounter);
 }
