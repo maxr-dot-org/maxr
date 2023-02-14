@@ -90,6 +90,7 @@ public:
 	void changeUnitName (const cUnit&, const std::string&);
 	void startClearRubbles (const cVehicle&);
 	void endTurn();
+	void finishBuild (const cUnit&, const cPosition& escapePosition);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

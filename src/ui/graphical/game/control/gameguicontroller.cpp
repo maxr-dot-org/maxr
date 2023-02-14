@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionfinishbuild.h"
 #include "game/logic/action/actionload.h"
 #include "game/logic/action/actionminelayerstatus.h"
 #include "game/logic/action/actionrepairreload.h"
@@ -765,7 +764,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredEndBuilding, [&] (const cVehicle& vehicle, const cPosition& destination) {
-		client.sendNetMessage (cActionFinishBuild (vehicle, destination));
+		client.finishBuild (vehicle, destination);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveSingle, [&] (const cVehicle& vehicle, const cPosition& destination) {
 		if (!activeClient) return;
@@ -788,7 +787,7 @@ void cGameGuiController::connectClient (cClient& client)
 		client.activateUnit (unit, *unit.storedUnits[index], position);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredExitFinishedUnit, [&] (const cBuilding& building, const cPosition& position) {
-		client.sendNetMessage (cActionFinishBuild (building, position));
+		client.finishBuild (building, position);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredLoadAt, [&] (const cUnit& unit, const cPosition& position) {
 		const auto& field = client.getModel().getMap()->getField (position);

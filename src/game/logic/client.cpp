@@ -45,6 +45,7 @@
 #include "game/logic/action/actionchangeunitname.h"
 #include "game/logic/action/actionclear.h"
 #include "game/logic/action/actionendturn.h"
+#include "game/logic/action/actionfinishbuild.h"
 #include "game/logic/action/actionsetautomove.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
@@ -419,4 +420,10 @@ void cClient::startClearRubbles (const cVehicle& vehicle)
 void cClient::endTurn()
 {
 	if (!getFreezeModes().isFreezed()) sendNetMessage (cActionEndTurn());
+}
+
+//------------------------------------------------------------------------------
+void cClient::finishBuild (const cUnit& unit, const cPosition& escapePosition)
+{
+	sendNetMessage (cActionFinishBuild (unit, escapePosition));
 }
