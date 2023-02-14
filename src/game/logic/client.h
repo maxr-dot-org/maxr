@@ -96,6 +96,7 @@ public:
 	void toggleCollectMines (const cVehicle&);
 	void rearm (const cUnit& sourceUnit, const cUnit& destUnit);
 	void repair (const cUnit& sourceUnit, const cUnit& destUnit);
+	void changeResourceDistribution (const cBuilding&, const sMiningResource&);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

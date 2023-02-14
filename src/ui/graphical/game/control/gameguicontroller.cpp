@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionresourcedistribution.h"
 #include "game/logic/action/actionresumemove.h"
 #include "game/logic/action/actionselfdestroy.h"
 #include "game/logic/action/actionstartbuild.h"
@@ -666,7 +665,7 @@ void cGameGuiController::connectClient (cClient& client)
 		client.sendNetMessage (cActionUpgradeVehicle (*static_cast<const cBuilding*> (&unit)));
 	});
 	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&] (const cBuilding& building, const sMiningResource& production) {
-		client.sendNetMessage (cActionResourceDistribution (building, production));
+		client.changeResourceDistribution (building, production);
 	});
 	clientSignalConnectionManager.connect (changeResearchSettingsTriggered, [&] (const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings) {
 		client.changeResearch (newResearchSettings);

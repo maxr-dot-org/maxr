@@ -50,6 +50,7 @@
 #include "game/logic/action/actionload.h"
 #include "game/logic/action/actionminelayerstatus.h"
 #include "game/logic/action/actionrepairreload.h"
+#include "game/logic/action/actionresourcedistribution.h"
 #include "game/logic/action/actionsetautomove.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
@@ -466,4 +467,10 @@ void cClient::rearm (const cUnit& sourceUnit, const cUnit& destUnit)
 void cClient::repair (const cUnit& sourceUnit, const cUnit& destUnit)
 {
 	sendNetMessage (cActionRepairReload (sourceUnit, destUnit, eSupplyType::REPAIR));
+}
+
+//------------------------------------------------------------------------------
+void cClient::changeResourceDistribution (const cBuilding& building, const sMiningResource& miningResource)
+{
+	sendNetMessage (cActionResourceDistribution (building, miningResource));
 }
