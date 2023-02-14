@@ -44,7 +44,6 @@
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/action/actionstartmove.h"
-#include "game/logic/action/actionstartwork.h"
 #include "game/logic/action/actionstealdisable.h"
 #include "game/logic/action/actionstop.h"
 #include "game/logic/action/actiontransfer.h"
@@ -682,9 +681,8 @@ void cGameGuiController::connectClient (cClient& client)
 	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit& unit, const std::string& name) {
 		client.changeUnitName (unit, name);
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartWork, [&] (const cUnit& unit) {
-		cActionStartWork msg (unit);
-		client.sendNetMessage (msg);
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartWork, [&] (const cBuilding& building) {
+		client.startWork (building);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStopWork, [&] (const cUnit& unit) {
 		const auto& units = gameGui->getGameMap().getUnitSelection().getSelectedUnits();

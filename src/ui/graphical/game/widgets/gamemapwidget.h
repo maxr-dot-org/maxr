@@ -149,7 +149,7 @@ public:
 
 	cSignal<void (const cUnit&)> triggeredBuild;
 	cSignal<void (const cUnit&)> triggeredResourceDistribution;
-	cSignal<void (const cUnit&)> triggeredStartWork;
+	cSignal<void (const cBuilding&)> triggeredStartWork;
 	cSignal<void (const cUnit&)> triggeredStopWork;
 	cSignal<void (const cUnit&)> triggeredAutoMoveJob;
 	cSignal<void (const cVehicle&)> triggeredStartClear;

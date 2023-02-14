@@ -180,7 +180,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	unitMenu->buildClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredBuild (*unitMenu->getUnit()); });
 	unitMenu->distributeClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredResourceDistribution (*unitMenu->getUnit()); });
-	unitMenu->startClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredStartWork (*unitMenu->getUnit()); });
+	unitMenu->startClicked.connect ([this]() { if (unitMenu->getBuilding()) triggeredStartWork (*unitMenu->getBuilding()); });
 	unitMenu->stopClicked.connect ([this]() { if (unitMenu->getUnit()) triggeredStopWork (*unitMenu->getUnit()); });
 	unitMenu->autoToggled.connect ([this]() { if (unitMenu->getUnit()) triggeredAutoMoveJob (*unitMenu->getUnit()); });
 	unitMenu->removeClicked.connect ([this]() { if (unitMenu->getVehicle()) triggeredStartClear (*unitMenu->getVehicle()); });
