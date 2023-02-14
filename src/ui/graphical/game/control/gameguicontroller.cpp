@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionstartmove.h"
 #include "game/logic/attackjob.h"
 #include "game/logic/client.h"
 #include "game/logic/movejob.h"
@@ -726,13 +725,11 @@ void cGameGuiController::connectClient (cClient& client)
 		client.finishBuild (vehicle, destination);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveSingle, [&] (const cVehicle& vehicle, const cPosition& destination) {
-		if (!activeClient) return;
-
 		cPathCalculator pc (vehicle, *mapView, destination, false);
 		const auto path = pc.calcPath();
 		if (!path.empty())
 		{
-			activeClient->sendNetMessage (cActionStartMove (vehicle, path));
+			client.startMove (vehicle, path);
 		}
 		else
 		{
@@ -768,7 +765,7 @@ void cGameGuiController::connectClient (cClient& client)
 					if (!path.empty())
 					{
 						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::Load);
-						activeClient->sendNetMessage (cActionStartMove (vehicle, path, emat));
+						client.startMove (vehicle, path, emat);
 					}
 					else
 					{
@@ -789,7 +786,7 @@ void cGameGuiController::connectClient (cClient& client)
 					if (!path.empty())
 					{
 						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::Load);
-						activeClient->sendNetMessage (cActionStartMove (*overVehicle, path, emat));
+						client.startMove (*overVehicle, path, emat);
 					}
 					else
 					{
@@ -814,7 +811,7 @@ void cGameGuiController::connectClient (cClient& client)
 					if (!path.empty())
 					{
 						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::Load);
-						activeClient->sendNetMessage (cActionStartMove (*overVehicle, path, emat));
+						client.startMove (*overVehicle, path, emat);
 					}
 					else
 					{
@@ -835,7 +832,7 @@ void cGameGuiController::connectClient (cClient& client)
 					if (!path.empty())
 					{
 						cEndMoveAction emat (*overPlane, unit, eEndMoveActionType::Load);
-						activeClient->sendNetMessage (cActionStartMove (*overPlane, path, emat));
+						client.startMove (*overPlane, path, emat);
 					}
 					else
 					{
@@ -860,7 +857,7 @@ void cGameGuiController::connectClient (cClient& client)
 
 			if (vehicle.isInRange (position))
 			{
-				activeClient->attack (vehicle, position, target);
+				client.attack (vehicle, position, target);
 			}
 			else if (target)
 			{
@@ -869,7 +866,7 @@ void cGameGuiController::connectClient (cClient& client)
 				if (!path.empty())
 				{
 					cEndMoveAction emat (vehicle, *target, eEndMoveActionType::Attack);
-					activeClient->sendNetMessage (cActionStartMove (vehicle, path, emat));
+					client.startMove (vehicle, path, emat);
 				}
 				else
 				{
@@ -882,7 +879,7 @@ void cGameGuiController::connectClient (cClient& client)
 			const auto& building = static_cast<const cBuilding&> (unit);
 			cUnit* target = cAttackJob::selectTarget (position, building.getStaticUnitData().canAttack, *mapView, building.getOwner());
 
-			activeClient->attack (building, position, target);
+			client.attack (building, position, target);
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSteal, [&] (const cVehicle& infiltrator, const cUnit& destinationUnit) {
@@ -905,7 +902,7 @@ void cGameGuiController::connectClient (cClient& client)
 			const auto path = pc.calcPath();
 			if (!path.empty())
 			{
-				activeClient->sendNetMessage (cActionStartMove (selectedVehicle, path));
+				client.startMove (selectedVehicle, path);
 			}
 			else
 			{
@@ -1831,7 +1828,7 @@ void cGameGuiController::sendStartGroupMoveAction (std::vector<cVehicle*> group,
 			auto& path = paths[i];
 			if (mapView->possiblePlace (*vehicle, path.front(), true) || Contains (startedMoves, mapView->getField (path.front()).getVehicle()))
 			{
-				activeClient->sendNetMessage (cActionStartMove (*vehicle, path));
+				activeClient->startMove (*vehicle, path);
 				moveStarted = true;
 				startedMoves.push_back (vehicle);
 				vehicle = nullptr;
@@ -1848,7 +1845,7 @@ void cGameGuiController::sendStartGroupMoveAction (std::vector<cVehicle*> group,
 	{
 		const auto& vehicle = group[i];
 		const auto& path = paths[i];
-		activeClient->sendNetMessage (cActionStartMove (*vehicle, path));
+		activeClient->startMove (*vehicle, path);
 	}
 }
 

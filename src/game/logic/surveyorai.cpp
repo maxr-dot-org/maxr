@@ -20,7 +20,6 @@
 #include "game/logic/surveyorai.h"
 
 #include "action/actionsetautomove.h"
-#include "action/actionstartmove.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/report/unit/savedreportsurveyoraiconfused.h"
@@ -106,7 +105,7 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 
 		if (!path.empty())
 		{
-			client.sendNetMessage (cActionStartMove (vehicle, path, true));
+			client.startMove (vehicle, path, true);
 			counter = ACTION_TIMEOUT;
 		}
 		else
@@ -306,7 +305,7 @@ void cSurveyorAi::planLongMove (const std::vector<std::unique_ptr<cSurveyorAi>>&
 		const auto path = pc.calcPath();
 		if (!path.empty())
 		{
-			client.sendNetMessage (cActionStartMove (vehicle, path, true));
+			client.startMove (vehicle, path, true);
 			counter = ACTION_TIMEOUT;
 		}
 		else

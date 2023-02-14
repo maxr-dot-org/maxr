@@ -55,6 +55,7 @@
 #include "game/logic/action/actionselfdestroy.h"
 #include "game/logic/action/actionsetautomove.h"
 #include "game/logic/action/actionstartbuild.h"
+#include "game/logic/action/actionstartmove.h"
 #include "game/logic/action/actionstartturn.h"
 #include "game/logic/action/actionstartwork.h"
 #include "game/logic/action/actionstealdisable.h"
@@ -513,6 +514,18 @@ void cClient::startBuild (const cVehicle& vehicle, sID buildingTypeID, int build
 void cClient::startBuildPath (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition)
 {
 	sendNetMessage (cActionStartBuild (vehicle, buildingTypeID, buildSpeed, buildPosition, pathEndPosition));
+}
+
+//------------------------------------------------------------------------------
+void cClient::startMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectResource)
+{
+	sendNetMessage (cActionStartMove (vehicle, path, stopOnDetectResource));
+}
+
+//------------------------------------------------------------------------------
+void cClient::startMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat)
+{
+	sendNetMessage (cActionStartMove (vehicle, path, emat));
 }
 
 //------------------------------------------------------------------------------
