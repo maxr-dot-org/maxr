@@ -44,7 +44,6 @@
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/action/actionstartmove.h"
-#include "game/logic/action/actiontransfer.h"
 #include "game/logic/action/actionupgradebuilding.h"
 #include "game/logic/action/actionupgradevehicle.h"
 #include "game/logic/attackjob.h"
@@ -623,11 +622,7 @@ void cGameGuiController::connectClient (cClient& client)
 	// GUI to client (action)
 	//
 	clientSignalConnectionManager.connect (transferTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType resourceType) {
-		if (transferValue != 0)
-		{
-			cActionTransfer msg (sourceUnit, destinationUnit, transferValue, resourceType);
-			client.sendNetMessage (msg);
-		}
+		client.transfer (sourceUnit, destinationUnit, transferValue, resourceType);
 	});
 	clientSignalConnectionManager.connect (buildBuildingTriggered, [&] (const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed) {
 		client.startBuild (vehicle, unitId, buildSpeed, destination);

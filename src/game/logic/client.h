@@ -107,6 +107,7 @@ public:
 	void disable (const cVehicle& infiltrator, const cUnit& target);
 	void steal (const cVehicle& infiltrator, const cUnit& target);
 	void stopWork (const cUnit&);
+	void transfer (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

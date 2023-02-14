@@ -59,6 +59,7 @@
 #include "game/logic/action/actionstartwork.h"
 #include "game/logic/action/actionstealdisable.h"
 #include "game/logic/action/actionstop.h"
+#include "game/logic/action/actiontransfer.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
@@ -540,4 +541,13 @@ void cClient::steal (const cVehicle& infiltrator, const cUnit& target)
 void cClient::stopWork (const cUnit& unit)
 {
 	sendNetMessage (cActionStop (unit));
+}
+
+//------------------------------------------------------------------------------
+void cClient::transfer (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType resourceType)
+{
+	if (transferValue != 0)
+	{
+		sendNetMessage (cActionTransfer (sourceUnit, destinationUnit, transferValue, resourceType));
+	}
 }
