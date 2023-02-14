@@ -19,7 +19,6 @@
 
 #include "game/logic/surveyorai.h"
 
-#include "action/actionresumemove.h"
 #include "action/actionsetautomove.h"
 #include "action/actionstartmove.h"
 #include "game/data/map/map.h"
@@ -123,7 +122,7 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 			int nextCosts = cPathCalculator::calcNextCost (vehicle.getPosition(), moveJob.getPath().front(), &vehicle, &map);
 			if (nextCosts <= vehicle.data.getSpeed())
 			{
-				client.sendNetMessage (cActionResumeMove (vehicle));
+				client.resumeMoveJob (vehicle);
 				counter = ACTION_TIMEOUT;
 			}
 		}

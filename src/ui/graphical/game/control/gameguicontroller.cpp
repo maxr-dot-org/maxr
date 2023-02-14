@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionresumemove.h"
 #include "game/logic/action/actionselfdestroy.h"
 #include "game/logic/action/actionstartbuild.h"
 #include "game/logic/action/actionstartmove.h"
@@ -677,10 +676,10 @@ void cGameGuiController::connectClient (cClient& client)
 		client.sendNetMessage (cActionSelfDestroy (building));
 	});
 	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&] (const cVehicle& vehicle) {
-		client.sendNetMessage (cActionResumeMove (vehicle));
+		client.resumeMoveJob (vehicle);
 	});
 	clientSignalConnectionManager.connect (resumeAllMoveJobsTriggered, [&]() {
-		client.sendNetMessage (cActionResumeMove());
+		client.resumeAllMoveJobs();
 	});
 	clientSignalConnectionManager.connect (gameGui->getHud().endClicked, [&]() { client.endTurn(); });
 	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit& unit, const std::string& name) {

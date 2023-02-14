@@ -97,6 +97,8 @@ public:
 	void rearm (const cUnit& sourceUnit, const cUnit& destUnit);
 	void repair (const cUnit& sourceUnit, const cUnit& destUnit);
 	void changeResourceDistribution (const cBuilding&, const sMiningResource&);
+	void resumeMoveJob (const cVehicle&);
+	void resumeAllMoveJobs();
 
 	/**
 	* sends a serialized copy of the netmessage to the server.
