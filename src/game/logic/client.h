@@ -30,26 +30,25 @@
 
 #include <memory>
 
+class cAttackJob;
 class cBuilding;
 class cCasualtiesTracker;
-class cAttackJob;
+class cGameSettings;
 class cJob;
 class cMap;
 class cPlayer;
-class cStaticMap;
 class cPlayerBasicData;
-class cGameSettings;
 class cPosition;
+class cStaticMap;
 class cTurnCounter;
 class cTurnTimeClock;
 class cTurnTimeDeadline;
-class cSubBase;
 class cSavegame;
+class cSubBase;
 class cSurveyorAi;
 
+struct sInitPlayerData;
 struct sLobbyPreparationData;
-
-Uint32 TimerCallback (Uint32 interval, void* arg);
 
 class cClient : public INetMessageReceiver
 {
@@ -91,6 +90,7 @@ public:
 	void startClearRubbles (const cVehicle&);
 	void endTurn();
 	void finishBuild (const cUnit&, const cPosition& escapePosition);
+	void initNewGame (const sInitPlayerData&);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

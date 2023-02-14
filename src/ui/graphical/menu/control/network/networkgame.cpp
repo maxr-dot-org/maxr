@@ -19,8 +19,8 @@
 
 #include "networkgame.h"
 
-#include "game/logic/action/actioninitnewgame.h"
 #include "game/logic/client.h"
+#include "game/startup/initplayerdata.h"
 #include "ui/widgets/application.h"
 
 //------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ void cNetworkGame::run()
 //------------------------------------------------------------------------------
 void cNetworkGame::startNewGame (cApplication& application, std::shared_ptr<cClient> client, const sInitPlayerData& initPlayerData, cServer* server)
 {
-	client->sendNetMessage (cActionInitNewGame (initPlayerData));
+	client->initNewGame (initPlayerData);
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, client->getModel().getMap()->staticMap);
 	gameGuiController->setSingleClient (client);

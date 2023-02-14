@@ -20,7 +20,6 @@
 #include "menucontrollermultiplayerclient.h"
 
 #include "game/data/units/landingunit.h"
-#include "game/logic/action/actioninitnewgame.h"
 #include "game/logic/client.h"
 #include "game/startup/gamepreparation.h"
 #include "ui/widgets/application.h"

@@ -543,7 +543,7 @@ void cLobbyClient::handleNetMessage_MU_MSG_START_GAME (const cMuMsgStartGame& me
 	else
 	{
 		client->setPreparationData (lobbyPreparationData);
-		//client->sendNetMessage (cActionInitNewGame (initPlayerData));
+		//client->initNewGame (initPlayerData));
 		onStartNewGame (client);
 	}
 }

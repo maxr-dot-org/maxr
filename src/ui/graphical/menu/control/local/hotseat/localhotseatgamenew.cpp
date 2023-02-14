@@ -23,7 +23,6 @@
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actioninitnewgame.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/startup/lobbypreparationdata.h"
@@ -66,7 +65,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 
 	for (size_t i = 0; i != playersData.size(); ++i)
 	{
-		clients[i]->sendNetMessage (cActionInitNewGame (playersData[i]));
+		clients[i]->initNewGame (playersData[i]);
 	}
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
