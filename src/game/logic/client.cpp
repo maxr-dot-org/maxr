@@ -49,6 +49,7 @@
 #include "game/logic/action/actioninitnewgame.h"
 #include "game/logic/action/actionload.h"
 #include "game/logic/action/actionminelayerstatus.h"
+#include "game/logic/action/actionrepairreload.h"
 #include "game/logic/action/actionsetautomove.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
@@ -453,4 +454,16 @@ void cClient::toggleLayMines (const cVehicle& vehicle)
 void cClient::toggleCollectMines (const cVehicle& vehicle)
 {
 	sendNetMessage (cActionMinelayerStatus (vehicle, false, !vehicle.isUnitClearingMines()));
+}
+
+//------------------------------------------------------------------------------
+void cClient::rearm (const cUnit& sourceUnit, const cUnit& destUnit)
+{
+	sendNetMessage (cActionRepairReload (sourceUnit, destUnit, eSupplyType::REARM));
+}
+
+//------------------------------------------------------------------------------
+void cClient::repair (const cUnit& sourceUnit, const cUnit& destUnit)
+{
+	sendNetMessage (cActionRepairReload (sourceUnit, destUnit, eSupplyType::REPAIR));
 }

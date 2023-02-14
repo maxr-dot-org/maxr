@@ -94,6 +94,8 @@ public:
 	void load (const cUnit& loadingUnit, const cVehicle& loadedVehicle);
 	void toggleLayMines (const cVehicle&);
 	void toggleCollectMines (const cVehicle&);
+	void rearm (const cUnit& sourceUnit, const cUnit& destUnit);
+	void repair (const cUnit& sourceUnit, const cUnit& destUnit);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.

@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionrepairreload.h"
 #include "game/logic/action/actionresourcedistribution.h"
 #include "game/logic/action/actionresumemove.h"
 #include "game/logic/action/actionselfdestroy.h"
@@ -651,10 +650,10 @@ void cGameGuiController::connectClient (cClient& client)
 		client.activateUnit (unit, *unit.storedUnits[index], position);
 	});
 	clientSignalConnectionManager.connect (reloadTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
-		client.sendNetMessage (cActionRepairReload (sourceUnit, destinationUnit, eSupplyType::REARM));
+		client.rearm (sourceUnit, destinationUnit);
 	});
 	clientSignalConnectionManager.connect (repairTriggered, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
-		client.sendNetMessage (cActionRepairReload (sourceUnit, destinationUnit, eSupplyType::REPAIR));
+		client.repair (sourceUnit, destinationUnit);
 	});
 	clientSignalConnectionManager.connect (upgradeTriggered, [&] (const cUnit& unit, size_t index) {
 		if (!unit.isABuilding()) return;
@@ -877,10 +876,10 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSupplyAmmo, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
-		client.sendNetMessage (cActionRepairReload (sourceUnit, destinationUnit, eSupplyType::REARM));
+		client.rearm (sourceUnit, destinationUnit);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredRepair, [&] (const cUnit& sourceUnit, const cUnit& destinationUnit) {
-		client.sendNetMessage (cActionRepairReload (sourceUnit, destinationUnit, eSupplyType::REPAIR));
+		client.repair (sourceUnit, destinationUnit);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAttack, [&] (const cUnit& unit, const cPosition& position) {
 		if (unit.isAVehicle())
