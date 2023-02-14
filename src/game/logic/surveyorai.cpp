@@ -19,7 +19,6 @@
 
 #include "game/logic/surveyorai.h"
 
-#include "action/actionsetautomove.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/report/unit/savedreportsurveyoraiconfused.h"
@@ -289,7 +288,7 @@ void cSurveyorAi::planLongMove (const std::vector<std::unique_ptr<cSurveyorAi>>&
 	if (minValue == 0)
 	{
 		client.surveyorAiConfused (vehicle);
-		client.sendNetMessage (cActionSetAutoMove (vehicle, false));
+		client.setAutoMove (vehicle, false);
 		finished = true;
 	}
 	else
@@ -311,7 +310,7 @@ void cSurveyorAi::planLongMove (const std::vector<std::unique_ptr<cSurveyorAi>>&
 		else
 		{
 			client.surveyorAiConfused (vehicle);
-			client.sendNetMessage (cActionSetAutoMove (vehicle, false));
+			client.setAutoMove (vehicle, false);
 			finished = true;
 		}
 	}

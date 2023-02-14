@@ -100,6 +100,7 @@ public:
 	void resumeMoveJob (const cVehicle&);
 	void resumeAllMoveJobs();
 	void selfDestroy (const cBuilding&);
+	void setAutoMove (const cVehicle&, bool);
 	void startBuild (const cVehicle&, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition);
 	void startBuildPath (const cVehicle&, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition);
 	void startMove (const cVehicle&, const std::forward_list<cPosition>& path, bool stopOnDetectResource = false);

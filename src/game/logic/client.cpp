@@ -505,6 +505,12 @@ void cClient::selfDestroy (const cBuilding& building)
 }
 
 //------------------------------------------------------------------------------
+void cClient::setAutoMove (const cVehicle& vehicle, bool value)
+{
+	sendNetMessage (cActionSetAutoMove (vehicle, value));
+}
+
+//------------------------------------------------------------------------------
 void cClient::startBuild (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition)
 {
 	sendNetMessage (cActionStartBuild (vehicle, buildingTypeID, buildSpeed, buildPosition));
