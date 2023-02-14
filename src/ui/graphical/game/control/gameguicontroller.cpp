@@ -1580,40 +1580,31 @@ void cGameGuiController::handleChatCommand (const std::string& chatString)
 {
 	if (cChatCommand::isCommand (chatString))
 	{
-		bool commandExecuted = false;
-		bool errorDetected = false;
 		try
 		{
 			for (const auto& commandExecutor : chatCommands)
 			{
 				if (commandExecutor->tryExecute (chatString))
 				{
-					commandExecuted = true;
 					if (commandExecutor->getCommand().getShouldBeReported() && server)
 					{
-						activeClient->sendNetMessage (cNetMessageReport (std::make_unique<cSavedReportHostCommand> (chatString)));
+						activeClient->report (std::make_unique<cSavedReportHostCommand> (chatString));
 					}
-					break;
+					return;
 				}
 			}
+			// TODO: translate
+			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> ("Could not recognize chat command '" + chatString + "'"));
 		}
 		catch (const std::runtime_error& e)
 		{
 			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (chatString));
 			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (e.what()));
-			errorDetected = true;
-		}
-
-		if (!commandExecuted && !errorDetected)
-		{
-			// TODO: translate
-			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> ("Could not recognize chat command '" + chatString + "'"));
 		}
 	}
 	else if (activeClient)
 	{
-		cNetMessageReport netMsg (std::make_unique<cSavedReportChat> (*getActivePlayer(), chatString));
-		activeClient->sendNetMessage (netMsg);
+		activeClient->report (std::make_unique<cSavedReportChat> (*getActivePlayer(), chatString));
 	}
 }
 

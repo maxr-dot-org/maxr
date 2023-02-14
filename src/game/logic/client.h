@@ -118,6 +118,8 @@ public:
 	void upgradeAllVehicles (const cBuilding& containingBuilding);
 	void upgradeVehicle (const cBuilding& containingBuilding, const cVehicle&);
 
+	void report (std::unique_ptr<cSavedReport>);
+
 	/**
 	* sends a serialized copy of the netmessage to the server.
 	*/

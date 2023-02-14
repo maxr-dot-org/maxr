@@ -610,3 +610,9 @@ void cClient::upgradeVehicle (const cBuilding& containingBuilding, const cVehicl
 {
 	sendNetMessage (cActionUpgradeVehicle (containingBuilding, &vehicle));
 }
+
+//------------------------------------------------------------------------------
+void cClient::report (std::unique_ptr<cSavedReport> report)
+{
+	sendNetMessage (cNetMessageReport (std::move (report)));
+}
