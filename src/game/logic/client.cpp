@@ -47,6 +47,7 @@
 #include "game/logic/action/actionendturn.h"
 #include "game/logic/action/actionfinishbuild.h"
 #include "game/logic/action/actioninitnewgame.h"
+#include "game/logic/action/actionload.h"
 #include "game/logic/action/actionsetautomove.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
@@ -433,4 +434,10 @@ void cClient::finishBuild (const cUnit& unit, const cPosition& escapePosition)
 void cClient::initNewGame (const sInitPlayerData& initPlayerData)
 {
 	sendNetMessage (cActionInitNewGame (initPlayerData));
+}
+
+//------------------------------------------------------------------------------
+void cClient::load(const cUnit& loadingUnit, const cVehicle& loadedVehicle)
+{
+	sendNetMessage (cActionLoad (loadingUnit, loadedVehicle));
 }

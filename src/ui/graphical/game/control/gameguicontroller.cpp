@@ -43,7 +43,6 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/action/actionload.h"
 #include "game/logic/action/actionminelayerstatus.h"
 #include "game/logic/action/actionrepairreload.h"
 #include "game/logic/action/actionresourcedistribution.h"
@@ -800,7 +799,7 @@ void cGameGuiController::connectClient (cClient& client)
 			{
 				if (overVehicle->getPosition() == vehicle.getPosition())
 				{
-					client.sendNetMessage (cActionLoad (unit, *overVehicle));
+					client.load (unit, *overVehicle);
 				}
 				else
 				{
@@ -821,7 +820,7 @@ void cGameGuiController::connectClient (cClient& client)
 			{
 				if (vehicle.isNextTo (overVehicle->getPosition()))
 				{
-					client.sendNetMessage (cActionLoad (unit, *overVehicle));
+					client.load (unit, *overVehicle);
 				}
 				else
 				{
@@ -846,7 +845,7 @@ void cGameGuiController::connectClient (cClient& client)
 			{
 				if (building.isNextTo (overVehicle->getPosition()))
 				{
-					client.sendNetMessage (cActionLoad (unit, *overVehicle));
+					client.load (unit, *overVehicle);
 				}
 				else
 				{
@@ -867,7 +866,7 @@ void cGameGuiController::connectClient (cClient& client)
 			{
 				if (building.isNextTo (overPlane->getPosition()))
 				{
-					client.sendNetMessage (cActionLoad (unit, *overPlane));
+					client.load (unit, *overPlane);
 				}
 				else
 				{
@@ -877,7 +876,6 @@ void cGameGuiController::connectClient (cClient& client)
 					{
 						cEndMoveAction emat (*overPlane, unit, eEndMoveActionType::Load);
 						activeClient->sendNetMessage (cActionStartMove (*overPlane, path, emat));
-						;
 					}
 					else
 					{

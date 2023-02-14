@@ -91,6 +91,7 @@ public:
 	void endTurn();
 	void finishBuild (const cUnit&, const cPosition& escapePosition);
 	void initNewGame (const sInitPlayerData&);
+	void load (const cUnit& loadingUnit, const cVehicle& loadedVehicle);
 
 	/**
 	* sends a serialized copy of the netmessage to the server.
