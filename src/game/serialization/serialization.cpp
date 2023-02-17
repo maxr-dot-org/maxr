@@ -19,21 +19,9 @@
 
 #include "serialization.h"
 
-#include "game/data/model.h"
-#include "utility/log.h"
-
 namespace serialization
 {
 
-	cPointerLoader::cPointerLoader (cModel& model) :
-		model (model)
-	{}
-
-	void cPointerLoader::get (int id, cVehicle*& value) const
-	{
-		value = model.getVehicleFromID (id);
-		if (value == nullptr && id != -1)
-			Log.write ("Vehicle with id " + std::to_string (id) + " not found.", cLog::eLogType::NetError);
-	}
+	cPointerLoader::cPointerLoader (cModel& model) {}
 
 } // namespace serialization

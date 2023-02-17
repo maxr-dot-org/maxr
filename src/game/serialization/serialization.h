@@ -431,73 +431,8 @@ namespace serialization
 	class cPointerLoader
 	{
 	public:
-		cPointerLoader (cModel& model);
-
-		void get (int id, cVehicle*& value) const;
-
-	private:
-		cModel& model;
+		cPointerLoader (cModel&);
 	};
-
-	template <typename Archive, typename T>
-	void save (Archive& archive, T* const value)
-	{
-		int id = value ? value->getId() : -1;
-		archive << id;
-	}
-	template <typename Archive, typename T>
-	void load (Archive& archive, T*& value)
-	{
-		assert (archive.getPointerLoader() != nullptr);
-
-		int id;
-		archive >> id;
-		if (id == -1)
-		{
-			value = nullptr;
-			return;
-		}
-
-		archive.getPointerLoader()->get (id, value);
-
-		if (value == nullptr)
-			throw std::runtime_error ("Error creating pointer to object from id");
-	}
-	template <typename Archive, typename T>
-	void serialize (Archive& archive, T*& value)
-	{
-		serialization::detail::splitFree (archive, value);
-	}
-
-	template <typename Archive, typename T>
-	void save (Archive& archive, const sNameValuePair<T*>& nvp)
-	{
-		int id = nvp.value ? nvp.value->getId() : -1;
-		archive << makeNvp (nvp.name, id);
-	}
-	template <typename Archive, typename T>
-	void load (Archive& archive, sNameValuePair<T*>& nvp)
-	{
-		assert (archive.getPointerLoader() != nullptr);
-
-		int id;
-		archive >> makeNvp (nvp.name, id);
-		if (id == -1)
-		{
-			nvp.value = nullptr;
-			return;
-		}
-
-		archive.getPointerLoader()->get (id, nvp.value);
-
-		if (nvp.value == nullptr)
-			throw std::runtime_error ("Error creating pointer to object from id");
-	}
-	template <typename Archive, typename T>
-	void serialize (Archive& archive, sNameValuePair<T*> nvp)
-	{
-		serialization::detail::splitFree (archive, nvp);
-	}
 
 	//-------------------------------------------------------------------------
 	namespace detail

@@ -70,7 +70,7 @@ cUnit::~cUnit()
 }
 
 //------------------------------------------------------------------------------
-void cUnit::postLoad(cModel& model)
+void cUnit::postLoad (cModel& model)
 {
 	if (data.getId() != sID (0, 0))
 	{
@@ -82,6 +82,7 @@ void cUnit::postLoad(cModel& model)
 		}
 		staticData = &model.getUnitsData()->getStaticUnitData (data.getId());
 	}
+	storedUnits = ranges::Transform (storedUnitIds, [&] (unsigned int id) { return model.getVehicleFromID (id); });
 }
 
 //------------------------------------------------------------------------------

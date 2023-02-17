@@ -201,9 +201,14 @@ public:
 		{
 			int id = iID;
 			archive & NVP (id); //const member. needs to be deserialized before calling constructor
+			storedUnitIds = ranges::Transform (storedUnits, [] (auto* unit) { return unit->getId(); });
+		}
+		else
+		{
+			storedUnitIds.clear();
 		}
 		archive & NVP (dir);
-		archive & NVP (storedUnits);
+		archive & NVP (storedUnitIds);
 		archive & NVP (detectedByPlayerList);
 		archive & NVP (detectedInThisTurnByPlayerList);
 		archive & NVP (position);
@@ -227,6 +232,9 @@ public: // TODO: make protected/private and make getters/setters
 	const unsigned int iID; // the identification number of this unit
 	int dir = 0; // ?Frame of the unit/current direction the unit is facing?
 
+private:
+	std::vector<unsigned int> storedUnitIds; // equivalent of storedUnits, for serialization only.
+public:
 	std::vector<cVehicle*> storedUnits; // list with the vehicles, that are stored in this unit
 
 	// little jobs, running on the vehicle.
