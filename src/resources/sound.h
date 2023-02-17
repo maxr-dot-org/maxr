@@ -20,8 +20,8 @@
 #ifndef soundH
 #define soundH
 
-#include "game/serialization/serialization.h"
 #include "output/sound/soundchunk.h"
+#include "utility/serialization/serialization.h"
 
 #include <array>
 #include <string>

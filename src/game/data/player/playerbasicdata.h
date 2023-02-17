@@ -21,8 +21,8 @@
 #define game_data_player_playerbasicdataH
 
 #include "game/data/player/playersettings.h"
-#include "game/serialization/serialization.h"
 #include "utility/color.h"
+#include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
 #include <string>

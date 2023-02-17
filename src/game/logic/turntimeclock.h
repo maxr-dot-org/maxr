@@ -20,7 +20,7 @@
 #ifndef game_logic_turntimeclockH
 #define game_logic_turntimeclockH
 
-#include "game/serialization/nvp.h"
+#include "utility/serialization/nvp.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

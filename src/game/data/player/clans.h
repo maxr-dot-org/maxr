@@ -21,7 +21,7 @@
 #define game_data_player_clansH
 
 #include "game/data/units/unitdata.h"
-#include "game/serialization/serialization.h"
+#include "utility/serialization/serialization.h"
 
 #include <map>
 #include <string>

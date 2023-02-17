@@ -20,7 +20,7 @@
 #ifndef game_networkAddressH
 #define game_networkAddressH
 
-#include "game/serialization/serialization.h"
+#include "utility/serialization/serialization.h"
 
 #include <string>
 

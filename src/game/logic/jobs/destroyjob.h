@@ -21,9 +21,9 @@
 #define game_logic_jobs_destroyjobH
 
 #include "game/data/units/unit.h"
-#include "game/serialization/binaryarchive.h"
-#include "game/serialization/jsonarchive.h"
-#include "job.h"
+#include "game/logic/jobs/job.h"
+#include "utility/serialization/binaryarchive.h"
+#include "utility/serialization/jsonarchive.h"
 
 class cMapField;
 class cModel;

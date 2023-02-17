@@ -19,10 +19,10 @@
 
 #include "keys.h"
 
-#include "game/serialization/jsonarchive.h"
 #include "settings.h"
 #include "utility/files.h"
 #include "utility/log.h"
+#include "utility/serialization/jsonarchive.h"
 
 cKeysList KeysList;
 

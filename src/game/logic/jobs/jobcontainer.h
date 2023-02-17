@@ -20,8 +20,8 @@
 #ifndef game_logic_jobs_jobcontainerH
 #define game_logic_jobs_jobcontainerH
 
-#include "game/serialization/serialization.h"
-#include "job.h"
+#include "game/logic/jobs/job.h"
+#include "utility/serialization/serialization.h"
 
 #include <memory>
 

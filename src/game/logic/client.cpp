@@ -70,11 +70,11 @@
 #include "game/logic/surveyorai.h"
 #include "game/logic/turntimeclock.h"
 #include "game/protocol/netmessage.h"
-#include "game/serialization/jsonarchive.h"
 #include "game/startup/lobbypreparationdata.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
+#include "utility/serialization/jsonarchive.h"
 
 //------------------------------------------------------------------------------
 cClient::cClient (std::shared_ptr<cConnectionManager> connectionManager) :

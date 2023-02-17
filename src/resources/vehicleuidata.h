@@ -22,8 +22,8 @@
 
 #include "SDLutility/autosurface.h"
 #include "game/data/units/id.h"
-#include "game/serialization/serialization.h"
 #include "resources/sound.h"
+#include "utility/serialization/serialization.h"
 
 #include <SDL.h>
 #include <array>

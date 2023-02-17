@@ -25,8 +25,8 @@
 #include "game/logic/jobs/getinjob.h"
 #include "game/logic/jobs/planetakeoffjob.h"
 #include "game/logic/jobs/startbuildjob.h"
-#include "game/serialization/binaryarchive.h"
-#include "game/serialization/jsonarchive.h"
+#include "utility/serialization/binaryarchive.h"
+#include "utility/serialization/jsonarchive.h"
 
 //------------------------------------------------------------------------------
 cJob::cJob (const cUnit& unit) :

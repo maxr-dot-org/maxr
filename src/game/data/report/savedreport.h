@@ -21,9 +21,9 @@
 #define game_data_reports_savedreportH
 
 #include "config/workaround/cpp17/optional.h"
-#include "game/serialization/binaryarchive.h"
-#include "game/serialization/jsonarchive.h"
 #include "utility/position.h"
+#include "utility/serialization/binaryarchive.h"
+#include "utility/serialization/jsonarchive.h"
 
 #include <memory>
 #include <string>

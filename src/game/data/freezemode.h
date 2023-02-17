@@ -20,7 +20,8 @@
 #ifndef game_data_freezemodeH
 #define game_data_freezemodeH
 
-#include <game/serialization/serialization.h>
+#include "utility/serialization/serialization.h"
+
 #include <string>
 
 enum class ePlayerConnectionState

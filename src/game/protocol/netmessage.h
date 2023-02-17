@@ -25,10 +25,10 @@
 #include "game/data/player/playerbasicdata.h"
 #include "game/data/report/savedreport.h"
 #include "game/logic/gametimer.h"
-#include "game/serialization/binaryarchive.h"
-#include "game/serialization/jsonarchive.h"
-#include "game/serialization/serialization.h"
 #include "utility/color.h"
+#include "utility/serialization/binaryarchive.h"
+#include "utility/serialization/jsonarchive.h"
+#include "utility/serialization/serialization.h"
 
 #include <memory>
 

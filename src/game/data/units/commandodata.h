@@ -20,7 +20,7 @@
 #ifndef game_data_units_commandodataH
 #define game_data_units_commandodataH
 
-#include "game/serialization/nvp.h"
+#include "utility/serialization/nvp.h"
 
 class cMapView;
 class cPosition;

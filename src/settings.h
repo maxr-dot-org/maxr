@@ -21,7 +21,7 @@
 
 #include "game/data/player/playersettings.h"
 #include "game/networkaddress.h"
-#include "game/serialization/serialization.h"
+#include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
 #include <mutex>

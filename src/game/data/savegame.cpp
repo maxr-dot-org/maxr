@@ -27,13 +27,13 @@
 #include "game/logic/server.h"
 #include "game/logic/turntimeclock.h"
 #include "game/protocol/netmessage.h"
-#include "game/serialization/jsonarchive.h"
-#include "game/serialization/serialization.h"
 #include "maxrversion.h"
 #include "settings.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
+#include "utility/serialization/jsonarchive.h"
+#include "utility/serialization/serialization.h"
 
 #include <config/workaround/cpp17/optional.h>
 #include <ctime>

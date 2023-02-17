@@ -21,8 +21,8 @@
 #define game_data_gui_gameguistateH
 
 #include "game/logic/upgradecalculator.h"
-#include "game/serialization/serialization.h"
 #include "utility/position.h"
+#include "utility/serialization/serialization.h"
 
 #include <vector>
 

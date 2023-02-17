@@ -21,10 +21,10 @@
 #define game_logic_jobs_startbuildjobH
 
 #include "game/data/units/unit.h"
-#include "game/serialization/binaryarchive.h"
-#include "game/serialization/jsonarchive.h"
-#include "job.h"
+#include "game/logic/jobs/job.h"
 #include "utility/position.h"
+#include "utility/serialization/binaryarchive.h"
+#include "utility/serialization/jsonarchive.h"
 
 class cStartBuildJob : public cJob
 {

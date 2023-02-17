@@ -20,10 +20,10 @@
 #include "settings.h"
 
 #include "defines.h"
-#include "game/serialization/jsonarchive.h"
 #include "maxrversion.h"
 #include "utility/files.h"
 #include "utility/log.h"
+#include "utility/serialization/jsonarchive.h"
 #include "utility/string/tolower.h"
 
 #include <iostream>

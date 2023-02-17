@@ -20,7 +20,7 @@
 #ifndef utility_versionH
 #define utility_versionH
 
-#include "game/serialization/serialization.h"
+#include "utility/serialization/serialization.h"
 
 #include <string>
 

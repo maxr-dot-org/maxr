@@ -20,8 +20,8 @@
 #ifndef ui_keysH
 #define ui_keysH
 
-#include "game/serialization/serialization.h"
 #include "input/keyboard/keysequence.h"
+#include "utility/serialization/serialization.h"
 
 enum class eMouseStyle
 {

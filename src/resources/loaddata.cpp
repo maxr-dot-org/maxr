@@ -43,7 +43,6 @@
 #include "game/data/player/clans.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "game/serialization/jsonarchive.h"
 #include "maxrversion.h"
 #include "output/video/unifonts.h"
 #include "output/video/video.h"
@@ -59,6 +58,7 @@
 #include "utility/language.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
+#include "utility/serialization/jsonarchive.h"
 
 #ifdef WIN32
 # include <direct.h>

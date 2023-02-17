@@ -21,7 +21,7 @@
 #define game_data_miningresourceH
 
 #include "game/data/resourcetype.h"
-#include "game/serialization/serialization.h"
+#include "utility/serialization/serialization.h"
 
 #include <cstdint>
 

@@ -19,8 +19,8 @@
 #ifndef game_data_savegameinfoH
 #define game_data_savegameinfoH
 
-#include "game/serialization/serialization.h"
 #include "player/playerbasicdata.h"
+#include "utility/serialization/serialization.h"
 #include "utility/version.h"
 
 #include <string>

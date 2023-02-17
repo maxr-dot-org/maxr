@@ -20,8 +20,8 @@
 #ifndef utility_crossplatformrandomH
 #define utility_crossplatformrandomH
 
-#include "game/serialization/serialization.h"
 #include "utility/crc.h"
+#include "utility/serialization/serialization.h"
 
 #include <cstdint>
 

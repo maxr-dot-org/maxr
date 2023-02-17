@@ -20,7 +20,7 @@
 #ifndef game_logic_endmoveaction_h
 #define game_logic_endmoveaction_h
 
-#include "game/serialization/nvp.h"
+#include "utility/serialization/nvp.h"
 
 #include <stdint.h>
 

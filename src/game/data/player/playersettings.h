@@ -19,9 +19,9 @@
 #ifndef game_data_player_playersettingsH
 #define game_data_player_playersettingsH
 
-#include "game/serialization/serialization.h"
 #include "utility/color.h"
 #include "utility/crc.h"
+#include "utility/serialization/serialization.h"
 
 struct sPlayerSettings
 {

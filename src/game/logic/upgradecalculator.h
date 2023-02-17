@@ -21,7 +21,7 @@
 #define game_logic_upgradecalculatorH
 
 #include "config/workaround/cpp17/optional.h"
-#include "game/serialization/nvp.h"
+#include "utility/serialization/nvp.h"
 #include "utility/signal/signal.h"
 
 #include <array>
