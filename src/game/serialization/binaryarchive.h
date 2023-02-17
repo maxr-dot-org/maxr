@@ -47,8 +47,6 @@ public:
 		return *this;
 	}
 
-	serialization::cPointerLoader* getPointerLoader() const { return nullptr; }
-
 private:
 	std::vector<unsigned char>& buffer;
 
@@ -108,7 +106,7 @@ class cBinaryArchiveOut
 public:
 	static const bool isWriter = false;
 
-	cBinaryArchiveOut (const unsigned char* data, size_t length, serialization::cPointerLoader* = nullptr);
+	cBinaryArchiveOut (const unsigned char* data, size_t length);
 
 	//--------------------------------------------------------------------------
 	template <typename T>
@@ -141,15 +139,12 @@ public:
 	}
 
 	size_t dataLeft() const;
-	serialization::cPointerLoader* getPointerLoader() const;
 
 private:
 	const unsigned char* data;
 	size_t length;
 
 	size_t readPosition;
-
-	serialization::cPointerLoader* pointerLoader;
 
 	template <size_t SIZE, typename T1>
 	void readFromBuffer (T1& value);

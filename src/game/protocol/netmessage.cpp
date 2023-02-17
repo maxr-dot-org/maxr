@@ -177,8 +177,7 @@ cNetMessageResyncModel::cNetMessageResyncModel (const cModel& model)
 
 void cNetMessageResyncModel::apply (cModel& model) const
 {
-	serialization::cPointerLoader p (model);
-	cBinaryArchiveOut archive (data.data(), data.size(), &p);
+	cBinaryArchiveOut archive (data.data(), data.size());
 	archive >> model;
 }
 

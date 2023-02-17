@@ -25,8 +25,7 @@ cJsonArchiveOut::cJsonArchiveOut (nlohmann::json& json) :
 {
 }
 //------------------------------------------------------------------------------
-cJsonArchiveIn::cJsonArchiveIn (const nlohmann::json& json, serialization::cPointerLoader* pointerLoader) :
-	json (json),
-	pointerLoader (pointerLoader)
+cJsonArchiveIn::cJsonArchiveIn (const nlohmann::json& json) :
+	json (json)
 {
 }

@@ -419,22 +419,6 @@ namespace serialization
 	}
 
 	//-------------------------------------------------------------------------
-	/**
-	* The class cPointerLoader is used to translate IDs into pointer values during deserialization.
-	* It looks for an object with the given ID in the model and returns the pointer.
-	* The object with the ID must exist in the model when the pointer is deserialized, otherwise an
-	* exception is thrown.
-	* Serialization/deserialization of a pointer needs the target class of the pointer to have
-	* a getId() method. That method should return an unique ID to identify the
-	* pointer target.
-	*/
-	class cPointerLoader
-	{
-	public:
-		cPointerLoader (cModel&);
-	};
-
-	//-------------------------------------------------------------------------
 	namespace detail
 	{
 		struct sSplitMemberWriter

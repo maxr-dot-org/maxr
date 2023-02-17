@@ -243,12 +243,11 @@ void cSavegame::loadModel (cModel& model, int slot)
 	}
 	try
 	{
-		serialization::cPointerLoader loader (model);
-		cJsonArchiveIn archive (*json, &loader);
+		cJsonArchiveIn archive (*json);
 		archive >> NVP (model);
 
 		// check crc
-		cJsonArchiveIn modelArchive (*json, &loader);
+		cJsonArchiveIn modelArchive (*json);
 		uint32_t crcFromSave;
 		modelArchive >> serialization::makeNvp ("modelcrc", crcFromSave);
 		Log.write (" Checksum from save file: " + std::to_string (crcFromSave), cLog::eLogType::NetDebug);

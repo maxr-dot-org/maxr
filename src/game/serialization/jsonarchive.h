@@ -48,9 +48,6 @@ public:
 		return *this;
 	}
 
-	//--------------------------------------------------------------------------
-	serialization::cPointerLoader* getPointerLoader() { return nullptr; }
-
 private:
 	//--------------------------------------------------------------------------
 	template <typename T>
@@ -202,7 +199,7 @@ class cJsonArchiveIn
 public:
 	static const bool isWriter = false;
 
-	explicit cJsonArchiveIn (const nlohmann::json& json, serialization::cPointerLoader* = nullptr);
+	explicit cJsonArchiveIn (const nlohmann::json& json);
 
 	//--------------------------------------------------------------------------
 	template <typename T>
@@ -236,9 +233,6 @@ public:
 		return *this;
 	}
 
-	//--------------------------------------------------------------------------
-	serialization::cPointerLoader* getPointerLoader() { return pointerLoader; }
-
 private:
 	//--------------------------------------------------------------------------
 	template <typename T>
@@ -247,7 +241,7 @@ private:
 		//check invalid characters in element and attribute names
 		assert (nvp.name.find_first_of ("<>\"= []?!&") == std::string::npos);
 
-		cJsonArchiveIn (json.at (nvp.name), pointerLoader) >> nvp.value;
+		cJsonArchiveIn (json.at (nvp.name)) >> nvp.value;
 	}
 
 	//--------------------------------------------------------------------------
@@ -312,7 +306,7 @@ private:
 		std::size_t i = 0;
 		for (const auto& e : json)
 		{
-			cJsonArchiveIn (e, pointerLoader) >> v[i++];
+			cJsonArchiveIn (e) >> v[i++];
 		}
 	}
 
@@ -325,7 +319,7 @@ private:
 		assert (json.size() == N);
 		for (const auto& e : json)
 		{
-			cJsonArchiveIn (e, pointerLoader) >> a[i++];
+			cJsonArchiveIn (e) >> a[i++];
 		}
 	}
 
@@ -337,7 +331,7 @@ private:
 		auto it = list.begin();
 		for (const auto& e : json)
 		{
-			cJsonArchiveIn (e, pointerLoader) >> *it++;
+			cJsonArchiveIn (e) >> *it++;
 		}
 	}
 
@@ -348,7 +342,7 @@ private:
 		for (const auto& e : json)
 		{
 			std::pair<K, V> p;
-			cJsonArchiveIn (e, pointerLoader) >> p;
+			cJsonArchiveIn (e) >> p;
 			m.insert (p);
 		}
 	}
@@ -361,7 +355,7 @@ private:
 		for (const auto& e : json)
 		{
 			T item;
-			cJsonArchiveIn (e, pointerLoader) >> item;
+			cJsonArchiveIn (e) >> item;
 			v.insert (std::move (item));
 		}
 	}
@@ -383,7 +377,6 @@ private:
 
 private:
 	const nlohmann::json& json;
-	serialization::cPointerLoader* pointerLoader = nullptr;
 };
 
 #endif
