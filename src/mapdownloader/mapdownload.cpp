@@ -73,21 +73,15 @@ bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 			{"ultima thule.wrl", 1397392934},
 			{"valentine's planet.wrl", 280492815}};
 
-	for (int i = 0; i != sizeof (maps) / sizeof (*maps); ++i)
+	if (ranges::any_of (maps, [&] (const auto& map) { return lowerMapName.compare (map.filename) == 0; }))
 	{
-		if (lowerMapName.compare (maps[i].filename) == 0)
-		{
-			return true;
-		}
+		return true;
 	}
 	if (checksum == 0)
 		checksum = calculateCheckSum (lowerMapName);
-	for (int i = 0; i != sizeof (maps) / sizeof (*maps); ++i)
+	if (ranges::any_of (maps, [&] (const auto& map) { return map.checksum == checksum; }))
 	{
-		if (maps[i].checksum == checksum)
-		{
-			return true;
-		}
+		return true;
 	}
 	return false;
 }
@@ -279,16 +273,14 @@ void cMapSender::run()
 		sendMsg (cMuMsgStartMapDownload (mapName, sendBuffer.size()));
 	}
 	int msgCount = 0;
-	const int MAX_MESSAGE_SIZE = 10 * 1024;
+	const std::size_t MAX_MESSAGE_SIZE = 10 * 1024;
 
 	while (bytesSent < sendBuffer.size())
 	{
 		if (canceled) return;
 
 		cMuMsgMapDownloadData msg;
-		int bytesToSend = sendBuffer.size() - bytesSent;
-		if (bytesToSend > MAX_MESSAGE_SIZE)
-			bytesToSend = MAX_MESSAGE_SIZE;
+		int bytesToSend = std::min (sendBuffer.size() - bytesSent, MAX_MESSAGE_SIZE);
 		for (int i = 0; i < bytesToSend; i++)
 			msg.data.push_back (sendBuffer[bytesSent + i]);
 		bytesSent += bytesToSend;

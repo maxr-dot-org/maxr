@@ -1582,14 +1582,7 @@ int cUnitUpgrade::getValueOrDefault (sUnitUpgrade::eUpgradeType upgradeType, int
 //------------------------------------------------------------------------------
 bool cUnitUpgrade::hasBeenPurchased() const
 {
-	for (const auto& upgrade : upgrades)
-	{
-		if (upgrade.purchased)
-		{
-			return true;
-		}
-	}
-	return false;
+	return ranges::any_of (upgrades, [] (const auto& upgrade) { return upgrade.purchased; });
 }
 
 //------------------------------------------------------------------------------

@@ -47,10 +47,10 @@ cUnitsUiData::~cUnitsUiData()
 //------------------------------------------------------------------------------
 const sBuildingUIData* cUnitsUiData::getBuildingUI (sID id) const
 {
-	for (unsigned int i = 0; i < buildingUIs.size(); ++i)
+	for (const auto& buildingUI : buildingUIs)
 	{
-		if (buildingUIs[i].id == id)
-			return &buildingUIs[i];
+		if (buildingUI.id == id)
+			return &buildingUI;
 	}
 	return nullptr;
 }
@@ -68,10 +68,10 @@ const sBuildingUIData& cUnitsUiData::getBuildingUI (const cBuilding& building) c
 //------------------------------------------------------------------------------
 const sVehicleUIData* cUnitsUiData::getVehicleUI (sID id) const
 {
-	for (unsigned int i = 0; i < vehicleUIs.size(); ++i)
+	for (const auto& vehicleUI : vehicleUIs)
 	{
-		if (vehicleUIs[i].id == id)
-			return &vehicleUIs[i];
+		if (vehicleUI.id == id)
+			return &vehicleUI;
 	}
 	return nullptr;
 }

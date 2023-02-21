@@ -428,15 +428,12 @@ static void LoadUnitData (sInitialVehicleData& vehicleData, char const* const di
 //------------------------------------------------------------------------------
 static bool checkUniqueness (const sID& id)
 {
-	for (size_t i = 0; i != UnitsDataGlobal.getStaticUnitsData().size(); ++i)
+	if (ranges::any_of (UnitsDataGlobal.getStaticUnitsData(), [&](const auto& data) { return data.ID == id; }))
 	{
-		if (UnitsDataGlobal.getStaticUnitsData()[i].ID == id)
-		{
-			char szTmp[100];
-			snprintf (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.firstPart, id.secondPart);
-			Log.write (szTmp, cLog::eLogType::Warning);
-			return false;
-		}
+		char szTmp[100];
+		snprintf (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.firstPart, id.secondPart);
+		Log.write (szTmp, cLog::eLogType::Warning);
+		return false;
 	}
 	return true;
 }

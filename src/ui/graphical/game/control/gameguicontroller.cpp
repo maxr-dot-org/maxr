@@ -187,9 +187,9 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 	else
 		setActiveClient (nullptr);
 
-	for (size_t i = 0; i < clients.size(); ++i)
+	for (auto clientPtr : clients)
 	{
-		auto client = clients[i].get();
+		auto client = clientPtr.get();
 
 		connectReportSources (*client);
 
@@ -202,9 +202,9 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 			if (guiInfo.playerNr != client->getActivePlayer().getId()) return;
 
 			const cMap& map = *client->getModel().getMap();
-			for (auto& savedPosition : guiInfo.guiInfo.savedPositions)
+			if (ranges::any_of (guiInfo.guiInfo.savedPositions, [&](const auto& savedPosition) { return savedPosition && !map.isValidPosition (*savedPosition);}))
 			{
-				if (savedPosition && !map.isValidPosition (*savedPosition)) return;
+				return;
 			}
 			const cPosition& mapPosition = guiInfo.guiInfo.gameGuiState.mapPosition;
 			if (!map.isValidPosition (mapPosition)) return;
@@ -1520,31 +1520,31 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 
 		storageWindow->reloadAll.connect ([building, this]() {
 			auto remainingResources = building->subBase->getResourcesStored().metal;
-			for (size_t i = 0; i < building->storedUnits.size() && remainingResources > 0; ++i)
+			for (const auto* storedUnit : building->storedUnits)
 			{
-				const auto& storedUnit = *building->storedUnits[i];
+				if (remainingResources == 0) break;
 
-				if (storedUnit.data.getAmmo() < storedUnit.data.getAmmoMax())
+				if (storedUnit->data.getAmmo() < storedUnit->data.getAmmoMax())
 				{
-					reloadTriggered (*building, storedUnit);
+					reloadTriggered (*building, *storedUnit);
 					remainingResources--;
 				}
 			}
 		});
 		storageWindow->repairAll.connect ([building, this]() {
 			auto remainingResources = building->subBase->getResourcesStored().metal;
-			for (size_t i = 0; i < building->storedUnits.size() && remainingResources > 0; ++i)
+			for (const auto& storedUnit : building->storedUnits)
 			{
-				const auto& storedUnit = *building->storedUnits[i];
+				if (remainingResources == 0) break;
 
-				if (storedUnit.data.getHitpoints() < storedUnit.data.getHitpointsMax())
+				if (storedUnit->data.getHitpoints() < storedUnit->data.getHitpointsMax())
 				{
-					repairTriggered (*building, storedUnit);
+					repairTriggered (*building, *storedUnit);
 					//TODO: don't decide, which units can be repaired in the GUI code
-					auto value = storedUnit.data.getHitpoints();
-					while (value < storedUnit.data.getHitpointsMax() && remainingResources > 0)
+					auto value = storedUnit->data.getHitpoints();
+					while (value < storedUnit->data.getHitpointsMax() && remainingResources > 0)
 					{
-						value += Round (((float) storedUnit.data.getHitpointsMax() / storedUnit.data.getBuildCost()) * 4);
+						value += Round (((float) storedUnit->data.getHitpointsMax() / storedUnit->data.getBuildCost()) * 4);
 						remainingResources--;
 					}
 				}

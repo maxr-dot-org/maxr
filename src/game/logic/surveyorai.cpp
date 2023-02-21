@@ -175,10 +175,10 @@ float cSurveyorAi::calcScoreDistToOtherSurveyor (const std::vector<std::unique_p
 {
 	float res = 0;
 
-	for (size_t i = 0; i != jobs.size(); ++i)
+	for (const auto& job : jobs)
 	{
-		if (jobs[i].get() == this) continue;
-		const auto& otherVehicle = jobs[i]->vehicle;
+		if (job.get() == this) continue;
+		const auto& otherVehicle = job->vehicle;
 		if (otherVehicle.getOwner() != vehicle.getOwner()) continue;
 		const auto dist = static_cast<float> ((position - otherVehicle.getPosition()).l2Norm());
 		res += powf (dist, e);
@@ -334,11 +334,7 @@ void cSurveyorAi::changeOP()
 //------------------------------------------------------------------------------
 bool cSurveyorAi::positionHasBeenSurveyedByPath (const cPosition& position, const std::forward_list<cPosition>& path) const
 {
-	for (const auto& pathPos : path)
-	{
-		if ((pathPos - position).l2NormSquared() <= 2) return true;
-	}
-	return false;
+	return ranges::any_of (path, [&] (const auto& pathPos) { return (pathPos - position).l2NormSquared() <= 2; });
 }
 
 //------------------------------------------------------------------------------

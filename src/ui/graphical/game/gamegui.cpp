@@ -234,9 +234,9 @@ void cGameGui::setPlayer (std::shared_ptr<const cPlayer> player_)
 void cGameGui::setPlayers (std::vector<std::shared_ptr<const cPlayer>> players)
 {
 	chatBox->clearPlayers();
-	for (size_t i = 0; i < players.size(); ++i)
+	for (const auto& player : players)
 	{
-		chatBox->addPlayerEntry (std::make_unique<cChatBoxPlayerListViewItem> (*players[i]));
+		chatBox->addPlayerEntry (std::make_unique<cChatBoxPlayerListViewItem> (*player));
 	}
 }
 
@@ -432,13 +432,13 @@ void cGameGui::restoreState (const cGameGuiState& state)
 
 			std::vector<cUnit*> fieldUnits = field.getUnits();
 
-			for (size_t j = 0; j < fieldUnits.size(); ++j)
+			for (auto* fieldUnit : fieldUnits)
 			{
 				for (auto k = selectedUnitIds.begin(); k != selectedUnitIds.end();)
 				{
-					if (fieldUnits[j]->iID == *k)
+					if (fieldUnit->iID == *k)
 					{
-						gameMap->getUnitSelection().selectUnit (*fieldUnits[j], true);
+						gameMap->getUnitSelection().selectUnit (*fieldUnit, true);
 						k = selectedUnitIds.erase (k);
 					}
 					else
@@ -448,9 +448,9 @@ void cGameGui::restoreState (const cGameGuiState& state)
 				}
 				for (auto k = lockedUnitIds.begin(); k != lockedUnitIds.end();)
 				{
-					if (fieldUnits[j]->iID == *k)
+					if (fieldUnit->iID == *k)
 					{
-						gameMap->getUnitLockList().lockUnit (*fieldUnits[j]);
+						gameMap->getUnitLockList().lockUnit (*fieldUnit);
 						k = lockedUnitIds.erase (k);
 					}
 					else

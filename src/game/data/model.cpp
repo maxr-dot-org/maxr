@@ -639,13 +639,7 @@ void cModel::handleTurnEnd()
 			bool turnFinished = true;
 			if (gameSettings->gameType == eGameSettingsGameType::Simultaneous)
 			{
-				for (const auto& player : playerList)
-				{
-					if (!player->getHasFinishedTurn() && !player->isDefeated)
-					{
-						turnFinished = false;
-					}
-				}
+				turnFinished = ranges::all_of (playerList, [] (const auto& player) { return player->isDefeated || player->getHasFinishedTurn(); });
 			}
 			else
 			{
@@ -671,14 +665,7 @@ void cModel::handleTurnEnd()
 		break;
 		case eTurnEndState::ExecuteRemainingMovements:
 		{
-			bool activeMoveJob = false;
-			for (const auto& moveJob : moveJobs)
-			{
-				if (moveJob->isActive())
-				{
-					activeMoveJob = true;
-				}
-			}
+			const bool activeMoveJob = ranges::any_of (moveJobs, [](const auto& moveJob) { return moveJob->isActive(); });
 			if (!activeMoveJob)
 			{
 				turnEndState = eTurnEndState::ExecuteTurnStart;
@@ -824,19 +811,21 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 			bool detectOnDest = false;
 			if (stealthVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Ground)
 			{
-				for (size_t i = 0; i != playerList.size(); ++i)
+				if (ranges::any_of (playerList, [&] (auto& player) {
+						return player.get() != stealthVehicle->getOwner() && player->hasLandDetection (currentPosition);
+					}))
 				{
-					if (playerList[i].get() == stealthVehicle->getOwner()) continue;
-					if (playerList[i]->hasLandDetection (currentPosition)) detectOnDest = true;
+					detectOnDest = true;
 				}
 				if (map->isWater (currentPosition)) detectOnDest = true;
 			}
 			if (stealthVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Sea)
 			{
-				for (size_t i = 0; i != playerList.size(); ++i)
+				if (ranges::any_of (playerList, [&](auto& player) {
+					return player.get() != stealthVehicle->getOwner() && player->hasSeaDetection (currentPosition);
+					}))
 				{
-					if (playerList[i].get() == stealthVehicle->getOwner()) continue;
-					if (playerList[i]->hasSeaDetection (currentPosition)) detectOnDest = true;
+					detectOnDest = true;
 				}
 				if (!map->isWater (currentPosition)) detectOnDest = true;
 
@@ -879,12 +868,7 @@ bool cModel::isVictoryConditionMet() const
 {
 	// if there is only one active player left, the game is over
 	// but only, if there have been other players.
-	int activePlayers = 0;
-	for (const auto& player : playerList)
-	{
-		if (player->isDefeated) continue;
-		activePlayers++;
-	}
+	const int activePlayers = ranges::count_if (playerList, [] (const auto& player) { return !player->isDefeated; });
 	if (activePlayers == 1 && playerList.size() > 1) return true;
 
 	switch (gameSettings->victoryConditionType)
@@ -895,12 +879,7 @@ bool cModel::isVictoryConditionMet() const
 		}
 		case eGameSettingsVictoryCondition::Points:
 		{
-			for (const auto& player : playerList)
-			{
-				if (player->isDefeated) continue;
-				if (player->getScore() >= static_cast<int> (gameSettings->victoryPoints)) return true;
-			}
-			return false;
+			return ranges::any_of (playerList, [this] (const auto& player) { return !player->isDefeated && player->getScore() >= static_cast<int> (gameSettings->victoryPoints); });
 		}
 		case eGameSettingsVictoryCondition::Death:
 			// The victory condition for this mode is already checked.

@@ -43,9 +43,9 @@ eValidatorState cValidatorInt::validate (const std::string& text) const
 {
 	if (text.empty()) return eValidatorState::Intermediate;
 
-	for (size_t i = 0; i < text.size(); ++i)
+	if (ranges::any_of (text, [](int c) {return !std::isdigit (c);}))
 	{
-		if (!std::isdigit (text[i])) return eValidatorState::Invalid;
+		return eValidatorState::Invalid;
 	}
 
 	int value = std::atoi (text.c_str());

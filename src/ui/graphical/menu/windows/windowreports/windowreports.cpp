@@ -434,20 +434,16 @@ void cWindowReports::rebuildDisadvantagesList()
 	const auto unitTypesWithLosses = casualties->getUnitTypesWithLosses();
 	const auto unitsData = model.getUnitsData();
 	const auto players = model.getPlayerList();
-	for (size_t i = 0; i < unitTypesWithLosses.size(); ++i)
+	for (const auto& unitId : unitTypesWithLosses)
 	{
-		const auto& unitId = unitTypesWithLosses[i];
-
 		const cStaticUnitData& unitData = unitsData->getStaticUnitData (unitId);
 
 		if (!checkFilter (unitData)) continue;
 
 		std::vector<int> unitCasualities;
 		unitCasualities.reserve (players.size());
-		for (size_t j = 0; j < players.size(); ++j)
+		for (const auto& player : players)
 		{
-			const auto& player = players[j];
-
 			if (player)
 			{
 				unitCasualities.push_back (casualties->getCasualtiesOfUnitType (unitId, player->getId()));
@@ -470,10 +466,8 @@ void cWindowReports::rebuildReportsList()
 	reportsList->clearItems();
 
 	cReportMessageListViewItem* lastItem = nullptr;
-	for (size_t i = 0; i < reports.size(); ++i)
+	for (const auto& savedReport : reports)
 	{
-		const auto& savedReport = reports[i];
-
 		if (savedReport)
 		{
 			if (savedReport->getType() == eSavedReportType::Chat) continue;
@@ -517,17 +511,13 @@ void cWindowReports::initializeScorePlot()
 	int minScore = std::numeric_limits<int>::max();
 	for (int turn = minTurns; turn <= maxTurns; ++turn)
 	{
-		for (size_t i = 0; i < players.size(); ++i)
+		for (const auto& player : players)
 		{
-			maxScore = std::max (maxScore, extrapolate (*players[i], turnClock->getTurn(), turn));
-			minScore = std::min (minScore, extrapolate (*players[i], turnClock->getTurn(), turn));
+			maxScore = std::max (maxScore, extrapolate (*player, turnClock->getTurn(), turn));
+			minScore = std::min (minScore, extrapolate (*player, turnClock->getTurn(), turn));
 		}
 	}
-
-	if (maxScore - minScore < 10)
-	{
-		maxScore = minScore + 10;
-	}
+	maxScore = std::max(maxScore, minScore + 10);
 
 	const cRgbColor axisColor (164, 164, 164);
 	const cRgbColor limitColor (128, 128, 128);
@@ -538,10 +528,10 @@ void cWindowReports::initializeScorePlot()
 	scorePlot->getYAxis().setInterval (minScore, maxScore);
 	scorePlot->getYAxis().setColor (axisColor);
 
-	for (size_t i = 0; i < players.size(); ++i)
+	for (const auto& player : players)
 	{
-		auto& graph = scorePlot->addGraph ([=] (int x) { return extrapolate (*players[i], turnClock->getTurn(), x); });
-		graph.setColor (players[i]->getColor());
+		auto& graph = scorePlot->addGraph ([=] (int x) { return extrapolate (*player, turnClock->getTurn(), x); });
+		graph.setColor (player->getColor());
 	}
 
 	{

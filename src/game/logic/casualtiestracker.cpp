@@ -48,11 +48,11 @@ void cCasualtiesTracker::setCasualty (sID unitType, int numberOfLosses, int play
 
 	vector<Casualty>& casualties = getCasualtiesOfPlayer (playerNr);
 
-	for (size_t i = 0; i != casualties.size(); ++i)
+	for (auto& casualty : casualties)
 	{
-		if (unitType == casualties[i].unitID)
+		if (unitType == casualty.unitID)
 		{
-			casualties[i].numberOfLosses = numberOfLosses;
+			casualty.numberOfLosses = numberOfLosses;
 			return;
 		}
 	}
@@ -88,22 +88,12 @@ vector<sID> cCasualtiesTracker::getUnitTypesWithLosses() const
 {
 	vector<sID> result;
 
-	for (size_t i = 0; i != casualtiesPerPlayer.size(); ++i)
+	for (const auto& casualtiesForPlayer : casualtiesPerPlayer)
 	{
-		const vector<Casualty>& casualties = casualtiesPerPlayer[i].casualties;
-		for (size_t entryIdx = 0; entryIdx != casualties.size(); ++entryIdx)
+		const vector<Casualty>& casualties = casualtiesForPlayer.casualties;
+		for (const Casualty& casualty : casualties)
 		{
-			const Casualty& casualty = casualties[entryIdx];
-			bool containedInResult = false;
-			for (size_t j = 0; j != result.size(); ++j)
-			{
-				if (result[j] == casualty.unitID)
-				{
-					containedInResult = true;
-					break;
-				}
-			}
-			if (containedInResult == true) continue;
+			if (ranges::any_of (result, [&] (const sID& id) { return id == casualty.unitID; })) continue;
 
 			bool inserted = false;
 			for (size_t j = 0; j != result.size(); ++j)

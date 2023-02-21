@@ -33,8 +33,8 @@ cLocalHotSeatGame::~cLocalHotSeatGame()
 //------------------------------------------------------------------------------
 void cLocalHotSeatGame::run()
 {
-	for (size_t i = 0; i < clients.size(); ++i)
+	for (auto& client : clients)
 	{
-		clients[i]->run();
+		client->run();
 	}
 }

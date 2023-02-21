@@ -659,14 +659,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		}
 		else
 		{
-			int notMovingPlanes = 0;
-			for (const auto& plane : planes)
-			{
-				if (!plane->isUnitMoving())
-				{
-					notMovingPlanes++;
-				}
-			}
+			const int notMovingPlanes = ranges::count_if (planes, [](const auto* plane) { return !plane->isUnitMoving(); });
 			if (notMovingPlanes >= MAX_PLANES_PER_FIELD) return false;
 		}
 	}

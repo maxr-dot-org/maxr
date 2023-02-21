@@ -289,16 +289,14 @@ void cWindowStorage::updateGlobalButtons()
 	upgradeAllButton->lock();
 	if (canRepairReloadUpgrade && metalBar->getValue() >= 1)
 	{
-		for (size_t i = 0; i != unit.storedUnits.size(); ++i)
+		for (const auto* vehicle : unit.storedUnits)
 		{
-			const auto& vehicle = *unit.storedUnits[i];
+			if (vehicle->data.getAmmo() != vehicle->data.getAmmoMax()) reloadAllButton->unlock();
+			if (vehicle->data.getHitpoints() != vehicle->data.getHitpointsMax()) repairAllButton->unlock();
 
-			if (vehicle.data.getAmmo() != vehicle.data.getAmmoMax()) reloadAllButton->unlock();
-			if (vehicle.data.getHitpoints() != vehicle.data.getHitpointsMax()) repairAllButton->unlock();
-
-			if (!vehicle.getOwner()) continue;
-			const auto& upgraded = *vehicle.getOwner()->getUnitDataCurrentVersion (vehicle.data.getId());
-			if (vehicle.data.getVersion() != upgraded.getVersion()) upgradeAllButton->unlock();
+			if (!vehicle->getOwner()) continue;
+			const auto& upgraded = *vehicle->getOwner()->getUnitDataCurrentVersion (vehicle->data.getId());
+			if (vehicle->data.getVersion() != upgraded.getVersion()) upgradeAllButton->unlock();
 		}
 	}
 }

@@ -194,17 +194,17 @@ int cDestroyJob::deleteAllBuildingsOnField (cMapField& field, bool deleteConnect
 	auto buildings = field.getBuildings();
 	int rubble = 0;
 
-	for (auto b_it = buildings.begin(); b_it != buildings.end(); ++b_it)
+	for (auto* building : buildings)
 	{
-		if ((*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Above && deleteConnector == false) continue;
-		if ((*b_it)->isRubble()) continue;
+		if (building->getStaticUnitData().surfacePosition == eSurfacePosition::Above && deleteConnector == false) continue;
+		if (building->isRubble()) continue;
 
-		if ((*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::Above) //no rubble for connectors
-			rubble += (*b_it)->data.getBuildCost();
-		if ((*b_it)->getStaticUnitData().storeResType == eResourceType::Metal)
-			rubble += (*b_it)->getStoredResources() * 2; // stored material is always added completely to the rubble
+		if (building->getStaticUnitData().surfacePosition != eSurfacePosition::Above) //no rubble for connectors
+			rubble += building->data.getBuildCost();
+		if (building->getStaticUnitData().storeResType == eResourceType::Metal)
+			rubble += building->getStoredResources() * 2; // stored material is always added completely to the rubble
 
-		model.deleteUnit (*b_it);
+		model.deleteUnit (building);
 	}
 	return rubble;
 }

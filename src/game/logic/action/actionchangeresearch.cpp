@@ -88,8 +88,8 @@ void cActionChangeResearch::execute (cModel& model) const
 	if (error)
 		return;
 
-	for (size_t i = 0; i != researchCentersToStop.size(); ++i)
-		researchCentersToStop[i]->stopWork (false);
+	for (auto* researchCenter : researchCentersToStop)
+		researchCenter->stopWork (false);
 
 	for (size_t i = 0; i != researchCentersToChangeArea.size(); ++i)
 		researchCentersToChangeArea[i]->setResearchArea (newAreasForResearchCenters[i]);

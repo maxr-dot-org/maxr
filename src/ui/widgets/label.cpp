@@ -137,10 +137,8 @@ void cLabel::updateDisplayInformation()
 	auto originalTargetSurface = font->getTargetSurface();
 	auto fontTargetSurfaceResetter = makeScopedOperation ([originalTargetSurface, font]() { font->setTargetSurface (originalTargetSurface); });
 	font->setTargetSurface (surface.get());
-	for (size_t i = 0; i < drawLines.size(); ++i)
+	for (const auto& line : drawLines)
 	{
-		const auto& line = drawLines[i];
-
 		const auto width = font->getTextWide (line, fontType);
 
 		int drawPositionX;

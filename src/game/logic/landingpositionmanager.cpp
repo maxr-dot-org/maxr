@@ -68,11 +68,11 @@ bool cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player
 	checkPlayerState (playerData, false);
 
 	// update all other states
-	for (size_t i = 0; i != landingPositions.size(); ++i)
+	for (const auto& landingPos : landingPositions)
 	{
-		if (landingPositions[i].player.getNr() == player.getNr()) continue;
+		if (landingPos.player.getNr() == player.getNr()) continue;
 
-		auto& otherData = getLandingPositionData (landingPositions[i].player);
+		auto& otherData = getLandingPositionData (landingPos.player);
 
 		if (otherData.state != eLandingPositionState::Unknown)
 		{
@@ -83,14 +83,14 @@ bool cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player
 	// test if all states are valid now
 	// mark players with invalid states that they need to select a new position.
 	bool allValid = true;
-	for (size_t i = 0; i != landingPositions.size(); ++i)
+	for (auto& landingPos : landingPositions)
 	{
-		const auto state = landingPositions[i].state;
+		const auto state = landingPos.state;
 		if (state == eLandingPositionState::Unknown || state == eLandingPositionState::Warning || state == eLandingPositionState::TooClose)
 		{
-			landingPositions[i].needNewPosition = true;
+			landingPos.needNewPosition = true;
 		}
-		if (landingPositions[i].needNewPosition)
+		if (landingPos.needNewPosition)
 		{
 			allValid = false;
 		}
@@ -131,9 +131,8 @@ void cLandingPositionManager::checkPlayerState (sLandingPositionData& playerData
 	bool positionTooClose = false;
 	bool positionWarning = false;
 	// check distances to all other players
-	for (size_t i = 0; i != landingPositions.size(); ++i)
+	for (const auto& data : landingPositions)
 	{
-		const auto& data = landingPositions[i];
 		if (data.state == eLandingPositionState::Unknown) continue;
 		if (data.player.getNr() == playerData.player.getNr()) continue;
 

@@ -237,12 +237,12 @@ std::string getClanStatsDescription (const cClanUnitStat& clanUnitStat, const cU
 			{eClanModification::Speed, lngPack.i18n ("Text~Others~Speed_7"), data->getSpeedMax() / 4},
 		};
 
-	for (int i = 0; i != sizeof (t) / sizeof (*t); ++i)
+	for (auto& e : t)
 	{
-		if (clanUnitStat.hasModification (t[i].type) == false) continue;
+		if (clanUnitStat.hasModification (e.type) == false) continue;
 		result += sep;
-		result += t[i].text;
-		result += GetModificatorString (t[i].originalValue, clanUnitStat.getModificationValue (t[i].type));
+		result += e.text;
+		result += GetModificatorString (e.originalValue, clanUnitStat.getModificationValue (e.type));
 		sep = commaSep;
 	}
 	if (clanUnitStat.hasModification (eClanModification::Built_Costs))

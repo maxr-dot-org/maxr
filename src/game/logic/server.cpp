@@ -434,14 +434,9 @@ void cServer::playerConnected (int playerId)
 //------------------------------------------------------------------------------
 void cServer::updateWaitForClientFlag()
 {
-	bool freeze = false;
-	for (const auto& state : playerConnectionStates)
-	{
-		if (state.second == ePlayerConnectionState::Disconnected || state.second == ePlayerConnectionState::NotResponding)
-		{
-			freeze = true;
-		}
-	}
+	const bool freeze = ranges::any_of (playerConnectionStates, [] (const auto& state) {
+		return state.second == ePlayerConnectionState::Disconnected || state.second == ePlayerConnectionState::NotResponding;
+	});
 
 	if (freeze)
 	{

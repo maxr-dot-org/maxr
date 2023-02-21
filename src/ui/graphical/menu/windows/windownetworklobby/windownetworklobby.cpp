@@ -316,9 +316,9 @@ void cWindowNetworkLobby::updateSettingsText()
 	if (saveGameInfo.number >= 0)
 	{
 		text += lngPack.i18n ("Text~Title~Savegame") + "\n  " + saveGameInfo.gameName + "\n\n" + lngPack.i18n ("Text~Title~Players") + "\n";
-		for (size_t i = 0; i < saveGameInfo.players.size(); ++i)
+		for (const auto& player : saveGameInfo.players)
 		{
-			text += saveGameInfo.players[i].getName() + "\n";
+			text += player.getName() + "\n";
 		}
 		text += "\n";
 	}

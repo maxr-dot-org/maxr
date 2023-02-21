@@ -132,9 +132,9 @@ void cWidget::fitToChildren()
 	{
 		cBox<cPosition> newArea (children[0]->getPosition(), children[0]->getPosition());
 
-		for (size_t i = 0; i < children.size(); ++i)
+		for (auto& child : children)
 		{
-			newArea.add (children[i]->getArea());
+			newArea.add (child->getArea());
 		}
 
 		setArea (newArea);
@@ -167,9 +167,9 @@ cWidget* cWidget::getChildAt (const cPosition& position) const
 	// is visually the one above all the others.
 	// We want to find this one first, because we will abort on the first child that
 	// intersects the point, regardless of whether there are other overlapping children.
-	for (auto i = children.rbegin(); i != children.rend(); ++i)
+	for (auto rit = children.rbegin(); rit != children.rend(); ++rit)
 	{
-		auto child = i->get();
+		auto child = rit->get();
 
 		if (!child->isEnabled()) continue;
 

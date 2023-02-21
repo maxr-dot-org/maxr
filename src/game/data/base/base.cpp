@@ -1021,9 +1021,9 @@ void cBase::deleteBuilding (cBuilding& building, const cMap& map)
 bool cBase::checkTurnEnd()
 {
 	bool changed = false;
-	for (size_t i = 0; i != SubBases.size(); ++i)
+	for (auto& subBase : SubBases)
 	{
-		if (SubBases[i]->checkTurnEnd())
+		if (subBase->checkTurnEnd())
 		{
 			changed = true;
 		}
@@ -1033,9 +1033,9 @@ bool cBase::checkTurnEnd()
 
 void cBase::makeTurnStart (sNewTurnPlayerReport& report)
 {
-	for (size_t i = 0; i != SubBases.size(); ++i)
+	for (auto& subBase : SubBases)
 	{
-		SubBases[i]->makeTurnStart (report);
+		subBase->makeTurnStart (report);
 	}
 }
 

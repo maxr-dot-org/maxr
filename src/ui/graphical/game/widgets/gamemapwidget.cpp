@@ -1467,13 +1467,11 @@ void cGameMapWidget::drawExitPointsIf (const cUnit& unit, const std::function<bo
 {
 	if (!mapView) return;
 
-	auto adjacentPositions = unit.getAdjacentPositions();
-
-	for (size_t i = 0; i != adjacentPositions.size(); ++i)
+	for (const auto& adjacentPosition : unit.getAdjacentPositions())
 	{
-		if (predicate (adjacentPositions[i]))
+		if (predicate (adjacentPosition))
 		{
-			drawExitPoint (adjacentPositions[i]);
+			drawExitPoint (adjacentPosition);
 		}
 	}
 }
@@ -1985,12 +1983,11 @@ void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPositio
 
 			units = field.getUnits();
 
-			for (size_t j = 0; j < units.size(); ++j)
+			for (const auto* unit : units)
 			{
-				const auto& unit = *units[j];
-				if (shouldDrawUnit (unit, position, tileDrawingRange) && !oldTileDrawingArea.intersects (unit.getArea()))
+				if (shouldDrawUnit (*unit, position, tileDrawingRange) && !oldTileDrawingArea.intersects (unit->getArea()))
 				{
-					addAnimationsForUnit (unit);
+					addAnimationsForUnit (*unit);
 				}
 			}
 		}
@@ -2244,10 +2241,8 @@ void cGameMapWidget::deactivateUnitCommandShortcuts()
 //------------------------------------------------------------------------------
 void cGameMapWidget::runOwnedEffects()
 {
-	for (size_t i = 0; i < effects.size(); ++i)
+	for (auto& effect : effects)
 	{
-		auto& effect = effects[i];
-
 		if (effect.use_count() == 1)
 		{
 			effect->run();
@@ -2267,18 +2262,14 @@ void cGameMapWidget::renewDamageEffects()
 	{
 		auto& mapField = mapView->getField (*i);
 
-		const auto& buildings = mapField.getBuildings();
-		for (size_t i = 0; i < buildings.size(); ++i)
+		for (const auto& building : mapField.getBuildings())
 		{
-			renewDamageEffect (*buildings[i]);
+			renewDamageEffect (*building);
 		}
-
-		const auto& planes = mapField.getPlanes();
-		for (size_t i = 0; i < planes.size(); ++i)
+		for (const auto& plane : mapField.getPlanes())
 		{
-			renewDamageEffect (*planes[i]);
+			renewDamageEffect (*plane);
 		}
-
 		if (mapField.getVehicle())
 		{
 			renewDamageEffect (*mapField.getVehicle());

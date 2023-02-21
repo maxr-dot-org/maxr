@@ -37,15 +37,13 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	auto connectionManager = std::make_shared<cConnectionManager>();
 
 	server = std::make_unique<cServer> (connectionManager);
-
 	server->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
 
 	clients.resize (playersData.size());
-
-	for (size_t i = 0; i != playersData.size(); ++i)
+	for (auto& client : clients)
 	{
-		clients[i] = std::make_shared<cClient> (connectionManager);
-		clients[i]->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
+		client = std::make_shared<cClient> (connectionManager);
+		client->setPreparationData ({unitsData, clanData, gameSettings, staticMap});
 	}
 	server->setPlayers (playersBasicData);
 	for (size_t i = 0; i != clients.size(); ++i)
@@ -54,11 +52,7 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 	}
 
 	connectionManager->setLocalServer (server.get());
-	std::vector<INetMessageReceiver*> hotseatClients;
-	for (auto& client : clients)
-	{
-		hotseatClients.push_back (client.get());
-	}
+	std::vector<INetMessageReceiver*> hotseatClients = ranges::Transform (clients, [] (auto& client) -> INetMessageReceiver* { return client.get(); });
 	connectionManager->setLocalClients (std::move (hotseatClients));
 
 	server->start();

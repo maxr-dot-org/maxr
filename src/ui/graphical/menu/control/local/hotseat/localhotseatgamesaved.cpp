@@ -45,11 +45,7 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 		clients[i]->loadModel (saveGameNumber, i); //TODO: resync model from server
 	}
 
-	std::vector<INetMessageReceiver*> hotseatClients;
-	for (auto& client : clients)
-	{
-		hotseatClients.push_back (client.get());
-	}
+	std::vector<INetMessageReceiver*> hotseatClients = ranges::Transform (clients, [](auto& client) -> INetMessageReceiver* { return client.get(); });
 	connectionManager->setLocalClients (std::move (hotseatClients));
 
 	server->sendGuiInfoToClients (saveGameNumber);

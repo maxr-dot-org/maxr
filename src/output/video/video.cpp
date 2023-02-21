@@ -309,15 +309,10 @@ const std::vector<std::pair<int, int>>& cVideo::getDetectedResolutions() const
 
 bool cVideo::haveMinMode() const
 {
-	const auto& resolutions = getDetectedResolutions();
-	for (const auto& resolution : resolutions)
+	if (ranges::any_of (getDetectedResolutions(), [] (const auto& resolution) { return resolution == std::pair<int, int>{MINWIDTH, MINHEIGHT}; }))
 	{
-		if (resolution.first == MINWIDTH && resolution.second == MINHEIGHT)
-		{
-			return true;
-		}
+		return true;
 	}
-
 	Log.write ("cVideo: Minimal needed video mode (" + std::to_string (MINWIDTH) + "x" + std::to_string (MINHEIGHT) + ") not detected. Probably bad!", cLog::eLogType::Error);
 	return false;
 }
@@ -327,7 +322,7 @@ int cVideo::validateResolution (int width, int height) const
 	const auto& resolutions = getDetectedResolutions();
 	for (size_t i = 0; i < resolutions.size(); i++)
 	{
-		if (resolutions[i].first == width && resolutions[i].second == height)
+		if (resolutions[i] == std::pair<int, int>{width, height})
 		{
 			return static_cast<int> (i);
 		}

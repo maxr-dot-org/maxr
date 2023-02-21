@@ -237,7 +237,7 @@ void cNetwork::handleNetworkThread()
 			std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
 			//handle incoming data
-			for (size_t i = 0; i < sockets.size();) // erease in loop
+			for (size_t i = 0; i < sockets.size();) // erase in loop
 			{
 				auto socket = sockets[i];
 				if (SDLNet_SocketReady (socket->sdlSocket))

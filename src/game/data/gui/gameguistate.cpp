@@ -26,12 +26,7 @@
 //------------------------------------------------------------------------------
 void cGameGuiState::setSelectedUnits (const cUnitSelection& unitSelection)
 {
-	selectedUnitIds.clear();
-	const auto selectedUnits = unitSelection.getSelectedUnits();
-	for (size_t i = 0; i < selectedUnits.size(); ++i)
-	{
-		selectedUnitIds.push_back (selectedUnits[i]->iID);
-	}
+	selectedUnitIds = ranges::Transform (unitSelection.getSelectedUnits(), [] (const cUnit* unit) { return unit->iID; });
 }
 
 //------------------------------------------------------------------------------

@@ -178,7 +178,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 
 	auto font = cUnicodeFont::font.get();
 
-	const cPlayer& player = client->getActivePlayer();
+	const cPlayer& activePlayer = client->getActivePlayer();
 
 	setPrintPosition (cPosition (getEndPosition().x() - 200, getPosition().y()));
 
@@ -191,17 +191,17 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 		SDL_Rect rDotDest = {drawPosition.x() - 10, drawPosition.y(), 10, 10};
 		SDL_Rect rBlackOut = {drawPosition.x() + 20, drawPosition.y(), 0, 10};
 		const auto& playerList = client->model.getPlayerList();
-		for (size_t i = 0; i != playerList.size(); ++i)
+		for (const auto& player : playerList)
 		{
 			// HACK SHOWFINISHEDPLAYERS
 			SDL_Rect rDot = {10, 0, 10, 10}; // for green dot
 
-			if (playerList[i]->getHasFinishedTurn() /* && playerList[i] != &player*/)
+			if (player->getHasFinishedTurn() /* && player.get() != &activePlayer*/)
 			{
 				SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &rDot, &destination, &rDotDest);
 			}
 #if 0
-			else if (playerList[i] == &player && client->bWantToEnd)
+			else if (player.get() == &activePlayer && client->bWantToEnd)
 			{
 				SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &rDot, &destination, &rDotDest);
 			}
@@ -212,10 +212,10 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 				SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &rDot, &destination, &rDotDest);
 			}
 
-			SDL_BlitSurface (cPlayerColor::getTexture (playerList[i]->getColor()), &rSrc, &destination, &rDest);
-			if (playerList[i].get() == &player)
+			SDL_BlitSurface (cPlayerColor::getTexture (player->getColor()), &rSrc, &destination, &rDest);
+			if (player.get() == &activePlayer)
 			{
-				std::string sTmpLine = " " + playerList[i]->getName() + ", nr: " + std::to_string (playerList[i]->getId()) + " << you! ";
+				std::string sTmpLine = " " + player->getName() + ", nr: " + std::to_string (player->getId()) + " << you! ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, eUnicodeFontType::LatinSmallWhite);
 				SDL_FillRect (&destination, &rBlackOut, 0xFF000000);
@@ -223,7 +223,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 			}
 			else
 			{
-				std::string sTmpLine = " " + playerList[i]->getName() + ", nr: " + std::to_string (playerList[i]->getId()) + " ";
+				std::string sTmpLine = " " + player->getName() + ", nr: " + std::to_string (player->getId()) + " ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, eUnicodeFontType::LatinSmallWhite);
 				SDL_FillRect (&destination, &rBlackOut, 0xFF000000);
@@ -246,12 +246,12 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 
 	if (debugBaseClient)
 	{
-		print ("subbases: " + std::to_string (player.base.SubBases.size()));
+		print ("subbases: " + std::to_string (activePlayer.base.SubBases.size()));
 	}
 
 	if (debugBaseServer && server)
 	{
-		const auto serverPlayer = server->model.getPlayer (player.getId());
+		const auto serverPlayer = server->model.getPlayer (activePlayer.getId());
 		print ("subbases: " + std::to_string (serverPlayer->base.SubBases.size()));
 	}
 

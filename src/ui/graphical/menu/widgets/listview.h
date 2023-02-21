@@ -391,9 +391,9 @@ template <typename ItemType>
 void cListView<ItemType>::clearItems()
 {
 	const auto hadSelection = !selectedItems.empty();
-	for (size_t j = 0; j != selectedItems.size(); ++j)
+	for (auto& selectedItem : selectedItems)
 	{
-		selectedItems[j]->deselect();
+		selectedItem->deselect();
 	}
 	selectedItems.clear();
 
@@ -557,9 +557,9 @@ void cListView<ItemType>::handleResized (const cPosition& oldSize)
 		scrollBar->moveTo (getPosition() + cPosition (getSize().x() - scrollBar->getSize().x() + 1, 0));
 	}
 
-	for (size_t i = 0; i < items.size(); ++i)
+	for (auto& item : items)
 	{
-		items[i].second->resize (cPosition (getSize().x() - getBeginMargin().x() - getEndMargin().x() - (scrollBar ? scrollBar->getSize().x() : 0), items[i].second->getSize().y()));
+		item.second->resize (cPosition (getSize().x() - getBeginMargin().x() - getEndMargin().x() - (scrollBar ? scrollBar->getSize().x() : 0), item.second->getSize().y()));
 	}
 
 	if (scrollBar && !items.empty())
@@ -649,9 +649,9 @@ void cListView<ItemType>::setSelectedItem (const ItemType* item)
 template <typename ItemType>
 void cListView<ItemType>::deselectAll()
 {
-	for (size_t j = 0; j != selectedItems.size(); ++j)
+	for (auto& selectedItem : selectedItems)
 	{
-		selectedItems[j]->deselect();
+		selectedItem->deselect();
 	}
 	selectedItems.clear();
 }

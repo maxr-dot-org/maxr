@@ -84,12 +84,7 @@ namespace
 		strftime (timestr, 21, "%d.%m.%y %H:%M", tmTime);
 
 		eGameType type = eGameType::Single;
-		int humanPlayers = 0;
-		for (auto player : model.getPlayerList())
-		{
-			if (player->isHuman())
-				humanPlayers++;
-		}
+		const int humanPlayers = ranges::count_if (model.getPlayerList(), [] (const auto& player) { return player->isHuman(); });
 		if (humanPlayers > 1)
 			type = eGameType::TcpIp;
 		if (model.getGameSettings()->gameType == eGameSettingsGameType::HotSeat)

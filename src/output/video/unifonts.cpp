@@ -596,8 +596,8 @@ void cUnicodeFont::showText (int x, int y, const string& text, eUnicodeFontType 
 		case eUnicodeFontType::LatinSmallRed:
 		case eUnicodeFontType::LatinSmallWhite:
 		case eUnicodeFontType::LatinSmallYellow:
-			for (size_t i = 0; i < sText.size(); i++)
-				sText[i] = toupper (sText[i]);
+			for (char& c : sText)
+				c = toupper (c);
 			iSpace = 1;
 			break;
 		case eUnicodeFontType::LatinNormal:
@@ -804,8 +804,8 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 		case eUnicodeFontType::LatinSmallRed:
 		case eUnicodeFontType::LatinSmallWhite:
 		case eUnicodeFontType::LatinSmallYellow:
-			for (size_t i = 0; i < sText.size(); i++)
-				sText[i] = toupper (sText[i]);
+			for (char& c : sText)
+				c = toupper (c);
 			iSpace = 1;
 			break;
 		case eUnicodeFontType::LatinNormal:
@@ -856,9 +856,9 @@ int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype) const
 {
 	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
 	// we will return the height of the first character in the list
-	for (int i = 0; i < 0xFFFF; i++)
+	for (const auto& surface : chars)
 	{
-		if (chars[i] != nullptr) return chars[i]->h;
+		if (surface != nullptr) return surface->h;
 	}
 	return 0;
 }

@@ -470,18 +470,16 @@ void cActionInitNewGame::makeLanding (cPlayer& player, const std::vector<sLandin
 		model.addBuilding (landingPosition + cPosition (0, -1), model.getUnitsData()->getMineID(), &player);
 	}
 
-	for (size_t i = 0; i != landingUnits.size(); ++i)
+	for (const sLandingUnit& landing : landingUnits)
 	{
-		const sLandingUnit& landing = landingUnits[i];
-		cVehicle* vehicle = nullptr;
-		int radius = 1;
-
 		if (!model.getUnitsData()->isValidId (landing.unitID))
 		{
 			Log.write (" Landing of unit failed. Unknown sID: " + landing.unitID.getText(), cLog::eLogType::NetError);
 			continue;
 		}
 
+		cVehicle* vehicle = nullptr;
+		int radius = 1;
 		while (!vehicle)
 		{
 			vehicle = landVehicle (landingPosition, radius, landing.unitID, player, model);

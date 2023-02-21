@@ -214,12 +214,9 @@ void cMuMsgSaveSlots::serialize (cBinaryArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgPlayerList::cMuMsgPlayerList (const std::vector<std::shared_ptr<cPlayerBasicData>>& playerList_)
+cMuMsgPlayerList::cMuMsgPlayerList (const std::vector<std::shared_ptr<cPlayerBasicData>>& playerList_) :
+	playerList (ranges::Transform (playerList_, [] (const auto& data) { return *data; }))
 {
-	for (const auto& p : playerList_)
-	{
-		playerList.push_back (*p);
-	}
 }
 
 //------------------------------------------------------------------------------

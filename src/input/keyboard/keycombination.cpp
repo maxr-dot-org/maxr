@@ -151,11 +151,7 @@ static const struct
 //------------------------------------------------------------------------------
 bool cKeyCombination::isRepresentableKey (SDL_Keycode key)
 {
-	for (size_t i = 0; i < sizeof (keyNames) / sizeof (keyNames[0]); ++i)
-	{
-		if (keyNames[i].key == key) return true;
-	}
-	return false;
+	return ranges::any_of (keyNames, [&] (const auto& keyName) { return keyName.key == key; });
 }
 
 //------------------------------------------------------------------------------
@@ -207,11 +203,11 @@ void cKeyCombination::addKey (const std::string& sequence)
 	}
 	else
 	{
-		for (size_t i = 0; i < sizeof (keyNames) / sizeof (keyNames[0]); ++i)
+		for (const auto& keyName : keyNames)
 		{
-			if (iequals (trimmed, keyNames[i].name))
+			if (iequals (trimmed, keyName.name))
 			{
-				key = keyNames[i].key;
+				key = keyName.key;
 				return;
 			}
 		}
@@ -247,12 +243,12 @@ std::string cKeyCombination::toString() const
 		result += "Num";
 	}
 
-	for (size_t i = 0; i < sizeof (keyNames) / sizeof (keyNames[0]); ++i)
+	for (const auto& keyName : keyNames)
 	{
-		if (key == keyNames[i].key)
+		if (key == keyName.key)
 		{
 			if (!result.empty()) result += "+";
-			result += keyNames[i].name;
+			result += keyName.name;
 			break;
 		}
 	}
