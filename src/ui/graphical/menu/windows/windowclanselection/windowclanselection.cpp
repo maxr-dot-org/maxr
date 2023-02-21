@@ -36,6 +36,8 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 	clanData (clanData),
 	selectedClan (0)
 {
+	assert (unitsData);
+	assert (clanData);
 	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	//
