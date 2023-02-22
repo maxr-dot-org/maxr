@@ -21,7 +21,7 @@
 #include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
 #include "ui/graphical/game/control/chatcommand/chatcommandexecutor.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <3rd/doctest/doctest.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -31,46 +31,46 @@ namespace
 	const std::string name = "test";
 	const std::string desc = "dummy desc";
 
-	TEST (ChatCommandFixtureNoArgs)
+	TEST_CASE ("ChatCommandFixtureNoArgs")
 	{
 		std::size_t test_counter = 0;
 
 		auto test = cChatCommand (name, desc).setAction ([&]() { ++test_counter; });
-		REQUIRE CHECK_EQUAL (0, test_counter);
+		REQUIRE (0 == test_counter);
 
-		CHECK_EQUAL (name, test->getCommand().getName());
-		CHECK_EQUAL (desc, test->getCommand().getDescription());
+		CHECK (name == test->getCommand().getName());
+		CHECK (desc == test->getCommand().getDescription());
 
 		CHECK (!test->tryExecute ("/" + name + "2"));
-		CHECK_EQUAL (0, test_counter);
-		CHECK_THROW (!test->tryExecute ("/" + name + " a"), std::runtime_error);
-		CHECK_EQUAL (0, test_counter);
+		CHECK (0 == test_counter);
+		CHECK_THROWS_AS (!test->tryExecute ("/" + name + " a"), std::runtime_error);
+		CHECK (0 == test_counter);
 
 		CHECK (test->tryExecute ("/" + name));
-		CHECK_EQUAL (1, test_counter);
+		CHECK (1 == test_counter);
 	}
 
-	TEST (ChatCommand_Bool)
+	TEST_CASE ("ChatCommand_Bool")
 	{
 		std::map<std::string, std::size_t> map_counter;
 		auto action = [&] (bool b) { ++map_counter[b ? "on" : "off"]; };
 
 		auto test = cChatCommand (name, desc).addArgument<cChatCommandArgumentBool>().setAction (action);
-		REQUIRE CHECK (map_counter.empty());
+		REQUIRE (map_counter.empty());
 
 		CHECK (!test->tryExecute ("/" + name + "2"));
 		CHECK (map_counter.empty());
-		CHECK_THROW (!test->tryExecute ("/" + name), std::runtime_error);
+		CHECK_THROWS_AS (!test->tryExecute ("/" + name), std::runtime_error);
 		CHECK (map_counter.empty());
 
 		for (const auto& s : {"off", "on"})
 		{
 			CHECK (test->tryExecute ("/" + name + " " + s));
-			CHECK_EQUAL (1, map_counter[s]);
+			CHECK (1 == map_counter[s]);
 		}
 	}
 
-	TEST (ChatCommand_Choice)
+	TEST_CASE ("ChatCommand_Choice")
 	{
 		const std::string name = "test";
 		const std::string desc = "dummy desc";
@@ -79,17 +79,17 @@ namespace
 		auto action = [&] (const std::string& s) { ++map_counter[s]; };
 
 		auto test = cChatCommand (name, desc).addArgument<cChatCommandArgumentChoice> (choices).setAction (action);
-		REQUIRE CHECK (map_counter.empty());
+		REQUIRE (map_counter.empty());
 
 		CHECK (!test->tryExecute ("/" + name + "2"));
 		CHECK (map_counter.empty());
-		CHECK_THROW (!test->tryExecute ("/" + name), std::runtime_error);
+		CHECK_THROWS_AS (!test->tryExecute ("/" + name), std::runtime_error);
 		CHECK (map_counter.empty());
 
 		for (const auto& s : choices)
 		{
 			CHECK (test->tryExecute ("/" + name + " " + s));
-			CHECK_EQUAL (1, map_counter[s]);
+			CHECK (1 == map_counter[s]);
 		}
 	}
 

@@ -20,7 +20,7 @@
 #include "output/video/unifonts.h"
 #include "unittesttag.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <3rd/doctest/doctest.h>
 #include <regex>
 
 static constexpr const std::size_t charWidth = 2;
@@ -61,26 +61,25 @@ namespace
 
 		auto res = font->breakText (text, text.size() * charWidth, eUnicodeFontType::LatinNormal);
 
-		CHECK_EQUAL (std::regex_replace (text, std::regex ("\n"), "|"),
-		             std::regex_replace (concatenateLines (res, "|"), std::regex ("\n"), "\\n"));
+		CHECK (std::regex_replace (text, std::regex ("\n"), "|") == std::regex_replace (concatenateLines (res, "|"), std::regex ("\n"), "\\n"));
 #if 0 // similar check, but by part
-		REQUIRE CHECK_EQUAL (expected.size(), res.size());
+		REQUIRE (expected.size() == res.size());
 		for (std::size_t i = 0; i != expected.size(); ++i)
 		{
-			CHECK_EQUAL (expected[i], res[i]);
+			CHECK (expected[i] == res[i]);
 		}
 #endif
 	}
 
-	TEST (BreakText_newline_simple)
+	TEST_CASE ("BreakText_newline_simple")
 	{
 		TestBreakLine ({"a", "b", "c", "d"});
 	}
-	TEST (BreakText_newline_prefix)
+	TEST_CASE ("BreakText_newline_prefix")
 	{
 		TestBreakLine ({" a", " b", " c", " d"});
 	}
-	TEST (BreakText_newline_emptyline)
+	TEST_CASE ("BreakText_newline_emptyline")
 	{
 		TestBreakLine ({"a", "", "c", ""});
 	}
@@ -91,23 +90,23 @@ namespace
 
 		auto res = font->breakText (text, nbPixels, eUnicodeFontType::LatinNormal);
 
-		CHECK_EQUAL (expected, concatenateLines (res, "|"));
+		CHECK (expected == concatenateLines (res, "|"));
 	}
 
-	TEST (BreakText_space_smallword)
+	TEST_CASE ("BreakText_space_smallword")
 	{
 		TestBreakSpace ("a|bb|c d|e", "a bb c d e", 3 * charWidth + 1);
 	}
-	TEST (BreakText_space_longword)
+	TEST_CASE ("BreakText_space_longword")
 	{
 		TestBreakSpace ("aa|bbbb|ccc", "aa bbbb ccc", 2 * charWidth + 1);
 	}
-	TEST (BreakText_space_manyspaces)
+	TEST_CASE ("BreakText_space_manyspaces")
 	{
 		TestBreakSpace ("a|bb|cc|dd", "a     bb     cc   dd  ", 2 * charWidth + 1);
 	}
 
-	TEST (BreakText_space_eolandspace)
+	TEST_CASE ("BreakText_space_eolandspace")
 	{
 		TestBreakSpace ("a|bb|cc|dd", "a  \nbb\n     cc  dd", 2 * charWidth + 1);
 	}

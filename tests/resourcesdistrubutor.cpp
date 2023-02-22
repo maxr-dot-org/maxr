@@ -22,7 +22,7 @@
 #include "game/logic/subbaseresourcedistribution.h"
 #include "utility/listhelpers.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <3rd/doctest/doctest.h>
 #include <iostream>
 
 //------------------------------------------------------------------------------
@@ -113,9 +113,9 @@ namespace
 	//--------------------------------------------------------------------------
 	void check (const cBuilding& mine)
 	{
-		REQUIRE CHECK (mine.getMaxProd().gold <= mine.getStaticData().canMineMaxRes);
-		REQUIRE CHECK (mine.getMaxProd().metal <= mine.getStaticData().canMineMaxRes);
-		REQUIRE CHECK (mine.getMaxProd().oil <= mine.getStaticData().canMineMaxRes);
+		REQUIRE (mine.getMaxProd().gold <= mine.getStaticData().canMineMaxRes);
+		REQUIRE (mine.getMaxProd().metal <= mine.getStaticData().canMineMaxRes);
+		REQUIRE (mine.getMaxProd().oil <= mine.getStaticData().canMineMaxRes);
 
 		CHECK (mine.prod.total() <= mine.getStaticData().canMineMaxRes);
 
@@ -154,12 +154,12 @@ namespace
 			setBuildingsProduction (buildings, orderedExpected);
 
 			check (buildings);
-			CHECK_EQUAL (orderedExpected, computeProduction (buildings));
+			CHECK (orderedExpected == computeProduction (buildings));
 		} while (std::next_permutation (std::begin (indexes), std::end (indexes)));
 	}
 
 	//--------------------------------------------------------------------------
-	TEST (TwoResConflict)
+	TEST_CASE ("TwoResConflict")
 	{
 		const sMiningResource expected{16, 16, 0};
 		std::vector<sMine> mines{sMine{16, 8, 0}, sMine{10, 10, 0}};
@@ -168,7 +168,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	TEST (ThreeResConflict)
+	TEST_CASE ("ThreeResConflict")
 	{
 		const sMiningResource expected{16, 12, 4};
 		std::vector<sMine> mines{sMine{16, 8, 0}, sMine{8, 8, 0}, sMine{{0, 4, 4}, 4}};

@@ -9,3 +9,7 @@ Those files doesn't have Maxr copyright:
 
 - SDL_flic:
   Allow to handle flc format
+
+- doctest:
+  Unit test framework
+

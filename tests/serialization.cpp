@@ -21,7 +21,7 @@
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/jsonarchive.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <3rd/doctest/doctest.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -115,7 +115,7 @@ namespace
 		cBinaryArchiveOut out (buffer.data(), buffer.size());
 		T value;
 		out >> serialization::makeNvp ("value", value);
-		CHECK_EQUAL (expected, value);
+		CHECK (expected == value);
 	}
 
 	//--------------------------------------------------------------------------
@@ -130,7 +130,7 @@ namespace
 		cBinaryArchiveOut out (buffer.data(), buffer.size());
 		T value;
 		out >> value;
-		CHECK_EQUAL (expected, value);
+		CHECK (expected == value);
 	}
 
 	//--------------------------------------------------------------------------
@@ -146,7 +146,7 @@ namespace
 		//std::cout << json.dump() << std::endl;
 		in >> serialization::makeNvp ("value", value);
 
-		CHECK_EQUAL (expected, value);
+		CHECK (expected == value);
 	}
 
 	//--------------------------------------------------------------------------
@@ -162,7 +162,7 @@ namespace
 		//std::cout << json.dump() << std::endl;
 		in >> value;
 
-		CHECK_EQUAL (expected, value);
+		CHECK (expected == value);
 	}
 
 	constexpr int n = 42;
@@ -178,7 +178,7 @@ namespace
 	const std::map<int, std::string> m{{1, "I"}, {2, "II"}, {5, "V"}};
 
 	//--------------------------------------------------------------------------
-	TEST (BinarySerializationNvp)
+	TEST_CASE ("BinarySerializationNvp")
 	{
 		checkBinarySaveLoadNvp (n);
 		checkBinarySaveLoadNvp (f);
@@ -194,7 +194,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	TEST (BinarySerialization)
+	TEST_CASE ("BinarySerialization")
 	{
 		checkBinarySaveLoad (n);
 		checkBinarySaveLoad (f);
@@ -210,7 +210,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	TEST (JsonSerializationNvp)
+	TEST_CASE ("JsonSerializationNvp")
 	{
 		checkJsonSaveLoadNvp (n);
 		checkJsonSaveLoadNvp (f);
@@ -226,7 +226,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	TEST (JsonSerialization)
+	TEST_CASE ("JsonSerialization")
 	{
 		checkJsonSaveLoad (n);
 		checkJsonSaveLoad (f);
