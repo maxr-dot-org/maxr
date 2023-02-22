@@ -17,25 +17,23 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <UnitTest++/UnitTest++.h>
-
-#include "game/logic/subbaseresourcedistribution.h"
 #include "game/data/units/building.h"
 #include "game/data/units/unitdata.h"
-
+#include "game/logic/subbaseresourcedistribution.h"
 #include "utility/listhelpers.h"
 
+#include <UnitTest++/UnitTest++.h>
 #include <iostream>
 
 //------------------------------------------------------------------------------
 template <typename OStream>
-OStream& operator << (OStream& os, const sMiningResource& res)
+OStream& operator<< (OStream& os, const sMiningResource& res)
 {
 	return os << '{' << res.metal << ", " << res.oil << ", " << res.gold << '}';
 }
 
 //------------------------------------------------------------------------------
-bool operator < (eResourceType lhs, eResourceType rhs)
+bool operator<(eResourceType lhs, eResourceType rhs)
 {
 	return int (lhs) < int (rhs);
 }
@@ -45,8 +43,10 @@ namespace
 	//--------------------------------------------------------------------------
 	struct sMine
 	{
-		sMine (int metal, int oil, int gold) : sMine{{metal, oil, gold}} {}
-		sMine (sMiningResource maxProd, int total = 16) : maxProd (maxProd)
+		sMine (int metal, int oil, int gold) :
+			sMine{{metal, oil, gold}} {}
+		sMine (sMiningResource maxProd, int total = 16) :
+			maxProd (maxProd)
 		{
 			staticData.buildingData.canMineMaxRes = total;
 		}
@@ -55,7 +55,7 @@ namespace
 		cStaticUnitData staticData;
 	};
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 template <>
@@ -78,13 +78,13 @@ namespace
 	//--------------------------------------------------------------------------
 	std::vector<std::unique_ptr<cBuilding>> MakeBuildings (const std::vector<sMine>& mines)
 	{
-		return ranges::Transform (mines, [](const sMine& mine){ return MakeBuilding (mine); });
+		return ranges::Transform (mines, [] (const sMine& mine) { return MakeBuilding (mine); });
 	}
 
 	//--------------------------------------------------------------------------
 	sMiningResource makeOrdered (eResourceType (&indexes)[3], const sMiningResource& res)
 	{
-		return { res.get (indexes[0]), res.get (indexes[1]), res.get (indexes[2]) };
+		return {res.get (indexes[0]), res.get (indexes[1]), res.get (indexes[2])};
 	}
 
 	//--------------------------------------------------------------------------
@@ -176,4 +176,4 @@ namespace
 		CheckAnyResOrder (expected, mines);
 	}
 
-}
+} // namespace

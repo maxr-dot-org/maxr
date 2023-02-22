@@ -20,6 +20,7 @@
 #ifndef tests_unittesttagH
 #define tests_unittesttagH
 
-struct cUnitTestTag{};
+struct cUnitTestTag
+{};
 
 #endif

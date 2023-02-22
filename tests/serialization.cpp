@@ -17,12 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <UnitTest++/UnitTest++.h>
-
 #include "utility/crc.h"
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/jsonarchive.h"
 
+#include <UnitTest++/UnitTest++.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -242,4 +241,4 @@ namespace
 		checkJsonSaveLoad (list);
 	}
 
-}
+} // namespace

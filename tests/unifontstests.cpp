@@ -17,18 +17,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <UnitTest++/UnitTest++.h>
-
 #include "output/video/unifonts.h"
-
 #include "unittesttag.h"
 
+#include <UnitTest++/UnitTest++.h>
 #include <regex>
 
 static constexpr const std::size_t charWidth = 2;
 static constexpr const std::size_t charHeight = 2;
 
-template <typename ... Args>
+template <typename... Args>
 cUnicodeFont::cUnicodeFont (cUnitTestTag, Args...)
 {
 	const int w = charWidth;
@@ -64,7 +62,7 @@ namespace
 		auto res = font->breakText (text, text.size() * charWidth, eUnicodeFontType::LatinNormal);
 
 		CHECK_EQUAL (std::regex_replace (text, std::regex ("\n"), "|"),
-					std::regex_replace (concatenateLines (res, "|"), std::regex ("\n"), "\\n"));
+		             std::regex_replace (concatenateLines (res, "|"), std::regex ("\n"), "\\n"));
 #if 0 // similar check, but by part
 		REQUIRE CHECK_EQUAL (expected.size(), res.size());
 		for (std::size_t i = 0; i != expected.size(); ++i)
@@ -113,4 +111,4 @@ namespace
 	{
 		TestBreakSpace ("a|bb|cc|dd", "a  \nbb\n     cc  dd", 2 * charWidth + 1);
 	}
-}
+} // namespace

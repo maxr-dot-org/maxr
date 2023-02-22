@@ -17,12 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <UnitTest++/UnitTest++.h>
-
 #include "ui/graphical/game/control/chatcommand/chatcommand.h"
 #include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
 #include "ui/graphical/game/control/chatcommand/chatcommandexecutor.h"
 
+#include <UnitTest++/UnitTest++.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -30,13 +29,13 @@
 namespace
 {
 	const std::string name = "test";
-	const std::string desc= "dummy desc";
+	const std::string desc = "dummy desc";
 
 	TEST (ChatCommandFixtureNoArgs)
 	{
 		std::size_t test_counter = 0;
 
-		auto test = cChatCommand (name, desc).setAction ([&]() {++test_counter;});
+		auto test = cChatCommand (name, desc).setAction ([&]() { ++test_counter; });
 		REQUIRE CHECK_EQUAL (0, test_counter);
 
 		CHECK_EQUAL (name, test->getCommand().getName());
@@ -54,7 +53,7 @@ namespace
 	TEST (ChatCommand_Bool)
 	{
 		std::map<std::string, std::size_t> map_counter;
-		auto action = [&](bool b) {++map_counter[b ? "on" : "off"];};
+		auto action = [&] (bool b) { ++map_counter[b ? "on" : "off"]; };
 
 		auto test = cChatCommand (name, desc).addArgument<cChatCommandArgumentBool>().setAction (action);
 		REQUIRE CHECK (map_counter.empty());
@@ -64,7 +63,8 @@ namespace
 		CHECK_THROW (!test->tryExecute ("/" + name), std::runtime_error);
 		CHECK (map_counter.empty());
 
-		for (const auto& s : {"off", "on"}) {
+		for (const auto& s : {"off", "on"})
+		{
 			CHECK (test->tryExecute ("/" + name + " " + s));
 			CHECK_EQUAL (1, map_counter[s]);
 		}
@@ -73,10 +73,10 @@ namespace
 	TEST (ChatCommand_Choice)
 	{
 		const std::string name = "test";
-		const std::string desc= "dummy desc";
+		const std::string desc = "dummy desc";
 		const std::vector<std::string> choices{"a", "b", "c"};
 		std::map<std::string, std::size_t> map_counter;
-		auto action = [&](const std::string& s) {++map_counter[s];};
+		auto action = [&] (const std::string& s) { ++map_counter[s]; };
 
 		auto test = cChatCommand (name, desc).addArgument<cChatCommandArgumentChoice> (choices).setAction (action);
 		REQUIRE CHECK (map_counter.empty());
@@ -86,10 +86,11 @@ namespace
 		CHECK_THROW (!test->tryExecute ("/" + name), std::runtime_error);
 		CHECK (map_counter.empty());
 
-		for (const auto& s : choices) {
+		for (const auto& s : choices)
+		{
 			CHECK (test->tryExecute ("/" + name + " " + s));
 			CHECK_EQUAL (1, map_counter[s]);
 		}
 	}
 
-}
+} // namespace
