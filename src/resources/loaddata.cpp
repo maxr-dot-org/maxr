@@ -287,21 +287,6 @@ static int LoadGraphics (const char* path)
 	return 1;
 }
 
-//------------------------------------------------------------------------------
-static void Split (const std::string& s, const char* seps, std::vector<std::string>& words)
-{
-	if (s.empty()) return;
-	size_t beg = 0;
-	size_t end = s.find_first_of (seps, beg);
-
-	while (end != std::string::npos)
-	{
-		words.push_back (s.substr (beg, end - beg));
-		beg = end + 1;
-		end = s.find_first_of (seps, beg);
-	}
-	words.push_back (s.substr (beg));
-}
 namespace
 {
 	//------------------------------------------------------------------------------
