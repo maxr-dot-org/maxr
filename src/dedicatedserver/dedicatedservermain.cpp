@@ -42,7 +42,7 @@ try
 	SDLComponent sdlComponent (false);
 	SDLNetComponent sdlNetComponent;
 
-	if (LoadData() == eLoadingState::Error)
+	if (LoadData (false) == eLoadingState::Error)
 	{
 		Log.write ("Error while loading data!", cLog::eLogType::Error);
 		return -1;

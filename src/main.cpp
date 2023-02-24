@@ -18,17 +18,13 @@
  ***************************************************************************/
 
 #include "dedicatedserver/dedicatedservermain.h"
-#include "defines.h"
 #include "ui/uimain.h"
 
 int main (int argc, char* argv[])
 {
-	if (DEDICATED_SERVER)
-	{
-		return dedicaterservermain (argc, argv);
-	}
-	else
-	{
-		return uimain (argc, argv);
-	}
+#if DEDICATED_SERVER_APPLICATION
+	return dedicaterservermain (argc, argv);
+#else
+	return uimain (argc, argv);
+#endif
 }

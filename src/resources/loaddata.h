@@ -29,6 +29,6 @@ enum class eLoadingState
 /**
 * Loads all relevant files and data
 */
-eLoadingState LoadData();
+eLoadingState LoadData (bool includingUiData);
 
 #endif

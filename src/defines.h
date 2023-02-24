@@ -33,11 +33,4 @@
 
 #define MAXR_ICON (cSettings::getInstance().getDataDir() + "maxr.bmp").c_str()
 
-//#define DEDICATED_SERVER_APPLICATION 1
-#if DEDICATED_SERVER_APPLICATION
-# define DEDICATED_SERVER true
-#else
-# define DEDICATED_SERVER false
-#endif
-
 #endif

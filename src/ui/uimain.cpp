@@ -148,7 +148,7 @@ try
 	initSound(); // now config is loaded and we can init sound and net
 
 	// load files
-	std::future<eLoadingState> dataThread = std::async (std::launch::async, &LoadData);
+	std::future<eLoadingState> dataThread = std::async (std::launch::async, &LoadData, true);
 	using namespace std::literals;
 
 	SDL_Event event;

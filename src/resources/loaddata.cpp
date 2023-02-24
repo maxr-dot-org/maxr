@@ -78,16 +78,20 @@ std::string getBuildVersion()
 /**
  * Writes a Logmessage on the SplashScreen
  * @param sTxt Text to write
+ */
+static void ConsoleMakeLog (const std::string& sTxt, int, int)
+{
+	std::cout << sTxt << std::endl;
+}
+
+/**
+ * Writes a Logmessage on the SplashScreen
+ * @param sTxt Text to write
  * @param ok 0 writes just text, 1 writes "OK" and else "ERROR"
  * @param pos Horizontal Positionindex on SplashScreen
  */
-static void MakeLog (const std::string& sTxt, int ok, int pos)
+static void WindowMakeLog (const std::string& sTxt, int ok, int pos)
 {
-	if (DEDICATED_SERVER)
-	{
-		std::cout << sTxt << std::endl;
-		return;
-	}
 	auto& font = *cUnicodeFont::font;
 	const SDL_Rect rDest = {22, 152, 228, Uint16 (font.getFontHeight (eUnicodeFontType::LatinBigGold))};
 	const SDL_Rect rDest2 = {250, 152, 230, Uint16 (font.getFontHeight (eUnicodeFontType::LatinBigGold))};
@@ -142,11 +146,6 @@ static void LoadLanguage()
 		cSettings::getInstance().saveInFile();
 	}
 	lngPack.setCurrentLanguage (cSettings::getInstance().getLanguage());
-
-	if (cSettings::getInstance().isDebug() && !DEDICATED_SERVER)
-	{
-		debugTranslationSize (lngPack, *cUnicodeFont::font);
-	}
 }
 
 /**
@@ -994,10 +993,9 @@ namespace
 } // namespace
 /**
  * Loads all Buildings
- * @param path Directory of the Buildings
  * @return 1 on success
  */
-static int LoadBuildings()
+static int LoadBuildings (bool includingUiData)
 {
 	Log.write ("Loading Buildings", cLog::eLogType::Info);
 
@@ -1053,7 +1051,7 @@ static int LoadBuildings()
 		cDynamicUnitData dynamicData = createDynamicUnitData (buildingData.id, buildingData.dynamicData);
 		staticData.buildingData = buildingData.staticBuildingData;
 
-		if (!DEDICATED_SERVER)
+		if (includingUiData)
 		{
 			UnitsUiData.buildingUIs.emplace_back();
 			sBuildingUIData& ui = UnitsUiData.buildingUIs.back();
@@ -1073,7 +1071,7 @@ static int LoadBuildings()
 	}
 
 	// Dirtsurfaces
-	if (!DEDICATED_SERVER)
+	if (includingUiData)
 	{
 		LoadGraphicToSurface (UnitsUiData.rubbleBig->img_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx");
 		UnitsUiData.rubbleBig->img = CloneSDLSurface (*UnitsUiData.rubbleBig->img_org);
@@ -1092,10 +1090,9 @@ static int LoadBuildings()
 
 /**
  * Loads all Vehicles
- * @param path Directory of the Vehicles
  * @return 1 on success
  */
-static int LoadVehicles()
+static int LoadVehicles (bool includingUiData)
 {
 	Log.write ("Loading Vehicles", cLog::eLogType::Info);
 
@@ -1154,7 +1151,7 @@ static int LoadVehicles()
 		}
 		staticData.vehicleData = vehicleData.staticVehicleData;
 
-		if (!DEDICATED_SERVER)
+		if (includingUiData)
 		{
 			UnitsUiData.vehicleUIs.emplace_back();
 			sVehicleUIData& ui = UnitsUiData.vehicleUIs.back();
@@ -1271,11 +1268,11 @@ bool loadFonts()
 
 // LoadData ///////////////////////////////////////////////////////////////////
 // Loads all relevant files and data:
-eLoadingState LoadData()
+eLoadingState LoadData (bool includingUiData)
 {
 	CR_ENABLE_CRASH_RPT_CURRENT_THREAD();
 
-	if (!DEDICATED_SERVER)
+	if (includingUiData)
 	{
 		if (!loadFonts())
 		{
@@ -1283,16 +1280,21 @@ eLoadingState LoadData()
 		}
 		Log.mark();
 	}
+	auto MakeLog = includingUiData ? WindowMakeLog : ConsoleMakeLog;
 
 	MakeLog (getBuildVersion(), 0, 0);
 
 	// Load Languagepack
 	MakeLog ("Loading languagepack...", 0, 2);
 	LoadLanguage();
+	if (includingUiData && cSettings::getInstance().isDebug())
+	{
+		debugTranslationSize (lngPack, *cUnicodeFont::font);
+	}
 	MakeLog ("", 1, 2);
 	Log.mark();
 
-	if (!DEDICATED_SERVER)
+	if (includingUiData)
 	{
 		// Load Keys
 		MakeLog (lngPack.i18n ("Text~Init~Keys"), 0, 3);
@@ -1344,7 +1346,7 @@ eLoadingState LoadData()
 	// Load Vehicles
 	MakeLog (lngPack.i18n ("Text~Init~Vehicles"), 0, 7);
 
-	if (LoadVehicles() != 1)
+	if (LoadVehicles (includingUiData) != 1)
 	{
 		MakeLog ("", -1, 7);
 		return eLoadingState::Error;
@@ -1358,7 +1360,7 @@ eLoadingState LoadData()
 	// Load Buildings
 	MakeLog (lngPack.i18n ("Text~Init~Buildings"), 0, 8);
 
-	if (LoadBuildings() != 1)
+	if (LoadBuildings (includingUiData) != 1)
 	{
 		MakeLog ("", -1, 8);
 		return eLoadingState::Error;
@@ -1382,7 +1384,7 @@ eLoadingState LoadData()
 	}
 	Log.mark();
 
-	if (!DEDICATED_SERVER)
+	if (includingUiData)
 	{
 		// Load Music
 		MakeLog (lngPack.i18n ("Text~Init~Music"), 0, 10);
