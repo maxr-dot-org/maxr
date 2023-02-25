@@ -24,6 +24,7 @@
 #include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
+#include <config/workaround/cpp17/filesystem.h>
 #include <mutex>
 #include <string>
 
@@ -177,7 +178,7 @@ public:
 	std::string getFontPath() const;
 	std::string getFxPath() const;
 	std::string getGfxPath() const;
-	std::string getLangPath() const;
+	std::filesystem::path getLangPath() const;
 	std::string getMapsPath() const;
 	std::string getSavesPath() const;
 	std::string getSoundsPath() const;

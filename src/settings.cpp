@@ -149,9 +149,10 @@ cSettings::cSettings()
 #else
 	char* user = getenv ("USER"); //get $USER on linux
 #endif
-
 	player.name = (user == nullptr ? "Commander" : user);
 	player.color = cRgbColor::red();
+
+	dataDir = "./";
 }
 
 //------------------------------------------------------------------------------
@@ -321,7 +322,7 @@ std::string cSettings::getGfxPath() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getLangPath() const
+std::filesystem::path cSettings::getLangPath() const
 {
 	return dataDir + path.languages;
 }
