@@ -24,15 +24,6 @@
 #include <vector>
 
 /**
-* Checks whether a file exists or not
-* @author beko
-* @param path Filename to check for
-* @return true if exists (as in readable)
-* @return false if does not exist (as in not readable)
-*/
-bool FileExists (const std::string& path);
-
-/**
 * Gets the filenames of all files in the directory
 * @author alzi
 * @param sDirectory Directory in which to search

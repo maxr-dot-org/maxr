@@ -26,7 +26,8 @@
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/widgets/image.h"
-#include "utility/files.h"
+
+#include <config/workaround/cpp17/filesystem.h>
 
 //------------------------------------------------------------------------------
 cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer> animationTimer) :
@@ -86,7 +87,7 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 			const auto& vehicle = *static_cast<const cVehicle*> (unit);
 			auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
 
-			if (FileExists (uiData->FLCFile))
+			if (std::filesystem::exists (uiData->FLCFile))
 			{
 				fliAnimation = FliAnimationPointerType (FLI_Open (SDL_RWFromFile (uiData->FLCFile.c_str(), "rb"), nullptr), FLI_Close);
 				FLI_Rewind (fliAnimation.get());

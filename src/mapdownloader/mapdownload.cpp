@@ -31,6 +31,7 @@
 #include "utility/log.h"
 #include "utility/string/tolower.h"
 
+#include <config/workaround/cpp17/filesystem.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -90,12 +91,12 @@ bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 std::string MapDownload::getExistingMapFilePath (const std::string& mapName)
 {
 	string filenameFactory = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
-	if (FileExists (filenameFactory))
+	if (std::filesystem::exists (filenameFactory))
 		return filenameFactory;
 	if (!getUserMapsDir().empty())
 	{
 		string filenameUser = getUserMapsDir() + mapName;
-		if (FileExists (filenameUser))
+		if (std::filesystem::exists (filenameUser))
 			return filenameUser;
 	}
 	return "";

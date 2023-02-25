@@ -25,10 +25,11 @@
 #include "resources/pcx.h"
 #include "settings.h"
 #include "utility/color.h"
-#include "utility/files.h"
 #include "utility/log.h"
 #include "utility/position.h"
 #include "utility/string/trim.h"
+
+#include <config/workaround/cpp17/filesystem.h>
 
 using namespace std;
 
@@ -542,7 +543,7 @@ AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 	filename += ".pcx";
 
 	// load the bitmap
-	if (FileExists (filename))
+	if (std::filesystem::exists (filename))
 		return LoadPCX (filename);
 	else
 		return nullptr;

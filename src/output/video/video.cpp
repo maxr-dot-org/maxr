@@ -31,6 +31,7 @@
 #include "utility/thread/ismainthread.h"
 
 #include <SDL.h>
+#include <config/workaround/cpp17/filesystem.h>
 #include <algorithm>
 #include <cassert>
 #include <ctime>
@@ -370,7 +371,7 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 			{
 				counter += 1;
 				screenshotfile = getUserScreenshotsDir() + "screenie_" + timestr + "_" + std::to_string (counter) + ".bmp";
-			} while (FileExists (screenshotfile));
+			} while (std::filesystem::exists (screenshotfile));
 			Log.write ("Screenshot saved to " + screenshotfile, cLog::eLogType::Info);
 			takeScreenShot (screenshotfile);
 

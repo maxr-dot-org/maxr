@@ -23,8 +23,7 @@
 #include "settings.h"
 #include "utility/log.h"
 
-#include <SDL.h>
-#include <SDL_endian.h>
+#include <config/workaround/cpp17/filesystem.h>
 #include <iostream>
 
 #ifdef _WIN32
@@ -43,21 +42,6 @@
 # include <sys/stat.h>
 # include <unistd.h>
 #endif
-
-//--------------------------------------------------------------
-/** @return exists a file at path */
-//------------------------------------------------------------------------------
-bool FileExists (const std::string& path)
-{
-	SDL_RWops* file = SDL_RWFromFile (path.c_str(), "r");
-
-	if (file == nullptr)
-	{
-		return false;
-	}
-	SDL_RWclose (file);
-	return true;
-}
 
 //------------------------------------------------------------------------------
 static bool makeDir (const std::string& path)
@@ -86,7 +70,7 @@ static bool DirExists (const std::string& path)
 	else
 		return false;
 #else
-	return FileExists (path); // on linux everything is a file
+	return std::filesystem::exists (path); // on linux everything is a file
 #endif
 }
 
@@ -219,7 +203,7 @@ std::string getCurrentExeDir()
 	// determine full path to application
 	// this needs /proc support that should be available
 	// on most linux installations
-	if (FileExists ("/proc/self/exe"))
+	if (std::filesystem::exists ("/proc/self/exe"))
 	{
 		char cPathToExe[255];
 		int iSize = readlink ("/proc/self/exe", cPathToExe, sizeof (cPathToExe));
@@ -250,7 +234,7 @@ std::string getCurrentExeDir()
 			exePath += PATH_DELIMITER;
 
 			// check for binary itself in bin folder
-			if (FileExists (exePath + "maxr"))
+			if (std::filesystem::exists (exePath + "maxr"))
 			{
 				Log.write ("Path to binary is: " + exePath, cLog::eLogType::Info);
 			}
@@ -262,7 +246,7 @@ std::string getCurrentExeDir()
 				if (cPathToExe[iPos - 1] == 'r' && cPathToExe[iPos - 2] == 'x' && cPathToExe[iPos - 3] == 'a' && cPathToExe[iPos - 4] == 'm')
 				{
 					exePath = exePath.substr (0, iPos - 5);
-					if (FileExists (exePath + "maxr"))
+					if (std::filesystem::exists (exePath + "maxr"))
 					{
 						Log.write ("Path to binary is: " + exePath, cLog::eLogType::Info);
 					}

@@ -20,10 +20,10 @@
 #include "pcx.h"
 
 #include "output/video/video.h"
-#include "utility/files.h"
 #include "utility/log.h"
 
 #include <algorithm>
+#include <config/workaround/cpp17/filesystem.h>
 
 /**
 *  Class that uses a internal buffer to read from file.
@@ -103,7 +103,7 @@ private:
 AutoSurface LoadPCX (const std::string& name)
 {
 	// Open the file.
-	if (!FileExists (name))
+	if (!std::filesystem::exists (name))
 	{
 		// File not found, create empty surface.
 		return AutoSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));

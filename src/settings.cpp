@@ -112,7 +112,7 @@ namespace
 		for (auto sInitFile : sPathArray)
 		{
 			sInitFile += PATH_DELIMITER;
-			if (FileExists (sInitFile + "init.pcx"))
+			if (std::filesystem::exists (sInitFile + "init.pcx"))
 			{
 				sPathToGameData = sInitFile;
 				break;

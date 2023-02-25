@@ -32,11 +32,11 @@
 #include "resources/loaddata.h"
 #include "ui/graphical/menu/windows/windowstart.h"
 #include "ui/widgets/application.h"
-#include "utility/files.h"
 #include "utility/log.h"
 #include "utility/thread/ismainthread.h"
 
 #include <SDL_mixer.h>
+#include <config/workaround/cpp17/filesystem.h>
 #include <future>
 #include <thread>
 /**
@@ -81,7 +81,7 @@ static void showIntro()
 {
 	const std::string filename = cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE";
 
-	if (!FileExists (filename))
+	if (!std::filesystem::exists (filename))
 	{
 		Log.write ("Couldn't find movie " + filename, cLog::eLogType::Warning);
 	}
