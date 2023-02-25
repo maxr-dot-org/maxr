@@ -26,6 +26,7 @@
 #include "utility/serialization/jsonarchive.h"
 #include "utility/string/tolower.h"
 
+#include <config/workaround/cpp17/filesystem.h>
 #include <iostream>
 #include <locale>
 #include <string>
@@ -177,7 +178,7 @@ void cSettings::setPaths()
 #endif
 	homeDir += (homeDir.empty() ? "" : PATH_DELIMITER) + maxrDir + PATH_DELIMITER;
 	std::cout << "\n(II): Read home directory " << homeDir;
-	makeDirectories (homeDir);
+	std::filesystem::create_directories (homeDir);
 
 	// set new place for logs
 	logPath = homeDir + "maxr.log";
@@ -221,7 +222,7 @@ void cSettings::initialize()
 
 	const auto settingsJson = homeDir + "maxr.json";
 
-	if (FileExists (settingsJson))
+	if (std::filesystem::exists (settingsJson))
 	{
 		loadFromJsonFile (settingsJson);
 	}
@@ -237,17 +238,10 @@ void cSettings::initialize()
 	else
 		Log.write ("Debugmode enabled", cLog::eLogType::Info);
 
-#if MAC
 	// Create saves directory, if it doesn't exist, yet.
 	// Creating it during setPaths is too early, because it was not read yet.
-	if (!FileExists (getSavesPath()))
-	{
-		if (mkdir (getSavesPath().c_str(), 0755) == 0)
-			Log.write ("Created new save directory " + getSavesPath(), cLog::eLogType::Info);
-		else
-			Log.write ("Can't create save directory " + getSavesPath(), cLog::eLogType::Error);
-	}
-#endif
+	std::filesystem::create_directories (getSavesPath());
+
 	initialized = true;
 	initializing = false;
 }

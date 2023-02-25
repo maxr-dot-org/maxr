@@ -35,6 +35,7 @@
 #include "utility/serialization/jsonarchive.h"
 #include "utility/serialization/serialization.h"
 
+#include <config/workaround/cpp17/filesystem.h>
 #include <config/workaround/cpp17/optional.h>
 #include <ctime>
 #include <regex>
@@ -112,7 +113,7 @@ void cSavegame::save (const cModel& model, int slot, const std::string& saveName
 	cJsonArchiveOut archiveCrc (json);
 	archiveCrc << serialization::makeNvp ("modelcrc", model.getChecksum());
 
-	makeDirectories (cSettings::getInstance().getSavesPath());
+	std::filesystem::create_directories (cSettings::getInstance().getSavesPath());
 	{
 		std::ofstream file (getFileName (slot));
 		file << json.dump (2);
@@ -144,7 +145,7 @@ void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 	archive << serialization::makeNvp ("playerNr", guiInfo.playerNr);
 	archive << serialization::makeNvp ("guiState", guiInfo.guiInfo);
 
-	makeDirectories (cSettings::getInstance().getSavesPath());
+	std::filesystem::create_directories (cSettings::getInstance().getSavesPath());
 	int loadedSlot = guiInfo.slot;
 	std::ofstream file (getFileName (loadedSlot));
 	file << json->dump (2);

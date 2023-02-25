@@ -60,7 +60,7 @@ bool FileExists (const std::string& path)
 }
 
 //------------------------------------------------------------------------------
-bool makeDir (const std::string& path)
+static bool makeDir (const std::string& path)
 {
 #ifdef WIN32
 	return _mkdir (path.c_str()) == 0;
@@ -70,25 +70,7 @@ bool makeDir (const std::string& path)
 }
 
 //------------------------------------------------------------------------------
-// std::make_directories is C++17
-void makeDirectories (const std::string& path)
-{
-	std::size_t prev_pos = 0;
-
-	while (prev_pos != std::string::npos)
-	{
-		const auto pos = path.find_first_of ("/\\", prev_pos);
-		const auto subPath = path.substr (0, pos);
-		if (!DirExists (subPath))
-		{
-			makeDir (subPath);
-		}
-		prev_pos = pos == std::string::npos ? pos : pos + 1;
-	}
-}
-
-//------------------------------------------------------------------------------
-bool DirExists (const std::string& path)
+static bool DirExists (const std::string& path)
 {
 #ifdef WIN32
 	if (_access (path.c_str(), 0) == 0)

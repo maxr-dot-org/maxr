@@ -33,23 +33,6 @@
 bool FileExists (const std::string& path);
 
 /**
-* Checks whether a directory exists.
-* @param path Path to check for
-* @return true if the directory exists. Else false.
-*/
-bool DirExists (const std::string& path);
-
-/**
-* Creates a new directory.
-* @param Path to the directory to create.
-* @return True if the directoy has been created successfully. False on errors.
-*/
-bool makeDir (const std::string& path);
-
-// Poor replacement of std::directory
-void makeDirectories (const std::string& path);
-
-/**
 * Gets the filenames of all files in the directory
 * @author alzi
 * @param sDirectory Directory in which to search
