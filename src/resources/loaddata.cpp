@@ -1336,7 +1336,7 @@ eLoadingState LoadData (bool includingUiData)
 		// Load Effects
 		MakeLog (lngPack.i18n ("Text~Init~Effects"), 0, 6);
 		Log.write ("Loading Effects", cLog::eLogType::Info);
-		EffectsData.load (cSettings::getInstance().getFxPath().c_str());
+		EffectsData.load (cSettings::getInstance().getFxPath());
 		MakeLog ("", 1, 6);
 		Log.mark();
 	}
@@ -1401,14 +1401,14 @@ eLoadingState LoadData (bool includingUiData)
 		// Load Sounds
 		MakeLog (lngPack.i18n ("Text~Init~Sounds"), 0, 11);
 		Log.write ("Loading Sounds", cLog::eLogType::Info);
-		SoundData.load (cSettings::getInstance().getSoundsPath().c_str());
+		SoundData.load (cSettings::getInstance().getSoundsPath());
 		MakeLog ("", 1, 11);
 		Log.mark();
 
 		// Load Voices
 		MakeLog (lngPack.i18n ("Text~Init~Voices"), 0, 12);
 		Log.write ("Loading Voices", cLog::eLogType::Info);
-		VoiceData.load (cSettings::getInstance().getVoicesPath().c_str());
+		VoiceData.load (cSettings::getInstance().getVoicesPath());
 		MakeLog ("", 1, 12);
 		Log.mark();
 	}
@@ -1472,8 +1472,11 @@ static int LoadEffectAlphaToSurface (AutoSurface (&dest)[2], const char* directo
 }
 
 //------------------------------------------------------------------------------
-void cEffectsData::load (const char* path)
+void cEffectsData::load (const std::filesystem::path& directory)
 {
+	const auto& directoryStr = directory.string();
+	const char* path = directoryStr.c_str();
+
 	LoadEffectGraphicToSurface (fx_explo_small, path, "explo_small.pcx");
 	LoadEffectGraphicToSurface (fx_explo_big, path, "explo_big.pcx");
 	LoadEffectGraphicToSurface (fx_explo_water, path, "explo_water.pcx");
@@ -1491,8 +1494,11 @@ void cEffectsData::load (const char* path)
 }
 
 //------------------------------------------------------------------------------
-void cSoundData::load (const char* path)
+void cSoundData::load (const std::filesystem::path& directory)
 {
+	const auto& directoryStr = directory.string();
+	const char* path = directoryStr.c_str();
+
 	LoadSoundfile (SNDHudSwitch, path, "HudSwitch.ogg");
 	LoadSoundfile (SNDHudButton, path, "HudButton.ogg");
 	LoadSoundfile (SNDMenuButton, path, "MenuButton.ogg");
@@ -1533,8 +1539,11 @@ void cSoundData::load (const char* path)
 }
 
 //------------------------------------------------------------------------------
-void cVoiceData::load (const char* path)
+void cVoiceData::load (const std::filesystem::path& directory)
 {
+	const auto& directoryStr = directory.string();
+	const char* path = directoryStr.c_str();
+
 	LoadSoundfile (VOIAmmoLow[0], path, "ammo_low1.ogg", true);
 	LoadSoundfile (VOIAmmoLow[1], path, "ammo_low2.ogg", true);
 	LoadSoundfile (VOIAmmoEmpty[0], path, "ammo_empty1.ogg", true);
@@ -1628,8 +1637,11 @@ void cOtherData::loadWayPoints()
 }
 
 //------------------------------------------------------------------------------
-void cResourceData::load (const char* path)
+void cResourceData::load (const std::filesystem::path& directory)
 {
+	const auto& directoryStr = directory.string();
+	const char* path = directoryStr.c_str();
+
 	// metal
 	if (LoadGraphicToSurface (res_metal_org, path, "res.pcx") == 1)
 	{

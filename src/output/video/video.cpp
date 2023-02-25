@@ -342,9 +342,9 @@ int cVideo::getMinH() const
 	return MINHEIGHT;
 }
 
-void cVideo::takeScreenShot (const std::string& filename) const
+void cVideo::takeScreenShot (const std::filesystem::path& filename) const
 {
-	SDL_SaveBMP (buffer, filename.c_str());
+	SDL_SaveBMP (buffer, filename.string().c_str());
 }
 
 void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)

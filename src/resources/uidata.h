@@ -25,6 +25,7 @@
 #include "game/data/units/unitdata.h"
 
 #include <SDL.h>
+#include <config/workaround/cpp17/filesystem.h>
 #include <vector>
 
 class cBuilding;
@@ -103,7 +104,7 @@ public:
 class cEffectsData
 {
 public:
-	void load (const char* path);
+	void load (const std::filesystem::path& directory);
 
 public:
 	AutoSurface fx_explo_big[2];
@@ -126,7 +127,7 @@ public:
 class cResourceData
 {
 public:
-	void load (const char* path);
+	void load (const std::filesystem::path& directory);
 
 public:
 	AutoSurface res_metal_org;

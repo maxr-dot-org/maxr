@@ -100,7 +100,7 @@ private:
 	unsigned int end = 0;
 };
 
-AutoSurface LoadPCX (const std::string& name)
+AutoSurface LoadPCX (const std::filesystem::path& name)
 {
 	// Open the file.
 	if (!std::filesystem::exists (name))
@@ -110,7 +110,7 @@ AutoSurface LoadPCX (const std::string& name)
 	}
 
 	cBufferedFile bufferedFile;
-	if (!bufferedFile.open (name.c_str(), "rb"))
+	if (!bufferedFile.open (name.string().c_str(), "rb"))
 	{
 		Log.write (SDL_GetError(), cLog::eLogType::Warning); // Image corrupted, create empty surface.
 		return AutoSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));
