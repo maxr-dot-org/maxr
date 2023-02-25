@@ -43,7 +43,7 @@ namespace
 
 		CHECK (!test->tryExecute ("/" + name + "2"));
 		CHECK (0 == test_counter);
-		CHECK_THROWS_AS (!test->tryExecute ("/" + name + " a"), std::runtime_error);
+		CHECK_THROWS_AS (test->tryExecute ("/" + name + " a"), std::runtime_error);
 		CHECK (0 == test_counter);
 
 		CHECK (test->tryExecute ("/" + name));
@@ -60,7 +60,7 @@ namespace
 
 		CHECK (!test->tryExecute ("/" + name + "2"));
 		CHECK (map_counter.empty());
-		CHECK_THROWS_AS (!test->tryExecute ("/" + name), std::runtime_error);
+		CHECK_THROWS_AS (test->tryExecute ("/" + name), std::runtime_error);
 		CHECK (map_counter.empty());
 
 		for (const auto& s : {"off", "on"})
@@ -83,7 +83,7 @@ namespace
 
 		CHECK (!test->tryExecute ("/" + name + "2"));
 		CHECK (map_counter.empty());
-		CHECK_THROWS_AS (!test->tryExecute ("/" + name), std::runtime_error);
+		CHECK_THROWS_AS (test->tryExecute ("/" + name), std::runtime_error);
 		CHECK (map_counter.empty());
 
 		for (const auto& s : choices)
