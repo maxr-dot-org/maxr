@@ -81,7 +81,7 @@ static void showIntro()
 {
 	const std::string filename = cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE";
 
-	if (!FileExists (filename.c_str()))
+	if (!FileExists (filename))
 	{
 		Log.write ("Couldn't find movie " + filename, cLog::eLogType::Warning);
 	}

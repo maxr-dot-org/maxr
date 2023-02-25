@@ -30,7 +30,6 @@
 * @return true if exists (as in readable)
 * @return false if does not exist (as in not readable)
 */
-bool FileExists (const char* path);
 bool FileExists (const std::string& path);
 
 /**

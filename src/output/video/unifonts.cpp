@@ -542,7 +542,7 @@ AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 	filename += ".pcx";
 
 	// load the bitmap
-	if (FileExists (filename.c_str()))
+	if (FileExists (filename))
 		return LoadPCX (filename);
 	else
 		return nullptr;

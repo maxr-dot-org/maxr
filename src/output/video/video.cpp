@@ -370,7 +370,7 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 			{
 				counter += 1;
 				screenshotfile = getUserScreenshotsDir() + "screenie_" + timestr + "_" + std::to_string (counter) + ".bmp";
-			} while (FileExists (screenshotfile.c_str()));
+			} while (FileExists (screenshotfile));
 			Log.write ("Screenshot saved to " + screenshotfile, cLog::eLogType::Info);
 			takeScreenShot (screenshotfile);
 

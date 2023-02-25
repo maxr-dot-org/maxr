@@ -103,7 +103,7 @@ private:
 AutoSurface LoadPCX (const std::string& name)
 {
 	// Open the file.
-	if (!FileExists (name.c_str()))
+	if (!FileExists (name))
 	{
 		// File not found, create empty surface.
 		return AutoSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));

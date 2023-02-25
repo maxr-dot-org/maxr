@@ -90,12 +90,12 @@ bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 std::string MapDownload::getExistingMapFilePath (const std::string& mapName)
 {
 	string filenameFactory = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
-	if (FileExists (filenameFactory.c_str()))
+	if (FileExists (filenameFactory))
 		return filenameFactory;
 	if (!getUserMapsDir().empty())
 	{
 		string filenameUser = getUserMapsDir() + mapName;
-		if (FileExists (filenameUser.c_str()))
+		if (FileExists (filenameUser))
 			return filenameUser;
 	}
 	return "";

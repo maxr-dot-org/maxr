@@ -47,9 +47,9 @@
 //--------------------------------------------------------------
 /** @return exists a file at path */
 //------------------------------------------------------------------------------
-bool FileExists (const char* path)
+bool FileExists (const std::string& path)
 {
-	SDL_RWops* file = SDL_RWFromFile (path, "r");
+	SDL_RWops* file = SDL_RWFromFile (path.c_str(), "r");
 
 	if (file == nullptr)
 	{
@@ -57,11 +57,6 @@ bool FileExists (const char* path)
 	}
 	SDL_RWclose (file);
 	return true;
-}
-//------------------------------------------------------------------------------
-bool FileExists (const std::string& path)
-{
-	return FileExists (path.c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -109,7 +104,7 @@ bool DirExists (const std::string& path)
 	else
 		return false;
 #else
-	return FileExists (path.c_str()); // on linux everything is a file
+	return FileExists (path); // on linux everything is a file
 #endif
 }
 
@@ -273,7 +268,7 @@ std::string getCurrentExeDir()
 			exePath += PATH_DELIMITER;
 
 			// check for binary itself in bin folder
-			if (FileExists ((exePath + "maxr").c_str()))
+			if (FileExists (exePath + "maxr"))
 			{
 				Log.write ("Path to binary is: " + exePath, cLog::eLogType::Info);
 			}
@@ -285,7 +280,7 @@ std::string getCurrentExeDir()
 				if (cPathToExe[iPos - 1] == 'r' && cPathToExe[iPos - 2] == 'x' && cPathToExe[iPos - 3] == 'a' && cPathToExe[iPos - 4] == 'm')
 				{
 					exePath = exePath.substr (0, iPos - 5);
-					if (FileExists ((exePath + "maxr").c_str()))
+					if (FileExists (exePath + "maxr"))
 					{
 						Log.write ("Path to binary is: " + exePath, cLog::eLogType::Info);
 					}

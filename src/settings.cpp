@@ -240,7 +240,7 @@ void cSettings::initialize()
 #if MAC
 	// Create saves directory, if it doesn't exist, yet.
 	// Creating it during setPaths is too early, because it was not read yet.
-	if (!FileExists (getSavesPath().c_str()))
+	if (!FileExists (getSavesPath()))
 	{
 		if (mkdir (getSavesPath().c_str(), 0755) == 0)
 			Log.write ("Created new save directory " + getSavesPath(), cLog::eLogType::Info);
