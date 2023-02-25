@@ -173,7 +173,7 @@ static int LoadGraphicToSurface (AutoSurface& dest, const char* directory, const
 	dest = LoadPCX (filepath);
 
 	filepath.insert (0, "File loaded: ");
-	Log.write (filepath.c_str(), cLog::eLogType::Debug);
+	Log.write (filepath, cLog::eLogType::Debug);
 
 	return 1;
 }

@@ -60,7 +60,7 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 		{
 			const auto index = row * clanColumns + column;
 
-			auto image = LoadPCX (clanLogoPaths[index].c_str());
+			auto image = LoadPCX (clanLogoPaths[index]);
 			SDL_SetColorKey (image.get(), SDL_TRUE, 0xFF00FF);
 			clanImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image.get(), &SoundData.SNDHudButton));
 			signalConnectionManager.connect (clanImages[index]->clicked, [this, index]() { clanClicked (clanImages[index]); });

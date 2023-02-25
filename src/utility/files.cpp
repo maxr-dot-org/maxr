@@ -148,9 +148,9 @@ std::string getUserMapsDir()
 #else
 	if (cSettings::getInstance().getHomeDir().empty()) return "";
 	std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
-	if (!DirExists (mapFolder.c_str()))
+	if (!DirExists (mapFolder))
 	{
-		if (makeDir (mapFolder.c_str()))
+		if (makeDir (mapFolder))
 			return mapFolder + PATH_DELIMITER;
 		return "";
 	}
@@ -178,7 +178,7 @@ std::string getUserScreenshotsDir()
 	std::string screenshotsFolder = cSettings::getInstance().getHomeDir() + "screenies";
 	if (!DirExists (screenshotsFolder))
 	{
-		if (makeDir (screenshotsFolder.c_str()))
+		if (makeDir (screenshotsFolder))
 			return screenshotsFolder + PATH_DELIMITER;
 		return "";
 	}
@@ -318,7 +318,7 @@ std::string getUserLogDir()
 
 	if (!DirExists (LogDir))
 	{
-		if (makeDir (LogDir.c_str()))
+		if (makeDir (LogDir))
 			return LogDir + PATH_DELIMITER;
 		return "";
 	}
