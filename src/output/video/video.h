@@ -165,7 +165,7 @@ public:
 
 	void applyShadow (const SDL_Rect* rect, SDL_Surface& destination);
 
-	mutable cSignal<void (const std::string&)> screenShotTaken;
+	mutable cSignal<void (const std::filesystem::path&)> screenShotTaken;
 
 	mutable cSignal<void()> resolutionChanged;
 

@@ -23,7 +23,6 @@
 #include "settings.h"
 #include "utility/log.h"
 
-#include <config/workaround/cpp17/filesystem.h>
 #include <iostream>
 
 #ifdef _WIN32
@@ -89,7 +88,7 @@ std::string getUserMapsDir()
 }
 
 //------------------------------------------------------------------------------
-std::string getUserScreenshotsDir()
+std::filesystem::path getUserScreenshotsDir()
 {
 #ifdef __amigaos4__
 	return "";
@@ -97,11 +96,11 @@ std::string getUserScreenshotsDir()
 	char* cHome = getenv ("HOME"); //get $HOME on mac
 	if (cHome == nullptr)
 		return "";
-	std::string homeFolder = cHome;
+	std::filesystem::path homeFolder = cHome;
 	if (homeFolder.empty())
 		return "";
 	// store screenshots directly on the desktop of the user
-	return homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
+	return homeFolder / "Desktop";
 #else
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";

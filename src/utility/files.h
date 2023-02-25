@@ -20,6 +20,7 @@
 #ifndef utility_filesH
 #define utility_filesH
 
+#include <config/workaround/cpp17/filesystem.h>
 #include <string>
 #include <vector>
 
@@ -43,7 +44,7 @@ std::string getUserMapsDir();
  * @author pagra
  * @return an absolute path to the user's screenshots directory or empty string, if no user screenshots folder is defined on the system
  */
-std::string getUserScreenshotsDir();
+std::filesystem::path getUserScreenshotsDir();
 
 std::string getUserLogDir();
 std::string getHomeDir();

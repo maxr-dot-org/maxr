@@ -365,14 +365,14 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 			tTime = time (nullptr);
 			tmTime = localtime (&tTime);
 			strftime (timestr, sizeof (timestr), "%Y-%m-%d_%H%M%S", tmTime);
-			std::string screenshotfile;
+			std::filesystem::path screenshotfile;
 			int counter = 0;
 			do
 			{
 				counter += 1;
-				screenshotfile = getUserScreenshotsDir() + "screenie_" + timestr + "_" + std::to_string (counter) + ".bmp";
+				screenshotfile = getUserScreenshotsDir() / (std::string ("screenie_") + timestr + "_" + std::to_string (counter) + ".bmp");
 			} while (std::filesystem::exists (screenshotfile));
-			Log.write ("Screenshot saved to " + screenshotfile, cLog::eLogType::Info);
+			Log.write ("Screenshot saved to " + screenshotfile.string(), cLog::eLogType::Info);
 			takeScreenShot (screenshotfile);
 
 			screenShotTaken (screenshotfile);
