@@ -89,7 +89,7 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 
 			if (std::filesystem::exists (uiData->FLCFile))
 			{
-				fliAnimation = FliAnimationPointerType (FLI_Open (SDL_RWFromFile (uiData->FLCFile.c_str(), "rb"), nullptr), FLI_Close);
+				fliAnimation = FliAnimationPointerType (FLI_Open (SDL_RWFromFile (uiData->FLCFile.string().c_str(), "rb"), nullptr), FLI_Close);
 				FLI_Rewind (fliAnimation.get());
 				FLI_NextFrame (fliAnimation.get());
 				currentFrameImage->setImage (fliAnimation->surface);

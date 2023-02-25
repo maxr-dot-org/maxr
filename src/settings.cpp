@@ -358,13 +358,13 @@ std::string cSettings::getMusicPath() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getVehiclesPath() const
+std::filesystem::path cSettings::getVehiclesPath() const
 {
 	return dataDir + path.vehicles;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getBuildingsPath() const
+std::filesystem::path cSettings::getBuildingsPath() const
 {
 	return dataDir + path.buildings;
 }

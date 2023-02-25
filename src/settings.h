@@ -184,8 +184,8 @@ public:
 	std::string getSoundsPath() const;
 	std::string getVoicesPath() const;
 	std::string getMusicPath() const;
-	std::string getVehiclesPath() const;
-	std::string getBuildingsPath() const;
+	std::filesystem::path getVehiclesPath() const;
+	std::filesystem::path getBuildingsPath() const;
 	std::string getMvePath() const;
 
 	template <typename Archive>

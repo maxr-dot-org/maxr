@@ -152,19 +152,11 @@ static void LoadLanguage()
 /**
  * Loads a graphic to the surface
  * @param dest Destination surface
- * @param directory Directory of the file
- * @param filename Name of the file
+ * @param filepath Name of the file
  * @return 1 on success
  */
-static int LoadGraphicToSurface (AutoSurface& dest, const char* directory, const char* filename)
+static int LoadGraphicToSurface (AutoSurface& dest, const std::filesystem::path& filepath)
 {
-	std::string filepath;
-	if (strcmp (directory, ""))
-	{
-		filepath = directory;
-		filepath += PATH_DELIMITER;
-	}
-	filepath += filename;
 	if (!std::filesystem::exists (filepath))
 	{
 		dest = nullptr;
@@ -173,9 +165,7 @@ static int LoadGraphicToSurface (AutoSurface& dest, const char* directory, const
 	}
 	dest = LoadPCX (filepath);
 
-	filepath.insert (0, "File loaded: ");
-	Log.write (filepath, cLog::eLogType::Debug);
-
+	Log.write ("File loaded: " + filepath.string(), cLog::eLogType::Debug);
 	return 1;
 }
 
@@ -198,66 +188,66 @@ static void createShadowGfx()
  * @param path Directory of the graphics
  * @return 1 on success
  */
-static int LoadGraphics (const char* path)
+static int LoadGraphics (const std::filesystem::path& directory)
 {
 	Log.write ("Loading Graphics", cLog::eLogType::Info);
 
 	Log.write ("Gamegraphics...", cLog::eLogType::Debug);
-	if (!LoadGraphicToSurface (GraphicsData.gfx_Chand, path, "hand.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Cno, path, "no.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Cselect, path, "select.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Cmove, path, "move.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Cmove_draft, path, "move_draft.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Chelp, path, "help.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Ctransf, path, "transf.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Cload, path, "load.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Cmuni, path, "muni.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Cband, path, "band_cur.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Cactivate, path, "activate.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Crepair, path, "repair.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Csteal, path, "steal.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Cdisable, path, "disable.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Cattack, path, "attack.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_Cattackoor, path, "attack_oor.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_hud_stuff, path, "hud_stuff.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_hud_extra_players, path, "hud_extra_players.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_panel_top, path, "panel_top.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_panel_bottom, path, "panel_bottom.pcx") ||
-		!LoadGraphicToSurface (GraphicsData.gfx_menu_stuff, path, "menu_stuff.pcx"))
+	if (!LoadGraphicToSurface (GraphicsData.gfx_Chand, directory / "hand.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cno, directory / "no.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cselect, directory / "select.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cmove, directory / "move.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cmove_draft, directory / "move_draft.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Chelp, directory / "help.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Ctransf, directory / "transf.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cload, directory / "load.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cmuni, directory / "muni.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cband, directory / "band_cur.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cactivate, directory / "activate.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Crepair, directory / "repair.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Csteal, directory / "steal.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cdisable, directory / "disable.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cattack, directory / "attack.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cattackoor, directory / "attack_oor.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_hud_stuff, directory / "hud_stuff.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_hud_extra_players, directory / "hud_extra_players.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_panel_top, directory / "panel_top.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_panel_bottom, directory / "panel_bottom.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_menu_stuff, directory / "menu_stuff.pcx"))
 	{
 		return 0;
 	}
-	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil1, path, "pf_1.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil2, path, "pf_2.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil3, path, "pf_3.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil4, path, "pf_4.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil6, path, "pf_6.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil7, path, "pf_7.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil8, path, "pf_8.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil9, path, "pf_9.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_context_menu, path, "object_menu2.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_destruction, path, "destruction.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_band_small_org, path, "band_small.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil1, directory / "pf_1.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil2, directory / "pf_2.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil3, directory / "pf_3.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil4, directory / "pf_4.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil6, directory / "pf_6.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil7, directory / "pf_7.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil8, directory / "pf_8.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil9, directory / "pf_9.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_context_menu, directory / "object_menu2.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_destruction, directory / "destruction.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_band_small_org, directory / "band_small.pcx");
 	GraphicsData.gfx_band_small = CloneSDLSurface (*GraphicsData.gfx_band_small_org);
-	LoadGraphicToSurface (GraphicsData.gfx_band_big_org, path, "band_big.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_band_big_org, directory / "band_big.pcx");
 	GraphicsData.gfx_band_big = CloneSDLSurface (*GraphicsData.gfx_band_big_org);
-	LoadGraphicToSurface (GraphicsData.gfx_big_beton_org, path, "big_beton.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_big_beton_org, directory / "big_beton.pcx");
 	GraphicsData.gfx_big_beton = CloneSDLSurface (*GraphicsData.gfx_big_beton_org);
-	LoadGraphicToSurface (GraphicsData.gfx_storage, path, "storage.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_storage_ground, path, "storage_ground.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_dialog, path, "dialog.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_edock, path, "edock.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_edepot, path, "edepot.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_ehangar, path, "ehangar.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_player_pc, path, "player_pc.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_player_human, path, "player_human.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_player_none, path, "player_none.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_exitpoints_org, path, "activate_field.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_storage, directory / "storage.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_storage_ground, directory / "storage_ground.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_dialog, directory / "dialog.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_edock, directory / "edock.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_edepot, directory / "edepot.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_ehangar, directory / "ehangar.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_player_pc, directory / "player_pc.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_player_human, directory / "player_human.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_player_none, directory / "player_none.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_exitpoints_org, directory / "activate_field.pcx");
 	GraphicsData.gfx_exitpoints = CloneSDLSurface (*GraphicsData.gfx_exitpoints_org);
-	LoadGraphicToSurface (GraphicsData.gfx_player_select, path, "customgame_menu.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_menu_buttons, path, "menu_buttons.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_player_ready, path, "player_ready.pcx");
-	LoadGraphicToSurface (GraphicsData.gfx_hud_chatbox, path, "hud_chatbox.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_player_select, directory / "customgame_menu.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_menu_buttons, directory / "menu_buttons.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_player_ready, directory / "player_ready.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_hud_chatbox, directory / "hud_chatbox.pcx");
 
 	GraphicsData.DialogPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog.pcx";
 	GraphicsData.Dialog2Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog2.pcx";
@@ -274,7 +264,7 @@ static int LoadGraphics (const char* path)
 
 	// Glas:
 	Log.write ("Glassgraphic...", cLog::eLogType::Debug);
-	LoadGraphicToSurface (GraphicsData.gfx_destruction_glas, path, "destruction_glas.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_destruction_glas, directory / "destruction_glas.pcx");
 	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_destruction_glas.get(), 150);
 
 	// Waypoints:
@@ -283,7 +273,7 @@ static int LoadGraphics (const char* path)
 
 	// Resources:
 	Log.write ("Resourcegraphics...", cLog::eLogType::Debug);
-	ResourceData.load (path);
+	ResourceData.load (directory);
 	return 1;
 }
 
@@ -371,18 +361,17 @@ namespace
  * Loads the unitdata from the data.json in the unitfolder
  * @param directory Unitdirectory, relative to the main game directory
  */
-static void LoadUnitData (sInitialBuildingData& buildingData, char const* const directory)
+static void LoadUnitData (sInitialBuildingData& buildingData, const std::filesystem::path& directory)
 {
-	std::string path = directory;
-	path += "data.json";
+	const auto path = directory / "data.json";
 	if (!std::filesystem::exists (path)) return;
 
-	std::ifstream file (path);
+	std::ifstream file (path.string());
 	nlohmann::json json;
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + path, cLog::eLogType::Warning);
+		Log.write ("Can't load " + path.string(), cLog::eLogType::Warning);
 		return;
 	}
 	cJsonArchiveIn in (json);
@@ -393,18 +382,17 @@ static void LoadUnitData (sInitialBuildingData& buildingData, char const* const 
  * Loads the unitdata from the data.json in the unitfolder
  * @param directory Unitdirectory, relative to the main game directory
  */
-static void LoadUnitData (sInitialVehicleData& vehicleData, char const* const directory)
+static void LoadUnitData (sInitialVehicleData& vehicleData, const std::filesystem::path& directory)
 {
-	std::string path = directory;
-	path += "data.json";
+	auto path = directory / "data.json";
 	if (!std::filesystem::exists (path)) return;
 
-	std::ifstream file (path);
+	std::ifstream file (path.string());
 	nlohmann::json json;
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + path, cLog::eLogType::Warning);
+		Log.write ("Can't load " + path.string(), cLog::eLogType::Warning);
 		return;
 	}
 	cJsonArchiveIn in (json);
@@ -465,49 +453,33 @@ static cStaticUnitData createStaticUnitData (const sID& id, const sStaticCommonU
  * @param localize When true, sVoiceLanguage is appended to the filename. Used for loading voice files.
  * @return 1 on success
  */
-static int LoadSoundfile (cSoundChunk& dest, const char* directory, const char* filename, bool localize = false)
+static int LoadSoundfile (cSoundChunk& dest, const std::filesystem::path& filepath, bool localize = false)
 {
-	std::string filepath;
-	std::string fullPath;
-	if (strcmp (directory, ""))
-	{
-		filepath = directory;
-		filepath += PATH_DELIMITER;
-	}
-	//add lang code to voice
-	fullPath = filepath + filename;
 	if (localize && !cSettings::getInstance().getVoiceLanguage().empty())
 	{
-		fullPath.insert (fullPath.rfind ("."), "_" + cSettings::getInstance().getVoiceLanguage());
-		if (std::filesystem::exists (fullPath))
+		auto localizedPath = filepath.string();
+		localizedPath.insert (localizedPath.rfind ("."), "_" + cSettings::getInstance().getVoiceLanguage());
+		if (std::filesystem::exists (localizedPath))
 		{
-			dest.load (fullPath);
+			dest.load (localizedPath);
 			return 1;
 		}
 	}
-
 	//no localized voice file. Try opening without lang code
-	fullPath = filepath + filename;
-	if (!std::filesystem::exists (fullPath))
+	if (!std::filesystem::exists (filepath))
 		return 0;
 
-	dest.load (fullPath);
-
+	dest.load (filepath);
 	return 1;
 }
 
 /**
  * Loads a unitsoundfile to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
  * @param dest Destination Mix_Chunk
- * @param directory Directory of the file, relative to the main vehicles directory
- * @param filename Name of the file
+ * @param filepath Name of the file
  */
-static void LoadUnitSoundfile (cSoundChunk& dest, const char* directory, const char* filename)
+static void LoadUnitSoundfile (cSoundChunk& dest, const std::filesystem::path& filepath)
 {
-	std::string filepath;
-	if (strcmp (directory, ""))
-		filepath += directory;
-	filepath += filename;
 	if (SoundData.DummySound.empty())
 	{
 		std::string sTmpString;
@@ -534,11 +506,10 @@ static void LoadUnitSoundfile (cSoundChunk& dest, const char* directory, const c
 }
 
 //------------------------------------------------------------------------------
-static bool LoadUiData (const std::string& sBuildingPath, sBuildingUIData& ui)
+static bool LoadUiData (const std::filesystem::path& sBuildingPath, sBuildingUIData& ui)
 {
 	// load img
-	std::string sTmpString = sBuildingPath;
-	sTmpString += "img.pcx";
+	auto sTmpString = sBuildingPath / "img.pcx";
 	if (std::filesystem::exists (sTmpString))
 	{
 		ui.img_org = LoadPCX (sTmpString);
@@ -552,8 +523,7 @@ static bool LoadUiData (const std::string& sBuildingPath, sBuildingUIData& ui)
 		return false;
 	}
 	// load shadow
-	sTmpString = sBuildingPath;
-	sTmpString += "shw.pcx";
+	sTmpString = sBuildingPath / "shw.pcx";
 	if (std::filesystem::exists (sTmpString))
 	{
 		ui.shw_org = LoadPCX (sTmpString);
@@ -562,22 +532,19 @@ static bool LoadUiData (const std::string& sBuildingPath, sBuildingUIData& ui)
 	}
 
 	// load video
-	sTmpString = sBuildingPath;
-	sTmpString += "video.pcx";
+	sTmpString = sBuildingPath / "video.pcx";
 	if (std::filesystem::exists (sTmpString))
 		ui.video = LoadPCX (sTmpString);
 
 	// load infoimage
-	sTmpString = sBuildingPath;
-	sTmpString += "info.pcx";
+	sTmpString = sBuildingPath / "info.pcx";
 	if (std::filesystem::exists (sTmpString))
 		ui.info = LoadPCX (sTmpString);
 
 	// load effectgraphics if necessary
 	if (ui.staticData.powerOnGraphic)
 	{
-		sTmpString = sBuildingPath;
-		sTmpString += "effect.pcx";
+		sTmpString = sBuildingPath / "effect.pcx";
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.eff_org = LoadPCX (sTmpString);
@@ -592,11 +559,11 @@ static bool LoadUiData (const std::string& sBuildingPath, sBuildingUIData& ui)
 	}
 
 	// load sounds
-	LoadUnitSoundfile (ui.Wait, sBuildingPath.c_str(), "wait.ogg");
-	LoadUnitSoundfile (ui.Start, sBuildingPath.c_str(), "start.ogg");
-	LoadUnitSoundfile (ui.Running, sBuildingPath.c_str(), "running.ogg");
-	LoadUnitSoundfile (ui.Stop, sBuildingPath.c_str(), "stop.ogg");
-	LoadUnitSoundfile (ui.Attack, sBuildingPath.c_str(), "attack.ogg");
+	LoadUnitSoundfile (ui.Wait, sBuildingPath / "wait.ogg");
+	LoadUnitSoundfile (ui.Start, sBuildingPath / "start.ogg");
+	LoadUnitSoundfile (ui.Running, sBuildingPath / "running.ogg");
+	LoadUnitSoundfile (ui.Stop, sBuildingPath / "stop.ogg");
+	LoadUnitSoundfile (ui.Attack, sBuildingPath / "attack.ogg");
 
 	// Get Ptr if necessary:
 	if (ui.id == UnitsDataGlobal.getConnectorID())
@@ -627,7 +594,7 @@ static bool LoadUiData (const std::string& sBuildingPath, sBuildingUIData& ui)
 }
 
 //------------------------------------------------------------------------------
-static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& staticData, sVehicleUIData& ui)
+static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStaticUnitData& staticData, sVehicleUIData& ui)
 {
 	Log.write ("Loading graphics", cLog::eLogType::Debug);
 	// load infantry graphics
@@ -642,14 +609,13 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 
 			for (int j = 0; j < 13; j++)
 			{
-				std::string sTmpString = sVehiclePath;
 				char sztmp[16];
 				snprintf (sztmp, sizeof (sztmp), "img%d_%.2d.pcx", n, j);
-				sTmpString += sztmp;
+				auto sTmpString = sVehiclePath / sztmp;
 
 				if (std::filesystem::exists (sTmpString))
 				{
-					Log.write (sTmpString, cLog::eLogType::Debug);
+					Log.write (sTmpString.string(), cLog::eLogType::Debug);
 					AutoSurface sfTempSurface (LoadPCX (sTmpString));
 					if (!sfTempSurface)
 					{
@@ -698,11 +664,10 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		for (int n = 0; n < 8; n++)
 		{
 			// load image
-			std::string sTmpString = sVehiclePath;
 			char sztmp[16];
 			snprintf (sztmp, sizeof (sztmp), "img%d.pcx", n);
-			sTmpString += sztmp;
-			Log.write (sTmpString, cLog::eLogType::Debug);
+			auto sTmpString = sVehiclePath / sztmp;
+			Log.write (sTmpString.string(), cLog::eLogType::Debug);
 			if (std::filesystem::exists (sTmpString))
 			{
 				ui.img_org[n] = LoadPCX (sTmpString);
@@ -717,7 +682,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 			}
 
 			// load shadow
-			sTmpString.replace (sTmpString.length() - 8, 3, "shw");
+			snprintf (sztmp, sizeof (sztmp), "shw%d.pcx", n);
+			sTmpString = sVehiclePath / sztmp;
 			if (std::filesystem::exists (sTmpString))
 			{
 				ui.shw_org[n] = LoadPCX (sTmpString);
@@ -732,18 +698,16 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 		}
 	}
 	// load video
-	ui.FLCFile = sVehiclePath;
-	ui.FLCFile += "video.flc";
-	Log.write ("Loading video: " + ui.FLCFile, cLog::eLogType::Debug);
+	ui.FLCFile = sVehiclePath / "video.flc";
+	Log.write ("Loading video: " + ui.FLCFile.string(), cLog::eLogType::Debug);
 	if (!std::filesystem::exists (ui.FLCFile))
 	{
 		ui.FLCFile = "";
 	}
 
 	// load infoimage
-	std::string sTmpString = sVehiclePath;
-	sTmpString += "info.pcx";
-	Log.write ("Loading portrait: " + sTmpString, cLog::eLogType::Debug);
+	auto sTmpString = sVehiclePath / "info.pcx";
+	Log.write ("Loading portrait: " + sTmpString.string(), cLog::eLogType::Debug);
 	if (std::filesystem::exists (sTmpString))
 	{
 		ui.info = LoadPCX (sTmpString);
@@ -755,9 +719,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 	}
 
 	// load storageimage
-	sTmpString = sVehiclePath;
-	sTmpString += "store.pcx";
-	Log.write ("Loading storageportrait: " + sTmpString, cLog::eLogType::Debug);
+	sTmpString = sVehiclePath / "store.pcx";
+	Log.write ("Loading storageportrait: " + sTmpString.string(), cLog::eLogType::Debug);
 	if (std::filesystem::exists (sTmpString))
 	{
 		ui.storage = LoadPCX (sTmpString);
@@ -771,9 +734,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 	// load overlaygraphics if necessary
 	if (ui.staticData.hasOverlay)
 	{
-		sTmpString = sVehiclePath;
-		sTmpString += "overlay.pcx";
-		Log.write ("Loading overlay: " + sTmpString, cLog::eLogType::Debug);
+		sTmpString = sVehiclePath / "overlay.pcx";
+		Log.write ("Loading overlay: " + sTmpString.string(), cLog::eLogType::Debug);
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.overlay_org = LoadPCX (sTmpString);
@@ -797,9 +759,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 	if (ui.staticData.buildUpGraphic)
 	{
 		// load image
-		sTmpString = sVehiclePath;
-		sTmpString += "build.pcx";
-		Log.write ("Loading buildgraphics: " + sTmpString, cLog::eLogType::Debug);
+		sTmpString = sVehiclePath / "build.pcx";
+		Log.write ("Loading buildgraphics: " + sTmpString.string(), cLog::eLogType::Debug);
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_org = LoadPCX (sTmpString);
@@ -815,9 +776,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 			ui.staticData.buildUpGraphic = false;
 		}
 		// load shadow
-		sTmpString = sVehiclePath;
-		sTmpString += "build_shw.pcx";
-		Log.write ("Loading buildgraphics: " + sTmpString, cLog::eLogType::Debug);
+		sTmpString = sVehiclePath / "build_shw.pcx";
+		Log.write ("Loading buildgraphics: " + sTmpString.string(), cLog::eLogType::Debug);
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_shw_org = LoadPCX (sTmpString);
@@ -843,9 +803,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 	if (staticData.vehicleData.canClearArea)
 	{
 		// load image (small)
-		sTmpString = sVehiclePath;
-		sTmpString += "clear_small.pcx";
-		Log.write ("Loading cleargraphics: " + sTmpString, cLog::eLogType::Debug);
+		sTmpString = sVehiclePath / "clear_small.pcx";
+		Log.write ("Loading cleargraphics: " + sTmpString.string(), cLog::eLogType::Debug);
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.clear_small_org = LoadPCX (sTmpString);
@@ -861,9 +820,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 			return false;
 		}
 		// load shadow (small)
-		sTmpString = sVehiclePath;
-		sTmpString += "clear_small_shw.pcx";
-		Log.write ("Loading cleargraphics: " + sTmpString, cLog::eLogType::Debug);
+		sTmpString = sVehiclePath / "clear_small_shw.pcx";
+		Log.write ("Loading cleargraphics: " + sTmpString.string(), cLog::eLogType::Debug);
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.clear_small_shw_org = LoadPCX (sTmpString);
@@ -878,9 +836,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 			return false;
 		}
 		// load image (big)
-		sTmpString = sVehiclePath;
-		sTmpString += "clear_big.pcx";
-		Log.write ("Loading cleargraphics: " + sTmpString, cLog::eLogType::Debug);
+		sTmpString = sVehiclePath / "clear_big.pcx";
+		Log.write ("Loading cleargraphics: " + sTmpString.string(), cLog::eLogType::Debug);
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_org = LoadPCX (sTmpString);
@@ -896,9 +853,8 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 			return false;
 		}
 		// load shadow (big)
-		sTmpString = sVehiclePath;
-		sTmpString += "clear_big_shw.pcx";
-		Log.write ("Loading cleargraphics: " + sTmpString, cLog::eLogType::Debug);
+		sTmpString = sVehiclePath / "clear_big_shw.pcx";
+		Log.write ("Loading cleargraphics: " + sTmpString.string(), cLog::eLogType::Debug);
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_shw_org = LoadPCX (sTmpString);
@@ -923,15 +879,15 @@ static bool LoadUiData (const std::string& sVehiclePath, const cStaticUnitData& 
 
 	// load sounds
 	Log.write ("Loading sounds", cLog::eLogType::Debug);
-	LoadUnitSoundfile (ui.Wait, sVehiclePath.c_str(), "wait.ogg");
-	LoadUnitSoundfile (ui.WaitWater, sVehiclePath.c_str(), "wait_water.ogg");
-	LoadUnitSoundfile (ui.Start, sVehiclePath.c_str(), "start.ogg");
-	LoadUnitSoundfile (ui.StartWater, sVehiclePath.c_str(), "start_water.ogg");
-	LoadUnitSoundfile (ui.Stop, sVehiclePath.c_str(), "stop.ogg");
-	LoadUnitSoundfile (ui.StopWater, sVehiclePath.c_str(), "stop_water.ogg");
-	LoadUnitSoundfile (ui.Drive, sVehiclePath.c_str(), "drive.ogg");
-	LoadUnitSoundfile (ui.DriveWater, sVehiclePath.c_str(), "drive_water.ogg");
-	LoadUnitSoundfile (ui.Attack, sVehiclePath.c_str(), "attack.ogg");
+	LoadUnitSoundfile (ui.Wait, sVehiclePath / "wait.ogg");
+	LoadUnitSoundfile (ui.WaitWater, sVehiclePath / "wait_water.ogg");
+	LoadUnitSoundfile (ui.Start, sVehiclePath / "start.ogg");
+	LoadUnitSoundfile (ui.StartWater, sVehiclePath / "start_water.ogg");
+	LoadUnitSoundfile (ui.Stop, sVehiclePath / "stop.ogg");
+	LoadUnitSoundfile (ui.StopWater, sVehiclePath / "stop_water.ogg");
+	LoadUnitSoundfile (ui.Drive, sVehiclePath / "drive.ogg");
+	LoadUnitSoundfile (ui.DriveWater, sVehiclePath / "drive_water.ogg");
+	LoadUnitSoundfile (ui.Attack, sVehiclePath / "attack.ogg");
 	return true;
 }
 namespace
@@ -997,20 +953,19 @@ static int LoadBuildings (bool includingUiData)
 {
 	Log.write ("Loading Buildings", cLog::eLogType::Info);
 
-	std::string sTmpString = cSettings::getInstance().getBuildingsPath();
-	sTmpString += PATH_DELIMITER "buildings.json";
-	if (!std::filesystem::exists (sTmpString))
+	auto buildingsJsonPath = cSettings::getInstance().getBuildingsPath() / "buildings.json";
+	if (!std::filesystem::exists (buildingsJsonPath))
 	{
 		Log.write ("buildings.json doesn't exist!", cLog::eLogType::Error);
 		return 0;
 	}
 
-	std::ifstream file (sTmpString);
+	std::ifstream file (buildingsJsonPath.string());
 	nlohmann::json json;
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + sTmpString, cLog::eLogType::Error);
+		Log.write ("Can't load " + buildingsJsonPath.string(), cLog::eLogType::Error);
 		return 0;
 	}
 	sBuildingsList buildingsList;
@@ -1025,23 +980,20 @@ static int LoadBuildings (bool includingUiData)
 	UnitsUiData.buildingUIs.reserve (buildingsList.buildings.size());
 	for (const auto& p : buildingsList.buildings)
 	{
-		std::string sBuildingPath = cSettings::getInstance().getBuildingsPath();
-		sBuildingPath += PATH_DELIMITER;
-		sBuildingPath += p.path;
-		sBuildingPath += PATH_DELIMITER;
+		const auto sBuildingPath = cSettings::getInstance().getBuildingsPath() / p.path;
 
 		sInitialBuildingData buildingData;
-		LoadUnitData (buildingData, sBuildingPath.c_str());
+		LoadUnitData (buildingData, sBuildingPath);
 
 		if (p.id != buildingData.id.secondPart)
 		// check whether the read id is the same as the one from building.json
 		{
-			Log.write ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sBuildingPath, cLog::eLogType::Error);
+			Log.write ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sBuildingPath.string(), cLog::eLogType::Error);
 			return 0;
 		}
 		else
 		{
-			Log.write ("id " + std::to_string (p.id) + " verified for " + sBuildingPath, cLog::eLogType::Debug);
+			Log.write ("id " + std::to_string (p.id) + " verified for " + sBuildingPath.string(), cLog::eLogType::Debug);
 		}
 		if (!checkUniqueness (buildingData.id)) return 0;
 
@@ -1071,15 +1023,15 @@ static int LoadBuildings (bool includingUiData)
 	// Dirtsurfaces
 	if (includingUiData)
 	{
-		LoadGraphicToSurface (UnitsUiData.rubbleBig->img_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx");
+		LoadGraphicToSurface (UnitsUiData.rubbleBig->img_org, cSettings::getInstance().getBuildingsPath() / "dirt_big.pcx");
 		UnitsUiData.rubbleBig->img = CloneSDLSurface (*UnitsUiData.rubbleBig->img_org);
-		LoadGraphicToSurface (UnitsUiData.rubbleBig->shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx");
+		LoadGraphicToSurface (UnitsUiData.rubbleBig->shw_org, cSettings::getInstance().getBuildingsPath() / "dirt_big_shw.pcx");
 		UnitsUiData.rubbleBig->shw = CloneSDLSurface (*UnitsUiData.rubbleBig->shw_org);
 		if (UnitsUiData.rubbleBig->shw != nullptr) SDL_SetSurfaceAlphaMod (UnitsUiData.rubbleBig->shw.get(), 50);
 
-		LoadGraphicToSurface (UnitsUiData.rubbleSmall->img_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
+		LoadGraphicToSurface (UnitsUiData.rubbleSmall->img_org, cSettings::getInstance().getBuildingsPath() / "dirt_small.pcx");
 		UnitsUiData.rubbleSmall->img = CloneSDLSurface (*UnitsUiData.rubbleSmall->img_org);
-		LoadGraphicToSurface (UnitsUiData.rubbleSmall->shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
+		LoadGraphicToSurface (UnitsUiData.rubbleSmall->shw_org, cSettings::getInstance().getBuildingsPath() / "dirt_small_shw.pcx");
 		UnitsUiData.rubbleSmall->shw = CloneSDLSurface (*UnitsUiData.rubbleSmall->shw_org);
 		if (UnitsUiData.rubbleSmall->shw != nullptr) SDL_SetSurfaceAlphaMod (UnitsUiData.rubbleSmall->shw.get(), 50);
 	}
@@ -1094,20 +1046,19 @@ static int LoadVehicles (bool includingUiData)
 {
 	Log.write ("Loading Vehicles", cLog::eLogType::Info);
 
-	std::string sTmpString = cSettings::getInstance().getVehiclesPath();
-	sTmpString += PATH_DELIMITER "vehicles.json";
-	if (!std::filesystem::exists (sTmpString))
+	auto vehicleJsonPath = cSettings::getInstance().getVehiclesPath() / "vehicles.json";
+	if (!std::filesystem::exists (vehicleJsonPath))
 	{
 		Log.write ("vehicles.json doesn't exist!", cLog::eLogType::Error);
 		return 0;
 	}
 
-	std::ifstream file (sTmpString);
+	std::ifstream file (vehicleJsonPath.string());
 	nlohmann::json json;
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + sTmpString, cLog::eLogType::Error);
+		Log.write ("Can't load " + vehicleJsonPath.string(), cLog::eLogType::Error);
 		return 0;
 	}
 	sVehiclesList vehiclesList;
@@ -1116,27 +1067,23 @@ static int LoadVehicles (bool includingUiData)
 	checkDuplicateId (vehiclesList.vehicles);
 
 	// load found units
-	std::string sVehiclePath;
 	UnitsUiData.vehicleUIs.reserve (vehiclesList.vehicles.size());
 	for (const auto& p : vehiclesList.vehicles)
 	{
-		sVehiclePath = cSettings::getInstance().getVehiclesPath();
-		sVehiclePath += PATH_DELIMITER;
-		sVehiclePath += p.path;
-		sVehiclePath += PATH_DELIMITER;
+		auto sVehiclePath = cSettings::getInstance().getVehiclesPath() / p.path;
 
 		sInitialVehicleData vehicleData;
-		LoadUnitData (vehicleData, sVehiclePath.c_str());
+		LoadUnitData (vehicleData, sVehiclePath);
 
 		// check whether the read id is the same as the one from vehicles.json
 		if (p.id != vehicleData.id.secondPart)
 		{
-			Log.write ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sVehiclePath, cLog::eLogType::Error);
+			Log.write ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sVehiclePath.string(), cLog::eLogType::Error);
 			return 0;
 		}
 		else
 		{
-			Log.write ("id " + std::to_string (p.id) + " verified for " + sVehiclePath, cLog::eLogType::Debug);
+			Log.write ("id " + std::to_string (p.id) + " verified for " + sVehiclePath.string(), cLog::eLogType::Debug);
 		}
 		if (!checkUniqueness (vehicleData.id)) return 0;
 
@@ -1205,17 +1152,17 @@ static int LoadClans()
  * @param path Directory of the Vehicles
  * @return 1 on success
  */
-static int LoadMusic (const char* path)
+static int LoadMusic (const std::filesystem::path& directory)
 {
-	const std::string musicPath = std::string (path) + PATH_DELIMITER "musics.json";
+	const auto musicPath = directory / "musics.json";
 
-	Log.write ("Loading music: " + std::string (musicPath), cLog::eLogType::Info);
+	Log.write ("Loading music: " + musicPath.string(), cLog::eLogType::Info);
 	if (!std::filesystem::exists (musicPath))
 	{
 		Log.write ("file doesn't exist", cLog::eLogType::Error);
 		return 0;
 	}
-	std::ifstream file (musicPath);
+	std::ifstream file (musicPath.string());
 	nlohmann::json json;
 
 	if (!(file >> json))
@@ -1230,12 +1177,12 @@ static int LoadMusic (const char* path)
 
 	if (!MusicFiles.start.empty())
 	{
-		MusicFiles.start = std::string (path) + PATH_DELIMITER + MusicFiles.start;
+		MusicFiles.start = (directory / MusicFiles.start).string();
 		if (!std::filesystem::exists (MusicFiles.start)) Log.write ("music files doesn't exist: " + MusicFiles.start, cLog::eLogType::Warning);
 	}
 	for (auto& filename : MusicFiles.backgrounds)
 	{
-		filename = std::string (path) + PATH_DELIMITER + filename;
+		filename = (directory / filename).string();
 	}
 	auto it = std::stable_partition (MusicFiles.backgrounds.begin(), MusicFiles.backgrounds.end(), [] (const auto& p) { return std::filesystem::exists (p); });
 	for (auto it2 = it; it2 != MusicFiles.backgrounds.end(); ++it2)
@@ -1321,7 +1268,7 @@ eLoadingState LoadData (bool includingUiData)
 		// Load Graphics
 		MakeLog (lngPack.i18n ("Text~Init~GFX"), 0, 5);
 
-		if (LoadGraphics (cSettings::getInstance().getGfxPath().c_str()) != 1)
+		if (LoadGraphics (cSettings::getInstance().getGfxPath()) != 1)
 		{
 			MakeLog ("", -1, 5);
 			Log.write ("Error while loading graphics", cLog::eLogType::Error);
@@ -1387,7 +1334,7 @@ eLoadingState LoadData (bool includingUiData)
 		// Load Music
 		MakeLog (lngPack.i18n ("Text~Init~Music"), 0, 10);
 
-		if (LoadMusic (cSettings::getInstance().getMusicPath().c_str()) != 1)
+		if (LoadMusic (cSettings::getInstance().getMusicPath()) != 1)
 		{
 			MakeLog ("", -1, 10);
 			return eLoadingState::Error;
@@ -1418,19 +1365,11 @@ eLoadingState LoadData (bool includingUiData)
 /**
  * Loads a effectgraphic to the surface
  * @param dest Destination surface
- * @param directory Directory of the file
- * @param filename Name of the file
+ * @param filepath Name of the file
  * @return 1 on success
  */
-static int LoadEffectGraphicToSurface (AutoSurface (&dest)[2], const char* directory, const char* filename)
+static int LoadEffectGraphicToSurface (AutoSurface (&dest)[2], const std::filesystem::path& filepath)
 {
-	std::string filepath;
-	if (strcmp (directory, ""))
-	{
-		filepath = directory;
-		filepath += PATH_DELIMITER;
-	}
-	filepath += filename;
 	if (!std::filesystem::exists (filepath))
 	{
 		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
@@ -1440,23 +1379,14 @@ static int LoadEffectGraphicToSurface (AutoSurface (&dest)[2], const char* direc
 	dest[0] = LoadPCX (filepath);
 	dest[1] = CloneSDLSurface (*dest[0]);
 
-	filepath.insert (0, "Effect successful loaded: ");
-	Log.write (filepath.c_str(), cLog::eLogType::Debug);
-
+	Log.write ("Effect successful loaded: " + filepath.string(), cLog::eLogType::Debug);
 	return 1;
 }
 
 // LoadEffectAlphacToSurface /////////////////////////////////////////////////
 // Loads a effectgraphic as alpha to the surface:
-static int LoadEffectAlphaToSurface (AutoSurface (&dest)[2], const char* directory, const char* filename, int alpha)
+static int LoadEffectAlphaToSurface (AutoSurface (&dest)[2], const std::filesystem::path& filepath, int alpha)
 {
-	std::string filepath;
-	if (strcmp (directory, ""))
-	{
-		filepath = directory;
-		filepath += PATH_DELIMITER;
-	}
-	filepath += filename;
 	if (!std::filesystem::exists (filepath))
 		return 0;
 
@@ -1465,150 +1395,139 @@ static int LoadEffectAlphaToSurface (AutoSurface (&dest)[2], const char* directo
 	SDL_SetSurfaceAlphaMod (dest[0].get(), alpha);
 	SDL_SetSurfaceAlphaMod (dest[1].get(), alpha);
 
-	filepath.insert (0, "Effectalpha loaded: ");
-	Log.write (filepath.c_str(), cLog::eLogType::Debug);
-
+	Log.write ("Effectalpha loaded: " + filepath.string(), cLog::eLogType::Debug);
 	return 1;
 }
 
 //------------------------------------------------------------------------------
 void cEffectsData::load (const std::filesystem::path& directory)
 {
-	const auto& directoryStr = directory.string();
-	const char* path = directoryStr.c_str();
-
-	LoadEffectGraphicToSurface (fx_explo_small, path, "explo_small.pcx");
-	LoadEffectGraphicToSurface (fx_explo_big, path, "explo_big.pcx");
-	LoadEffectGraphicToSurface (fx_explo_water, path, "explo_water.pcx");
-	LoadEffectGraphicToSurface (fx_explo_air, path, "explo_air.pcx");
-	LoadEffectGraphicToSurface (fx_muzzle_big, path, "muzzle_big.pcx");
-	LoadEffectGraphicToSurface (fx_muzzle_small, path, "muzzle_small.pcx");
-	LoadEffectGraphicToSurface (fx_muzzle_med, path, "muzzle_med.pcx");
-	LoadEffectGraphicToSurface (fx_hit, path, "hit.pcx");
-	LoadEffectAlphaToSurface (fx_smoke, path, "smoke.pcx", 100);
-	LoadEffectGraphicToSurface (fx_rocket, path, "rocket.pcx");
-	LoadEffectAlphaToSurface (fx_dark_smoke, path, "dark_smoke.pcx", 100);
-	LoadEffectAlphaToSurface (fx_tracks, path, "tracks.pcx", 100);
-	LoadEffectAlphaToSurface (fx_corpse, path, "corpse.pcx", 254);
-	LoadEffectAlphaToSurface (fx_absorb, path, "absorb.pcx", 150);
+	LoadEffectGraphicToSurface (fx_explo_small, directory / "explo_small.pcx");
+	LoadEffectGraphicToSurface (fx_explo_big, directory / "explo_big.pcx");
+	LoadEffectGraphicToSurface (fx_explo_water, directory / "explo_water.pcx");
+	LoadEffectGraphicToSurface (fx_explo_air, directory / "explo_air.pcx");
+	LoadEffectGraphicToSurface (fx_muzzle_big, directory / "muzzle_big.pcx");
+	LoadEffectGraphicToSurface (fx_muzzle_small, directory / "muzzle_small.pcx");
+	LoadEffectGraphicToSurface (fx_muzzle_med, directory / "muzzle_med.pcx");
+	LoadEffectGraphicToSurface (fx_hit, directory / "hit.pcx");
+	LoadEffectAlphaToSurface (fx_smoke, directory / "smoke.pcx", 100);
+	LoadEffectGraphicToSurface (fx_rocket, directory / "rocket.pcx");
+	LoadEffectAlphaToSurface (fx_dark_smoke, directory / "dark_smoke.pcx", 100);
+	LoadEffectAlphaToSurface (fx_tracks, directory / "tracks.pcx", 100);
+	LoadEffectAlphaToSurface (fx_corpse, directory / "corpse.pcx", 254);
+	LoadEffectAlphaToSurface (fx_absorb, directory / "absorb.pcx", 150);
 }
 
 //------------------------------------------------------------------------------
 void cSoundData::load (const std::filesystem::path& directory)
 {
-	const auto& directoryStr = directory.string();
-	const char* path = directoryStr.c_str();
-
-	LoadSoundfile (SNDHudSwitch, path, "HudSwitch.ogg");
-	LoadSoundfile (SNDHudButton, path, "HudButton.ogg");
-	LoadSoundfile (SNDMenuButton, path, "MenuButton.ogg");
-	LoadSoundfile (SNDChat, path, "Chat.ogg");
-	LoadSoundfile (SNDObjectMenu, path, "ObjectMenu.ogg");
-	LoadSoundfile (EXPBigWet[0], path, "exp_big_wet0.ogg");
-	LoadSoundfile (EXPBigWet[1], path, "exp_big_wet1.ogg");
-	LoadSoundfile (EXPBig[0], path, "exp_big0.ogg");
-	LoadSoundfile (EXPBig[1], path, "exp_big1.ogg");
-	LoadSoundfile (EXPBig[2], path, "exp_big2.ogg");
-	LoadSoundfile (EXPBig[3], path, "exp_big3.ogg");
-	LoadSoundfile (EXPSmallWet[0], path, "exp_small_wet0.ogg");
-	LoadSoundfile (EXPSmallWet[1], path, "exp_small_wet1.ogg");
-	LoadSoundfile (EXPSmallWet[2], path, "exp_small_wet2.ogg");
-	LoadSoundfile (EXPSmall[0], path, "exp_small0.ogg");
-	LoadSoundfile (EXPSmall[1], path, "exp_small1.ogg");
-	LoadSoundfile (EXPSmall[2], path, "exp_small2.ogg");
-	LoadSoundfile (SNDArm, path, "arm.ogg");
-	LoadSoundfile (SNDBuilding, path, "building.ogg");
-	LoadSoundfile (SNDClearing, path, "clearing.ogg");
-	LoadSoundfile (SNDQuitsch, path, "quitsch.ogg");
-	LoadSoundfile (SNDActivate, path, "activate.ogg");
-	LoadSoundfile (SNDLoad, path, "load.ogg");
-	LoadSoundfile (SNDReload, path, "reload.ogg");
-	LoadSoundfile (SNDRepair, path, "repair.ogg");
-	LoadSoundfile (SNDLandMinePlace, path, "land_mine_place.ogg");
-	LoadSoundfile (SNDLandMineClear, path, "land_mine_clear.ogg");
-	LoadSoundfile (SNDSeaMinePlace, path, "sea_mine_place.ogg");
-	LoadSoundfile (SNDSeaMineClear, path, "sea_mine_clear.ogg");
-	LoadSoundfile (SNDPanelOpen, path, "panel_open.ogg");
-	LoadSoundfile (SNDPanelClose, path, "panel_close.ogg");
-	LoadSoundfile (SNDAbsorb, path, "absorb.ogg");
-	LoadSoundfile (SNDHitSmall, path, "hit_small.ogg");
-	LoadSoundfile (SNDHitMed, path, "hit_med.ogg");
-	LoadSoundfile (SNDHitLarge, path, "hit_large.ogg");
-	LoadSoundfile (SNDPlaneLand, path, "plane_land.ogg");
-	LoadSoundfile (SNDPlaneTakeoff, path, "plane_takeoff.ogg");
+	LoadSoundfile (SNDHudSwitch, directory / "HudSwitch.ogg");
+	LoadSoundfile (SNDHudButton, directory / "HudButton.ogg");
+	LoadSoundfile (SNDMenuButton, directory / "MenuButton.ogg");
+	LoadSoundfile (SNDChat, directory / "Chat.ogg");
+	LoadSoundfile (SNDObjectMenu, directory / "ObjectMenu.ogg");
+	LoadSoundfile (EXPBigWet[0], directory / "exp_big_wet0.ogg");
+	LoadSoundfile (EXPBigWet[1], directory / "exp_big_wet1.ogg");
+	LoadSoundfile (EXPBig[0], directory / "exp_big0.ogg");
+	LoadSoundfile (EXPBig[1], directory / "exp_big1.ogg");
+	LoadSoundfile (EXPBig[2], directory / "exp_big2.ogg");
+	LoadSoundfile (EXPBig[3], directory / "exp_big3.ogg");
+	LoadSoundfile (EXPSmallWet[0], directory / "exp_small_wet0.ogg");
+	LoadSoundfile (EXPSmallWet[1], directory / "exp_small_wet1.ogg");
+	LoadSoundfile (EXPSmallWet[2], directory / "exp_small_wet2.ogg");
+	LoadSoundfile (EXPSmall[0], directory / "exp_small0.ogg");
+	LoadSoundfile (EXPSmall[1], directory / "exp_small1.ogg");
+	LoadSoundfile (EXPSmall[2], directory / "exp_small2.ogg");
+	LoadSoundfile (SNDArm, directory / "arm.ogg");
+	LoadSoundfile (SNDBuilding, directory / "building.ogg");
+	LoadSoundfile (SNDClearing, directory / "clearing.ogg");
+	LoadSoundfile (SNDQuitsch, directory / "quitsch.ogg");
+	LoadSoundfile (SNDActivate, directory / "activate.ogg");
+	LoadSoundfile (SNDLoad, directory / "load.ogg");
+	LoadSoundfile (SNDReload, directory / "reload.ogg");
+	LoadSoundfile (SNDRepair, directory / "repair.ogg");
+	LoadSoundfile (SNDLandMinePlace, directory / "land_mine_place.ogg");
+	LoadSoundfile (SNDLandMineClear, directory / "land_mine_clear.ogg");
+	LoadSoundfile (SNDSeaMinePlace, directory / "sea_mine_place.ogg");
+	LoadSoundfile (SNDSeaMineClear, directory / "sea_mine_clear.ogg");
+	LoadSoundfile (SNDPanelOpen, directory / "panel_open.ogg");
+	LoadSoundfile (SNDPanelClose, directory / "panel_close.ogg");
+	LoadSoundfile (SNDAbsorb, directory / "absorb.ogg");
+	LoadSoundfile (SNDHitSmall, directory / "hit_small.ogg");
+	LoadSoundfile (SNDHitMed, directory / "hit_med.ogg");
+	LoadSoundfile (SNDHitLarge, directory / "hit_large.ogg");
+	LoadSoundfile (SNDPlaneLand, directory / "plane_land.ogg");
+	LoadSoundfile (SNDPlaneTakeoff, directory / "plane_takeoff.ogg");
 }
 
 //------------------------------------------------------------------------------
 void cVoiceData::load (const std::filesystem::path& directory)
 {
-	const auto& directoryStr = directory.string();
-	const char* path = directoryStr.c_str();
-
-	LoadSoundfile (VOIAmmoLow[0], path, "ammo_low1.ogg", true);
-	LoadSoundfile (VOIAmmoLow[1], path, "ammo_low2.ogg", true);
-	LoadSoundfile (VOIAmmoEmpty[0], path, "ammo_empty1.ogg", true);
-	LoadSoundfile (VOIAmmoEmpty[1], path, "ammo_empty2.ogg", true);
-	LoadSoundfile (VOIAttacking[0], path, "attacking1.ogg", true);
-	LoadSoundfile (VOIAttacking[1], path, "attacking2.ogg", true);
-	LoadSoundfile (VOIAttackingEnemy[0], path, "attacking_enemy1.ogg", true);
-	LoadSoundfile (VOIAttackingEnemy[1], path, "attacking_enemy2.ogg", true);
-	LoadSoundfile (VOIAttackingUs[0], path, "attacking_us.ogg", true);
-	LoadSoundfile (VOIAttackingUs[1], path, "attacking_us2.ogg", true);
-	LoadSoundfile (VOIAttackingUs[2], path, "attacking_us3.ogg", true);
-	LoadSoundfile (VOIBuildDone[0], path, "build_done1.ogg", true);
-	LoadSoundfile (VOIBuildDone[1], path, "build_done2.ogg", true);
-	LoadSoundfile (VOIBuildDone[2], path, "build_done3.ogg", true);
-	LoadSoundfile (VOIBuildDone[3], path, "build_done4.ogg", true);
-	LoadSoundfile (VOIClearing, path, "clearing.ogg", true);
-	LoadSoundfile (VOIClearingMines[0], path, "clearing_mines.ogg", true);
-	LoadSoundfile (VOIClearingMines[1], path, "clearing_mines2.ogg", true);
-	LoadSoundfile (VOICommandoFailed[0], path, "commando_failed1.ogg", true);
-	LoadSoundfile (VOICommandoFailed[1], path, "commando_failed2.ogg", true);
-	LoadSoundfile (VOICommandoFailed[2], path, "commando_failed3.ogg", true);
-	LoadSoundfile (VOIDestroyedUs[0], path, "destroyed_us1.ogg", true);
-	LoadSoundfile (VOIDestroyedUs[1], path, "destroyed_us2.ogg", true);
-	LoadSoundfile (VOIDetected[0], path, "detected1.ogg", true);
-	LoadSoundfile (VOIDetected[1], path, "detected2.ogg", true);
-	LoadSoundfile (VOILanding[0], path, "landing1.ogg", true);
-	LoadSoundfile (VOILanding[1], path, "landing2.ogg", true);
-	LoadSoundfile (VOILanding[2], path, "landing3.ogg", true);
-	LoadSoundfile (VOILayingMines, path, "laying_mines.ogg", true);
-	LoadSoundfile (VOINoPath[0], path, "no_path1.ogg", true);
-	LoadSoundfile (VOINoPath[1], path, "no_path2.ogg", true);
-	LoadSoundfile (VOINoSpeed, path, "no_speed.ogg", true);
-	LoadSoundfile (VOIOK[0], path, "ok1.ogg", true);
-	LoadSoundfile (VOIOK[1], path, "ok2.ogg", true);
-	LoadSoundfile (VOIOK[2], path, "ok3.ogg", true);
-	LoadSoundfile (VOIOK[3], path, "ok4.ogg", true);
-	LoadSoundfile (VOIReammo, path, "reammo.ogg", true);
-	LoadSoundfile (VOIReammoAll, path, "reammo_all.ogg", true);
-	LoadSoundfile (VOIRepaired[0], path, "repaired.ogg", true);
-	LoadSoundfile (VOIRepaired[1], path, "repaired2.ogg", true);
-	LoadSoundfile (VOIRepairedAll[0], path, "repaired_all1.ogg", true);
-	LoadSoundfile (VOIRepairedAll[1], path, "repaired_all2.ogg", true);
-	LoadSoundfile (VOIResearchComplete, path, "research_complete.ogg", true);
-	LoadSoundfile (VOISaved, path, "saved.ogg", true);
-	LoadSoundfile (VOISentry, path, "sentry.ogg", true);
-	LoadSoundfile (VOIStartMore, path, "start_more.ogg", true);
-	LoadSoundfile (VOIStartNone, path, "start_none.ogg", true);
-	LoadSoundfile (VOIStartOne, path, "start_one.ogg", true);
-	LoadSoundfile (VOIStatusRed[0], path, "status_red1.ogg", true);
-	LoadSoundfile (VOIStatusRed[1], path, "status_red2.ogg", true);
-	LoadSoundfile (VOIStatusYellow[0], path, "status_yellow1.ogg", true);
-	LoadSoundfile (VOIStatusYellow[1], path, "status_yellow2.ogg", true);
-	LoadSoundfile (VOISubDetected, path, "sub_detected.ogg", true);
-	LoadSoundfile (VOISurveying[0], path, "surveying.ogg", true);
-	LoadSoundfile (VOISurveying[1], path, "surveying2.ogg", true);
-	LoadSoundfile (VOITransferDone, path, "transfer_done.ogg", true);
-	LoadSoundfile (VOITurnEnd20Sec[0], path, "turn_end_20_sec1.ogg", true);
-	LoadSoundfile (VOITurnEnd20Sec[1], path, "turn_end_20_sec2.ogg", true);
-	LoadSoundfile (VOITurnEnd20Sec[2], path, "turn_end_20_sec3.ogg", true);
-	LoadSoundfile (VOIUnitDisabled, path, "unit_disabled.ogg", true);
-	LoadSoundfile (VOIUnitDisabledByEnemy[0], path, "unit_disabled_by_enemy1.ogg", true);
-	LoadSoundfile (VOIUnitDisabledByEnemy[1], path, "unit_disabled_by_enemy2.ogg", true);
-	LoadSoundfile (VOIUnitStolen[0], path, "unit_stolen1.ogg", true);
-	LoadSoundfile (VOIUnitStolen[1], path, "unit_stolen2.ogg", true);
-	LoadSoundfile (VOIUnitStolenByEnemy, path, "unit_stolen_by_enemy.ogg", true);
+	LoadSoundfile (VOIAmmoLow[0], directory / "ammo_low1.ogg", true);
+	LoadSoundfile (VOIAmmoLow[1], directory / "ammo_low2.ogg", true);
+	LoadSoundfile (VOIAmmoEmpty[0], directory / "ammo_empty1.ogg", true);
+	LoadSoundfile (VOIAmmoEmpty[1], directory / "ammo_empty2.ogg", true);
+	LoadSoundfile (VOIAttacking[0], directory / "attacking1.ogg", true);
+	LoadSoundfile (VOIAttacking[1], directory / "attacking2.ogg", true);
+	LoadSoundfile (VOIAttackingEnemy[0], directory / "attacking_enemy1.ogg", true);
+	LoadSoundfile (VOIAttackingEnemy[1], directory / "attacking_enemy2.ogg", true);
+	LoadSoundfile (VOIAttackingUs[0], directory / "attacking_us.ogg", true);
+	LoadSoundfile (VOIAttackingUs[1], directory / "attacking_us2.ogg", true);
+	LoadSoundfile (VOIAttackingUs[2], directory / "attacking_us3.ogg", true);
+	LoadSoundfile (VOIBuildDone[0], directory / "build_done1.ogg", true);
+	LoadSoundfile (VOIBuildDone[1], directory / "build_done2.ogg", true);
+	LoadSoundfile (VOIBuildDone[2], directory / "build_done3.ogg", true);
+	LoadSoundfile (VOIBuildDone[3], directory / "build_done4.ogg", true);
+	LoadSoundfile (VOIClearing, directory / "clearing.ogg", true);
+	LoadSoundfile (VOIClearingMines[0], directory / "clearing_mines.ogg", true);
+	LoadSoundfile (VOIClearingMines[1], directory / "clearing_mines2.ogg", true);
+	LoadSoundfile (VOICommandoFailed[0], directory / "commando_failed1.ogg", true);
+	LoadSoundfile (VOICommandoFailed[1], directory / "commando_failed2.ogg", true);
+	LoadSoundfile (VOICommandoFailed[2], directory / "commando_failed3.ogg", true);
+	LoadSoundfile (VOIDestroyedUs[0], directory / "destroyed_us1.ogg", true);
+	LoadSoundfile (VOIDestroyedUs[1], directory / "destroyed_us2.ogg", true);
+	LoadSoundfile (VOIDetected[0], directory / "detected1.ogg", true);
+	LoadSoundfile (VOIDetected[1], directory / "detected2.ogg", true);
+	LoadSoundfile (VOILanding[0], directory / "landing1.ogg", true);
+	LoadSoundfile (VOILanding[1], directory / "landing2.ogg", true);
+	LoadSoundfile (VOILanding[2], directory / "landing3.ogg", true);
+	LoadSoundfile (VOILayingMines, directory / "laying_mines.ogg", true);
+	LoadSoundfile (VOINoPath[0], directory / "no_path1.ogg", true);
+	LoadSoundfile (VOINoPath[1], directory / "no_path2.ogg", true);
+	LoadSoundfile (VOINoSpeed, directory / "no_speed.ogg", true);
+	LoadSoundfile (VOIOK[0], directory / "ok1.ogg", true);
+	LoadSoundfile (VOIOK[1], directory / "ok2.ogg", true);
+	LoadSoundfile (VOIOK[2], directory / "ok3.ogg", true);
+	LoadSoundfile (VOIOK[3], directory / "ok4.ogg", true);
+	LoadSoundfile (VOIReammo, directory / "reammo.ogg", true);
+	LoadSoundfile (VOIReammoAll, directory / "reammo_all.ogg", true);
+	LoadSoundfile (VOIRepaired[0], directory / "repaired.ogg", true);
+	LoadSoundfile (VOIRepaired[1], directory / "repaired2.ogg", true);
+	LoadSoundfile (VOIRepairedAll[0], directory / "repaired_all1.ogg", true);
+	LoadSoundfile (VOIRepairedAll[1], directory / "repaired_all2.ogg", true);
+	LoadSoundfile (VOIResearchComplete, directory / "research_complete.ogg", true);
+	LoadSoundfile (VOISaved, directory / "saved.ogg", true);
+	LoadSoundfile (VOISentry, directory / "sentry.ogg", true);
+	LoadSoundfile (VOIStartMore, directory / "start_more.ogg", true);
+	LoadSoundfile (VOIStartNone, directory / "start_none.ogg", true);
+	LoadSoundfile (VOIStartOne, directory / "start_one.ogg", true);
+	LoadSoundfile (VOIStatusRed[0], directory / "status_red1.ogg", true);
+	LoadSoundfile (VOIStatusRed[1], directory / "status_red2.ogg", true);
+	LoadSoundfile (VOIStatusYellow[0], directory / "status_yellow1.ogg", true);
+	LoadSoundfile (VOIStatusYellow[1], directory / "status_yellow2.ogg", true);
+	LoadSoundfile (VOISubDetected, directory / "sub_detected.ogg", true);
+	LoadSoundfile (VOISurveying[0], directory / "surveying.ogg", true);
+	LoadSoundfile (VOISurveying[1], directory / "surveying2.ogg", true);
+	LoadSoundfile (VOITransferDone, directory / "transfer_done.ogg", true);
+	LoadSoundfile (VOITurnEnd20Sec[0], directory / "turn_end_20_sec1.ogg", true);
+	LoadSoundfile (VOITurnEnd20Sec[1], directory / "turn_end_20_sec2.ogg", true);
+	LoadSoundfile (VOITurnEnd20Sec[2], directory / "turn_end_20_sec3.ogg", true);
+	LoadSoundfile (VOIUnitDisabled, directory / "unit_disabled.ogg", true);
+	LoadSoundfile (VOIUnitDisabledByEnemy[0], directory / "unit_disabled_by_enemy1.ogg", true);
+	LoadSoundfile (VOIUnitDisabledByEnemy[1], directory / "unit_disabled_by_enemy2.ogg", true);
+	LoadSoundfile (VOIUnitStolen[0], directory / "unit_stolen1.ogg", true);
+	LoadSoundfile (VOIUnitStolen[1], directory / "unit_stolen2.ogg", true);
+	LoadSoundfile (VOIUnitStolenByEnemy, directory / "unit_stolen_by_enemy.ogg", true);
 }
 
 //------------------------------------------------------------------------------
@@ -1639,25 +1558,22 @@ void cOtherData::loadWayPoints()
 //------------------------------------------------------------------------------
 void cResourceData::load (const std::filesystem::path& directory)
 {
-	const auto& directoryStr = directory.string();
-	const char* path = directoryStr.c_str();
-
 	// metal
-	if (LoadGraphicToSurface (res_metal_org, path, "res.pcx") == 1)
+	if (LoadGraphicToSurface (res_metal_org, directory / "res.pcx") == 1)
 	{
 		res_metal = CloneSDLSurface (*res_metal_org);
 		SDL_SetColorKey (res_metal.get(), SDL_TRUE, 0xFF00FF);
 	}
 
 	// gold
-	if (LoadGraphicToSurface (res_gold_org, path, "gold.pcx") == 1)
+	if (LoadGraphicToSurface (res_gold_org, directory / "gold.pcx") == 1)
 	{
 		res_gold = CloneSDLSurface (*res_gold_org);
 		SDL_SetColorKey (res_gold.get(), SDL_TRUE, 0xFF00FF);
 	}
 
 	// fuel
-	if (LoadGraphicToSurface (res_oil_org, path, "fuel.pcx") == 1)
+	if (LoadGraphicToSurface (res_oil_org, directory / "fuel.pcx") == 1)
 	{
 		res_oil = CloneSDLSurface (*res_oil_org);
 		SDL_SetColorKey (res_oil.get(), SDL_TRUE, 0xFF00FF);
