@@ -325,28 +325,3 @@ std::string getUserLogDir()
 	return LogDir + PATH_DELIMITER;
 #endif
 }
-
-//------------------------------------------------------------------------------
-void copyFile (const std::string& source, const std::string& dest)
-{
-	SDL_RWops* sourceFile = SDL_RWFromFile (source.c_str(), "rb");
-	SDL_RWops* destFile = SDL_RWFromFile (dest.c_str(), "wb");
-	if (destFile == nullptr)
-	{
-		return;
-	}
-
-	SDL_RWseek (sourceFile, 0, SEEK_END);
-	const long int size = SDL_RWtell (sourceFile);
-	std::vector<unsigned char> buffer (size);
-
-	SDL_RWseek (sourceFile, 0, SEEK_SET);
-	SDL_RWread (sourceFile, buffer.data(), 1, size);
-
-	SDL_RWwrite (destFile, buffer.data(), 1, size);
-
-	buffer.clear();
-
-	if (sourceFile) SDL_RWclose (sourceFile);
-	if (destFile) SDL_RWclose (destFile);
-}
