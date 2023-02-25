@@ -482,15 +482,14 @@ static void LoadUnitSoundfile (cSoundChunk& dest, const std::filesystem::path& f
 {
 	if (SoundData.DummySound.empty())
 	{
-		std::string sTmpString;
-		sTmpString = cSettings::getInstance().getSoundsPath() + PATH_DELIMITER + "dummy.ogg";
+		auto sTmpString = cSettings::getInstance().getSoundsPath() / "dummy.ogg";
 		if (std::filesystem::exists (sTmpString))
 		{
 			try
 			{
 				SoundData.DummySound.load (sTmpString);
 			}
-			catch (std::runtime_error& e)
+			catch (const std::runtime_error& e)
 			{
 				Log.write (std::string ("Can't load dummy.ogg: ") + e.what(), cLog::eLogType::Warning);
 			}
@@ -1196,11 +1195,11 @@ static int LoadMusic (const std::filesystem::path& directory)
 //------------------------------------------------------------------------------
 bool loadFonts()
 {
-	const std::string& fontPath = cSettings::getInstance().getFontPath() + PATH_DELIMITER;
-	if (!std::filesystem::exists (fontPath + "latin_normal.pcx")
-	    || !std::filesystem::exists (fontPath + "latin_big.pcx")
-	    || !std::filesystem::exists (fontPath + "latin_big_gold.pcx")
-	    || !std::filesystem::exists (fontPath + "latin_small.pcx"))
+	const auto& fontPath = cSettings::getInstance().getFontPath();
+	if (!std::filesystem::exists (fontPath / "latin_normal.pcx")
+	    || !std::filesystem::exists (fontPath / "latin_big.pcx")
+	    || !std::filesystem::exists (fontPath / "latin_big_gold.pcx")
+	    || !std::filesystem::exists (fontPath / "latin_small.pcx"))
 	{
 		Log.write ("Missing a file needed for game. Check log and config! ", cLog::eLogType::Error);
 		return false;

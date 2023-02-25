@@ -304,13 +304,13 @@ const std::string& cSettings::getHomeDir() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getFontPath() const
+std::filesystem::path cSettings::getFontPath() const
 {
 	return dataDir + path.font;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getFxPath() const
+std::filesystem::path cSettings::getFxPath() const
 {
 	return dataDir + path.fx;
 }
@@ -340,19 +340,19 @@ std::string cSettings::getSavesPath() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getSoundsPath() const
+std::filesystem::path cSettings::getSoundsPath() const
 {
 	return dataDir + path.sounds;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getVoicesPath() const
+std::filesystem::path cSettings::getVoicesPath() const
 {
 	return dataDir + path.voices;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getMusicPath() const
+std::filesystem::path cSettings::getMusicPath() const
 {
 	return dataDir + path.music;
 }
@@ -370,7 +370,7 @@ std::filesystem::path cSettings::getBuildingsPath() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getMvePath() const
+std::filesystem::path cSettings::getMvePath() const
 {
 	return dataDir + path.mve;
 }

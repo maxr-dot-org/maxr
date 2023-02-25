@@ -175,18 +175,18 @@ public:
 	void setCacheSize (unsigned int cacheSize) { global.cacheSize = cacheSize; }
 
 	// Paths
-	std::string getFontPath() const;
-	std::string getFxPath() const;
+	std::filesystem::path getFontPath() const;
+	std::filesystem::path getFxPath() const;
 	std::string getGfxPath() const;
 	std::filesystem::path getLangPath() const;
 	std::string getMapsPath() const;
 	std::string getSavesPath() const;
-	std::string getSoundsPath() const;
-	std::string getVoicesPath() const;
-	std::string getMusicPath() const;
+	std::filesystem::path getSoundsPath() const;
+	std::filesystem::path getVoicesPath() const;
+	std::filesystem::path getMusicPath() const;
 	std::filesystem::path getVehiclesPath() const;
 	std::filesystem::path getBuildingsPath() const;
-	std::string getMvePath() const;
+	std::filesystem::path getMvePath() const;
 
 	template <typename Archive>
 	void serialize (Archive& archive)

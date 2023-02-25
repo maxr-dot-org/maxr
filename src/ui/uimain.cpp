@@ -79,17 +79,17 @@ static int initSound()
 
 static void showIntro()
 {
-	const std::string filename = cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE";
+	const auto filename = cSettings::getInstance().getMvePath() / "MAXINT.MVE";
 
 	if (!std::filesystem::exists (filename))
 	{
-		Log.write ("Couldn't find movie " + filename, cLog::eLogType::Warning);
+		Log.write ("Couldn't find movie " + filename.string(), cLog::eLogType::Warning);
 	}
 	// Close maxr sound for intro movie
 	cSoundDevice::getInstance().close();
 
-	Log.write ("Starting movie " + filename, cLog::eLogType::Debug);
-	const int mvereturn = MVEPlayer (filename.c_str(),
+	Log.write ("Starting movie " + filename.string(), cLog::eLogType::Debug);
+	const int mvereturn = MVEPlayer (filename.string().c_str(),
 	                                 Video.getResolutionX(),
 	                                 Video.getResolutionY(),
 	                                 !Video.getWindowMode(),
