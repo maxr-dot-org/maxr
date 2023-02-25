@@ -44,37 +44,6 @@
 #endif
 
 //------------------------------------------------------------------------------
-static bool makeDir (const std::string& path)
-{
-#ifdef WIN32
-	return _mkdir (path.c_str()) == 0;
-#else
-	return mkdir (path.c_str(), 0755) == 0;
-#endif
-}
-
-//------------------------------------------------------------------------------
-static bool DirExists (const std::string& path)
-{
-#ifdef WIN32
-	if (_access (path.c_str(), 0) == 0)
-	{
-		struct stat status;
-		stat (path.c_str(), &status);
-
-		if (status.st_mode & S_IFDIR)
-			return true;
-		else
-			return false; // The path is not a directory
-	}
-	else
-		return false;
-#else
-	return std::filesystem::exists (path); // on linux everything is a file
-#endif
-}
-
-//------------------------------------------------------------------------------
 std::vector<std::string> getFilesOfDirectory (const std::string& sDirectory)
 {
 	std::vector<std::string> List;
@@ -114,12 +83,7 @@ std::string getUserMapsDir()
 #else
 	if (cSettings::getInstance().getHomeDir().empty()) return "";
 	std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
-	if (!DirExists (mapFolder))
-	{
-		if (makeDir (mapFolder))
-			return mapFolder + PATH_DELIMITER;
-		return "";
-	}
+	std::filesystem::create_directories (mapFolder);
 	return mapFolder + PATH_DELIMITER;
 #endif
 }
@@ -142,12 +106,7 @@ std::string getUserScreenshotsDir()
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
 	std::string screenshotsFolder = cSettings::getInstance().getHomeDir() + "screenies";
-	if (!DirExists (screenshotsFolder))
-	{
-		if (makeDir (screenshotsFolder))
-			return screenshotsFolder + PATH_DELIMITER;
-		return "";
-	}
+	std::filesystem::create_directories (screenshotsFolder);
 	return screenshotsFolder + PATH_DELIMITER;
 #endif
 }
@@ -281,13 +240,7 @@ std::string getUserLogDir()
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
 	std::string LogDir = cSettings::getInstance().getHomeDir() + "log_files";
-
-	if (!DirExists (LogDir))
-	{
-		if (makeDir (LogDir))
-			return LogDir + PATH_DELIMITER;
-		return "";
-	}
+	std::filesystem::create_directories (LogDir);
 	return LogDir + PATH_DELIMITER;
 #endif
 }
