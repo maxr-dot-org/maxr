@@ -22,6 +22,8 @@
 
 #include "ui/graphical/menu/windows/windowload/windowload.h"
 
+#include <config/workaround/cpp17/filesystem.h>
+
 class cPushButton;
 class cTurnTimeClock;
 
