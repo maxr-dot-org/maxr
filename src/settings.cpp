@@ -268,13 +268,13 @@ void cSettings::setAnimations (bool animations)
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSettings::getNetLogPath() const
+const std::filesystem::path& cSettings::getNetLogPath() const
 {
 	return netLogPath;
 }
 
 //------------------------------------------------------------------------------
-void cSettings::setNetLogPath (const char* netLogPath)
+void cSettings::setNetLogPath (const std::filesystem::path& netLogPath)
 {
 	this->netLogPath = netLogPath;
 }

@@ -106,7 +106,7 @@ void initCrashreporting()
 		crAddFile2 (settings.c_str(), nullptr, "Maxr Configuration File", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
-	std::string netlog = cSettings::getInstance().getNetLogPath();
+	std::string netlog = cSettings::getInstance().getNetLogPath().string();
 	if (!netlog.empty())
 	{
 		crAddFile2 (netlog.c_str(), nullptr, "Maxr Network Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);

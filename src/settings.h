@@ -107,8 +107,8 @@ public:
 	int getScrollSpeed() const { return inGame.scrollSpeed; }
 	void setScrollSpeed (int scrollSpeed) { inGame.scrollSpeed = scrollSpeed; }
 
-	const std::string& getNetLogPath() const;
-	void setNetLogPath (const char* netLog);
+	const std::filesystem::path& getNetLogPath() const;
+	void setNetLogPath (const std::filesystem::path&);
 
 	const std::filesystem::path& getDataDir() const;
 	const std::filesystem::path& getLogPath() const;
@@ -391,7 +391,7 @@ private:
 	/** sLog is where the log goes - set in setPaths() **/
 	std::filesystem::path logPath;
 	/** sNetLog is where the netlog goes - set in setPaths() **/
-	std::string netLogPath;
+	std::filesystem::path netLogPath;
 	/** sHome is where the user has his $HOME dir - set in setPaths() **/
 	std::string homeDir;
 
