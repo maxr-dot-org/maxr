@@ -280,7 +280,7 @@ const std::filesystem::path& cSettings::getDataDir() const
 }
 
 //------------------------------------------------------------------------------
-void cSettings::setDataDir (const char* dataDir)
+void cSettings::setDataDir (const std::filesystem::path& dataDir)
 {
 	this->dataDir = dataDir;
 }

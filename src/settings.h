@@ -228,7 +228,7 @@ private:
 	 */
 	void setPaths();
 
-	void setDataDir (const char* dataDir);
+	void setDataDir (const std::filesystem::path&);
 
 private:
 	struct sGlobalSettings
