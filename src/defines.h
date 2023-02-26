@@ -31,6 +31,6 @@
 
 #define DEFAULTPORT 58600
 
-#define MAXR_ICON (cSettings::getInstance().getDataDir() + "maxr.bmp").c_str()
+#define MAXR_ICON (cSettings::getInstance().getDataDir() / "maxr.bmp").string().c_str()
 
 #endif

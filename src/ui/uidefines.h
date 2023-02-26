@@ -66,6 +66,6 @@
 #define GFXOD_DESTRUCTION      GFXOD ("destruction.pcx")
 
 // Other Resources /////////////////////////////////////////////////////////////
-#define SPLASH_BACKGROUND (cSettings::getInstance().getDataDir() + "init.pcx")
+#define SPLASH_BACKGROUND (cSettings::getInstance().getDataDir() / "init.pcx")
 
 #endif

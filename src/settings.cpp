@@ -280,7 +280,7 @@ void cSettings::setNetLogPath (const char* netLogPath)
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSettings::getDataDir() const
+const std::filesystem::path& cSettings::getDataDir() const
 {
 	return dataDir;
 }
@@ -306,31 +306,31 @@ const std::string& cSettings::getHomeDir() const
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getFontPath() const
 {
-	return dataDir + path.font;
+	return dataDir / path.font;
 }
 
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getFxPath() const
 {
-	return dataDir + path.fx;
+	return dataDir / path.fx;
 }
 
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getGfxPath() const
 {
-	return dataDir + path.gfx;
+	return dataDir / path.gfx;
 }
 
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getLangPath() const
 {
-	return dataDir + path.languages;
+	return dataDir / path.languages;
 }
 
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getMapsPath() const
 {
-	return dataDir + path.maps;
+	return dataDir / path.maps;
 }
 
 //------------------------------------------------------------------------------
@@ -342,35 +342,35 @@ std::filesystem::path cSettings::getSavesPath() const
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getSoundsPath() const
 {
-	return dataDir + path.sounds;
+	return dataDir / path.sounds;
 }
 
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getVoicesPath() const
 {
-	return dataDir + path.voices;
+	return dataDir / path.voices;
 }
 
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getMusicPath() const
 {
-	return dataDir + path.music;
+	return dataDir / path.music;
 }
 
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getVehiclesPath() const
 {
-	return dataDir + path.vehicles;
+	return dataDir / path.vehicles;
 }
 
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getBuildingsPath() const
 {
-	return dataDir + path.buildings;
+	return dataDir / path.buildings;
 }
 
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getMvePath() const
 {
-	return dataDir + path.mve;
+	return dataDir / path.mve;
 }

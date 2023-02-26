@@ -139,7 +139,7 @@ void cKeysList::loadFromFile()
 {
 	Log.write ("Loading Keys", cLog::eLogType::Info);
 
-	const auto keysJsonGame = cSettings::getInstance().getDataDir() + "keys.json";
+	const auto keysJsonGame = cSettings::getInstance().getDataDir() / "keys.json";
 	const auto keysJsonUsers = cSettings::getInstance().getHomeDir() + "keys.json";
 
 	if (std::filesystem::exists (keysJsonUsers))

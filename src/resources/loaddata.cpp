@@ -1124,18 +1124,18 @@ static int LoadVehicles (bool includingUiData)
  */
 static int LoadClans()
 {
-	std::string clansPath = cSettings::getInstance().getDataDir() + "clans.json";
+	auto clansPath = cSettings::getInstance().getDataDir() / "clans.json";
 
 	if (!std::filesystem::exists (clansPath))
 	{
-		Log.write ("File doesn't exist: " + clansPath, cLog::eLogType::Error);
+		Log.write ("File doesn't exist: " + clansPath.string(), cLog::eLogType::Error);
 		return 0;
 	}
-	std::ifstream file (clansPath);
+	std::ifstream file (clansPath.string());
 	nlohmann::json json;
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + clansPath, cLog::eLogType::Error);
+		Log.write ("Can't load " + clansPath.string(), cLog::eLogType::Error);
 		return 0;
 	}
 	cJsonArchiveIn in (json);

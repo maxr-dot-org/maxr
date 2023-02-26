@@ -110,7 +110,7 @@ public:
 	const std::string& getNetLogPath() const;
 	void setNetLogPath (const char* netLog);
 
-	const std::string& getDataDir() const;
+	const std::filesystem::path& getDataDir() const;
 	const std::string& getLogPath() const;
 	const std::string& getHomeDir() const;
 
@@ -387,7 +387,7 @@ private:
 	mutable std::recursive_mutex docMutex;
 
 	/** sDataDir is where the data files are stored */
-	std::string dataDir;
+	std::filesystem::path dataDir;
 	/** sLog is where the log goes - set in setPaths() **/
 	std::string logPath;
 	/** sNetLog is where the netlog goes - set in setPaths() **/
