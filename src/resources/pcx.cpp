@@ -35,9 +35,9 @@ public:
 	cBufferedFile() = default;
 	~cBufferedFile() { close(); }
 
-	bool open (const char* filename, const char* mode)
+	bool open (const std::filesystem::path& filename, const char* mode)
 	{
-		this->file = SDL_RWFromFile (filename, mode);
+		this->file = SDL_RWFromFile (filename.string().c_str(), mode);
 		return this->file != nullptr;
 	}
 
@@ -110,7 +110,7 @@ AutoSurface LoadPCX (const std::filesystem::path& name)
 	}
 
 	cBufferedFile bufferedFile;
-	if (!bufferedFile.open (name.string().c_str(), "rb"))
+	if (!bufferedFile.open (name, "rb"))
 	{
 		Log.write (SDL_GetError(), cLog::eLogType::Warning); // Image corrupted, create empty surface.
 		return AutoSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));
