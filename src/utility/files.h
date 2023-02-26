@@ -46,7 +46,7 @@ std::filesystem::path getUserMapsDir();
  */
 std::filesystem::path getUserScreenshotsDir();
 
-std::string getUserLogDir();
+std::filesystem::path getUserLogDir();
 std::string getHomeDir();
 std::string getCurrentExeDir();
 

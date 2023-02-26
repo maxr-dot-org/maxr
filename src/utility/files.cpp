@@ -222,7 +222,7 @@ std::string getCurrentExeDir()
 }
 
 //------------------------------------------------------------------------------
-std::string getUserLogDir()
+std::filesystem::path getUserLogDir()
 {
 #ifdef __amigaos4__
 	return "";
@@ -234,12 +234,12 @@ std::string getUserLogDir()
 	if (homeFolder.empty())
 		return "";
 	// store Log directly on the desktop of the user
-	return homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
+	return homeFolder + PATH_DELIMITER "Desktop";
 #else
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
 	std::string LogDir = cSettings::getInstance().getHomeDir() + "log_files";
 	std::filesystem::create_directories (LogDir);
-	return LogDir + PATH_DELIMITER;
+	return LogDir;
 #endif
 }
