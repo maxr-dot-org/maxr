@@ -42,26 +42,21 @@ namespace
 	 *        from the configuration file.
 	 * @return The really selected data location.
 	 */
-	std::string searchDataDir (const std::string& sDataDirFromConf)
+	std::filesystem::path searchDataDir (const std::filesystem::path& sDataDirFromConf)
 	{
-		std::string sPathToGameData = "";
 #if MAC
 		// assuming data is in same folder as binary (or current working directory)
-		sPathToGameData = getCurrentExeDir();
+		return getCurrentExeDir();
 #elif WIN32
-		if (!sDataDirFromConf.empty())
-		{
-			sPathToGameData = sDataDirFromConf;
-			sPathToGameData += PATH_DELIMITER;
-		}
+		return sDataDirFromConf;
 #elif __amigaos4__
 		// assuming data is in same folder as binary (or current working directory)
-		sPathToGameData = getCurrentExeDir();
+		return getCurrentExeDir();
 #else
 		// BEGIN crude path validation to find gamedata
 		Log.write ("Probing for data paths using default values:", cLog::eLogType::Info);
 
-		std::string sPathArray[] =
+		std::filesystem::path sPathArray[] =
 			{
 				// most important position holds value of configure --prefix
 				// to gamedata in %prefix%/$(datadir)/maxr or default path
@@ -95,8 +90,7 @@ namespace
 		}
 
 		// BEGIN SET MAXRDATA
-		char* cDataDir;
-		cDataDir = getenv ("MAXRDATA");
+		const char* cDataDir = getenv ("MAXRDATA");
 		if (cDataDir == nullptr)
 		{
 			Log.write ("$MAXRDATA is not set", cLog::eLogType::Info);
@@ -109,10 +103,10 @@ namespace
 		}
 		// END SET MAXRDATA
 
+		std::filesystem::path sPathToGameData = "";
 		for (auto sInitFile : sPathArray)
 		{
-			sInitFile += PATH_DELIMITER;
-			if (std::filesystem::exists (sInitFile + "init.pcx"))
+			if (std::filesystem::exists (sInitFile / "init.pcx"))
 			{
 				sPathToGameData = sInitFile;
 				break;
@@ -129,8 +123,8 @@ namespace
 			Log.write ("Found gamedata in: " + sPathToGameData, cLog::eLogType::Info);
 		}
 		// END crude path validation to find gamedata
-#endif
 		return sPathToGameData;
+#endif
 	}
 
 } // namespace
