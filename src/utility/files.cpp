@@ -43,35 +43,35 @@
 #endif
 
 //------------------------------------------------------------------------------
-std::vector<std::string> getFilesOfDirectory (const std::string& sDirectory)
+std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& directory)
 {
-	std::vector<std::string> List;
+	std::vector<std::string> files;
 #ifdef _WIN32
 	_finddata_t DataFile;
-	intptr_t const lFile = _findfirst ((sDirectory + PATH_DELIMITER "*.*").c_str(), &DataFile);
+	intptr_t const lFile = _findfirst ((directory / "*.*").string().c_str(), &DataFile);
 	if (lFile != -1)
 	{
 		do
 		{
 			if (DataFile.attrib & _A_SUBDIR) continue;
 			if (DataFile.name[0] == '.') continue;
-			List.push_back (DataFile.name);
+			files.push_back (DataFile.name);
 		} while (_findnext (lFile, &DataFile) == 0);
 		_findclose (lFile);
 	}
 #else
-	if (DIR* const dir = opendir (sDirectory.c_str()))
+	if (DIR* const dir = opendir (directory.string().c_str()))
 	{
 		while (struct dirent* const entry = readdir (dir))
 		{
 			char const* const name = entry->d_name;
 			if (name[0] == '.') continue;
-			List.push_back (name);
+			files.push_back (name);
 		}
 		closedir (dir);
 	}
 #endif
-	return List;
+	return files;
 }
 
 //------------------------------------------------------------------------------

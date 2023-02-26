@@ -27,10 +27,10 @@
 /**
 * Gets the filenames of all files in the directory
 * @author alzi
-* @param sDirectory Directory in which to search
+* @param directory Directory in which to search
 * @return A new list with all filenames
 */
-std::vector<std::string> getFilesOfDirectory (const std::string& sDirectory);
+std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& directory);
 
 /**
 * Gets the map folder of the user's custom maps.
