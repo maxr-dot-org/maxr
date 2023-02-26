@@ -177,7 +177,7 @@ public:
 	// Paths
 	std::filesystem::path getFontPath() const;
 	std::filesystem::path getFxPath() const;
-	std::string getGfxPath() const;
+	std::filesystem::path getGfxPath() const;
 	std::filesystem::path getLangPath() const;
 	std::filesystem::path getMapsPath() const;
 	std::filesystem::path getSavesPath() const;

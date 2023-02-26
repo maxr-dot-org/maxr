@@ -43,17 +43,16 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 	//
 	// Clan Images
 	//
-	std::array<std::string, clanCount> clanLogoPaths;
-	const auto gfxPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER;
-	clanLogoPaths[0] = gfxPath + "clanlogo1.pcx";
-	clanLogoPaths[1] = gfxPath + "clanlogo2.pcx";
-	clanLogoPaths[2] = gfxPath + "clanlogo3.pcx";
-	clanLogoPaths[3] = gfxPath + "clanlogo4.pcx";
-	clanLogoPaths[4] = gfxPath + "clanlogo5.pcx";
-	clanLogoPaths[5] = gfxPath + "clanlogo6.pcx";
-	clanLogoPaths[6] = gfxPath + "clanlogo7.pcx";
-	clanLogoPaths[7] = gfxPath + "clanlogo8.pcx";
-
+	const auto gfxPath = cSettings::getInstance().getGfxPath();
+	std::array<std::filesystem::path, clanCount> clanLogoPaths{
+		gfxPath / "clanlogo1.pcx",
+		gfxPath / "clanlogo2.pcx",
+		gfxPath / "clanlogo3.pcx",
+		gfxPath / "clanlogo4.pcx",
+		gfxPath / "clanlogo5.pcx",
+		gfxPath / "clanlogo6.pcx",
+		gfxPath / "clanlogo7.pcx",
+		gfxPath / "clanlogo8.pcx"};
 	for (size_t row = 0; row < clanRows; ++row)
 	{
 		for (size_t column = 0; column < clanColumns; ++column)

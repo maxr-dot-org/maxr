@@ -34,7 +34,7 @@
 
 // some defines for typical menus
 // GFX On Demand /////////////////////////////////////////////////////////////
-#define GFXOD(filename)        (cSettings::getInstance().getGfxPath() + PATH_DELIMITER filename)
+#define GFXOD(filename)        (cSettings::getInstance().getGfxPath() / filename)
 #define GFXOD_MAIN             GFXOD ("main.pcx")
 #define GFXOD_HELP             GFXOD ("help_screen.pcx")
 #define GFXOD_OPTIONS          GFXOD ("options.pcx")

@@ -316,7 +316,7 @@ std::filesystem::path cSettings::getFxPath() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getGfxPath() const
+std::filesystem::path cSettings::getGfxPath() const
 {
 	return dataDir + path.gfx;
 }
