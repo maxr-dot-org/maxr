@@ -78,11 +78,11 @@ void initCrashreporting()
 	info.pszErrorReportSaveDir = path.c_str();
 	std::string lang = cSettings::getInstance().getLanguage();
 	const auto currentExeDir = getCurrentExeDir();
-	std::string langPath = currentExeDir + "\\crashrpt_lang_EN.ini";
+	std::string langPath = currentExeDir / "crashrpt_lang_EN.ini";
 	if (lang == "GER")
-		std::string langPath = currentExeDir + "\\crashrpt_lang_DE.ini";
+		langPath = currentExeDir / "crashrpt_lang_DE.ini";
 
-	info.pszLangFilePath = langPath.c_str();
+	info.pszLangFilePath = langPath.string().c_str();
 
 	int result = crInstall (&info);
 	if (result != 0)

@@ -136,7 +136,7 @@ std::string getHomeDir()
 }
 
 //------------------------------------------------------------------------------
-std::string getCurrentExeDir()
+std::filesystem::path getCurrentExeDir()
 {
 #if MAC
 	return ""; // TODO
@@ -154,7 +154,7 @@ std::string getCurrentExeDir()
 	const auto backslashString = "\\";
 # endif
 	exe.erase (exe.rfind (backslashString), std::string::npos);
-	return std::string (exe.begin(), exe.end());
+	return exe;
 #elif __amigaos4__
 	return "";
 #else
