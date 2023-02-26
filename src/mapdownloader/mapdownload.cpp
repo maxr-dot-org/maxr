@@ -21,7 +21,6 @@
 
 #include "mapdownload.h"
 
-#include "defines.h"
 #include "game/connectionmanager.h"
 #include "game/protocol/lobbymessage.h"
 #include "game/protocol/netmessage.h"

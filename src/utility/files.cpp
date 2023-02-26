@@ -19,7 +19,6 @@
 
 #include "utility/files.h"
 
-#include "defines.h"
 #include "settings.h"
 #include "utility/log.h"
 
@@ -177,7 +176,7 @@ std::filesystem::path getCurrentExeDir()
 			int iPos = 0;
 			for (int i = 0; i < 255 && cPathToExe[i] != '\0'; i++)
 			{
-				// snip garbage after last PATH_DELIMITER + executable itself
+				// snip garbage after last '/' + executable itself
 				// (is reported on some linux systems
 				//  as well using /proc/self/exe
 				if (cPathToExe[i] == '/')
@@ -186,7 +185,7 @@ std::filesystem::path getCurrentExeDir()
 
 			std::string exePath = cPathToExe;
 			exePath = exePath.substr (0, iPos);
-			exePath += PATH_DELIMITER;
+			exePath += "/";
 
 			// check for binary itself in bin folder
 			if (std::filesystem::exists (exePath + "maxr"))

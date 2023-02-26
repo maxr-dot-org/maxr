@@ -20,7 +20,6 @@
 #include "hud.h"
 
 #include "SDLutility/tosdl.h"
-#include "defines.h"
 #include "game/data/units/unit.h"
 #include "game/logic/turncounter.h"
 #include "game/logic/turntimeclock.h"

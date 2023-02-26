@@ -19,7 +19,6 @@
 
 #include "windowstart.h"
 
-#include "defines.h"
 #include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "settings.h"

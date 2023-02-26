@@ -19,7 +19,6 @@
 #ifndef ui_uidefinesH
 #define ui_uidefinesH
 
-#include "defines.h"
 #include "settings.h"
 
 #define GRID_COLOR         0xFF305C04 // color of the grid

@@ -19,7 +19,6 @@
 
 #include "map.h"
 
-#include "defines.h"
 #include "game/data/map/mapfieldview.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"

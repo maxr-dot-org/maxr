@@ -19,6 +19,7 @@
 
 #include "windownetworklobby.h"
 
+#include "defines.h"
 #include "game/data/gamesettings.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"

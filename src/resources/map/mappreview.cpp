@@ -19,7 +19,6 @@
 
 #include "mappreview.h"
 
-#include "defines.h"
 #include "output/video/video.h"
 #include "settings.h"
 #include "utility/files.h"

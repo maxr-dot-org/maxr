@@ -19,6 +19,7 @@
 
 #include "video.h"
 
+#include "defines.h"
 #include "input/keyboard/keyboard.h"
 #include "maxrversion.h"
 #include "output/video/unifonts.h"

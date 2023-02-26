@@ -21,7 +21,6 @@
 
 #include "SDLutility/autosurface.h"
 #include "SDLutility/drawing.h"
-#include "defines.h"
 #include "resources/pcx.h"
 #include "settings.h"
 #include "utility/color.h"
