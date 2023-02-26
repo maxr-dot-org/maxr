@@ -238,9 +238,9 @@ cSaveSlotWidget& cWindowLoad::getSaveSlot (size_t slotIndex)
 //------------------------------------------------------------------------------
 cSaveSlotWidget* cWindowLoad::getSaveSlotFromSaveNumber (size_t saveNumber)
 {
-	if (selectedSaveNumber - 1 >= page * (int) (rows * columns) && selectedSaveNumber - 1 < (page + 1) * (int) (rows * columns))
+	if (saveNumber - 1 >= page * (rows * columns) && saveNumber - 1 < (page + 1) * (rows * columns))
 	{
-		return &getSaveSlot (selectedSaveNumber - 1 - page * (int) (rows * columns));
+		return &getSaveSlot (saveNumber - 1 - page * (rows * columns));
 	}
 	else
 		return nullptr;
