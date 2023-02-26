@@ -112,7 +112,7 @@ public:
 
 	const std::filesystem::path& getDataDir() const;
 	const std::filesystem::path& getLogPath() const;
-	const std::string& getHomeDir() const;
+	const std::filesystem::path& getHomeDir() const;
 
 	const sNetworkAddress& getNetworkAddress() const { return network; }
 	void setNetworkAddress (const sNetworkAddress& network) { this->network = network; }
@@ -221,7 +221,7 @@ private:
 	 */
 	void initialize();
 
-	void loadFromJsonFile (const std::string& path);
+	void loadFromJsonFile (const std::filesystem::path&);
 
 	/**
 	 * Sets the platform dependent config, log and save paths.
@@ -393,7 +393,7 @@ private:
 	/** sNetLog is where the netlog goes - set in setPaths() **/
 	std::filesystem::path netLogPath;
 	/** sHome is where the user has his $HOME dir - set in setPaths() **/
-	std::string homeDir;
+	std::filesystem::path homeDir;
 
 	sGlobalSettings global;
 	sNetworkAddress network;

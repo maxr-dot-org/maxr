@@ -81,7 +81,7 @@ std::filesystem::path getUserMapsDir()
 	return "";
 #else
 	if (cSettings::getInstance().getHomeDir().empty()) return "";
-	std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
+	auto mapFolder = cSettings::getInstance().getHomeDir() / "maps";
 	std::filesystem::create_directories (mapFolder);
 	return mapFolder;
 #endif
@@ -93,10 +93,7 @@ std::filesystem::path getUserScreenshotsDir()
 #ifdef __amigaos4__
 	return "";
 #elif defined(MAC)
-	char* cHome = getenv ("HOME"); //get $HOME on mac
-	if (cHome == nullptr)
-		return "";
-	std::filesystem::path homeFolder = cHome;
+	std::filesystem::path homeFolder = cSettings::getInstance().getHomeDir();
 	if (homeFolder.empty())
 		return "";
 	// store screenshots directly on the desktop of the user
@@ -104,14 +101,14 @@ std::filesystem::path getUserScreenshotsDir()
 #else
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
-	std::string screenshotsFolder = cSettings::getInstance().getHomeDir() + "screenies";
+	auto screenshotsFolder = cSettings::getInstance().getHomeDir() / "screenies";
 	std::filesystem::create_directories (screenshotsFolder);
-	return screenshotsFolder + PATH_DELIMITER;
+	return screenshotsFolder;
 #endif
 }
 
 //------------------------------------------------------------------------------
-std::string getHomeDir()
+std::filesystem::path getHomeDir()
 {
 #if WIN32
 	// this is where windowsuser should set their %HOME%
@@ -123,7 +120,7 @@ std::string getHomeDir()
 # else
 	std::string home = szPath;
 # endif
-	return std::string (home.begin(), home.end());
+	return home;
 #elif __amigaos4__
 	return "";
 #elif MAC
@@ -227,18 +224,15 @@ std::filesystem::path getUserLogDir()
 #ifdef __amigaos4__
 	return "";
 #elif defined(MAC)
-	char* cHome = getenv ("HOME"); //get $HOME on mac
-	if (cHome == nullptr)
-		return "";
-	std::string homeFolder = cHome;
+	auto homeFolder = getHomeDir();
 	if (homeFolder.empty())
 		return "";
 	// store Log directly on the desktop of the user
-	return homeFolder + PATH_DELIMITER "Desktop";
+	return homeFolder / "Desktop";
 #else
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
-	std::string LogDir = cSettings::getInstance().getHomeDir() + "log_files";
+	auto LogDir = cSettings::getInstance().getHomeDir() / "log_files";
 	std::filesystem::create_directories (LogDir);
 	return LogDir;
 #endif

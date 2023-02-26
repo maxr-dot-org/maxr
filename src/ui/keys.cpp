@@ -108,9 +108,9 @@ cKeysList::cKeysList() :
 {}
 
 //------------------------------------------------------------------------------
-void cKeysList::loadFromJsonFile (const std::string& path)
+void cKeysList::loadFromJsonFile (const std::filesystem::path& path)
 {
-	std::ifstream file (path);
+	std::ifstream file (path.string());
 	nlohmann::json json;
 
 	if (!(file >> json))
@@ -140,7 +140,7 @@ void cKeysList::loadFromFile()
 	Log.write ("Loading Keys", cLog::eLogType::Info);
 
 	const auto keysJsonGame = cSettings::getInstance().getDataDir() / "keys.json";
-	const auto keysJsonUsers = cSettings::getInstance().getHomeDir() + "keys.json";
+	const auto keysJsonUsers = cSettings::getInstance().getHomeDir() / "keys.json";
 
 	if (std::filesystem::exists (keysJsonUsers))
 	{
@@ -168,7 +168,7 @@ void cKeysList::saveToFile()
 
 	serialize (archive);
 
-	std::ofstream file (cSettings::getInstance().getHomeDir() + "keys.json");
+	std::ofstream file ((cSettings::getInstance().getHomeDir() / "keys.json").string());
 	file << json.dump (0);
 }
 

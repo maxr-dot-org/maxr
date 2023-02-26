@@ -171,20 +171,20 @@ void cSettings::setPaths()
 #else
 	const std::string maxrDir = std::string (".maxr");
 #endif
-	homeDir += (homeDir.empty() ? "" : PATH_DELIMITER) + maxrDir + PATH_DELIMITER;
-	std::cout << "\n(II): Read home directory " << homeDir;
+	homeDir /= maxrDir;
+	std::cout << "\n(II): Read home directory " << homeDir.string();
 	std::filesystem::create_directories (homeDir);
 
 	// set new place for logs
-	logPath = homeDir + "maxr.log";
+	logPath = homeDir / "maxr.log";
 	netLogPath = getUserLogDir();
 	std::cout << "\n(II): Starting logging to: " << logPath.string() << std::endl;
 }
 
 //------------------------------------------------------------------------------
-void cSettings::loadFromJsonFile (const std::string& path)
+void cSettings::loadFromJsonFile (const std::filesystem::path& path)
 {
-	std::ifstream file (path);
+	std::ifstream file (path.string());
 	nlohmann::json json;
 
 	if (!(file >> json))
@@ -215,7 +215,7 @@ void cSettings::initialize()
 
 	setPaths();
 
-	const auto settingsJson = homeDir + "maxr.json";
+	const auto settingsJson = homeDir / "maxr.json";
 
 	if (std::filesystem::exists (settingsJson))
 	{
@@ -250,7 +250,7 @@ void cSettings::saveInFile() const
 	cJsonArchiveOut out (json);
 	out << *this;
 
-	std::ofstream file (homeDir + "maxr.json");
+	std::ofstream file ((homeDir / "maxr.json").string());
 	file << json.dump (1);
 }
 
@@ -292,7 +292,7 @@ const std::filesystem::path& cSettings::getLogPath() const
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSettings::getHomeDir() const
+const std::filesystem::path& cSettings::getHomeDir() const
 {
 	return homeDir;
 }
@@ -330,7 +330,7 @@ std::filesystem::path cSettings::getMapsPath() const
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getSavesPath() const
 {
-	return homeDir + path.saves;
+	return homeDir / path.saves;
 }
 
 //------------------------------------------------------------------------------
