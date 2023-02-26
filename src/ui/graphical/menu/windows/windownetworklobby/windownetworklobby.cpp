@@ -202,10 +202,10 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 	signalConnectionManager.connect (lobbyClient.onNoMapNoReady, [this] (const std::string& mapName) {
 		addInfoEntry (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", mapName));
 	});
-	signalConnectionManager.connect (lobbyClient.onIncompatibleMap, [this] (const std::string& mapName, const std::string& localPath) {
+	signalConnectionManager.connect (lobbyClient.onIncompatibleMap, [this] (const std::string& mapName, const std::filesystem::path& localPath) {
 		addInfoEntry ("You have an incompatible version of the"); //TODO: translate
 		addInfoEntry (std::string ("map \"") + mapName + "\" at");
-		addInfoEntry (std::string ("\"") + localPath + "\" !");
+		addInfoEntry (std::string ("\"") + localPath.string() + "\" !");
 		addInfoEntry ("Move it away or delete it, then reconnect.");
 	});
 	signalConnectionManager.connect (lobbyClient.onMapDownloadRequest, [this] (const std::string& mapName) {

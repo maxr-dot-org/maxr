@@ -328,7 +328,7 @@ std::filesystem::path cSettings::getLangPath() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getMapsPath() const
+std::filesystem::path cSettings::getMapsPath() const
 {
 	return dataDir + path.maps;
 }

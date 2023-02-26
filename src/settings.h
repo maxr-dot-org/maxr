@@ -179,7 +179,7 @@ public:
 	std::filesystem::path getFxPath() const;
 	std::string getGfxPath() const;
 	std::filesystem::path getLangPath() const;
-	std::string getMapsPath() const;
+	std::filesystem::path getMapsPath() const;
 	std::string getSavesPath() const;
 	std::filesystem::path getSoundsPath() const;
 	std::filesystem::path getVoicesPath() const;

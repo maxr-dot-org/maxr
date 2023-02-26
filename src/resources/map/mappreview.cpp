@@ -26,14 +26,14 @@
 
 sMapPreview loadMapPreview (const std::string& mapName)
 {
-	std::string mapPath = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
+	auto mapPath = cSettings::getInstance().getMapsPath() / mapName;
 	// if no factory map of that name exists, try the custom user maps
 
-	SDL_RWops* mapFile = SDL_RWFromFile (mapPath.c_str(), "rb");
+	SDL_RWops* mapFile = SDL_RWFromFile (mapPath.string().c_str(), "rb");
 	if (mapFile == nullptr && !getUserMapsDir().empty())
 	{
 		mapPath = getUserMapsDir() + mapName;
-		mapFile = SDL_RWFromFile (mapPath.c_str(), "rb");
+		mapFile = SDL_RWFromFile (mapPath.string().c_str(), "rb");
 	}
 
 	if (mapFile == nullptr) return {nullptr, {0, 0}};

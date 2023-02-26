@@ -27,6 +27,8 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/thread/concurrentqueue.h"
 
+#include <config/workaround/cpp17/filesystem.h>
+
 class cClient;
 class cLobbyServer;
 struct sNetworkAddress;
@@ -75,7 +77,7 @@ public:
 	cSignal<void()> onConnectionClosed;
 
 	cSignal<void (const std::string&)> onNoMapNoReady;
-	cSignal<void (const std::string& mapName, const std::string& localPath)> onIncompatibleMap;
+	cSignal<void (const std::string& mapName, const std::filesystem::path& localPath)> onIncompatibleMap;
 	cSignal<void (const std::string&)> onMapDownloadRequest;
 	cSignal<void (const std::string&)> onMissingOriginalMap;
 	cSignal<void (int)> onDownloadMapPercentChanged;
