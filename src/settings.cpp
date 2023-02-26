@@ -184,7 +184,7 @@ void cSettings::setPaths()
 	// set new place for logs
 	logPath = homeDir + "maxr.log";
 	netLogPath = getUserLogDir();
-	std::cout << "\n(II): Starting logging to: " << logPath << std::endl;
+	std::cout << "\n(II): Starting logging to: " << logPath.string() << std::endl;
 }
 
 //------------------------------------------------------------------------------
@@ -292,7 +292,7 @@ void cSettings::setDataDir (const char* dataDir)
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSettings::getLogPath() const
+const std::filesystem::path& cSettings::getLogPath() const
 {
 	return logPath;
 }

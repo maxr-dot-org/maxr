@@ -94,7 +94,7 @@ void initCrashreporting()
 
 	crSetCrashCallback (CrashCallback, nullptr);
 
-	std::string log = cSettings::getInstance().getLogPath();
+	std::string log = cSettings::getInstance().getLogPath().string();
 	if (!log.empty())
 	{
 		crAddFile2 (log.c_str(), nullptr, "Maxr Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);

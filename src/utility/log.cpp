@@ -142,7 +142,7 @@ void cLog::checkOpenFile (eLogType type)
 		}
 
 		//create + open new log file
-		logfile.open (cSettings::getInstance().getLogPath(), std::fstream::out | std::fstream::trunc);
+		logfile.open (cSettings::getInstance().getLogPath().string(), std::fstream::out | std::fstream::trunc);
 		if (!logfile.is_open())
 		{
 			std::cerr << "(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n";

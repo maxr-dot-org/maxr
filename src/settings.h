@@ -111,7 +111,7 @@ public:
 	void setNetLogPath (const char* netLog);
 
 	const std::filesystem::path& getDataDir() const;
-	const std::string& getLogPath() const;
+	const std::filesystem::path& getLogPath() const;
 	const std::string& getHomeDir() const;
 
 	const sNetworkAddress& getNetworkAddress() const { return network; }
@@ -389,7 +389,7 @@ private:
 	/** sDataDir is where the data files are stored */
 	std::filesystem::path dataDir;
 	/** sLog is where the log goes - set in setPaths() **/
-	std::string logPath;
+	std::filesystem::path logPath;
 	/** sNetLog is where the netlog goes - set in setPaths() **/
 	std::string netLogPath;
 	/** sHome is where the user has his $HOME dir - set in setPaths() **/
