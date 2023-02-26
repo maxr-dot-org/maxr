@@ -334,7 +334,7 @@ std::filesystem::path cSettings::getMapsPath() const
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getSavesPath() const
+std::filesystem::path cSettings::getSavesPath() const
 {
 	return homeDir + path.saves;
 }

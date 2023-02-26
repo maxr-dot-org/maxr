@@ -215,7 +215,7 @@ std::filesystem::path cSavegame::getFileName (int slot)
 {
 	char numberstr[4];
 	snprintf (numberstr, sizeof (numberstr), "%.3d", slot);
-	return cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".json";
+	return cSettings::getInstance().getSavesPath() / (std::string ("Save") + numberstr + ".json");
 }
 
 //------------------------------------------------------------------------------
