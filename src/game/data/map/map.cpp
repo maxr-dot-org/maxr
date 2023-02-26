@@ -294,10 +294,10 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	if (fpMapFile == nullptr)
 	{
 		// now try in the user's map directory
-		std::string userMapsDir = getUserMapsDir();
+		auto userMapsDir = getUserMapsDir();
 		if (!userMapsDir.empty())
 		{
-			fullFilename = userMapsDir + filename;
+			fullFilename = userMapsDir / filename;
 			fpMapFile = SDL_RWFromFile (fullFilename.string().c_str(), "rb");
 		}
 	}

@@ -37,7 +37,7 @@ std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& direc
 * @author pagra
 * @return an absolute path to the user's maps directory or empty string, if no user maps folder is defined on the system
 */
-std::string getUserMapsDir();
+std::filesystem::path getUserMapsDir();
 
 /**
  * Gets the folder, where screenshots made by the user should be saved.

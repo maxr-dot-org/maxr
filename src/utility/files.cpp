@@ -75,7 +75,7 @@ std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& direc
 }
 
 //------------------------------------------------------------------------------
-std::string getUserMapsDir()
+std::filesystem::path getUserMapsDir()
 {
 #ifdef __amigaos4__
 	return "";
@@ -83,7 +83,7 @@ std::string getUserMapsDir()
 	if (cSettings::getInstance().getHomeDir().empty()) return "";
 	std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
 	std::filesystem::create_directories (mapFolder);
-	return mapFolder + PATH_DELIMITER;
+	return mapFolder;
 #endif
 }
 

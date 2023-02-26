@@ -32,7 +32,7 @@ sMapPreview loadMapPreview (const std::string& mapName)
 	SDL_RWops* mapFile = SDL_RWFromFile (mapPath.string().c_str(), "rb");
 	if (mapFile == nullptr && !getUserMapsDir().empty())
 	{
-		mapPath = getUserMapsDir() + mapName;
+		mapPath = getUserMapsDir() / mapName;
 		mapFile = SDL_RWFromFile (mapPath.string().c_str(), "rb");
 	}
 

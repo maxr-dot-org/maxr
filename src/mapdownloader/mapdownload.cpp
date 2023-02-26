@@ -95,7 +95,7 @@ std::filesystem::path MapDownload::getExistingMapFilePath (const std::string& ma
 		return filenameFactory;
 	if (!getUserMapsDir().empty())
 	{
-		string filenameUser = getUserMapsDir() + mapName;
+		auto filenameUser = getUserMapsDir() / mapName;
 		if (std::filesystem::exists (filenameUser))
 			return filenameUser;
 	}
@@ -111,7 +111,7 @@ uint32_t MapDownload::calculateCheckSum (const std::string& mapName)
 	if (!file.is_open() && !getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
-		filename = getUserMapsDir() + mapName;
+		filename = getUserMapsDir() / mapName;
 		file.open (filename.string(), ios::in | ios::binary | ios::ate);
 	}
 	if (file.is_open())
@@ -246,7 +246,7 @@ bool cMapSender::getMapFileContent()
 	if (!file.is_open() && !getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
-		filename = getUserMapsDir() + mapName;
+		filename = getUserMapsDir() / mapName;
 		file.open (filename.string(), ios::in | ios::binary | ios::ate);
 	}
 	if (!file.is_open())
