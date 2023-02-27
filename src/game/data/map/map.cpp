@@ -26,7 +26,6 @@
 #include "mapdownloader/mapdownload.h"
 #include "settings.h"
 #include "utility/crc.h"
-#include "utility/files.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/position.h"
@@ -293,7 +292,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	if (fpMapFile == nullptr)
 	{
 		// now try in the user's map directory
-		auto userMapsDir = getUserMapsDir();
+		auto userMapsDir = cSettings::getInstance().getUserMapsDir();
 		if (!userMapsDir.empty())
 		{
 			fullFilename = userMapsDir / filename;

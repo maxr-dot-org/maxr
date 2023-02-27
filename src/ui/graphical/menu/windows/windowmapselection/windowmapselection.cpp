@@ -205,9 +205,9 @@ void cWindowMapSelection::updateMaps()
 void cWindowMapSelection::loadMaps()
 {
 	maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
-	if (!getUserMapsDir().empty())
+	if (!cSettings::getInstance().getUserMapsDir().empty())
 	{
-		std::vector<std::string> userMaps (getFilesOfDirectory (getUserMapsDir()));
+		std::vector<std::string> userMaps (getFilesOfDirectory (cSettings::getInstance().getUserMapsDir()));
 		for (const auto& userMap : userMaps)
 		{
 			if (!Contains (maps, userMap))

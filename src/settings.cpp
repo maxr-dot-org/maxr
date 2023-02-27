@@ -342,3 +342,16 @@ std::filesystem::path cSettings::getMvePath() const
 {
 	return dataDir / path.mve;
 }
+
+//------------------------------------------------------------------------------
+std::filesystem::path cSettings::getUserMapsDir() const
+{
+#ifdef __amigaos4__
+	return "";
+#else
+	if (getHomeDir().empty()) return "";
+	auto mapFolder = getHomeDir() / "maps";
+	std::filesystem::create_directories (mapFolder);
+	return mapFolder;
+#endif
+}

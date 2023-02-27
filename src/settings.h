@@ -188,6 +188,14 @@ public:
 	std::filesystem::path getBuildingsPath() const;
 	std::filesystem::path getMvePath() const;
 
+	/**
+	* Gets the map folder of the user's custom maps.
+	* @author pagra
+	* @return an absolute path to the user's maps directory or empty string, if no user maps folder is defined on the system
+	*/
+	std::filesystem::path getUserMapsDir() const;
+
+
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{

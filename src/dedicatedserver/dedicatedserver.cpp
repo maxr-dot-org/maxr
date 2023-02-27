@@ -318,9 +318,9 @@ std::string cDedicatedServer::getAvailableMapsString() const
 {
 	std::stringstream oss;
 	std::vector<std::string> maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
-	if (getUserMapsDir().empty() == false)
+	if (cSettings::getInstance().getUserMapsDir().empty() == false)
 	{
-		std::vector<std::string> userMaps = getFilesOfDirectory (getUserMapsDir());
+		std::vector<std::string> userMaps = getFilesOfDirectory (cSettings::getInstance().getUserMapsDir());
 		for (size_t i = 0; i != userMaps.size(); ++i)
 		{
 			if (Contains (maps, userMaps[i]) == false)

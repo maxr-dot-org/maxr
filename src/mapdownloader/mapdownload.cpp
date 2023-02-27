@@ -26,7 +26,6 @@
 #include "game/protocol/netmessage.h"
 #include "settings.h"
 #include "utility/crc.h"
-#include "utility/files.h"
 #include "utility/log.h"
 #include "utility/string/tolower.h"
 
@@ -92,9 +91,9 @@ std::filesystem::path MapDownload::getExistingMapFilePath (const std::string& ma
 	auto filenameFactory = cSettings::getInstance().getMapsPath() / mapName;
 	if (std::filesystem::exists (filenameFactory))
 		return filenameFactory;
-	if (!getUserMapsDir().empty())
+	if (!cSettings::getInstance().getUserMapsDir().empty())
 	{
-		auto filenameUser = getUserMapsDir() / mapName;
+		auto filenameUser = cSettings::getInstance().getUserMapsDir() / mapName;
 		if (std::filesystem::exists (filenameUser))
 			return filenameUser;
 	}
@@ -107,10 +106,10 @@ uint32_t MapDownload::calculateCheckSum (const std::string& mapName)
 	uint32_t result = 0;
 	auto filename = cSettings::getInstance().getMapsPath() / mapName;
 	ifstream file (filename.string(), ios::in | ios::binary | ios::ate);
-	if (!file.is_open() && !getUserMapsDir().empty())
+	if (!file.is_open() && !cSettings::getInstance().getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
-		filename = getUserMapsDir() / mapName;
+		filename = cSettings::getInstance().getUserMapsDir() / mapName;
 		file.open (filename.string(), ios::in | ios::binary | ios::ate);
 	}
 	if (file.is_open())
@@ -173,7 +172,7 @@ bool cMapReceiver::finished()
 
 	if (bytesReceived != readBuffer.size())
 		return false;
-	std::filesystem::path mapsFolder = getUserMapsDir();
+	std::filesystem::path mapsFolder = cSettings::getInstance().getUserMapsDir();
 	if (mapsFolder.empty())
 		mapsFolder = cSettings::getInstance().getMapsPath();
 	const auto filename = mapsFolder / mapName;
@@ -242,10 +241,10 @@ bool cMapSender::getMapFileContent()
 	// read map file in memory
 	auto filename = cSettings::getInstance().getMapsPath() / mapName;
 	ifstream file (filename.string(), ios::in | ios::binary | ios::ate);
-	if (!file.is_open() && !getUserMapsDir().empty())
+	if (!file.is_open() && !cSettings::getInstance().getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
-		filename = getUserMapsDir() / mapName;
+		filename = cSettings::getInstance().getUserMapsDir() / mapName;
 		file.open (filename.string(), ios::in | ios::binary | ios::ate);
 	}
 	if (!file.is_open())

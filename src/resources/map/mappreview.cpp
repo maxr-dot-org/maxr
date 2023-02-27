@@ -21,7 +21,6 @@
 
 #include "output/video/video.h"
 #include "settings.h"
-#include "utility/files.h"
 
 sMapPreview loadMapPreview (const std::string& mapName)
 {
@@ -29,9 +28,9 @@ sMapPreview loadMapPreview (const std::string& mapName)
 	// if no factory map of that name exists, try the custom user maps
 
 	SDL_RWops* mapFile = SDL_RWFromFile (mapPath.string().c_str(), "rb");
-	if (mapFile == nullptr && !getUserMapsDir().empty())
+	if (mapFile == nullptr && !cSettings::getInstance().getUserMapsDir().empty())
 	{
-		mapPath = getUserMapsDir() / mapName;
+		mapPath = cSettings::getInstance().getUserMapsDir() / mapName;
 		mapFile = SDL_RWFromFile (mapPath.string().c_str(), "rb");
 	}
 
