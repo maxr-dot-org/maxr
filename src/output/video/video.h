@@ -122,11 +122,6 @@ public:
 	int getDisplayIndex() const { return displayIndex; }
 
 	/**
-	* @return Detected videomodes
-	*/
-	size_t getVideoSize() const;
-
-	/**
 	 * Returns the available resolutions for the currently active display.
 	 *
 	 * @return A list with pairs of the supported X and Y resolution components.
