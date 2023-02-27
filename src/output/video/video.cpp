@@ -19,20 +19,16 @@
 
 #include "video.h"
 
-#include "defines.h"
 #include "input/keyboard/keyboard.h"
-#include "maxrversion.h"
 #include "output/video/unifonts.h"
 #include "resources/pcx.h"
 #include "resources/uidata.h"
-#include "ui/uidefines.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "utility/mathtools.h"
 #include "utility/thread/ismainthread.h"
 
 #include <SDL.h>
-#include <config/workaround/cpp17/filesystem.h>
 #include <algorithm>
 #include <cassert>
 #include <ctime>
@@ -81,11 +77,9 @@ void cVideo::clearMemory()
 	sdlWindow = nullptr;
 }
 
-void cVideo::init()
+void cVideo::init (const std::string& title, const std::filesystem::path& iconPath)
 {
-	const auto title = PACKAGE_NAME " " PACKAGE_VERSION " " PACKAGE_REV " ";
-
-	sdlWindow = SDL_CreateWindow (title,
+	sdlWindow = SDL_CreateWindow (title.c_str(),
 	                              SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex()),
 	                              SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex()),
 	                              MINWIDTH,
@@ -93,7 +87,7 @@ void cVideo::init()
 	                              SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
 
 	{
-		auto icon = AutoSurface (SDL_LoadBMP (MAXR_ICON));
+		auto icon = AutoSurface (SDL_LoadBMP (iconPath.string().c_str()));
 		SDL_SetColorKey (icon.get(), 1, 0xFF00FF);
 		SDL_SetWindowIcon (sdlWindow, icon.get());
 	}
@@ -106,9 +100,9 @@ void cVideo::init()
 	detectResolutions();
 }
 
-void cVideo::showSplashScreen()
+void cVideo::showSplashScreen (const std::filesystem::path& splashScreenPath)
 {
-	AutoSurface splash (LoadPCX (SPLASH_BACKGROUND));
+	AutoSurface splash (LoadPCX (splashScreenPath));
 
 	SDL_SetWindowBordered (sdlWindow, SDL_FALSE);
 	SDL_SetWindowSize (sdlWindow, splash->w, splash->h);

@@ -49,12 +49,12 @@ public:
 
 	void clearMemory();
 
-	void init();
+	void init (const std::string& title, const std::filesystem::path& icon);
 
 	/**
 	 * Shows the splash screen
 	 */
-	void showSplashScreen();
+	void showSplashScreen (const std::filesystem::path&);
 
 	/**
 	 * Prepares the window, buffer and renderer to display the game screen.

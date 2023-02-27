@@ -30,6 +30,7 @@
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 #include "resources/loaddata.h"
+#include "ui/uidefines.h"
 #include "ui/graphical/menu/windows/windowstart.h"
 #include "ui/widgets/application.h"
 #include "utility/log.h"
@@ -143,8 +144,8 @@ try
 	SDLComponent sdlComponent (true);
 	SDLNetComponent sdlNetComponent;
 
-	Video.init();
-	Video.showSplashScreen();
+	Video.init (PACKAGE_NAME " " PACKAGE_VERSION " " PACKAGE_REV, MAXR_ICON);
+	Video.showSplashScreen (SPLASH_BACKGROUND);
 	initSound(); // now config is loaded and we can init sound and net
 
 	// load files
