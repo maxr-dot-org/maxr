@@ -185,4 +185,17 @@ namespace os
 		}
 #endif
 	}
+
+	//--------------------------------------------------------------------------
+	std::string getUserName()
+	{
+#ifdef WIN32
+		return getenv ("USERNAME");
+#elif __amigaos4__
+		return "AmigaOS4-User";
+#else
+		return getenv ("USER"); //get $USER on linux
+#endif
+	}
+
 } // namespace os

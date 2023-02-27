@@ -38,6 +38,8 @@ namespace os
 	std::filesystem::path getHomeDir();
 	std::filesystem::path getCurrentExeDir();
 
+	std::string getUserName();
+
 } // namespace os
 
 #endif // utility_osH

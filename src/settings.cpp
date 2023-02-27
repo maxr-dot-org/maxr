@@ -110,14 +110,9 @@ cSettings cSettings::instance;
 cSettings::cSettings()
 {
 	network.port = DEFAULTPORT;
-#ifdef WIN32
-	char* user = getenv ("USERNAME");
-#elif __amigaos4__
-	char* user = "AmigaOS4-User";
-#else
-	char* user = getenv ("USER"); //get $USER on linux
-#endif
-	player.name = (user == nullptr ? "Commander" : user);
+
+	auto user = os::getUserName();
+	player.name = (user.empty() ? "Commander" : user);
 	player.color = cRgbColor::red();
 }
 
