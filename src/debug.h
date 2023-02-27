@@ -22,19 +22,30 @@
 
 #ifdef USE_CRASH_RPT
 
-# include <CrashRpt.h>
+# include <memory>
 
-# define CR_ENABLE_CRASH_RPT_CURRENT_THREAD() CrThreadAutoInstallHelper (0)
-# define CR_EMULATE_CRASH() crEmulateCrash (CR_SEH_EXCEPTION)
-# define CR_INIT_CRASHREPORTING() initCrashreporting()
+class CR_RPT_RAII
+{
+public:
+	CR_RPT_RAII();
+	~CR_RPT_RAII() = default;
 
-void initCrashreporting();
+	CR_RPT_RAII (const CR_RPT_RAII&) = delete;
+	CR_RPT_RAII& operator= (const CR_RPT_RAII&) = delete;
+
+private:
+	std::shared_ptr<void> pimpl;
+};
+
+# define CR_ENABLE_CRASH_RPT_CURRENT_THREAD() CR_RPT_RAII cr_rpt_raii
+void CR_EMULATE_CRASH();
+void CR_INIT_CRASHREPORTING();
 
 #else
 
-# define CR_ENABLE_CRASH_RPT_CURRENT_THREAD()
-# define CR_EMULATE_CRASH()
-# define CR_INIT_CRASHREPORTING()
+inline void CR_ENABLE_CRASH_RPT_CURRENT_THREAD() {}
+inline void CR_EMULATE_CRASH() {}
+inline void CR_INIT_CRASHREPORTING() {}
 
 #endif
 

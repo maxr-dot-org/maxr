@@ -37,8 +37,8 @@ try
 	{
 		return -1;
 	}
-	CR_INIT_CRASHREPORTING();
 	logMAXRVersion();
+	CR_INIT_CRASHREPORTING();
 
 	SDLComponent sdlComponent (false);
 	SDLNetComponent sdlNetComponent;

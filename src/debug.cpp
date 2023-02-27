@@ -29,9 +29,21 @@
 # include "output/video/video.h"
 # include "settings.h"
 # include "utility/log.h"
+# include "utility/os.h"
 
+# ifndef NOMINMAX
+#  define NOMINMAX // CrashRpt includes windows.h
+#endif
+# include <CrashRpt.h>
 # include <SDL.h>
 
+# ifdef WIN32
+#  define L(LITERAL) L"" LITERAL
+# else
+#  define L(LITERAL) "" LITERAL
+# endif
+
+//------------------------------------------------------------------------------
 int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO* pInfo)
 {
 	// The application has crashed!
@@ -42,7 +54,7 @@ int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO* pInfo)
 		{
 			auto path = home / "Crashshot.bmp";
 			SDL_SaveBMP (cVideo::buffer, path.string().c_str());
-			crAddFile2 (path.c_str(), nullptr, "Screenshot at the moment of the crash", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+			crAddFile2 (path.native().c_str(), nullptr, L("Screenshot at the moment of the crash"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 		}
 	}
 
@@ -50,6 +62,7 @@ int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO* pInfo)
 	return CR_CB_DODEFAULT;
 }
 
+//------------------------------------------------------------------------------
 void initCrashreporting()
 {
 	//crUninstall();
@@ -57,8 +70,8 @@ void initCrashreporting()
 	CR_INSTALL_INFO info;
 	memset (&info, 0, sizeof (CR_INSTALL_INFO));
 	info.cb = sizeof (CR_INSTALL_INFO);
-	info.pszAppName = "maxr";
-	info.pszAppVersion = PACKAGE_VERSION " " PACKAGE_REV;
+	info.pszAppName = L("maxr");
+	info.pszAppVersion = L(PACKAGE_VERSION " " PACKAGE_REV);
 	info.uMiniDumpType = MiniDumpWithIndirectlyReferencedMemory;
 	//info.pszUrl
 	//info.uPriorities[CR_SFTP] = 1;
@@ -72,54 +85,72 @@ void initCrashreporting()
 	info.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS;
 	info.dwFlags |= CR_INST_SEND_QUEUED_REPORTS;
 	info.dwFlags |= CR_INST_APP_RESTART;
-	info.pszCustomSenderIcon = "maxr.ico";
-	info.pszPrivacyPolicyURL = "http://eiko.maxr.org/crashreports/Privacy%20Policy.html";
-	auto path = cSettings::getInstance().getMaxrHomeDir() / "Crashreports\\";
-	info.pszErrorReportSaveDir = path.string().c_str();
+	info.pszCustomSenderIcon = L("maxr.ico");
+	info.pszPrivacyPolicyURL = L("http://eiko.maxr.org/crashreports/Privacy%20Policy.html");
+	const auto path = (cSettings::getInstance().getMaxrHomeDir() / "Crashreports").native();
+	info.pszErrorReportSaveDir = path.c_str();
 	std::string lang = cSettings::getInstance().getLanguage();
 	const auto currentExeDir = os::getCurrentExeDir();
-	std::string langPath = currentExeDir / "crashrpt_lang_EN.ini";
+	auto langPath = (currentExeDir / "crashrpt_lang_EN.ini").native();
 	if (lang == "GER")
-		langPath = currentExeDir / "crashrpt_lang_DE.ini";
+		langPath = (currentExeDir / "crashrpt_lang_DE.ini").native();
 
-	info.pszLangFilePath = langPath.string().c_str();
+	info.pszLangFilePath = langPath.c_str();
 
 	int result = crInstall (&info);
 	if (result != 0)
 	{
 		char msg[512];
-		crGetLastErrorMsg (msg, sizeof (msg));
+		crGetLastErrorMsgA (msg, sizeof (msg));
 		Log.write (std::string ("Couldn't install crash reporting: ") + msg, cLog::eLogType::Warning);
 	}
 
 	crSetCrashCallback (CrashCallback, nullptr);
 
-	std::string log = cSettings::getInstance().getLogPath().string();
+	auto log = cSettings::getInstance().getLogPath().native();
 	if (!log.empty())
 	{
-		crAddFile2 (log.c_str(), nullptr, "Maxr Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 (log.c_str(), nullptr, L("Maxr Logfile"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	auto home = cSettings::getInstance().getMaxrHomeDir();
 	if (!home.empty())
 	{
-		std::string settings = home / "maxr.json";
-		crAddFile2 (settings.string().c_str(), nullptr, "Maxr Configuration File", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		auto settings = home / "maxr.json";
+		crAddFile2 (settings.native().c_str(), nullptr, L("Maxr Configuration File"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
-	std::string netlog = cSettings::getInstance().getNetLogPath().string();
+	auto netlog = cSettings::getInstance().getNetLogPath().native();
 	if (!netlog.empty())
 	{
-		crAddFile2 (netlog.c_str(), nullptr, "Maxr Network Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 (netlog.c_str(), nullptr, L("Maxr Network Logfile"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	if (!home.empty())
 	{
-		crAddFile2 ((home / "resinstaller.log").string().c_str(), nullptr, "Maxr Resinstaller Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 ((home / "resinstaller.log").native().c_str(), nullptr, L("Maxr Resinstaller Logfile"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	//internal screenshot function is useless...
 	//crAddScreenshot2(CR_AS_PROCESS_WINDOWS, 0);
+}
+
+//------------------------------------------------------------------------------
+CR_RPT_RAII::CR_RPT_RAII() :
+	pimpl (std::make_shared<CrThreadAutoInstallHelper> (0))
+{
+}
+
+//------------------------------------------------------------------------------
+void CR_EMULATE_CRASH()
+{
+	crEmulateCrash (CR_SEH_EXCEPTION);
+}
+
+//------------------------------------------------------------------------------
+void CR_INIT_CRASHREPORTING()
+{
+	initCrashreporting();
 }
 
 #endif //USE_CRASH_RPT

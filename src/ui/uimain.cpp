@@ -137,11 +137,11 @@ try
 		return -1;
 	}
 
-	applySettings (Video, cSettings::getInstance().getVideoSettings())
+	applySettings (Video, cSettings::getInstance().getVideoSettings());
 
-	CR_INIT_CRASHREPORTING();
 	is_main_thread();
 	logMAXRVersion();
+	CR_INIT_CRASHREPORTING();
 
 	SDLComponent sdlComponent (true);
 	SDLNetComponent sdlNetComponent;

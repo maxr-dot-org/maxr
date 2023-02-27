@@ -86,6 +86,12 @@ namespace std
 				//operator string_type() const { return pathname; }
 				std::string string() const { return pathname; }
 
+# ifdef WIN32
+				std::wstring native() const;
+# else
+				std::string native() const { return pathname; }
+# endif
+
 				bool empty() const { return pathname.empty(); }
 
 				bool operator== (const path& rhs) const
