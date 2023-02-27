@@ -32,7 +32,6 @@
 */
 std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& directory);
 
-std::filesystem::path getUserLogDir();
 std::filesystem::path getHomeDir();
 std::filesystem::path getCurrentExeDir();
 

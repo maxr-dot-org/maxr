@@ -202,6 +202,8 @@ public:
 	 */
 	std::filesystem::path getUserScreenshotsDir() const;
 
+	std::filesystem::path getUserLogDir() const;
+
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{

@@ -20,7 +20,6 @@
 #include "utility/log.h"
 
 #include "settings.h"
-#include "utility/files.h"
 
 #include <ctime>
 #include <iostream>
@@ -124,7 +123,7 @@ void cLog::checkOpenFile (eLogType type)
 		char timestr[25];
 		strftime (timestr, 21, "%Y-%m-%d-%H%M%S_", tmTime);
 		std::string sTime = timestr;
-		cSettings::getInstance().setNetLogPath (getUserLogDir() / (sTime + "net.log"));
+		cSettings::getInstance().setNetLogPath (cSettings::getInstance().getUserLogDir() / (sTime + "net.log"));
 
 		//create + open new log file
 		netLogfile.open (cSettings::getInstance().getNetLogPath().string(), std::fstream::out | std::fstream::trunc);

@@ -19,7 +19,6 @@
 
 #include "utility/files.h"
 
-#include "settings.h"
 #include "utility/log.h"
 
 #include <iostream>
@@ -181,25 +180,5 @@ std::filesystem::path getCurrentExeDir()
 		std::cerr << "Can't resolve full path to program. Doesn't this system feature /proc/self/exe?";
 		return "";
 	}
-#endif
-}
-
-//------------------------------------------------------------------------------
-std::filesystem::path getUserLogDir()
-{
-#ifdef __amigaos4__
-	return "";
-#elif defined(MAC)
-	auto homeFolder = getHomeDir();
-	if (homeFolder.empty())
-		return "";
-	// store Log directly on the desktop of the user
-	return homeFolder / "Desktop";
-#else
-	if (cSettings::getInstance().getHomeDir().empty())
-		return "";
-	auto LogDir = cSettings::getInstance().getHomeDir() / "log_files";
-	std::filesystem::create_directories (LogDir);
-	return LogDir;
 #endif
 }

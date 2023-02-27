@@ -375,3 +375,23 @@ std::filesystem::path cSettings::getUserScreenshotsDir() const
 	return screenshotsFolder;
 #endif
 }
+
+//------------------------------------------------------------------------------
+std::filesystem::path cSettings::getUserLogDir() const
+{
+#ifdef __amigaos4__
+	return "";
+#elif defined(MAC)
+	auto homeFolder = ::getHomeDir();
+	if (homeFolder.empty())
+		return "";
+	// store Log directly on the desktop of the user
+	return homeFolder / "Desktop";
+#else
+	if (homeDir.empty())
+		return "";
+	auto LogDir = homeDir / "log_files";
+	std::filesystem::create_directories (LogDir);
+	return LogDir;
+#endif
+}
