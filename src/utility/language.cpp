@@ -20,7 +20,6 @@
 #include "utility/language.h"
 
 #include "game/data/units/id.h"
-#include "utility/files.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 
@@ -159,7 +158,7 @@ std::string cLanguage::plural (const std::string& text, std::size_t n) const
 std::vector<std::string> cLanguage::getAvailableLanguages() const
 {
 #if 0 // TODO: detect automatically languages from directories
-	return getDirectories (cSettings::getInstance().getLangPath());
+	return os::getDirectories (cSettings::getInstance().getLangPath());
 #else
 	return {"ca", "de", "en", "es", "fr", "hu", "nl", "ru", "sl"};
 #endif

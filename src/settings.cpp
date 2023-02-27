@@ -21,8 +21,8 @@
 
 #include "defines.h"
 #include "maxrversion.h"
-#include "utility/files.h"
 #include "utility/log.h"
+#include "utility/os.h"
 #include "utility/serialization/jsonarchive.h"
 #include "utility/string/tolower.h"
 
@@ -44,13 +44,13 @@ namespace
 	{
 #if MAC
 		// assuming data is in same folder as binary (or current working directory)
-		return getCurrentExeDir();
+		return os::getCurrentExeDir();
 #elif WIN32
 		// assuming data is in same folder as binary (or current working directory)
-		return getCurrentExeDir();
+		return os::getCurrentExeDir();
 #elif __amigaos4__
 		// assuming data is in same folder as binary (or current working directory)
-		return getCurrentExeDir();
+		return os::getCurrentExeDir();
 #else
 		// BEGIN crude path validation to find gamedata
 		Log.write ("Probing for data paths using default values:", cLog::eLogType::Info);
@@ -69,7 +69,7 @@ namespace
 				"/opt/maxr",
 				"/usr/share/games/maxr",
 				"/usr/local/share/games/maxr",
-				getCurrentExeDir(), // check for gamedata in bin folder too
+				os::getCurrentExeDir(), // check for gamedata in bin folder too
 				"." // last resort: local dir
 			};
 
@@ -131,7 +131,7 @@ cSettings& cSettings::getInstance()
 //------------------------------------------------------------------------------
 void cSettings::setPaths()
 {
-	homeDir = getHomeDir();
+	homeDir = os::getHomeDir();
 
 	// NOTE: I do not use cLog here on purpose.
 	// Logs on linux go somewhere to $HOME/.maxr/
@@ -362,7 +362,7 @@ std::filesystem::path cSettings::getUserScreenshotsDir() const
 #ifdef __amigaos4__
 	return "";
 #elif defined(MAC)
-	std::filesystem::path homeFolder = getHomeDir();
+	std::filesystem::path homeFolder = os::getHomeDir();
 	if (homeFolder.empty())
 		return "";
 	// store screenshots directly on the desktop of the user
@@ -382,7 +382,7 @@ std::filesystem::path cSettings::getUserLogDir() const
 #ifdef __amigaos4__
 	return "";
 #elif defined(MAC)
-	auto homeFolder = getHomeDir();
+	auto homeFolder = os::getHomeDir();
 	if (homeFolder.empty())
 		return "";
 	// store Log directly on the desktop of the user

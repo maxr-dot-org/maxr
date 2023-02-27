@@ -22,8 +22,8 @@
 #include "dedicatedserver/dedicatedservergame.h"
 #include "defines.h"
 #include "settings.h"
-#include "utility/files.h"
 #include "utility/listhelpers.h"
+#include "utility/os.h"
 
 #include <algorithm>
 #include <iostream>
@@ -317,10 +317,10 @@ void cDedicatedServer::printMaps() const
 std::string cDedicatedServer::getAvailableMapsString() const
 {
 	std::stringstream oss;
-	std::vector<std::string> maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
+	std::vector<std::string> maps = os::getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (cSettings::getInstance().getUserMapsDir().empty() == false)
 	{
-		std::vector<std::string> userMaps = getFilesOfDirectory (cSettings::getInstance().getUserMapsDir());
+		std::vector<std::string> userMaps = os::getFilesOfDirectory (cSettings::getInstance().getUserMapsDir());
 		for (size_t i = 0; i != userMaps.size(); ++i)
 		{
 			if (Contains (maps, userMaps[i]) == false)

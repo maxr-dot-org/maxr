@@ -17,22 +17,27 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_filesH
-#define utility_filesH
+#ifndef utility_osH
+#define utility_osH
 
 #include <config/workaround/cpp17/filesystem.h>
 #include <string>
 #include <vector>
 
-/**
-* Gets the filenames of all files in the directory
-* @author alzi
-* @param directory Directory in which to search
-* @return A new list with all filenames
-*/
-std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& directory);
+namespace os
+{
 
-std::filesystem::path getHomeDir();
-std::filesystem::path getCurrentExeDir();
+	/**
+	* Gets the filenames of all files in the directory
+	* @author alzi
+	* @param directory Directory in which to search
+	* @return A new list with all filenames
+	*/
+	std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& directory);
 
-#endif // utility_filesH
+	std::filesystem::path getHomeDir();
+	std::filesystem::path getCurrentExeDir();
+
+} // namespace os
+
+#endif // utility_osH

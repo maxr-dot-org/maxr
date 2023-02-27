@@ -29,9 +29,9 @@
 #include "ui/uidefines.h"
 #include "ui/widgets/image.h"
 #include "ui/widgets/label.h"
-#include "utility/files.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
+#include "utility/os.h"
 
 //------------------------------------------------------------------------------
 cWindowMapSelection::cWindowMapSelection() :
@@ -204,10 +204,10 @@ void cWindowMapSelection::updateMaps()
 //------------------------------------------------------------------------------
 void cWindowMapSelection::loadMaps()
 {
-	maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
+	maps = os::getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (!cSettings::getInstance().getUserMapsDir().empty())
 	{
-		std::vector<std::string> userMaps (getFilesOfDirectory (cSettings::getInstance().getUserMapsDir()));
+		std::vector<std::string> userMaps (os::getFilesOfDirectory (cSettings::getInstance().getUserMapsDir()));
 		for (const auto& userMap : userMaps)
 		{
 			if (!Contains (maps, userMap))

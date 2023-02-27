@@ -55,7 +55,6 @@
 #include "settings.h"
 #include "ui/keys.h"
 #include "ui/uidefines.h"
-#include "utility/files.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"

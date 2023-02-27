@@ -77,7 +77,7 @@ void initCrashreporting()
 	auto path = cSettings::getInstance().getMaxrHomeDir() / "Crashreports\\";
 	info.pszErrorReportSaveDir = path.string().c_str();
 	std::string lang = cSettings::getInstance().getLanguage();
-	const auto currentExeDir = getCurrentExeDir();
+	const auto currentExeDir = os::getCurrentExeDir();
 	std::string langPath = currentExeDir / "crashrpt_lang_EN.ini";
 	if (lang == "GER")
 		langPath = currentExeDir / "crashrpt_lang_DE.ini";

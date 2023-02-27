@@ -28,8 +28,8 @@
 #include "game/protocol/netmessage.h"
 #include "maxrversion.h"
 #include "settings.h"
-#include "utility/files.h"
 #include "utility/log.h"
+#include "utility/os.h"
 #include "utility/ranges.h"
 #include "utility/serialization/jsonarchive.h"
 #include "utility/serialization/serialization.h"
@@ -291,7 +291,7 @@ void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
 void fillSaveGames (std::size_t minIndex, std::size_t maxIndex, std::vector<cSaveGameInfo>& saveGames)
 {
 	cSavegame savegame;
-	const auto saveFileNames = getFilesOfDirectory (cSettings::getInstance().getSavesPath());
+	const auto saveFileNames = os::getFilesOfDirectory (cSettings::getInstance().getSavesPath());
 	const std::regex savename_regex{R"(Save(\d{3})\.json)"};
 
 	for (const auto& filename : saveFileNames)
