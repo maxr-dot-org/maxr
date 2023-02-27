@@ -37,7 +37,7 @@ int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO* pInfo)
 	// The application has crashed!
 	if (cVideo::buffer)
 	{
-		auto home = cSettings::getInstance().getHomeDir();
+		auto home = cSettings::getInstance().getMaxrHomeDir();
 		if (!home.empty())
 		{
 			auto path = home / "Crashshot.bmp";
@@ -74,7 +74,7 @@ void initCrashreporting()
 	info.dwFlags |= CR_INST_APP_RESTART;
 	info.pszCustomSenderIcon = "maxr.ico";
 	info.pszPrivacyPolicyURL = "http://eiko.maxr.org/crashreports/Privacy%20Policy.html";
-	auto path = cSettings::getInstance().getHomeDir() / "Crashreports\\";
+	auto path = cSettings::getInstance().getMaxrHomeDir() / "Crashreports\\";
 	info.pszErrorReportSaveDir = path.string().c_str();
 	std::string lang = cSettings::getInstance().getLanguage();
 	const auto currentExeDir = getCurrentExeDir();
@@ -100,7 +100,7 @@ void initCrashreporting()
 		crAddFile2 (log.c_str(), nullptr, "Maxr Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
-	auto home = cSettings::getInstance().getHomeDir();
+	auto home = cSettings::getInstance().getMaxrHomeDir();
 	if (!home.empty())
 	{
 		std::string settings = home / "maxr.json";

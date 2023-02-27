@@ -112,7 +112,7 @@ public:
 
 	const std::filesystem::path& getDataDir() const;
 	const std::filesystem::path& getLogPath() const;
-	const std::filesystem::path& getHomeDir() const;
+	const std::filesystem::path& getMaxrHomeDir() const;
 
 	const sNetworkAddress& getNetworkAddress() const { return network; }
 	void setNetworkAddress (const sNetworkAddress& network) { this->network = network; }
