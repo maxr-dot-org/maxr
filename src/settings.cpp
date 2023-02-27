@@ -38,17 +38,16 @@ namespace
 	 * Platform dependent implementations.
 	 * On most platforms just the executable folder is used.
 	 * On Linux it tries to verify the path from the configuration file
-	 * @param sDataDirFromConf The data location that has been read
-	 *        from the configuration file.
 	 * @return The really selected data location.
 	 */
-	std::filesystem::path searchDataDir (const std::filesystem::path& sDataDirFromConf)
+	std::filesystem::path searchDataDir()
 	{
 #if MAC
 		// assuming data is in same folder as binary (or current working directory)
 		return getCurrentExeDir();
 #elif WIN32
-		return sDataDirFromConf;
+		// assuming data is in same folder as binary (or current working directory)
+		return getCurrentExeDir();
 #elif __amigaos4__
 		// assuming data is in same folder as binary (or current working directory)
 		return getCurrentExeDir();
@@ -56,7 +55,7 @@ namespace
 		// BEGIN crude path validation to find gamedata
 		Log.write ("Probing for data paths using default values:", cLog::eLogType::Info);
 
-		std::filesystem::path sPathArray[] =
+		std::vector<std::filesystem::path> sPathArray =
 			{
 				// most important position holds value of configure --prefix
 				// to gamedata in %prefix%/$(datadir)/maxr or default path
@@ -74,21 +73,6 @@ namespace
 				"." // last resort: local dir
 			};
 
-		/*
-		* Logic is:
-		* BUILD_DATADIR is default search path
-		* sDataDirFromConf overrides BUILD_DATADIR
-		* "$MAXRDATA overrides both
-		* BUILD_DATADIR is checked if sDataDirFromConf or $MAXRDATA fail the probe
-		*/
-		if (!sDataDirFromConf.empty())
-		{
-			// override default path with path from config
-			sPathArray[0] = sDataDirFromConf;
-			// and save old value one later in case sDataDirFromConf is invalid
-			sPathArray[1] = BUILD_DATADIR;
-		}
-
 		// BEGIN SET MAXRDATA
 		const char* cDataDir = getenv ("MAXRDATA");
 		if (cDataDir == nullptr)
@@ -97,33 +81,23 @@ namespace
 		}
 		else
 		{
-			sPathArray[0] = cDataDir;
-			sPathArray[1] = BUILD_DATADIR;
+			sPathArray.insert (sPathArray.begin(), cDataDir);
 			Log.write ("$MAXRDATA is set and overrides default data search path", cLog::eLogType::Warning);
 		}
 		// END SET MAXRDATA
 
-		std::filesystem::path sPathToGameData = "";
 		for (auto sInitFile : sPathArray)
 		{
 			if (std::filesystem::exists (sInitFile / "init.pcx"))
 			{
-				sPathToGameData = sInitFile;
-				break;
+				Log.write ("Found gamedata in: " + sInitFile, cLog::eLogType::Info);
+				return sInitFile;
 			}
 		}
-
 		// still empty? cry for mama - we couldn't locate any typical data folder
-		if (sPathToGameData.empty())
-		{
-			Log.write ("No success probing for data folder!", cLog::eLogType::Error);
-		}
-		else
-		{
-			Log.write ("Found gamedata in: " + sPathToGameData, cLog::eLogType::Info);
-		}
+		Log.write ("No success probing for data folder!", cLog::eLogType::Error);
 		// END crude path validation to find gamedata
-		return sPathToGameData;
+		return "";
 #endif
 	}
 
@@ -145,8 +119,6 @@ cSettings::cSettings()
 #endif
 	player.name = (user == nullptr ? "Commander" : user);
 	player.color = cRgbColor::red();
-
-	dataDir = "./";
 }
 
 //------------------------------------------------------------------------------
@@ -179,6 +151,8 @@ void cSettings::setPaths()
 	logPath = homeDir / "maxr.log";
 	netLogPath = getUserLogDir();
 	std::cout << "\n(II): Starting logging to: " << logPath.string() << std::endl;
+
+	dataDir = searchDataDir();
 }
 
 //------------------------------------------------------------------------------
