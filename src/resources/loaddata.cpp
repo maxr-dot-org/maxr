@@ -32,13 +32,6 @@
 #include <set>
 #include <sstream>
 
-#ifdef WIN32
-
-#else
-# include <sys/stat.h>
-# include <unistd.h>
-#endif
-
 #include "SDLutility/autosurface.h"
 #include "debug.h"
 #include "game/data/player/clans.h"
@@ -59,11 +52,6 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/serialization/jsonarchive.h"
-
-#ifdef WIN32
-# include <direct.h>
-# include <shlobj.h>
-#endif
 
 std::string getBuildVersion()
 {
