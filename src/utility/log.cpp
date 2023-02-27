@@ -124,10 +124,10 @@ void cLog::checkOpenFile (eLogType type)
 		char timestr[25];
 		strftime (timestr, 21, "%Y-%m-%d-%H%M%S_", tmTime);
 		std::string sTime = timestr;
-		cSettings::getInstance().setNetLogPath ((getUserLogDir() + sTime + "net.log").c_str());
+		cSettings::getInstance().setNetLogPath (getUserLogDir() / (sTime + "net.log"));
 
 		//create + open new log file
-		netLogfile.open (cSettings::getInstance().getNetLogPath(), std::fstream::out | std::fstream::trunc);
+		netLogfile.open (cSettings::getInstance().getNetLogPath().string(), std::fstream::out | std::fstream::trunc);
 		if (!netLogfile.is_open())
 		{
 			std::cerr << "(EE): Couldn't open net.log!\n Please check file/directory permissions\n";
@@ -142,7 +142,7 @@ void cLog::checkOpenFile (eLogType type)
 		}
 
 		//create + open new log file
-		logfile.open (cSettings::getInstance().getLogPath(), std::fstream::out | std::fstream::trunc);
+		logfile.open (cSettings::getInstance().getLogPath().string(), std::fstream::out | std::fstream::trunc);
 		if (!logfile.is_open())
 		{
 			std::cerr << "(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n";

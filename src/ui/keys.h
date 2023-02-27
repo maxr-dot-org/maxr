@@ -23,6 +23,8 @@
 #include "input/keyboard/keysequence.h"
 #include "utility/serialization/serialization.h"
 
+#include <config/workaround/cpp17/filesystem.h>
+
 enum class eMouseStyle
 {
 	OldSchool,
@@ -48,7 +50,7 @@ public:
 	eMouseStyle getMouseStyle() const;
 
 public:
-	void loadFromJsonFile (const std::string& path);
+	void loadFromJsonFile (const std::filesystem::path&);
 
 public:
 	cKeySequence keyExit;

@@ -25,6 +25,8 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <config/workaround/cpp17/filesystem.h>
+
 struct SDL_Texture;
 struct SDL_Renderer;
 struct SDL_Window;
@@ -159,11 +161,11 @@ public:
 	*/
 	void draw();
 
-	void takeScreenShot (const std::string& filename) const;
+	void takeScreenShot (const std::filesystem::path&) const;
 
 	void applyShadow (const SDL_Rect* rect, SDL_Surface& destination);
 
-	mutable cSignal<void (const std::string&)> screenShotTaken;
+	mutable cSignal<void (const std::filesystem::path&)> screenShotTaken;
 
 	mutable cSignal<void()> resolutionChanged;
 

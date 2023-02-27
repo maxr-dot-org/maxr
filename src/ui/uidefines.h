@@ -19,7 +19,6 @@
 #ifndef ui_uidefinesH
 #define ui_uidefinesH
 
-#include "defines.h"
 #include "settings.h"
 
 #define GRID_COLOR         0xFF305C04 // color of the grid
@@ -34,7 +33,7 @@
 
 // some defines for typical menus
 // GFX On Demand /////////////////////////////////////////////////////////////
-#define GFXOD(filename)        (cSettings::getInstance().getGfxPath() + PATH_DELIMITER filename)
+#define GFXOD(filename)        (cSettings::getInstance().getGfxPath() / filename)
 #define GFXOD_MAIN             GFXOD ("main.pcx")
 #define GFXOD_HELP             GFXOD ("help_screen.pcx")
 #define GFXOD_OPTIONS          GFXOD ("options.pcx")
@@ -66,6 +65,6 @@
 #define GFXOD_DESTRUCTION      GFXOD ("destruction.pcx")
 
 // Other Resources /////////////////////////////////////////////////////////////
-#define SPLASH_BACKGROUND (cSettings::getInstance().getDataDir() + "init.pcx")
+#define SPLASH_BACKGROUND (cSettings::getInstance().getDataDir() / "init.pcx")
 
 #endif

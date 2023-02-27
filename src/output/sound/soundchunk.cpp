@@ -28,12 +28,12 @@ bool cSoundChunk::operator== (const cSoundChunk& other) const
 }
 
 //--------------------------------------------------------------------------
-void cSoundChunk::load (const std::string& fileName)
+void cSoundChunk::load (const std::filesystem::path& fileName)
 {
-	sdlSound = SaveSdlMixChunkPointer (Mix_LoadWAV (fileName.c_str()));
+	sdlSound = SaveSdlMixChunkPointer (Mix_LoadWAV (fileName.string().c_str()));
 	if (sdlSound == nullptr)
 	{
-		Log.write ("Mix_LoadWAV returned nullptr on loading file '" + fileName + "'. Reason: " + Mix_GetError(), cLog::eLogType::Error);
+		Log.write ("Mix_LoadWAV returned nullptr on loading file '" + fileName.string() + "'. Reason: " + Mix_GetError(), cLog::eLogType::Error);
 	}
 }
 

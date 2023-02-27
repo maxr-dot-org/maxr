@@ -20,7 +20,6 @@
 #include "hud.h"
 
 #include "SDLutility/tosdl.h"
-#include "defines.h"
 #include "game/data/units/unit.h"
 #include "game/logic/turncounter.h"
 #include "game/logic/turntimeclock.h"
@@ -246,9 +245,9 @@ AutoSurface cHud::generateSurface()
 	SDL_FillRect (surface.get(), nullptr, 0x00FF00FF);
 	SDL_SetColorKey (surface.get(), SDL_TRUE, 0x00FF00FF);
 
-	const std::string gfxPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER;
+	const auto gfxPath = cSettings::getInstance().getGfxPath();
 	{
-		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_left.pcx"));
+		AutoSurface tmpSurface (LoadPCX (gfxPath / "hud_left.pcx"));
 		if (tmpSurface != nullptr)
 		{
 			SDL_BlitSurface (tmpSurface.get(), nullptr, surface.get(), nullptr);
@@ -257,7 +256,7 @@ AutoSurface cHud::generateSurface()
 
 	SDL_Rect dest;
 	{
-		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_top.pcx"));
+		AutoSurface tmpSurface (LoadPCX (gfxPath / "hud_top.pcx"));
 		if (tmpSurface != nullptr)
 		{
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h)};
@@ -273,7 +272,7 @@ AutoSurface cHud::generateSurface()
 	}
 
 	{
-		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_right.pcx"));
+		AutoSurface tmpSurface (LoadPCX (gfxPath / "hud_right.pcx"));
 		if (tmpSurface != nullptr)
 		{
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h)};
@@ -284,7 +283,7 @@ AutoSurface cHud::generateSurface()
 	}
 
 	{
-		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_bottom.pcx"));
+		AutoSurface tmpSurface (LoadPCX (gfxPath / "hud_bottom.pcx"));
 		if (tmpSurface != nullptr)
 		{
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h)};
@@ -307,7 +306,7 @@ AutoSurface cHud::generateSurface()
 
 	if (Video.getResolutionY() > 480)
 	{
-		AutoSurface tmpSurface (LoadPCX (gfxPath + "logo.pcx"));
+		AutoSurface tmpSurface (LoadPCX (gfxPath / "logo.pcx"));
 		if (tmpSurface != nullptr)
 		{
 			dest.x = 9;

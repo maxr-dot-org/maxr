@@ -25,6 +25,7 @@
 #ifndef utility_languageH
 #define utility_languageH
 
+#include <config/workaround/cpp17/filesystem.h>
 #include <string>
 #include <vector>
 
@@ -35,7 +36,7 @@ class cLanguage
 public:
 	cLanguage() = default;
 
-	void setLanguagesFolder (const std::string&);
+	void setLanguagesFolder (const std::filesystem::path&);
 
 	const std::string& getCurrentLanguage() const { return m_languageCode; }
 	void setCurrentLanguage (const std::string& code);

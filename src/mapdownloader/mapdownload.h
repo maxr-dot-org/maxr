@@ -21,6 +21,7 @@
 #define mapdownloader_mapdownloadH
 
 #include <atomic>
+#include <config/workaround/cpp17/filesystem.h>
 #include <string>
 #include <thread>
 #include <vector>
@@ -37,7 +38,7 @@ namespace MapDownload
 
 	/** @return the path to the map (in user or factory maps directory),
  *          or empty string if not found */
-	std::string getExistingMapFilePath (const std::string& mapName);
+	std::filesystem::path getExistingMapFilePath (const std::string& mapName);
 
 	/** @return a 32 bit checksum of the given map */
 	uint32_t calculateCheckSum (const std::string& mapName);

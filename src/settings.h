@@ -24,6 +24,7 @@
 #include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
+#include <config/workaround/cpp17/filesystem.h>
 #include <mutex>
 #include <string>
 
@@ -106,12 +107,12 @@ public:
 	int getScrollSpeed() const { return inGame.scrollSpeed; }
 	void setScrollSpeed (int scrollSpeed) { inGame.scrollSpeed = scrollSpeed; }
 
-	const std::string& getNetLogPath() const;
-	void setNetLogPath (const char* netLog);
+	const std::filesystem::path& getNetLogPath() const;
+	void setNetLogPath (const std::filesystem::path&);
 
-	const std::string& getDataDir() const;
-	const std::string& getLogPath() const;
-	const std::string& getHomeDir() const;
+	const std::filesystem::path& getDataDir() const;
+	const std::filesystem::path& getLogPath() const;
+	const std::filesystem::path& getHomeDir() const;
 
 	const sNetworkAddress& getNetworkAddress() const { return network; }
 	void setNetworkAddress (const sNetworkAddress& network) { this->network = network; }
@@ -174,18 +175,18 @@ public:
 	void setCacheSize (unsigned int cacheSize) { global.cacheSize = cacheSize; }
 
 	// Paths
-	std::string getFontPath() const;
-	std::string getFxPath() const;
-	std::string getGfxPath() const;
-	std::string getLangPath() const;
-	std::string getMapsPath() const;
-	std::string getSavesPath() const;
-	std::string getSoundsPath() const;
-	std::string getVoicesPath() const;
-	std::string getMusicPath() const;
-	std::string getVehiclesPath() const;
-	std::string getBuildingsPath() const;
-	std::string getMvePath() const;
+	std::filesystem::path getFontPath() const;
+	std::filesystem::path getFxPath() const;
+	std::filesystem::path getGfxPath() const;
+	std::filesystem::path getLangPath() const;
+	std::filesystem::path getMapsPath() const;
+	std::filesystem::path getSavesPath() const;
+	std::filesystem::path getSoundsPath() const;
+	std::filesystem::path getVoicesPath() const;
+	std::filesystem::path getMusicPath() const;
+	std::filesystem::path getVehiclesPath() const;
+	std::filesystem::path getBuildingsPath() const;
+	std::filesystem::path getMvePath() const;
 
 	template <typename Archive>
 	void serialize (Archive& archive)
@@ -220,14 +221,14 @@ private:
 	 */
 	void initialize();
 
-	void loadFromJsonFile (const std::string& path);
+	void loadFromJsonFile (const std::filesystem::path&);
 
 	/**
 	 * Sets the platform dependent config, log and save paths.
 	 */
 	void setPaths();
 
-	void setDataDir (const char* dataDir);
+	void setDataDir (const std::filesystem::path&);
 
 private:
 	struct sGlobalSettings
@@ -386,13 +387,13 @@ private:
 	mutable std::recursive_mutex docMutex;
 
 	/** sDataDir is where the data files are stored */
-	std::string dataDir;
+	std::filesystem::path dataDir;
 	/** sLog is where the log goes - set in setPaths() **/
-	std::string logPath;
+	std::filesystem::path logPath;
 	/** sNetLog is where the netlog goes - set in setPaths() **/
-	std::string netLogPath;
+	std::filesystem::path netLogPath;
 	/** sHome is where the user has his $HOME dir - set in setPaths() **/
-	std::string homeDir;
+	std::filesystem::path homeDir;
 
 	sGlobalSettings global;
 	sNetworkAddress network;

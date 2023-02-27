@@ -19,12 +19,9 @@
 
 #include "utility/files.h"
 
-#include "defines.h"
 #include "settings.h"
 #include "utility/log.h"
 
-#include <SDL.h>
-#include <SDL_endian.h>
 #include <iostream>
 
 #ifdef _WIN32
@@ -44,150 +41,73 @@
 # include <unistd.h>
 #endif
 
-//--------------------------------------------------------------
-/** @return exists a file at path */
 //------------------------------------------------------------------------------
-bool FileExists (const std::string& path)
+std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& directory)
 {
-	SDL_RWops* file = SDL_RWFromFile (path.c_str(), "r");
-
-	if (file == nullptr)
-	{
-		return false;
-	}
-	SDL_RWclose (file);
-	return true;
-}
-
-//------------------------------------------------------------------------------
-bool makeDir (const std::string& path)
-{
-#ifdef WIN32
-	return _mkdir (path.c_str()) == 0;
-#else
-	return mkdir (path.c_str(), 0755) == 0;
-#endif
-}
-
-//------------------------------------------------------------------------------
-// std::make_directories is C++17
-void makeDirectories (const std::string& path)
-{
-	std::size_t prev_pos = 0;
-
-	while (prev_pos != std::string::npos)
-	{
-		const auto pos = path.find_first_of ("/\\", prev_pos);
-		const auto subPath = path.substr (0, pos);
-		if (!DirExists (subPath))
-		{
-			makeDir (subPath);
-		}
-		prev_pos = pos == std::string::npos ? pos : pos + 1;
-	}
-}
-
-//------------------------------------------------------------------------------
-bool DirExists (const std::string& path)
-{
-#ifdef WIN32
-	if (_access (path.c_str(), 0) == 0)
-	{
-		struct stat status;
-		stat (path.c_str(), &status);
-
-		if (status.st_mode & S_IFDIR)
-			return true;
-		else
-			return false; // The path is not a directory
-	}
-	else
-		return false;
-#else
-	return FileExists (path); // on linux everything is a file
-#endif
-}
-
-//------------------------------------------------------------------------------
-std::vector<std::string> getFilesOfDirectory (const std::string& sDirectory)
-{
-	std::vector<std::string> List;
+	std::vector<std::string> files;
 #ifdef _WIN32
 	_finddata_t DataFile;
-	intptr_t const lFile = _findfirst ((sDirectory + PATH_DELIMITER "*.*").c_str(), &DataFile);
+	intptr_t const lFile = _findfirst ((directory / "*.*").string().c_str(), &DataFile);
 	if (lFile != -1)
 	{
 		do
 		{
 			if (DataFile.attrib & _A_SUBDIR) continue;
 			if (DataFile.name[0] == '.') continue;
-			List.push_back (DataFile.name);
+			files.push_back (DataFile.name);
 		} while (_findnext (lFile, &DataFile) == 0);
 		_findclose (lFile);
 	}
 #else
-	if (DIR* const dir = opendir (sDirectory.c_str()))
+	if (DIR* const dir = opendir (directory.string().c_str()))
 	{
 		while (struct dirent* const entry = readdir (dir))
 		{
 			char const* const name = entry->d_name;
 			if (name[0] == '.') continue;
-			List.push_back (name);
+			files.push_back (name);
 		}
 		closedir (dir);
 	}
 #endif
-	return List;
+	return files;
 }
 
 //------------------------------------------------------------------------------
-std::string getUserMapsDir()
+std::filesystem::path getUserMapsDir()
 {
 #ifdef __amigaos4__
 	return "";
 #else
 	if (cSettings::getInstance().getHomeDir().empty()) return "";
-	std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
-	if (!DirExists (mapFolder))
-	{
-		if (makeDir (mapFolder))
-			return mapFolder + PATH_DELIMITER;
-		return "";
-	}
-	return mapFolder + PATH_DELIMITER;
+	auto mapFolder = cSettings::getInstance().getHomeDir() / "maps";
+	std::filesystem::create_directories (mapFolder);
+	return mapFolder;
 #endif
 }
 
 //------------------------------------------------------------------------------
-std::string getUserScreenshotsDir()
+std::filesystem::path getUserScreenshotsDir()
 {
 #ifdef __amigaos4__
 	return "";
 #elif defined(MAC)
-	char* cHome = getenv ("HOME"); //get $HOME on mac
-	if (cHome == nullptr)
-		return "";
-	std::string homeFolder = cHome;
+	std::filesystem::path homeFolder = cSettings::getInstance().getHomeDir();
 	if (homeFolder.empty())
 		return "";
 	// store screenshots directly on the desktop of the user
-	return homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
+	return homeFolder / "Desktop";
 #else
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
-	std::string screenshotsFolder = cSettings::getInstance().getHomeDir() + "screenies";
-	if (!DirExists (screenshotsFolder))
-	{
-		if (makeDir (screenshotsFolder))
-			return screenshotsFolder + PATH_DELIMITER;
-		return "";
-	}
-	return screenshotsFolder + PATH_DELIMITER;
+	auto screenshotsFolder = cSettings::getInstance().getHomeDir() / "screenies";
+	std::filesystem::create_directories (screenshotsFolder);
+	return screenshotsFolder;
 #endif
 }
 
 //------------------------------------------------------------------------------
-std::string getHomeDir()
+std::filesystem::path getHomeDir()
 {
 #if WIN32
 	// this is where windowsuser should set their %HOME%
@@ -199,7 +119,7 @@ std::string getHomeDir()
 # else
 	std::string home = szPath;
 # endif
-	return std::string (home.begin(), home.end());
+	return home;
 #elif __amigaos4__
 	return "";
 #elif MAC
@@ -212,7 +132,7 @@ std::string getHomeDir()
 }
 
 //------------------------------------------------------------------------------
-std::string getCurrentExeDir()
+std::filesystem::path getCurrentExeDir()
 {
 #if MAC
 	return ""; // TODO
@@ -230,14 +150,14 @@ std::string getCurrentExeDir()
 	const auto backslashString = "\\";
 # endif
 	exe.erase (exe.rfind (backslashString), std::string::npos);
-	return std::string (exe.begin(), exe.end());
+	return exe;
 #elif __amigaos4__
 	return "";
 #else
 	// determine full path to application
 	// this needs /proc support that should be available
 	// on most linux installations
-	if (FileExists ("/proc/self/exe"))
+	if (std::filesystem::exists ("/proc/self/exe"))
 	{
 		char cPathToExe[255];
 		int iSize = readlink ("/proc/self/exe", cPathToExe, sizeof (cPathToExe));
@@ -256,7 +176,7 @@ std::string getCurrentExeDir()
 			int iPos = 0;
 			for (int i = 0; i < 255 && cPathToExe[i] != '\0'; i++)
 			{
-				// snip garbage after last PATH_DELIMITER + executable itself
+				// snip garbage after last '/' + executable itself
 				// (is reported on some linux systems
 				//  as well using /proc/self/exe
 				if (cPathToExe[i] == '/')
@@ -265,10 +185,10 @@ std::string getCurrentExeDir()
 
 			std::string exePath = cPathToExe;
 			exePath = exePath.substr (0, iPos);
-			exePath += PATH_DELIMITER;
+			exePath += "/";
 
 			// check for binary itself in bin folder
-			if (FileExists (exePath + "maxr"))
+			if (std::filesystem::exists (exePath + "maxr"))
 			{
 				Log.write ("Path to binary is: " + exePath, cLog::eLogType::Info);
 			}
@@ -280,7 +200,7 @@ std::string getCurrentExeDir()
 				if (cPathToExe[iPos - 1] == 'r' && cPathToExe[iPos - 2] == 'x' && cPathToExe[iPos - 3] == 'a' && cPathToExe[iPos - 4] == 'm')
 				{
 					exePath = exePath.substr (0, iPos - 5);
-					if (FileExists (exePath + "maxr"))
+					if (std::filesystem::exists (exePath + "maxr"))
 					{
 						Log.write ("Path to binary is: " + exePath, cLog::eLogType::Info);
 					}
@@ -298,55 +218,21 @@ std::string getCurrentExeDir()
 }
 
 //------------------------------------------------------------------------------
-std::string getUserLogDir()
+std::filesystem::path getUserLogDir()
 {
 #ifdef __amigaos4__
 	return "";
 #elif defined(MAC)
-	char* cHome = getenv ("HOME"); //get $HOME on mac
-	if (cHome == nullptr)
-		return "";
-	std::string homeFolder = cHome;
+	auto homeFolder = getHomeDir();
 	if (homeFolder.empty())
 		return "";
 	// store Log directly on the desktop of the user
-	return homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
+	return homeFolder / "Desktop";
 #else
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
-	std::string LogDir = cSettings::getInstance().getHomeDir() + "log_files";
-
-	if (!DirExists (LogDir))
-	{
-		if (makeDir (LogDir))
-			return LogDir + PATH_DELIMITER;
-		return "";
-	}
-	return LogDir + PATH_DELIMITER;
+	auto LogDir = cSettings::getInstance().getHomeDir() / "log_files";
+	std::filesystem::create_directories (LogDir);
+	return LogDir;
 #endif
-}
-
-//------------------------------------------------------------------------------
-void copyFile (const std::string& source, const std::string& dest)
-{
-	SDL_RWops* sourceFile = SDL_RWFromFile (source.c_str(), "rb");
-	SDL_RWops* destFile = SDL_RWFromFile (dest.c_str(), "wb");
-	if (destFile == nullptr)
-	{
-		return;
-	}
-
-	SDL_RWseek (sourceFile, 0, SEEK_END);
-	const long int size = SDL_RWtell (sourceFile);
-	std::vector<unsigned char> buffer (size);
-
-	SDL_RWseek (sourceFile, 0, SEEK_SET);
-	SDL_RWread (sourceFile, buffer.data(), 1, size);
-
-	SDL_RWwrite (destFile, buffer.data(), 1, size);
-
-	buffer.clear();
-
-	if (sourceFile) SDL_RWclose (sourceFile);
-	if (destFile) SDL_RWclose (destFile);
 }

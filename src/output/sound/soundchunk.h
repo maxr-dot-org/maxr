@@ -21,6 +21,7 @@
 #define output_sound_soundchunkH
 
 #include <SDL_mixer.h>
+#include <config/workaround/cpp17/filesystem.h>
 #include <chrono>
 #include <memory>
 #include <string>
@@ -36,7 +37,7 @@ public:
 
 	bool operator== (const cSoundChunk&) const;
 
-	void load (const std::string& fileName);
+	void load (const std::filesystem::path& fileName);
 
 	bool empty() const;
 

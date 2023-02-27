@@ -19,8 +19,8 @@
 
 #include "keys.h"
 
+#include "config/workaround/cpp17/filesystem.h"
 #include "settings.h"
-#include "utility/files.h"
 #include "utility/log.h"
 #include "utility/serialization/jsonarchive.h"
 
@@ -108,9 +108,9 @@ cKeysList::cKeysList() :
 {}
 
 //------------------------------------------------------------------------------
-void cKeysList::loadFromJsonFile (const std::string& path)
+void cKeysList::loadFromJsonFile (const std::filesystem::path& path)
 {
-	std::ifstream file (path);
+	std::ifstream file (path.string());
 	nlohmann::json json;
 
 	if (!(file >> json))
@@ -139,17 +139,17 @@ void cKeysList::loadFromFile()
 {
 	Log.write ("Loading Keys", cLog::eLogType::Info);
 
-	const auto keysJsonGame = cSettings::getInstance().getDataDir() + "keys.json";
-	const auto keysJsonUsers = cSettings::getInstance().getHomeDir() + "keys.json";
+	const auto keysJsonGame = cSettings::getInstance().getDataDir() / "keys.json";
+	const auto keysJsonUsers = cSettings::getInstance().getHomeDir() / "keys.json";
 
-	if (FileExists (keysJsonUsers))
+	if (std::filesystem::exists (keysJsonUsers))
 	{
 		Log.write ("User key-file in use", cLog::eLogType::Info);
 		loadFromJsonFile (keysJsonUsers);
 	}
-	else if (FileExists (keysJsonGame))
+	else if (std::filesystem::exists (keysJsonGame))
 	{
-		copyFile (keysJsonGame, keysJsonUsers);
+		std::filesystem::copy_file (keysJsonGame, keysJsonUsers);
 		Log.write ("Key-file copied from gamedir to userdir", cLog::eLogType::Info);
 		loadFromJsonFile (keysJsonUsers);
 	}
@@ -157,7 +157,6 @@ void cKeysList::loadFromFile()
 	{
 		Log.write ("generating new keys-file", cLog::eLogType::Warning);
 		saveToFile();
-		return;
 	}
 }
 
@@ -169,7 +168,7 @@ void cKeysList::saveToFile()
 
 	serialize (archive);
 
-	std::ofstream file (cSettings::getInstance().getHomeDir() + "keys.json");
+	std::ofstream file ((cSettings::getInstance().getHomeDir() / "keys.json").string());
 	file << json.dump (0);
 }
 

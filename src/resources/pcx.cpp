@@ -20,10 +20,10 @@
 #include "pcx.h"
 
 #include "output/video/video.h"
-#include "utility/files.h"
 #include "utility/log.h"
 
 #include <algorithm>
+#include <config/workaround/cpp17/filesystem.h>
 
 /**
 *  Class that uses a internal buffer to read from file.
@@ -35,9 +35,9 @@ public:
 	cBufferedFile() = default;
 	~cBufferedFile() { close(); }
 
-	bool open (const char* filename, const char* mode)
+	bool open (const std::filesystem::path& filename, const char* mode)
 	{
-		this->file = SDL_RWFromFile (filename, mode);
+		this->file = SDL_RWFromFile (filename.string().c_str(), mode);
 		return this->file != nullptr;
 	}
 
@@ -100,17 +100,17 @@ private:
 	unsigned int end = 0;
 };
 
-AutoSurface LoadPCX (const std::string& name)
+AutoSurface LoadPCX (const std::filesystem::path& name)
 {
 	// Open the file.
-	if (!FileExists (name))
+	if (!std::filesystem::exists (name))
 	{
 		// File not found, create empty surface.
 		return AutoSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));
 	}
 
 	cBufferedFile bufferedFile;
-	if (!bufferedFile.open (name.c_str(), "rb"))
+	if (!bufferedFile.open (name, "rb"))
 	{
 		Log.write (SDL_GetError(), cLog::eLogType::Warning); // Image corrupted, create empty surface.
 		return AutoSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));

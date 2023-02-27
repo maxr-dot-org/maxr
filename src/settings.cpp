@@ -26,6 +26,7 @@
 #include "utility/serialization/jsonarchive.h"
 #include "utility/string/tolower.h"
 
+#include <config/workaround/cpp17/filesystem.h>
 #include <iostream>
 #include <locale>
 #include <string>
@@ -41,26 +42,21 @@ namespace
 	 *        from the configuration file.
 	 * @return The really selected data location.
 	 */
-	std::string searchDataDir (const std::string& sDataDirFromConf)
+	std::filesystem::path searchDataDir (const std::filesystem::path& sDataDirFromConf)
 	{
-		std::string sPathToGameData = "";
 #if MAC
 		// assuming data is in same folder as binary (or current working directory)
-		sPathToGameData = getCurrentExeDir();
+		return getCurrentExeDir();
 #elif WIN32
-		if (!sDataDirFromConf.empty())
-		{
-			sPathToGameData = sDataDirFromConf;
-			sPathToGameData += PATH_DELIMITER;
-		}
+		return sDataDirFromConf;
 #elif __amigaos4__
 		// assuming data is in same folder as binary (or current working directory)
-		sPathToGameData = getCurrentExeDir();
+		return getCurrentExeDir();
 #else
 		// BEGIN crude path validation to find gamedata
 		Log.write ("Probing for data paths using default values:", cLog::eLogType::Info);
 
-		std::string sPathArray[] =
+		std::filesystem::path sPathArray[] =
 			{
 				// most important position holds value of configure --prefix
 				// to gamedata in %prefix%/$(datadir)/maxr or default path
@@ -94,8 +90,7 @@ namespace
 		}
 
 		// BEGIN SET MAXRDATA
-		char* cDataDir;
-		cDataDir = getenv ("MAXRDATA");
+		const char* cDataDir = getenv ("MAXRDATA");
 		if (cDataDir == nullptr)
 		{
 			Log.write ("$MAXRDATA is not set", cLog::eLogType::Info);
@@ -108,10 +103,10 @@ namespace
 		}
 		// END SET MAXRDATA
 
+		std::filesystem::path sPathToGameData = "";
 		for (auto sInitFile : sPathArray)
 		{
-			sInitFile += PATH_DELIMITER;
-			if (FileExists (sInitFile + "init.pcx"))
+			if (std::filesystem::exists (sInitFile / "init.pcx"))
 			{
 				sPathToGameData = sInitFile;
 				break;
@@ -128,8 +123,8 @@ namespace
 			Log.write ("Found gamedata in: " + sPathToGameData, cLog::eLogType::Info);
 		}
 		// END crude path validation to find gamedata
-#endif
 		return sPathToGameData;
+#endif
 	}
 
 } // namespace
@@ -148,9 +143,10 @@ cSettings::cSettings()
 #else
 	char* user = getenv ("USER"); //get $USER on linux
 #endif
-
 	player.name = (user == nullptr ? "Commander" : user);
 	player.color = cRgbColor::red();
+
+	dataDir = "./";
 }
 
 //------------------------------------------------------------------------------
@@ -175,20 +171,20 @@ void cSettings::setPaths()
 #else
 	const std::string maxrDir = std::string (".maxr");
 #endif
-	homeDir += (homeDir.empty() ? "" : PATH_DELIMITER) + maxrDir + PATH_DELIMITER;
-	std::cout << "\n(II): Read home directory " << homeDir;
-	makeDirectories (homeDir);
+	homeDir /= maxrDir;
+	std::cout << "\n(II): Read home directory " << homeDir.string();
+	std::filesystem::create_directories (homeDir);
 
 	// set new place for logs
-	logPath = homeDir + "maxr.log";
+	logPath = homeDir / "maxr.log";
 	netLogPath = getUserLogDir();
-	std::cout << "\n(II): Starting logging to: " << logPath << std::endl;
+	std::cout << "\n(II): Starting logging to: " << logPath.string() << std::endl;
 }
 
 //------------------------------------------------------------------------------
-void cSettings::loadFromJsonFile (const std::string& path)
+void cSettings::loadFromJsonFile (const std::filesystem::path& path)
 {
-	std::ifstream file (path);
+	std::ifstream file (path.string());
 	nlohmann::json json;
 
 	if (!(file >> json))
@@ -219,9 +215,9 @@ void cSettings::initialize()
 
 	setPaths();
 
-	const auto settingsJson = homeDir + "maxr.json";
+	const auto settingsJson = homeDir / "maxr.json";
 
-	if (FileExists (settingsJson))
+	if (std::filesystem::exists (settingsJson))
 	{
 		loadFromJsonFile (settingsJson);
 	}
@@ -237,17 +233,10 @@ void cSettings::initialize()
 	else
 		Log.write ("Debugmode enabled", cLog::eLogType::Info);
 
-#if MAC
 	// Create saves directory, if it doesn't exist, yet.
 	// Creating it during setPaths is too early, because it was not read yet.
-	if (!FileExists (getSavesPath()))
-	{
-		if (mkdir (getSavesPath().c_str(), 0755) == 0)
-			Log.write ("Created new save directory " + getSavesPath(), cLog::eLogType::Info);
-		else
-			Log.write ("Can't create save directory " + getSavesPath(), cLog::eLogType::Error);
-	}
-#endif
+	std::filesystem::create_directories (getSavesPath());
+
 	initialized = true;
 	initializing = false;
 }
@@ -261,7 +250,7 @@ void cSettings::saveInFile() const
 	cJsonArchiveOut out (json);
 	out << *this;
 
-	std::ofstream file (homeDir + "maxr.json");
+	std::ofstream file ((homeDir / "maxr.json").string());
 	file << json.dump (1);
 }
 
@@ -273,109 +262,109 @@ void cSettings::setAnimations (bool animations)
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSettings::getNetLogPath() const
+const std::filesystem::path& cSettings::getNetLogPath() const
 {
 	return netLogPath;
 }
 
 //------------------------------------------------------------------------------
-void cSettings::setNetLogPath (const char* netLogPath)
+void cSettings::setNetLogPath (const std::filesystem::path& netLogPath)
 {
 	this->netLogPath = netLogPath;
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSettings::getDataDir() const
+const std::filesystem::path& cSettings::getDataDir() const
 {
 	return dataDir;
 }
 
 //------------------------------------------------------------------------------
-void cSettings::setDataDir (const char* dataDir)
+void cSettings::setDataDir (const std::filesystem::path& dataDir)
 {
 	this->dataDir = dataDir;
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSettings::getLogPath() const
+const std::filesystem::path& cSettings::getLogPath() const
 {
 	return logPath;
 }
 
 //------------------------------------------------------------------------------
-const std::string& cSettings::getHomeDir() const
+const std::filesystem::path& cSettings::getHomeDir() const
 {
 	return homeDir;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getFontPath() const
+std::filesystem::path cSettings::getFontPath() const
 {
-	return dataDir + path.font;
+	return dataDir / path.font;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getFxPath() const
+std::filesystem::path cSettings::getFxPath() const
 {
-	return dataDir + path.fx;
+	return dataDir / path.fx;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getGfxPath() const
+std::filesystem::path cSettings::getGfxPath() const
 {
-	return dataDir + path.gfx;
+	return dataDir / path.gfx;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getLangPath() const
+std::filesystem::path cSettings::getLangPath() const
 {
-	return dataDir + path.languages;
+	return dataDir / path.languages;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getMapsPath() const
+std::filesystem::path cSettings::getMapsPath() const
 {
-	return dataDir + path.maps;
+	return dataDir / path.maps;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getSavesPath() const
+std::filesystem::path cSettings::getSavesPath() const
 {
-	return homeDir + path.saves;
+	return homeDir / path.saves;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getSoundsPath() const
+std::filesystem::path cSettings::getSoundsPath() const
 {
-	return dataDir + path.sounds;
+	return dataDir / path.sounds;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getVoicesPath() const
+std::filesystem::path cSettings::getVoicesPath() const
 {
-	return dataDir + path.voices;
+	return dataDir / path.voices;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getMusicPath() const
+std::filesystem::path cSettings::getMusicPath() const
 {
-	return dataDir + path.music;
+	return dataDir / path.music;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getVehiclesPath() const
+std::filesystem::path cSettings::getVehiclesPath() const
 {
-	return dataDir + path.vehicles;
+	return dataDir / path.vehicles;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getBuildingsPath() const
+std::filesystem::path cSettings::getBuildingsPath() const
 {
-	return dataDir + path.buildings;
+	return dataDir / path.buildings;
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getMvePath() const
+std::filesystem::path cSettings::getMvePath() const
 {
-	return dataDir + path.mve;
+	return dataDir / path.mve;
 }

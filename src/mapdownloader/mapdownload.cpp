@@ -21,7 +21,6 @@
 
 #include "mapdownload.h"
 
-#include "defines.h"
 #include "game/connectionmanager.h"
 #include "game/protocol/lobbymessage.h"
 #include "game/protocol/netmessage.h"
@@ -31,6 +30,7 @@
 #include "utility/log.h"
 #include "utility/string/tolower.h"
 
+#include <config/workaround/cpp17/filesystem.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -87,15 +87,15 @@ bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 }
 
 //------------------------------------------------------------------------------
-std::string MapDownload::getExistingMapFilePath (const std::string& mapName)
+std::filesystem::path MapDownload::getExistingMapFilePath (const std::string& mapName)
 {
-	string filenameFactory = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
-	if (FileExists (filenameFactory))
+	auto filenameFactory = cSettings::getInstance().getMapsPath() / mapName;
+	if (std::filesystem::exists (filenameFactory))
 		return filenameFactory;
 	if (!getUserMapsDir().empty())
 	{
-		string filenameUser = getUserMapsDir() + mapName;
-		if (FileExists (filenameUser))
+		auto filenameUser = getUserMapsDir() / mapName;
+		if (std::filesystem::exists (filenameUser))
 			return filenameUser;
 	}
 	return "";
@@ -105,13 +105,13 @@ std::string MapDownload::getExistingMapFilePath (const std::string& mapName)
 uint32_t MapDownload::calculateCheckSum (const std::string& mapName)
 {
 	uint32_t result = 0;
-	string filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
-	ifstream file (filename, ios::in | ios::binary | ios::ate);
+	auto filename = cSettings::getInstance().getMapsPath() / mapName;
+	ifstream file (filename.string(), ios::in | ios::binary | ios::ate);
 	if (!file.is_open() && !getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
-		filename = getUserMapsDir() + mapName;
-		file.open (filename, ios::in | ios::binary | ios::ate);
+		filename = getUserMapsDir() / mapName;
+		file.open (filename.string(), ios::in | ios::binary | ios::ate);
 	}
 	if (file.is_open())
 	{
@@ -173,11 +173,11 @@ bool cMapReceiver::finished()
 
 	if (bytesReceived != readBuffer.size())
 		return false;
-	std::string mapsFolder = getUserMapsDir();
+	std::filesystem::path mapsFolder = getUserMapsDir();
 	if (mapsFolder.empty())
-		mapsFolder = cSettings::getInstance().getMapsPath() + PATH_DELIMITER;
-	const std::string filename = mapsFolder + mapName;
-	std::ofstream newMapFile (filename, ios::out | ios::binary);
+		mapsFolder = cSettings::getInstance().getMapsPath();
+	const auto filename = mapsFolder / mapName;
+	std::ofstream newMapFile (filename.string(), ios::out | ios::binary);
 	if (newMapFile.bad())
 		return false;
 	newMapFile.write (readBuffer.data(), readBuffer.size());
@@ -240,17 +240,17 @@ void cMapSender::runInThread()
 bool cMapSender::getMapFileContent()
 {
 	// read map file in memory
-	string filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
-	ifstream file (filename, ios::in | ios::binary | ios::ate);
+	auto filename = cSettings::getInstance().getMapsPath() / mapName;
+	ifstream file (filename.string(), ios::in | ios::binary | ios::ate);
 	if (!file.is_open() && !getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
-		filename = getUserMapsDir() + mapName;
-		file.open (filename, ios::in | ios::binary | ios::ate);
+		filename = getUserMapsDir() / mapName;
+		file.open (filename.string(), ios::in | ios::binary | ios::ate);
 	}
 	if (!file.is_open())
 	{
-		Log.write (string ("MapSender: could not read the map \"") + filename + "\" into memory.", cLog::eLogType::Warning);
+		Log.write (string ("MapSender: could not read the map \"") + filename.string() + "\" into memory.", cLog::eLogType::Warning);
 		return false;
 	}
 	const std::size_t mapSize = file.tellg();
@@ -258,7 +258,7 @@ bool cMapSender::getMapFileContent()
 	file.seekg (0, ios::beg);
 	file.read (sendBuffer.data(), mapSize);
 	file.close();
-	Log.write (string ("MapSender: read the map \"") + filename + "\" into memory.", cLog::eLogType::Debug);
+	Log.write (string ("MapSender: read the map \"") + filename.string() + "\" into memory.", cLog::eLogType::Debug);
 	return true;
 }
 

@@ -21,16 +21,8 @@
 
 #include "settings.h"
 
-#ifndef PATH_DELIMITER
-# ifdef WIN32
-#  define PATH_DELIMITER "\\"
-# else
-#  define PATH_DELIMITER "/"
-# endif
-#endif
-
 #define DEFAULTPORT 58600
 
-#define MAXR_ICON (cSettings::getInstance().getDataDir() + "maxr.bmp").c_str()
+#define MAXR_ICON (cSettings::getInstance().getDataDir() / "maxr.bmp").string().c_str()
 
 #endif

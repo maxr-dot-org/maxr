@@ -55,13 +55,13 @@ namespace
 } // namespace
 
 //------------------------------------------------------------------------------
-void cLanguage::setLanguagesFolder (const std::string& path)
+void cLanguage::setLanguagesFolder (const std::filesystem::path& path)
 {
-	bindtextdomain ("maxr", path.c_str());
+	bindtextdomain ("maxr", path.string().c_str());
 	bind_textdomain_codeset ("maxr", "utf-8");
-	bindtextdomain ("clans", path.c_str());
+	bindtextdomain ("clans", path.string().c_str());
 	bind_textdomain_codeset ("clans", "utf-8");
-	bindtextdomain ("units", path.c_str());
+	bindtextdomain ("units", path.string().c_str());
 	bind_textdomain_codeset ("units", "utf-8");
 	textdomain ("maxr");
 	std::unique_lock<std::mutex> lock (putenv_mutex);

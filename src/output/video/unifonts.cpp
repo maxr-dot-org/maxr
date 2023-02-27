@@ -21,14 +21,14 @@
 
 #include "SDLutility/autosurface.h"
 #include "SDLutility/drawing.h"
-#include "defines.h"
 #include "resources/pcx.h"
 #include "settings.h"
 #include "utility/color.h"
-#include "utility/files.h"
 #include "utility/log.h"
 #include "utility/position.h"
 #include "utility/string/trim.h"
+
+#include <config/workaround/cpp17/filesystem.h>
 
 using namespace std;
 
@@ -512,7 +512,7 @@ AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
                                               eUnicodeFontType fonttype)
 {
 	// build the filename from the information
-	string filename = cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_";
+	std::string filename = "latin_";
 	switch (fonttype)
 	{
 		case eUnicodeFontType::LatinNormal:
@@ -541,9 +541,10 @@ AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 	}
 	filename += ".pcx";
 
+	auto path = cSettings::getInstance().getFontPath() / filename;
 	// load the bitmap
-	if (FileExists (filename))
-		return LoadPCX (filename);
+	if (std::filesystem::exists (path))
+		return LoadPCX (path);
 	else
 		return nullptr;
 }

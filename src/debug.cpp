@@ -37,11 +37,11 @@ int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO* pInfo)
 	// The application has crashed!
 	if (cVideo::buffer)
 	{
-		std::string home = cSettings::getInstance().getHomeDir();
+		auto home = cSettings::getInstance().getHomeDir();
 		if (!home.empty())
 		{
-			std::string path = home + "\\Crashshot.bmp";
-			SDL_SaveBMP (cVideo::buffer, path.c_str());
+			auto path = home / "Crashshot.bmp";
+			SDL_SaveBMP (cVideo::buffer, path.string().c_str());
 			crAddFile2 (path.c_str(), nullptr, "Screenshot at the moment of the crash", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 		}
 	}
@@ -74,15 +74,15 @@ void initCrashreporting()
 	info.dwFlags |= CR_INST_APP_RESTART;
 	info.pszCustomSenderIcon = "maxr.ico";
 	info.pszPrivacyPolicyURL = "http://eiko.maxr.org/crashreports/Privacy%20Policy.html";
-	std::string path = cSettings::getInstance().getHomeDir() + "\\Crashreports\\";
-	info.pszErrorReportSaveDir = path.c_str();
+	auto path = cSettings::getInstance().getHomeDir() / "Crashreports\\";
+	info.pszErrorReportSaveDir = path.string().c_str();
 	std::string lang = cSettings::getInstance().getLanguage();
 	const auto currentExeDir = getCurrentExeDir();
-	std::string langPath = currentExeDir + "\\crashrpt_lang_EN.ini";
+	std::string langPath = currentExeDir / "crashrpt_lang_EN.ini";
 	if (lang == "GER")
-		std::string langPath = currentExeDir + "\\crashrpt_lang_DE.ini";
+		langPath = currentExeDir / "crashrpt_lang_DE.ini";
 
-	info.pszLangFilePath = langPath.c_str();
+	info.pszLangFilePath = langPath.string().c_str();
 
 	int result = crInstall (&info);
 	if (result != 0)
@@ -94,28 +94,28 @@ void initCrashreporting()
 
 	crSetCrashCallback (CrashCallback, nullptr);
 
-	std::string log = cSettings::getInstance().getLogPath();
+	std::string log = cSettings::getInstance().getLogPath().string();
 	if (!log.empty())
 	{
 		crAddFile2 (log.c_str(), nullptr, "Maxr Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
-	std::string settings = cSettings::getInstance().getHomeDir() + "maxr.json";
-	if (!settings.empty())
+	auto home = cSettings::getInstance().getHomeDir();
+	if (!home.empty())
 	{
-		crAddFile2 (settings.c_str(), nullptr, "Maxr Configuration File", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		std::string settings = home / "maxr.json";
+		crAddFile2 (settings.string().c_str(), nullptr, "Maxr Configuration File", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
-	std::string netlog = cSettings::getInstance().getNetLogPath();
+	std::string netlog = cSettings::getInstance().getNetLogPath().string();
 	if (!netlog.empty())
 	{
 		crAddFile2 (netlog.c_str(), nullptr, "Maxr Network Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
-	std::string home = cSettings::getInstance().getHomeDir();
 	if (!home.empty())
 	{
-		crAddFile2 ((home + "resinstaller.log").c_str(), nullptr, "Maxr Resinstaller Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 ((home / "resinstaller.log").string().c_str(), nullptr, "Maxr Resinstaller Logfile", CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	//internal screenshot function is useless...

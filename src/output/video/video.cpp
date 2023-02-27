@@ -19,6 +19,7 @@
 
 #include "video.h"
 
+#include "defines.h"
 #include "input/keyboard/keyboard.h"
 #include "maxrversion.h"
 #include "output/video/unifonts.h"
@@ -31,6 +32,7 @@
 #include "utility/thread/ismainthread.h"
 
 #include <SDL.h>
+#include <config/workaround/cpp17/filesystem.h>
 #include <algorithm>
 #include <cassert>
 #include <ctime>
@@ -341,9 +343,9 @@ int cVideo::getMinH() const
 	return MINHEIGHT;
 }
 
-void cVideo::takeScreenShot (const std::string& filename) const
+void cVideo::takeScreenShot (const std::filesystem::path& filename) const
 {
-	SDL_SaveBMP (buffer, filename.c_str());
+	SDL_SaveBMP (buffer, filename.string().c_str());
 }
 
 void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
@@ -364,14 +366,14 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 			tTime = time (nullptr);
 			tmTime = localtime (&tTime);
 			strftime (timestr, sizeof (timestr), "%Y-%m-%d_%H%M%S", tmTime);
-			std::string screenshotfile;
+			std::filesystem::path screenshotfile;
 			int counter = 0;
 			do
 			{
 				counter += 1;
-				screenshotfile = getUserScreenshotsDir() + "screenie_" + timestr + "_" + std::to_string (counter) + ".bmp";
-			} while (FileExists (screenshotfile));
-			Log.write ("Screenshot saved to " + screenshotfile, cLog::eLogType::Info);
+				screenshotfile = getUserScreenshotsDir() / (std::string ("screenie_") + timestr + "_" + std::to_string (counter) + ".bmp");
+			} while (std::filesystem::exists (screenshotfile));
+			Log.write ("Screenshot saved to " + screenshotfile.string(), cLog::eLogType::Info);
 			takeScreenShot (screenshotfile);
 
 			screenShotTaken (screenshotfile);

@@ -24,6 +24,7 @@
 #include "utility/serialization/serialization.h"
 
 #include <array>
+#include <config/workaround/cpp17/filesystem.h>
 #include <string>
 #include <vector>
 
@@ -31,7 +32,7 @@
 class cSoundData
 {
 public:
-	void load (const char* path);
+	void load (const std::filesystem::path& directory);
 
 public:
 	// General
@@ -75,7 +76,7 @@ public:
 class cVoiceData
 {
 public:
-	void load (const char* path);
+	void load (const std::filesystem::path& directory);
 
 public:
 	std::array<cSoundChunk, 2> VOIAmmoLow;

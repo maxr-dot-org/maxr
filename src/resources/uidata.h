@@ -25,6 +25,7 @@
 #include "game/data/units/unitdata.h"
 
 #include <SDL.h>
+#include <config/workaround/cpp17/filesystem.h>
 #include <vector>
 
 class cBuilding;
@@ -94,16 +95,16 @@ public:
 	AutoSurface gfx_player_ready;
 	AutoSurface gfx_hud_chatbox;
 
-	std::string DialogPath;
-	std::string Dialog2Path;
-	std::string Dialog3Path;
+	std::filesystem::path DialogPath;
+	std::filesystem::path Dialog2Path;
+	std::filesystem::path Dialog3Path;
 };
 
 // Effects - Class containing all effect surfaces /////////////////////////////
 class cEffectsData
 {
 public:
-	void load (const char* path);
+	void load (const std::filesystem::path& directory);
 
 public:
 	AutoSurface fx_explo_big[2];
@@ -126,7 +127,7 @@ public:
 class cResourceData
 {
 public:
-	void load (const char* path);
+	void load (const std::filesystem::path& directory);
 
 public:
 	AutoSurface res_metal_org;

@@ -26,6 +26,7 @@
 #include "utility/serialization/serialization.h"
 
 #include <SDL.h>
+#include <config/workaround/cpp17/filesystem.h>
 #include <array>
 #include <string>
 
@@ -90,7 +91,7 @@ public:
 	AutoSurface clear_small_shw, clear_small_shw_org; // Surfaces when clearing
 	AutoSurface overlay, overlay_org; // Overlays
 	AutoSurface storage; // image of the vehicle in storage
-	std::string FLCFile; // FLC-Video
+	std::filesystem::path FLCFile; // FLC-Video
 	AutoSurface info; // info image
 
 	// Sounds:
