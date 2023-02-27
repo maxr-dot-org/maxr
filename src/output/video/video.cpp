@@ -173,11 +173,11 @@ void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 			Log.write ("cVideo:  => Couldn't find requested video mode " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " :(", cLog::eLogType::Warning);
 			if (haveMinMode())
 			{
-				Log.write ("cVideo:  => Edit your config and try default video mode " + std::to_string (Video.getMinW()) + "x" + std::to_string (Video.getMinH()) + " if I crash now!", cLog::eLogType::Warning);
+				Log.write ("cVideo:  => Edit your config and try default video mode " + std::to_string (getMinW()) + "x" + std::to_string (getMinH()) + " if I crash now!", cLog::eLogType::Warning);
 			}
 			else
 			{
-				Log.write ("cVideo:  => Couldn't even find my minimal video mode " + std::to_string (Video.getMinW()) + "x" + std::to_string (Video.getMinH()) + " - panic! ;(", cLog::eLogType::Warning);
+				Log.write ("cVideo:  => Couldn't even find my minimal video mode " + std::to_string (getMinW()) + "x" + std::to_string (getMinH()) + " - panic! ;(", cLog::eLogType::Warning);
 			}
 		}
 		// END SANITY CHECK SCREEN RES
