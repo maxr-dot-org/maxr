@@ -195,6 +195,12 @@ public:
 	*/
 	std::filesystem::path getUserMapsDir() const;
 
+	/**
+	 * Gets the folder, where screenshots made by the user should be saved.
+	 * @author pagra
+	 * @return an absolute path to the user's screenshots directory or empty string, if no user screenshots folder is defined on the system
+	 */
+	std::filesystem::path getUserScreenshotsDir() const;
 
 	template <typename Archive>
 	void serialize (Archive& archive)

@@ -23,7 +23,6 @@
 #include "output/video/unifonts.h"
 #include "resources/pcx.h"
 #include "resources/uidata.h"
-#include "utility/files.h"
 #include "utility/log.h"
 #include "utility/mathtools.h"
 #include "utility/thread/ismainthread.h"
@@ -365,7 +364,7 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 			do
 			{
 				counter += 1;
-				screenshotfile = getUserScreenshotsDir() / (std::string ("screenie_") + timestr + "_" + std::to_string (counter) + ".bmp");
+				screenshotfile = cSettings::getInstance().getUserScreenshotsDir() / (std::string ("screenie_") + timestr + "_" + std::to_string (counter) + ".bmp");
 			} while (std::filesystem::exists (screenshotfile));
 			Log.write ("Screenshot saved to " + screenshotfile.string(), cLog::eLogType::Info);
 			takeScreenShot (screenshotfile);

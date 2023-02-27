@@ -74,26 +74,6 @@ std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& direc
 }
 
 //------------------------------------------------------------------------------
-std::filesystem::path getUserScreenshotsDir()
-{
-#ifdef __amigaos4__
-	return "";
-#elif defined(MAC)
-	std::filesystem::path homeFolder = cSettings::getInstance().getHomeDir();
-	if (homeFolder.empty())
-		return "";
-	// store screenshots directly on the desktop of the user
-	return homeFolder / "Desktop";
-#else
-	if (cSettings::getInstance().getHomeDir().empty())
-		return "";
-	auto screenshotsFolder = cSettings::getInstance().getHomeDir() / "screenies";
-	std::filesystem::create_directories (screenshotsFolder);
-	return screenshotsFolder;
-#endif
-}
-
-//------------------------------------------------------------------------------
 std::filesystem::path getHomeDir()
 {
 #if WIN32

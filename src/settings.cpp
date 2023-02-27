@@ -355,3 +355,23 @@ std::filesystem::path cSettings::getUserMapsDir() const
 	return mapFolder;
 #endif
 }
+
+//------------------------------------------------------------------------------
+std::filesystem::path cSettings::getUserScreenshotsDir() const
+{
+#ifdef __amigaos4__
+	return "";
+#elif defined(MAC)
+	std::filesystem::path homeFolder = ::getHomeDir();
+	if (homeFolder.empty())
+		return "";
+	// store screenshots directly on the desktop of the user
+	return homeFolder / "Desktop";
+#else
+	if (getHomeDir().empty())
+		return "";
+	auto screenshotsFolder = getHomeDir() / "screenies";
+	std::filesystem::create_directories (screenshotsFolder);
+	return screenshotsFolder;
+#endif
+}

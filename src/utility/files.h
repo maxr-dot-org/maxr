@@ -32,13 +32,6 @@
 */
 std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& directory);
 
-/**
- * Gets the folder, where screenshots made by the user should be saved.
- * @author pagra
- * @return an absolute path to the user's screenshots directory or empty string, if no user screenshots folder is defined on the system
- */
-std::filesystem::path getUserScreenshotsDir();
-
 std::filesystem::path getUserLogDir();
 std::filesystem::path getHomeDir();
 std::filesystem::path getCurrentExeDir();
