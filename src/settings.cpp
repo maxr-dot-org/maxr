@@ -90,7 +90,7 @@ namespace
 		{
 			if (std::filesystem::exists (sInitFile / "init.pcx"))
 			{
-				Log.write ("Found gamedata in: " + sInitFile, cLog::eLogType::Info);
+				Log.write ("Found gamedata in: " + sInitFile.string(), cLog::eLogType::Info);
 				return sInitFile;
 			}
 		}

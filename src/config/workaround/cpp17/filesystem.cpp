@@ -39,6 +39,7 @@
 # endif
 
 # include <fstream>
+# include <iterator>
 # include <vector>
 
 namespace
@@ -67,7 +68,7 @@ namespace
 		else
 			return false;
 # else
-		return exists (path); // on linux everything is a file
+		return std::filesystem::exists (path); // on linux everything is a file
 # endif
 	}
 
