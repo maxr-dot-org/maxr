@@ -40,6 +40,7 @@
 #include <config/workaround/cpp17/filesystem.h>
 #include <future>
 #include <thread>
+
 /**
  *Inits SDL_sound
  *@author beko
@@ -94,6 +95,7 @@ static void showIntro()
 	                                 Video.getResolutionX(),
 	                                 Video.getResolutionY(),
 	                                 !Video.getWindowMode(),
+	                                 MAXR_ICON.string().c_str(),
 	                                 !cSettings::getInstance().isSoundMute());
 	Log.write ("MVEPlayer returned " + std::to_string (mvereturn), cLog::eLogType::Debug);
 	//FIXME: make this case sensitive - my mve is e.g. completely lower cases -- beko
@@ -137,7 +139,7 @@ try
 
 	applySettings (Video, cSettings::getInstance().getVideoSettings())
 
-		CR_INIT_CRASHREPORTING();
+	CR_INIT_CRASHREPORTING();
 	is_main_thread();
 	logMAXRVersion();
 

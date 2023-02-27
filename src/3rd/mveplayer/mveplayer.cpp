@@ -29,7 +29,6 @@
 
 #include "SDLutility/autosurface.h"
 #include "output/video/video.h"
-#include "defines.h"
 
 #include <SDL.h>
 
@@ -127,7 +126,7 @@ void MVEPlayerEventHandler();
 /* primary function entry point */
 /********************************/
 
-int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, int audio)
+int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, const char* iconPath, int audio)
 {
 	/*************************/
 	/* variable declarations */
@@ -506,7 +505,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, in
 												 dwidth, dheight,
 												 SDL_WINDOW_OPENGL);
 					{
-						auto icon = AutoSurface(SDL_LoadBMP(MAXR_ICON));
+						auto icon = AutoSurface(SDL_LoadBMP(iconPath));
 						SDL_SetColorKey(icon.get(), 1, 0xFF00FF);
 						SDL_SetWindowIcon(sdlWindow, icon.get());
 					}

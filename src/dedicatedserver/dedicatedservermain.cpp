@@ -26,6 +26,7 @@
 #include "defines.h"
 #include "maxrversion.h"
 #include "resources/loaddata.h"
+#include "settings.h"
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------

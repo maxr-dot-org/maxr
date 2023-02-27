@@ -65,6 +65,7 @@
 #define GFXOD_DESTRUCTION      GFXOD ("destruction.pcx")
 
 // Other Resources /////////////////////////////////////////////////////////////
+#define MAXR_ICON (cSettings::getInstance().getDataDir() / "maxr.bmp")
 #define SPLASH_BACKGROUND (cSettings::getInstance().getDataDir() / "init.pcx")
 
 #endif

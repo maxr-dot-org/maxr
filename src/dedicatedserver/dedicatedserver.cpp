@@ -21,6 +21,7 @@
 
 #include "dedicatedserver/dedicatedservergame.h"
 #include "defines.h"
+#include "settings.h"
 #include "utility/files.h"
 #include "utility/listhelpers.h"
 
