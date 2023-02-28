@@ -36,7 +36,6 @@
 
 #include <config/workaround/cpp17/filesystem.h>
 #include <config/workaround/cpp17/optional.h>
-#include <ctime>
 #include <regex>
 
 #define SAVE_FORMAT_VERSION ((std::string) "1.0")
@@ -78,11 +77,6 @@ namespace
 		json["version"] = SAVE_FORMAT_VERSION;
 
 		//write header
-		char timestr[21];
-		time_t tTime = time (nullptr);
-		tm* tmTime = localtime (&tTime);
-		strftime (timestr, 21, "%d.%m.%y %H:%M", tmTime);
-
 		eGameType type = eGameType::Single;
 		const int humanPlayers = ranges::count_if (model.getPlayerList(), [] (const auto& player) { return player->isHuman(); });
 		if (humanPlayers > 1)
@@ -94,7 +88,7 @@ namespace
 		archive << serialization::makeNvp ("gameVersion", std::string (PACKAGE_VERSION " " PACKAGE_REV));
 		archive << serialization::makeNvp ("gameName", saveName);
 		archive << serialization::makeNvp ("type", type);
-		archive << serialization::makeNvp ("date", std::string (timestr));
+		archive << serialization::makeNvp ("date", os::formattedNow ("%d.%m.%y %H:%M"));
 	}
 
 } // namespace

@@ -40,6 +40,10 @@ namespace os
 
 	std::string getUserName();
 
+	/* Get current time with format (strftime)
+	*/
+	std::string formattedNow (const char* format);
+
 } // namespace os
 
 #endif // utility_osH

@@ -25,6 +25,7 @@
 #include "resources/uidata.h"
 #include "utility/log.h"
 #include "utility/mathtools.h"
+#include "utility/os.h"
 #include "utility/thread/ismainthread.h"
 
 #include <SDL.h>
@@ -351,20 +352,13 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 		}
 		else if (key == SDLK_c)
 		{
-			// TODO: may use std::chrono here.
-			//       Problem is that std::put_time is not supported in gcc < 4.8 iirc
-			time_t tTime;
-			tm* tmTime;
-			char timestr[18];
-			tTime = time (nullptr);
-			tmTime = localtime (&tTime);
-			strftime (timestr, sizeof (timestr), "%Y-%m-%d_%H%M%S", tmTime);
+			const auto timestr = os::formattedNow ("screenie_%Y-%m-%d_%H%M%S_");
 			std::filesystem::path screenshotfile;
 			int counter = 0;
 			do
 			{
 				counter += 1;
-				screenshotfile = cSettings::getInstance().getUserScreenshotsDir() / (std::string ("screenie_") + timestr + "_" + std::to_string (counter) + ".bmp");
+				screenshotfile = cSettings::getInstance().getUserScreenshotsDir() / (timestr + std::to_string (counter) + ".bmp");
 			} while (std::filesystem::exists (screenshotfile));
 			Log.write ("Screenshot saved to " + screenshotfile.string(), cLog::eLogType::Info);
 			takeScreenShot (screenshotfile);

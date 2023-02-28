@@ -40,6 +40,8 @@
 # include <unistd.h>
 #endif
 
+#include <ctime>
+
 namespace os
 {
 
@@ -196,6 +198,26 @@ namespace os
 #else
 		return getenv ("USER"); //get $USER on linux
 #endif
+	}
+
+	//--------------------------------------------------------------------------
+	std::string formattedNow (const char* format)
+	{
+		// TODO: may use std::chrono here.
+		//       Problem is that std::put_time is not supported in gcc < 4.8 iirc
+
+		time_t tTime = time (nullptr);
+#if defined(_MSC_VER)
+		tm tm_;
+		tm* tmTime = &tm_;
+		localtime_s (tmTime, &tTime);
+#else
+		// Not thread safe
+		tm* tmTime = localtime (&tTime);
+#endif
+		char timestr[1024];
+		strftime (timestr, 1024, format, tmTime);
+		return timestr;
 	}
 
 } // namespace os

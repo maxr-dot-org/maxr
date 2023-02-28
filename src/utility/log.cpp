@@ -20,6 +20,7 @@
 #include "utility/log.h"
 
 #include "settings.h"
+#include "utility/os.h"
 
 #include <ctime>
 #include <iostream>
@@ -109,21 +110,7 @@ void cLog::checkOpenFile (eLogType type)
 			//file is already open
 			return;
 		}
-
-		//append time stamp to log file name
-		time_t tTime = time (nullptr);
-#if defined(_MSC_VER)
-		tm tm_;
-		tm* tmTime = &tm_;
-		localtime_s (tmTime, &tTime);
-#else
-		// Not thread safe, but we have a mutex which protects also that.
-		tm* tmTime = localtime (&tTime);
-#endif
-		char timestr[25];
-		strftime (timestr, 21, "%Y-%m-%d-%H%M%S_", tmTime);
-		std::string sTime = timestr;
-		cSettings::getInstance().setNetLogPath (cSettings::getInstance().getUserLogDir() / (sTime + "net.log"));
+		cSettings::getInstance().setNetLogPath (cSettings::getInstance().getUserLogDir() / os::formattedNow ( "%Y-%m-%d-%H%M%S_net.log"));
 
 		//create + open new log file
 		netLogfile.open (cSettings::getInstance().getNetLogPath().string(), std::fstream::out | std::fstream::trunc);
