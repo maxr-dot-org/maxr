@@ -82,7 +82,7 @@ namespace
 		else
 		{
 			sPathArray.insert (sPathArray.begin(), cDataDir);
-			Log.write ("$MAXRDATA is set and overrides default data search path", cLog::eLogType::Warning);
+			Log.warn ("$MAXRDATA is set and overrides default data search path");
 		}
 		// END SET MAXRDATA
 
@@ -158,7 +158,7 @@ void cSettings::loadFromJsonFile (const std::filesystem::path& path)
 
 	if (!(file >> json))
 	{
-		Log.write ("cannot load maxr.json\ngenerating new file", cLog::eLogType::Warning);
+		Log.warn ("cannot load maxr.json\ngenerating new file");
 		saveInFile();
 		return;
 	}
@@ -169,8 +169,8 @@ void cSettings::loadFromJsonFile (const std::filesystem::path& path)
 	}
 	catch (const std::exception& e)
 	{
-		Log.write (std::string ("Error while reading settings: ") + e.what(), cLog::eLogType::Warning);
-		Log.write ("Overwriting with default settings", cLog::eLogType::Warning);
+		Log.warn (std::string ("Error while reading settings: ") + e.what());
+		Log.warn ("Overwriting with default settings");
 		saveInFile();
 	}
 }
@@ -192,13 +192,13 @@ void cSettings::initialize()
 	}
 	else
 	{
-		Log.write ("generating new settings", cLog::eLogType::Warning);
+		Log.warn ("generating new settings");
 		saveInFile();
 	}
 
 	to_lower (global.voiceLanguage);
 	if (!global.debug)
-		Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.json", cLog::eLogType::Warning);
+		Log.warn ("Debugmode disabled - for verbose output please enable Debug in maxr.json");
 	else
 		Log.write ("Debugmode enabled", cLog::eLogType::Info);
 

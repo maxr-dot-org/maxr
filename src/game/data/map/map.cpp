@@ -301,7 +301,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	}
 	if (fpMapFile == nullptr)
 	{
-		Log.write ("Cannot load map file: \"" + filename + "\"", cLog::eLogType::Warning);
+		Log.warn ("Cannot load map file: \"" + filename + "\"");
 		clear();
 		return false;
 	}
@@ -315,7 +315,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	// DMO - for some reason some original maps have this filetype
 	if (strcmp (szFileTyp, "WRL") != 0 && strcmp (szFileTyp, "WRX") != 0 && strcmp (szFileTyp, "DMO") != 0)
 	{
-		Log.write ("Wrong file format: \"" + filename + "\"", cLog::eLogType::Warning);
+		Log.warn ("Wrong file format: \"" + filename + "\"");
 		SDL_RWclose (fpMapFile);
 		clear();
 		return false;
@@ -338,7 +338,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 
 	if (sWidth != sHeight)
 	{
-		Log.write ("Map must be quadratic!: \"" + filename + "\"", cLog::eLogType::Warning);
+		Log.warn ("Map must be quadratic!: \"" + filename + "\"");
 		SDL_RWclose (fpMapFile);
 		clear();
 		return false;
@@ -373,7 +373,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 				terrains[iNum].blocked = true;
 				break;
 			default:
-				Log.write ("unknown terrain type " + std::to_string (cByte) + " on tile " + std::to_string (iNum) + " found. Handled as blocked!", cLog::eLogType::Warning);
+				Log.warn ("unknown terrain type " + std::to_string (cByte) + " on tile " + std::to_string (iNum) + " found. Handled as blocked!");
 				terrains[iNum].blocked = true;
 				//SDL_RWclose (fpMapFile);
 				//return false;
@@ -394,7 +394,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 			int Kachel = SDL_ReadLE16 (fpMapFile);
 			if (Kachel >= iNumberOfTerrains)
 			{
-				Log.write ("a map field referred to a nonexisting terrain: " + std::to_string (Kachel), cLog::eLogType::Warning);
+				Log.warn ("a map field referred to a nonexisting terrain: " + std::to_string (Kachel));
 				SDL_RWclose (fpMapFile);
 				clear();
 				return false;

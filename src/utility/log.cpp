@@ -88,6 +88,12 @@ void cLog::write (const std::string& msg, eLogType type)
 }
 
 //------------------------------------------------------------------------------
+void cLog::warn (const std::string& msg)
+{
+	write (msg, eLogType::Warning);
+}
+
+//------------------------------------------------------------------------------
 void cLog::mark()
 {
 	std::unique_lock<std::mutex> l (mutex);

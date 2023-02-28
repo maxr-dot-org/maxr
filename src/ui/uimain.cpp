@@ -56,9 +56,9 @@ static int initSound()
 
 	if (SDL_Init (SDL_INIT_AUDIO) < 0) //start sound
 	{
-		Log.write ("Could not init SDL_INIT_AUDIO", cLog::eLogType::Warning);
-		Log.write ("Sound won't be available!", cLog::eLogType::Warning);
-		Log.write (SDL_GetError(), cLog::eLogType::Warning);
+		Log.warn ("Could not init SDL_INIT_AUDIO");
+		Log.warn ("Sound won't be available!");
+		Log.warn (SDL_GetError());
 		cSettings::getInstance().setSoundEnabled (false);
 		return -1;
 	}
@@ -69,9 +69,9 @@ static int initSound()
 	}
 	catch (std::runtime_error& e)
 	{
-		Log.write ("Could not init SDL_mixer:", cLog::eLogType::Warning);
-		Log.write (e.what(), cLog::eLogType::Warning);
-		Log.write ("Sound won't be available!", cLog::eLogType::Warning);
+		Log.warn ("Could not init SDL_mixer:");
+		Log.warn (e.what());
+		Log.warn ("Sound won't be available!");
 		cSettings::getInstance().setSoundEnabled (false);
 		return -1;
 	}
@@ -85,7 +85,7 @@ static void showIntro()
 
 	if (!std::filesystem::exists (filename))
 	{
-		Log.write ("Couldn't find movie " + filename.string(), cLog::eLogType::Warning);
+		Log.warn ("Couldn't find movie " + filename.string());
 	}
 	// Close maxr sound for intro movie
 	cSoundDevice::getInstance().close();

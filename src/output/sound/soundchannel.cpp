@@ -56,8 +56,8 @@ void cSoundChannel::play (const cSoundChunk& chunk, bool loop)
 
 	if (Mix_PlayChannel (sdlChannelId, chunk.getSdlSound(), loop ? -1 : 0) < 0)
 	{
-		Log.write ("Could not play sound:", cLog::eLogType::Warning);
-		Log.write (Mix_GetError(), cLog::eLogType::Warning);
+		Log.warn ("Could not play sound:");
+		Log.warn (Mix_GetError());
 	}
 	else
 	{

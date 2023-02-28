@@ -117,7 +117,7 @@ void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 
 			if (font.getTextWide (std::string (maxSize, referenceLetter)) < font.getTextWide (p.second))
 			{
-				Log.write ("Maybe too long string for " + p.first + ": " + p.second, cLog::eLogType::Warning);
+				Log.warn ("Maybe too long string for " + p.first + ": " + p.second);
 			}
 		}
 	}
@@ -129,7 +129,7 @@ static void LoadLanguage()
 	lngPack.setLanguagesFolder (cSettings::getInstance().getLangPath());
 	if (!Contains (lngPack.getAvailableLanguages(), cSettings::getInstance().getLanguage()))
 	{
-		Log.write ("Not a supported language: " + cSettings::getInstance().getLanguage() + ", defaulting to en.", cLog::eLogType::Warning);
+		Log.warn ("Not a supported language: " + cSettings::getInstance().getLanguage() + ", defaulting to en.");
 		cSettings::getInstance().setLanguage ("en");
 		cSettings::getInstance().saveInFile();
 	}
@@ -358,7 +358,7 @@ static void LoadUnitData (sInitialBuildingData& buildingData, const std::filesys
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + path.string(), cLog::eLogType::Warning);
+		Log.warn ("Can't load " + path.string());
 		return;
 	}
 	cJsonArchiveIn in (json);
@@ -379,7 +379,7 @@ static void LoadUnitData (sInitialVehicleData& vehicleData, const std::filesyste
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + path.string(), cLog::eLogType::Warning);
+		Log.warn ("Can't load " + path.string());
 		return;
 	}
 	cJsonArchiveIn in (json);
@@ -392,7 +392,7 @@ static bool checkUniqueness (const sID& id)
 	{
 		char szTmp[100];
 		snprintf (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.firstPart, id.secondPart);
-		Log.write (szTmp, cLog::eLogType::Warning);
+		Log.warn (szTmp);
 		return false;
 	}
 	return true;
@@ -478,7 +478,7 @@ static void LoadUnitSoundfile (cSoundChunk& dest, const std::filesystem::path& f
 			}
 			catch (const std::runtime_error& e)
 			{
-				Log.write (std::string ("Can't load dummy.ogg: ") + e.what(), cLog::eLogType::Warning);
+				Log.warn (std::string ("Can't load dummy.ogg: ") + e.what());
 			}
 		}
 	}
@@ -605,7 +605,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 					AutoSurface sfTempSurface (LoadPCX (sTmpString));
 					if (!sfTempSurface)
 					{
-						Log.write (SDL_GetError(), cLog::eLogType::Warning);
+						Log.warn (SDL_GetError());
 					}
 					else
 					{
@@ -729,7 +729,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.overlay_org = nullptr;
 			ui.overlay = nullptr;
 			ui.staticData.hasOverlay = false;
@@ -756,7 +756,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.build_org = nullptr;
 			ui.build = nullptr;
 			ui.staticData.buildUpGraphic = false;
@@ -772,7 +772,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.build_shw_org = nullptr;
 			ui.build_shw = nullptr;
 			ui.staticData.buildUpGraphic = false;
@@ -800,7 +800,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.clear_small_org = nullptr;
 			ui.clear_small = nullptr;
 			return false;
@@ -816,7 +816,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.clear_small_shw_org = nullptr;
 			ui.clear_small_shw = nullptr;
 			return false;
@@ -833,7 +833,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.build_org = nullptr;
 			ui.build = nullptr;
 			return false;
@@ -849,7 +849,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.build_shw_org = nullptr;
 			ui.build_shw = nullptr;
 			return false;
@@ -900,7 +900,7 @@ namespace
 		auto it = std::adjacent_find (v.begin(), v.end(), sameId);
 		while (it != v.end())
 		{
-			Log.write ("duplicated id " + std::to_string (it->id) + ", skipping unit.", cLog::eLogType::Warning);
+			Log.warn ("duplicated id " + std::to_string (it->id) + ", skipping unit.");
 			it = std::adjacent_find (it + 1, v.end(), sameId);
 		}
 		v.erase (std::unique (v.begin(), v.end(), sameId), v.end());
@@ -1078,7 +1078,7 @@ static int LoadVehicles (bool includingUiData)
 
 		if (staticData.factorGround == 0 && staticData.factorSea == 0 && staticData.factorAir == 0 && staticData.factorCoast == 0)
 		{
-			Log.write ("Unit cannot move", cLog::eLogType::Warning);
+			Log.warn ("Unit cannot move");
 		}
 		staticData.vehicleData = vehicleData.staticVehicleData;
 
@@ -1164,7 +1164,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 	if (!MusicFiles.start.empty())
 	{
 		MusicFiles.start = (directory / MusicFiles.start).string();
-		if (!std::filesystem::exists (MusicFiles.start)) Log.write ("music files doesn't exist: " + MusicFiles.start, cLog::eLogType::Warning);
+		if (!std::filesystem::exists (MusicFiles.start)) Log.warn ("music files doesn't exist: " + MusicFiles.start);
 	}
 	for (auto& filename : MusicFiles.backgrounds)
 	{
@@ -1173,7 +1173,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 	auto it = std::stable_partition (MusicFiles.backgrounds.begin(), MusicFiles.backgrounds.end(), [] (const auto& p) { return std::filesystem::exists (p); });
 	for (auto it2 = it; it2 != MusicFiles.backgrounds.end(); ++it2)
 	{
-		Log.write ("music files doesn't exist: " + *it2, cLog::eLogType::Warning);
+		Log.warn ("music files doesn't exist: " + *it2);
 	}
 	MusicFiles.backgrounds.erase (it, MusicFiles.backgrounds.end());
 	return 1;

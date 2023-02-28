@@ -46,6 +46,8 @@ public:
 	*/
 	void write (const std::string& msg, eLogType type = eLogType::Info);
 
+	void warn (const std::string& msg);
+
 	/**
 	* Writes a marker into logfile - please use only very few times!
 	*/

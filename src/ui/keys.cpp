@@ -115,7 +115,7 @@ void cKeysList::loadFromJsonFile (const std::filesystem::path& path)
 
 	if (!(file >> json))
 	{
-		Log.write ("cannot load keys.json\ngenerating new file", cLog::eLogType::Warning);
+		Log.warn ("cannot load keys.json\ngenerating new file");
 		saveToFile();
 		return;
 	}
@@ -128,8 +128,8 @@ void cKeysList::loadFromJsonFile (const std::filesystem::path& path)
 	}
 	catch (const std::exception& e)
 	{
-		Log.write (std::string ("Error while reading keys: ") + e.what(), cLog::eLogType::Warning);
-		Log.write ("Overwriting with default settings", cLog::eLogType::Warning);
+		Log.warn (std::string ("Error while reading keys: ") + e.what());
+		Log.warn ("Overwriting with default settings");
 		saveToFile();
 	}
 }
@@ -155,7 +155,7 @@ void cKeysList::loadFromFile()
 	}
 	else
 	{
-		Log.write ("generating new keys-file", cLog::eLogType::Warning);
+		Log.warn ("generating new keys-file");
 		saveToFile();
 	}
 }

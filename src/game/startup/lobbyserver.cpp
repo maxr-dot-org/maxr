@@ -123,7 +123,7 @@ eOpenServerResult cLobbyServer::startServer (int port)
 
 	if (connectionManager->openServer (port))
 	{
-		Log.write ("Error opening socket", cLog::eLogType::Warning);
+		Log.warn ("Error opening socket");
 		return eOpenServerResult::Failed;
 	}
 	else

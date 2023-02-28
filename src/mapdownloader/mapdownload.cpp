@@ -249,7 +249,7 @@ bool cMapSender::getMapFileContent()
 	}
 	if (!file.is_open())
 	{
-		Log.write (string ("MapSender: could not read the map \"") + filename.string() + "\" into memory.", cLog::eLogType::Warning);
+		Log.warn (string ("MapSender: could not read the map \"") + filename.string() + "\" into memory.");
 		return false;
 	}
 	const std::size_t mapSize = file.tellg();

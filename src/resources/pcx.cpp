@@ -112,7 +112,7 @@ AutoSurface LoadPCX (const std::filesystem::path& name)
 	cBufferedFile bufferedFile;
 	if (!bufferedFile.open (name, "rb"))
 	{
-		Log.write (SDL_GetError(), cLog::eLogType::Warning); // Image corrupted, create empty surface.
+		Log.warn (SDL_GetError()); // Image corrupted, create empty surface.
 		return AutoSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));
 	}
 	// Load the image.

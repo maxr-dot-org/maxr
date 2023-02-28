@@ -164,14 +164,14 @@ void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 		}
 		else
 		{
-			Log.write ("cVideo:  => Couldn't find requested video mode " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " :(", cLog::eLogType::Warning);
+			Log.warn ("cVideo:  => Couldn't find requested video mode " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " :(");
 			if (haveMinMode())
 			{
-				Log.write ("cVideo:  => Edit your config and try default video mode " + std::to_string (getMinW()) + "x" + std::to_string (getMinH()) + " if I crash now!", cLog::eLogType::Warning);
+				Log.warn ("cVideo:  => Edit your config and try default video mode " + std::to_string (getMinW()) + "x" + std::to_string (getMinH()) + " if I crash now!");
 			}
 			else
 			{
-				Log.write ("cVideo:  => Couldn't even find my minimal video mode " + std::to_string (getMinW()) + "x" + std::to_string (getMinH()) + " - panic! ;(", cLog::eLogType::Warning);
+				Log.warn ("cVideo:  => Couldn't even find my minimal video mode " + std::to_string (getMinW()) + "x" + std::to_string (getMinH()) + " - panic! ;(");
 			}
 		}
 		// END SANITY CHECK SCREEN RES
@@ -192,7 +192,7 @@ void cVideo::setColDepth (unsigned iDepth)
 	//       validate new color depth
 	if (iDepth != 32)
 	{
-		Log.write ("cVideo: TODO: Implement other colourdepths beside 32. Desired " + std::to_string (iDepth) + "bpp ignored.", cLog::eLogType::Warning);
+		Log.warn ("cVideo: TODO: Implement other colourdepths beside 32. Desired " + std::to_string (iDepth) + "bpp ignored.");
 	}
 	else
 	{
@@ -323,7 +323,7 @@ int cVideo::validateResolution (int width, int height) const
 			return static_cast<int> (i);
 		}
 	}
-	Log.write ("cVideo: Configured video mode (" + std::to_string (width) + "x" + std::to_string (height) + ") not detected. Resume on own risk!", cLog::eLogType::Warning);
+	Log.warn ("cVideo: Configured video mode (" + std::to_string (width) + "x" + std::to_string (height) + ") not detected. Resume on own risk!");
 	return -1;
 }
 

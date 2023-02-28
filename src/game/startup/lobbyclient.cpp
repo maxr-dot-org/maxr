@@ -377,7 +377,7 @@ void cLobbyClient::handleNetMessage_TCP_CONNECTED (const cNetMessageTcpConnected
 //------------------------------------------------------------------------------
 void cLobbyClient::handleNetMessage_TCP_CONNECT_FAILED (const cNetMessageTcpConnectFailed& message)
 {
-	Log.write ("Error on connecting to server", cLog::eLogType::Warning);
+	Log.warn ("Error on connecting to server");
 
 	localPlayer.setNr (-1);
 	onConnectionFailed (message.reason);

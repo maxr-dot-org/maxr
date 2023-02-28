@@ -297,7 +297,7 @@ void cNetwork::handleNetworkThread()
 				IPaddress ipaddr;
 				if (SDLNet_ResolveHost (&ipaddr, connectTo->ip.c_str(), connectTo->port) == -1)
 				{
-					Log.write ("Network: Couldn't resolve host", cLog::eLogType::Warning);
+					Log.warn ("Network: Couldn't resolve host");
 					connectionManager.connectionResult (nullptr);
 				}
 				else
@@ -305,7 +305,7 @@ void cNetwork::handleNetworkThread()
 					TCPsocket sdlSocket = SDLNet_TCP_Open (&ipaddr);
 					if (sdlSocket == nullptr)
 					{
-						Log.write ("Network: Couldn't connect to host", cLog::eLogType::Warning);
+						Log.warn ("Network: Couldn't connect to host");
 						connectionManager.connectionResult (nullptr);
 					}
 					else
