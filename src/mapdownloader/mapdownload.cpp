@@ -161,14 +161,14 @@ bool cMapReceiver::receiveData (const cMuMsgMapDownloadData& message)
 	std::ostringstream os;
 	os << "MapReceiver: Received Data for map " << mapName << ": "
 	   << bytesReceived << "/" << readBuffer.size();
-	Log.write (os.str(), cLog::eLogType::Debug);
+	Log.debug (os.str());
 	return true;
 }
 
 //------------------------------------------------------------------------------
 bool cMapReceiver::finished()
 {
-	Log.write ("MapReceiver: Received complete map", cLog::eLogType::Debug);
+	Log.debug ("MapReceiver: Received complete map");
 
 	if (bytesReceived != readBuffer.size())
 		return false;
@@ -214,7 +214,7 @@ cMapSender::~cMapSender()
 		// the thread was not finished yet
 		// (else it would have deleted sendBuffer already)
 		// send a canceled msg to the client
-		Log.write ("MapSender: Canceling an unfinished upload thread", cLog::eLogType::Debug);
+		Log.debug ("MapSender: Canceling an unfinished upload thread");
 		sendMsg (cMuMsgCanceledMapDownload());
 	}
 }
@@ -257,7 +257,7 @@ bool cMapSender::getMapFileContent()
 	file.seekg (0, ios::beg);
 	file.read (sendBuffer.data(), mapSize);
 	file.close();
-	Log.write (string ("MapSender: read the map \"") + filename.string() + "\" into memory.", cLog::eLogType::Debug);
+	Log.debug (string ("MapSender: read the map \"") + filename.string() + "\" into memory.");
 	return true;
 }
 

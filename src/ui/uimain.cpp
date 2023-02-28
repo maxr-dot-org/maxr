@@ -90,14 +90,14 @@ static void showIntro()
 	// Close maxr sound for intro movie
 	cSoundDevice::getInstance().close();
 
-	Log.write ("Starting movie " + filename.string(), cLog::eLogType::Debug);
+	Log.debug ("Starting movie " + filename.string());
 	const int mvereturn = MVEPlayer (filename.string().c_str(),
 	                                 Video.getResolutionX(),
 	                                 Video.getResolutionY(),
 	                                 !Video.getWindowMode(),
 	                                 MAXR_ICON.string().c_str(),
 	                                 !cSettings::getInstance().isSoundMute());
-	Log.write ("MVEPlayer returned " + std::to_string (mvereturn), cLog::eLogType::Debug);
+	Log.debug ("MVEPlayer returned " + std::to_string (mvereturn));
 	//FIXME: make this case sensitive - my mve is e.g. completely lower cases -- beko
 
 	// reinit maxr sound
@@ -109,8 +109,8 @@ static void showIntro()
 		}
 		catch (std::runtime_error& e)
 		{
-			Log.write ("Can't reinit sound after playing intro" + std::to_string (mvereturn), cLog::eLogType::Debug);
-			Log.write (e.what(), cLog::eLogType::Debug);
+			Log.debug ("Can't reinit sound after playing intro" + std::to_string (mvereturn));
+			Log.debug (e.what());
 		}
 	}
 }
@@ -184,7 +184,7 @@ try
 	}
 	else
 	{
-		Log.write ("Skipped intro movie due settings", cLog::eLogType::Debug);
+		Log.debug ("Skipped intro movie due settings");
 	}
 	Video.prepareGameScreen();
 	Video.clearBuffer();

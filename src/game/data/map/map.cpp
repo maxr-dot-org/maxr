@@ -284,7 +284,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	clear();
 	// Open File
 	filename = filename_;
-	Log.write ("Loading map \"" + filename_ + "\"", cLog::eLogType::Debug);
+	Log.debug ("Loading map \"" + filename_ + "\"");
 
 	// first try in the factory maps directory
 	auto fullFilename = cSettings::getInstance().getMapsPath() / filename;
@@ -324,14 +324,14 @@ bool cStaticMap::loadMap (const std::string& filename_)
 
 	// Read informations and get positions from the map-file
 	const short sWidth = SDL_ReadLE16 (fpMapFile);
-	Log.write ("SizeX: " + std::to_string (sWidth), cLog::eLogType::Debug);
+	Log.debug ("SizeX: " + std::to_string (sWidth));
 	const short sHeight = SDL_ReadLE16 (fpMapFile);
-	Log.write ("SizeY: " + std::to_string (sHeight), cLog::eLogType::Debug);
+	Log.debug ("SizeY: " + std::to_string (sHeight));
 	SDL_RWseek (fpMapFile, sWidth * sHeight, SEEK_CUR); // Ignore Mini-Map
 	const Sint64 iDataPos = SDL_RWtell (fpMapFile); // Map-Data
 	SDL_RWseek (fpMapFile, sWidth * sHeight * 2, SEEK_CUR);
 	const int iNumberOfTerrains = SDL_ReadLE16 (fpMapFile); // Read PicCount
-	Log.write ("Number of terrains: " + std::to_string (iNumberOfTerrains), cLog::eLogType::Debug);
+	Log.debug ("Number of terrains: " + std::to_string (iNumberOfTerrains));
 	const Sint64 iGraphicsPos = SDL_RWtell (fpMapFile); // Terrain Graphics
 	const Sint64 iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64; // Palette
 	const Sint64 iInfoPos = iPalettePos + 256 * 3; // Special informations

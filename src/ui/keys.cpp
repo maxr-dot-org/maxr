@@ -124,7 +124,7 @@ void cKeysList::loadFromJsonFile (const std::filesystem::path& path)
 		cJsonArchiveIn in (json);
 		serialize (in);
 
-		Log.write ("Done", cLog::eLogType::Debug);
+		Log.debug ("Done");
 	}
 	catch (const std::exception& e)
 	{

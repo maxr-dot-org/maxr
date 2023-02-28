@@ -210,7 +210,7 @@ void cVideo::setDisplayIndex (int index)
 void cVideo::setWindowMode (bool bWindowMode, bool bApply)
 {
 	windowMode = bWindowMode;
-	Log.write ("cVideo: Window mode settings changed to " + std::string (getWindowMode() ? "windowmode" : "fullscreen"), cLog::eLogType::Debug);
+	Log.debug ("cVideo: Window mode settings changed to " + std::string (getWindowMode() ? "windowmode" : "fullscreen"));
 
 	if (bApply)
 	{

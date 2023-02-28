@@ -100,6 +100,12 @@ void cLog::warn (const std::string& msg)
 }
 
 //------------------------------------------------------------------------------
+void cLog::debug (const std::string& msg)
+{
+	write (msg, eLogType::Debug);
+}
+
+//------------------------------------------------------------------------------
 void cLog::error (const std::string& msg)
 {
 	write (msg, eLogType::Error);

@@ -1636,7 +1636,7 @@ void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report
 	if (activeClient)
 		playSound (*soundManager, activeClient->getModel(), report);
 
-	if (cSettings::getInstance().isDebug() && activeClient) Log.write (getMessage (report, activeClient->getModel()), cLog::eLogType::Debug);
+	if (cSettings::getInstance().isDebug() && activeClient) Log.debug (getMessage (report, activeClient->getModel()));
 }
 
 //------------------------------------------------------------------------------
