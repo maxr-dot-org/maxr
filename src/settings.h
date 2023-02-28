@@ -107,11 +107,9 @@ public:
 	int getScrollSpeed() const { return inGame.scrollSpeed; }
 	void setScrollSpeed (int scrollSpeed) { inGame.scrollSpeed = scrollSpeed; }
 
-	const std::filesystem::path& getNetLogPath() const;
-	void setNetLogPath (const std::filesystem::path&);
-
 	const std::filesystem::path& getDataDir() const;
 	const std::filesystem::path& getLogPath() const;
+	const std::filesystem::path& getNetLogPath() const;
 	const std::filesystem::path& getMaxrHomeDir() const;
 
 	const sNetworkAddress& getNetworkAddress() const { return network; }
@@ -158,7 +156,7 @@ public:
 	// Global
 
 	bool isDebug() const { return global.debug; }
-	void setDebug (bool debug) { global.debug = debug; }
+	void setDebug (bool debug);
 
 	bool shouldShowIntro() const { return global.showIntro; }
 	void setShowIntro (bool showIntro) { global.showIntro = showIntro; }

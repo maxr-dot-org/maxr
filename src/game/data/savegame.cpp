@@ -239,15 +239,15 @@ void cSavegame::loadModel (cModel& model, int slot)
 		cJsonArchiveIn modelArchive (*json);
 		uint32_t crcFromSave;
 		modelArchive >> serialization::makeNvp ("modelcrc", crcFromSave);
-		Log.write (" Checksum from save file: " + std::to_string (crcFromSave), cLog::eLogType::NetDebug);
+		NetLog.debug (" Checksum from save file: " + std::to_string (crcFromSave));
 
 		uint32_t modelCrc = model.getChecksum();
-		Log.write (" Checksum after loading model: " + std::to_string (modelCrc), cLog::eLogType::NetDebug);
-		Log.write (" GameId: " + std::to_string (model.getGameId()), cLog::eLogType::NetDebug);
+		NetLog.debug (" Checksum after loading model: " + std::to_string (modelCrc));
+		NetLog.debug (" GameId: " + std::to_string (model.getGameId()));
 
 		if (crcFromSave != modelCrc)
 		{
-			Log.write (" Crc of loaded model does not match the saved crc!", cLog::eLogType::NetError);
+			NetLog.error (" Crc of loaded model does not match the saved crc!");
 			//TODO: what to do in this case?
 		}
 	}

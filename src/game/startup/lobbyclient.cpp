@@ -92,7 +92,7 @@ void cLobbyClient::connectToServer (const sNetworkAddress& address)
 	// Connect only if there isn't a connection yet
 	if (connectionManager->isConnectedToServer()) return;
 
-	Log.write ("Connecting to " + address.toString(), cLog::eLogType::NetDebug);
+	NetLog.debug ("Connecting to " + address.toString());
 
 	connectionManager->connectToServer (address);
 }
@@ -100,7 +100,7 @@ void cLobbyClient::connectToServer (const sNetworkAddress& address)
 //------------------------------------------------------------------------------
 void cLobbyClient::connectToLocalServer (cLobbyServer& server)
 {
-	Log.write ("Connecting to local server", cLog::eLogType::NetDebug);
+	NetLog.debug ("Connecting to local server");
 
 	server.localClientConnects (*this, localPlayer);
 	// For network clients, similar to :
@@ -123,7 +123,7 @@ void cLobbyClient::sendNetMessage (cNetMessage& message)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("LobbyClient: --> " + json.dump (-1) + " to host", cLog::eLogType::NetDebug);
+	NetLog.debug ("LobbyClient: --> " + json.dump (-1) + " to host");
 
 	connectionManager->sendToServer (message);
 }
@@ -260,7 +260,7 @@ void cLobbyClient::handleNetMessage (const cNetMessage& message)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("LobbyClient: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
+	NetLog.debug ("LobbyClient: <-- " + json.dump (-1));
 
 	switch (message.getType())
 	{
@@ -283,7 +283,7 @@ void cLobbyClient::handleNetMessage (const cNetMessage& message)
 			handleNetMessage_GAME_ALREADY_RUNNING (static_cast<const cNetMessageGameAlreadyRunning&> (message));
 			return;
 		default:
-			Log.write ("LobbyClient: Can not handle message", cLog::eLogType::NetError);
+			NetLog.error ("LobbyClient: Can not handle message");
 			return;
 	}
 }
@@ -341,7 +341,7 @@ void cLobbyClient::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 			handleNetMessage_MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION (static_cast<const cMuMsgPlayerAbortedGamePreparations&> (message));
 			break;
 		default:
-			Log.write ("LobbyClient: Can not handle message", cLog::eLogType::NetError);
+			NetLog.error ("LobbyClient: Can not handle message");
 			break;
 	}
 }

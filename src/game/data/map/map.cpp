@@ -607,7 +607,7 @@ void cMap::moveVehicleBig (cVehicle& vehicle, const cPosition& position)
 {
 	if (vehicle.getIsBig())
 	{
-		Log.write ("Calling moveVehicleBig on a big vehicle", cLog::eLogType::NetError);
+		NetLog.error ("Calling moveVehicleBig on a big vehicle");
 		//calling this function twice is always an error.
 		//nevertheless try to proceed by resetting the data.isBig flag
 		moveVehicle (vehicle, position);

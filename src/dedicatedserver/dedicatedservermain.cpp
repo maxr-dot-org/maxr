@@ -49,7 +49,7 @@ try
 		return -1;
 	}
 	cDedicatedServer (DEFAULTPORT).run();
-	Log.write ("EOF");
+	Log.info ("EOF");
 	return 0;
 }
 catch (const std::exception& ex)

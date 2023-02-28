@@ -189,7 +189,7 @@ public:
 
 		if (filename == fileToLoad && crc == crcFromSave)
 		{
-			Log.write ("Static map already loaded. Skipped...", cLog::eLogType::NetDebug);
+			NetLog.debug ("Static map already loaded. Skipped...");
 			return;
 		}
 		if (!loadMap (fileToLoad))

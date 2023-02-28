@@ -35,6 +35,6 @@ void logMAXRVersion()
 	sBuild += MAX_BUILD_DATE;
 	Log.info (sBuild);
 	Log.mark();
-	Log.write (sVersion, cLog::eLogType::NetDebug);
-	Log.write (sBuild, cLog::eLogType::NetDebug);
+	NetLog.debug (sVersion);
+	NetLog.debug (sBuild);
 }

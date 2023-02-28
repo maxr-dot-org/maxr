@@ -20,6 +20,8 @@
 #ifndef utility_logH
 #define utility_logH
 
+#include <atomic>
+#include <config/workaround/cpp17/filesystem.h>
 #include <fstream>
 #include <mutex>
 #include <string>
@@ -27,24 +29,6 @@
 class cLog
 {
 public:
-	enum class eLogType
-	{
-		Debug,
-		Info,
-		Warning,
-		Error,
-		NetDebug,
-		NetWarning,
-		NetError
-	};
-
-	/**
-	* Writes message with given type to logfile
-	*
-	* @param str Message for the log
-	* @param type Type for the log
-	*/
-	void write (const std::string& msg, eLogType type = eLogType::Info);
 
 	void info (const std::string& msg);
 	void warn (const std::string& msg);
@@ -56,16 +40,19 @@ public:
 	*/
 	void mark();
 
+	void setLogPath (const std::filesystem::path&);
+	void showDebug (bool b) { isPrintingDebug = b; }
+
 private:
-	void checkOpenFile (eLogType);
-	void writeToFile (const std::string& msg, std::ofstream& file);
+	void writeToFile (const std::string& msg);
 
 private:
 	std::mutex mutex;
+	std::atomic<bool> isPrintingDebug = true;
 	std::ofstream logfile;
-	std::ofstream netLogfile;
 };
 
 extern cLog Log;
+extern cLog NetLog;
 
 #endif // utility_logH

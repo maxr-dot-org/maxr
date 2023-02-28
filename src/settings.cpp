@@ -144,8 +144,11 @@ void cSettings::setPaths()
 
 	// set new place for logs
 	logPath = homeDir / "maxr.log";
-	netLogPath = getUserLogDir();
 	std::cout << "\n(II): Starting logging to: " << logPath.string() << std::endl;
+	netLogPath = cSettings::getInstance().getUserLogDir() / os::formattedNow ("%Y-%m-%d-%H%M%S_net.log");
+
+	Log.setLogPath (logPath);
+	NetLog.setLogPath (netLogPath);
 
 	dataDir = searchDataDir();
 }
@@ -197,6 +200,8 @@ void cSettings::initialize()
 	}
 
 	to_lower (global.voiceLanguage);
+	Log.showDebug (global.debug);
+	NetLog.showDebug (global.debug);
 	if (!global.debug)
 		Log.warn ("Debugmode disabled - for verbose output please enable Debug in maxr.json");
 	else
@@ -231,15 +236,17 @@ void cSettings::setAnimations (bool animations)
 }
 
 //------------------------------------------------------------------------------
-const std::filesystem::path& cSettings::getNetLogPath() const
+void cSettings::setDebug (bool debug)
 {
-	return netLogPath;
+	global.debug = debug;
+	Log.showDebug (debug);
+	NetLog.showDebug (debug);
 }
 
 //------------------------------------------------------------------------------
-void cSettings::setNetLogPath (const std::filesystem::path& netLogPath)
+const std::filesystem::path& cSettings::getNetLogPath() const
 {
-	this->netLogPath = netLogPath;
+	return netLogPath;
 }
 
 //------------------------------------------------------------------------------

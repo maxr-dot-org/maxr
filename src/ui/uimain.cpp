@@ -123,7 +123,7 @@ struct AtExit
 		cSoundDevice::getInstance().close();
 
 		Video.clearMemory();
-		Log.write ("EOF");
+		Log.info ("EOF");
 	}
 };
 

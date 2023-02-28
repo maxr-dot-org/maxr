@@ -137,7 +137,7 @@ void cClient::sendNetMessage (cNetMessage&& message) const
 		nlohmann::json json;
 		cJsonArchiveOut jsonarchive (json);
 		jsonarchive << message;
-		Log.write (getActivePlayer().getName() + ": --> " + json.dump (-1) + " @" + std::to_string (model.getGameTime()), cLog::eLogType::NetDebug);
+		NetLog.debug (getActivePlayer().getName() + ": --> " + json.dump (-1) + " @" + std::to_string (model.getGameTime()));
 	}
 	connectionManager->sendToServer (message);
 }
@@ -173,7 +173,7 @@ void cClient::handleNetMessages()
 			nlohmann::json json;
 			cJsonArchiveOut jsonarchive (json);
 			jsonarchive << *message;
-			Log.write (getActivePlayer().getName() + ": <-- " + json.dump (-1) + " @" + std::to_string (model.getGameTime()), cLog::eLogType::NetDebug);
+			NetLog.debug (getActivePlayer().getName() + ": <-- " + json.dump (-1) + " @" + std::to_string (model.getGameTime()));
 		}
 
 		switch (message->getType())
@@ -222,7 +222,7 @@ void cClient::handleNetMessages()
 			break;
 			case eNetMessageType::RESYNC_MODEL:
 			{
-				Log.write (" Client: Received model data for resynchronization", cLog::eLogType::NetDebug);
+				NetLog.debug (" Client: Received model data for resynchronization");
 				const cNetMessageResyncModel* msg = static_cast<cNetMessageResyncModel*> (message.get());
 				try
 				{
@@ -232,7 +232,7 @@ void cClient::handleNetMessages()
 				}
 				catch (const std::runtime_error& e)
 				{
-					Log.write (std::string (" Client: error loading received model data: ") + e.what(), cLog::eLogType::NetError);
+					NetLog.error (std::string (" Client: error loading received model data: ") + e.what());
 				}
 
 				//FIXME: deserializing model does not trigger signals on changed data members. Use this signal to trigger some gui updates
@@ -252,13 +252,13 @@ void cClient::handleNetMessages()
 				{
 					if (model.getPlayer (state.first) == nullptr)
 					{
-						Log.write (" Client: Invalid player id: " + std::to_string (state.first), cLog::eLogType::NetError);
+						NetLog.error (" Client: Invalid player id: " + std::to_string (state.first));
 						break;
 					}
 				}
 				if (msg->playerStates.size() != model.getPlayerList().size())
 				{
-					Log.write (" Client: Wrong size of playerState map " + std::to_string (msg->playerStates.size()), cLog::eLogType::NetError);
+					NetLog.error (" Client: Wrong size of playerState map " + std::to_string (msg->playerStates.size()));
 					break;
 				}
 				playerConnectionStates = msg->playerStates;
@@ -272,7 +272,7 @@ void cClient::handleNetMessages()
 			}
 			break;
 			default:
-				Log.write (" Client: received unknown net message type", cLog::eLogType::NetWarning);
+				NetLog.warn (" Client: received unknown net message type");
 				break;
 		}
 	}
@@ -291,7 +291,7 @@ void cClient::handleSurveyorMoveJobs()
 //------------------------------------------------------------------------------
 void cClient::enableFreezeMode (eFreezeMode mode)
 {
-	Log.write (" Client: enabled freeze mode: " + serialization::enumToString (mode), cLog::eLogType::NetDebug);
+	NetLog.debug (" Client: enabled freeze mode: " + serialization::enumToString (mode));
 	const auto wasEnabled = freezeModes.isEnabled (mode);
 
 	freezeModes.enable (mode);
@@ -302,7 +302,7 @@ void cClient::enableFreezeMode (eFreezeMode mode)
 //------------------------------------------------------------------------------
 void cClient::disableFreezeMode (eFreezeMode mode)
 {
-	Log.write (" Client: disabled freeze mode: " + serialization::enumToString (mode), cLog::eLogType::NetDebug);
+	NetLog.debug (" Client: disabled freeze mode: " + serialization::enumToString (mode));
 	const auto wasDisabled = !freezeModes.isEnabled (mode);
 
 	freezeModes.disable (mode);
@@ -378,7 +378,7 @@ void cClient::loadModel (int saveGameNumber, int playerNr)
 
 	recreateSurveyorMoveJobs();
 
-	Log.write (" Client: loaded model. GameId: " + std::to_string (model.getGameId()), cLog::eLogType::NetDebug);
+	NetLog.debug (" Client: loaded model. GameId: " + std::to_string (model.getGameId()));
 }
 //------------------------------------------------------------------------------
 void cClient::run()

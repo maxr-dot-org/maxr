@@ -306,7 +306,7 @@ void cMapSender::sendMsg (cNetMessage& message)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("MapSender: --> " + json.dump (-1) + " to " + std::to_string (toPlayerNr), cLog::eLogType::NetDebug);
+	NetLog.debug ("MapSender: --> " + json.dump (-1) + " to " + std::to_string (toPlayerNr));
 
 	connectionManager.sendToPlayer (message, toPlayerNr);
 }
