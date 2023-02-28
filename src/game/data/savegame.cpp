@@ -50,7 +50,7 @@ namespace
 		nlohmann::json json;
 		if (!(file >> json))
 		{
-			Log.write ("Error loading savegame file: " + fileName.string(), cLog::eLogType::Error);
+			Log.error ("Error loading savegame file: " + fileName.string());
 			return std::nullopt;
 		}
 		return json;
@@ -62,7 +62,7 @@ namespace
 		const auto& jsonVersion = json["version"];
 		if (!jsonVersion.is_string())
 		{
-			Log.write ("Error loading savegame file " + std::to_string (slot) + ": \"version\" field not found.", cLog::eLogType::Error);
+			Log.error ("Error loading savegame file " + std::to_string (slot) + ": \"version\" field not found.");
 			return std::nullopt;
 		}
 		cVersion version;
@@ -120,7 +120,7 @@ void cSavegame::save (const cModel& model, int slot, const std::string& saveName
 
 		if (model.getChecksum() != model2.getChecksum())
 		{
-			Log.write ("Checksum issue when saving", cLog::eLogType::Error);
+			Log.error ("Checksum issue when saving");
 		}
 	}
 #endif
@@ -196,7 +196,7 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 	}
 	catch (const std::runtime_error& e)
 	{
-		Log.write ("Error loading savegame file " + std::to_string (slot) + ": " + e.what(), cLog::eLogType::Error);
+		Log.error ("Error loading savegame file " + std::to_string (slot) + ": " + e.what());
 		info.gameName = "File Error";
 		return info;
 	}
@@ -253,7 +253,7 @@ void cSavegame::loadModel (cModel& model, int slot)
 	}
 	catch (const std::exception& e)
 	{
-		Log.write ("Error loading savegame file " + std::to_string (slot) + ": " + e.what(), cLog::eLogType::Error);
+		Log.error ("Error loading savegame file " + std::to_string (slot) + ": " + e.what());
 	}
 }
 

@@ -230,7 +230,7 @@ void cMapSender::runInThread()
 		}
 		catch (const std::exception& ex)
 		{
-			Log.write (std::string ("Exception: ") + ex.what(), cLog::eLogType::Error);
+			Log.error (std::string ("Exception: ") + ex.what());
 		}
 	});
 }

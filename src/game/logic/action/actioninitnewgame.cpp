@@ -399,7 +399,7 @@ void cActionInitNewGame::execute (cModel& model) const
 	}
 	if (credits < 0)
 	{
-		Log.write (" Landing failed. Used more than the available credits", cLog::eLogType::Error);
+		Log.error (" Landing failed. Used more than the available credits");
 		return;
 	}
 	makeLanding (player, initPlayerData.landingUnits, model);

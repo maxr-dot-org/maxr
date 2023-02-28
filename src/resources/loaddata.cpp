@@ -147,7 +147,7 @@ static int LoadGraphicToSurface (AutoSurface& dest, const std::filesystem::path&
 	if (!std::filesystem::exists (filepath))
 	{
 		dest = nullptr;
-		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+		Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 		return 0;
 	}
 	dest = LoadPCX (filepath);
@@ -505,7 +505,7 @@ static bool LoadUiData (const std::filesystem::path& sBuildingPath, sBuildingUID
 	}
 	else
 	{
-		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+		Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 		return false;
 	}
 	// load shadow
@@ -663,7 +663,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 			}
 			else
 			{
-				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+				Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 				return false;
 			}
 
@@ -700,7 +700,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	}
 	else
 	{
-		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+		Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 		return false;
 	}
 
@@ -713,7 +713,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	}
 	else
 	{
-		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+		Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 		return false;
 	}
 
@@ -942,7 +942,7 @@ static int LoadBuildings (bool includingUiData)
 	auto buildingsJsonPath = cSettings::getInstance().getBuildingsPath() / "buildings.json";
 	if (!std::filesystem::exists (buildingsJsonPath))
 	{
-		Log.write ("buildings.json doesn't exist!", cLog::eLogType::Error);
+		Log.error ("buildings.json doesn't exist!");
 		return 0;
 	}
 
@@ -951,7 +951,7 @@ static int LoadBuildings (bool includingUiData)
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + buildingsJsonPath.string(), cLog::eLogType::Error);
+		Log.error ("Can't load " + buildingsJsonPath.string());
 		return 0;
 	}
 	sBuildingsList buildingsList;
@@ -974,7 +974,7 @@ static int LoadBuildings (bool includingUiData)
 		if (p.id != buildingData.id.secondPart)
 		// check whether the read id is the same as the one from building.json
 		{
-			Log.write ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sBuildingPath.string(), cLog::eLogType::Error);
+			Log.error ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sBuildingPath.string());
 			return 0;
 		}
 		else
@@ -1035,7 +1035,7 @@ static int LoadVehicles (bool includingUiData)
 	auto vehicleJsonPath = cSettings::getInstance().getVehiclesPath() / "vehicles.json";
 	if (!std::filesystem::exists (vehicleJsonPath))
 	{
-		Log.write ("vehicles.json doesn't exist!", cLog::eLogType::Error);
+		Log.error ("vehicles.json doesn't exist!");
 		return 0;
 	}
 
@@ -1044,7 +1044,7 @@ static int LoadVehicles (bool includingUiData)
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + vehicleJsonPath.string(), cLog::eLogType::Error);
+		Log.error ("Can't load " + vehicleJsonPath.string());
 		return 0;
 	}
 	sVehiclesList vehiclesList;
@@ -1064,7 +1064,7 @@ static int LoadVehicles (bool includingUiData)
 		// check whether the read id is the same as the one from vehicles.json
 		if (p.id != vehicleData.id.secondPart)
 		{
-			Log.write ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sVehiclePath.string(), cLog::eLogType::Error);
+			Log.error ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sVehiclePath.string());
 			return 0;
 		}
 		else
@@ -1115,14 +1115,14 @@ static int LoadClans()
 
 	if (!std::filesystem::exists (clansPath))
 	{
-		Log.write ("File doesn't exist: " + clansPath.string(), cLog::eLogType::Error);
+		Log.error ("File doesn't exist: " + clansPath.string());
 		return 0;
 	}
 	std::ifstream file (clansPath.string());
 	nlohmann::json json;
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + clansPath.string(), cLog::eLogType::Error);
+		Log.error ("Can't load " + clansPath.string());
 		return 0;
 	}
 	cJsonArchiveIn in (json);
@@ -1145,7 +1145,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 	Log.info ("Loading music: " + musicPath.string());
 	if (!std::filesystem::exists (musicPath))
 	{
-		Log.write ("file doesn't exist", cLog::eLogType::Error);
+		Log.error ("file doesn't exist");
 		return 0;
 	}
 	std::ifstream file (musicPath.string());
@@ -1153,7 +1153,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load music.json", cLog::eLogType::Error);
+		Log.error ("Can't load music.json");
 		return 0;
 	}
 
@@ -1188,7 +1188,7 @@ bool loadFonts()
 	    || !std::filesystem::exists (fontPath / "latin_big_gold.pcx")
 	    || !std::filesystem::exists (fontPath / "latin_small.pcx"))
 	{
-		Log.write ("Missing a file needed for game. Check log and config! ", cLog::eLogType::Error);
+		Log.error ("Missing a file needed for game. Check log and config! ");
 		return false;
 	}
 
@@ -1237,7 +1237,7 @@ eLoadingState LoadData (bool includingUiData)
 		}
 		catch (std::runtime_error& e)
 		{
-			Log.write (e.what(), cLog::eLogType::Error);
+			Log.error (e.what());
 			MakeLog ("", -1, 3);
 			return eLoadingState::Error;
 		}
@@ -1257,7 +1257,7 @@ eLoadingState LoadData (bool includingUiData)
 		if (LoadGraphics (cSettings::getInstance().getGfxPath()) != 1)
 		{
 			MakeLog ("", -1, 5);
-			Log.write ("Error while loading graphics", cLog::eLogType::Error);
+			Log.error ("Error while loading graphics");
 			return eLoadingState::Error;
 		}
 		else
@@ -1358,7 +1358,7 @@ static int LoadEffectGraphicToSurface (AutoSurface (&dest)[2], const std::filesy
 {
 	if (!std::filesystem::exists (filepath))
 	{
-		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+		Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 		return 0;
 	}
 

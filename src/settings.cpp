@@ -95,7 +95,7 @@ namespace
 			}
 		}
 		// still empty? cry for mama - we couldn't locate any typical data folder
-		Log.write ("No success probing for data folder!", cLog::eLogType::Error);
+		Log.error ("No success probing for data folder!");
 		// END crude path validation to find gamedata
 		return "";
 #endif

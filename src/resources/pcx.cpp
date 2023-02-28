@@ -122,7 +122,7 @@ AutoSurface LoadPCX (const std::filesystem::path& name)
 	AutoSurface s (SDL_CreateRGBSurface (0, x, y, 32, 0, 0, 0, 0));
 	if (!s)
 	{
-		Log.write (SDL_GetError(), cLog::eLogType::Error);
+		Log.error (SDL_GetError());
 		return nullptr; //app will crash using this
 	}
 	SDL_SetColorKey (s.get(), SDL_TRUE, 0xFF00FF);

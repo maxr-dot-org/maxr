@@ -72,7 +72,7 @@ void cLanguage::setCurrentLanguage (const std::string& code)
 {
 	if (!Contains (getAvailableLanguages(), code))
 	{
-		Log.write ("Not a supported language: " + code, cLog::eLogType::Error);
+		Log.error ("Not a supported language: " + code);
 		throw std::runtime_error ("Unsupported language " + code);
 	}
 	m_languageCode = code;

@@ -309,7 +309,7 @@ bool cVideo::haveMinMode() const
 	{
 		return true;
 	}
-	Log.write ("cVideo: Minimal needed video mode (" + std::to_string (MINWIDTH) + "x" + std::to_string (MINHEIGHT) + ") not detected. Probably bad!", cLog::eLogType::Error);
+	Log.error ("cVideo: Minimal needed video mode (" + std::to_string (MINWIDTH) + "x" + std::to_string (MINHEIGHT) + ") not detected. Probably bad!");
 	return false;
 }
 

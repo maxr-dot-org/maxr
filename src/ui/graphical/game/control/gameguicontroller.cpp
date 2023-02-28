@@ -1291,7 +1291,7 @@ void cGameGuiController::showFilesWindow()
 		}
 		catch (std::runtime_error& e)
 		{
-			Log.write (e.what(), cLog::eLogType::Error);
+			Log.error (e.what());
 			application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Writing")));
 		}
 	});
