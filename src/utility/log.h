@@ -48,7 +48,7 @@ private:
 
 private:
 	std::mutex mutex;
-	std::atomic<bool> isPrintingDebug = true;
+	std::atomic<bool> isPrintingDebug{true};
 	std::ofstream logfile;
 };
 
