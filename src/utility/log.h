@@ -46,6 +46,7 @@ public:
 	*/
 	void write (const std::string& msg, eLogType type = eLogType::Info);
 
+	void info (const std::string& msg);
 	void warn (const std::string& msg);
 
 	/**

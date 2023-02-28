@@ -53,7 +53,7 @@ namespace
 		return os::getCurrentExeDir();
 #else
 		// BEGIN crude path validation to find gamedata
-		Log.write ("Probing for data paths using default values:", cLog::eLogType::Info);
+		Log.info ("Probing for data paths using default values:");
 
 		std::vector<std::filesystem::path> sPathArray =
 			{
@@ -77,7 +77,7 @@ namespace
 		const char* cDataDir = getenv ("MAXRDATA");
 		if (cDataDir == nullptr)
 		{
-			Log.write ("$MAXRDATA is not set", cLog::eLogType::Info);
+			Log.info ("$MAXRDATA is not set");
 		}
 		else
 		{
@@ -90,7 +90,7 @@ namespace
 		{
 			if (std::filesystem::exists (sInitFile / "init.pcx"))
 			{
-				Log.write ("Found gamedata in: " + sInitFile.string(), cLog::eLogType::Info);
+				Log.info ("Found gamedata in: " + sInitFile.string());
 				return sInitFile;
 			}
 		}
@@ -200,7 +200,7 @@ void cSettings::initialize()
 	if (!global.debug)
 		Log.warn ("Debugmode disabled - for verbose output please enable Debug in maxr.json");
 	else
-		Log.write ("Debugmode enabled", cLog::eLogType::Info);
+		Log.info ("Debugmode enabled");
 
 	// Create saves directory, if it doesn't exist, yet.
 	// Creating it during setPaths is too early, because it was not read yet.

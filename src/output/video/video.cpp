@@ -160,7 +160,7 @@ void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 
 		if (validateResolution (iWidth, iHeight) >= 0)
 		{
-			Log.write ("cVideo:  => Found requested video mode " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " :)", cLog::eLogType::Info);
+			Log.info ("cVideo:  => Found requested video mode " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " :)");
 		}
 		else
 		{
@@ -182,7 +182,7 @@ void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 	}
 	else
 	{
-		Log.write ("cVideo: Resolution set to " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " but was not applied yet", cLog::eLogType::Info);
+		Log.info ("cVideo: Resolution set to " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " but was not applied yet");
 	}
 }
 
@@ -291,7 +291,7 @@ void cVideo::detectResolutions()
 		for (size_t i = 0; i < resolutions.size(); ++i)
 		{
 			const auto& resolution = resolutions[i];
-			Log.write ("cVideo: Display" + std::to_string (displayIndex) + " is offering detected video mode " + std::to_string (i) + " (" + std::to_string (resolution.first) + "x" + std::to_string (resolution.second) + ")", cLog::eLogType::Info);
+			Log.info ("cVideo: Display" + std::to_string (displayIndex) + " is offering detected video mode " + std::to_string (i) + " (" + std::to_string (resolution.first) + "x" + std::to_string (resolution.second) + ")");
 		}
 	}
 }
@@ -360,7 +360,7 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 				counter += 1;
 				screenshotfile = cSettings::getInstance().getUserScreenshotsDir() / (timestr + std::to_string (counter) + ".bmp");
 			} while (std::filesystem::exists (screenshotfile));
-			Log.write ("Screenshot saved to " + screenshotfile.string(), cLog::eLogType::Info);
+			Log.info ("Screenshot saved to " + screenshotfile.string());
 			takeScreenShot (screenshotfile);
 
 			screenShotTaken (screenshotfile);

@@ -161,7 +161,7 @@ namespace os
 				// check for binary itself in bin folder
 				if (std::filesystem::exists (exePath + "maxr"))
 				{
-					Log.write ("Path to binary is: " + exePath, cLog::eLogType::Info);
+					Log.info ("Path to binary is: " + exePath);
 				}
 				else
 				{
@@ -173,7 +173,7 @@ namespace os
 						exePath = exePath.substr (0, iPos - 5);
 						if (std::filesystem::exists (exePath + "maxr"))
 						{
-							Log.write ("Path to binary is: " + exePath, cLog::eLogType::Info);
+							Log.info ("Path to binary is: " + exePath);
 						}
 					}
 				}

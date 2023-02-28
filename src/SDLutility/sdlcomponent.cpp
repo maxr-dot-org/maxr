@@ -33,7 +33,7 @@ SDLComponent::SDLComponent (bool withVideo)
 		Log.write (SDL_GetError(), cLog::eLogType::Error);
 		throw std::runtime_error ("Could not init SDL");
 	}
-	Log.write ("Initialized SDL basics - looks good!", cLog::eLogType::Info);
+	Log.info ("Initialized SDL basics - looks good!");
 	Log.mark();
 }
 

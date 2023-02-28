@@ -128,7 +128,7 @@ eOpenServerResult cLobbyServer::startServer (int port)
 	}
 	else
 	{
-		Log.write ("Game open (Port: " + std::to_string (port) + ")", cLog::eLogType::Info);
+		Log.info ("Game open (Port: " + std::to_string (port) + ")");
 		return eOpenServerResult::Success;
 	}
 }

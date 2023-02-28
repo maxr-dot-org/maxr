@@ -30,10 +30,10 @@ void logMAXRVersion()
 	sVersion += " ";
 	sVersion += PACKAGE_REV;
 	sVersion += " ";
-	Log.write (sVersion, cLog::eLogType::Info);
+	Log.info (sVersion);
 	std::string sBuild = "Build: ";
 	sBuild += MAX_BUILD_DATE;
-	Log.write (sBuild, cLog::eLogType::Info);
+	Log.info (sBuild);
 	Log.mark();
 	Log.write (sVersion, cLog::eLogType::NetDebug);
 	Log.write (sBuild, cLog::eLogType::NetDebug);

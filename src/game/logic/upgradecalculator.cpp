@@ -985,10 +985,10 @@ void cUpgradeCalculator::printToLog (const char* str, int value) const
 		ss << value;
 		ss >> printStr;
 		printStr.insert (0, str);
-		Log.write (printStr, cLog::eLogType::Info);
+		Log.info (printStr);
 	}
 	else
-		Log.write (str, cLog::eLogType::Info);
+		Log.info (str);
 }
 
 #if 0

@@ -33,7 +33,7 @@ SDLNetComponent::SDLNetComponent()
 	}
 	else
 	{
-		Log.write ("Net started", cLog::eLogType::Info);
+		Log.info ("Net started");
 	}
 }
 

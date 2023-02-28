@@ -177,7 +177,7 @@ static void createShadowGfx()
  */
 static int LoadGraphics (const std::filesystem::path& directory)
 {
-	Log.write ("Loading Graphics", cLog::eLogType::Info);
+	Log.info ("Loading Graphics");
 
 	Log.write ("Gamegraphics...", cLog::eLogType::Debug);
 	if (!LoadGraphicToSurface (GraphicsData.gfx_Chand, directory / "hand.pcx") ||
@@ -937,7 +937,7 @@ namespace
  */
 static int LoadBuildings (bool includingUiData)
 {
-	Log.write ("Loading Buildings", cLog::eLogType::Info);
+	Log.info ("Loading Buildings");
 
 	auto buildingsJsonPath = cSettings::getInstance().getBuildingsPath() / "buildings.json";
 	if (!std::filesystem::exists (buildingsJsonPath))
@@ -1030,7 +1030,7 @@ static int LoadBuildings (bool includingUiData)
  */
 static int LoadVehicles (bool includingUiData)
 {
-	Log.write ("Loading Vehicles", cLog::eLogType::Info);
+	Log.info ("Loading Vehicles");
 
 	auto vehicleJsonPath = cSettings::getInstance().getVehiclesPath() / "vehicles.json";
 	if (!std::filesystem::exists (vehicleJsonPath))
@@ -1142,7 +1142,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 {
 	const auto musicPath = directory / "musics.json";
 
-	Log.write ("Loading music: " + musicPath.string(), cLog::eLogType::Info);
+	Log.info ("Loading music: " + musicPath.string());
 	if (!std::filesystem::exists (musicPath))
 	{
 		Log.write ("file doesn't exist", cLog::eLogType::Error);
@@ -1268,7 +1268,7 @@ eLoadingState LoadData (bool includingUiData)
 
 		// Load Effects
 		MakeLog (lngPack.i18n ("Text~Init~Effects"), 0, 6);
-		Log.write ("Loading Effects", cLog::eLogType::Info);
+		Log.info ("Loading Effects");
 		EffectsData.load (cSettings::getInstance().getFxPath());
 		MakeLog ("", 1, 6);
 		Log.mark();
@@ -1333,14 +1333,14 @@ eLoadingState LoadData (bool includingUiData)
 
 		// Load Sounds
 		MakeLog (lngPack.i18n ("Text~Init~Sounds"), 0, 11);
-		Log.write ("Loading Sounds", cLog::eLogType::Info);
+		Log.info ("Loading Sounds");
 		SoundData.load (cSettings::getInstance().getSoundsPath());
 		MakeLog ("", 1, 11);
 		Log.mark();
 
 		// Load Voices
 		MakeLog (lngPack.i18n ("Text~Init~Voices"), 0, 12);
-		Log.write ("Loading Voices", cLog::eLogType::Info);
+		Log.info ("Loading Voices");
 		VoiceData.load (cSettings::getInstance().getVoicesPath());
 		MakeLog ("", 1, 12);
 		Log.mark();

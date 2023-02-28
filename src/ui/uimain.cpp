@@ -50,7 +50,7 @@ static int initSound()
 {
 	if (!cSettings::getInstance().isSoundEnabled())
 	{
-		Log.write ("Sound disabled due configuration", cLog::eLogType::Info);
+		Log.info ("Sound disabled due configuration");
 		return 1;
 	}
 
@@ -75,7 +75,7 @@ static int initSound()
 		cSettings::getInstance().setSoundEnabled (false);
 		return -1;
 	}
-	Log.write ("Sound started", cLog::eLogType::Info);
+	Log.info ("Sound started");
 	return 0;
 }
 

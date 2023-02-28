@@ -407,7 +407,7 @@ void cGameGuiController::initChatCommands()
 			{
 				server->setTurnEndDeadlineActive (false);
 			}
-			Log.write ("Turn end deadline changed to " + std::to_string (seconds), cLog::eLogType::Info);
+			Log.info ("Turn end deadline changed to " + std::to_string (seconds));
 			*/
 		})
 	);
@@ -430,7 +430,7 @@ void cGameGuiController::initChatCommands()
 			{
 				server->setTurnLimitActive (false);
 			}
-			Log.write ("Turn limit changed to " + std::to_string (seconds), cLog::eLogType::Info);
+			Log.info ("Turn limit changed to " + std::to_string (seconds));
 			*/
 		})
 	);

@@ -88,6 +88,12 @@ void cLog::write (const std::string& msg, eLogType type)
 }
 
 //------------------------------------------------------------------------------
+void cLog::info (const std::string& msg)
+{
+	write (msg, eLogType::Info);
+}
+
+//------------------------------------------------------------------------------
 void cLog::warn (const std::string& msg)
 {
 	write (msg, eLogType::Warning);

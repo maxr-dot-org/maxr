@@ -137,20 +137,20 @@ void cKeysList::loadFromJsonFile (const std::filesystem::path& path)
 //------------------------------------------------------------------------------
 void cKeysList::loadFromFile()
 {
-	Log.write ("Loading Keys", cLog::eLogType::Info);
+	Log.info ("Loading Keys");
 
 	const auto keysJsonGame = cSettings::getInstance().getDataDir() / "keys.json";
 	const auto keysJsonUsers = cSettings::getInstance().getMaxrHomeDir() / "keys.json";
 
 	if (std::filesystem::exists (keysJsonUsers))
 	{
-		Log.write ("User key-file in use", cLog::eLogType::Info);
+		Log.info ("User key-file in use");
 		loadFromJsonFile (keysJsonUsers);
 	}
 	else if (std::filesystem::exists (keysJsonGame))
 	{
 		std::filesystem::copy_file (keysJsonGame, keysJsonUsers);
-		Log.write ("Key-file copied from gamedir to userdir", cLog::eLogType::Info);
+		Log.info ("Key-file copied from gamedir to userdir");
 		loadFromJsonFile (keysJsonUsers);
 	}
 	else
