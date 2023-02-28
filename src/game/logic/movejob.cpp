@@ -219,7 +219,7 @@ void cMoveJob::startMove (cModel& model, cVehicle& vehicle)
 
 	vehicle.setMovementOffset (cPosition (0, 0));
 	changeVehicleOffset (vehicle, -64);
-	Log.write (" cMoveJob: Vehicle (ID: " + std::to_string (vehicle.getId()) + ") moved to " + toString (vehicle.getPosition()) + " @" + std::to_string (model.getGameTime()), cLog::eLogType::NetDebug);
+	NetLog.debug (" cMoveJob: Vehicle (ID: " + std::to_string (vehicle.getId()) + ") moved to " + toString (vehicle.getPosition()) + " @" + std::to_string (model.getGameTime()));
 }
 
 //------------------------------------------------------------------------------

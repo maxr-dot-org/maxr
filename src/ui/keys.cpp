@@ -115,7 +115,7 @@ void cKeysList::loadFromJsonFile (const std::filesystem::path& path)
 
 	if (!(file >> json))
 	{
-		Log.write ("cannot load keys.json\ngenerating new file", cLog::eLogType::Warning);
+		Log.warn ("cannot load keys.json\ngenerating new file");
 		saveToFile();
 		return;
 	}
@@ -124,12 +124,12 @@ void cKeysList::loadFromJsonFile (const std::filesystem::path& path)
 		cJsonArchiveIn in (json);
 		serialize (in);
 
-		Log.write ("Done", cLog::eLogType::Debug);
+		Log.debug ("Done");
 	}
 	catch (const std::exception& e)
 	{
-		Log.write (std::string ("Error while reading keys: ") + e.what(), cLog::eLogType::Warning);
-		Log.write ("Overwriting with default settings", cLog::eLogType::Warning);
+		Log.warn (std::string ("Error while reading keys: ") + e.what());
+		Log.warn ("Overwriting with default settings");
 		saveToFile();
 	}
 }
@@ -137,25 +137,25 @@ void cKeysList::loadFromJsonFile (const std::filesystem::path& path)
 //------------------------------------------------------------------------------
 void cKeysList::loadFromFile()
 {
-	Log.write ("Loading Keys", cLog::eLogType::Info);
+	Log.info ("Loading Keys");
 
 	const auto keysJsonGame = cSettings::getInstance().getDataDir() / "keys.json";
 	const auto keysJsonUsers = cSettings::getInstance().getMaxrHomeDir() / "keys.json";
 
 	if (std::filesystem::exists (keysJsonUsers))
 	{
-		Log.write ("User key-file in use", cLog::eLogType::Info);
+		Log.info ("User key-file in use");
 		loadFromJsonFile (keysJsonUsers);
 	}
 	else if (std::filesystem::exists (keysJsonGame))
 	{
 		std::filesystem::copy_file (keysJsonGame, keysJsonUsers);
-		Log.write ("Key-file copied from gamedir to userdir", cLog::eLogType::Info);
+		Log.info ("Key-file copied from gamedir to userdir");
 		loadFromJsonFile (keysJsonUsers);
 	}
 	else
 	{
-		Log.write ("generating new keys-file", cLog::eLogType::Warning);
+		Log.warn ("generating new keys-file");
 		saveToFile();
 	}
 }

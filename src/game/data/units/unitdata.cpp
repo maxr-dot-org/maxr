@@ -158,13 +158,13 @@ uint32_t sSpecialBuildingsId::computeChecksum (uint32_t crc) const
 //------------------------------------------------------------------------------
 void sSpecialBuildingsId::logMissing() const
 {
-	if (alienFactory == 0) Log.write ("special \"alienFactory\" missing", cLog::eLogType::Error);
-	if (connector == 0) Log.write ("special \"connector\" missing", cLog::eLogType::Error);
-	if (landMine == 0) Log.write ("special \"landmine\" missing", cLog::eLogType::Error);
-	if (mine == 0) Log.write ("special \"mine\" missing", cLog::eLogType::Error);
-	if (seaMine == 0) Log.write ("special \"seamine\" missing", cLog::eLogType::Error);
-	if (smallBeton == 0) Log.write ("special \"smallBeton\" missing", cLog::eLogType::Error);
-	if (smallGenerator == 0) Log.write ("special \"energy\" missing", cLog::eLogType::Error);
+	if (alienFactory == 0) Log.error ("special \"alienFactory\" missing");
+	if (connector == 0) Log.error ("special \"connector\" missing");
+	if (landMine == 0) Log.error ("special \"landmine\" missing");
+	if (mine == 0) Log.error ("special \"mine\" missing");
+	if (seaMine == 0) Log.error ("special \"seamine\" missing");
+	if (smallBeton == 0) Log.error ("special \"smallBeton\" missing");
+	if (smallGenerator == 0) Log.error ("special \"energy\" missing");
 }
 
 //------------------------------------------------------------------------------
@@ -179,9 +179,9 @@ uint32_t sSpecialVehiclesId::computeChecksum (uint32_t crc) const
 //------------------------------------------------------------------------------
 void sSpecialVehiclesId::logMissing() const
 {
-	if (constructor == 0) Log.write ("Constructor index not found. Constructor needs to have the property \"Can_Build = BigBuilding\"", cLog::eLogType::Error);
-	if (engineer == 0) Log.write ("Engineer index not found. Engineer needs to have the property \"Can_Build = SmallBuilding\"", cLog::eLogType::Error);
-	if (surveyor == 0) Log.write ("Surveyor index not found. Surveyor needs to have the property \"Can_Survey = Yes\"", cLog::eLogType::Error);
+	if (constructor == 0) Log.error ("Constructor index not found. Constructor needs to have the property \"Can_Build = BigBuilding\"");
+	if (engineer == 0) Log.error ("Engineer index not found. Engineer needs to have the property \"Can_Build = SmallBuilding\"");
+	if (surveyor == 0) Log.error ("Surveyor index not found. Surveyor needs to have the property \"Can_Survey = Yes\"");
 }
 
 //------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ int cUnitsData::getUnitIndexBy (sID id) const
 	{
 		if (staticUnitData[i].ID == id) return i;
 	}
-	Log.write ("Unitdata with id (" + std::to_string (id.firstPart) + ", " + std::to_string (id.secondPart) + ") not found", cLog::eLogType::Error);
+	Log.error ("Unitdata with id (" + std::to_string (id.firstPart) + ", " + std::to_string (id.secondPart) + ") not found");
 	return -1;
 }
 

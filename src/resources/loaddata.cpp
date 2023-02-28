@@ -117,7 +117,7 @@ void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 
 			if (font.getTextWide (std::string (maxSize, referenceLetter)) < font.getTextWide (p.second))
 			{
-				Log.write ("Maybe too long string for " + p.first + ": " + p.second, cLog::eLogType::Warning);
+				Log.warn ("Maybe too long string for " + p.first + ": " + p.second);
 			}
 		}
 	}
@@ -129,7 +129,7 @@ static void LoadLanguage()
 	lngPack.setLanguagesFolder (cSettings::getInstance().getLangPath());
 	if (!Contains (lngPack.getAvailableLanguages(), cSettings::getInstance().getLanguage()))
 	{
-		Log.write ("Not a supported language: " + cSettings::getInstance().getLanguage() + ", defaulting to en.", cLog::eLogType::Warning);
+		Log.warn ("Not a supported language: " + cSettings::getInstance().getLanguage() + ", defaulting to en.");
 		cSettings::getInstance().setLanguage ("en");
 		cSettings::getInstance().saveInFile();
 	}
@@ -147,12 +147,12 @@ static int LoadGraphicToSurface (AutoSurface& dest, const std::filesystem::path&
 	if (!std::filesystem::exists (filepath))
 	{
 		dest = nullptr;
-		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+		Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 		return 0;
 	}
 	dest = LoadPCX (filepath);
 
-	Log.write ("File loaded: " + filepath.string(), cLog::eLogType::Debug);
+	Log.debug ("File loaded: " + filepath.string());
 	return 1;
 }
 
@@ -177,9 +177,9 @@ static void createShadowGfx()
  */
 static int LoadGraphics (const std::filesystem::path& directory)
 {
-	Log.write ("Loading Graphics", cLog::eLogType::Info);
+	Log.info ("Loading Graphics");
 
-	Log.write ("Gamegraphics...", cLog::eLogType::Debug);
+	Log.debug ("Gamegraphics...");
 	if (!LoadGraphicToSurface (GraphicsData.gfx_Chand, directory / "hand.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Cno, directory / "no.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Cselect, directory / "select.pcx") ||
@@ -240,7 +240,7 @@ static int LoadGraphics (const std::filesystem::path& directory)
 	GraphicsData.Dialog2Path = cSettings::getInstance().getGfxPath() / "dialog2.pcx";
 	GraphicsData.Dialog3Path = cSettings::getInstance().getGfxPath() / "dialog3.pcx";
 
-	Log.write ("Shadowgraphics...", cLog::eLogType::Debug);
+	Log.debug ("Shadowgraphics...");
 	// Shadow:
 	createShadowGfx();
 	Video.resolutionChanged.connect (&createShadowGfx);
@@ -250,16 +250,16 @@ static int LoadGraphics (const std::filesystem::path& directory)
 	SDL_SetColorKey (GraphicsData.gfx_tmp.get(), SDL_TRUE, 0xFF00FF);
 
 	// Glas:
-	Log.write ("Glassgraphic...", cLog::eLogType::Debug);
+	Log.debug ("Glassgraphic...");
 	LoadGraphicToSurface (GraphicsData.gfx_destruction_glas, directory / "destruction_glas.pcx");
 	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_destruction_glas.get(), 150);
 
 	// Waypoints:
-	Log.write ("Waypointgraphics...", cLog::eLogType::Debug);
+	Log.debug ("Waypointgraphics...");
 	OtherData.loadWayPoints();
 
 	// Resources:
-	Log.write ("Resourcegraphics...", cLog::eLogType::Debug);
+	Log.debug ("Resourcegraphics...");
 	ResourceData.load (directory);
 	return 1;
 }
@@ -358,7 +358,7 @@ static void LoadUnitData (sInitialBuildingData& buildingData, const std::filesys
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + path.string(), cLog::eLogType::Warning);
+		Log.warn ("Can't load " + path.string());
 		return;
 	}
 	cJsonArchiveIn in (json);
@@ -379,7 +379,7 @@ static void LoadUnitData (sInitialVehicleData& vehicleData, const std::filesyste
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + path.string(), cLog::eLogType::Warning);
+		Log.warn ("Can't load " + path.string());
 		return;
 	}
 	cJsonArchiveIn in (json);
@@ -392,7 +392,7 @@ static bool checkUniqueness (const sID& id)
 	{
 		char szTmp[100];
 		snprintf (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.firstPart, id.secondPart);
-		Log.write (szTmp, cLog::eLogType::Warning);
+		Log.warn (szTmp);
 		return false;
 	}
 	return true;
@@ -478,7 +478,7 @@ static void LoadUnitSoundfile (cSoundChunk& dest, const std::filesystem::path& f
 			}
 			catch (const std::runtime_error& e)
 			{
-				Log.write (std::string ("Can't load dummy.ogg: ") + e.what(), cLog::eLogType::Warning);
+				Log.warn (std::string ("Can't load dummy.ogg: ") + e.what());
 			}
 		}
 	}
@@ -505,7 +505,7 @@ static bool LoadUiData (const std::filesystem::path& sBuildingPath, sBuildingUID
 	}
 	else
 	{
-		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+		Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 		return false;
 	}
 	// load shadow
@@ -582,7 +582,7 @@ static bool LoadUiData (const std::filesystem::path& sBuildingPath, sBuildingUID
 //------------------------------------------------------------------------------
 static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStaticUnitData& staticData, sVehicleUIData& ui)
 {
-	Log.write ("Loading graphics", cLog::eLogType::Debug);
+	Log.debug ("Loading graphics");
 	// load infantry graphics
 	if (staticData.vehicleData.animationMovement)
 	{
@@ -601,11 +601,11 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 
 				if (std::filesystem::exists (sTmpString))
 				{
-					Log.write (sTmpString.string(), cLog::eLogType::Debug);
+					Log.debug (sTmpString.string());
 					AutoSurface sfTempSurface (LoadPCX (sTmpString));
 					if (!sfTempSurface)
 					{
-						Log.write (SDL_GetError(), cLog::eLogType::Warning);
+						Log.warn (SDL_GetError());
 					}
 					else
 					{
@@ -653,7 +653,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 			char sztmp[16];
 			snprintf (sztmp, sizeof (sztmp), "img%d.pcx", n);
 			auto sTmpString = sVehiclePath / sztmp;
-			Log.write (sTmpString.string(), cLog::eLogType::Debug);
+			Log.debug (sTmpString.string());
 			if (std::filesystem::exists (sTmpString))
 			{
 				ui.img_org[n] = LoadPCX (sTmpString);
@@ -663,7 +663,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 			}
 			else
 			{
-				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+				Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 				return false;
 			}
 
@@ -685,7 +685,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	}
 	// load video
 	ui.FLCFile = sVehiclePath / "video.flc";
-	Log.write ("Loading video: " + ui.FLCFile.string(), cLog::eLogType::Debug);
+	Log.debug ("Loading video: " + ui.FLCFile.string());
 	if (!std::filesystem::exists (ui.FLCFile))
 	{
 		ui.FLCFile = "";
@@ -693,27 +693,27 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 
 	// load infoimage
 	auto sTmpString = sVehiclePath / "info.pcx";
-	Log.write ("Loading portrait: " + sTmpString.string(), cLog::eLogType::Debug);
+	Log.debug ("Loading portrait: " + sTmpString.string());
 	if (std::filesystem::exists (sTmpString))
 	{
 		ui.info = LoadPCX (sTmpString);
 	}
 	else
 	{
-		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+		Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 		return false;
 	}
 
 	// load storageimage
 	sTmpString = sVehiclePath / "store.pcx";
-	Log.write ("Loading storageportrait: " + sTmpString.string(), cLog::eLogType::Debug);
+	Log.debug ("Loading storageportrait: " + sTmpString.string());
 	if (std::filesystem::exists (sTmpString))
 	{
 		ui.storage = LoadPCX (sTmpString);
 	}
 	else
 	{
-		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+		Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 		return false;
 	}
 
@@ -721,7 +721,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	if (ui.staticData.hasOverlay)
 	{
 		sTmpString = sVehiclePath / "overlay.pcx";
-		Log.write ("Loading overlay: " + sTmpString.string(), cLog::eLogType::Debug);
+		Log.debug ("Loading overlay: " + sTmpString.string());
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.overlay_org = LoadPCX (sTmpString);
@@ -729,7 +729,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.overlay_org = nullptr;
 			ui.overlay = nullptr;
 			ui.staticData.hasOverlay = false;
@@ -746,7 +746,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	{
 		// load image
 		sTmpString = sVehiclePath / "build.pcx";
-		Log.write ("Loading buildgraphics: " + sTmpString.string(), cLog::eLogType::Debug);
+		Log.debug ("Loading buildgraphics: " + sTmpString.string());
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_org = LoadPCX (sTmpString);
@@ -756,14 +756,14 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.build_org = nullptr;
 			ui.build = nullptr;
 			ui.staticData.buildUpGraphic = false;
 		}
 		// load shadow
 		sTmpString = sVehiclePath / "build_shw.pcx";
-		Log.write ("Loading buildgraphics: " + sTmpString.string(), cLog::eLogType::Debug);
+		Log.debug ("Loading buildgraphics: " + sTmpString.string());
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_shw_org = LoadPCX (sTmpString);
@@ -772,7 +772,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.build_shw_org = nullptr;
 			ui.build_shw = nullptr;
 			ui.staticData.buildUpGraphic = false;
@@ -790,7 +790,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	{
 		// load image (small)
 		sTmpString = sVehiclePath / "clear_small.pcx";
-		Log.write ("Loading cleargraphics: " + sTmpString.string(), cLog::eLogType::Debug);
+		Log.debug ("Loading cleargraphics: " + sTmpString.string());
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.clear_small_org = LoadPCX (sTmpString);
@@ -800,14 +800,14 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.clear_small_org = nullptr;
 			ui.clear_small = nullptr;
 			return false;
 		}
 		// load shadow (small)
 		sTmpString = sVehiclePath / "clear_small_shw.pcx";
-		Log.write ("Loading cleargraphics: " + sTmpString.string(), cLog::eLogType::Debug);
+		Log.debug ("Loading cleargraphics: " + sTmpString.string());
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.clear_small_shw_org = LoadPCX (sTmpString);
@@ -816,14 +816,14 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.clear_small_shw_org = nullptr;
 			ui.clear_small_shw = nullptr;
 			return false;
 		}
 		// load image (big)
 		sTmpString = sVehiclePath / "clear_big.pcx";
-		Log.write ("Loading cleargraphics: " + sTmpString.string(), cLog::eLogType::Debug);
+		Log.debug ("Loading cleargraphics: " + sTmpString.string());
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_org = LoadPCX (sTmpString);
@@ -833,14 +833,14 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.build_org = nullptr;
 			ui.build = nullptr;
 			return false;
 		}
 		// load shadow (big)
 		sTmpString = sVehiclePath / "clear_big_shw.pcx";
-		Log.write ("Loading cleargraphics: " + sTmpString.string(), cLog::eLogType::Debug);
+		Log.debug ("Loading cleargraphics: " + sTmpString.string());
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_shw_org = LoadPCX (sTmpString);
@@ -849,7 +849,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		else
 		{
-			Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Warning);
+			Log.warn ("Missing GFX - your MAXR install seems to be incomplete!");
 			ui.build_shw_org = nullptr;
 			ui.build_shw = nullptr;
 			return false;
@@ -864,7 +864,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	}
 
 	// load sounds
-	Log.write ("Loading sounds", cLog::eLogType::Debug);
+	Log.debug ("Loading sounds");
 	LoadUnitSoundfile (ui.Wait, sVehiclePath / "wait.ogg");
 	LoadUnitSoundfile (ui.WaitWater, sVehiclePath / "wait_water.ogg");
 	LoadUnitSoundfile (ui.Start, sVehiclePath / "start.ogg");
@@ -900,7 +900,7 @@ namespace
 		auto it = std::adjacent_find (v.begin(), v.end(), sameId);
 		while (it != v.end())
 		{
-			Log.write ("duplicated id " + std::to_string (it->id) + ", skipping unit.", cLog::eLogType::Warning);
+			Log.warn ("duplicated id " + std::to_string (it->id) + ", skipping unit.");
 			it = std::adjacent_find (it + 1, v.end(), sameId);
 		}
 		v.erase (std::unique (v.begin(), v.end(), sameId), v.end());
@@ -937,12 +937,12 @@ namespace
  */
 static int LoadBuildings (bool includingUiData)
 {
-	Log.write ("Loading Buildings", cLog::eLogType::Info);
+	Log.info ("Loading Buildings");
 
 	auto buildingsJsonPath = cSettings::getInstance().getBuildingsPath() / "buildings.json";
 	if (!std::filesystem::exists (buildingsJsonPath))
 	{
-		Log.write ("buildings.json doesn't exist!", cLog::eLogType::Error);
+		Log.error ("buildings.json doesn't exist!");
 		return 0;
 	}
 
@@ -951,7 +951,7 @@ static int LoadBuildings (bool includingUiData)
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + buildingsJsonPath.string(), cLog::eLogType::Error);
+		Log.error ("Can't load " + buildingsJsonPath.string());
 		return 0;
 	}
 	sBuildingsList buildingsList;
@@ -974,12 +974,12 @@ static int LoadBuildings (bool includingUiData)
 		if (p.id != buildingData.id.secondPart)
 		// check whether the read id is the same as the one from building.json
 		{
-			Log.write ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sBuildingPath.string(), cLog::eLogType::Error);
+			Log.error ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sBuildingPath.string());
 			return 0;
 		}
 		else
 		{
-			Log.write ("id " + std::to_string (p.id) + " verified for " + sBuildingPath.string(), cLog::eLogType::Debug);
+			Log.debug ("id " + std::to_string (p.id) + " verified for " + sBuildingPath.string());
 		}
 		if (!checkUniqueness (buildingData.id)) return 0;
 
@@ -1030,12 +1030,12 @@ static int LoadBuildings (bool includingUiData)
  */
 static int LoadVehicles (bool includingUiData)
 {
-	Log.write ("Loading Vehicles", cLog::eLogType::Info);
+	Log.info ("Loading Vehicles");
 
 	auto vehicleJsonPath = cSettings::getInstance().getVehiclesPath() / "vehicles.json";
 	if (!std::filesystem::exists (vehicleJsonPath))
 	{
-		Log.write ("vehicles.json doesn't exist!", cLog::eLogType::Error);
+		Log.error ("vehicles.json doesn't exist!");
 		return 0;
 	}
 
@@ -1044,7 +1044,7 @@ static int LoadVehicles (bool includingUiData)
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + vehicleJsonPath.string(), cLog::eLogType::Error);
+		Log.error ("Can't load " + vehicleJsonPath.string());
 		return 0;
 	}
 	sVehiclesList vehiclesList;
@@ -1064,12 +1064,12 @@ static int LoadVehicles (bool includingUiData)
 		// check whether the read id is the same as the one from vehicles.json
 		if (p.id != vehicleData.id.secondPart)
 		{
-			Log.write ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sVehiclePath.string(), cLog::eLogType::Error);
+			Log.error ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sVehiclePath.string());
 			return 0;
 		}
 		else
 		{
-			Log.write ("id " + std::to_string (p.id) + " verified for " + sVehiclePath.string(), cLog::eLogType::Debug);
+			Log.debug ("id " + std::to_string (p.id) + " verified for " + sVehiclePath.string());
 		}
 		if (!checkUniqueness (vehicleData.id)) return 0;
 
@@ -1078,7 +1078,7 @@ static int LoadVehicles (bool includingUiData)
 
 		if (staticData.factorGround == 0 && staticData.factorSea == 0 && staticData.factorAir == 0 && staticData.factorCoast == 0)
 		{
-			Log.write ("Unit cannot move", cLog::eLogType::Warning);
+			Log.warn ("Unit cannot move");
 		}
 		staticData.vehicleData = vehicleData.staticVehicleData;
 
@@ -1115,14 +1115,14 @@ static int LoadClans()
 
 	if (!std::filesystem::exists (clansPath))
 	{
-		Log.write ("File doesn't exist: " + clansPath.string(), cLog::eLogType::Error);
+		Log.error ("File doesn't exist: " + clansPath.string());
 		return 0;
 	}
 	std::ifstream file (clansPath.string());
 	nlohmann::json json;
 	if (!(file >> json))
 	{
-		Log.write ("Can't load " + clansPath.string(), cLog::eLogType::Error);
+		Log.error ("Can't load " + clansPath.string());
 		return 0;
 	}
 	cJsonArchiveIn in (json);
@@ -1142,10 +1142,10 @@ static int LoadMusic (const std::filesystem::path& directory)
 {
 	const auto musicPath = directory / "musics.json";
 
-	Log.write ("Loading music: " + musicPath.string(), cLog::eLogType::Info);
+	Log.info ("Loading music: " + musicPath.string());
 	if (!std::filesystem::exists (musicPath))
 	{
-		Log.write ("file doesn't exist", cLog::eLogType::Error);
+		Log.error ("file doesn't exist");
 		return 0;
 	}
 	std::ifstream file (musicPath.string());
@@ -1153,7 +1153,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 
 	if (!(file >> json))
 	{
-		Log.write ("Can't load music.json", cLog::eLogType::Error);
+		Log.error ("Can't load music.json");
 		return 0;
 	}
 
@@ -1164,7 +1164,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 	if (!MusicFiles.start.empty())
 	{
 		MusicFiles.start = (directory / MusicFiles.start).string();
-		if (!std::filesystem::exists (MusicFiles.start)) Log.write ("music files doesn't exist: " + MusicFiles.start, cLog::eLogType::Warning);
+		if (!std::filesystem::exists (MusicFiles.start)) Log.warn ("music files doesn't exist: " + MusicFiles.start);
 	}
 	for (auto& filename : MusicFiles.backgrounds)
 	{
@@ -1173,7 +1173,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 	auto it = std::stable_partition (MusicFiles.backgrounds.begin(), MusicFiles.backgrounds.end(), [] (const auto& p) { return std::filesystem::exists (p); });
 	for (auto it2 = it; it2 != MusicFiles.backgrounds.end(); ++it2)
 	{
-		Log.write ("music files doesn't exist: " + *it2, cLog::eLogType::Warning);
+		Log.warn ("music files doesn't exist: " + *it2);
 	}
 	MusicFiles.backgrounds.erase (it, MusicFiles.backgrounds.end());
 	return 1;
@@ -1188,7 +1188,7 @@ bool loadFonts()
 	    || !std::filesystem::exists (fontPath / "latin_big_gold.pcx")
 	    || !std::filesystem::exists (fontPath / "latin_small.pcx"))
 	{
-		Log.write ("Missing a file needed for game. Check log and config! ", cLog::eLogType::Error);
+		Log.error ("Missing a file needed for game. Check log and config! ");
 		return false;
 	}
 
@@ -1237,7 +1237,7 @@ eLoadingState LoadData (bool includingUiData)
 		}
 		catch (std::runtime_error& e)
 		{
-			Log.write (e.what(), cLog::eLogType::Error);
+			Log.error (e.what());
 			MakeLog ("", -1, 3);
 			return eLoadingState::Error;
 		}
@@ -1257,7 +1257,7 @@ eLoadingState LoadData (bool includingUiData)
 		if (LoadGraphics (cSettings::getInstance().getGfxPath()) != 1)
 		{
 			MakeLog ("", -1, 5);
-			Log.write ("Error while loading graphics", cLog::eLogType::Error);
+			Log.error ("Error while loading graphics");
 			return eLoadingState::Error;
 		}
 		else
@@ -1268,7 +1268,7 @@ eLoadingState LoadData (bool includingUiData)
 
 		// Load Effects
 		MakeLog (lngPack.i18n ("Text~Init~Effects"), 0, 6);
-		Log.write ("Loading Effects", cLog::eLogType::Info);
+		Log.info ("Loading Effects");
 		EffectsData.load (cSettings::getInstance().getFxPath());
 		MakeLog ("", 1, 6);
 		Log.mark();
@@ -1333,14 +1333,14 @@ eLoadingState LoadData (bool includingUiData)
 
 		// Load Sounds
 		MakeLog (lngPack.i18n ("Text~Init~Sounds"), 0, 11);
-		Log.write ("Loading Sounds", cLog::eLogType::Info);
+		Log.info ("Loading Sounds");
 		SoundData.load (cSettings::getInstance().getSoundsPath());
 		MakeLog ("", 1, 11);
 		Log.mark();
 
 		// Load Voices
 		MakeLog (lngPack.i18n ("Text~Init~Voices"), 0, 12);
-		Log.write ("Loading Voices", cLog::eLogType::Info);
+		Log.info ("Loading Voices");
 		VoiceData.load (cSettings::getInstance().getVoicesPath());
 		MakeLog ("", 1, 12);
 		Log.mark();
@@ -1358,14 +1358,14 @@ static int LoadEffectGraphicToSurface (AutoSurface (&dest)[2], const std::filesy
 {
 	if (!std::filesystem::exists (filepath))
 	{
-		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLogType::Error);
+		Log.error ("Missing GFX - your MAXR install seems to be incomplete!");
 		return 0;
 	}
 
 	dest[0] = LoadPCX (filepath);
 	dest[1] = CloneSDLSurface (*dest[0]);
 
-	Log.write ("Effect successful loaded: " + filepath.string(), cLog::eLogType::Debug);
+	Log.debug ("Effect successful loaded: " + filepath.string());
 	return 1;
 }
 
@@ -1381,7 +1381,7 @@ static int LoadEffectAlphaToSurface (AutoSurface (&dest)[2], const std::filesyst
 	SDL_SetSurfaceAlphaMod (dest[0].get(), alpha);
 	SDL_SetSurfaceAlphaMod (dest[1].get(), alpha);
 
-	Log.write ("Effectalpha loaded: " + filepath.string(), cLog::eLogType::Debug);
+	Log.debug ("Effectalpha loaded: " + filepath.string());
 	return 1;
 }
 

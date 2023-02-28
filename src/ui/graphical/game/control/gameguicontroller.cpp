@@ -407,7 +407,7 @@ void cGameGuiController::initChatCommands()
 			{
 				server->setTurnEndDeadlineActive (false);
 			}
-			Log.write ("Turn end deadline changed to " + std::to_string (seconds), cLog::eLogType::Info);
+			Log.info ("Turn end deadline changed to " + std::to_string (seconds));
 			*/
 		})
 	);
@@ -430,7 +430,7 @@ void cGameGuiController::initChatCommands()
 			{
 				server->setTurnLimitActive (false);
 			}
-			Log.write ("Turn limit changed to " + std::to_string (seconds), cLog::eLogType::Info);
+			Log.info ("Turn limit changed to " + std::to_string (seconds));
 			*/
 		})
 	);
@@ -1291,7 +1291,7 @@ void cGameGuiController::showFilesWindow()
 		}
 		catch (std::runtime_error& e)
 		{
-			Log.write (e.what(), cLog::eLogType::Error);
+			Log.error (e.what());
 			application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Writing")));
 		}
 	});
@@ -1636,7 +1636,7 @@ void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report
 	if (activeClient)
 		playSound (*soundManager, activeClient->getModel(), report);
 
-	if (cSettings::getInstance().isDebug() && activeClient) Log.write (getMessage (report, activeClient->getModel()), cLog::eLogType::Debug);
+	if (cSettings::getInstance().isDebug() && activeClient) Log.debug (getMessage (report, activeClient->getModel()));
 }
 
 //------------------------------------------------------------------------------

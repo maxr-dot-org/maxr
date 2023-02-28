@@ -119,13 +119,13 @@ void cConnectionManager::acceptConnection (const cSocket* socket, int playerNr)
 	if (x == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
-		Log.write ("ConnectionManager: accept called for unknown socket", cLog::eLogType::NetWarning);
+		NetLog.warn ("ConnectionManager: accept called for unknown socket");
 		localServer->pushMessage (std::make_unique<cNetMessageTcpClose> (playerNr));
 
 		return;
 	}
 
-	Log.write ("ConnectionManager: Accepted connection and assigned playerNr: " + std::to_string (playerNr), cLog::eLogType::NetDebug);
+	NetLog.debug ("ConnectionManager: Accepted connection and assigned playerNr: " + std::to_string (playerNr));
 
 	//assign playerNr to the socket
 	x->second = playerNr;
@@ -135,7 +135,7 @@ void cConnectionManager::acceptConnection (const cSocket* socket, int playerNr)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("ConnectionManager: --> " + json.dump (-1), cLog::eLogType::NetDebug);
+	NetLog.debug ("ConnectionManager: --> " + json.dump (-1));
 
 	sendMessage (socket, message);
 }
@@ -153,7 +153,7 @@ void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConne
 	if (x == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
-		Log.write ("ConnectionManager: decline called for unknown socket", cLog::eLogType::NetWarning);
+		NetLog.warn ("ConnectionManager: decline called for unknown socket");
 		return;
 	}
 
@@ -162,7 +162,7 @@ void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConne
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("ConnectionManager: --> " + json.dump (-1), cLog::eLogType::NetDebug);
+	NetLog.debug ("ConnectionManager: --> " + json.dump (-1));
 
 	sendMessage (socket, message);
 
@@ -179,7 +179,7 @@ void cConnectionManager::connectToServer (const sNetworkAddress& address)
 	if (!network)
 		network = std::make_unique<cNetwork> (*this, mutex);
 
-	Log.write ("ConnectionManager: Connecting to " + address.toString(), cLog::eLogType::NetDebug);
+	NetLog.debug ("ConnectionManager: Connecting to " + address.toString());
 
 	network->connectToServer (address);
 
@@ -199,7 +199,7 @@ bool cConnectionManager::isConnectedToServer() const
 void cConnectionManager::changePlayerNumber (int currentNr, int newNr)
 {
 	if (currentNr == newNr) return;
-	Log.write ("Connection Manager: ChangePlayerNumber " + std::to_string (currentNr) + " to " + std::to_string (newNr), cLog::eLogType::NetDebug);
+	NetLog.debug ("Connection Manager: ChangePlayerNumber " + std::to_string (currentNr) + " to " + std::to_string (newNr));
 	std::unique_lock<std::recursive_mutex> tl (mutex);
 
 	if (localPlayer == currentNr)
@@ -211,11 +211,11 @@ void cConnectionManager::changePlayerNumber (int currentNr, int newNr)
 	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.second == currentNr; });
 	if (x == clientSockets.end())
 	{
-		Log.write ("Connection Manager: Can't change playerNr. Unknown player " + std::to_string (currentNr), cLog::eLogType::NetError);
-		Log.write ("Connection Manager: Known players are:", cLog::eLogType::NetDebug);
+		NetLog.error ("Connection Manager: Can't change playerNr. Unknown player " + std::to_string (currentNr));
+		NetLog.debug ("Connection Manager: Known players are:");
 		for (const auto& p : clientSockets)
 		{
-			Log.write ("player " + std::to_string (p.second), cLog::eLogType::NetDebug);
+			NetLog.debug ("player " + std::to_string (p.second));
 		}
 		return;
 	}
@@ -278,7 +278,7 @@ void cConnectionManager::sendToServer (const cNetMessage& message)
 	}
 	else
 	{
-		Log.write ("Connection Manager: Can't send message. No local server and no connection to server", cLog::eLogType::NetError);
+		NetLog.error ("Connection Manager: Can't send message. No local server and no connection to server");
 	}
 }
 
@@ -301,7 +301,7 @@ void cConnectionManager::sendToPlayer (const cNetMessage& message, int playerNr)
 		auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.second == playerNr; });
 		if (x == clientSockets.end())
 		{
-			Log.write ("Connection Manager: Can't send message. No connection to player " + std::to_string (playerNr), cLog::eLogType::NetError);
+			NetLog.error ("Connection Manager: Can't send message. No connection to player " + std::to_string (playerNr));
 			return;
 		}
 
@@ -342,7 +342,7 @@ void cConnectionManager::disconnect (int player)
 	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.second == player; });
 	if (x == clientSockets.end())
 	{
-		Log.write ("ConnectionManager: Can't disconnect player. No connection to player " + std::to_string (player), cLog::eLogType::NetError);
+		NetLog.error ("ConnectionManager: Can't disconnect player. No connection to player " + std::to_string (player));
 		return;
 	}
 
@@ -384,7 +384,7 @@ void cConnectionManager::connectionClosed (const cSocket* socket)
 		auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.first == socket; });
 		if (x == clientSockets.end())
 		{
-			Log.write ("ConnectionManager: An unknown connection was closed", cLog::eLogType::NetError);
+			NetLog.error ("ConnectionManager: An unknown connection was closed");
 			return;
 		}
 
@@ -410,7 +410,7 @@ void cConnectionManager::incomingConnection (const cSocket* socket)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("ConnectionManager: --> " + json.dump (-1), cLog::eLogType::NetDebug);
+	NetLog.debug ("ConnectionManager: --> " + json.dump (-1));
 
 	sendMessage (socket, message);
 }
@@ -436,7 +436,7 @@ void cConnectionManager::messageReceived (const cSocket* socket, unsigned char* 
 	}
 	catch (std::runtime_error& e)
 	{
-		Log.write (std::string{"ConnectionManager: Can't deserialize net message: "} + e.what(), cLog::eLogType::NetError);
+		NetLog.error (std::string{"ConnectionManager: Can't deserialize net message: "} + e.what());
 		return;
 	}
 
@@ -448,7 +448,7 @@ void cConnectionManager::messageReceived (const cSocket* socket, unsigned char* 
 		playerOnSocket = x->second;
 		if (message->playerNr != playerOnSocket)
 		{
-			Log.write ("ConnectionManager: Discarding message with wrong sender id", cLog::eLogType::NetWarning);
+			NetLog.warn ("ConnectionManager: Discarding message with wrong sender id");
 			return;
 		}
 	}
@@ -469,7 +469,7 @@ void cConnectionManager::messageReceived (const cSocket* socket, unsigned char* 
 	}
 	else
 	{
-		Log.write ("ConnectionManager: Cannot handle message. No message receiver.", cLog::eLogType::NetError);
+		NetLog.error ("ConnectionManager: Cannot handle message. No message receiver.");
 	}
 }
 
@@ -482,7 +482,7 @@ bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMes
 			nlohmann::json json;
 			cJsonArchiveOut jsonarchive (json);
 			jsonarchive << *message;
-			Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
+			NetLog.debug ("ConnectionManager: <-- " + json.dump (-1));
 
 			if (localServer)
 			{
@@ -503,7 +503,7 @@ bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMes
 			nlohmann::json json;
 			cJsonArchiveOut jsonarchive (json);
 			jsonarchive << *message;
-			Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
+			NetLog.debug ("ConnectionManager: <-- " + json.dump (-1));
 
 			if (!localServer)
 			{
@@ -513,7 +513,7 @@ bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMes
 
 			if (playerOnSocket != -1)
 			{
-				Log.write ("ConnectionManager: Received TCP_WANT_CONNECT from already connected player", cLog::eLogType::NetError);
+				NetLog.error ("ConnectionManager: Received TCP_WANT_CONNECT from already connected player");
 				return true;
 			}
 
@@ -538,7 +538,7 @@ bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMes
 			nlohmann::json json;
 			cJsonArchiveOut jsonarchive (json);
 			jsonarchive << *message;
-			Log.write ("ConnectionManager: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
+			NetLog.debug ("ConnectionManager: <-- " + json.dump (-1));
 
 			stopTimeout (socket);
 
@@ -577,7 +577,7 @@ void cConnectionManager::connectionResult (const cSocket* socket)
 
 	if (socket == nullptr)
 	{
-		Log.write ("ConnectionManager: Connect to server failed", cLog::eLogType::NetWarning);
+		NetLog.warn ("ConnectionManager: Connect to server failed");
 		auto message = std::make_unique<cNetMessageTcpConnectFailed> (eDeclineConnectionReason::Other);
 		localClient->pushMessage (std::move (message));
 	}
@@ -606,7 +606,7 @@ void cConnectionManager::handshakeTimeoutCallback (cHandshakeTimeout& timer)
 {
 	std::unique_lock<std::recursive_mutex> tl (mutex);
 
-	Log.write ("ConnectionManager: Handshake timed out", cLog::eLogType::NetWarning);
+	NetLog.warn ("ConnectionManager: Handshake timed out");
 
 	auto it = ranges::find_if (timeouts, [&] (const auto& timeout) { return timeout.get() == &timer; });
 	if (it != timeouts.end())

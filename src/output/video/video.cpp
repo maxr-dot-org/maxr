@@ -160,18 +160,18 @@ void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 
 		if (validateResolution (iWidth, iHeight) >= 0)
 		{
-			Log.write ("cVideo:  => Found requested video mode " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " :)", cLog::eLogType::Info);
+			Log.info ("cVideo:  => Found requested video mode " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " :)");
 		}
 		else
 		{
-			Log.write ("cVideo:  => Couldn't find requested video mode " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " :(", cLog::eLogType::Warning);
+			Log.warn ("cVideo:  => Couldn't find requested video mode " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " :(");
 			if (haveMinMode())
 			{
-				Log.write ("cVideo:  => Edit your config and try default video mode " + std::to_string (getMinW()) + "x" + std::to_string (getMinH()) + " if I crash now!", cLog::eLogType::Warning);
+				Log.warn ("cVideo:  => Edit your config and try default video mode " + std::to_string (getMinW()) + "x" + std::to_string (getMinH()) + " if I crash now!");
 			}
 			else
 			{
-				Log.write ("cVideo:  => Couldn't even find my minimal video mode " + std::to_string (getMinW()) + "x" + std::to_string (getMinH()) + " - panic! ;(", cLog::eLogType::Warning);
+				Log.warn ("cVideo:  => Couldn't even find my minimal video mode " + std::to_string (getMinW()) + "x" + std::to_string (getMinH()) + " - panic! ;(");
 			}
 		}
 		// END SANITY CHECK SCREEN RES
@@ -182,7 +182,7 @@ void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 	}
 	else
 	{
-		Log.write ("cVideo: Resolution set to " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " but was not applied yet", cLog::eLogType::Info);
+		Log.info ("cVideo: Resolution set to " + std::to_string (iWidth) + "x" + std::to_string (iHeight) + " but was not applied yet");
 	}
 }
 
@@ -192,7 +192,7 @@ void cVideo::setColDepth (unsigned iDepth)
 	//       validate new color depth
 	if (iDepth != 32)
 	{
-		Log.write ("cVideo: TODO: Implement other colourdepths beside 32. Desired " + std::to_string (iDepth) + "bpp ignored.", cLog::eLogType::Warning);
+		Log.warn ("cVideo: TODO: Implement other colourdepths beside 32. Desired " + std::to_string (iDepth) + "bpp ignored.");
 	}
 	else
 	{
@@ -210,7 +210,7 @@ void cVideo::setDisplayIndex (int index)
 void cVideo::setWindowMode (bool bWindowMode, bool bApply)
 {
 	windowMode = bWindowMode;
-	Log.write ("cVideo: Window mode settings changed to " + std::string (getWindowMode() ? "windowmode" : "fullscreen"), cLog::eLogType::Debug);
+	Log.debug ("cVideo: Window mode settings changed to " + std::string (getWindowMode() ? "windowmode" : "fullscreen"));
 
 	if (bApply)
 	{
@@ -291,7 +291,7 @@ void cVideo::detectResolutions()
 		for (size_t i = 0; i < resolutions.size(); ++i)
 		{
 			const auto& resolution = resolutions[i];
-			Log.write ("cVideo: Display" + std::to_string (displayIndex) + " is offering detected video mode " + std::to_string (i) + " (" + std::to_string (resolution.first) + "x" + std::to_string (resolution.second) + ")", cLog::eLogType::Info);
+			Log.info ("cVideo: Display" + std::to_string (displayIndex) + " is offering detected video mode " + std::to_string (i) + " (" + std::to_string (resolution.first) + "x" + std::to_string (resolution.second) + ")");
 		}
 	}
 }
@@ -309,7 +309,7 @@ bool cVideo::haveMinMode() const
 	{
 		return true;
 	}
-	Log.write ("cVideo: Minimal needed video mode (" + std::to_string (MINWIDTH) + "x" + std::to_string (MINHEIGHT) + ") not detected. Probably bad!", cLog::eLogType::Error);
+	Log.error ("cVideo: Minimal needed video mode (" + std::to_string (MINWIDTH) + "x" + std::to_string (MINHEIGHT) + ") not detected. Probably bad!");
 	return false;
 }
 
@@ -323,7 +323,7 @@ int cVideo::validateResolution (int width, int height) const
 			return static_cast<int> (i);
 		}
 	}
-	Log.write ("cVideo: Configured video mode (" + std::to_string (width) + "x" + std::to_string (height) + ") not detected. Resume on own risk!", cLog::eLogType::Warning);
+	Log.warn ("cVideo: Configured video mode (" + std::to_string (width) + "x" + std::to_string (height) + ") not detected. Resume on own risk!");
 	return -1;
 }
 
@@ -360,7 +360,7 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 				counter += 1;
 				screenshotfile = cSettings::getInstance().getUserScreenshotsDir() / (timestr + std::to_string (counter) + ".bmp");
 			} while (std::filesystem::exists (screenshotfile));
-			Log.write ("Screenshot saved to " + screenshotfile.string(), cLog::eLogType::Info);
+			Log.info ("Screenshot saved to " + screenshotfile.string());
 			takeScreenShot (screenshotfile);
 
 			screenShotTaken (screenshotfile);

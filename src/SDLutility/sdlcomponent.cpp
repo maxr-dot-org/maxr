@@ -29,11 +29,11 @@ SDLComponent::SDLComponent (bool withVideo)
 	auto flags = SDL_INIT_TIMER;
 	if (SDL_Init (withVideo ? SDL_INIT_VIDEO | flags : flags) == -1)
 	{
-		Log.write ("Could not init SDL", cLog::eLogType::Error);
-		Log.write (SDL_GetError(), cLog::eLogType::Error);
+		Log.error ("Could not init SDL");
+		Log.error (SDL_GetError());
 		throw std::runtime_error ("Could not init SDL");
 	}
-	Log.write ("Initialized SDL basics - looks good!", cLog::eLogType::Info);
+	Log.info ("Initialized SDL basics - looks good!");
 	Log.mark();
 }
 

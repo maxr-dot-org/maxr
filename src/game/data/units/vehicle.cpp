@@ -395,7 +395,7 @@ bool cVehicle::makeAttackOnThis (cModel& model, cUnit* opponentUnit, const strin
 	const cUnit* target = cAttackJob::selectTarget (getPosition(), opponentUnit->getStaticUnitData().canAttack, mapView, getOwner());
 	if (target != this) return false;
 
-	Log.write (" cVehicle: " + reasonForLog + ": attacking " + toString (getPosition()) + ", Aggressor ID: " + std::to_string (opponentUnit->iID) + ", Target ID: " + std::to_string (target->getId()), cLog::eLogType::NetDebug);
+	NetLog.debug (" cVehicle: " + reasonForLog + ": attacking " + toString (getPosition()) + ", Aggressor ID: " + std::to_string (opponentUnit->iID) + ", Target ID: " + std::to_string (target->getId()));
 
 	model.addAttackJob (*opponentUnit, getPosition());
 

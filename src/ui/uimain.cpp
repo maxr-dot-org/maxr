@@ -50,15 +50,15 @@ static int initSound()
 {
 	if (!cSettings::getInstance().isSoundEnabled())
 	{
-		Log.write ("Sound disabled due configuration", cLog::eLogType::Info);
+		Log.info ("Sound disabled due configuration");
 		return 1;
 	}
 
 	if (SDL_Init (SDL_INIT_AUDIO) < 0) //start sound
 	{
-		Log.write ("Could not init SDL_INIT_AUDIO", cLog::eLogType::Warning);
-		Log.write ("Sound won't be available!", cLog::eLogType::Warning);
-		Log.write (SDL_GetError(), cLog::eLogType::Warning);
+		Log.warn ("Could not init SDL_INIT_AUDIO");
+		Log.warn ("Sound won't be available!");
+		Log.warn (SDL_GetError());
 		cSettings::getInstance().setSoundEnabled (false);
 		return -1;
 	}
@@ -69,13 +69,13 @@ static int initSound()
 	}
 	catch (std::runtime_error& e)
 	{
-		Log.write ("Could not init SDL_mixer:", cLog::eLogType::Warning);
-		Log.write (e.what(), cLog::eLogType::Warning);
-		Log.write ("Sound won't be available!", cLog::eLogType::Warning);
+		Log.warn ("Could not init SDL_mixer:");
+		Log.warn (e.what());
+		Log.warn ("Sound won't be available!");
 		cSettings::getInstance().setSoundEnabled (false);
 		return -1;
 	}
-	Log.write ("Sound started", cLog::eLogType::Info);
+	Log.info ("Sound started");
 	return 0;
 }
 
@@ -85,19 +85,19 @@ static void showIntro()
 
 	if (!std::filesystem::exists (filename))
 	{
-		Log.write ("Couldn't find movie " + filename.string(), cLog::eLogType::Warning);
+		Log.warn ("Couldn't find movie " + filename.string());
 	}
 	// Close maxr sound for intro movie
 	cSoundDevice::getInstance().close();
 
-	Log.write ("Starting movie " + filename.string(), cLog::eLogType::Debug);
+	Log.debug ("Starting movie " + filename.string());
 	const int mvereturn = MVEPlayer (filename.string().c_str(),
 	                                 Video.getResolutionX(),
 	                                 Video.getResolutionY(),
 	                                 !Video.getWindowMode(),
 	                                 MAXR_ICON.string().c_str(),
 	                                 !cSettings::getInstance().isSoundMute());
-	Log.write ("MVEPlayer returned " + std::to_string (mvereturn), cLog::eLogType::Debug);
+	Log.debug ("MVEPlayer returned " + std::to_string (mvereturn));
 	//FIXME: make this case sensitive - my mve is e.g. completely lower cases -- beko
 
 	// reinit maxr sound
@@ -109,8 +109,8 @@ static void showIntro()
 		}
 		catch (std::runtime_error& e)
 		{
-			Log.write ("Can't reinit sound after playing intro" + std::to_string (mvereturn), cLog::eLogType::Debug);
-			Log.write (e.what(), cLog::eLogType::Debug);
+			Log.debug ("Can't reinit sound after playing intro" + std::to_string (mvereturn));
+			Log.debug (e.what());
 		}
 	}
 }
@@ -123,7 +123,7 @@ struct AtExit
 		cSoundDevice::getInstance().close();
 
 		Video.clearMemory();
-		Log.write ("EOF");
+		Log.info ("EOF");
 	}
 };
 
@@ -173,7 +173,7 @@ try
 
 	if (dataThread.get() == eLoadingState::Error)
 	{
-		Log.write ("Error while loading data!", cLog::eLogType::Error);
+		Log.error ("Error while loading data!");
 		return -1;
 	}
 
@@ -184,7 +184,7 @@ try
 	}
 	else
 	{
-		Log.write ("Skipped intro movie due settings", cLog::eLogType::Debug);
+		Log.debug ("Skipped intro movie due settings");
 	}
 	Video.prepareGameScreen();
 	Video.clearBuffer();
@@ -204,6 +204,6 @@ try
 }
 catch (const std::exception& ex)
 {
-	Log.write (ex.what(), cLog::eLogType::Error);
+	Log.error (ex.what());
 	return -1;
 }

@@ -19,15 +19,12 @@
 
 #include "utility/log.h"
 
-#include "settings.h"
-#include "utility/os.h"
-
-#include <ctime>
 #include <iostream>
 #include <sstream>
 #include <thread>
 
 cLog Log;
+cLog NetLog;
 
 namespace
 {
@@ -41,108 +38,68 @@ namespace
 } // namespace
 
 //------------------------------------------------------------------------------
-void cLog::write (const std::string& msg, eLogType type)
+void cLog::info (const std::string& msg)
 {
-	if ((type == eLogType::Debug || type == eLogType::NetDebug) && !cSettings::getInstance().isDebug())
+	writeToFile ("Thread " + toString (std::this_thread::get_id()) + ": (II): " + msg + "\n");
+}
+
+//------------------------------------------------------------------------------
+void cLog::warn (const std::string& msg)
+{
+	writeToFile ("Thread " + toString (std::this_thread::get_id()) + ": (WW): " + msg + "\n");
+}
+
+//------------------------------------------------------------------------------
+void cLog::debug (const std::string& msg)
+{
+	if (!isPrintingDebug)
 	{
 		//in case debug is disabled we skip message
 		return;
 	}
-	std::unique_lock<std::mutex> l (mutex);
+	writeToFile ("Thread " + toString (std::this_thread::get_id()) + ": (DD): " + msg + "\n");
+}
 
-	checkOpenFile (type);
-
-	//attach log message type to string
-	std::string tmp;
-	auto threadId = "Thread " + toString (std::this_thread::get_id());
-	switch (type)
-	{
-		case eLogType::NetWarning:
-		case eLogType::Warning:
-			tmp = threadId + ": (WW): " + msg;
-			break;
-		case eLogType::NetError:
-		case eLogType::Error:
-			tmp = threadId + ": (EE): " + msg;
-			std::cout << tmp << "\n";
-			break;
-		case eLogType::NetDebug:
-		case eLogType::Debug:
-			tmp = threadId + ": (DD): " + msg;
-			break;
-		case eLogType::Info:
-		default:
-			tmp = threadId + ": (II): " + msg;
-			break;
-	}
-	tmp += '\n';
-
-	if (type == eLogType::NetDebug || type == eLogType::NetWarning || type == eLogType::NetError)
-	{
-		writeToFile (tmp, netLogfile);
-	}
-	else
-	{
-		writeToFile (tmp, logfile);
-	}
+//------------------------------------------------------------------------------
+void cLog::error (const std::string& msg)
+{
+	auto fullmsg = "Thread " + toString (std::this_thread::get_id()) + ": (EE): " + msg + "\n";
+	std::cout << fullmsg << "\n";
+	writeToFile (fullmsg);
 }
 
 //------------------------------------------------------------------------------
 void cLog::mark()
 {
+	writeToFile ("==============================(MARK)==============================\n");
+}
+
+//------------------------------------------------------------------------------
+void cLog::setLogPath (const std::filesystem::path& path)
+{
 	std::unique_lock<std::mutex> l (mutex);
-
-	checkOpenFile (eLogType::Info);
-
-	std::string str = "==============================(MARK)==============================";
-	str += '\n';
-
-	writeToFile (str, logfile);
-}
-
-//------------------------------------------------------------------------------
-void cLog::checkOpenFile (eLogType type)
-{
-	if (type == eLogType::NetDebug || type == eLogType::NetWarning || type == eLogType::NetError)
+	if (logfile.is_open())
 	{
-		if (netLogfile.is_open())
-		{
-			//file is already open
-			return;
-		}
-		cSettings::getInstance().setNetLogPath (cSettings::getInstance().getUserLogDir() / os::formattedNow ( "%Y-%m-%d-%H%M%S_net.log"));
-
-		//create + open new log file
-		netLogfile.open (cSettings::getInstance().getNetLogPath().string(), std::fstream::out | std::fstream::trunc);
-		if (!netLogfile.is_open())
-		{
-			std::cerr << "(EE): Couldn't open net.log!\n Please check file/directory permissions\n";
-		}
+		//file is already open
+		return;
 	}
-	else
-	{
-		if (logfile.is_open())
-		{
-			//file is already open
-			return;
-		}
 
-		//create + open new log file
-		logfile.open (cSettings::getInstance().getLogPath().string(), std::fstream::out | std::fstream::trunc);
-		if (!logfile.is_open())
-		{
-			std::cerr << "(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n";
-		}
+	//create + open new log file
+	logfile.open (path.string(), std::fstream::out | std::fstream::trunc);
+	if (!logfile.is_open())
+	{
+		std::cerr << "(EE): Couldn't open" + path.string() + "!\n Please check file / directory permissions\n ";
 	}
 }
 
 //------------------------------------------------------------------------------
-void cLog::writeToFile (const std::string& msg, std::ofstream& file)
+void cLog::writeToFile (const std::string& msg)
 {
-	file.write (msg.c_str(), msg.length());
-	file.flush();
+	std::unique_lock<std::mutex> l (mutex);
+	logfile.write (msg.c_str(), msg.length());
+	logfile.flush();
 
-	if (file.bad())
+	if (logfile.bad())
 	{
 		std::cerr << msg;
 	}

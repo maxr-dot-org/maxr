@@ -61,7 +61,7 @@ void cActionAttack::execute (cModel& model) const
 		{
 			if (targetPosition != target->getPosition())
 			{
-				Log.write (" cActionAttack: Target coords changed to " + toString (target->getPosition()) + " to match current unit position", cLog::eLogType::NetDebug);
+				NetLog.debug (" cActionAttack: Target coords changed to " + toString (target->getPosition()) + " to match current unit position");
 			}
 			validatedTargetPosition = target->getPosition();
 		}
@@ -71,7 +71,7 @@ void cActionAttack::execute (cModel& model) const
 	cMapView mapView (model.getMap(), nullptr);
 	if (aggressor->canAttackObjectAt (validatedTargetPosition, mapView, true) == false)
 	{
-		Log.write (" cActionAttack: Attack is not possible", cLog::eLogType::NetWarning);
+		NetLog.warn (" cActionAttack: Attack is not possible");
 		return;
 	}
 	model.addAttackJob (*aggressor, validatedTargetPosition);

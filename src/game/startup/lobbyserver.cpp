@@ -123,12 +123,12 @@ eOpenServerResult cLobbyServer::startServer (int port)
 
 	if (connectionManager->openServer (port))
 	{
-		Log.write ("Error opening socket", cLog::eLogType::Warning);
+		Log.warn ("Error opening socket");
 		return eOpenServerResult::Failed;
 	}
 	else
 	{
-		Log.write ("Game open (Port: " + std::to_string (port) + ")", cLog::eLogType::Info);
+		Log.info ("Game open (Port: " + std::to_string (port) + ")");
 		return eOpenServerResult::Success;
 	}
 }
@@ -150,7 +150,7 @@ void cLobbyServer::sendNetMessage (const cNetMessage& message, int receiverPlaye
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("LobbyServer: --> " + json.dump (-1) + " to " + std::to_string (receiverPlayerNr), cLog::eLogType::NetDebug);
+	NetLog.debug ("LobbyServer: --> " + json.dump (-1) + " to " + std::to_string (receiverPlayerNr));
 
 	if (receiverPlayerNr == -1)
 		connectionManager->sendToPlayers (message);
@@ -164,7 +164,7 @@ void cLobbyServer::forwardMessage (const cNetMessage& message)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("LobbyServer: forward --> " + json.dump (-1) + " from " + std::to_string (message.playerNr), cLog::eLogType::NetDebug);
+	NetLog.debug ("LobbyServer: forward --> " + json.dump (-1) + " from " + std::to_string (message.playerNr));
 
 	for (auto& player : players)
 	{
@@ -256,7 +256,7 @@ void cLobbyServer::askedToFinishLobby (int fromPlayer)
 //------------------------------------------------------------------------------
 void cLobbyServer::sendChatMessage (const std::string& message, int receiverPlayerNr /*= -1*/)
 {
-	Log.write ("LobbyServer: --> " + message + " to " + std::to_string (receiverPlayerNr), cLog::eLogType::NetDebug);
+	NetLog.debug ("LobbyServer: --> " + message + " to " + std::to_string (receiverPlayerNr));
 
 	if (receiverPlayerNr == -1)
 		connectionManager->sendToPlayers (cMuMsgChat (message));
@@ -270,7 +270,7 @@ void cLobbyServer::handleNetMessage (const cNetMessage& message)
 	nlohmann::json json;
 	cJsonArchiveOut jsonarchive (json);
 	jsonarchive << message;
-	Log.write ("LobbyServer: <-- " + json.dump (-1), cLog::eLogType::NetDebug);
+	NetLog.debug ("LobbyServer: <-- " + json.dump (-1));
 
 	switch (message.getType())
 	{
@@ -284,7 +284,7 @@ void cLobbyServer::handleNetMessage (const cNetMessage& message)
 			handleLobbyMessage (static_cast<const cMultiplayerLobbyMessage&> (message));
 			return;
 		default:
-			Log.write ("Lobby Server: Can not handle message", cLog::eLogType::NetError);
+			NetLog.error ("Lobby Server: Can not handle message");
 			return;
 	}
 }
@@ -324,7 +324,7 @@ void cLobbyServer::handleLobbyMessage (const cMultiplayerLobbyMessage& message)
 			clientAbortsPreparation (static_cast<const cMuMsgPlayerAbortedGamePreparations&> (message));
 			break;
 		default:
-			Log.write ("LobbyServer: Can not handle message", cLog::eLogType::NetError);
+			NetLog.error ("LobbyServer: Can not handle message");
 			break;
 	}
 }
@@ -500,7 +500,7 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 		}
 		catch (const std::runtime_error& e)
 		{
-			Log.write ((std::string) "Error loading save game: " + e.what(), cLog::eLogType::NetError);
+			NetLog.error ((std::string) "Error loading save game: " + e.what());
 			server.reset();
 			onErrorLoadSavedGame (saveGameInfo.number);
 			return;
@@ -546,7 +546,7 @@ void cLobbyServer::clientLands (const cMuMsgLandingPosition& message)
 {
 	if (!landingPositionManager) return;
 
-	Log.write ("LobbyServer: received landing position from Player " + std::to_string (message.playerNr), cLog::eLogType::NetDebug);
+	NetLog.debug ("LobbyServer: received landing position from Player " + std::to_string (message.playerNr));
 
 	auto player = getPlayer (message.playerNr);
 	if (player == nullptr) return;

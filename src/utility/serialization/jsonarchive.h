@@ -58,7 +58,7 @@ private:
 
 		if (json.contains (nvp.name))
 		{
-			Log.write ("Entry " + nvp.name + " already present. old data will be overwritten", cLog::eLogType::Error);
+			Log.error ("Entry " + nvp.name + " already present. old data will be overwritten");
 		}
 		cJsonArchiveOut (json[nvp.name]) << nvp.value;
 	}

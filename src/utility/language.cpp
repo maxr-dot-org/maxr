@@ -72,7 +72,7 @@ void cLanguage::setCurrentLanguage (const std::string& code)
 {
 	if (!Contains (getAvailableLanguages(), code))
 	{
-		Log.write ("Not a supported language: " + code, cLog::eLogType::Error);
+		Log.error ("Not a supported language: " + code);
 		throw std::runtime_error ("Unsupported language " + code);
 	}
 	m_languageCode = code;
@@ -88,13 +88,13 @@ std::string cLanguage::dGetText (const char* textDomain, const char* s) const
 
 	if (translated == s)
 	{
-		Log.write ("Missing translation: " + std::string (s), cLog::eLogType::Warning);
+		Log.warn ("Missing translation: " + std::string (s));
 
 		setLanguageEnv ("en");
 		translated = dgettext (textDomain, s);
 		if (translated == s)
 		{
-			Log.write ("Missing English translation: " + std::string (s), cLog::eLogType::Warning);
+			Log.warn ("Missing English translation: " + std::string (s));
 		}
 		setLanguageEnv (m_languageCode.c_str());
 	}
@@ -116,8 +116,8 @@ std::string cLanguage::i18n (const std::string& format, const std::string& inser
 
 	if (pos == std::string::npos)
 	{
-		Log.write ("Found no place holder in language string. Update language file!", cLog::eLogType::Warning);
-		Log.write ("*-> String in question is: \"" + format + "\"", cLog::eLogType::Warning);
+		Log.warn ("Found no place holder in language string. Update language file!");
+		Log.warn ("*-> String in question is: \"" + format + "\"");
 		return format + insertText;
 	}
 	else
@@ -135,13 +135,13 @@ std::string cLanguage::plural (const std::string& text, std::size_t n) const
 
 	if (translated == text)
 	{
-		Log.write ("Missing translation (plural entry): " + std::string (text), cLog::eLogType::Warning);
+		Log.warn ("Missing translation (plural entry): " + std::string (text));
 
 		setLanguageEnv ("en");
 		translated = dngettext (maxrDomain, text.c_str(), text.c_str(), n);
 		if (translated == text)
 		{
-			Log.write ("Missing English translation (plural entry): " + std::string (text), cLog::eLogType::Warning);
+			Log.warn ("Missing English translation (plural entry): " + std::string (text));
 		}
 		setLanguageEnv (m_languageCode.c_str());
 	}

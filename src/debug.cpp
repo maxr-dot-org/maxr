@@ -102,7 +102,7 @@ void initCrashreporting()
 	{
 		char msg[512];
 		crGetLastErrorMsgA (msg, sizeof (msg));
-		Log.write (std::string ("Couldn't install crash reporting: ") + msg, cLog::eLogType::Warning);
+		Log.warn (std::string ("Couldn't install crash reporting: ") + msg);
 	}
 
 	crSetCrashCallback (CrashCallback, nullptr);

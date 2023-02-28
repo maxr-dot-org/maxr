@@ -131,8 +131,8 @@ void cSoundDevice::startMusic (const std::string& fileName)
 	musicStream = SaveSdlMixMusicPointer (Mix_LoadMUS (fileName.c_str()));
 	if (!musicStream)
 	{
-		Log.write ("Failed opening music stream:", cLog::eLogType::Warning);
-		Log.write (Mix_GetError(), cLog::eLogType::Warning);
+		Log.warn ("Failed opening music stream:");
+		Log.warn (Mix_GetError());
 		return;
 	}
 	Mix_PlayMusic (musicStream.get(), 0);
@@ -183,8 +183,8 @@ void cSoundDevice::setMusicVolume (int volume)
 //	channel = Mix_PlayChannel (channel, sound.getSdlSound(), 0);
 //	if (channel < 0)
 //	{
-//		Log.write ("Could not play sound:", cLog::eLogType::Warning);
-//		Log.write (Mix_GetError(), cLog::eLogType::Warning);
+//		Log.warn ("Could not play sound:");
+//		Log.warn (Mix_GetError());
 //	}
 //	return channel;
 //}

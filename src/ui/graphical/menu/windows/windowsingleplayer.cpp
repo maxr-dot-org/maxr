@@ -117,8 +117,8 @@ void cWindowSinglePlayer::loadGameClicked()
 		}
 		catch (const std::runtime_error& e)
 		{
-			Log.write ("Could not start saved game.", cLog::eLogType::Error);
-			Log.write (e.what(), cLog::eLogType::Error);
+			Log.error ("Could not start saved game.");
+			Log.error (e.what());
 			application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Loading")));
 			return;
 		}

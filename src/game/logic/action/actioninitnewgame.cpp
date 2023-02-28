@@ -303,14 +303,14 @@ void cActionInitNewGame::execute (cModel& model) const
 	const cUnitsData& unitsdata = *unitsdataPtr;
 
 	player.removeAllUnits();
-	Log.write (" GameId: " + std::to_string (model.getGameId()), cLog::eLogType::NetDebug);
+	NetLog.debug (" GameId: " + std::to_string (model.getGameId()));
 
 	// init clan
 	if (model.getGameSettings()->clansEnabled)
 	{
 		if (initPlayerData.clan < 0 || static_cast<size_t> (initPlayerData.clan) >= unitsdata.getNrOfClans())
 		{
-			Log.write (" Landing failed. Invalid clan number.", cLog::eLogType::NetError);
+			NetLog.error (" Landing failed. Invalid clan number.");
 			return;
 		}
 		player.setClan (initPlayerData.clan, unitsdata);
@@ -323,7 +323,7 @@ void cActionInitNewGame::execute (cModel& model) const
 	// init landing position
 	if (!model.getMap()->isValidPosition (initPlayerData.landingPosition))
 	{
-		Log.write (" Received invalid landing position", cLog::eLogType::NetError);
+		NetLog.error (" Received invalid landing position");
 		return;
 	}
 	cPosition updatedLandingPosition = initPlayerData.landingPosition;
@@ -332,7 +332,7 @@ void cActionInitNewGame::execute (cModel& model) const
 		// Find place for mine if bridgehead is fixed
 		if (!findPositionForStartMine (updatedLandingPosition, *model.getUnitsData(), *model.getMap()->staticMap))
 		{
-			Log.write ("couldn't place player start mine: " + player.getName(), cLog::eLogType::NetError);
+			NetLog.error ("couldn't place player start mine: " + player.getName());
 			return;
 		}
 	}
@@ -355,19 +355,19 @@ void cActionInitNewGame::execute (cModel& model) const
 
 		if (!unitsdata.isValidId (unitId))
 		{
-			Log.write (" Apply upgrades failed. Unknown sID: " + unitId.getText(), cLog::eLogType::NetError);
+			NetLog.error (" Apply upgrades failed. Unknown sID: " + unitId.getText());
 			return;
 		}
 		int costs = upgradeValues.calcTotalCosts (unitsdata.getDynamicUnitData (unitId, player.getClan()), *player.getUnitDataCurrentVersion (unitId), player.getResearchState());
 		if (costs <= 0)
 		{
-			Log.write (" Apply upgrades failed. Couldn't calculate costs.", cLog::eLogType::NetError);
+			NetLog.error (" Apply upgrades failed. Couldn't calculate costs.");
 			return;
 		}
 		credits -= costs;
 		if (credits <= 0)
 		{
-			Log.write (" Apply upgrade failed. Used more than the available credits.", cLog::eLogType::NetError);
+			NetLog.error (" Apply upgrade failed. Used more than the available credits.");
 			return;
 		}
 		upgradeValues.updateUnitData (*player.getUnitDataCurrentVersion (unitId));
@@ -379,7 +379,7 @@ void cActionInitNewGame::execute (cModel& model) const
 	{
 		if (!unitsdata.isValidId (landing.unitID))
 		{
-			Log.write (" Landing failed. Unknown sID: " + landing.unitID.getText(), cLog::eLogType::NetError);
+			NetLog.error (" Landing failed. Unknown sID: " + landing.unitID.getText());
 			return;
 		}
 
@@ -399,7 +399,7 @@ void cActionInitNewGame::execute (cModel& model) const
 	}
 	if (credits < 0)
 	{
-		Log.write (" Landing failed. Used more than the available credits", cLog::eLogType::Error);
+		Log.error (" Landing failed. Used more than the available credits");
 		return;
 	}
 	makeLanding (player, initPlayerData.landingUnits, model);
@@ -474,7 +474,7 @@ void cActionInitNewGame::makeLanding (cPlayer& player, const std::vector<sLandin
 	{
 		if (!model.getUnitsData()->isValidId (landing.unitID))
 		{
-			Log.write (" Landing of unit failed. Unknown sID: " + landing.unitID.getText(), cLog::eLogType::NetError);
+			NetLog.error (" Landing of unit failed. Unknown sID: " + landing.unitID.getText());
 			continue;
 		}
 

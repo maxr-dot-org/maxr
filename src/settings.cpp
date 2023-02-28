@@ -53,7 +53,7 @@ namespace
 		return os::getCurrentExeDir();
 #else
 		// BEGIN crude path validation to find gamedata
-		Log.write ("Probing for data paths using default values:", cLog::eLogType::Info);
+		Log.info ("Probing for data paths using default values:");
 
 		std::vector<std::filesystem::path> sPathArray =
 			{
@@ -77,12 +77,12 @@ namespace
 		const char* cDataDir = getenv ("MAXRDATA");
 		if (cDataDir == nullptr)
 		{
-			Log.write ("$MAXRDATA is not set", cLog::eLogType::Info);
+			Log.info ("$MAXRDATA is not set");
 		}
 		else
 		{
 			sPathArray.insert (sPathArray.begin(), cDataDir);
-			Log.write ("$MAXRDATA is set and overrides default data search path", cLog::eLogType::Warning);
+			Log.warn ("$MAXRDATA is set and overrides default data search path");
 		}
 		// END SET MAXRDATA
 
@@ -90,12 +90,12 @@ namespace
 		{
 			if (std::filesystem::exists (sInitFile / "init.pcx"))
 			{
-				Log.write ("Found gamedata in: " + sInitFile.string(), cLog::eLogType::Info);
+				Log.info ("Found gamedata in: " + sInitFile.string());
 				return sInitFile;
 			}
 		}
 		// still empty? cry for mama - we couldn't locate any typical data folder
-		Log.write ("No success probing for data folder!", cLog::eLogType::Error);
+		Log.error ("No success probing for data folder!");
 		// END crude path validation to find gamedata
 		return "";
 #endif
@@ -144,8 +144,11 @@ void cSettings::setPaths()
 
 	// set new place for logs
 	logPath = homeDir / "maxr.log";
-	netLogPath = getUserLogDir();
 	std::cout << "\n(II): Starting logging to: " << logPath.string() << std::endl;
+	netLogPath = cSettings::getInstance().getUserLogDir() / os::formattedNow ("%Y-%m-%d-%H%M%S_net.log");
+
+	Log.setLogPath (logPath);
+	NetLog.setLogPath (netLogPath);
 
 	dataDir = searchDataDir();
 }
@@ -158,7 +161,7 @@ void cSettings::loadFromJsonFile (const std::filesystem::path& path)
 
 	if (!(file >> json))
 	{
-		Log.write ("cannot load maxr.json\ngenerating new file", cLog::eLogType::Warning);
+		Log.warn ("cannot load maxr.json\ngenerating new file");
 		saveInFile();
 		return;
 	}
@@ -169,8 +172,8 @@ void cSettings::loadFromJsonFile (const std::filesystem::path& path)
 	}
 	catch (const std::exception& e)
 	{
-		Log.write (std::string ("Error while reading settings: ") + e.what(), cLog::eLogType::Warning);
-		Log.write ("Overwriting with default settings", cLog::eLogType::Warning);
+		Log.warn (std::string ("Error while reading settings: ") + e.what());
+		Log.warn ("Overwriting with default settings");
 		saveInFile();
 	}
 }
@@ -192,15 +195,17 @@ void cSettings::initialize()
 	}
 	else
 	{
-		Log.write ("generating new settings", cLog::eLogType::Warning);
+		Log.warn ("generating new settings");
 		saveInFile();
 	}
 
 	to_lower (global.voiceLanguage);
+	Log.showDebug (global.debug);
+	NetLog.showDebug (global.debug);
 	if (!global.debug)
-		Log.write ("Debugmode disabled - for verbose output please enable Debug in maxr.json", cLog::eLogType::Warning);
+		Log.warn ("Debugmode disabled - for verbose output please enable Debug in maxr.json");
 	else
-		Log.write ("Debugmode enabled", cLog::eLogType::Info);
+		Log.info ("Debugmode enabled");
 
 	// Create saves directory, if it doesn't exist, yet.
 	// Creating it during setPaths is too early, because it was not read yet.
@@ -231,15 +236,17 @@ void cSettings::setAnimations (bool animations)
 }
 
 //------------------------------------------------------------------------------
-const std::filesystem::path& cSettings::getNetLogPath() const
+void cSettings::setDebug (bool debug)
 {
-	return netLogPath;
+	global.debug = debug;
+	Log.showDebug (debug);
+	NetLog.showDebug (debug);
 }
 
 //------------------------------------------------------------------------------
-void cSettings::setNetLogPath (const std::filesystem::path& netLogPath)
+const std::filesystem::path& cSettings::getNetLogPath() const
 {
-	this->netLogPath = netLogPath;
+	return netLogPath;
 }
 
 //------------------------------------------------------------------------------

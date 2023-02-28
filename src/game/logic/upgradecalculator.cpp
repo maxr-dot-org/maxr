@@ -985,10 +985,10 @@ void cUpgradeCalculator::printToLog (const char* str, int value) const
 		ss << value;
 		ss >> printStr;
 		printStr.insert (0, str);
-		Log.write (printStr, cLog::eLogType::Info);
+		Log.info (printStr);
 	}
 	else
-		Log.write (str, cLog::eLogType::Info);
+		Log.info (str);
 }
 
 #if 0
@@ -1660,13 +1660,13 @@ int cUnitUpgrade::calcTotalCosts (const cDynamicUnitData& originalData, const cD
 			case sUnitUpgrade::eUpgradeType::None:
 				break;
 			default:
-				Log.write (" Can't apply upgrade. Unknown upgrade type.", cLog::eLogType::NetError);
+				NetLog.error (" Can't apply upgrade. Unknown upgrade type.");
 				return 0;
 		}
 
 		if (upgrade.getPurchased() && costs.value_or (0) <= 0)
 		{
-			Log.write (" Can't apply upgrade. Unable to calculate price.", cLog::eLogType::NetError);
+			NetLog.error (" Can't apply upgrade. Unable to calculate price.");
 			return 0;
 		}
 		totalCosts += costs.value_or (0);

@@ -286,7 +286,7 @@ void cLineEdit::doPosIncrease (int& value, int pos)
 	if (value > (int) text.length())
 	{
 		value = (int) text.length();
-		Log.write ("Invalid UTF-8 string in line edit: '" + text + "'", cLog::eLogType::Warning);
+		Log.warn ("Invalid UTF-8 string in line edit: '" + text + "'");
 	}
 }
 
@@ -300,7 +300,7 @@ void cLineEdit::doPosDecrease (int& pos)
 		{
 			if (pos <= 1)
 			{
-				Log.write ("Invalid UTF-8 string in line edit: '" + text + "'", cLog::eLogType::Warning);
+				Log.warn ("Invalid UTF-8 string in line edit: '" + text + "'");
 				break;
 			}
 
@@ -359,7 +359,7 @@ void cLineEdit::deleteLeft()
 		{
 			if (cursorPos <= 1)
 			{
-				Log.write ("Invalid UTF-8 string in line edit: '" + text + "'", cLog::eLogType::Warning);
+				Log.warn ("Invalid UTF-8 string in line edit: '" + text + "'");
 				break;
 			}
 

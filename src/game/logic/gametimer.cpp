@@ -117,12 +117,12 @@ void cGameTimerServer::handleSyncMessage (const cNetMessageSyncClient& message, 
 
 	if (message.gameTime > gameTime)
 	{
-		Log.write (" Server: the received game time from client is in the future", cLog::eLogType::NetError);
+		NetLog.error (" Server: the received game time from client is in the future");
 		return;
 	}
 	if (message.gameTime < receivedTime[playerNr])
 	{
-		Log.write (" Server: the received game time from client is older than the last one", cLog::eLogType::NetError);
+		NetLog.error (" Server: the received game time from client is older than the last one");
 		return;
 	}
 	receivedTime[playerNr] = message.gameTime;
@@ -199,7 +199,7 @@ void cGameTimerClient::handleSyncMessage (const cNetMessageSyncServer& message, 
 	ping = message.ping;
 
 	if (message.gameTime != gameTime + 1)
-		Log.write ("Game Synchronization Error: Received out of order sync message", cLog::eLogType::NetError);
+		NetLog.error ("Game Synchronization Error: Received out of order sync message");
 
 	syncMessageReceived = true;
 }
@@ -254,7 +254,7 @@ void cGameTimerClient::run (cClient& client, cModel& model)
 			debugRemoteChecksum = remoteChecksum;
 			if (localChecksum != remoteChecksum)
 			{
-				Log.write ("OUT OF SYNC @" + std::to_string (model.getGameTime()), cLog::eLogType::NetError);
+				NetLog.error ("OUT OF SYNC @" + std::to_string (model.getGameTime()));
 			}
 
 			syncMessageReceived = false;
