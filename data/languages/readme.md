@@ -1,4 +1,6 @@
-Maxr uses gettext po files for translation ([quick tutorial](https://www.labri.fr/perso/fleury/posts/programming/a-quick-gettext-tutorial.html))
+Maxr uses gettext po files for translation ([quick tutorial](https://www.labri.fr/perso/fleury/posts/programming/a-quick-gettext-tutorial.html)).
+Maxr doesn't use libintl but [spiritless_po](https://github.com/oo13/spiritless_po) which uses directly po files instead of mo files
+
 
 - For extraction we use:
 
@@ -19,13 +21,6 @@ Maxr uses gettext po files for translation ([quick tutorial](https://www.labri.f
 
 	```
 	msgmerge --update -s --no-location data/languages/LANG/maxr.po data/languages/maxr.pot
-	```
-
-
-- And the final step to binarize result for LANG 
-
-	```
-	msgfmt --output-file=data/languages/LANG/LC_MESSAGES/maxr.mo data/languages/LANG/maxr.po
 	```
 
 Current languages are:

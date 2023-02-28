@@ -88,7 +88,8 @@ endif()
 # ============================================
 
 file(GLOB_RECURSE maxr_SRCS "src/*.cpp" "src/*.c" "src/*.h")
- 
+list(FILTER maxr_SRCS EXCLUDE REGEX "src/3rd/spiritless_po/.*$")
+
 macro(GroupSources curdir)
   
   file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
@@ -106,6 +107,8 @@ endmacro()
 GroupSources(src)
 
 add_executable(maxr ${maxr_SRCS} ${RESSOURCE_FILE})
+
+target_include_directories(maxr SYSTEM PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/3rd/spiritless_po/include")
 
 # set linker flags for target
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
@@ -128,13 +131,6 @@ endif()
 # ============================================
 # === Additional Packages
 # ============================================
-
-# ---------------------------------------
-# Intl (translation)
-find_package(Intl REQUIRED)
-
-include_directories(${Intl_INCLUDE_DIRS})
-target_link_libraries(maxr ${Intl_LIBRARIES})
 
 # ---------------------------------------
 # SDL2

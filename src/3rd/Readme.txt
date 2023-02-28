@@ -13,3 +13,5 @@ Those files doesn't have Maxr copyright:
 - doctest:
   Unit test framework
 
+- [spiritless_po](https://github.com/oo13/spiritless_po)
+  kind of gettext library in C++11
