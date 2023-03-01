@@ -30,6 +30,7 @@
 # include "settings.h"
 # include "utility/log.h"
 # include "utility/os.h"
+# include "utility/string/toupper.h"
 
 # ifndef NOMINMAX
 #  define NOMINMAX // CrashRpt includes windows.h
@@ -86,15 +87,17 @@ void initCrashreporting()
 	info.dwFlags |= CR_INST_SEND_QUEUED_REPORTS;
 	info.dwFlags |= CR_INST_APP_RESTART;
 	info.pszCustomSenderIcon = L("maxr.ico");
-	info.pszPrivacyPolicyURL = L("http://eiko.maxr.org/crashreports/Privacy%20Policy.html");
+	auto privacyPolicyPath = (cSettings::getInstance().getDataDir() / "CrashRpt/Privacy Policy.html").native();
+	info.pszPrivacyPolicyURL = privacyPolicyPath.c_str();
 	const auto path = (cSettings::getInstance().getMaxrHomeDir() / "Crashreports").native();
 	info.pszErrorReportSaveDir = path.c_str();
-	std::string lang = cSettings::getInstance().getLanguage();
+	std::string lang = to_upper_copy(cSettings::getInstance().getLanguage());
 	const auto currentExeDir = os::getCurrentExeDir();
-	auto langPath = (currentExeDir / "crashrpt_lang_EN.ini").native();
-	if (lang == "GER")
-		langPath = (currentExeDir / "crashrpt_lang_DE.ini").native();
-
+	auto langPath = (currentExeDir / ("CrashRpt/crashrpt_lang_" + lang + ".ini")).native();
+	if (!std::filesystem::exists(langPath))
+	{
+		langPath = (currentExeDir / ("CrashRpt/crashrpt_lang_EN.ini")).native();
+	}
 	info.pszLangFilePath = langPath.c_str();
 
 	int result = crInstall (&info);
