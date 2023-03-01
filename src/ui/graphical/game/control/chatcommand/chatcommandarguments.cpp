@@ -34,7 +34,7 @@
 size_t getNextWordLength (const std::string& s, size_t position)
 {
 	const auto begin = s.begin() + position;
-	const auto end = std::find_if (begin, s.end(), std::ptr_fun<int, int> (std::isspace));
+	const auto end = std::find_if (begin, s.end(), [] (unsigned char c) { return std::isspace (c); });
 	return end - begin;
 }
 

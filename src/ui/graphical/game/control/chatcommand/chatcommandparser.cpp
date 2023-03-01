@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------
 void skipWhiteSpace (const std::string& command, size_t& position)
 {
-	while (position < command.size() && std::isspace (command[position]))
+	while (position < command.size() && std::isspace (static_cast<unsigned char>(command[position])))
 	{
 		++position;
 	}

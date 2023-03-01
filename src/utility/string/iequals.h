@@ -33,7 +33,7 @@ static inline bool iequals (const std::string& a, const std::string& b)
 
 	for (size_t i = 0; i < a.size(); ++i)
 	{
-		if (std::tolower (a[i]) != std::tolower (b[i])) return false;
+		if (std::tolower (static_cast<unsigned char> (a[i])) != std::tolower (static_cast<unsigned char> (b[i]))) return false;
 	}
 	return true;
 }

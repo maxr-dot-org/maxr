@@ -24,18 +24,17 @@
 
 #include <algorithm>
 #include <cctype>
-#include <functional>
 #include <locale>
 
 static inline std::string& trim_left (std::string& s)
 {
-	s.erase (s.begin(), ranges::find_if (s, std::not1 (std::ptr_fun<int, int> (std::isspace))));
+	s.erase (s.begin(), ranges::find_if (s, [] (unsigned char c) { return !std::isspace (c); }));
 	return s;
 }
 
 static inline std::string& trim_right (std::string& s)
 {
-	s.erase (std::find_if (s.rbegin(), s.rend(), std::not1 (std::ptr_fun<int, int> (std::isspace))).base(), s.end());
+	s.erase (std::find_if (s.rbegin(), s.rend(), [] (unsigned char c) { return !std::isspace (c); }).base(), s.end());
 	return s;
 }
 
