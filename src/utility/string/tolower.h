@@ -32,7 +32,7 @@ static inline std::string& to_lower (std::string& s)
 
 static inline std::string to_lower_copy (const std::string& s)
 {
-	auto s2 = s;
+	std::string s2 = s;
 	return to_lower (s2);
 }
 

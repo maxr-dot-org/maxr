@@ -45,19 +45,19 @@ static inline std::string& trim (std::string& s)
 
 static inline std::string trim_left_copy (const std::string& s)
 {
-	auto s2 = s;
+	std::string s2 = s;
 	return trim_left (s2);
 }
 
 static inline std::string trim_right_copy (const std::string& s)
 {
-	auto s2 = s;
+	std::string s2 = s;
 	return trim_right (s2);
 }
 
 static inline std::string trim_copy (const std::string& s)
 {
-	auto s2 = s;
+	std::string s2 = s;
 	return trim (s2);
 }
 

@@ -32,7 +32,7 @@ static inline std::string& to_upper (std::string& s)
 
 static inline std::string to_upper_copy (const std::string& s)
 {
-	auto s2 = s;
+	std::string s2 = s;
 	return to_upper (s2);
 }
 
