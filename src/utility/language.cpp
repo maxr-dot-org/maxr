@@ -23,48 +23,99 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 
-#include <cstdlib>
 #include <iomanip>
-#include <libintl.h>
-#include <mutex>
+
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable : 4267) /*'=' conversion from size_t to '_Ty', possible loss of data*/
+# pragma warning(disable : 4101) /*'e': unreferenced local variable*/
+#endif
+#include <spiritless_po.h>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif
 
 cLanguage lngPack;
 
+struct cLanguage::cPimpl
+{
+	spiritless_po::Catalog maxrCatalogEng;
+	spiritless_po::Catalog clansCatalogEng;
+	spiritless_po::Catalog unitsCatalogEng;
+	spiritless_po::Catalog maxrCatalog;
+	spiritless_po::Catalog clansCatalog;
+	spiritless_po::Catalog unitsCatalog;
+};
+
 namespace
 {
-	constexpr const char* maxrDomain = "maxr";
-	constexpr const char* clansDomain = "clans";
-	constexpr const char* unitsDomain = "units";
-
-	// gettext use environment variable to select language.
-	// We fall-back to English by changing environment variable
-	// (whereas traditional way is to use English key).
-	std::mutex putenv_mutex;
-
-	//------------------------------------------------------------------------------
-	void setLanguageEnv (const char* lang)
+	//--------------------------------------------------------------------------
+	void openCatalog (spiritless_po::Catalog& catalog, const std::filesystem::path& path)
 	{
-		// putenv(char*) is some system, even if string is unchanged
-		// it even seems that pointer should still be alive
-		static char buffer[] = "LANGUAGE=....";
-		snprintf (buffer, sizeof (buffer), "LANGUAGE=%s", lang);
-		putenv (buffer);
+		catalog.Clear();
+		std::ifstream file (path.string());
+
+		if (!catalog.Add (file))
+		{
+			Log.error ("Cannot open translation file: " + path.string());
+			for (const auto& s : catalog.GetError())
+			{
+				Log.error (s);
+			}
+		}
+	}
+
+	//--------------------------------------------------------------------------
+	std::string getText (const spiritless_po::Catalog& catalogEng, const spiritless_po::Catalog& catalog, const std::string& s)
+	{
+		const auto& translated = catalog.gettext (s);
+		if (&translated != &s)
+		{
+			return translated;
+		}
+		Log.warn ("Missing translation: " + s);
+		const auto& translatedEng = catalogEng.gettext (s);
+		if (&translatedEng == &s)
+		{
+			Log.warn ("Missing English translation: " + std::string (s));
+			return s;
+		}
+		return translatedEng;
+	}
+
+	//--------------------------------------------------------------------------
+	std::string nGetText (const spiritless_po::Catalog& catalogEng, const spiritless_po::Catalog& catalog, const std::string& s, int n)
+	{
+		const auto& translated = catalog.ngettext (s, s, n);
+		if (&translated != &s)
+		{
+			return translated;
+		}
+		Log.warn ("Missing translation: " + s);
+		const auto& translatedEng = catalogEng.ngettext (s, s, n);
+		if (&translatedEng == &s)
+		{
+			Log.warn ("Missing English translation: " + std::string (s));
+			return s;
+		}
+		return translatedEng;
 	}
 
 } // namespace
 
 //------------------------------------------------------------------------------
+cLanguage::cLanguage() :
+	pimpl (std::make_shared<cLanguage::cPimpl>())
+{
+}
+  
+//------------------------------------------------------------------------------
 void cLanguage::setLanguagesFolder (const std::filesystem::path& path)
 {
-	bindtextdomain ("maxr", path.string().c_str());
-	bind_textdomain_codeset ("maxr", "utf-8");
-	bindtextdomain ("clans", path.string().c_str());
-	bind_textdomain_codeset ("clans", "utf-8");
-	bindtextdomain ("units", path.string().c_str());
-	bind_textdomain_codeset ("units", "utf-8");
-	textdomain ("maxr");
-	std::unique_lock<std::mutex> lock (putenv_mutex);
-	setLanguageEnv ("en");
+	rootDir = path;
+	openCatalog (pimpl->maxrCatalogEng, path / "en/maxr.po");
+	openCatalog (pimpl->clansCatalogEng, path / "en/clans.po");
+	openCatalog (pimpl->unitsCatalogEng, path / "en/units.po");
 }
 
 //------------------------------------------------------------------------------
@@ -76,42 +127,22 @@ void cLanguage::setCurrentLanguage (const std::string& code)
 		throw std::runtime_error ("Unsupported language " + code);
 	}
 	m_languageCode = code;
-	std::unique_lock<std::mutex> lock (putenv_mutex);
-	setLanguageEnv (code.c_str());
-}
-
-//------------------------------------------------------------------------------
-std::string cLanguage::dGetText (const char* textDomain, const char* s) const
-{
-	std::unique_lock<std::mutex> lock (putenv_mutex);
-	auto translated = dgettext (textDomain, s);
-
-	if (translated == s)
-	{
-		Log.warn ("Missing translation: " + std::string (s));
-
-		setLanguageEnv ("en");
-		translated = dgettext (textDomain, s);
-		if (translated == s)
-		{
-			Log.warn ("Missing English translation: " + std::string (s));
-		}
-		setLanguageEnv (m_languageCode.c_str());
-	}
-	return translated;
+	openCatalog (pimpl->maxrCatalog, rootDir / code / "maxr.po");
+	openCatalog (pimpl->clansCatalog, rootDir / code / "clans.po");
+	openCatalog (pimpl->unitsCatalog, rootDir / code / "units.po");
 }
 
 //------------------------------------------------------------------------------
 std::string cLanguage::i18n (const std::string& s) const
 {
-	return dGetText (maxrDomain, s.c_str());
+	return getText (pimpl->maxrCatalogEng, pimpl->maxrCatalog, s);
 }
 
 //------------------------------------------------------------------------------
 // Translation with replace %s
 std::string cLanguage::i18n (const std::string& format, const std::string& insertText) const
 {
-	std::string translated = dGetText (maxrDomain, format.c_str());
+	std::string translated = getText (pimpl->maxrCatalogEng, pimpl->maxrCatalog, format);
 	auto pos = translated.find ("%s");
 
 	if (pos == std::string::npos)
@@ -130,21 +161,7 @@ std::string cLanguage::i18n (const std::string& format, const std::string& inser
 //------------------------------------------------------------------------------
 std::string cLanguage::plural (const std::string& text, std::size_t n) const
 {
-	std::unique_lock<std::mutex> lock (putenv_mutex);
-	std::string translated = dngettext (maxrDomain, text.c_str(), text.c_str(), n);
-
-	if (translated == text)
-	{
-		Log.warn ("Missing translation (plural entry): " + std::string (text));
-
-		setLanguageEnv ("en");
-		translated = dngettext (maxrDomain, text.c_str(), text.c_str(), n);
-		if (translated == text)
-		{
-			Log.warn ("Missing English translation (plural entry): " + std::string (text));
-		}
-		setLanguageEnv (m_languageCode.c_str());
-	}
+	std::string translated = nGetText (pimpl->maxrCatalogEng, pimpl->maxrCatalog, text, n);
 	const auto pos = translated.find ("%d");
 
 	if (pos != std::string::npos)
@@ -173,7 +190,7 @@ std::string cLanguage::getUnitName (const sID& id) const
 	   << std::setfill ('0') << std::setw (2) << id.secondPart
 	   << "_Name";
 
-	return dGetText (unitsDomain, ss.str().c_str());
+	return getText (pimpl->unitsCatalogEng, pimpl->unitsCatalog, ss.str());
 }
 
 //------------------------------------------------------------------------------
@@ -185,25 +202,33 @@ std::string cLanguage::getUnitDescription (const sID& id) const
 	   << std::setfill ('0') << std::setw (2) << id.secondPart
 	   << "_Desc";
 
-	return dGetText (unitsDomain, ss.str().c_str());
+	return getText (pimpl->unitsCatalogEng, pimpl->unitsCatalog, ss.str());
 }
 
 //------------------------------------------------------------------------------
 std::string cLanguage::getClanName (int num) const
 {
-	std::stringstream ss;
-
-	ss << "Clan" << num << "_Name";
-
-	return dGetText (clansDomain, ss.str().c_str());
+	return getText (pimpl->clansCatalogEng, pimpl->clansCatalog, "Clan" + std::to_string (num) + "_Name");
 }
 
 //------------------------------------------------------------------------------
 std::string cLanguage::getClanDescription (int num) const
 {
-	std::stringstream ss;
+	return getText (pimpl->clansCatalogEng, pimpl->clansCatalog, "Clan" + std::to_string (num) + "_Desc");
+}
 
-	ss << "Clan" << num << "_Desc";
-
-	return dGetText (clansDomain, ss.str().c_str());
+//------------------------------------------------------------------------------
+std::vector<std::pair<std::string, std::string>> cLanguage::getAllTranslations() const
+{
+	std::vector<std::pair<std::string, std::string>> res;
+	const auto& catalog = pimpl->maxrCatalog;
+	for (const auto& p : catalog.GetIndex())
+	{
+		const spiritless_po::Catalog::IndexDataT& index = p.second;
+		for (std::size_t i = 0; i != index.totalPlurals; ++i)
+		{
+			res.emplace_back (p.first, catalog.GetStringTable()[index.stringTableIndex + i]);
+		}
+	}
+	return res;
 }

@@ -26,6 +26,7 @@
 #define utility_languageH
 
 #include <config/workaround/cpp17/filesystem.h>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -34,7 +35,9 @@ struct sID;
 class cLanguage
 {
 public:
-	cLanguage() = default;
+	cLanguage();
+	cLanguage (const cLanguage&) = delete;
+	cLanguage& operator=(const cLanguage&) = delete;
 
 	void setLanguagesFolder (const std::filesystem::path&);
 
@@ -55,10 +58,13 @@ public:
 	std::string getClanName (int num) const;
 	std::string getClanDescription (int num) const;
 
-private:
-	std::string dGetText (const char* textDomain, const char* s) const;
+	std::vector<std::pair<std::string, std::string>> getAllTranslations() const;
 
 private:
+	struct cPimpl;
+	std::shared_ptr<cPimpl> pimpl;
+
+	std::filesystem::path rootDir;
 	std::string m_languageCode;
 };
 
