@@ -17,8 +17,8 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef _DEBUG_H
-#define _DEBUG_H
+#ifndef CRASHREPORTER_DEBUG_H
+#define CRASHREPORTER_DEBUG_H
 
 #ifdef USE_CRASH_RPT
 
@@ -49,4 +49,4 @@ inline void CR_INIT_CRASHREPORTING() {}
 
 #endif
 
-#endif //_DEBUG_H
+#endif

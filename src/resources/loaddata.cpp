@@ -33,7 +33,7 @@
 #include <sstream>
 
 #include "SDLutility/autosurface.h"
-#include "debug.h"
+#include "crashreporter/debug.h"
 #include "game/data/player/clans.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"

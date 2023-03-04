@@ -19,7 +19,7 @@
 
 #include "ui/graphical/game/control/gameguicontroller.h"
 
-#include "debug.h"
+#include "crashreporter/debug.h"
 #include "game/data/map/mapview.h"
 #include "game/data/player/player.h"
 #include "game/data/report/savedreportchat.h"

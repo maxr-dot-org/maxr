@@ -22,7 +22,7 @@
 #include "3rd/mveplayer/mveplayer.h"
 #include "SDLutility/sdlcomponent.h"
 #include "SDLutility/sdlnetcomponent.h"
-#include "debug.h"
+#include "crashreporter/debug.h"
 #include "defines.h"
 #include "input/keyboard/keyboard.h"
 #include "input/mouse/mouse.h"
