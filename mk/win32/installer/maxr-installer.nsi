@@ -25,6 +25,7 @@ OutFile "maxr-${VERSION}.exe"
 InstallDir "$PROGRAMFILES\M.A.X. Reloaded"
 
 VIProductVersion "${VERSION}.0"
+VIAddVersionKey FileVersion "${VERSION}.0"
 VIAddVersionKey ProductName "${NAME}"
 VIAddVersionKey Comments "${NAME} ${VERSION}"
 VIAddVersionKey CompanyName maxr.org
@@ -61,28 +62,29 @@ Page custom DirectoryDialog DirectoryDialogLeave
 !insertmacro MUI_PAGE_FINISH
 
 # Set Language
+#!insertmacro MUI_LANGUAGE "French"
 !insertmacro MUI_LANGUAGE "English"
-;!insertmacro MUI_LANGUAGE "German"
-/*!insertmacro MUI_LANGUAGE "Dutch"
-!insertmacro MUI_LANGUAGE "Russian"
-!insertmacro MUI_LANGUAGE "Hungarian"*/
+#!insertmacro MUI_LANGUAGE "German"
+#!insertmacro MUI_LANGUAGE "Dutch"
+#!insertmacro MUI_LANGUAGE "Russian"
+#!insertmacro MUI_LANGUAGE "Hungarian"
 
 Var ORIGINAL_DIR
 Var SELECTED_LANGUAGE
 
 # --- Main files ---
-Section "Main Files (requierd)" Section_Main
+Section "Main Files (required)" Section_Main
     SetOutPath $INSTDIR
 
     # now install all files
     File /r "${FILESFOLDER}"
 
-	# create initial config file and set language
+    # create initial config file and set language
     CreateDirectory "$DOCUMENTS\maxr"
     SetOutPath "$DOCUMENTS\maxr"
-	SetOverwrite off ; do not overwrite an existing user config
-    File "maxr.xml"
-	SetOverwrite on
+    SetOverwrite off ; do not overwrite an existing user config
+    File "maxr.json"
+    SetOverwrite on
     SetOutPath $INSTDIR
     Call ChangeLanguage
 SectionEnd
@@ -141,7 +143,6 @@ LangString DESC_Section_Group_Res       ${LANG_ENGLISH} "Import graphics, sounds
 LangString DESC_Section_Res_Graphics    ${LANG_ENGLISH} "Import unit graphics from original M.A.X. This will replace the M.A.X. Reloaded unit graphics."
 LangString DESC_Section_Res_Sound       ${LANG_ENGLISH} "Import sounds and maps from original M.A.X. This does not overwrite any of the M.A.X. Reloaded files."
 
-
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Main}            $(DESC_Section_Main)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Start_Menu_Link} $(DESC_Section_Start_Menu_Link)
@@ -158,7 +159,7 @@ Function .onInit
     #Set section flags
     IntOp $0 ${SF_SELECTED} | ${SF_RO}
     SectionSetFlags ${Section_Main} $0
-	
+
 FunctionEnd
 
 # --- Language Page Variables ---
@@ -172,12 +173,12 @@ VAR FILE_LENGTH
 VAR LANGUAGE_CODE
 
 Function ChangeLanguage
-    # open the maxr.xml
-    FileOpen $MAX_XML_FILE $DOCUMENTS\maxr\maxr.xml a
+    # open the maxr.json
+    FileOpen $MAX_XML_FILE $DOCUMENTS\maxr\maxr.json a
     StrCpy $FILE_LENGTH "0"
 
     # get the code of the selected language
-    StrCpy $LANGUAGE_CODE $SELECTED_LANGUAGE 3 -4
+    StrCpy $LANGUAGE_CODE $SELECTED_LANGUAGE 2 -3
 
     # find the language code postion in the xml file
     # the xml must contain this line: "<Language Text="XYZ" />" !!!
@@ -186,18 +187,18 @@ Function ChangeLanguage
         FileRead $MAX_XML_FILE $TMP_STRING 1024
 
         # look whether in this line is the language code
-        ${StrContains} $0 "Language Text=$\"" $TMP_STRING
+        ${StrContains} $0 "$\"language$\": $\"" $TMP_STRING
 
         StrCmp $0 "" notfound
                # calulate the length before the language entry
-               ${StrStr} $R1 $TMP_STRING "Language Text=$\""
+               ${StrStr} $R1 $TMP_STRING "$\"language$\": $\""
                StrLen $0 $TMP_STRING
                StrLen $1 $R1
                IntOp $0 $0 - $1
 
-               # add the length to the postion counter
+               # add the length to the position counter
                IntOp $FILE_LENGTH $FILE_LENGTH + $0
-               IntOp $FILE_LENGTH $FILE_LENGTH + 15
+               IntOp $FILE_LENGTH $FILE_LENGTH + 13
 
                # replace the language code
                FileSeek $MAX_XML_FILE $FILE_LENGTH SET
@@ -231,18 +232,19 @@ Function LanguageDialog
     ${NSD_CreateDropList} 0 78 180 12 ""
     Pop $LANGUAGE_DROPLIST
 
-    # Add the by maxr supported languages
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "English (ENG)"
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "German (GER)"
-    ;${NSD_CB_AddString} $LANGUAGE_DROPLIST "Russian (RUS)"
-    ;${NSD_CB_AddString} $LANGUAGE_DROPLIST "Hungarian (HUN)"
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Dutch (DUT)"
-    ;${NSD_CB_AddString} $LANGUAGE_DROPLIST "Slovenian (SLV)"
-    ;${NSD_CB_AddString} $LANGUAGE_DROPLIST "French (FRE)"
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Spanish (SPA)"
+    # Add the maxr supported languages
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Catalan (ca)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "German (de)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "English (en)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Spanish (es)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "French (fr)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Hungarian (hu)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Dutch (nl)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Russian (ru)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Slovenian (sl)"
 
     # by default english is selected
-    ${NSD_CB_SelectString} $LANGUAGE_DROPLIST "English (ENG)"
+    ${NSD_CB_SelectString} $LANGUAGE_DROPLIST "English (en)"
 
     nsDialogs::Show
 
@@ -278,7 +280,7 @@ Function DirectoryDialog
     SectionGetFlags ${Section_Res_Sound} $R0
     SectionGetFlags ${Section_Res_Graphics} $R1
 
-    SectionGetSize Section_Main $3
+    SectionGetSize ${Section_Main} $3
     IntOp $0 $3 + 0
     ${If} $R0 == ${SF_SELECTED}
         SectionGetSize ${Section_Res_Sound} $1
@@ -298,18 +300,18 @@ Function DirectoryDialog
     # Original Dir Elements
     ${If} $R0 == ${SF_SELECTED}
     ${OrIF} $R1 == ${SF_SELECTED}
-		${NSD_CreateGroupBox} 0 95 100% 100 "Original M.A.X.-CD or Installation Folder"
-		${NSD_CreateDirRequest} 15 119 315 12u ""
-		Pop $ORI_DIRECTORY_FIELD
-		${NSD_OnChange} $ORI_DIRECTORY_FIELD OriDirChange
-		System::Call shlwapi::SHAutoComplete($ORI_DIRECTORY_FIELD,i1)
+        ${NSD_CreateGroupBox} 0 95 100% 100 "Original M.A.X.-CD or Installation Folder"
+        ${NSD_CreateDirRequest} 15 119 315 12u ""
+        Pop $ORI_DIRECTORY_FIELD
+        ${NSD_OnChange} $ORI_DIRECTORY_FIELD OriDirChange
+        System::Call shlwapi::SHAutoComplete($ORI_DIRECTORY_FIELD,i1)
 
-		${NSD_CreateBrowseButton} 342 116 90 24 "Browse..."
-		Pop $ORI_DIRECTORY_BROWSE
-		${NSD_OnClick} $ORI_DIRECTORY_BROWSE OriDirBrowse
-		
-		${NSD_CreateLabel} 15 144 95% 26u ""
-		Pop $ORI_NOT_FOUND_LABEL
+        ${NSD_CreateBrowseButton} 342 116 90 24 "Browse..."
+        Pop $ORI_DIRECTORY_BROWSE
+        ${NSD_OnClick} $ORI_DIRECTORY_BROWSE OriDirBrowse
+
+        ${NSD_CreateLabel} 15 144 95% 26u ""
+        Pop $ORI_NOT_FOUND_LABEL
     ${EndIF}
 
     # Directoy Filed
@@ -343,20 +345,20 @@ FunctionEnd
 Function DirectoryDialogLeave
     Push $R0
     Push $R1
-	SectionGetFlags ${Section_Res_Sound} $R0
+    SectionGetFlags ${Section_Res_Sound} $R0
     SectionGetFlags ${Section_Res_Graphics} $R1
-	
-	${If} $R0 == ${SF_SELECTED}
+
+    ${If} $R0 == ${SF_SELECTED}
     ${OrIF} $R1 == ${SF_SELECTED}
-		Call CheckOriPath
-		${if} $ORI_PATH_FOUND == "0"
-			Abort
-		${EndIf}
-	${EndIf}
-	
+        Call CheckOriPath
+        ${if} $ORI_PATH_FOUND == "0"
+            Abort
+        ${EndIf}
+    ${EndIf}
+
     ${NSD_GetText} $ORI_DIRECTORY_FIELD $ORIGINAL_DIR
-	
-	Pop $R1
+
+    Pop $R1
     Pop $R0
 FunctionEnd
 
@@ -390,18 +392,18 @@ Function UpdateAvaSpace
 FunctionEnd
 
 Function CheckOriPath
-	Push $R0
-	${NSD_GetText} $ORI_DIRECTORY_FIELD $R0
-	
-	${NSD_SetText} $ORI_NOT_FOUND_LABEL "Original M.A.X. found."
-	StrCpy $ORI_PATH_FOUND "1"
-	IfFileExists "$R0\MAX.RES" FOUND 0
-	IfFileExists "$R0\MAX\MAX.RES" FOUND 0
-	${NSD_SetText} $ORI_NOT_FOUND_LABEL "No original M.A.X found. Please choose the correct path, or disable the Import option in the installation settings. You can import the original ressources anytime later by using the resinstaller tool."
-	StrCpy $ORI_PATH_FOUND "0"
-	FOUND:
-	
-	Pop $R0
+    Push $R0
+    ${NSD_GetText} $ORI_DIRECTORY_FIELD $R0
+
+    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "Original M.A.X. found."
+    StrCpy $ORI_PATH_FOUND "1"
+    IfFileExists "$R0\MAX.RES" FOUND 0
+    IfFileExists "$R0\MAX\MAX.RES" FOUND 0
+    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "No original M.A.X found. Please choose the correct path, or disable the Import option in the installation settings. You can import the original ressources anytime later by using the resinstaller tool."
+    StrCpy $ORI_PATH_FOUND "0"
+    FOUND:
+
+    Pop $R0
 FunctionEnd
 
 # --- Callback function when directoy has chanded ---
@@ -414,7 +416,7 @@ Function DirChange
 FunctionEnd
 
 Function OriDirChange
-	Call CheckOriPath 
+    Call CheckOriPath
 FunctionEnd
 
 # --- Browse button functions ---
@@ -426,7 +428,7 @@ Function DirBrowse
         ${NSD_SetText} $DIRECTORY_FIELD "$R0"
     ${EndIf}
 FunctionEnd
-	
+
 Function OriDirBrowse
     ${NSD_GetText} $ORI_DIRECTORY_FIELD $R0
     nsDialogs::SelectFolderDialog "" $R0
