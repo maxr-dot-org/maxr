@@ -19,7 +19,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#define __resinstaller__
 #include "resinstaller.h"
 
 #include "converter.h"
@@ -40,6 +39,27 @@
 #elif WIN32
 # include <Shlobj.h>
 #endif
+
+bool bDoNotElevate = false;
+std::string sAppName;
+std::string sMAXPath;
+std::string sVoicePath;
+std::string sOutputPath;
+std::string sLanguage;
+std::string sResChoice;
+std::string waveExtension;
+SDL_RWops* res = nullptr;
+SDL_RWops* logFile = nullptr;
+
+Uint32 lPosBegin = 0;
+Uint32 lEndOfFile = 0;
+
+int iErrors = 0;
+int iInstalledFiles = 0;
+int iTotalFiles = 0;
+bool wasError = false;
+
+bool oggEncode = false;
 
 //-------------------------------------------------------------
 int installMVEs()

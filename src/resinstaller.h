@@ -38,24 +38,26 @@
 # pragma warning(disable : 4996)
 #endif
 
-EX bool bDoNotElevate;
-EX std::string sAppName;
-EX std::string sMAXPath;
-EX std::string sVoicePath;
-EX std::string sOutputPath;
-EX std::string sLanguage;
-EX std::string sResChoice;
-EX std::string waveExtension;
-EX SDL_RWops* res ZERO;
-EX SDL_RWops* logFile ZERO;
+extern bool bDoNotElevate;
+extern std::string sAppName;
+extern std::string sMAXPath;
+extern std::string sVoicePath;
+extern std::string sOutputPath;
+extern std::string sLanguage;
+extern std::string sResChoice;
+extern std::string waveExtension;
+extern SDL_RWops* res;
+extern SDL_RWops* logFile;
 
-EX Uint32 lPosBegin;
-EX Uint32 lEndOfFile;
+extern Uint32 lPosBegin;
+extern Uint32 lEndOfFile;
 
-EX int iErrors, iInstalledFiles, iTotalFiles;
-EX bool wasError;
+extern int iErrors;
+extern int iInstalledFiles;
+extern int iTotalFiles;
+extern bool wasError;
 
-EX bool oggEncode;
+extern bool oggEncode;
 
 //this exception is thrown, when the installation of the current file failed
 class InstallException
