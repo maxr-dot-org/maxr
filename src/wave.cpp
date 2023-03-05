@@ -36,7 +36,7 @@ cWaveFile::cWaveFile()
 
 cWaveFile::~cWaveFile()
 {
-	//memoy has to be deleted manually
+	//memory has to be deleted manually
 	//because we can't determine here if it was allocated by SDL or malloc
 }
 
