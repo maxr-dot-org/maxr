@@ -102,7 +102,7 @@ void copyImageFromFLC (std::string fileName, std::string dst);
 void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w);
 void setColor (SDL_Surface* surface, unsigned char nr, unsigned char r, unsigned char g, unsigned char b);
 void generateAnimationFrame (SDL_Surface* surface, unsigned char frame);
-std::string iToStr (int x);
+
 void updateProgressbar();
 void writeLog (std::string msg);
 

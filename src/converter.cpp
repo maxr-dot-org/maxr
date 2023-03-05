@@ -623,7 +623,7 @@ SDL_Surface* cImage::getSurface (int imageNr)
 {
 	if (imageNr > iImageCount - 1)
 	{
-		throw InstallException (std::string ("Image '") + name + "' number " + iToStr (imageNr) + " not found in max.res");
+		throw InstallException (std::string ("Image '") + name + "' number " + std::to_string (imageNr) + " not found in max.res");
 	}
 
 	Images[imageNr].surface->refcount++;
@@ -1165,13 +1165,6 @@ void updateProgressbar()
 #if MAC
 	updateProgressWindow ("", iTotalFiles, iInstalledFiles);
 #endif
-}
-
-std::string iToStr (int x)
-{
-	std::stringstream strStream;
-	strStream << x;
-	return strStream.str();
 }
 
 void writeLog (std::string msg)

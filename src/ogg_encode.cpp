@@ -21,7 +21,6 @@
 
 #include "ogg_encode.h"
 
-#include "converter.h"
 #include "resinstaller.h"
 #include "wave.h"
 
@@ -62,7 +61,7 @@ void encodeWAV (std::string fileName, cWaveFile& waveFile)
 	//curently only 2 bps supported
 	if (bytesPerSample != 2)
 	{
-		throw InstallException (std::string ("Encoding of wave files with ") + iToStr (bytesPerSample) + " bytes per sample not supported" + TEXT_FILE_LF);
+		throw InstallException (std::string ("Encoding of wave files with ") + std::to_string (bytesPerSample) + " bytes per sample not supported" + TEXT_FILE_LF);
 	}
 
 	vorbis_info_init (&vorbisInfo);

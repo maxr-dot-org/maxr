@@ -84,12 +84,12 @@ int installMVEs()
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("MVEs") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 	return 1;
 }
 
@@ -1364,12 +1364,12 @@ int installVehicleGraphics()
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("Vehicle graphics") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 	return 1;
 }
 
@@ -2134,12 +2134,12 @@ int installBuildingGraphics()
 	END_INSTALL_FILE (path + "dirt_small_shw.pcx");
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("Building graphics") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
@@ -2302,12 +2302,12 @@ int installVehicleVideos()
 	copyFile (sMAXPath + "MGENR.FLC", path + "video.flc");
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("Vehicle videos") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
@@ -2546,12 +2546,12 @@ int installFX()
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("Fx") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 
 	return 1;
 }
@@ -2913,7 +2913,7 @@ int installGfx()
 
 		for (int i = 1; i < 17; i++)
 		{
-			surface = getImageFromRes ("RAWMSK" + iToStr (i));
+			surface = getImageFromRes ("RAWMSK" + std::to_string (i));
 			setColor (surface, 48, 255, 0, 255);
 			SDL_Rect dst_rect = {1 + i * 64, 1, 0, 0};
 			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
@@ -2934,7 +2934,7 @@ int installGfx()
 
 		for (int i = 1; i < 17; i++)
 		{
-			surface = getImageFromRes ("FUELMK" + iToStr (i));
+			surface = getImageFromRes ("FUELMK" + std::to_string (i));
 			setColor (surface, 255, 255, 0, 255);
 			SDL_Rect dst_rect = {1 + i * 64, 1, 0, 0};
 			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
@@ -2955,7 +2955,7 @@ int installGfx()
 
 		for (int i = 1; i < 17; i++)
 		{
-			surface = getImageFromRes ("GOLDMK" + iToStr (i));
+			surface = getImageFromRes ("GOLDMK" + std::to_string (i));
 			setColor (surface, 255, 255, 0, 255);
 			SDL_Rect dst_rect = {1 + i * 64, 1, 0, 0};
 			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
@@ -3178,12 +3178,12 @@ int installGfx()
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("Gfx") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 
 	return 1;
 }
@@ -3320,12 +3320,12 @@ int installBuildingSounds()
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("Building sounds") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 	return 1;
 }
 
@@ -3631,12 +3631,12 @@ int installVehicleSounds()
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("Vehicle sounds") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 	return 1;
 }
 
@@ -3764,12 +3764,12 @@ void installVoices()
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("Voices") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
 //-------------------------------------------------------------
@@ -3816,12 +3816,12 @@ void installMaps()
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("Maps") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
 //-------------------------------------------------------------
@@ -3877,12 +3877,12 @@ void installSounds()
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("Sounds") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
 //-------------------------------------------------------------
@@ -3920,12 +3920,12 @@ void installMusic()
 	if (logFile != nullptr)
 	{
 		writeLog (std::string ("Music") + TEXT_FILE_LF);
-		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	std::cout << "\n";
-	std::cout << iToStr (iErrors) << " errors\n";
+	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
 //-------------------------------------------------------------
