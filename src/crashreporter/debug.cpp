@@ -34,7 +34,7 @@
 
 # ifndef NOMINMAX
 #  define NOMINMAX // CrashRpt includes windows.h
-#endif
+# endif
 # include <CrashRpt.h>
 # include <SDL.h>
 
@@ -55,7 +55,7 @@ int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO* pInfo)
 		{
 			auto path = home / "Crashshot.bmp";
 			SDL_SaveBMP (cVideo::buffer, path.string().c_str());
-			crAddFile2 (path.native().c_str(), nullptr, L("Screenshot at the moment of the crash"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+			crAddFile2 (path.native().c_str(), nullptr, L ("Screenshot at the moment of the crash"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 		}
 	}
 
@@ -71,8 +71,8 @@ void initCrashreporting()
 	CR_INSTALL_INFO info;
 	memset (&info, 0, sizeof (CR_INSTALL_INFO));
 	info.cb = sizeof (CR_INSTALL_INFO);
-	info.pszAppName = L("maxr");
-	info.pszAppVersion = L(PACKAGE_VERSION " " PACKAGE_REV);
+	info.pszAppName = L ("maxr");
+	info.pszAppVersion = L (PACKAGE_VERSION " " PACKAGE_REV);
 	info.uMiniDumpType = MiniDumpWithIndirectlyReferencedMemory;
 	//info.pszUrl
 	//info.uPriorities[CR_SFTP] = 1;
@@ -86,15 +86,15 @@ void initCrashreporting()
 	info.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS;
 	info.dwFlags |= CR_INST_SEND_QUEUED_REPORTS;
 	info.dwFlags |= CR_INST_APP_RESTART;
-	info.pszCustomSenderIcon = L("maxr.ico");
+	info.pszCustomSenderIcon = L ("maxr.ico");
 	auto privacyPolicyPath = (cSettings::getInstance().getDataDir() / "CrashRpt/Privacy Policy.html").native();
 	info.pszPrivacyPolicyURL = privacyPolicyPath.c_str();
 	const auto path = (cSettings::getInstance().getMaxrHomeDir() / "Crashreports").native();
 	info.pszErrorReportSaveDir = path.c_str();
-	std::string lang = to_upper_copy(cSettings::getInstance().getLanguage());
+	std::string lang = to_upper_copy (cSettings::getInstance().getLanguage());
 	const auto currentExeDir = os::getCurrentExeDir();
 	auto langPath = (currentExeDir / ("CrashRpt/crashrpt_lang_" + lang + ".ini")).native();
-	if (!std::filesystem::exists(langPath))
+	if (!std::filesystem::exists (langPath))
 	{
 		langPath = (currentExeDir / ("CrashRpt/crashrpt_lang_EN.ini")).native();
 	}
@@ -113,25 +113,25 @@ void initCrashreporting()
 	auto log = cSettings::getInstance().getLogPath().native();
 	if (!log.empty())
 	{
-		crAddFile2 (log.c_str(), nullptr, L("Maxr Logfile"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 (log.c_str(), nullptr, L ("Maxr Logfile"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	auto home = cSettings::getInstance().getMaxrHomeDir();
 	if (!home.empty())
 	{
 		auto settings = home / "maxr.json";
-		crAddFile2 (settings.native().c_str(), nullptr, L("Maxr Configuration File"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 (settings.native().c_str(), nullptr, L ("Maxr Configuration File"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	auto netlog = cSettings::getInstance().getNetLogPath().native();
 	if (!netlog.empty())
 	{
-		crAddFile2 (netlog.c_str(), nullptr, L("Maxr Network Logfile"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 (netlog.c_str(), nullptr, L ("Maxr Network Logfile"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	if (!home.empty())
 	{
-		crAddFile2 ((home / "resinstaller.log").native().c_str(), nullptr, L("Maxr Resinstaller Logfile"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
+		crAddFile2 ((home / "resinstaller.log").native().c_str(), nullptr, L ("Maxr Resinstaller Logfile"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 	}
 
 	//internal screenshot function is useless...
