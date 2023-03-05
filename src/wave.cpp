@@ -90,7 +90,7 @@ int readSmplChunk (SDL_RWops* file, cWaveFile& waveFile)
 	return 1;
 }
 
-int loadWAV (string src, cWaveFile& waveFile)
+int loadWAV (std::string src, cWaveFile& waveFile)
 {
 	SDL_RWops* file;
 	file = openFile (src, "rb");
@@ -108,7 +108,7 @@ int loadWAV (string src, cWaveFile& waveFile)
 	return 1;
 }
 
-void saveWAV (string dst, cWaveFile& waveFile)
+void saveWAV (std::string dst, cWaveFile& waveFile)
 {
 	int was_error = 0;
 	Chunk chunk;
@@ -126,13 +126,13 @@ void saveWAV (string dst, cWaveFile& waveFile)
 	SDL_RWops* file = SDL_RWFromFile (dst.c_str(), "wb");
 	if (file == nullptr)
 	{
-		throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
+		throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
 	}
 
 	// Write the magic header
 	if (SDL_WriteLE32 (file, RIFF) == -1)
 	{
-		throw InstallException (string ("Couldn't write to file") + TEXT_FILE_LF);
+		throw InstallException (std::string ("Couldn't write to file") + TEXT_FILE_LF);
 	}
 	SDL_WriteLE32 (file, HEADER_SIZE + audio_len);
 	SDL_WriteLE32 (file, WAVE);
@@ -143,7 +143,7 @@ void saveWAV (string dst, cWaveFile& waveFile)
 	chunk.data = (Uint8*) malloc (chunk.length);
 	if (chunk.data == nullptr)
 	{
-		cout << "Out of memory\n";
+		std::cout << "Out of memory\n";
 		exit (-1);
 	}
 	format = (WaveFMT*) chunk.data;
@@ -216,11 +216,11 @@ done:
 
 	if (was_error)
 	{
-		throw InstallException (string ("Error while saving wav file") + TEXT_FILE_LF);
+		throw InstallException (std::string ("Error while saving wav file") + TEXT_FILE_LF);
 	}
 }
 
-void copyPartOfWAV (string src, string dst, Uint8 nr)
+void copyPartOfWAV (std::string src, std::string dst, Uint8 nr)
 {
 	cWaveFile waveFile;
 
@@ -272,7 +272,7 @@ void copyPartOfWAV (string src, string dst, Uint8 nr)
 		Uint8* new_buffer = (Uint8*) malloc (waveFile.length);
 		if (new_buffer == nullptr)
 		{
-			cout << "Out of memory\n";
+			std::cout << "Out of memory\n";
 			exit (-1);
 		}
 		memcpy (new_buffer, waveFile.buffer + start, waveFile.length);
@@ -295,7 +295,7 @@ void copyPartOfWAV (string src, string dst, Uint8 nr)
 	END_INSTALL_FILE (dst)
 }
 
-void copyWAV (string src, string dst)
+void copyWAV (std::string src, std::string dst)
 {
 	if (oggEncode)
 	{

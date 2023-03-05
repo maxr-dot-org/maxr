@@ -69,7 +69,7 @@ void cImage::saveFile()
 		return;
 	for (int iNum = 0; iNum < iImageCount; iNum++)
 	{
-		string sOutputname = sOutputPath;
+		std::string sOutputname = sOutputPath;
 		sOutputname += name;
 		if (iImageCount > 1)
 		{
@@ -82,12 +82,12 @@ void cImage::saveFile()
 
 		savePCX (Images[iNum].surface, sOutputname);
 
-		cout << name;
+		std::cout << name;
 		if (iImageCount > 1)
 		{
-			cout << "_" << iNum;
+			std::cout << "_" << iNum;
 		}
-		cout << "\n";
+		std::cout << "\n";
 	}
 }
 
@@ -145,7 +145,7 @@ void cImage::resampleFile()
 		SDL_Surface* surface = SDL_CreateRGBSurface (SDL_SWSURFACE, sWidth, sHeight, 8, 0, 0, 0, 0);
 		if (surface == nullptr)
 		{
-			cout << "Out of memory\n";
+			std::cout << "Out of memory\n";
 			exit (-1);
 		}
 
@@ -623,7 +623,7 @@ SDL_Surface* cImage::getSurface (int imageNr)
 {
 	if (imageNr > iImageCount - 1)
 	{
-		throw InstallException (string ("Image '") + name + "' number " + iToStr (imageNr) + " not found in max.res");
+		throw InstallException (std::string ("Image '") + name + "' number " + iToStr (imageNr) + " not found in max.res");
 	}
 
 	Images[imageNr].surface->refcount++;
@@ -631,11 +631,11 @@ SDL_Surface* cImage::getSurface (int imageNr)
 	return Images[imageNr].surface;
 }
 
-SDL_Surface* getImageFromRes (string file_name, int imageNr)
+SDL_Surface* getImageFromRes (std::string file_name, int imageNr)
 {
 	if (res == nullptr)
 	{
-		throw InstallException (string ("max.res was not opened") + TEXT_FILE_LF);
+		throw InstallException (std::string ("max.res was not opened") + TEXT_FILE_LF);
 	}
 	cImage* Image = cImage::Image;
 	if (Image == nullptr || file_name.compare (Image->name) != 0)
@@ -742,7 +742,7 @@ int saveAllFiles()
 	return 1;
 }
 
-void copyFileFromRes (string src, string dst, int number)
+void copyFileFromRes (std::string src, std::string dst, int number)
 {
 	SDL_Surface* surface = nullptr;
 	try
@@ -755,7 +755,7 @@ void copyFileFromRes (string src, string dst, int number)
 }
 
 //rpc stands for "remove player color"
-void copyFileFromRes_rpc (string src, string dst, int number)
+void copyFileFromRes_rpc (std::string src, std::string dst, int number)
 {
 	SDL_Surface* surface = nullptr;
 	try
@@ -768,7 +768,7 @@ void copyFileFromRes_rpc (string src, string dst, int number)
 	END_INSTALL_FILE (dst)
 }
 
-void copyImageFromFLC (string fileName, string dst)
+void copyImageFromFLC (std::string fileName, std::string dst)
 {
 	try
 	{
@@ -836,7 +836,7 @@ void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w)
 	resizedSurface = SDL_CreateRGBSurface (SDL_SWSURFACE, h, w, 8, 0, 0, 0, 0);
 	if (resizedSurface == nullptr)
 	{
-		cout << "Out of memory";
+		std::cout << "Out of memory";
 		exit (-1);
 	}
 	SDL_SetPaletteColors (resizedSurface->format->palette, surface->format->palette->colors, 0, 256);
@@ -1158,7 +1158,7 @@ void updateProgressbar()
 	int newValue = (int) ((float) iInstalledFiles * 72 / iTotalFiles);
 
 	for (int i = value; i < newValue; i++)
-		cout << ".";
+		std::cout << ".";
 
 	value = newValue;
 
@@ -1167,14 +1167,14 @@ void updateProgressbar()
 #endif
 }
 
-string iToStr (int x)
+std::string iToStr (int x)
 {
-	stringstream strStream;
+	std::stringstream strStream;
 	strStream << x;
 	return strStream.str();
 }
 
-void writeLog (string msg)
+void writeLog (std::string msg)
 {
 	if (logFile != nullptr)
 	{
@@ -1182,6 +1182,6 @@ void writeLog (string msg)
 	}
 	else
 	{
-		cout << msg;
+		std::cout << msg;
 	}
 }

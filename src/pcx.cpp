@@ -19,12 +19,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "pcx.h"
+
 #include "converter.h"
 
 #include <SDL.h>
 #include <string>
 
-int savePCX_8bpp (SDL_Surface* surface, string fileName)
+int savePCX_8bpp (SDL_Surface* surface, std::string fileName)
 {
 	int Z_Index, S_Index; // PCX-Größenangaben
 
@@ -38,7 +40,7 @@ int savePCX_8bpp (SDL_Surface* surface, string fileName)
 
 	if (file == nullptr)
 	{
-		throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
+		throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
 	}
 
 	//PCX-Header erzeugen
@@ -114,7 +116,7 @@ int savePCX_8bpp (SDL_Surface* surface, string fileName)
 	return 1;
 }
 
-int savePCX_32bpp (SDL_Surface* surface, string fileName)
+int savePCX_32bpp (SDL_Surface* surface, std::string fileName)
 {
 	int Z_Index, S_Index; // PCX-Größenangaben
 
@@ -128,7 +130,7 @@ int savePCX_32bpp (SDL_Surface* surface, string fileName)
 
 	if (file == nullptr)
 	{
-		throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
+		throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
 	}
 
 	//PCX-Header erzeugen
@@ -186,7 +188,7 @@ int savePCX_32bpp (SDL_Surface* surface, string fileName)
 			if (NrColors > 255)
 			{
 				//to many colors, table full
-				throw InstallException (string ("Couldn't convert image to 8 bpp, color table full") + TEXT_FILE_LF);
+				throw InstallException (std::string ("Couldn't convert image to 8 bpp, color table full") + TEXT_FILE_LF);
 			}
 			colors[NrColors] = surface_data[sourceIndex];
 			bild[Index] = NrColors;
@@ -248,7 +250,7 @@ int savePCX_32bpp (SDL_Surface* surface, string fileName)
 	return 1;
 }
 
-int savePCX (SDL_Surface* surface, string fileName)
+int savePCX (SDL_Surface* surface, std::string fileName)
 {
 	if (!surface)
 		return 0;
@@ -265,7 +267,7 @@ int savePCX (SDL_Surface* surface, string fileName)
 	return 0;
 }
 
-SDL_Surface* loadPCX (string name)
+SDL_Surface* loadPCX (std::string name)
 {
 	Uint8* _ptr;
 	Uint8 byte;
@@ -279,7 +281,7 @@ SDL_Surface* loadPCX (string name)
 
 	if (file == nullptr)
 	{
-		throw InstallException (string ("Couldn't open file") + name + TEXT_FILE_LF);
+		throw InstallException (std::string ("Couldn't open file") + name + TEXT_FILE_LF);
 	}
 
 	//load data

@@ -29,7 +29,7 @@
 #include <string>
 #include <vorbis/vorbisenc.h>
 
-void encodeWAV (string fileName, cWaveFile& waveFile)
+void encodeWAV (std::string fileName, cWaveFile& waveFile)
 {
 	static unsigned char serialNr = 0;
 	int ret;
@@ -44,7 +44,7 @@ void encodeWAV (string fileName, cWaveFile& waveFile)
 	vorbis_block vorbisBlock;
 
 	//if the file name ends with .wav it has to be replaced with .ogg
-	string extension = fileName.substr (fileName.length() - 4, fileName.length());
+	std::string extension = fileName.substr (fileName.length() - 4, fileName.length());
 	if (extension.compare (".wav") == 0 || extension.compare (".WAV") == 0)
 	{
 		fileName.replace (fileName.length() - 4, 4, ".ogg");
@@ -53,7 +53,7 @@ void encodeWAV (string fileName, cWaveFile& waveFile)
 	SDL_RWops* file = SDL_RWFromFile (fileName.c_str(), "wb");
 	if (file == nullptr)
 	{
-		throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
+		throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
 	}
 
 	//begin initialisations and encoder setup
@@ -62,14 +62,14 @@ void encodeWAV (string fileName, cWaveFile& waveFile)
 	//curently only 2 bps supported
 	if (bytesPerSample != 2)
 	{
-		throw InstallException (string ("Encoding of wave files with ") + iToStr (bytesPerSample) + " bytes per sample not supported" + TEXT_FILE_LF);
+		throw InstallException (std::string ("Encoding of wave files with ") + iToStr (bytesPerSample) + " bytes per sample not supported" + TEXT_FILE_LF);
 	}
 
 	vorbis_info_init (&vorbisInfo);
 	ret = vorbis_encode_init_vbr (&vorbisInfo, waveFile.spec.channels, waveFile.spec.freq, (float) VORBIS_QUALITY);
 	if (ret != 0)
 	{
-		throw InstallException (string ("Couldn't initialize vorbis encoder") + TEXT_FILE_LF);
+		throw InstallException (std::string ("Couldn't initialize vorbis encoder") + TEXT_FILE_LF);
 	}
 
 	vorbis_comment_init (&vorbisComment);

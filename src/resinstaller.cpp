@@ -41,12 +41,10 @@
 # include <Shlobj.h>
 #endif
 
-using namespace std;
-
 //-------------------------------------------------------------
 int installMVEs()
 {
-	string path;
+	std::string path;
 	iTotalFiles = 3;
 	iErrors = 0;
 	iInstalledFiles = 0;
@@ -55,8 +53,8 @@ int installMVEs()
 	updateProgressWindow ("Movie files", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "MVE files\n";
+	std::cout << "========================================================================\n";
+	std::cout << "MVE files\n";
 
 	path = sOutputPath + "mve" + PATH_DELIMITER;
 	copyFile (sVoicePath + "MAXINT.MVE", path + "MAXINT.MVE");
@@ -65,20 +63,20 @@ int installMVEs()
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("MVEs") + TEXT_FILE_LF);
+		writeLog (std::string ("MVEs") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 	return 1;
 }
 
 //-------------------------------------------------------------
 int installVehicleGraphics()
 {
-	string path;
+	std::string path;
 
 	iTotalFiles = 824;
 	iErrors = 0;
@@ -94,8 +92,8 @@ int installVehicleGraphics()
 	updateProgressWindow ("Vehicle graphics", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "Vehicle graphics\n";
+	std::cout << "========================================================================\n";
+	std::cout << "Vehicle graphics\n";
 
 	// air_transport
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
@@ -1345,20 +1343,20 @@ int installVehicleGraphics()
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("Vehicle graphics") + TEXT_FILE_LF);
+		writeLog (std::string ("Vehicle graphics") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 	return 1;
 }
 
 //-------------------------------------------------------------
 int installBuildingGraphics()
 {
-	string path;
+	std::string path;
 	iTotalFiles = 161;
 	iErrors = 0;
 	iInstalledFiles = 0;
@@ -1370,8 +1368,8 @@ int installBuildingGraphics()
 	updateProgressWindow ("Building graphics", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "Building graphics\n";
+	std::cout << "========================================================================\n";
+	std::cout << "Building graphics\n";
 
 	// Barracks
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "barracks" + PATH_DELIMITER;
@@ -2115,14 +2113,14 @@ int installBuildingGraphics()
 	}
 	END_INSTALL_FILE (path + "dirt_small_shw.pcx");
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("Building graphics") + TEXT_FILE_LF);
+		writeLog (std::string ("Building graphics") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	return 1;
@@ -2131,7 +2129,7 @@ int installBuildingGraphics()
 //-------------------------------------------------------------
 int installVehicleVideos()
 {
-	string path;
+	std::string path;
 	iTotalFiles = 35;
 	iErrors = 0;
 	iInstalledFiles = 0;
@@ -2140,8 +2138,8 @@ int installVehicleVideos()
 	updateProgressWindow ("Vehicle videos", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "Vehicle videos\n";
+	std::cout << "========================================================================\n";
+	std::cout << "Vehicle videos\n";
 
 	// air_transport
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
@@ -2283,14 +2281,14 @@ int installVehicleVideos()
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_oil" + PATH_DELIMITER;
 	copyFile (sMAXPath + "MGENR.FLC", path + "video.flc");
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("Vehicle videos") + TEXT_FILE_LF);
+		writeLog (std::string ("Vehicle videos") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	return 1;
@@ -2299,7 +2297,7 @@ int installVehicleVideos()
 //-------------------------------------------------------------
 int installFX()
 {
-	string path;
+	std::string path;
 	SDL_Surface *surface, *output;
 	iTotalFiles = 9;
 	iErrors = 0;
@@ -2309,8 +2307,8 @@ int installFX()
 	updateProgressWindow ("Fx", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "Fx\n";
+	std::cout << "========================================================================\n";
+	std::cout << "Fx\n";
 
 	path = sOutputPath + "fx" + PATH_DELIMITER;
 
@@ -2527,13 +2525,13 @@ int installFX()
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("Fx") + TEXT_FILE_LF);
+		writeLog (std::string ("Fx") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 
 	return 1;
 }
@@ -2541,7 +2539,7 @@ int installFX()
 //-------------------------------------------------------------
 int installGfx()
 {
-	string path;
+	std::string path;
 	char szNum[13];
 	SDL_Surface *surface, *output;
 	iTotalFiles = 44;
@@ -2552,8 +2550,8 @@ int installGfx()
 	updateProgressWindow ("Gfx", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "Gfx\n";
+	std::cout << "========================================================================\n";
+	std::cout << "Gfx\n";
 
 	path = sOutputPath + "gfx" + PATH_DELIMITER;
 
@@ -2563,7 +2561,7 @@ int installGfx()
 		try
 		{
 			sprintf (szNum, "%d", i);
-			output = getImageFromRes (string ("CLN") + szNum + "LOGO");
+			output = getImageFromRes (std::string ("CLN") + szNum + "LOGO");
 			setColor (output, 0, 255, 0, 255);
 			savePCX (output, path + "clanlogo" + szNum + ".pcx");
 			SDL_FreeSurface (output);
@@ -3159,13 +3157,13 @@ int installGfx()
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("Gfx") + TEXT_FILE_LF);
+		writeLog (std::string ("Gfx") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 
 	return 1;
 }
@@ -3173,7 +3171,7 @@ int installGfx()
 //-------------------------------------------------------------
 int installBuildingSounds()
 {
-	string path;
+	std::string path;
 	iTotalFiles = 46;
 	iErrors = 0;
 	iInstalledFiles = 0;
@@ -3183,8 +3181,8 @@ int installBuildingSounds()
 	updateProgressWindow ("Building sounds", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "Building sounds\n";
+	std::cout << "========================================================================\n";
+	std::cout << "Building sounds\n";
 
 	// energy big
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "energy_big" + PATH_DELIMITER;
@@ -3301,20 +3299,20 @@ int installBuildingSounds()
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("Building sounds") + TEXT_FILE_LF);
+		writeLog (std::string ("Building sounds") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 	return 1;
 }
 
 //-------------------------------------------------------------
 int installVehicleSounds()
 {
-	string path;
+	std::string path;
 	iTotalFiles = 178;
 	iErrors = 0;
 	iInstalledFiles = 0;
@@ -3324,8 +3322,8 @@ int installVehicleSounds()
 	updateProgressWindow ("Vehicle sounds", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "Vehicle Sounds\n";
+	std::cout << "========================================================================\n";
+	std::cout << "Vehicle Sounds\n";
 
 	// air_transport
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
@@ -3612,21 +3610,21 @@ int installVehicleSounds()
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("Vehicle sounds") + TEXT_FILE_LF);
+		writeLog (std::string ("Vehicle sounds") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 	return 1;
 }
 
 //-------------------------------------------------------------
 void installVoices()
 {
-	string path;
-	string waveExt;
+	std::string path;
+	std::string waveExt;
 	iTotalFiles = 65;
 	iErrors = 0;
 	iInstalledFiles = 0;
@@ -3636,8 +3634,8 @@ void installVoices()
 	updateProgressWindow ("Voices", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "Voices\n";
+	std::cout << "========================================================================\n";
+	std::cout << "Voices\n";
 
 	path = sOutputPath + "voices" + PATH_DELIMITER;
 	waveExt = ".wav";
@@ -3745,19 +3743,19 @@ void installVoices()
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("Voices") + TEXT_FILE_LF);
+		writeLog (std::string ("Voices") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 }
 
 //-------------------------------------------------------------
 void installMaps()
 {
-	string path;
+	std::string path;
 	iTotalFiles = 24;
 	iErrors = 0;
 	iInstalledFiles = 0;
@@ -3766,8 +3764,8 @@ void installMaps()
 	updateProgressWindow ("Maps", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "Maps\n";
+	std::cout << "========================================================================\n";
+	std::cout << "Maps\n";
 
 	path = sOutputPath + "maps" + PATH_DELIMITER;
 	copyFile (sMAXPath + "CRATER_1.WRL", path + "Iron Cross.wrl");
@@ -3797,19 +3795,19 @@ void installMaps()
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("Maps") + TEXT_FILE_LF);
+		writeLog (std::string ("Maps") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 }
 
 //-------------------------------------------------------------
 void installSounds()
 {
-	string path;
+	std::string path;
 	iTotalFiles = 31;
 	iErrors = 0;
 	iInstalledFiles = 0;
@@ -3819,8 +3817,8 @@ void installSounds()
 	updateProgressWindow ("Sounds", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "Sounds\n";
+	std::cout << "========================================================================\n";
+	std::cout << "Sounds\n";
 
 	path = sOutputPath + "sounds" + PATH_DELIMITER;
 	copyWAV (sMAXPath + "ACTIVATE" + waveExtension, path + "activate.wav");
@@ -3858,19 +3856,19 @@ void installSounds()
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("Sounds") + TEXT_FILE_LF);
+		writeLog (std::string ("Sounds") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 }
 
 //-------------------------------------------------------------
 void installMusic()
 {
-	string path;
+	std::string path;
 	iTotalFiles = 13;
 	iErrors = 0;
 	iInstalledFiles = 0;
@@ -3881,8 +3879,8 @@ void installMusic()
 	updateProgressWindow ("Music (May take a while)", iTotalFiles, iInstalledFiles);
 #endif
 
-	cout << "========================================================================\n";
-	cout << "Music (May take a while)\n";
+	std::cout << "========================================================================\n";
+	std::cout << "Music (May take a while)\n";
 
 	path = sOutputPath + "music" + PATH_DELIMITER;
 	copyWAV (sMAXPath + "MAIN_MSC.MSC", path + "main.wav");
@@ -3901,13 +3899,13 @@ void installMusic()
 
 	if (logFile != nullptr)
 	{
-		writeLog (string ("Music") + TEXT_FILE_LF);
+		writeLog (std::string ("Music") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	cout << "\n";
-	cout << iToStr (iErrors) << " errors\n";
+	std::cout << "\n";
+	std::cout << iToStr (iErrors) << " errors\n";
 }
 
 //-------------------------------------------------------------
@@ -3934,47 +3932,47 @@ void initialize()
 //-------------------------------------------------------------
 void showIntroduction()
 {
-	string strAbout1 = "Resinstaller - installs graphics and sounds from Interplay's M.A.X. to ";
-	string strAbout2 = "M.A.X.R. for original game look and feel. For this you need an existing ";
-	string strAbout3 = "M.A.X. installation or an original M.A.X. CD available.";
+	std::string strAbout1 = "Resinstaller - installs graphics and sounds from Interplay's M.A.X. to ";
+	std::string strAbout2 = "M.A.X.R. for original game look and feel. For this you need an existing ";
+	std::string strAbout3 = "M.A.X. installation or an original M.A.X. CD available.";
 
-	string strGPL1 = "This program is free software; you can redistribute it and/or modify ";
-	string strGPL2 = "it under the terms of the GNU General Public License as published by ";
-	string strGPL3 = "the Free Software Foundation; either version 2 of the License, or ";
-	string strGPL4 = "(at your option) any later version.";
+	std::string strGPL1 = "This program is free software; you can redistribute it and/or modify ";
+	std::string strGPL2 = "it under the terms of the GNU General Public License as published by ";
+	std::string strGPL3 = "the Free Software Foundation; either version 2 of the License, or ";
+	std::string strGPL4 = "(at your option) any later version.";
 
-	string strGPL5 = "This program is distributed in the hope that it will be useful, ";
-	string strGPL6 = "but WITHOUT ANY WARRANTY; without even the implied warranty of ";
-	string strGPL7 = "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the ";
-	string strGPL8 = "GNU General Public License for more details.";
+	std::string strGPL5 = "This program is distributed in the hope that it will be useful, ";
+	std::string strGPL6 = "but WITHOUT ANY WARRANTY; without even the implied warranty of ";
+	std::string strGPL7 = "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the ";
+	std::string strGPL8 = "GNU General Public License for more details.";
 
 #if MAC
-	string strText = strAbout1 + strAbout2 + strAbout3 + "\n\n\n"
+	std::string strText = strAbout1 + strAbout2 + strAbout3 + "\n\n\n"
 	               + strGPL1 + strGPL2 + strGPL3 + strGPL4 + "\n\n"
 	               + strGPL5 + strGPL6 + strGPL7 + strGPL8;
 	showIntroductionMAC (strText);
 #else
-	cout << strAbout1 << endl;
-	cout << strAbout2 << endl;
-	cout << strAbout3 << endl
-		 << endl;
-	cout << strGPL1 << endl;
-	cout << strGPL2 << endl;
-	cout << strGPL3 << endl;
-	cout << strGPL4 << endl
-		 << endl;
-	cout << strGPL5 << endl;
-	cout << strGPL6 << endl;
-	cout << strGPL7 << endl;
-	cout << strGPL8 << endl
-		 << endl;
+	std::cout << strAbout1 << std::endl;
+	std::cout << strAbout2 << std::endl;
+	std::cout << strAbout3 << std::endl
+			  << std::endl;
+	std::cout << strGPL1 << std::endl;
+	std::cout << strGPL2 << std::endl;
+	std::cout << strGPL3 << std::endl;
+	std::cout << strGPL4 << std::endl
+		 << std::endl;
+	std::cout << strGPL5 << std::endl;
+	std::cout << strGPL6 << std::endl;
+	std::cout << strGPL7 << std::endl;
+	std::cout << strGPL8 << std::endl
+		 << std::endl;
 #endif
 }
 
 //-------------------------------------------------------------
 void createLogFile()
 {
-	string path;
+	std::string path;
 #ifdef WIN32
 	// write log file to user home dir
 	char szPath[MAX_PATH];
@@ -3992,40 +3990,40 @@ void createLogFile()
 	}
 	if (path.empty())
 	{
-		cout << "Warning: Couldn't determine home directory. Writing log to current directory instead.\n";
+		std::cout << "Warning: Couldn't determine home directory. Writing log to current directory instead.\n";
 	}
 
 #endif
 
-	string fileName = path + "resinstaller.log";
+	std::string fileName = path + "resinstaller.log";
 	logFile = SDL_RWFromFile (fileName.c_str(), "a");
 	if (logFile == nullptr)
 	{
-		cout << "Warning: Couldn't create log file. Writing to stdout instead.\n";
+		std::cout << "Warning: Couldn't create log file. Writing to stdout instead.\n";
 	}
 	else
 	{
 		freopen ("resinstaller.log", "a", stderr); // write errors to log instead stdout(.txt)
 	}
 
-	writeLog (string ("resinstaller version ") + VERSION + TEXT_FILE_LF);
+	writeLog (std::string ("resinstaller version ") + VERSION + TEXT_FILE_LF);
 }
 
 void checkWritePermissions()
 {
 #ifdef WIN32
 	// create test file
-	string testFileName = sOutputPath + "\\writeTest.txt";
+	std::string testFileName = sOutputPath + "\\writeTest.txt";
 	SDL_RWops* testFile = SDL_RWFromFile (testFileName.c_str(), "w");
 
 	if (testFile == 0)
 	{
-		writeLog (string ("Couldn't write to output directory") + TEXT_FILE_LF);
+		writeLog (std::string ("Couldn't write to output directory") + TEXT_FILE_LF);
 		if (!bDoNotElevate)
 		{
-			writeLog (string ("Retrying with admin rights...") + TEXT_FILE_LF);
+			writeLog (std::string ("Retrying with admin rights...") + TEXT_FILE_LF);
 			SDL_RWclose (logFile);
-			string parameter = "\"" + sMAXPath + "\"\" \"" + sOutputPath + "\"\" " + sLanguage + " " + sResChoice + " /donotelevate";
+			std::string parameter = "\"" + sMAXPath + "\"\" \"" + sOutputPath + "\"\" " + sLanguage + " " + sResChoice + " /donotelevate";
 
 			HINSTANCE result = ShellExecuteA (
 				nullptr,
@@ -4039,7 +4037,7 @@ void checkWritePermissions()
 				exit (0); // success
 		}
 
-		cout << "Failed. Please restart the application with admin rights." << endl;
+		std::cout << "Failed. Please restart the application with admin rights." << std::endl;
 
 		// wait for key press
 		FlushConsoleInputBuffer (GetStdHandle (STD_INPUT_HANDLE));
@@ -4055,7 +4053,7 @@ void checkWritePermissions()
 }
 
 //-------------------------------------------------------------
-bool validateMAXPath (string& maxPath)
+bool validateMAXPath (std::string& maxPath)
 {
 	// now testing different input variations
 	try
@@ -4115,10 +4113,10 @@ bool validateMAXPath (string& maxPath)
 }
 
 //-------------------------------------------------------------
-string getMAXPathFromUser (string cmdLineMaxPath)
+std::string getMAXPathFromUser (std::string cmdLineMaxPath)
 {
-	string pathFromUser = "";
-	string sTmp = "";
+	std::string pathFromUser = "";
+	std::string sTmp = "";
 
 #if MAC
 	// pass the validateMAXPath-Method as function pointer, so that the askForCDPath-Method can determine, if the path is valid.
@@ -4126,46 +4124,46 @@ string getMAXPathFromUser (string cmdLineMaxPath)
 
 #else
 
-	cout << "Path to an existing M.A.X. installation or mounted cd." << endl;
+	std::cout << "Path to an existing M.A.X. installation or mounted cd." << std::endl;
 	// test, if a path was given from the command line
 	if (cmdLineMaxPath.size() != 0)
 	{
 		trimQuotes (cmdLineMaxPath);
 		writeLog ("sMAXPath from command line: " + cmdLineMaxPath + TEXT_FILE_LF);
-		cout << "Path was given as command line argument: " << cmdLineMaxPath << endl;
+		std::cout << "Path was given as command line argument: " << cmdLineMaxPath << std::endl;
 		if (validateMAXPath (cmdLineMaxPath))
 			return cmdLineMaxPath;
 		else
-			cout << "Path is not a valid full path to an existing M.A.X. installation or mounted cd." << endl;
+			std::cout << "Path is not a valid full path to an existing M.A.X. installation or mounted cd." << std::endl;
 	}
 
 	while (1)
 	{
-		cout << "Please enter full path to existing M.A.X. installation or mounted cd:" << endl;
+		std::cout << "Please enter full path to existing M.A.X. installation or mounted cd:" << std::endl;
 
 		// read path from cin
-		getline (cin, pathFromUser, '\n');
+		std::getline (std::cin, pathFromUser, '\n');
 		trimSpaces (pathFromUser);
 		trimQuotes (pathFromUser);
 
 		if (validateMAXPath (pathFromUser))
 			break;
 
-		cout << "Couldn't find valid M.A.X. installation in given folder:\n";
-		cout << "No max.res found.\n";
+		std::cout << "Couldn't find valid M.A.X. installation in given folder:\n";
+		std::cout << "No max.res found.\n";
 		pathFromUser.clear();
 	}
-	cout << endl;
+	std::cout << std::endl;
 #endif
 
 	return pathFromUser;
 }
 
 //-------------------------------------------------------------
-bool validateOutputPath (string& outputPath)
+bool validateOutputPath (std::string& outputPath)
 {
 	// test for valid output folder
-	string testFileName = "init.pcx";
+	std::string testFileName = "init.pcx";
 	SDL_RWops* testFile;
 	try
 	{
@@ -4189,13 +4187,13 @@ bool validateOutputPath (string& outputPath)
 	return false;
 }
 
-string validateRessources (string zChoices)
+std::string validateRessources (std::string zChoices)
 {
-	if (zChoices.find ("all") != string::npos)
+	if (zChoices.find ("all") != std::string::npos)
 	{
 		zChoices = "0123456789ab";
 	}
-	if (zChoices.find ("z") != string::npos)
+	if (zChoices.find ("z") != std::string::npos)
 	{
 		zChoices = "012345b";
 	}
@@ -4204,30 +4202,30 @@ string validateRessources (string zChoices)
 
 void getResChoiceFromUser()
 {
-	string sChoiceFromUser = "";
+	std::string sChoiceFromUser = "";
 	// what kind of ressources should the resinstaller import into M.A.X. Reloaded
-	cout << "What kind of ressources should the resinstaller import into your M.A.X. Reloaded installation?" << endl;
-	cout << "========================================================================" << endl;
-	cout << "All Ressources       (all)" << endl;
-	cout << "==========================" << endl;
-	cout << "Building Sounds        (0)" << endl;
-	cout << "Vehicle Sounds         (1)" << endl;
-	cout << "Voices                 (2)" << endl;
-	cout << "Sounds                 (3)" << endl;
-	cout << "Music                  (4)" << endl;
-	cout << "Movies                 (5)" << endl;
-	cout << "FX                     (6)" << endl;
-	cout << "GFX                    (7)" << endl;
-	cout << "Vehicle Videos         (8)" << endl;
-	cout << "Vehicle Graphics       (9)" << endl;
-	cout << "Building Graphics      (a)" << endl;
-	cout << "Maps                   (b)" << endl;
-	cout << "==========================" << endl;
-	cout << "All but no old Graphic (z)" << endl;
-	cout << "==========================" << endl;
-	cout << "Example: Type \"0123458b\", \"all\" or \"z\" without the \"" << endl;
+	std::cout << "What kind of ressources should the resinstaller import into your M.A.X. Reloaded installation?" << std::endl;
+	std::cout << "========================================================================" << std::endl;
+	std::cout << "All Ressources       (all)" << std::endl;
+	std::cout << "==========================" << std::endl;
+	std::cout << "Building Sounds        (0)" << std::endl;
+	std::cout << "Vehicle Sounds         (1)" << std::endl;
+	std::cout << "Voices                 (2)" << std::endl;
+	std::cout << "Sounds                 (3)" << std::endl;
+	std::cout << "Music                  (4)" << std::endl;
+	std::cout << "Movies                 (5)" << std::endl;
+	std::cout << "FX                     (6)" << std::endl;
+	std::cout << "GFX                    (7)" << std::endl;
+	std::cout << "Vehicle Videos         (8)" << std::endl;
+	std::cout << "Vehicle Graphics       (9)" << std::endl;
+	std::cout << "Building Graphics      (a)" << std::endl;
+	std::cout << "Maps                   (b)" << std::endl;
+	std::cout << "==========================" << std::endl;
+	std::cout << "All but no old Graphic (z)" << std::endl;
+	std::cout << "==========================" << std::endl;
+	std::cout << "Example: Type \"0123458b\", \"all\" or \"z\" without the \"" << std::endl;
 
-	getline (cin, sChoiceFromUser); // get user input
+	std::getline (std::cin, sChoiceFromUser); // get user input
 	for (unsigned int i = 0; i < (sChoiceFromUser.length()); i++)
 	{
 		// convert string into lowercase
@@ -4237,9 +4235,9 @@ void getResChoiceFromUser()
 }
 
 //-------------------------------------------------------------
-string getOutputPathFromUser (string cmdLineOutputPath)
+std::string getOutputPathFromUser (std::string cmdLineOutputPath)
 {
-	string pathFromUser = "";
+	std::string pathFromUser = "";
 
 #if MAC
 	// pass the validateOutputPath-Method as function pointer, so that the askForOutputPath-Method can determine, if the path is valid.
@@ -4247,42 +4245,42 @@ string getOutputPathFromUser (string cmdLineOutputPath)
 
 #else
 
-	cout << "Path to M.A.X.R. for extracted files." << endl;
+	std::cout << "Path to M.A.X.R. for extracted files." << std::endl;
 	// test, if a path was given from the command line
 	if (cmdLineOutputPath.size() != 0)
 	{
 		trimQuotes (cmdLineOutputPath);
 		writeLog ("sOutputPath from command line: " + cmdLineOutputPath + TEXT_FILE_LF);
-		cout << "Path was given as command line argument: " << cmdLineOutputPath << endl;
+		std::cout << "Path was given as command line argument: " << cmdLineOutputPath << std::endl;
 		if (validateOutputPath (cmdLineOutputPath))
 			return cmdLineOutputPath;
 		else
-			cout << "Can't extract the resources to the path, because it doesn't point to a M.A.X.R installation." << endl;
+			std::cout << "Can't extract the resources to the path, because it doesn't point to a M.A.X.R installation." << std::endl;
 	}
 
 	while (1)
 	{
-		cout << "Please enter full path to M.A.X.R. installation for extracted files:" << endl;
+		std::cout << "Please enter full path to M.A.X.R. installation for extracted files:" << std::endl;
 
 		// read the path from cin
-		getline (cin, pathFromUser);
+		std::getline (std::cin, pathFromUser);
 		trimSpaces (pathFromUser);
 		trimQuotes (pathFromUser);
 
 		if (validateOutputPath (pathFromUser))
 			break;
 
-		cout << "Couldn't find valid M.A.X.R. installation in given folder." << endl;
+		std::cout << "Couldn't find valid M.A.X.R. installation in given folder." << std::endl;
 		pathFromUser.clear();
 	}
-	cout << endl;
+	std::cout << std::endl;
 #endif
 
 	return pathFromUser;
 }
 
 //-------------------------------------------------------------
-int checkForAvailableLanguages (string testFileName, bool& bGerman, bool& bItalian, bool& bFrench, bool& bUppercase)
+int checkForAvailableLanguages (std::string testFileName, bool& bGerman, bool& bItalian, bool& bFrench, bool& bUppercase)
 {
 	int iLanguages = 0;
 	SDL_RWops* testFile;
@@ -4362,136 +4360,136 @@ int installEverything (void*)
 {
 	gFinishedInstalling = false;
 
-	if (sResChoice.find ("0") != string::npos)
+	if (sResChoice.find ("0") != std::string::npos)
 	{
 		installBuildingSounds();
 	}
 	else
 	{
-		cout << "Skip Building Sounds" << endl;
-		writeLog (string ("Skip Building Sounds") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip Building Sounds" << std::endl;
+		writeLog (std::string ("Skip Building Sounds") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	if (sResChoice.find ("1") != string::npos)
+	if (sResChoice.find ("1") != std::string::npos)
 	{
 		installVehicleSounds();
 	}
 	else
 	{
-		cout << "Skip Vehicle Sounds" << endl;
-		writeLog (string ("Skip Vehicle Sounds") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip Vehicle Sounds" << std::endl;
+		writeLog (std::string ("Skip Vehicle Sounds") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	if (sResChoice.find ("2") != string::npos)
+	if (sResChoice.find ("2") != std::string::npos)
 	{
 		installVoices();
 	}
 	else
 	{
-		cout << "Skip Voices" << endl;
-		writeLog (string ("Skip Voices") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip Voices" << std::endl;
+		writeLog (std::string ("Skip Voices") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	if (sResChoice.find ("3") != string::npos)
+	if (sResChoice.find ("3") != std::string::npos)
 	{
 		installSounds();
 	}
 	else
 	{
-		cout << "Skip Sounds" << endl;
-		writeLog (string ("Skip Sounds") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip Sounds" << std::endl;
+		writeLog (std::string ("Skip Sounds") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	if (sResChoice.find ("4") != string::npos)
+	if (sResChoice.find ("4") != std::string::npos)
 	{
 		installMusic();
 	}
 	else
 	{
-		cout << "Skip Music" << endl;
-		writeLog (string ("Skip Music") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip Music" << std::endl;
+		writeLog (std::string ("Skip Music") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	if (sResChoice.find ("5") != string::npos)
+	if (sResChoice.find ("5") != std::string::npos)
 	{
 		installMVEs();
 	}
 	else
 	{
-		cout << "Skip Movies" << endl;
-		writeLog (string ("Skip Movies") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip Movies" << std::endl;
+		writeLog (std::string ("Skip Movies") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	if (sResChoice.find ("6") != string::npos)
+	if (sResChoice.find ("6") != std::string::npos)
 	{
 		installFX();
 	}
 	else
 	{
-		cout << "Skip FX" << endl;
-		writeLog (string ("Skip FX") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip FX" << std::endl;
+		writeLog (std::string ("Skip FX") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	if (sResChoice.find ("7") != string::npos)
+	if (sResChoice.find ("7") != std::string::npos)
 	{
 		installGfx();
 	}
 	else
 	{
-		cout << "Skip GFX" << endl;
-		writeLog (string ("Skip GFX") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip GFX" << std::endl;
+		writeLog (std::string ("Skip GFX") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	if (sResChoice.find ("8") != string::npos)
+	if (sResChoice.find ("8") != std::string::npos)
 	{
 		installVehicleVideos();
 	}
 	else
 	{
-		cout << "Skip Vehicle Videos" << endl;
-		writeLog (string ("Skip Vehicle Videos") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip Vehicle Videos" << std::endl;
+		writeLog (std::string ("Skip Vehicle Videos") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	if (sResChoice.find ("9") != string::npos)
+	if (sResChoice.find ("9") != std::string::npos)
 	{
 		installVehicleGraphics();
 	}
 	else
 	{
-		cout << "Skip Vehicle Graphics" << endl;
-		writeLog (string ("Skip Vehicle Graphics") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip Vehicle Graphics" << std::endl;
+		writeLog (std::string ("Skip Vehicle Graphics") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	if (sResChoice.find ("a") != string::npos)
+	if (sResChoice.find ("a") != std::string::npos)
 	{
 		installBuildingGraphics();
 	}
 	else
 	{
-		cout << "Skip Building Graphics" << endl;
-		writeLog (string ("Skip Building Graphics") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip Building Graphics" << std::endl;
+		writeLog (std::string ("Skip Building Graphics") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
-	if (sResChoice.find ("b") != string::npos)
+	if (sResChoice.find ("b") != std::string::npos)
 	{
 		installMaps();
 	}
 	else
 	{
-		cout << "Skip Maps" << endl;
-		writeLog (string ("Skip Maps") + TEXT_FILE_LF);
-		writeLog (string ("========================================================================") + TEXT_FILE_LF);
+		std::cout << "Skip Maps" << std::endl;
+		writeLog (std::string ("Skip Maps") + TEXT_FILE_LF);
+		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
 
 	gFinishedInstalling = true;
@@ -4499,10 +4497,10 @@ int installEverything (void*)
 	return 0;
 }
 
-void trimSpaces (string& str, const locale& loc)
+void trimSpaces (std::string& str, const std::locale& loc)
 {
 	// trim spaces at the beginning
-	string::size_type pos = 0;
+	std::string::size_type pos = 0;
 	while (pos < str.size() && isspace (str[pos], loc))
 		pos++;
 	str.erase (0, pos);
@@ -4513,9 +4511,9 @@ void trimSpaces (string& str, const locale& loc)
 	str.erase (pos);
 }
 
-void trimQuotes (string& str)
+void trimQuotes (std::string& str)
 {
-	string::size_type pos = 0;
+	std::string::size_type pos = 0;
 	while (pos < str.size() && str[pos] == '"')
 		pos++;
 	str.erase (0, pos);
@@ -4563,7 +4561,7 @@ int main (int argc, char* argv[])
 
 	sResChoice = validateRessources (sResChoice); // validate the parameter for importing the ressources
 
-	if (string (argv[argc - 1]) == "/donotelevate")
+	if (std::string (argv[argc - 1]) == "/donotelevate")
 		bDoNotElevate = true;
 	else
 		bDoNotElevate = false;
@@ -4583,7 +4581,7 @@ int main (int argc, char* argv[])
 	}
 
 	// test with a sound file, which languages are available at the install source
-	string testFileName = "F001";
+	std::string testFileName = "F001";
 	// check for North American CD source
 	waveExtension = ".WAV";
 	try
@@ -4664,7 +4662,7 @@ int main (int argc, char* argv[])
 #else
 
 		// make menu values
-		vector<string> vectorLanguages; // initialize empty vector of strings
+		std::vector<std::string> vectorLanguages; // initialize empty vector of strings
 		vectorLanguages.push_back ("english");
 
 		if (bGerman)
@@ -4683,20 +4681,20 @@ int main (int argc, char* argv[])
 		do
 		{
 			// make menu output
-			cout << "\nThe following voice samples are available from your install source:\n";
-			cout << "\n No. | as word\n";
-			cout << " ------------- " << endl;
+			std::cout << "\nThe following voice samples are available from your install source:\n";
+			std::cout << "\n No. | as word\n";
+			std::cout << " ------------- " << std::endl;
 			for (unsigned ii = 0; ii < vectorLanguages.size(); ii++)
 			{
-				cout << "  " << ii + 1 << "  | " << vectorLanguages[ii] << endl; // output languages from vector with increased number to start menu with 1 instead of 0
-				cout << " ------------- " << endl;
+				std::cout << "  " << ii + 1 << "  | " << vectorLanguages[ii] << std::endl; // output languages from vector with increased number to start menu with 1 instead of 0
+				std::cout << " ------------- " << std::endl;
 			}
 
-			cout << "\nPlease enter your preferred language (as number or word): ";
+			std::cout << "\nPlease enter your preferred language (as number or word): ";
 
 			// read lang from cin
-			string input;
-			getline (cin, input);
+			std::string input;
+			std::getline (std::cin, input);
 			trimSpaces (input);
 			transform (input.begin(), input.end(), input.begin(), ::tolower);
 
@@ -4706,7 +4704,7 @@ int main (int argc, char* argv[])
 				input = vectorLanguages[value - 1];
 			}
 			sLanguage = input;
-			string errormsg;
+			std::string errormsg;
 			if (value < 0 || value > (long) vectorLanguages.size())
 			{
 				errormsg = "you inserted an invalid number";
@@ -4737,8 +4735,8 @@ int main (int argc, char* argv[])
 			}
 			if (sVoicePath.empty())
 			{
-				cout << "\nSo sorry, but " << errormsg << endl;
-				cout << " Please try it again...\n";
+				std::cout << "\nSo sorry, but " << errormsg << std::endl;
+				std::cout << " Please try it again...\n";
 			}
 		} while (sVoicePath.empty());
 
@@ -4799,7 +4797,7 @@ int main (int argc, char* argv[])
 
 	if (lPosBegin == lEndOfFile)
 	{
-		cout << "Error: [EOD] not found in resource file. Please contact the developer!";
+		std::cout << "Error: [EOD] not found in resource file. Please contact the developer!";
 		exit (-1);
 	}
 
@@ -4820,14 +4818,14 @@ int main (int argc, char* argv[])
 
 	if (wasError)
 	{
-		cout << "There were errors during install. See 'resinstaller.log' for details.\n";
+		std::cout << "There were errors during install. See 'resinstaller.log' for details.\n";
 #if MAC
 		showMessage ("Installation Finished", "There were errors during install. See 'resinstaller.log' for details.");
 #endif
 	}
 	else
 	{
-		cout << "Finished\n";
+		std::cout << "Finished\n";
 #if MAC
 		showMessage ("Installation Finished", "The installation finished without errors. Have fun playing M.A.X.R.!");
 #endif

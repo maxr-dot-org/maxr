@@ -83,12 +83,12 @@ public:
 	SDL_Surface* getSurface (int imageNr = 0);
 };
 
-SDL_Surface* getImageFromRes (string file_name, int imageNr = 0);
+SDL_Surface* getImageFromRes (std::string file_name, int imageNr = 0);
 void removePlayerColor (SDL_Surface* surface);
 int saveAllFiles();
-void copyFileFromRes (string src, string dst, int number = 0);
-void copyFileFromRes_rpc (string src, string dst, int number = 0);
-void copyImageFromFLC (string fileName, string dst);
+void copyFileFromRes (std::string src, std::string dst, int number = 0);
+void copyFileFromRes_rpc (std::string src, std::string dst, int number = 0);
+void copyImageFromFLC (std::string fileName, std::string dst);
 
 /** resizes (not scales!) a surface
 * @author Eiko
@@ -102,8 +102,8 @@ void copyImageFromFLC (string fileName, string dst);
 void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w);
 void setColor (SDL_Surface* surface, unsigned char nr, unsigned char r, unsigned char g, unsigned char b);
 void generateAnimationFrame (SDL_Surface* surface, unsigned char frame);
-string iToStr (int x);
+std::string iToStr (int x);
 void updateProgressbar();
-void writeLog (string msg);
+void writeLog (std::string msg);
 
 #endif // ConvertH

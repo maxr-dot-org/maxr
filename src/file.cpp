@@ -36,11 +36,11 @@
 
 //first tries to open a file with lowercase name
 //if this fails, tries to open the file with uppercase name
-SDL_RWops* openFile (string path, const char* mode)
+SDL_RWops* openFile (std::string path, const char* mode)
 {
 	//split string into path and filename
 	int pos = (int) path.rfind (PATH_DELIMITER);
-	string fileName = path.substr (pos + 1, path.length());
+	std::string fileName = path.substr (pos + 1, path.length());
 	path = path.substr (0, pos + 1);
 
 	//try to open with lower case file name
@@ -49,7 +49,7 @@ SDL_RWops* openFile (string path, const char* mode)
 	{
 		fileName[i] = tolower (fileName[i]);
 	}
-	string lowerCaseFileName = fileName;
+	std::string lowerCaseFileName = fileName;
 	SDL_RWops* file = SDL_RWFromFile ((path + fileName).c_str(), mode);
 	if (file != nullptr)
 	{
@@ -71,7 +71,7 @@ SDL_RWops* openFile (string path, const char* mode)
 	return nullptr;
 }
 
-void copyFile (string source, string dest)
+void copyFile (std::string source, std::string dest)
 {
 	long int size;
 	unsigned char* buffer;
@@ -85,7 +85,7 @@ void copyFile (string source, string dest)
 		destFile = SDL_RWFromFile (dest.c_str(), "wb");
 		if (destFile == nullptr)
 		{
-			throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
+			throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
 		}
 
 		SDL_RWseek (sourceFile, 0, SEEK_END);
@@ -94,7 +94,7 @@ void copyFile (string source, string dest)
 		buffer = (unsigned char*) malloc (size);
 		if (buffer == nullptr)
 		{
-			cout << "Out of memory\n";
+			std::cout << "Out of memory\n";
 			exit (-1);
 		}
 

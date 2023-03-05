@@ -22,7 +22,10 @@
 #ifndef pcx_h
 #define pcx_h
 
-int savePCX (SDL_Surface* surface, string fileName);
-SDL_Surface* loadPCX (string name);
+#include <SDL.h>
+#include <string>
+
+int savePCX (SDL_Surface* surface, std::string fileName);
+SDL_Surface* loadPCX (std::string name);
 
 #endif //#ifndef pcx_h

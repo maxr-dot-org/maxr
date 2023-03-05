@@ -107,10 +107,10 @@ public:
 int readSmplChunk (SDL_RWops* file, cWaveFile& waveFile);
 
 //loads an wav file into the cWaveFile structure
-int loadWAV (string src, cWaveFile& waveFile);
+int loadWAV (std::string src, cWaveFile& waveFile);
 
 //saves a cWaveFile structure to a physical wav file
-void saveWAV (string dst, cWaveFile& waveFile);
+void saveWAV (std::string dst, cWaveFile& waveFile);
 
 //copys a part of the src file to the dst file
 //the parts are defined by the wave files smpl chunk
@@ -118,11 +118,11 @@ void saveWAV (string dst, cWaveFile& waveFile);
 //and		1 means the first sample loop
 //if oggEncode is set, this function encodes the file bevor saving it
 //the extension .wav is then automatically replaced by .ogg
-void copyPartOfWAV (string src, string dst, Uint8 nr);
+void copyPartOfWAV (std::string src, std::string dst, Uint8 nr);
 
 //if oggEncode is set, this function loads encodes and saves a wave file
 //the extension .wav is then automatically replaced by .ogg
 //if oggEncode is 0, the wave file is just copied
-void copyWAV (string src, string dst);
+void copyWAV (std::string src, std::string dst);
 
 #endif //wave_h

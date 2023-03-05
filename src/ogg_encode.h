@@ -27,6 +27,6 @@
 #define READ 1024
 #define VORBIS_QUALITY 0.4
 
-void encodeWAV (string fileName, cWaveFile& waveFile);
+void encodeWAV (std::string fileName, cWaveFile& waveFile);
 
 #endif //Ogg_EncodeH

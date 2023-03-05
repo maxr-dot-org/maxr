@@ -33,21 +33,19 @@
 # include <windows.h>
 #endif
 
-using namespace std;
-
 #ifdef _WIN32
 # pragma warning(disable : 4312)
 # pragma warning(disable : 4996)
 #endif
 
 EX bool bDoNotElevate;
-EX string sAppName;
-EX string sMAXPath;
-EX string sVoicePath;
-EX string sOutputPath;
-EX string sLanguage;
-EX string sResChoice;
-EX string waveExtension;
+EX std::string sAppName;
+EX std::string sMAXPath;
+EX std::string sVoicePath;
+EX std::string sOutputPath;
+EX std::string sLanguage;
+EX std::string sResChoice;
+EX std::string waveExtension;
 EX SDL_RWops* res ZERO;
 EX SDL_RWops* logFile ZERO;
 
@@ -63,8 +61,8 @@ EX bool oggEncode;
 class InstallException
 {
 public:
-	string message;
-	InstallException (string m) { message = m; };
+	std::string message;
+	InstallException (std::string m) { message = m; };
 };
 
 void trimSpaces (std::string& str, const std::locale& loc = std::locale());
