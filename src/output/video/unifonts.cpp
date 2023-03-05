@@ -30,8 +30,6 @@
 
 #include <config/workaround/cpp17/filesystem.h>
 
-using namespace std;
-
 #if 1
 /*
  * The following stuff is part of the GNU LIBICONV Library.
@@ -576,14 +574,14 @@ const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset) con
 	return nullptr;
 }
 
-void cUnicodeFont::showText (SDL_Rect rDest, const string& sText, eUnicodeFontType fonttype)
+void cUnicodeFont::showText (SDL_Rect rDest, const std::string& sText, eUnicodeFontType fonttype)
 {
 	showText (rDest.x, rDest.y, sText, fonttype);
 }
 
-void cUnicodeFont::showText (int x, int y, const string& text, eUnicodeFontType fonttype)
+void cUnicodeFont::showText (int x, int y, const std::string& text, eUnicodeFontType fonttype)
 {
-	string sText (text);
+	std::string sText (text);
 	int offX = x;
 	int offY = y;
 	int iSpace = 0;
@@ -647,15 +645,15 @@ void cUnicodeFont::showText (int x, int y, const string& text, eUnicodeFontType 
 	}
 }
 
-void cUnicodeFont::showText (const cPosition& position, const string& text, eUnicodeFontType fonttype)
+void cUnicodeFont::showText (const cPosition& position, const std::string& text, eUnicodeFontType fonttype)
 {
 	showText (position.x(), position.y(), text, fonttype);
 }
 
-int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text, eUnicodeFontType fonttype)
+int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const std::string& text, eUnicodeFontType fonttype)
 {
-	string sText (text);
-	string drawString = "";
+	std::string sText (text);
+	std::string drawString = "";
 
 	while (getTextWide (sText, fonttype) > rDest.w)
 	{
@@ -666,7 +664,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text, eUnico
 		{
 			lastPos = pos;
 			pos = sText.find (" ", pos + 1);
-		} while (getTextWide (sText.substr (0, pos), fonttype) < rDest.w && pos != string::npos);
+		} while (getTextWide (sText.substr (0, pos), fonttype) < rDest.w && pos != std::string::npos);
 
 		// get the words.
 		// If there was no " " in the text we get the whole text string
@@ -680,7 +678,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text, eUnico
 		// we will check this, and cut it if necessary
 		while (getTextWide (drawString, fonttype) > rDest.w)
 		{
-			string stringPart = drawString;
+			std::string stringPart = drawString;
 
 			// delete as many chars as it is needed to fit into the line
 			while (getTextWide (stringPart, fonttype) + getTextWide ("-", fonttype) > rDest.w)
@@ -711,9 +709,9 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text, eUnico
 	return rDest.y;
 }
 
-int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text, eUnicodeFontType fonttype)
+int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const std::string& text, eUnicodeFontType fonttype)
 {
-	string sText (text);
+	std::string sText (text);
 	size_t k;
 
 	do
@@ -722,11 +720,11 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text, eUnicodeF
 		// like we may get them from translation
 		k = sText.find ("\\n");
 
-		if (k != string::npos)
+		if (k != std::string::npos)
 		{
 			sText.replace (k, 2, "\n");
 		}
-	} while (k != string::npos);
+	} while (k != std::string::npos);
 
 	do
 	{
@@ -735,11 +733,11 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text, eUnicodeF
 		// IMPORTANT: _two_ blanks!
 		// don't change this or this will become an endless loop
 
-		if (k != string::npos)
+		if (k != std::string::npos)
 		{
 			sText.erase (k, 1);
 		}
-	} while (k != string::npos);
+	} while (k != std::string::npos);
 
 	// support of linebreaks: snip text at linebreaks,
 	// do the auto linebreak for first part and proceed with second part
@@ -749,9 +747,9 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text, eUnicodeF
 		// - no manual breaklines allowed
 		k = sText.find ("\n");
 
-		if (k != string::npos)
+		if (k != std::string::npos)
 		{
-			string sTmp = sText;
+			std::string sTmp = sText;
 
 			// delete everything before and including linebreak \n
 			sText.erase (0, k + 1);
@@ -762,37 +760,37 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text, eUnicodeF
 			rDest.y = drawWithBreakLines (rDest, sTmp, fonttype);
 			// += getFontHeight (eBitmapFontType); //add newline for each breakline
 		}
-	} while (k != string::npos);
+	} while (k != std::string::npos);
 
 	// draw rest of text
 	return drawWithBreakLines (rDest, sText, fonttype);
 }
 
-void cUnicodeFont::showTextCentered (SDL_Rect rDest, const string& sText, eUnicodeFontType fonttype)
+void cUnicodeFont::showTextCentered (SDL_Rect rDest, const std::string& sText, eUnicodeFontType fonttype)
 {
 	showTextCentered (rDest.x, rDest.y, sText, fonttype);
 }
 
-void cUnicodeFont::showTextCentered (int x, int y, const string& sText, eUnicodeFontType fonttype)
+void cUnicodeFont::showTextCentered (int x, int y, const std::string& sText, eUnicodeFontType fonttype)
 {
 	SDL_Rect rTmp = getTextSize (sText, fonttype);
 	showText (x - rTmp.w / 2, y, sText, fonttype);
 }
 
-void cUnicodeFont::showTextCentered (const cPosition& position, const string& sText, eUnicodeFontType fonttype)
+void cUnicodeFont::showTextCentered (const cPosition& position, const std::string& sText, eUnicodeFontType fonttype)
 {
 	showTextCentered (position.x(), position.y(), sText, fonttype);
 }
 
-int cUnicodeFont::getTextWide (const string& sText, eUnicodeFontType fonttype) const
+int cUnicodeFont::getTextWide (const std::string& sText, eUnicodeFontType fonttype) const
 {
 	SDL_Rect rTmp = getTextSize (sText, fonttype);
 	return rTmp.w;
 }
 
-SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttype) const
+SDL_Rect cUnicodeFont::getTextSize (const std::string& text, eUnicodeFontType fonttype) const
 {
-	string sText (text);
+	std::string sText (text);
 	int iSpace = 0;
 	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
 	SDL_Rect rTmp = {0, 0, 0, 0};
@@ -883,9 +881,9 @@ int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype) const
 	}
 }
 
-string cUnicodeFont::shortenStringToSize (const string& str, int size, eUnicodeFontType fonttype) const
+std::string cUnicodeFont::shortenStringToSize (const std::string& str, int size, eUnicodeFontType fonttype) const
 {
-	string res (str);
+	std::string res (str);
 
 	if (getTextWide (res, fonttype) > size)
 	{

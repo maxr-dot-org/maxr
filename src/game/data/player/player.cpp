@@ -32,8 +32,6 @@
 #include <cassert>
 #include <cmath>
 
-using namespace std;
-
 //------------------------------------------------------------------------------
 void sNewTurnPlayerReport::addUnitBuilt (const sID& unitTypeId)
 {

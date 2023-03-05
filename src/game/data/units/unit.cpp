@@ -34,8 +34,6 @@
 
 #include <algorithm>
 
-using namespace std;
-
 //------------------------------------------------------------------------------
 cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticData, cPlayer* owner, unsigned int ID) :
 	iID (ID),
@@ -357,9 +355,9 @@ std::optional<std::string> cUnit::getCustomName() const
 //------------------------------------------------------------------------------
 /** generates the name for the unit depending on the version number */
 //------------------------------------------------------------------------------
-string cUnit::getNamePrefix() const
+std::string cUnit::getNamePrefix() const
 {
-	string rome = "MK ";
+	std::string rome = "MK ";
 	// +1, because the numbers in the name start at 1, not at 0
 	unsigned int nr = data.getVersion() + 1;
 
@@ -369,7 +367,7 @@ string cUnit::getNamePrefix() const
 //------------------------------------------------------------------------------
 /** Returns the displayed name of the unit */
 //------------------------------------------------------------------------------
-string cUnit::getDisplayName (const std::string& defaultName) const
+std::string cUnit::getDisplayName (const std::string& defaultName) const
 {
 	return getNamePrefix() + " " + getCustomName().value_or (defaultName);
 }
@@ -377,7 +375,7 @@ string cUnit::getDisplayName (const std::string& defaultName) const
 //------------------------------------------------------------------------------
 /** changes the name of the unit and indicates it as "not default" */
 //------------------------------------------------------------------------------
-void cUnit::changeName (const string& newName)
+void cUnit::changeName (const std::string& newName)
 {
 	customName = newName;
 	renamed();

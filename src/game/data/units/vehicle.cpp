@@ -37,8 +37,6 @@
 
 #include <cmath>
 
-using namespace std;
-
 //-----------------------------------------------------------------------------
 // cVehicle Class Implementation
 //-----------------------------------------------------------------------------
@@ -273,7 +271,7 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 
 	while (a >= 10 && costs < staticData->storageResMax - 2)
 	{
-		int inc = 24 - min (16, a);
+		int inc = 24 - std::min (16, a);
 		if (costs + inc > getStoredResources()) break;
 
 		rounds--;
@@ -389,7 +387,7 @@ bool cVehicle::canTransferTo (const cUnit& unit) const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::makeAttackOnThis (cModel& model, cUnit* opponentUnit, const string& reasonForLog) const
+bool cVehicle::makeAttackOnThis (cModel& model, cUnit* opponentUnit, const std::string& reasonForLog) const
 {
 	cMapView mapView (model.getMap(), nullptr);
 	const cUnit* target = cAttackJob::selectTarget (getPosition(), opponentUnit->getStaticUnitData().canAttack, mapView, getOwner());

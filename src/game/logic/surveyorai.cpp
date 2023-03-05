@@ -32,8 +32,6 @@
 #include <cmath>
 #include <forward_list>
 
-using namespace std;
-
 static const float FIELD_BLOCKED = -10000.f;
 static const int ACTION_TIMEOUT = 50;
 

@@ -34,8 +34,6 @@
 #include <iostream>
 #include <sstream>
 
-using namespace std;
-
 //------------------------------------------------------------------------------
 bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 {
@@ -105,18 +103,18 @@ uint32_t MapDownload::calculateCheckSum (const std::string& mapName)
 {
 	uint32_t result = 0;
 	auto filename = cSettings::getInstance().getMapsPath() / mapName;
-	ifstream file (filename.string(), ios::in | ios::binary | ios::ate);
+	std::ifstream file (filename.string(), std::ios::in | std::ios::binary | std::ios::ate);
 	if (!file.is_open() && !cSettings::getInstance().getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
 		filename = cSettings::getInstance().getUserMapsDir() / mapName;
-		file.open (filename.string(), ios::in | ios::binary | ios::ate);
+		file.open (filename.string(), std::ios::in | std::ios::binary | std::ios::ate);
 	}
 	if (file.is_open())
 	{
 		const int mapSize = (int) file.tellg();
 		std::vector<char> data (mapSize);
-		file.seekg (0, ios::beg);
+		file.seekg (0, std::ios::beg);
 
 		file.read (data.data(), 9); // read only header
 		const int width = data[5] + data[6] * 256;
@@ -176,7 +174,7 @@ bool cMapReceiver::finished()
 	if (mapsFolder.empty())
 		mapsFolder = cSettings::getInstance().getMapsPath();
 	const auto filename = mapsFolder / mapName;
-	std::ofstream newMapFile (filename.string(), ios::out | ios::binary);
+	std::ofstream newMapFile (filename.string(), std::ios::out | std::ios::binary);
 	if (newMapFile.bad())
 		return false;
 	newMapFile.write (readBuffer.data(), readBuffer.size());
@@ -240,24 +238,24 @@ bool cMapSender::getMapFileContent()
 {
 	// read map file in memory
 	auto filename = cSettings::getInstance().getMapsPath() / mapName;
-	ifstream file (filename.string(), ios::in | ios::binary | ios::ate);
+	std::ifstream file (filename.string(), std::ios::in | std::ios::binary | std::ios::ate);
 	if (!file.is_open() && !cSettings::getInstance().getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
 		filename = cSettings::getInstance().getUserMapsDir() / mapName;
-		file.open (filename.string(), ios::in | ios::binary | ios::ate);
+		file.open (filename.string(), std::ios::in | std::ios::binary | std::ios::ate);
 	}
 	if (!file.is_open())
 	{
-		Log.warn (string ("MapSender: could not read the map \"") + filename.string() + "\" into memory.");
+		Log.warn (std::string ("MapSender: could not read the map \"") + filename.string() + "\" into memory.");
 		return false;
 	}
 	const std::size_t mapSize = file.tellg();
 	sendBuffer.resize (mapSize);
-	file.seekg (0, ios::beg);
+	file.seekg (0, std::ios::beg);
 	file.read (sendBuffer.data(), mapSize);
 	file.close();
-	Log.debug (string ("MapSender: read the map \"") + filename.string() + "\" into memory.");
+	Log.debug (std::string ("MapSender: read the map \"") + filename.string() + "\" into memory.");
 	return true;
 }
 

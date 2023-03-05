@@ -36,8 +36,6 @@
 
 #include <cmath>
 
-using namespace std;
-
 //--------------------------------------------------------------------------
 cBuildListItem::cBuildListItem()
 {}
@@ -476,17 +474,17 @@ void cBuilding::initMineResourceProd (const cMap& map)
 		if (res->typ != eResourceType::None) maxProd.get (res->typ) += res->value;
 	}
 
-	maxProd.metal = min (maxProd.metal, getStaticData().canMineMaxRes);
-	maxProd.oil = min (maxProd.oil, getStaticData().canMineMaxRes);
-	maxProd.gold = min (maxProd.gold, getStaticData().canMineMaxRes);
+	maxProd.metal = std::min (maxProd.metal, getStaticData().canMineMaxRes);
+	maxProd.oil = std::min (maxProd.oil, getStaticData().canMineMaxRes);
+	maxProd.gold = std::min (maxProd.gold, getStaticData().canMineMaxRes);
 
 	// set default mine allocation
 	int freeProductionCapacity = getStaticData().canMineMaxRes;
 	prod.metal = maxProd.metal;
 	freeProductionCapacity -= prod.metal;
-	prod.gold = min (maxProd.gold, freeProductionCapacity);
+	prod.gold = std::min (maxProd.gold, freeProductionCapacity);
 	freeProductionCapacity -= prod.gold;
-	prod.oil = min (maxProd.oil, freeProductionCapacity);
+	prod.oil = std::min (maxProd.oil, freeProductionCapacity);
 }
 
 //--------------------------------------------------------------------------
@@ -518,7 +516,7 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 
 	while (a >= 15)
 	{
-		turboBuildCosts[2] += (12 * staticData->needsMetal - min (a, 8 * staticData->needsMetal));
+		turboBuildCosts[2] += (12 * staticData->needsMetal - std::min (a, 8 * staticData->needsMetal));
 		a -= 8 * staticData->needsMetal;
 	}
 
@@ -660,7 +658,7 @@ int cBuilding::getBuildSpeed() const
 int cBuilding::getMetalPerRound() const
 {
 	if (buildList.size() > 0)
-		return min (metalPerRound, buildList[0].getRemainingMetal());
+		return std::min (metalPerRound, buildList[0].getRemainingMetal());
 	else
 		return 0;
 }
