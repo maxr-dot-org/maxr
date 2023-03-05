@@ -204,24 +204,24 @@ Var LANGUAGE_DROPLIST
 
 # --- Language Page Function ---
 
-VAR MAX_XML_FILE
+VAR MAX_JSON_FILE
 VAR TMP_STRING
 VAR FILE_LENGTH
 VAR LANGUAGE_CODE
 
 Function ChangeLanguage
     # open the maxr.json
-    FileOpen $MAX_XML_FILE $DOCUMENTS\maxr\maxr.json a
+    FileOpen $MAX_JSON_FILE $DOCUMENTS\maxr\maxr.json a
     StrCpy $FILE_LENGTH "0"
 
     # get the code of the selected language
     StrCpy $LANGUAGE_CODE $SELECTED_LANGUAGE 2 -3
 
-    # find the language code postion in the xml file
-    # the xml must contain this line: "<Language Text="XYZ" />" !!!
+    # find the language code position in the json file
+    # the json must contain this line: '"language": ".."' !!!
     ${While} 0 < 1
         # read the next line
-        FileRead $MAX_XML_FILE $TMP_STRING 1024
+        FileRead $MAX_JSON_FILE $TMP_STRING 1024
 
         # look whether in this line is the language code
         ${StrContains} $0 "$\"language$\": $\"" $TMP_STRING
@@ -238,8 +238,8 @@ Function ChangeLanguage
                IntOp $FILE_LENGTH $FILE_LENGTH + 13
 
                # replace the language code
-               FileSeek $MAX_XML_FILE $FILE_LENGTH SET
-               FileWrite $MAX_XML_FILE $LANGUAGE_CODE
+               FileSeek $MAX_JSON_FILE $FILE_LENGTH SET
+               FileWrite $MAX_JSON_FILE $LANGUAGE_CODE
 
                GoTo done
         notfound:
@@ -249,7 +249,7 @@ Function ChangeLanguage
     ${EndWhile}
     done:
 
-    FileClose $MAX_XML_FILE
+    FileClose $MAX_JSON_FILE
 
 FunctionEnd
 
@@ -291,7 +291,7 @@ FunctionEnd
 
 # --- Function to get the selected language ---
 Function LanguageDialogLeave
-         ${NSD_GetText} $LANGUAGE_DROPLIST $SELECTED_LANGUAGE
+    ${NSD_GetText} $LANGUAGE_DROPLIST $SELECTED_LANGUAGE
 FunctionEnd
 
 # --- Directory Page Variables ---
