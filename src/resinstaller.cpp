@@ -63,7 +63,7 @@ int installMVEs()
 	copyFile (sMAXPath + "MAXMVE1.MVE", path + "MAXMVE1.MVE");
 	copyFile (sMAXPath + "MAXMVE2.MVE", path + "MAXMVE2.MVE");
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("MVEs") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -1343,7 +1343,7 @@ int installVehicleGraphics()
 	copyFileFromRes ("A_FUELTR", path + "store.pcx");
 	copyFileFromRes ("P_FUELTR", path + "info.pcx");
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("Vehicle graphics") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -1896,7 +1896,7 @@ int installBuildingGraphics()
 			removePlayerColor (surface);
 			dst_rect.x = i * 128 + 128;
 			dst_rect.y = 0;
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 		}
 
@@ -1904,7 +1904,7 @@ int installBuildingGraphics()
 		surface = loadPCX (path + "roof.pcx");
 		dst_rect.x = 32;
 		dst_rect.y = 40;
-		SDL_BlitSurface (surface, NULL, output, &dst_rect);
+		SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 
 		savePCX (output, path + "img.pcx");
 		SDL_FreeSurface (output);
@@ -2063,7 +2063,7 @@ int installBuildingGraphics()
 		resizeSurface (output, 0, 0, 256, 128);
 		surface = getImageFromRes ("LRGRUBLE", 1);
 		SDL_Rect dst_rect = {128, 0, 0, 0};
-		SDL_BlitSurface (surface, NULL, output, &dst_rect);
+		SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 		SDL_FreeSurface (surface);
 		savePCX (output, path + "dirt_big.pcx");
 		SDL_FreeSurface (output);
@@ -2078,7 +2078,7 @@ int installBuildingGraphics()
 		for (int i = 1; i < 5; i++)
 		{
 			surface = getImageFromRes ("SMLRUBLE", i);
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 			dst_rect.x += 64;
 		}
@@ -2092,7 +2092,7 @@ int installBuildingGraphics()
 		resizeSurface (output, 0, 0, 256, 128);
 		surface = getImageFromRes ("S_LRGRBL", 1);
 		SDL_Rect dst_rect = {128, 0, 0, 0};
-		SDL_BlitSurface (surface, NULL, output, &dst_rect);
+		SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 		SDL_FreeSurface (surface);
 		savePCX (output, path + "dirt_big_shw.pcx");
 		SDL_FreeSurface (output);
@@ -2107,7 +2107,7 @@ int installBuildingGraphics()
 		for (int i = 1; i < 5; i++)
 		{
 			surface = getImageFromRes ("S_SMLRBL", i);
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 			dst_rect.x += 64;
 		}
@@ -2118,7 +2118,7 @@ int installBuildingGraphics()
 	cout << "\n";
 	cout << iToStr (iErrors) << " errors\n";
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("Building graphics") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -2286,7 +2286,7 @@ int installVehicleVideos()
 	cout << "\n";
 	cout << iToStr (iErrors) << " errors\n";
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("Vehicle videos") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -2334,7 +2334,7 @@ int installFX()
 		for (int i = 1; i < 5; i++)
 		{
 			surface = getImageFromRes ("HITEXPLD", i);
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 			dst_rect.x += 64;
 		}
@@ -2354,7 +2354,7 @@ int installFX()
 		for (int i = 1; i < 14; i++)
 		{
 			surface = getImageFromRes ("AIREXPLD", i);
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 			dst_rect.x += 137;
 		}
@@ -2374,7 +2374,7 @@ int installFX()
 		for (int i = 1; i < 28; i++)
 		{
 			surface = getImageFromRes ("BLDEXPLD", i);
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 			dst_rect.x += 307;
 		}
@@ -2394,7 +2394,7 @@ int installFX()
 		for (int i = 1; i < 14; i++)
 		{
 			surface = getImageFromRes ("LNDEXPLD", i);
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 			dst_rect.x += 114;
 		}
@@ -2414,7 +2414,7 @@ int installFX()
 		for (int i = 1; i < 14; i++)
 		{
 			surface = getImageFromRes ("SEAEXPLD", i);
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 			dst_rect.x += 114;
 		}
@@ -2432,7 +2432,7 @@ int installFX()
 		for (int i = 1; i < 8; i++)
 		{
 			surface = getImageFromRes ("ROCKET", 2 * i);
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 			dst_rect.x += 28;
 		}
@@ -2451,7 +2451,7 @@ int installFX()
 		for (int i = 1; i < 8; i++)
 		{
 			surface = getImageFromRes ("TORPEDO", 2 * i);
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 			dst_rect.x += 28;
 		}
@@ -2472,7 +2472,7 @@ int installFX()
 		for ( int i = 1; i < 8; i++ )
 		{
 			surface = getImageFromRes("ALIEN TANK PLASMA BALL", 2*i );
-			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_BlitSurface( surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface( surface );
 			dst_rect.x += 28;
 		}
@@ -2491,7 +2491,7 @@ int installFX()
 		for ( int i = 1; i < 8; i++ )
 		{
 			surface = getImageFromRes("ALIEN ARTILLERY PLASMA BALL", 2*i );
-			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_BlitSurface( surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface( surface );
 			dst_rect.x += 28;
 		}
@@ -2510,7 +2510,7 @@ int installFX()
 		for ( int i = 1; i < 8; i++ )
 		{
 			surface = getImageFromRes("ALIEN MISSLE", 2*i );
-			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_BlitSurface( surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface( surface );
 			dst_rect.x += 28;
 		}
@@ -2525,7 +2525,7 @@ int installFX()
 	// saveload.flc
 	copyFile (sMAXPath + "SAVELOAD.FLC", path + "saveload.flc");
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("Fx") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -2609,25 +2609,25 @@ int installGfx()
 		surface = getImageFromRes ("BLDMRK2");
 		setColor (surface, 0, 255, 0, 255);
 		SDL_Rect dst_rect = {65, 1, 0, 0};
-		SDL_BlitSurface (surface, NULL, output, &dst_rect);
+		SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 		SDL_FreeSurface (surface);
 
 		surface = getImageFromRes ("BLDMRK3");
 		setColor (surface, 0, 255, 0, 255);
 		dst_rect.x += 64;
-		SDL_BlitSurface (surface, NULL, output, &dst_rect);
+		SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 		SDL_FreeSurface (surface);
 
 		surface = getImageFromRes ("BLDMRK4");
 		setColor (surface, 0, 255, 0, 255);
 		dst_rect.x += 64;
-		SDL_BlitSurface (surface, NULL, output, &dst_rect);
+		SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 		SDL_FreeSurface (surface);
 
 		surface = getImageFromRes ("BLDMRK5");
 		setColor (surface, 0, 255, 0, 255);
 		dst_rect.x += 64;
-		SDL_BlitSurface (surface, NULL, output, &dst_rect);
+		SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 		SDL_FreeSurface (surface);
 
 		savePCX (output, path + "activate_field.pcx");
@@ -2771,7 +2771,7 @@ int installGfx()
 		surface = getImageFromRes ("UNTBTN_D");
 		setColor (surface, 0, 255, 0, 255);
 		SDL_Rect dst_rect = {0, 21, 0, 0};
-		SDL_BlitSurface (surface, NULL, output, &dst_rect);
+		SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 		SDL_FreeSurface (surface);
 
 		savePCX (output, path + "object_menu2.pcx");
@@ -2898,7 +2898,7 @@ int installGfx()
 			surface = getImageFromRes ("RAWMSK" + iToStr (i));
 			setColor (surface, 48, 255, 0, 255);
 			SDL_Rect dst_rect = {1 + i * 64, 1, 0, 0};
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 		}
 
@@ -2919,7 +2919,7 @@ int installGfx()
 			surface = getImageFromRes ("FUELMK" + iToStr (i));
 			setColor (surface, 255, 255, 0, 255);
 			SDL_Rect dst_rect = {1 + i * 64, 1, 0, 0};
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 		}
 
@@ -2940,7 +2940,7 @@ int installGfx()
 			surface = getImageFromRes ("GOLDMK" + iToStr (i));
 			setColor (surface, 255, 255, 0, 255);
 			SDL_Rect dst_rect = {1 + i * 64, 1, 0, 0};
-			SDL_BlitSurface (surface, NULL, output, &dst_rect);
+			SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 			SDL_FreeSurface (surface);
 		}
 
@@ -2990,7 +2990,7 @@ int installGfx()
  setColor (surface, backgroundIndex, 255, 0, 255); \
  dst_rect.x = (_x); \
  dst_rect.y = (_y); \
- SDL_BlitSurface (surface, NULL, output, &dst_rect); \
+ SDL_BlitSurface (surface, nullptr, output, &dst_rect); \
  SDL_FreeSurface (surface);
 
 	try
@@ -3049,7 +3049,7 @@ int installGfx()
 		setColor (surface, 9, 255, 0, 255);
 		dst_rect.x = 88;
 		dst_rect.y = 98;
-		SDL_BlitSurface (surface, NULL, output, &dst_rect);
+		SDL_BlitSurface (surface, nullptr, output, &dst_rect);
 		SDL_FreeSurface (surface);
 
 		SDL_Rect src_rect;
@@ -3157,7 +3157,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE (path + "hud_stuff.pcx");
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("Gfx") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -3299,7 +3299,7 @@ int installBuildingSounds()
 	copyPartOfWAV (sMAXPath + "LVP17" + waveExtension, path + "running.wav", 1);
 	copyWAV (sMAXPath + "LVP18" + waveExtension, path + "stop.wav");
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("Building sounds") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -3610,7 +3610,7 @@ int installVehicleSounds()
 	copyPartOfWAV (sMAXPath + "TRUCKMVE" + waveExtension, path + "drive.wav", 1);
 	copyWAV (sMAXPath + "TRUCKSTP" + waveExtension, path + "stop.wav");
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("Vehicle sounds") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -3743,7 +3743,7 @@ void installVoices()
 	}
 	//-------------------------------------------------------------
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("Voices") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -3795,7 +3795,7 @@ void installMaps()
 	copyFile (sMAXPath + "SNOW_5.WRL", path + "Ultima Thule.wrl");
 	copyFile (sMAXPath + "SNOW_6.WRL", path + "Long Floes.wrl");
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("Maps") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -3856,7 +3856,7 @@ void installSounds()
 	copyWAV (sMAXPath + "EXPLBLD1" + waveExtension, path + "exp_big2.wav");
 	copyWAV (sMAXPath + "EXPLBLD2" + waveExtension, path + "exp_big3.wav");
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("Sounds") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -3899,7 +3899,7 @@ void installMusic()
 	copyWAV (sMAXPath + "SNOW_MSC.MSC", path + "snow.wav");
 	copyWAV (sMAXPath + "WINR_MSC.MSC", path + "winr.wav");
 
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		writeLog (string ("Music") + TEXT_FILE_LF);
 		writeLog (iToStr (iErrors) + " errors" + TEXT_FILE_LF);
@@ -3978,7 +3978,7 @@ void createLogFile()
 #ifdef WIN32
 	// write log file to user home dir
 	char szPath[MAX_PATH];
-	if (SHGetFolderPathA (NULL, CSIDL_PERSONAL, NULL, 0, szPath) == S_OK)
+	if (SHGetFolderPathA (nullptr, CSIDL_PERSONAL, nullptr, 0, szPath) == S_OK)
 	{
 		path = szPath;
 		path += "\\maxr\\";
@@ -3999,7 +3999,7 @@ void createLogFile()
 
 	string fileName = path + "resinstaller.log";
 	logFile = SDL_RWFromFile (fileName.c_str(), "a");
-	if (logFile == NULL)
+	if (logFile == nullptr)
 	{
 		cout << "Warning: Couldn't create log file. Writing to stdout instead.\n";
 	}
@@ -4028,11 +4028,11 @@ void checkWritePermissions()
 			string parameter = "\"" + sMAXPath + "\"\" \"" + sOutputPath + "\"\" " + sLanguage + " " + sResChoice + " /donotelevate";
 
 			HINSTANCE result = ShellExecuteA (
-				NULL,
+				nullptr,
 				"runas", // request elevated rights
 				sAppName.c_str(),
 				parameter.c_str(),
-				NULL, // working directory
+				nullptr, // working directory
 				SW_SHOW);
 
 			if ((int) result > 32)
@@ -4700,7 +4700,7 @@ int main (int argc, char* argv[])
 			trimSpaces (input);
 			transform (input.begin(), input.end(), input.begin(), ::tolower);
 
-			long int value = strtol (input.c_str(), NULL, 10); // If no valid conversion could be performed, a zero value is returned
+			long int value = strtol (input.c_str(), nullptr, 10); // If no valid conversion could be performed, a zero value is returned
 			if (value > 0 && value <= (long) vectorLanguages.size())
 			{
 				input = vectorLanguages[value - 1];
@@ -4806,13 +4806,13 @@ int main (int argc, char* argv[])
 	// Do the work: Install the resources
 #if MAC
 	// on MAC the installation has to happen in a separate thread to allow displaying and updating a progress window
-	SDL_Thread* installThread = NULL;
+	SDL_Thread* installThread = nullptr;
 	gFinishedInstalling = false;
-	installThread = SDL_CreateThread (installEverything, NULL);
+	installThread = SDL_CreateThread (installEverything, nullptr);
 	if (installThread != 0)
 	{
 		displayProgressWindow (gFinishedInstalling);
-		SDL_WaitThread (installThread, NULL);
+		SDL_WaitThread (installThread, nullptr);
 	}
 #else
 	installEverything (0);

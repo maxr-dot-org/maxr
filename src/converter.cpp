@@ -35,11 +35,11 @@
 # include "mac/sources/resinstallerGUI.h"
 #endif
 
-cImage* cImage::Image = NULL;
+cImage* cImage::Image = nullptr;
 
 cImage::cImage()
 {
-	palette = NULL;
+	palette = nullptr;
 	iImageCount = 0;
 }
 
@@ -143,7 +143,7 @@ void cImage::resampleFile()
 	{
 		//create surface
 		SDL_Surface* surface = SDL_CreateRGBSurface (SDL_SWSURFACE, sWidth, sHeight, 8, 0, 0, 0, 0);
-		if (surface == NULL)
+		if (surface == nullptr)
 		{
 			cout << "Out of memory\n";
 			exit (-1);
@@ -546,7 +546,7 @@ bool cImage::decodeBigImage()
 	Images[0].alpha = (unsigned char*) malloc (sizeof (unsigned char) * sLocWidth * sLocHeight);
 	memset (Images[0].alpha, 0, sLocWidth * sLocHeight);
 
-	unsigned char* Buffer = NULL;
+	unsigned char* Buffer = nullptr;
 	while (iInOfs + 1 < lLenght && iOutOfs < sLocWidth * sLocHeight)
 	{
 		SDL_RWseek (res, lPos + iInOfs, SEEK_SET);
@@ -604,9 +604,9 @@ bool cImage::decodeBigImage()
 
 	if (iInOfs != lLenght || iOutOfs != sLocWidth * sLocHeight)
 	{
-		Images[0].data = NULL;
-		Images[0].alpha = NULL;
-		Images = NULL;
+		Images[0].data = nullptr;
+		Images[0].alpha = nullptr;
+		Images = nullptr;
 		return false;
 	}
 	else
@@ -633,12 +633,12 @@ SDL_Surface* cImage::getSurface (int imageNr)
 
 SDL_Surface* getImageFromRes (string file_name, int imageNr)
 {
-	if (res == NULL)
+	if (res == nullptr)
 	{
 		throw InstallException (string ("max.res was not opened") + TEXT_FILE_LF);
 	}
 	cImage* Image = cImage::Image;
-	if (Image == NULL || file_name.compare (Image->name) != 0)
+	if (Image == nullptr || file_name.compare (Image->name) != 0)
 	{
 		Uint32 lPosOfFile = lPosBegin;
 
@@ -680,7 +680,7 @@ SDL_Surface* getImageFromRes (string file_name, int imageNr)
 		Image->decodeFile();
 		Image->resampleFile();
 
-		if (cImage::Image != NULL)
+		if (cImage::Image != nullptr)
 		{
 			delete cImage::Image;
 		}
@@ -744,7 +744,7 @@ int saveAllFiles()
 
 void copyFileFromRes (string src, string dst, int number)
 {
-	SDL_Surface* surface = NULL;
+	SDL_Surface* surface = nullptr;
 	try
 	{
 		surface = getImageFromRes (src, number);
@@ -757,7 +757,7 @@ void copyFileFromRes (string src, string dst, int number)
 //rpc stands for "remove player color"
 void copyFileFromRes_rpc (string src, string dst, int number)
 {
-	SDL_Surface* surface = NULL;
+	SDL_Surface* surface = nullptr;
 	try
 	{
 		surface = getImageFromRes (src, number);
@@ -776,7 +776,7 @@ void copyImageFromFLC (string fileName, string dst)
 		int error;
 		FLI_Animation* animation;
 
-		if (file == NULL)
+		if (file == nullptr)
 		{
 			throw InstallException ("FLC-File '" + fileName + "' not found" + TEXT_FILE_LF);
 		}
@@ -834,7 +834,7 @@ void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w)
 	}
 
 	resizedSurface = SDL_CreateRGBSurface (SDL_SWSURFACE, h, w, 8, 0, 0, 0, 0);
-	if (resizedSurface == NULL)
+	if (resizedSurface == nullptr)
 	{
 		cout << "Out of memory";
 		exit (-1);
@@ -1176,7 +1176,7 @@ string iToStr (int x)
 
 void writeLog (string msg)
 {
-	if (logFile != NULL)
+	if (logFile != nullptr)
 	{
 		SDL_RWwrite (logFile, msg.c_str(), (int) msg.length(), 1);
 	}

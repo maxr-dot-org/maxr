@@ -30,8 +30,8 @@
 
 cWaveFile::cWaveFile()
 {
-	buffer = NULL;
-	smplChunk.ListofSampleLoops = NULL;
+	buffer = nullptr;
+	smplChunk.ListofSampleLoops = nullptr;
 }
 
 cWaveFile::~cWaveFile()
@@ -42,7 +42,7 @@ cWaveFile::~cWaveFile()
 
 int readSmplChunk (SDL_RWops* file, cWaveFile& waveFile)
 {
-	waveFile.smplChunk.ListofSampleLoops = NULL;
+	waveFile.smplChunk.ListofSampleLoops = nullptr;
 
 	SDL_RWseek (file, 0, SEEK_SET);
 	if (SDL_ReadLE32 (file) != RIFF)
@@ -96,7 +96,7 @@ int loadWAV (string src, cWaveFile& waveFile)
 	file = openFile (src, "rb");
 
 	//load audio data and format spec
-	if (SDL_LoadWAV_RW (file, 0, &waveFile.spec, &waveFile.buffer, &waveFile.length) == NULL)
+	if (SDL_LoadWAV_RW (file, 0, &waveFile.spec, &waveFile.buffer, &waveFile.length) == nullptr)
 	{
 		SDL_RWclose (file);
 		throw InstallException ("File '" + src + "' may be corrupted" + TEXT_FILE_LF);
@@ -120,11 +120,11 @@ void saveWAV (string dst, cWaveFile& waveFile)
 	Uint32 audio_len = waveFile.length;
 	Uint8* audio_buf = waveFile.buffer;
 	// FMT chunk
-	WaveFMT* format = NULL;
+	WaveFMT* format = nullptr;
 
 	//open destiantion file
 	SDL_RWops* file = SDL_RWFromFile (dst.c_str(), "wb");
-	if (file == NULL)
+	if (file == nullptr)
 	{
 		throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
 	}
@@ -141,7 +141,7 @@ void saveWAV (string dst, cWaveFile& waveFile)
 	chunk.magic = FMT;
 	chunk.length = FMT_DATA_SIZE;
 	chunk.data = (Uint8*) malloc (chunk.length);
-	if (chunk.data == NULL)
+	if (chunk.data == nullptr)
 	{
 		cout << "Out of memory\n";
 		exit (-1);
@@ -207,7 +207,7 @@ void saveWAV (string dst, cWaveFile& waveFile)
 	}
 
 done:
-	if (format != NULL)
+	if (format != nullptr)
 	{
 		free (format);
 	}
@@ -270,7 +270,7 @@ void copyPartOfWAV (string src, string dst, Uint8 nr)
 		//resize the wave buffer and copy the desired part
 		waveFile.length = end - start;
 		Uint8* new_buffer = (Uint8*) malloc (waveFile.length);
-		if (new_buffer == NULL)
+		if (new_buffer == nullptr)
 		{
 			cout << "Out of memory\n";
 			exit (-1);

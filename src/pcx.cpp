@@ -36,7 +36,7 @@ int savePCX_8bpp (SDL_Surface* surface, string fileName)
 
 	SDL_RWops* file = SDL_RWFromFile (fileName.c_str(), "wb");
 
-	if (file == NULL)
+	if (file == nullptr)
 	{
 		throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
 	}
@@ -126,7 +126,7 @@ int savePCX_32bpp (SDL_Surface* surface, string fileName)
 
 	SDL_RWops* file = SDL_RWFromFile (fileName.c_str(), "wb");
 
-	if (file == NULL)
+	if (file == nullptr)
 	{
 		throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
 	}
@@ -277,7 +277,7 @@ SDL_Surface* loadPCX (string name)
 	//open file
 	file = SDL_RWFromFile (name.c_str(), "rb");
 
-	if (file == NULL)
+	if (file == nullptr)
 	{
 		throw InstallException (string ("Couldn't open file") + name + TEXT_FILE_LF);
 	}

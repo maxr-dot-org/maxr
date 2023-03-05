@@ -51,7 +51,7 @@ void encodeWAV (string fileName, cWaveFile& waveFile)
 	}
 
 	SDL_RWops* file = SDL_RWFromFile (fileName.c_str(), "wb");
-	if (file == NULL)
+	if (file == nullptr)
 	{
 		throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
 	}
@@ -120,7 +120,7 @@ void encodeWAV (string fileName, cWaveFile& waveFile)
 
 		while (vorbis_analysis_blockout (&vorbisDSPState, &vorbisBlock) == 1)
 		{
-			vorbis_analysis (&vorbisBlock, NULL);
+			vorbis_analysis (&vorbisBlock, nullptr);
 			vorbis_bitrate_addblock (&vorbisBlock);
 
 			while (vorbis_bitrate_flushpacket (&vorbisDSPState, &oggPacket))

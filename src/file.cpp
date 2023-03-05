@@ -50,7 +50,7 @@ SDL_RWops* openFile (string path, const char* mode)
 	}
 	string lowerCaseFileName = fileName;
 	SDL_RWops* file = SDL_RWFromFile ((path + fileName).c_str(), mode);
-	if (file != NULL)
+	if (file != nullptr)
 	{
 		return file;
 	}
@@ -61,28 +61,28 @@ SDL_RWops* openFile (string path, const char* mode)
 		fileName[i] = toupper (fileName[i]);
 	}
 	file = SDL_RWFromFile ((path + fileName).c_str(), mode);
-	if (file != NULL)
+	if (file != nullptr)
 	{
 		return file;
 	}
 
 	throw InstallException ("Couldn't open file '" + path + fileName + "' or '" + lowerCaseFileName + "'" + TEXT_FILE_LF);
-	return NULL;
+	return nullptr;
 }
 
 void copyFile (string source, string dest)
 {
 	long int size;
 	unsigned char* buffer;
-	SDL_RWops* sourceFile = NULL;
-	SDL_RWops* destFile = NULL;
+	SDL_RWops* sourceFile = nullptr;
+	SDL_RWops* destFile = nullptr;
 
 	try
 	{
 		sourceFile = openFile (source, "rb");
 
 		destFile = SDL_RWFromFile (dest.c_str(), "wb");
-		if (destFile == NULL)
+		if (destFile == nullptr)
 		{
 			throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
 		}
@@ -91,7 +91,7 @@ void copyFile (string source, string dest)
 		size = SDL_RWtell (sourceFile);
 
 		buffer = (unsigned char*) malloc (size);
-		if (buffer == NULL)
+		if (buffer == nullptr)
 		{
 			cout << "Out of memory\n";
 			exit (-1);
