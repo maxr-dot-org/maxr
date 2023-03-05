@@ -96,7 +96,7 @@ Skips the current frame of the animation without rendering it.
 extern int           FLI_Skip(FLI_Animation *flic);
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif
