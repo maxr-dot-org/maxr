@@ -317,15 +317,15 @@ Function DirectoryDialog
     SectionGetFlags ${Section_Res_Sound} $R0
     SectionGetFlags ${Section_Res_Graphics} $R1
 
-    SectionGetSize ${Section_Main} $3
-    IntOp $0 $3 + 0
+    SectionGetSize ${Section_Main} $0
+
     ${If} $R0 == ${SF_SELECTED}
         SectionGetSize ${Section_Res_Sound} $1
-        IntOp $0 $3 + $1
+        IntOp $0 $0 + $1
     ${EndIF}
     ${If} $R1 == ${SF_SELECTED}
         SectionGetSize ${Section_Res_Graphics} $1
-        IntOp $0 $3 + $1
+        IntOp $0 $0 + $1
     ${EndIF}
     IntOp $1 $0 / 1024
     IntOp $2 $0 % 1024
@@ -405,7 +405,7 @@ Function UpdateAvaSpace
     ${GetRoot} $INSTDIR $0
     StrCpy $1 " $(^Byte)"
 
-    System::Call kernel32::GetDiskFreeSpaceEx(tr0,*l,*l,*l.r0)
+    ${DriveSpace} $0 "/D=F" $0
 
     ${If} $0 > 1024
     ${OrIf} $0 < 0
