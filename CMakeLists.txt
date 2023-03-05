@@ -12,7 +12,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/mk/cmake)
 include_directories(src)
 
 if(RESINSTALLER_VERSION)
-  MESSAGE (STATUS "  Resinstaller verion: ${RESINSTALLER_VERSION}")
+  MESSAGE (STATUS "  Resinstaller version: ${RESINSTALLER_VERSION}")
   add_definitions( "-DVERSION=\"${RESINSTALLER_VERSION}\"")
 endif()
 
