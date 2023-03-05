@@ -3985,8 +3985,8 @@ void createLogFile ()
 	string path;
 #ifdef WIN32
 	// write log file to user home dir
-	TCHAR szPath[MAX_PATH];
-	if (SHGetFolderPath (NULL, CSIDL_PERSONAL, NULL, 0, szPath) == S_OK)
+	char szPath[MAX_PATH];
+	if (SHGetFolderPathA (NULL, CSIDL_PERSONAL, NULL, 0, szPath) == S_OK)
 	{
 		path = szPath;
 		path += "\\maxr\\";
@@ -4037,7 +4037,7 @@ void checkWritePermissions()
 			SDL_RWclose(logFile);
 			string parameter = "\"" + sMAXPath + "\"\" \"" + sOutputPath + "\"\" " + sLanguage + " " + sResChoice + " /donotelevate";
 
-			HINSTANCE result = ShellExecute(
+			HINSTANCE result = ShellExecuteA(
 				NULL,
 				"runas",			// request elevated rights
 				sAppName.c_str(),
