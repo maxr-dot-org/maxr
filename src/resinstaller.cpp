@@ -2494,8 +2494,8 @@ int installFX()
 			SDL_FreeSurface( surface );
 			dst_rect.x += 28;
 		}
-		
-		savePCX( output, path + "alien_tank_plasma_ball.pcx"); 
+
+		savePCX( output, path + "alien_tank_plasma_ball.pcx");
 		SDL_FreeSurface( output );
 
 	}
@@ -2513,8 +2513,8 @@ int installFX()
 			SDL_FreeSurface( surface );
 			dst_rect.x += 28;
 		}
-		
-		savePCX( output, path + "alien_ari_plasma_ball.pcx"); 
+
+		savePCX( output, path + "alien_ari_plasma_ball.pcx");
 		SDL_FreeSurface( output );
 
 	}
@@ -2532,8 +2532,8 @@ int installFX()
 			SDL_FreeSurface( surface );
 			dst_rect.x += 28;
 		}
-		
-		savePCX( output, path + "alien_missle.pcx"); 
+
+		savePCX( output, path + "alien_missle.pcx");
 		SDL_FreeSurface( output );
 
 	}
@@ -2972,7 +2972,7 @@ int installGfx()
 		// blizzard-pointer...
 		// maybe useful if teammode available,
 		// => mouse over a friends unit -> ident. friend or foe (IFF)
-		try 
+		try
 		{
 			output = getImageFromRes("FRND_FUE");
 			setColor( output, 0, 255, 0, 255 );
@@ -3940,7 +3940,7 @@ void initialize()
 
 	/*
 	 Uncommented since you do break any terminal I/O for users at least
-	 under linux with that too. You may write some WIN32 DEFINED code 
+	 under linux with that too. You may write some WIN32 DEFINED code
 	 to prevend stdout.txt to be created on windows -- beko
 	 */
 	// added code to prevent writing to stdout.txt and stderr.txt
@@ -3968,8 +3968,8 @@ void showIntroduction()
 
 #if MAC
 	std::string strText = strAbout1 + strAbout2 + strAbout3 + "\n\n\n"
-	               + strGPL1 + strGPL2 + strGPL3 + strGPL4 + "\n\n"
-	               + strGPL5 + strGPL6 + strGPL7 + strGPL8;
+	                    + strGPL1 + strGPL2 + strGPL3 + strGPL4 + "\n\n"
+	                    + strGPL5 + strGPL6 + strGPL7 + strGPL8;
 	showIntroductionMAC (strText);
 #else
 	std::cout << strAbout1 << std::endl;
@@ -3980,12 +3980,12 @@ void showIntroduction()
 	std::cout << strGPL2 << std::endl;
 	std::cout << strGPL3 << std::endl;
 	std::cout << strGPL4 << std::endl
-		 << std::endl;
+			  << std::endl;
 	std::cout << strGPL5 << std::endl;
 	std::cout << strGPL6 << std::endl;
 	std::cout << strGPL7 << std::endl;
 	std::cout << strGPL8 << std::endl
-		 << std::endl;
+			  << std::endl;
 #endif
 }
 
@@ -4053,7 +4053,7 @@ void checkWritePermissions()
 				nullptr, // working directory
 				SW_SHOW);
 
-			if ((int) result > 32)
+			if ((std::uintptr_t) result > 32)
 				exit (0); // success
 		}
 
