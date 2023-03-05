@@ -33,11 +33,6 @@
 # include <windows.h>
 #endif
 
-#ifdef _WIN32
-# pragma warning(disable : 4312)
-# pragma warning(disable : 4996)
-#endif
-
 extern bool bDoNotElevate;
 extern std::string sAppName;
 extern std::string sMAXPath;
