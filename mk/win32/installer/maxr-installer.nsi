@@ -1,4 +1,4 @@
-#
+﻿#
 # This is the nis-installer-script for M.A.X. Reloaded
 #
 
@@ -62,18 +62,61 @@ Page custom DirectoryDialog DirectoryDialogLeave
 !insertmacro MUI_PAGE_FINISH
 
 # Set Language
-#!insertmacro MUI_LANGUAGE "French"
 !insertmacro MUI_LANGUAGE "English"
+!insertmacro MUI_LANGUAGE "French"
 #!insertmacro MUI_LANGUAGE "German"
 #!insertmacro MUI_LANGUAGE "Dutch"
 #!insertmacro MUI_LANGUAGE "Russian"
 #!insertmacro MUI_LANGUAGE "Hungarian"
 
+# English
+LangString TITLE_Section_Main            ${LANG_ENGLISH} "Main Files (required)"
+LangString DESC_Section_Main             ${LANG_ENGLISH} "M.A.X. Reloaded game files."
+LangString TITLE_Section_Start_Menu_Link ${LANG_ENGLISH} "Start menu shortcut"
+LangString DESC_Section_Start_Menu_Link  ${LANG_ENGLISH} "Creates a link in the start menu."
+LangString TITLE_Section_Desktop_Link    ${LANG_ENGLISH} "Desktop shortcut"
+LangString DESC_Section_Desktop_Link     ${LANG_ENGLISH} "Creates a link on the desktop."
+LangString TITLE_Section_Group_Res       ${LANG_ENGLISH} "Import resources from original M.A.X."
+LangString DESC_Section_Group_Res        ${LANG_ENGLISH} "Import graphics, sounds and maps from a CD or installation of the original M.A.X. You can import the resources anytime later by starting the resinstaller tool."
+LangString TITLE_Section_Res_Graphics    ${LANG_ENGLISH} "Unit graphics"
+LangString DESC_Section_Res_Graphics     ${LANG_ENGLISH} "Import unit graphics from original M.A.X. This will replace the M.A.X. Reloaded unit graphics."
+LangString TITLE_Section_Res_Sound       ${LANG_ENGLISH} "Sounds/Maps"
+LangString DESC_Section_Res_Sound        ${LANG_ENGLISH} "Import sounds and maps from original M.A.X. This does NOT overwrite any of the M.A.X. Reloaded files."
+LangString TITLE_LanguageDialog          ${LANG_ENGLISH} "Choose language"
+LangString DESC_LanguageDialog           ${LANG_ENGLISH} "Choose the language you would prefer to play $(^NameDA) in."
+LangString DESC_LanguageDialogLong       ${LANG_ENGLISH} "Setup will change the default language of $(^NameDA). Please select your prefered language from the following list. If your language is not listed there, the language is not supported yet. Feel free to help us translating the game and write the translation yourself. More information at www.maxr.org."
+LangString TITLE_InstallFolder           ${LANG_ENGLISH} "Choose Install Location"
+LangString MAX_CD_Or_InstallFolder       ${LANG_ENGLISH} "Original M.A.X.-CD or Installation Folder"
+LangString MAX_PATH_Found                ${LANG_ENGLISH} "Original M.A.X. found."
+LangString MAX_PATH_NotFound             ${LANG_ENGLISH} "No original M.A.X found. Please choose the correct path, or disable the Import option in the installation settings. You can import the original resources anytime later by using the resinstaller tool."
+
+#French
+LangString TITLE_Section_Main            ${LANG_FRENCH} "Fichiers principaux (requis)"
+LangString DESC_Section_Main             ${LANG_FRENCH} "Fichiers de jeu de M.A.X. Reloaded."
+LangString TITLE_Section_Start_Menu_Link ${LANG_FRENCH} "Raccourci dans le menu démarrer"
+LangString DESC_Section_Start_Menu_Link  ${LANG_FRENCH} "Crée un raccourci dans le menu démarrer."
+LangString TITLE_Section_Desktop_Link    ${LANG_FRENCH} "Raccourci sur le Bureau"
+LangString DESC_Section_Desktop_Link     ${LANG_FRENCH} "Crée un raccourci sur le bureau."
+LangString TITLE_Section_Group_Res       ${LANG_FRENCH} "Importer les ressources depuis le jeu original M.A.X."
+LangString DESC_Section_Group_Res        ${LANG_FRENCH} "Importer les graphiques, sons et cartes depuis le CD ou le dossier d'installation du jeu original M.A.X. Vous pouvez importer ces ressources ultérieurement via l'outils 'resinstaller'."
+LangString TITLE_Section_Res_Graphics    ${LANG_FRENCH} "Graphiques des unités"
+LangString DESC_Section_Res_Graphics     ${LANG_FRENCH} "Importer les graphiques des unités depuis le jeu original M.A.X. Ceci remplace les graphiques de M.A.X. Reloaded."
+LangString TITLE_Section_Res_Sound       ${LANG_FRENCH} "Sons / Cartes"
+LangString DESC_Section_Res_Sound        ${LANG_FRENCH} "Importer les sons et les cartes depuis le jeu original M.A.X. ceci NE remplace AUCUN fichiers de M.A.X. Reloaded."
+LangString TITLE_LanguageDialog          ${LANG_FRENCH} "Choix du langage"
+LangString DESC_LanguageDialog           ${LANG_FRENCH} "Choisissez le language à utiliser dans $(^NameDA)."
+LangString DESC_LanguageDialogLong       ${LANG_FRENCH} "L'installeur va changer la langue par défaut de $(^NameDA). Choisissez votre langue depuis la liste suivante. Si votre langue n'est pas listée, votre langue n'est pas encore supportée. Vous pouvez nous aider à ajouter votre langue au jeu en fournissant les traductions. Plus d'information sur www.maxr.org."
+LangString TITLE_InstallFolder           ${LANG_FRENCH} "Choix du répertoire d'installation"
+LangString MAX_CD_Or_InstallFolder       ${LANG_FRENCH} "CD du jeu original M.A.X. ou son répertoire d'installation"
+LangString MAX_PATH_Found                ${LANG_FRENCH} "Original M.A.X. trouvé."
+LangString MAX_PATH_NotFound             ${LANG_FRENCH} "Original M.A.X NON trouvé. Vérifier le chemin saisi, ou désactiver l'option d'import dans les choix des composants à installer. Vous pouvez importer ces ressources ultérieurement via l'outils 'resinstaller'."
+
+
 Var ORIGINAL_DIR
 Var SELECTED_LANGUAGE
 
 # --- Main files ---
-Section "Main Files (required)" Section_Main
+Section "$(TITLE_Section_Main)" Section_Main
     SetOutPath $INSTDIR
 
     # now install all files
@@ -90,22 +133,22 @@ Section "Main Files (required)" Section_Main
 SectionEnd
 
 
-Section "Start menu shortcut" Section_Start_Menu_Link
+Section "$(TITLE_Section_Start_Menu_Link)" Section_Start_Menu_Link
 	CreateDirectory "$SMPROGRAMS\M.A.X. Reloaded"
 	CreateShortCut  "$SMPROGRAMS\M.A.X. Reloaded\M.A.X. Reloaded.lnk" "$INSTDIR\${MAXR_EXE}"
 	CreateShortCut  "$SMPROGRAMS\M.A.X. Reloaded\resinstaller.lnk" "$INSTDIR\${RESINSTALLER_EXE}"
 SectionEnd
 
-Section "Desktop shortcut" Section_Desktop_Link
+Section "$(TITLE_Section_Desktop_Link)" Section_Desktop_Link
 	CreateShortCut "$DESKTOP\M.A.X. Reloaded.lnk" "$INSTDIR\${MAXR_EXE}"
 SectionEnd
 
-SectionGroup "Import ressources from original M.A.X." Section_Group_Res
-    Section "Unit graphics" Section_Res_Graphics
+SectionGroup "$(TITLE_Section_Group_Res)" Section_Group_Res
+    Section "$(TITLE_Section_Res_Graphics)" Section_Res_Graphics
         AddSize ${SIZE_RES_GRAPHIC}
     SectionEnd
 
-    Section "Sounds/Maps" Section_Res_Sound
+    Section "$(TITLE_Section_Res_Sound)" Section_Res_Sound
         AddSize ${SIZE_RES_SOUND}
     SectionEnd
 SectionGroupEnd
@@ -136,12 +179,6 @@ Section "" Section_Resinstaller
 SectionEnd
 
 # --- Component descriptions
-LangString DESC_Section_Main            ${LANG_ENGLISH} "M.A.X. Reloaded game files."
-LangString DESC_Section_Start_Menu_Link ${LANG_ENGLISH} "Creates a link in the start menu."
-LangString DESC_Section_Desktop_Link    ${LANG_ENGLISH} "Creates a link on the desktop."
-LangString DESC_Section_Group_Res       ${LANG_ENGLISH} "Import graphics, sounds and maps from a CD or installation of the original M.A.X. You can import the ressources anytime later by starting the resinstaller tool."
-LangString DESC_Section_Res_Graphics    ${LANG_ENGLISH} "Import unit graphics from original M.A.X. This will replace the M.A.X. Reloaded unit graphics."
-LangString DESC_Section_Res_Sound       ${LANG_ENGLISH} "Import sounds and maps from original M.A.X. This does not overwrite any of the M.A.X. Reloaded files."
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Main}            $(DESC_Section_Main)
@@ -225,10 +262,10 @@ Function LanguageDialog
     EnableWindow $0 1
 
     nsDialogs::Create 1018
-    !insertmacro MUI_HEADER_TEXT "Choose language" "Choose the language you would prefer to play $(^NameDA) in."
+    !insertmacro MUI_HEADER_TEXT "$(TITLE_LanguageDialog)" "$(DESC_LanguageDialog)"
 
     # Create Dialog-Items
-    ${NSD_CreateLabel} 0 0 100% 36u "Setup will change the default language of $(^NameDA). Please select your prefered language from the following list. If your language is not listed there, the language is not supported yet. Feel free to help us translating the game and write the translation yourself. More information at www.maxr.org."
+    ${NSD_CreateLabel} 0 0 100% 36u "$(DESC_LanguageDialogLong)"
     ${NSD_CreateDropList} 0 78 180 12 ""
     Pop $LANGUAGE_DROPLIST
 
@@ -274,7 +311,7 @@ Function DirectoryDialog
 
     # Create the Dialog
     nsDialogs::Create 1018
-    !insertmacro MUI_HEADER_TEXT "Choose Install Location" "Choose the folder in which to install $(^NameDA)."
+    !insertmacro MUI_HEADER_TEXT "$(TITLE_InstallFolder)" "$(^DirBrowseText)" #"Choose the folder in which to install $(^NameDA)."
 
     # Calculate Values
     SectionGetFlags ${Section_Res_Sound} $R0
@@ -292,21 +329,21 @@ Function DirectoryDialog
     ${EndIF}
     IntOp $1 $0 / 1024
     IntOp $2 $0 % 1024
-    StrCpy $REQ_SPACE "Space required: $1.$2MB"
+    StrCpy $REQ_SPACE "$(^SpaceRequired)$1.$2 $(^Mega)$(^Byte)"
 
     # Create Dialog-Items
-    ${NSD_CreateLabel} 0 0 100% 26u "Setup will install M.A.X. Reloaded in the following folder. To install in a different folder, click Browse and select another folder. Click Install to start the installation"
+    ${NSD_CreateLabel} 0 0 100% 26u "$(^DirText)" #"Setup will install M.A.X. Reloaded in the following folder. To install in a different folder, click Browse and select another folder. Click Install to start the installation"
 
     # Original Dir Elements
     ${If} $R0 == ${SF_SELECTED}
     ${OrIF} $R1 == ${SF_SELECTED}
-        ${NSD_CreateGroupBox} 0 95 100% 100 "Original M.A.X.-CD or Installation Folder"
+        ${NSD_CreateGroupBox} 0 95 100% 100 "$(MAX_CD_Or_InstallFolder)"
         ${NSD_CreateDirRequest} 15 119 315 12u ""
         Pop $ORI_DIRECTORY_FIELD
         ${NSD_OnChange} $ORI_DIRECTORY_FIELD OriDirChange
         System::Call shlwapi::SHAutoComplete($ORI_DIRECTORY_FIELD,i1)
 
-        ${NSD_CreateBrowseButton} 342 116 90 24 "Browse..."
+        ${NSD_CreateBrowseButton} 342 116 90 24 "$(^BrowseBtn)"
         Pop $ORI_DIRECTORY_BROWSE
         ${NSD_OnClick} $ORI_DIRECTORY_BROWSE OriDirBrowse
 
@@ -315,7 +352,7 @@ Function DirectoryDialog
     ${EndIF}
 
     # Directoy Filed
-    ${NSD_CreateGroupBox} 0 30 100% 57 "Destination Folder"
+    ${NSD_CreateGroupBox} 0 30 100% 57 "$(^DirSubText)" #"Destination Folder"
     ${NSD_CreateDirRequest} 15 54 315 12u $INSTDIR
     Pop $DIRECTORY_FIELD
     ${NSD_OnChange} $DIRECTORY_FIELD DirChange
@@ -324,7 +361,7 @@ Function DirectoryDialog
     Call DirChange
 
     # Browse Button
-    ${NSD_CreateBrowseButton} 342 51 90 24 "Browse..."
+    ${NSD_CreateBrowseButton} 342 51 90 24 "$(^BrowseBtn)"
     Pop $DIRECTORY_BROWSE
     ${NSD_OnClick} $DIRECTORY_BROWSE DirBrowse
 
@@ -366,7 +403,7 @@ FunctionEnd
 Function UpdateAvaSpace
 
     ${GetRoot} $INSTDIR $0
-    StrCpy $1 " bytes"
+    StrCpy $1 " $(^Byte)"
 
     System::Call kernel32::GetDiskFreeSpaceEx(tr0,*l,*l,*l.r0)
 
@@ -374,32 +411,32 @@ Function UpdateAvaSpace
     ${OrIf} $0 < 0
         System::Int64Op $0 / 1024
         Pop $0
-        StrCpy $1 "KB"
+        StrCpy $1 "$(^Kilo)$(^Byte)"
         ${If} $0 > 1024
         ${OrIf} $0 < 0
             System::Int64Op $0 / 1024
             Pop $0
-            StrCpy $1 "MB"
+            StrCpy $1 "$(^Mega)$(^Byte)"
             ${If} $0 > 1024
             ${OrIf} $0 < 0
                 System::Int64Op $0 / 1024
                 Pop $0
-                StrCpy $1 "GB"
+                StrCpy $1 "$(^Giga)$(^Byte)"
             ${EndIf}
         ${EndIf}
     ${EndIf}
-    ${NSD_SetText} $AVA_SPACE "Space available: $0$1"
+    ${NSD_SetText} $AVA_SPACE "$(^SpaceAvailable)$0$1"
 FunctionEnd
 
 Function CheckOriPath
     Push $R0
     ${NSD_GetText} $ORI_DIRECTORY_FIELD $R0
 
-    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "Original M.A.X. found."
+    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "$(MAX_PATH_NotFound)"
     StrCpy $ORI_PATH_FOUND "1"
     IfFileExists "$R0\MAX.RES" FOUND 0
     IfFileExists "$R0\MAX\MAX.RES" FOUND 0
-    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "No original M.A.X found. Please choose the correct path, or disable the Import option in the installation settings. You can import the original ressources anytime later by using the resinstaller tool."
+    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "$(MAX_PATH_NotFound)"
     StrCpy $ORI_PATH_FOUND "0"
     FOUND:
 
