@@ -18,18 +18,18 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
-#include <vorbis/vorbisenc.h>
-#include <SDL.h>
-#include <string>
-#include "resinstaller.h"
-#include "converter.h"
+
 #include "ogg_encode.h"
+
+#include "converter.h"
+#include "resinstaller.h"
 #include "wave.h"
 
+#include <SDL.h>
+#include <string>
+#include <vorbis/vorbisenc.h>
 
-
-void encodeWAV( string fileName, cWaveFile &waveFile )
+void encodeWAV (string fileName, cWaveFile& waveFile)
 {
 	static unsigned char serialNr = 0;
 	int ret;
@@ -44,112 +44,108 @@ void encodeWAV( string fileName, cWaveFile &waveFile )
 	vorbis_block vorbisBlock;
 
 	//if the file name ends with .wav it has to be replaced with .ogg
-	string extension = fileName.substr( fileName.length() - 4 , fileName.length() );
-	if ( extension.compare( ".wav") == 0 || extension.compare( ".WAV") == 0 )
+	string extension = fileName.substr (fileName.length() - 4, fileName.length());
+	if (extension.compare (".wav") == 0 || extension.compare (".WAV") == 0)
 	{
-		fileName.replace(fileName.length() - 4, 4, ".ogg");
+		fileName.replace (fileName.length() - 4, 4, ".ogg");
 	}
-	
 
-	SDL_RWops* file = SDL_RWFromFile( fileName.c_str(), "wb");
-	if ( file == NULL )
+	SDL_RWops* file = SDL_RWFromFile (fileName.c_str(), "wb");
+	if (file == NULL)
 	{
-		throw InstallException( string( "Couldn't open file for writing") + TEXT_FILE_LF );
+		throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
 	}
 
 	//begin initialisations and encoder setup
 	Uint8 bytesPerSample = (waveFile.spec.format & 0x00FF) / 8;
 
 	//curently only 2 bps supported
-	if ( bytesPerSample != 2 )
+	if (bytesPerSample != 2)
 	{
-		throw InstallException( string( "Encoding of wave files with ") + iToStr(bytesPerSample) + " bytes per sample not supported" + TEXT_FILE_LF );
+		throw InstallException (string ("Encoding of wave files with ") + iToStr (bytesPerSample) + " bytes per sample not supported" + TEXT_FILE_LF);
 	}
 
-	vorbis_info_init( &vorbisInfo );
-	ret = vorbis_encode_init_vbr( &vorbisInfo, waveFile.spec.channels, waveFile.spec.freq, (float) VORBIS_QUALITY);
-	if ( ret != 0 )
+	vorbis_info_init (&vorbisInfo);
+	ret = vorbis_encode_init_vbr (&vorbisInfo, waveFile.spec.channels, waveFile.spec.freq, (float) VORBIS_QUALITY);
+	if (ret != 0)
 	{
-		throw InstallException( string( "Couldn't initialize vorbis encoder" ) + TEXT_FILE_LF );
+		throw InstallException (string ("Couldn't initialize vorbis encoder") + TEXT_FILE_LF);
 	}
 
-	vorbis_comment_init( &vorbisComment );
-	vorbis_analysis_init( &vorbisDSPState, &vorbisInfo );
-	vorbis_block_init( &vorbisDSPState, &vorbisBlock );
-	
-	ogg_stream_init( &oggStream, serialNr );
+	vorbis_comment_init (&vorbisComment);
+	vorbis_analysis_init (&vorbisDSPState, &vorbisInfo);
+	vorbis_block_init (&vorbisDSPState, &vorbisBlock);
+
+	ogg_stream_init (&oggStream, serialNr);
 	serialNr++;
-	
+
 	//build the 3 nessesary ogg headers
 	ogg_packet header;
 	ogg_packet header_comm;
 	ogg_packet header_code;
 
-	vorbis_analysis_headerout( &vorbisDSPState, &vorbisComment, &header, &header_comm, &header_code );
-	ogg_stream_packetin( &oggStream, &header );
-	ogg_stream_packetin( &oggStream, &header_comm );
-	ogg_stream_packetin( &oggStream, &header_code );
+	vorbis_analysis_headerout (&vorbisDSPState, &vorbisComment, &header, &header_comm, &header_code);
+	ogg_stream_packetin (&oggStream, &header);
+	ogg_stream_packetin (&oggStream, &header_comm);
+	ogg_stream_packetin (&oggStream, &header_code);
 
 	//flush the ogg stream
-	while ( ogg_stream_flush( &oggStream, &oggPage) != 0 )
+	while (ogg_stream_flush (&oggStream, &oggPage) != 0)
 	{
-		SDL_RWwrite( file, oggPage.header, oggPage.header_len, 1 );
-		SDL_RWwrite( file, oggPage.body, oggPage.body_len, 1 );
+		SDL_RWwrite (file, oggPage.header, oggPage.header_len, 1);
+		SDL_RWwrite (file, oggPage.body, oggPage.body_len, 1);
 	}
 
 	//begin encoding
 	int eos = 0;
 	Uint32 dataPos = 0; //read position of the wave buffer in bytes
-	while ( !eos )
+	while (!eos)
 	{
-		float **buffer = vorbis_analysis_buffer( &vorbisDSPState, READ );
+		float** buffer = vorbis_analysis_buffer (&vorbisDSPState, READ);
 		int i;
-		for ( i = 0; i < READ; i++ )
+		for (i = 0; i < READ; i++)
 		{
 			//check end of data
-			if ( dataPos  >= waveFile.length ) break;
+			if (dataPos >= waveFile.length) break;
 
-			for ( int c = 0; c < waveFile.spec.channels; c++ )
+			for (int c = 0; c < waveFile.spec.channels; c++)
 			{
-				buffer[c][i] = (Sint16) ( ( waveFile.buffer[ dataPos + (c * bytesPerSample) + 1] << 8 ) | (0x00FF & (Sint16) waveFile.buffer[ dataPos + (c * bytesPerSample) ]) )/32768.f;
+				buffer[c][i] = (Sint16) ((waveFile.buffer[dataPos + (c * bytesPerSample) + 1] << 8) | (0x00FF & (Sint16) waveFile.buffer[dataPos + (c * bytesPerSample)])) / 32768.f;
 			}
-		
+
 			dataPos += bytesPerSample * waveFile.spec.channels;
 		}
 
-		vorbis_analysis_wrote( &vorbisDSPState, i );
-		
-		while ( vorbis_analysis_blockout( &vorbisDSPState, &vorbisBlock ) == 1 )
+		vorbis_analysis_wrote (&vorbisDSPState, i);
+
+		while (vorbis_analysis_blockout (&vorbisDSPState, &vorbisBlock) == 1)
 		{
-			vorbis_analysis( &vorbisBlock, NULL );
-			vorbis_bitrate_addblock( &vorbisBlock );
+			vorbis_analysis (&vorbisBlock, NULL);
+			vorbis_bitrate_addblock (&vorbisBlock);
 
-			while ( vorbis_bitrate_flushpacket( &vorbisDSPState, &oggPacket ))
+			while (vorbis_bitrate_flushpacket (&vorbisDSPState, &oggPacket))
 			{
-				ogg_stream_packetin(&oggStream,&oggPacket);
-	
+				ogg_stream_packetin (&oggStream, &oggPacket);
 
-				while(!eos)
+				while (!eos)
 				{
-					int result = ogg_stream_pageout(&oggStream,&oggPage);
-					if ( result == 0 ) break;
-					SDL_RWwrite(file, oggPage.header, 1, oggPage.header_len );
-					SDL_RWwrite(file, oggPage.body, 1, oggPage.body_len );
-	  
-					if ( ogg_page_eos( &oggPage )) eos = 1;
+					int result = ogg_stream_pageout (&oggStream, &oggPage);
+					if (result == 0) break;
+					SDL_RWwrite (file, oggPage.header, 1, oggPage.header_len);
+					SDL_RWwrite (file, oggPage.body, 1, oggPage.body_len);
+
+					if (ogg_page_eos (&oggPage)) eos = 1;
 				}
 			}
 		}
 	}
 
-	SDL_RWclose( file );
+	SDL_RWclose (file);
 
 	// clean up
-	ogg_stream_clear( &oggStream );
-	vorbis_block_clear( &vorbisBlock );
-	vorbis_dsp_clear( &vorbisDSPState );
-	vorbis_comment_clear( &vorbisComment );
-	vorbis_info_clear( &vorbisInfo );
-
-
+	ogg_stream_clear (&oggStream);
+	vorbis_block_clear (&vorbisBlock);
+	vorbis_dsp_clear (&vorbisDSPState);
+	vorbis_comment_clear (&vorbisComment);
+	vorbis_info_clear (&vorbisInfo);
 }

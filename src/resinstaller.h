@@ -18,26 +18,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 #ifndef ResinstallerH
 #define ResinstallerH
 #include "defines.h"
+
 #include <SDL.h>
 #include <iostream>
-#include <string>
 #include <locale>
+#include <string>
 
 #ifdef WIN32
-#include <conio.h>
-#include <windows.h>
+# include <conio.h>
+# include <windows.h>
 #endif
 
 using namespace std;
 
-
 #ifdef _WIN32
-#pragma warning(disable:4312)
-#pragma warning(disable:4996)
+# pragma warning(disable : 4312)
+# pragma warning(disable : 4996)
 #endif
 
 EX bool bDoNotElevate;
@@ -48,9 +48,8 @@ EX string sOutputPath;
 EX string sLanguage;
 EX string sResChoice;
 EX string waveExtension;
-EX SDL_RWops *res ZERO;
-EX SDL_RWops *logFile ZERO;
-
+EX SDL_RWops* res ZERO;
+EX SDL_RWops* logFile ZERO;
 
 EX Uint32 lPosBegin;
 EX Uint32 lEndOfFile;
@@ -60,33 +59,28 @@ EX bool wasError;
 
 EX bool oggEncode;
 
-
-
 //this exception is thrown, when the installation of the current file failed
 class InstallException
 {
 public:
 	string message;
-	InstallException( string m ) { message = m; };
+	InstallException (string m) { message = m; };
 };
 
-void trimSpaces(std::string& str, const std::locale& loc = std::locale());
+void trimSpaces (std::string& str, const std::locale& loc = std::locale());
 
-void trimQuotes(std::string& str);
+void trimQuotes (std::string& str);
 
-// makes all necessary actions after a successfull 
+// makes all necessary actions after a successfull
 // or unsuccessfull attempt to install a file
-#define END_INSTALL_FILE( file )\
-			catch ( InstallException e )\
-			{\
-				writeLog("Error while installing file '" + file + "'" + TEXT_FILE_LF + e.message );\
-				iErrors++;\
-				wasError = true;\
-			}\
-			iInstalledFiles++;\
-			updateProgressbar();
-		
-
-
+#define END_INSTALL_FILE(file) \
+ catch (InstallException e) \
+ { \
+  writeLog ("Error while installing file '" + file + "'" + TEXT_FILE_LF + e.message); \
+  iErrors++; \
+  wasError = true; \
+ } \
+ iInstalledFiles++; \
+ updateProgressbar();
 
 #endif // ResinstallerH

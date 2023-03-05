@@ -23,33 +23,33 @@
 #define DefinesH
 
 #ifndef VERSION
-	#define VERSION "0.2.9"
+# define VERSION "0.2.9"
 #endif
 
 #ifdef __resinstaller__
-#define EX
-#define ZERO =0
-#define ONE =1
+# define EX
+# define ZERO = 0
+# define ONE = 1
 #else
-#define EX extern
-#define ZERO
-#define ONE 
+# define EX extern
+# define ZERO
+# define ONE
 #endif
 
 #ifdef WIN32
-	#ifndef PATH_DELIMITER
-		#define PATH_DELIMITER "\\"
-	#endif
-	#ifndef TEXT_FILE_LF
-		#define TEXT_FILE_LF "\r\n"
-	#endif
+# ifndef PATH_DELIMITER
+#  define PATH_DELIMITER "\\"
+# endif
+# ifndef TEXT_FILE_LF
+#  define TEXT_FILE_LF "\r\n"
+# endif
 #else
-	#ifndef PATH_DELIMITER
-		#define PATH_DELIMITER "/"
-	#endif
-	#ifndef TEXT_FILE_LF
-		#define TEXT_FILE_LF "\n"
-	#endif
+# ifndef PATH_DELIMITER
+#  define PATH_DELIMITER "/"
+# endif
+# ifndef TEXT_FILE_LF
+#  define TEXT_FILE_LF "\n"
+# endif
 #endif
 
 #endif // DefinesH

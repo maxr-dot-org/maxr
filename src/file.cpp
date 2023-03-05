@@ -19,98 +19,95 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <SDL.h>
 #include <iostream>
 #include <string>
-#include <SDL.h>
 #include <sys/stat.h>
 #ifdef WIN32
-	#include <direct.h>
-	#include <io.h>
+# include <direct.h>
+# include <io.h>
 #else
-	#include <sys/types.h>
-	#include <unistd.h>
+# include <sys/types.h>
+# include <unistd.h>
 #endif
-#include "resinstaller.h"
 #include "converter.h"
-
+#include "resinstaller.h"
 
 //first tries to open a file with lowercase name
 //if this fails, tries to open the file with uppercase name
-SDL_RWops* openFile( string path, const char* mode)
+SDL_RWops* openFile (string path, const char* mode)
 {
 	//split string into path and filename
-	int pos = (int) path.rfind(PATH_DELIMITER);
-	string fileName = path.substr( pos + 1, path.length() );
-	path = path.substr( 0, pos + 1 );
-	
+	int pos = (int) path.rfind (PATH_DELIMITER);
+	string fileName = path.substr (pos + 1, path.length());
+	path = path.substr (0, pos + 1);
+
 	//try to open with lower case file name
 	int lenght = (int) fileName.size();
-	for(int i=0; i < lenght; i++)
+	for (int i = 0; i < lenght; i++)
 	{
-		fileName[i] = tolower(fileName[i]); 
+		fileName[i] = tolower (fileName[i]);
 	}
 	string lowerCaseFileName = fileName;
-	SDL_RWops* file = SDL_RWFromFile( (path + fileName).c_str(), mode );
-	if ( file != NULL )
+	SDL_RWops* file = SDL_RWFromFile ((path + fileName).c_str(), mode);
+	if (file != NULL)
 	{
 		return file;
 	}
 
 	//try to open with upper case file name
-	for(int i=0; i < lenght; i++)
+	for (int i = 0; i < lenght; i++)
 	{
-		fileName[i] = toupper(fileName[i]); 
+		fileName[i] = toupper (fileName[i]);
 	}
-	file = SDL_RWFromFile( (path + fileName).c_str(), mode );
-	if ( file != NULL )
+	file = SDL_RWFromFile ((path + fileName).c_str(), mode);
+	if (file != NULL)
 	{
 		return file;
 	}
-	
-	throw InstallException( "Couldn't open file '" + path + fileName + "' or '" + lowerCaseFileName + "'" + TEXT_FILE_LF);
+
+	throw InstallException ("Couldn't open file '" + path + fileName + "' or '" + lowerCaseFileName + "'" + TEXT_FILE_LF);
 	return NULL;
 }
 
-void copyFile( string source, string dest )
+void copyFile (string source, string dest)
 {
 	long int size;
 	unsigned char* buffer;
-	SDL_RWops *sourceFile = NULL;
-	SDL_RWops *destFile = NULL;
-	
+	SDL_RWops* sourceFile = NULL;
+	SDL_RWops* destFile = NULL;
+
 	try
 	{
-		sourceFile = openFile ( source, "rb" );
-		
+		sourceFile = openFile (source, "rb");
 
-		destFile = SDL_RWFromFile ( dest.c_str(), "wb" );
-		if ( destFile == NULL )
+		destFile = SDL_RWFromFile (dest.c_str(), "wb");
+		if (destFile == NULL)
 		{
-			throw InstallException (string( "Couldn't open file for writing") + TEXT_FILE_LF );
+			throw InstallException (string ("Couldn't open file for writing") + TEXT_FILE_LF);
 		}
 
-		SDL_RWseek( sourceFile, 0, SEEK_END );
-		size = SDL_RWtell( sourceFile );
+		SDL_RWseek (sourceFile, 0, SEEK_END);
+		size = SDL_RWtell (sourceFile);
 
-		buffer = (unsigned char*) malloc( size );
-		if ( buffer == NULL )
+		buffer = (unsigned char*) malloc (size);
+		if (buffer == NULL)
 		{
 			cout << "Out of memory\n";
 			exit (-1);
 		}
 
-		SDL_RWseek( sourceFile, 0, SEEK_SET);
-		SDL_RWread( sourceFile, buffer, 1, size );
+		SDL_RWseek (sourceFile, 0, SEEK_SET);
+		SDL_RWread (sourceFile, buffer, 1, size);
 
-		SDL_RWwrite( destFile, buffer, 1, size );
+		SDL_RWwrite (destFile, buffer, 1, size);
 
-		free ( buffer );
+		free (buffer);
 	}
-	END_INSTALL_FILE( dest );
+	END_INSTALL_FILE (dest);
 
-	if (sourceFile) SDL_RWclose( sourceFile );
-	if (destFile)   SDL_RWclose( destFile );
-
+	if (sourceFile) SDL_RWclose (sourceFile);
+	if (destFile) SDL_RWclose (destFile);
 }
 
 bool makeDir (const std::string& path)
@@ -131,12 +128,15 @@ bool DirExists (const std::string& path)
 		struct stat status;
 		stat (path.c_str(), &status);
 
-		if (status.st_mode & S_IFDIR) return true;
-		else return false;	// The path is not a directory
+		if (status.st_mode & S_IFDIR)
+			return true;
+		else
+			return false; // The path is not a directory
 	}
-	else return false;
+	else
+		return false;
 #else
 	struct stat st;
-	return stat(path.c_str(), &st) == 0 && (st.st_mode & S_IFDIR) != 0;
+	return stat (path.c_str(), &st) == 0 && (st.st_mode & S_IFDIR) != 0;
 #endif
 }

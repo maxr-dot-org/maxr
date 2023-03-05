@@ -18,14 +18,13 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 #ifndef ConverterH
 #define ConverterH
-#include <SDL.h>
 #include "defines.h"
 #include "resinstaller.h"
 
-
+#include <SDL.h>
 
 struct sPixel
 {
@@ -41,10 +40,10 @@ struct cImageData
 	short sUHotX;
 	short sUHotY;
 
-	cImageData *Images;
+	cImageData* Images;
 
-	unsigned char *data;
-	unsigned char *alpha;
+	unsigned char* data;
+	unsigned char* alpha;
 
 	SDL_Surface* surface;
 };
@@ -53,7 +52,7 @@ class cImage
 {
 	short sWidth;
 	short sHeight;
-	cImageData *Images;
+	cImageData* Images;
 
 	int iImageCount;
 
@@ -67,7 +66,7 @@ class cImage
 
 public:
 	static cImage* Image;
-	
+
 	cImage();
 	~cImage();
 
@@ -76,20 +75,20 @@ public:
 	Sint32 lPos;
 	Sint32 lLenght;
 
-	sPixel *palette;
+	sPixel* palette;
 
 	void decodeFile();
 	void resampleFile();
 	void saveFile();
-	SDL_Surface* getSurface(int imageNr = 0);
+	SDL_Surface* getSurface (int imageNr = 0);
 };
 
-SDL_Surface* getImageFromRes(string file_name, int imageNr = 0);
-void removePlayerColor( SDL_Surface *surface);
+SDL_Surface* getImageFromRes (string file_name, int imageNr = 0);
+void removePlayerColor (SDL_Surface* surface);
 int saveAllFiles();
-void copyFileFromRes ( string src, string dst, int number = 0 );
-void copyFileFromRes_rpc(string src, string dst, int number = 0 );
-void copyImageFromFLC(string fileName, string dst);
+void copyFileFromRes (string src, string dst, int number = 0);
+void copyFileFromRes_rpc (string src, string dst, int number = 0);
+void copyImageFromFLC (string fileName, string dst);
 
 /** resizes (not scales!) a surface
 * @author Eiko
@@ -100,12 +99,11 @@ void copyImageFromFLC(string fileName, string dst);
 * e. g. when increaseing the x dimension, x is used for the destination rect.
 * When decreaseing the x dimention, x is used for the source rect.
 */
-void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w );
-void setColor( SDL_Surface* surface, unsigned char nr, unsigned char r, unsigned char g, unsigned char b );
-void generateAnimationFrame( SDL_Surface* surface, unsigned char frame);
-string iToStr(int x);
+void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w);
+void setColor (SDL_Surface* surface, unsigned char nr, unsigned char r, unsigned char g, unsigned char b);
+void generateAnimationFrame (SDL_Surface* surface, unsigned char frame);
+string iToStr (int x);
 void updateProgressbar();
-void writeLog( string msg );
-
+void writeLog (string msg);
 
 #endif // ConvertH

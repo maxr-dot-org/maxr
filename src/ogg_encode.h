@@ -18,7 +18,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 #ifndef Ogg_EncodeH
 #define Ogg_EncodeH
 
@@ -27,7 +27,6 @@
 #define READ 1024
 #define VORBIS_QUALITY 0.4
 
-void encodeWAV( string fileName, cWaveFile &waveFile );
-
+void encodeWAV (string fileName, cWaveFile& waveFile);
 
 #endif //Ogg_EncodeH
