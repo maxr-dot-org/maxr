@@ -21,7 +21,7 @@
 
 #include "converter.h"
 
-#include "SDL_flic.h"
+#include "3rd/SDL_flic/SDL_flic.h"
 #include "file.h"
 #include "palette.h"
 #include "pcx.h"
