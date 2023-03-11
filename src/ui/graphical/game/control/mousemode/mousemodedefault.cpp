@@ -29,13 +29,13 @@
 #include "input/mouse/cursor/mousecursorattack.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
+#include "resources/keys.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionactivatefinished.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionattack.h"
 #include "ui/graphical/game/control/mouseaction/mouseactiondisable.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionmove.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionselect.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionsteal.h"
-#include "ui/keys.h"
 
 #include <cassert>
 

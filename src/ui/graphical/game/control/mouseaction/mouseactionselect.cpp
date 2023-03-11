@@ -24,8 +24,8 @@
 #include "game/data/map/mapview.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "resources/keys.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
-#include "ui/keys.h"
 #include "utility/listhelpers.h"
 
 //------------------------------------------------------------------------------

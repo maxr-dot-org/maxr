@@ -23,7 +23,7 @@
 #include "input/keyboard/keyboard.h"
 #include "input/mouse/mouse.h"
 #include "output/video/video.h"
-#include "ui/keys.h"
+#include "resources/keys.h"
 #include "ui/widgets/application.h"
 #include "ui/widgets/validators/validator.h"
 #include "ui/widgets/window.h"
