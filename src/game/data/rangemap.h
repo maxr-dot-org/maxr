@@ -21,7 +21,6 @@
 #define game_data_rangemapH
 
 #include "config/workaround/cpp17/optional.h"
-#include "ui/graphical/game/widgets/debugoutputwidget.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 
@@ -31,8 +30,6 @@
 */
 class cRangeMap
 {
-	friend cDebugOutputWidget;
-
 public:
 	cRangeMap() = default;
 
