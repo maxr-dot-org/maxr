@@ -20,9 +20,9 @@
 #ifndef utility_arraycrcH
 #define utility_arraycrcH
 
-#include "config/workaround/cpp17/optional.h"
 #include "crc.h"
 
+#include <config/workaround/cpp17/optional.h>
 #include <cstdint>
 
 /**

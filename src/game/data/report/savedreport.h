@@ -20,11 +20,11 @@
 #ifndef game_data_reports_savedreportH
 #define game_data_reports_savedreportH
 
-#include "config/workaround/cpp17/optional.h"
 #include "utility/position.h"
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/jsonarchive.h"
 
+#include <config/workaround/cpp17/optional.h>
 #include <memory>
 #include <string>
 

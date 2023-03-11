@@ -20,12 +20,12 @@
 #ifndef game_data_units_unitdataH
 #define game_data_units_unitdataH
 
-#include "config/workaround/cpp17/optional.h"
 #include "game/data/resourcetype.h"
 #include "game/data/units/id.h"
 #include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
+#include <config/workaround/cpp17/optional.h>
 #include <string>
 #include <utility>
 #include <vector>

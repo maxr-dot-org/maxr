@@ -19,11 +19,11 @@
 #ifndef game_networkH
 #define game_networkH
 
-#include "config/workaround/cpp17/optional.h"
 #include "game/networkaddress.h"
 
 #include <SDL_net.h>
 #include <atomic>
+#include <config/workaround/cpp17/optional.h>
 #include <mutex>
 #include <thread>
 #include <vector>

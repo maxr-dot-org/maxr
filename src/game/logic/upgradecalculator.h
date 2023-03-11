@@ -20,11 +20,11 @@
 #ifndef game_logic_upgradecalculatorH
 #define game_logic_upgradecalculatorH
 
-#include "config/workaround/cpp17/optional.h"
 #include "utility/serialization/nvp.h"
 #include "utility/signal/signal.h"
 
 #include <array>
+#include <config/workaround/cpp17/optional.h>
 #include <map>
 
 class cResearch;

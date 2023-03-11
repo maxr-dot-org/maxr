@@ -20,11 +20,11 @@
 #ifndef utility_crcH
 #define utility_crcH
 
-#include "config/workaround/cpp17/optional.h"
 #include "utility/flatset.h"
 
 #include <SDL_endian.h>
 #include <array>
+#include <config/workaround/cpp17/optional.h>
 #include <cstddef>
 #include <cstdint>
 #include <forward_list>

@@ -20,10 +20,10 @@
 #ifndef game_logic_movejobs2H
 #define game_logic_movejobs2H
 
-#include "config/workaround/cpp17/optional.h"
 #include "game/logic/endmoveaction.h"
 #include "utility/position.h"
 
+#include <config/workaround/cpp17/optional.h>
 #include <forward_list>
 #include <memory>
 

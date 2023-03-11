@@ -20,7 +20,6 @@
 #ifndef serialization_serializationH
 #define serialization_serializationH
 
-#include "config/workaround/cpp17/optional.h"
 #include "nvp.h"
 #include "utility/color.h"
 #include "utility/flatset.h"
@@ -31,6 +30,7 @@
 #include <array>
 #include <cassert>
 #include <chrono>
+#include <config/workaround/cpp17/optional.h>
 #include <forward_list>
 #include <map>
 #include <memory>

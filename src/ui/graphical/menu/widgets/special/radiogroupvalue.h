@@ -20,10 +20,11 @@
 #ifndef ui_graphical_menu_widgets_special_radiogroupvalueH
 #define ui_graphical_menu_widgets_special_radiogroupvalueH
 
-#include "config/workaround/cpp17/optional.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/widgets/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <config/workaround/cpp17/optional.h>
 
 /*
 ** Similar to regular radioGroup, but handles natively an association

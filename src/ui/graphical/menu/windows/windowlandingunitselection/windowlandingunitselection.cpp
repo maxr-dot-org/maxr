@@ -19,7 +19,6 @@
 
 #include "windowlandingunitselection.h"
 
-#include "config/workaround/cpp17/clamp.h"
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
 #include "resources/pcx.h"
@@ -35,6 +34,7 @@
 #include "utility/language.h"
 
 #include <algorithm>
+#include <config/workaround/cpp17/clamp.h>
 
 //------------------------------------------------------------------------------
 cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold, std::shared_ptr<const cUnitsData> unitsData) :

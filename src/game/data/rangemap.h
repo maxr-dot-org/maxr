@@ -20,9 +20,10 @@
 #ifndef game_data_rangemapH
 #define game_data_rangemapH
 
-#include "config/workaround/cpp17/optional.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
+
+#include <config/workaround/cpp17/optional.h>
 
 /**
 * This class is used to track, whether a position is a specific range to any

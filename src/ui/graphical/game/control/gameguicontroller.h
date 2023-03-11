@@ -20,7 +20,6 @@
 #ifndef ui_graphical_game_control_gameguicontrollerH
 #define ui_graphical_game_control_gameguicontrollerH
 
-#include "config/workaround/cpp17/optional.h"
 #include "game/data/gui/gameguistate.h"
 #include "game/data/gui/playerguiinfo.h"
 #include "game/logic/upgradecalculator.h"
@@ -29,6 +28,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <array>
+#include <config/workaround/cpp17/optional.h>
 #include <memory>
 #include <string>
 #include <vector>
