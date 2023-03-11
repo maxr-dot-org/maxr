@@ -20,10 +20,10 @@
 #include "ui/graphical/menu/widgets/special/lobbyplayerlistviewitem.h"
 
 #include "game/data/player/playerbasicdata.h"
+#include "resources/playercolor.h"
 #include "resources/uidata.h"
 #include "ui/widgets/image.h"
 #include "ui/widgets/label.h"
-#include "ui/graphical/playercolor.h"
 
 #include <cassert>
 

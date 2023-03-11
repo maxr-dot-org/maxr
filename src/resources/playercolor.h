@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_playercolorH
-#define ui_graphical_playercolorH
+#ifndef resources_playercolorH
+#define resources_playercolorH
 
 #include "SDLutility/autosurface.h"
 #include "utility/color.h"

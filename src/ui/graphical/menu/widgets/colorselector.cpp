@@ -20,9 +20,9 @@
 #include "colorselector.h"
 
 #include "output/video/video.h"
+#include "resources/playercolor.h"
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/playercolor.h"
 #include "ui/widgets/application.h"
 #include "ui/widgets/image.h"
 

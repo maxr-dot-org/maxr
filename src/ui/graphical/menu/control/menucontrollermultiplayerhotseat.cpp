@@ -25,6 +25,7 @@
 #include "game/data/units/landingunit.h"
 #include "game/logic/upgradecalculator.h"
 #include "game/startup/gamepreparation.h"
+#include "resources/playercolor.h"
 #include "resources/uidata.h"
 #include "ui/widgets/application.h"
 #include "ui/graphical/menu/control/local/hotseat/localhotseatgamenew.h"
@@ -36,7 +37,6 @@
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/graphical/menu/windows/windowplayerselection/windowplayerselection.h"
-#include "ui/graphical/playercolor.h"
 #include "utility/language.h"
 
 #include <cassert>

@@ -21,8 +21,8 @@
 
 #include "SDLutility/tosdl.h"
 #include "game/data/player/player.h"
+#include "resources/playercolor.h"
 #include "resources/uidata.h"
-#include "ui/graphical/playercolor.h"
 #include "ui/widgets/image.h"
 #include "ui/widgets/label.h"
 
