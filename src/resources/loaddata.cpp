@@ -47,12 +47,15 @@
 #include "resources/vehicleuidata.h"
 #include "settings.h"
 #include "ui/keys.h"
-#include "ui/uidefines.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/serialization/jsonarchive.h"
 
+#define PFEIL_COLOR 0xFF0000FF // color of a waypointarrow
+#define PFEILS_COLOR 0xFF00FF00 // color of a special waypointarrow
+
+//------------------------------------------------------------------------------
 std::string getBuildVersion()
 {
 	std::string sVersion = PACKAGE_NAME;

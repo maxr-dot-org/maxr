@@ -25,8 +25,6 @@
 #define SCAN_COLOR         0xFFE3E300 // color of scan circles
 #define RANGE_GROUND_COLOR 0xFFE20000 // color of range circles for ground attack
 #define RANGE_AIR_COLOR    0xFFFCA800 // color of range circles for air attack
-#define PFEIL_COLOR        0xFF0000FF // color of a waypointarrow
-#define PFEILS_COLOR       0xFF00FF00 // color of a special waypointarrow
 
 // minimap configuration
 #define MINIMAP_COLOR 0xFFFC0000 // color of the screen borders on the minimap
