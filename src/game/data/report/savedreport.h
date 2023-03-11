@@ -24,7 +24,7 @@
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/jsonarchive.h"
 
-#include <config/workaround/cpp17/optional.h>
+#include <cpp17_workaround/optional.h>
 #include <memory>
 #include <string>
 

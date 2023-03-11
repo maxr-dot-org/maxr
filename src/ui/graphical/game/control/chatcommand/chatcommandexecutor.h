@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_control_chatcommand_chatcommandexecutorH
 #define ui_graphical_game_control_chatcommand_chatcommandexecutorH
 
-#include <config/workaround/cpp17/apply.h>
+#include <cpp17_workaround/apply.h>
 #include <exception>
 #include <sstream>
 #include <string>

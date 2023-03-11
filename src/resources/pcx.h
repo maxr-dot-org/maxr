@@ -22,7 +22,7 @@
 
 #include "SDLutility/autosurface.h"
 
-#include <config/workaround/cpp17/filesystem.h>
+#include <cpp17_workaround/filesystem.h>
 
 /** Loads an image to a surface
  * @param name path to img

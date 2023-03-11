@@ -37,7 +37,7 @@
 #include "utility/thread/ismainthread.h"
 
 #include <SDL_mixer.h>
-#include <config/workaround/cpp17/filesystem.h>
+#include <cpp17_workaround/filesystem.h>
 #include <future>
 #include <thread>
 

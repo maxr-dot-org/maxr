@@ -21,7 +21,7 @@
 #define mapdownloader_mapdownloadH
 
 #include <atomic>
-#include <config/workaround/cpp17/filesystem.h>
+#include <cpp17_workaround/filesystem.h>
 #include <string>
 #include <thread>
 #include <vector>

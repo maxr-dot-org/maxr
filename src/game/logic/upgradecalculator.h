@@ -24,7 +24,7 @@
 #include "utility/signal/signal.h"
 
 #include <array>
-#include <config/workaround/cpp17/optional.h>
+#include <cpp17_workaround/optional.h>
 #include <map>
 
 class cResearch;

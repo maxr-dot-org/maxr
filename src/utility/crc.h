@@ -24,7 +24,7 @@
 
 #include <SDL_endian.h>
 #include <array>
-#include <config/workaround/cpp17/optional.h>
+#include <cpp17_workaround/optional.h>
 #include <cstddef>
 #include <cstdint>
 #include <forward_list>

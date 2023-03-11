@@ -28,7 +28,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <array>
-#include <config/workaround/cpp17/optional.h>
+#include <cpp17_workaround/optional.h>
 #include <memory>
 #include <string>
 #include <vector>

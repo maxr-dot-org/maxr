@@ -23,7 +23,7 @@
 #include "utility/log.h"
 
 #include <algorithm>
-#include <config/workaround/cpp17/filesystem.h>
+#include <cpp17_workaround/filesystem.h>
 
 /**
 *  Class that uses a internal buffer to read from file.

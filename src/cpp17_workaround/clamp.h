@@ -17,37 +17,25 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef config_workaround_cpp17_applyH
-#define config_workaround_cpp17_applyH
+#ifndef cpp17_workaround_clampH
+#define cpp17_workaround_clampH
 
 #if __cplusplus < 201700
 
-# include <tuple>
-
 namespace std
 {
-
 	inline namespace compatibility_cpp17
 	{
-		namespace details
+		template <typename T>
+		const T& clamp (const T& value, const T& min, const T& max)
 		{
-			template <typename F, typename Tuple, std::size_t... Is>
-			auto apply (F func, Tuple&& tuple, std::index_sequence<Is...>)
-			{
-				return func (std::get<Is> (std::forward<Tuple> (tuple))...);
-			}
-		} // namespace details
-
-		template <typename F, typename Tuple>
-		auto apply (F func, Tuple&& tuple)
-		{
-			using Seq = std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>;
-			return details::apply (func, std::forward<Tuple> (tuple), Seq{});
+			return std::max (min, std::min (value, max));
 		}
-
 	} // namespace compatibility_cpp17
-
 } // namespace std
 
+#else
+# include <algorithm>
 #endif
+
 #endif

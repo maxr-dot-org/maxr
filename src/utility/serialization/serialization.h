@@ -30,7 +30,7 @@
 #include <array>
 #include <cassert>
 #include <chrono>
-#include <config/workaround/cpp17/optional.h>
+#include <cpp17_workaround/optional.h>
 #include <forward_list>
 #include <map>
 #include <memory>

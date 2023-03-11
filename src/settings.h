@@ -24,7 +24,7 @@
 #include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
-#include <config/workaround/cpp17/filesystem.h>
+#include <cpp17_workaround/filesystem.h>
 #include <mutex>
 #include <string>
 

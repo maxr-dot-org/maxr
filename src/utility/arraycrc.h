@@ -22,7 +22,7 @@
 
 #include "crc.h"
 
-#include <config/workaround/cpp17/optional.h>
+#include <cpp17_workaround/optional.h>
 #include <cstdint>
 
 /**

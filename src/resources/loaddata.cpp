@@ -26,7 +26,7 @@
 #include "loaddata.h"
 
 #include <SDL_mixer.h>
-#include <config/workaround/cpp17/filesystem.h>
+#include <cpp17_workaround/filesystem.h>
 #include <iostream>
 #include <regex>
 #include <set>

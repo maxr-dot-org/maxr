@@ -28,7 +28,7 @@
 #include "utility/position.h"
 #include "utility/string/trim.h"
 
-#include <config/workaround/cpp17/filesystem.h>
+#include <cpp17_workaround/filesystem.h>
 
 #if 1
 /*

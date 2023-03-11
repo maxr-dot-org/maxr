@@ -24,7 +24,7 @@
 #include "utility/serialization/serialization.h"
 
 #include <array>
-#include <config/workaround/cpp17/filesystem.h>
+#include <cpp17_workaround/filesystem.h>
 #include <string>
 #include <vector>
 

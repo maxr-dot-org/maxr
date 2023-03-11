@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef config_workaround_cpp17_optionalH
-#define config_workaround_cpp17_optionalH
+#ifndef cpp17_workaround_optionalH
+#define cpp17_workaround_optionalH
 
 #if __cplusplus < 201700
 

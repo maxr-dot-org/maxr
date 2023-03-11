@@ -20,7 +20,7 @@
 #ifndef game_data_savegameH
 #define game_data_savegameH
 
-#include <config/workaround/cpp17/filesystem.h>
+#include <cpp17_workaround/filesystem.h>
 #include <string>
 #include <vector>
 

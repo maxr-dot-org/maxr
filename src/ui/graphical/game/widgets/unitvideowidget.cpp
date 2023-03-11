@@ -27,7 +27,7 @@
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/widgets/image.h"
 
-#include <config/workaround/cpp17/filesystem.h>
+#include <cpp17_workaround/filesystem.h>
 
 //------------------------------------------------------------------------------
 cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer> animationTimer) :

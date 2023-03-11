@@ -21,8 +21,8 @@
 #define output_sound_soundchunkH
 
 #include <SDL_mixer.h>
-#include <config/workaround/cpp17/filesystem.h>
 #include <chrono>
+#include <cpp17_workaround/filesystem.h>
 #include <memory>
 #include <string>
 

@@ -26,8 +26,8 @@
 #include "utility/serialization/serialization.h"
 
 #include <SDL.h>
-#include <config/workaround/cpp17/filesystem.h>
 #include <array>
+#include <cpp17_workaround/filesystem.h>
 #include <string>
 
 class cMapView;
