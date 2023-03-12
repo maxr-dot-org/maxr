@@ -17,8 +17,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "dedicatedservermain.h"
-
 #include "SDLutility/sdlcomponent.h"
 #include "SDLutility/sdlnetcomponent.h"
 #include "crashreporter/debug.h"
@@ -30,7 +28,7 @@
 #include "utility/log.h"
 
 //------------------------------------------------------------------------------
-int dedicaterservermain (int, char**)
+int main (int, char**)
 try
 {
 	if (!cSettings::getInstance().isInitialized())

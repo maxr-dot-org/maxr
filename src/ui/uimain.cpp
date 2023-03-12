@@ -17,8 +17,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "uimain.h"
-
 #include "3rd/mveplayer/mveplayer.h"
 #include "SDLutility/sdlcomponent.h"
 #include "SDLutility/sdlnetcomponent.h"
@@ -36,7 +34,6 @@
 #include "utility/log.h"
 #include "utility/thread/ismainthread.h"
 
-#include <SDL_mixer.h>
 #include <cpp17_workaround/filesystem.h>
 #include <future>
 #include <thread>
@@ -127,7 +124,7 @@ struct AtExit
 	}
 };
 
-int uimain (int argc, char* argv[])
+int main (int, char*[])
 try
 {
 	AtExit exitGuard; // Will clean data global data in its destructor

@@ -3,18 +3,12 @@ cmake_minimum_required(VERSION 3.1)
 
 project(maxr)
 
-
 # ============================================
-# === Options
-# ============================================
-
-option(MAXR_BUILD_DEDICATED_SERVER "Build the dedicated server instead of the normal game" OFF)
-
-# ============================================
-# === Global sdditional includes directories
+# === Global additional includes directories
 # ============================================
 
 include_directories(src)
+include_directories(src/lib)
 
 # ============================================
 # === Global defines
@@ -22,10 +16,6 @@ include_directories(src)
 
 if(PACKAGE_VERSION)
   add_definitions( "-DPACKAGE_VERSION=\"${PACKAGE_VERSION}\"")
-endif()
-
-if(MAXR_BUILD_DEDICATED_SERVER)
-  add_definitions( -DDEDICATED_SERVER_APPLICATION )
 endif()
 
 if(CRASH_RPT_INCLUDE_DIR)
@@ -50,8 +40,8 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /bigobj")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI /bigobj")
-  set(RESSOURCE_FILE src/maxr.rc)
-  
+  set(RESOURCE_FILE src/maxr.rc)
+
   # use WinXP compatible platformtoolset
   if (CMAKE_VS_PLATFORM_TOOLSET STREQUAL v120)
     set(CMAKE_GENERATOR_TOOLSET "v120_xp" CACHE STRING "CMAKE_GENERATOR_TOOLSET" FORCE)
@@ -87,11 +77,17 @@ endif()
 # === Target
 # ============================================
 
-file(GLOB_RECURSE maxr_SRCS "src/*.cpp" "src/*.c" "src/*.h")
-list(FILTER maxr_SRCS EXCLUDE REGEX "src/3rd/spiritless_po/.*$")
+add_library(SDL_flic src/3rd/SDL_flic/SDL_flic.c src/3rd/SDL_flic/SDL_flic.h)
+add_library(mve_player src/3rd/mveplayer/mveplayer.cpp src/3rd/mveplayer/mveplayer.h)
+# nlohman is library header library for json
+# spiritless_po is library header for gettext po translation
+# doctest is library header for test framework
+
+file(GLOB_RECURSE maxr_LIB_SRCS "src/lib/*.cpp" "src/lib/*.h")
+file(GLOB_RECURSE maxr_SRCS "src/ui/*.cpp" "src/ui/*.h")
+file(GLOB_RECURSE maxr_dedicatedserver_SRCS "src/dedicatedserver/*.cpp" "src/dedicatedserver/*.h")
 
 macro(GroupSources curdir)
-  
   file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
 
   foreach(child ${children})
@@ -105,15 +101,24 @@ macro(GroupSources curdir)
 endmacro()
 
 GroupSources(src)
+# source_group(TREE . FILES maxr_SRCS)
 
-add_executable(maxr ${maxr_SRCS} ${RESSOURCE_FILE})
+add_library(maxr_lib ${maxr_LIB_SRCS})
 
-target_include_directories(maxr SYSTEM PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/3rd/spiritless_po/include")
+add_executable(maxr_dedicatedserver ${maxr_dedicatedserver_SRCS} ${RESOURCE_FILE})
+add_executable(maxr ${maxr_SRCS} ${RESOURCE_FILE})
+
+target_include_directories(maxr_lib SYSTEM PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/3rd/spiritless_po/include")
+
+target_link_libraries(maxr maxr_lib SDL_flic mve_player)
+target_link_libraries(maxr_dedicatedserver maxr_lib)
 
 # set linker flags for target
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set_target_properties(maxr PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+  target_compile_definitions(maxr_lib PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
   target_compile_definitions(maxr PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
+  target_compile_definitions(maxr_dedicatedserver PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
 endif()
 
 # ============================================
@@ -136,27 +141,30 @@ endif()
 # SDL2
 find_package(SDL2 REQUIRED)
 
-include_directories(${SDL2_INCLUDE_DIR})
-target_link_libraries(maxr ${SDL2_LIBRARY})
+target_include_directories(maxr_lib PUBLIC ${SDL2_INCLUDE_DIR})
+target_link_libraries(maxr_lib PUBLIC ${SDL2_LIBRARY})
+target_include_directories(mve_player PUBLIC ${SDL2_INCLUDE_DIR})
+target_link_libraries(mve_player PUBLIC ${SDL2_LIBRARY})
+target_include_directories(SDL_flic PUBLIC ${SDL2_INCLUDE_DIR})
+target_link_libraries(SDL_flic PUBLIC ${SDL2_LIBRARY})
 
 # ---------------------------------------
 # SDL2_mixer
 find_package(SDL2_mixer REQUIRED)
 
-include_directories(${SDL2_MIXER_INCLUDE_DIR})
-target_link_libraries(maxr ${SDL2_MIXER_LIBRARY})
+target_include_directories(maxr_lib PUBLIC ${SDL2_MIXER_INCLUDE_DIR})
+target_link_libraries(maxr_lib PUBLIC ${SDL2_MIXER_LIBRARY})
 
 # ---------------------------------------
 # SDL2_net
 find_package(SDL2_net REQUIRED)
 
-include_directories(${SDL2_NET_INCLUDE_DIR})
-target_link_libraries(maxr ${SDL2_NET_LIBRARY})
-
+target_include_directories(maxr_lib PUBLIC ${SDL2_NET_INCLUDE_DIR})
+target_link_libraries(maxr_lib PUBLIC ${SDL2_NET_LIBRARY})
 
 # ---------------------------------------
 # add crash reporting library
 if(CRASH_RPT_INCLUDE_DIR)
-  include_directories(${CRASH_RPT_INCLUDE_DIR})
-  target_link_libraries(maxr ${CRASH_RPT_LIB})
+  target_include_directories(maxr_lib PUBLIC ${CRASH_RPT_INCLUDE_DIR})
+  target_link_libraries(maxr_lib PUBLIC ${CRASH_RPT_LIB})
 endif()

@@ -4,4 +4,4 @@ build-linux:
     script:
         - mkdir build && cd build
         - cmake ..
-        - make -j4
+        - make maxr_dedicatedserver maxr -j4
