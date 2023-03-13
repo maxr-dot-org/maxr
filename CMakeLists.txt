@@ -86,6 +86,7 @@ add_library(mve_player src/3rd/mveplayer/mveplayer.cpp src/3rd/mveplayer/mveplay
 file(GLOB_RECURSE maxr_LIB_SRCS "src/lib/*.cpp" "src/lib/*.h")
 file(GLOB_RECURSE maxr_SRCS "src/ui/*.cpp" "src/ui/*.h")
 file(GLOB_RECURSE maxr_dedicatedserver_SRCS "src/dedicatedserver/*.cpp" "src/dedicatedserver/*.h")
+file(GLOB_RECURSE maxr_tests_SRCS "tests/*.cpp" "tests/*.h")
 
 macro(GroupSources curdir)
   file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
@@ -107,11 +108,13 @@ add_library(maxr_lib ${maxr_LIB_SRCS})
 
 add_executable(maxr_dedicatedserver ${maxr_dedicatedserver_SRCS} ${RESOURCE_FILE})
 add_executable(maxr ${maxr_SRCS} ${RESOURCE_FILE})
+add_executable(maxr_tests ${maxr_tests_SRCS})
 
 target_include_directories(maxr_lib SYSTEM PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/3rd/spiritless_po/include")
 
 target_link_libraries(maxr maxr_lib SDL_flic mve_player)
 target_link_libraries(maxr_dedicatedserver maxr_lib)
+target_link_libraries(maxr_tests maxr_lib)
 
 # set linker flags for target
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")

@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_control_chatcommand_chatcommandargumentsH
-#define ui_graphical_game_control_chatcommand_chatcommandargumentsH
+#ifndef chatcommand_chatcommandargumentsH
+#define chatcommand_chatcommandargumentsH
 
 #include <exception>
 #include <iostream>
@@ -294,4 +294,4 @@ const typename cChatCommandArgumentInt<T>::ValueType& cChatCommandArgumentInt<T>
 	return value;
 }
 
-#endif // ui_graphical_game_control_chatcommand_chatcommandargumentsH
+#endif

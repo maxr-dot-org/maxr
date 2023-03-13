@@ -17,33 +17,43 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/control/chatcommand/chatcommand.h"
+#include "chatcommandparser.h"
+
+#include <cctype>
+#include <string>
 
 //------------------------------------------------------------------------------
-/*static*/ bool cChatCommand::isCommand (const std::string& command)
+void skipWhiteSpace (const std::string& command, size_t& position)
 {
-	if (command.empty()) return false;
-	if (command[0] != '/') return false;
-
-	return true;
+	while (position < command.size() && std::isspace (static_cast<unsigned char>(command[position])))
+	{
+		++position;
+	}
 }
 
 //------------------------------------------------------------------------------
-cChatCommand::cChatCommand (std::string name, std::string description) :
-	name (std::move (name)),
-	description (std::move (description))
+cChatCommandParser<>::cChatCommandParser (cChatCommand command_) :
+	command (std::move (command_))
 {}
 
 //------------------------------------------------------------------------------
-cChatCommand& cChatCommand::setShouldBeReported (bool value)
+size_t cChatCommandParser<>::parse (const std::string& command, size_t position) const
 {
-	shouldBeReported = value;
-	return *this;
+	return position;
 }
 
 //------------------------------------------------------------------------------
-cChatCommand& cChatCommand::setIsServerOnly (bool value)
+void cChatCommandParser<>::printArguments (std::ostream& result) const
+{}
+
+//------------------------------------------------------------------------------
+const cChatCommand& cChatCommandParser<>::getCommand() const
 {
-	isServerOnly = value;
-	return *this;
+	return command;
+}
+
+//------------------------------------------------------------------------------
+cChatCommandParser<>::ArgumentValueTypes cChatCommandParser<>::getArgumentValues() const
+{
+	return ArgumentValueTypes();
 }

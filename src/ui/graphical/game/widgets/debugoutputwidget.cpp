@@ -19,6 +19,10 @@
 
 #include "ui/graphical/game/widgets/debugoutputwidget.h"
 
+#include "chatcommand/chatcommand.h"
+#include "chatcommand/chatcommandarguments.h"
+#include "chatcommand/chatcommandexecutor.h"
+#include "chatcommand/chatcommandparser.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
@@ -29,10 +33,6 @@
 #include "resources/playercolor.h"
 #include "resources/uidata.h"
 #include "ui/graphical/game/animations/animation.h"
-#include "ui/graphical/game/control/chatcommand/chatcommand.h"
-#include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
-#include "ui/graphical/game/control/chatcommand/chatcommandexecutor.h"
-#include "ui/graphical/game/control/chatcommand/chatcommandparser.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/translations.h"
 #include "utility/indexiterator.h"

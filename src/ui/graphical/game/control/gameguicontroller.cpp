@@ -19,6 +19,10 @@
 
 #include "ui/graphical/game/control/gameguicontroller.h"
 
+#include "chatcommand/chatcommand.h"
+#include "chatcommand/chatcommandarguments.h"
+#include "chatcommand/chatcommandexecutor.h"
+#include "chatcommand/chatcommandparser.h"
 #include "crashreporter/debug.h"
 #include "game/data/map/mapview.h"
 #include "game/data/player/player.h"
@@ -54,10 +58,6 @@
 #include "output/sound/sounddevice.h"
 #include "resources/keys.h"
 #include "ui/graphical/game/animations/animationtimer.h"
-#include "ui/graphical/game/control/chatcommand/chatcommand.h"
-#include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
-#include "ui/graphical/game/control/chatcommand/chatcommandexecutor.h"
-#include "ui/graphical/game/control/chatcommand/chatcommandparser.h"
 #include "ui/graphical/game/gamegui.h"
 #include "ui/graphical/game/hud.h"
 #include "ui/graphical/game/widgets/chatbox.h"

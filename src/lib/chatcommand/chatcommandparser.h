@@ -18,10 +18,10 @@
  ***************************************************************************/
 
 // Outside of header guards due to circular dependencies
-#include "ui/graphical/game/control/chatcommand/chatcommand.h"
+#include "chatcommand/chatcommand.h"
 
-#ifndef ui_graphical_game_control_chatcommand_chatcommandparserH
-# define ui_graphical_game_control_chatcommand_chatcommandparserH
+#ifndef chatcommand_chatcommandparserH
+# define chatcommand_chatcommandparserH
 
 # include <sstream>
 # include <string>
@@ -61,9 +61,9 @@ public:
 	size_t parse (const std::string& command, size_t position) const;
 
 	template <typename NewArgument, typename... Args>
-	cChatCommandParser<NewArgument, Argument, LastArguments...> addArgument (Args&&... args);
+	cChatCommandParser<NewArgument, Argument, LastArguments...> addArgument (Args&&... args) &&;
 	template <typename F>
-	std::unique_ptr<cChatCommandExecutor> setAction (F function);
+	std::unique_ptr<cChatCommandExecutor> setAction (F function) &&;
 
 	void printArguments (std::ostream& result) const;
 
@@ -106,7 +106,7 @@ size_t cChatCommandParser<Argument, LastArguments...>::parse (const std::string&
 //------------------------------------------------------------------------------
 template <typename Argument, typename... LastArguments>
 template <typename NewArgument, typename... Args>
-cChatCommandParser<NewArgument, Argument, LastArguments...> cChatCommandParser<Argument, LastArguments...>::addArgument (Args&&... args)
+cChatCommandParser<NewArgument, Argument, LastArguments...> cChatCommandParser<Argument, LastArguments...>::addArgument (Args&&... args) &&
 {
 	return cChatCommandParser<NewArgument, Argument, LastArguments...> (std::move (*this), NewArgument (std::forward<Args> (args)...));
 }
@@ -114,7 +114,7 @@ cChatCommandParser<NewArgument, Argument, LastArguments...> cChatCommandParser<A
 //------------------------------------------------------------------------------
 template <typename Argument, typename... LastArguments>
 template <typename F>
-std::unique_ptr<cChatCommandExecutor> cChatCommandParser<Argument, LastArguments...>::setAction (F function)
+std::unique_ptr<cChatCommandExecutor> cChatCommandParser<Argument, LastArguments...>::setAction (F function) &&
 {
 	return std::make_unique<cChatCommandExecutorImpl<F, Argument, LastArguments...>> (std::move (function), std::move (*this));
 }
@@ -145,4 +145,4 @@ typename cChatCommandParser<Argument, LastArguments...>::ArgumentValueTypes cCha
 	return std::tuple_cat (lastParser.getArgumentValues(), std::tuple<typename Argument::ValueType> (argument.getValue()));
 }
 
-#endif // ui_graphical_game_control_chatcommand_chatcommandparserH
+#endif

@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_control_chatcommand_chatcommandH
-#define ui_graphical_game_control_chatcommand_chatcommandH
+#ifndef chatcommand_chatcommandH
+#define chatcommand_chatcommandH
 
 #include <memory>
 #include <string>
@@ -77,4 +77,4 @@ std::unique_ptr<cChatCommandExecutor> cChatCommand::setAction (F function)
 	return std::make_unique<cChatCommandExecutorImpl<F>> (std::move (function), cChatCommandParser<> (std::move (*this)));
 }
 
-#endif // ui_graphical_game_control_chatcommand_chatcommandH
+#endif

@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/control/chatcommand/chatcommandarguments.h"
+#include "chatcommandarguments.h"
 
 #include "game/logic/client.h"
 #include "game/logic/server.h"
