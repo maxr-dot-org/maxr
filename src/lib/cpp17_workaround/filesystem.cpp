@@ -146,7 +146,11 @@ namespace std
 			//----------------------------------------------------------------------
 			bool exists (const path& p)
 			{
+# ifdef WIN32
+				return _access (p.string().c_str(), 0) == 0;
+# else
 				return std::ifstream (p.string(), std::ifstream::binary).is_open();
+# endif
 			}
 
 		} // namespace compatibility_cpp17
