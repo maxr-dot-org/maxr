@@ -486,11 +486,13 @@ void cGameGuiController::initChatCommands()
 				// FIXME: do not do changes on server data that are not synchronized with the server thread!
 				server->disableFreezeMode (eFreezeMode::Pause);
 			}));
+#ifdef USE_CRASH_RPT
 	chatCommands.push_back (
 		cChatCommand ("crash", "Emulates a crash (to test the crash report utility)")
 			.setAction ([]() {
 				CR_EMULATE_CRASH();
 			}));
+#endif
 #if 0
 	chatCommands.push_back (
 		cChatCommand ("disconnect", "Disconnect a player")
