@@ -39,10 +39,10 @@ size_t getNextWordLength (const std::string& s, size_t position)
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentBool::cChatCommandArgumentBool (bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentBool> (isOptional_),
-	value (defaultValue_),
-	defaultValue (defaultValue_)
+cChatCommandArgumentBool::cChatCommandArgumentBool (bool isOptional, ValueType defaultValue) :
+	isOptional (isOptional),
+	value (defaultValue),
+	defaultValue (defaultValue)
 {}
 
 //------------------------------------------------------------------------------
@@ -100,13 +100,13 @@ const cChatCommandArgumentBool::ValueType& cChatCommandArgumentBool::getValue() 
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentChoice::cChatCommandArgumentChoice (std::vector<std::string> choices_, bool isOptional_, size_t defaultSelection_) :
-	cChatCommandArgument<cChatCommandArgumentChoice> (isOptional_),
-	choices (std::move (choices_)),
-	currentSelection (defaultSelection_),
-	defaultSelection (defaultSelection_)
+cChatCommandArgumentChoice::cChatCommandArgumentChoice (std::vector<std::string> choices, bool isOptional, size_t defaultSelection) :
+	isOptional (isOptional),
+	choices (std::move (choices)),
+	currentSelection (defaultSelection),
+	defaultSelection (defaultSelection)
 {
-	assert (defaultSelection < choices.size());
+	assert (defaultSelection < this->choices.size());
 }
 
 //------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ size_t cChatCommandArgumentChoice::parse (const std::string& command, size_t pos
 
 	if (!success)
 	{
-		if (this->isOptional)
+		if (isOptional)
 		{
 			currentSelection = defaultSelection;
 			return position;
@@ -163,7 +163,7 @@ size_t cChatCommandArgumentChoice::parse (const std::string& command, size_t pos
 std::string cChatCommandArgumentChoice::toString() const
 {
 	std::stringstream result;
-	if (this->isOptional) result << "[";
+	if (isOptional) result << "[";
 	result << "{";
 	if (!choices.empty())
 	{
@@ -174,7 +174,7 @@ std::string cChatCommandArgumentChoice::toString() const
 		}
 	}
 	result << "}";
-	if (this->isOptional) result << "]";
+	if (isOptional) result << "]";
 	return result.str();
 }
 
@@ -185,10 +185,10 @@ const cChatCommandArgumentChoice::ValueType& cChatCommandArgumentChoice::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentString::cChatCommandArgumentString (std::string name_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentString> (isOptional_),
-	name (std::move (name_)),
-	defaultValue (std::move (defaultValue_))
+cChatCommandArgumentString::cChatCommandArgumentString (std::string name, bool isOptional, ValueType defaultValue) :
+	isOptional (isOptional),
+	name (std::move (name)),
+	defaultValue (std::move (defaultValue))
 {}
 
 //------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ size_t cChatCommandArgumentString::parse (const std::string& command, size_t pos
 
 	if (value.empty())
 	{
-		if (this->isOptional)
+		if (isOptional)
 		{
 			value = defaultValue;
 		}
@@ -216,9 +216,9 @@ size_t cChatCommandArgumentString::parse (const std::string& command, size_t pos
 std::string cChatCommandArgumentString::toString() const
 {
 	std::stringstream result;
-	if (this->isOptional) result << "[";
+	if (isOptional) result << "[";
 	result << "<" << name << ">";
-	if (this->isOptional) result << "]";
+	if (isOptional) result << "]";
 	return result.str();
 }
 
@@ -229,11 +229,11 @@ const cChatCommandArgumentString::ValueType& cChatCommandArgumentString::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentServer::cChatCommandArgumentServer (cServer*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentServer> (isOptional_),
-	value (defaultValue_),
-	defaultValue (defaultValue_),
-	serverPointer (serverPointer_)
+cChatCommandArgumentServer::cChatCommandArgumentServer (cServer*& serverPointer, bool isOptional, ValueType defaultValue) :
+	isOptional (isOptional),
+	value (defaultValue),
+	defaultValue (defaultValue),
+	serverPointer (serverPointer)
 {}
 
 //------------------------------------------------------------------------------
@@ -242,7 +242,7 @@ size_t cChatCommandArgumentServer::parse (const std::string& command, size_t pos
 	value = serverPointer;
 	if (value == nullptr)
 	{
-		if (this->isOptional)
+		if (isOptional)
 		{
 			value = defaultValue;
 		}
@@ -268,11 +268,11 @@ const cChatCommandArgumentServer::ValueType& cChatCommandArgumentServer::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentClient::cChatCommandArgumentClient (const std::shared_ptr<cClient>& activeClientPointer_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentClient> (isOptional_),
-	value (defaultValue_),
-	defaultValue (defaultValue_),
-	activeClientPointer (activeClientPointer_)
+cChatCommandArgumentClient::cChatCommandArgumentClient (const std::shared_ptr<cClient>& activeClientPointer, bool isOptional, ValueType defaultValue) :
+	isOptional (isOptional),
+	value (defaultValue),
+	defaultValue (defaultValue),
+	activeClientPointer (activeClientPointer)
 {}
 
 //------------------------------------------------------------------------------
@@ -280,7 +280,7 @@ size_t cChatCommandArgumentClient::parse (const std::string& command, size_t pos
 {
 	if (activeClientPointer == nullptr)
 	{
-		if (this->isOptional)
+		if (isOptional)
 		{
 			value = defaultValue;
 		}
@@ -310,11 +310,11 @@ const cChatCommandArgumentClient::ValueType& cChatCommandArgumentClient::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentServerPlayer::cChatCommandArgumentServerPlayer (cServer*& serverPointer_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentServerPlayer> (isOptional_),
-	value (defaultValue_),
-	defaultValue (defaultValue_),
-	serverPointer (serverPointer_)
+cChatCommandArgumentServerPlayer::cChatCommandArgumentServerPlayer (cServer*& serverPointer, bool isOptional, ValueType defaultValue) :
+	isOptional (isOptional),
+	value (defaultValue),
+	defaultValue (defaultValue),
+	serverPointer (serverPointer)
 {}
 
 //------------------------------------------------------------------------------
@@ -391,9 +391,9 @@ size_t cChatCommandArgumentServerPlayer::parse (const std::string& command, size
 std::string cChatCommandArgumentServerPlayer::toString() const
 {
 	std::stringstream result;
-	if (this->isOptional) result << "[";
+	if (isOptional) result << "[";
 	result << "<playerID>";
-	if (this->isOptional) result << "]";
+	if (isOptional) result << "]";
 	return result.str();
 }
 
@@ -404,11 +404,11 @@ const cChatCommandArgumentServerPlayer::ValueType& cChatCommandArgumentServerPla
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentClientPlayer::cChatCommandArgumentClientPlayer (const std::shared_ptr<cClient>& activeClientPointer_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentClientPlayer> (isOptional_),
-	value (defaultValue_),
-	defaultValue (defaultValue_),
-	activeClientPointer (activeClientPointer_)
+cChatCommandArgumentClientPlayer::cChatCommandArgumentClientPlayer (const std::shared_ptr<cClient>& activeClientPointer, bool isOptional, ValueType defaultValue) :
+	isOptional (isOptional),
+	value (defaultValue),
+	defaultValue (defaultValue),
+	activeClientPointer (activeClientPointer)
 {}
 
 //------------------------------------------------------------------------------
@@ -482,9 +482,9 @@ size_t cChatCommandArgumentClientPlayer::parse (const std::string& command, size
 std::string cChatCommandArgumentClientPlayer::toString() const
 {
 	std::stringstream result;
-	if (this->isOptional) result << "[";
+	if (isOptional) result << "[";
 	result << "<playerID>";
-	if (this->isOptional) result << "]";
+	if (isOptional) result << "]";
 	return result.str();
 }
 

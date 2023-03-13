@@ -34,29 +34,7 @@ class cPlayer;
 class cClient;
 class cServer;
 
-template <typename Impl>
-class cChatCommandArgument
-{
-public:
-	explicit cChatCommandArgument (bool isOptional_) :
-		isOptional (isOptional_)
-	{}
-
-	size_t parse (const std::string& command, size_t position)
-	{
-		return static_cast<Impl&> (*this)->parse (command, position);
-	}
-
-	std::string& toString() const
-	{
-		return static_cast<Impl&> (*this)->toString();
-	}
-
-protected:
-	bool isOptional;
-};
-
-class cChatCommandArgumentBool : public cChatCommandArgument<cChatCommandArgumentBool>
+class cChatCommandArgumentBool
 {
 public:
 	using ValueType = bool;
@@ -73,31 +51,37 @@ public:
 	const ValueType& getValue() const;
 
 private:
+	bool isOptional;
 	ValueType value;
 	const ValueType defaultValue;
 };
 
 template <typename T>
-class cChatCommandArgumentInt : public cChatCommandArgument<cChatCommandArgumentInt<T>>
+class cChatCommandArgumentInt
 {
 public:
 	using ValueType = T;
 
-	explicit cChatCommandArgumentInt (std::string name, bool isOptional = false, ValueType defaultValue = 0);
+	explicit cChatCommandArgumentInt (std::string name, bool isOptional = false, ValueType defaultValue = 0) 
+:		isOptional (isOptional),
+		name (std::move (name)),
+		defaultValue (std::move (defaultValue))
+	{}
 
 	size_t parse (const std::string& command, size_t position);
 
 	std::string toString() const;
 
-	const ValueType& getValue() const;
+	const ValueType& getValue() const { return value; }
 
 private:
+	bool isOptional;
 	std::string name;
 	ValueType value;
 	const ValueType defaultValue;
 };
 
-class cChatCommandArgumentChoice : public cChatCommandArgument<cChatCommandArgumentChoice>
+class cChatCommandArgumentChoice
 {
 public:
 	using ValueType = std::string;
@@ -111,12 +95,13 @@ public:
 	const ValueType& getValue() const;
 
 private:
+	bool isOptional;
 	std::vector<std::string> choices;
 	size_t currentSelection;
 	size_t defaultSelection;
 };
 
-class cChatCommandArgumentString : public cChatCommandArgument<cChatCommandArgumentString>
+class cChatCommandArgumentString
 {
 public:
 	using ValueType = std::string;
@@ -130,12 +115,13 @@ public:
 	const ValueType& getValue() const;
 
 private:
+	bool isOptional;
 	std::string name;
 	ValueType value;
 	const ValueType defaultValue;
 };
 
-class cChatCommandArgumentServer : public cChatCommandArgument<cChatCommandArgumentServer>
+class cChatCommandArgumentServer
 {
 public:
 	using ValueType = cServer*;
@@ -149,12 +135,13 @@ public:
 	const ValueType& getValue() const;
 
 private:
+	bool isOptional;
 	ValueType value;
 	const ValueType defaultValue;
 	cServer*& serverPointer;
 };
 
-class cChatCommandArgumentClient : public cChatCommandArgument<cChatCommandArgumentClient>
+class cChatCommandArgumentClient
 {
 public:
 	using ValueType = cClient*;
@@ -168,12 +155,13 @@ public:
 	const ValueType& getValue() const;
 
 private:
+	bool isOptional;
 	ValueType value;
 	const ValueType defaultValue;
 	const std::shared_ptr<cClient>& activeClientPointer;
 };
 
-class cChatCommandArgumentServerPlayer : public cChatCommandArgument<cChatCommandArgumentServerPlayer>
+class cChatCommandArgumentServerPlayer
 {
 public:
 	using ValueType = const cPlayer*;
@@ -187,12 +175,13 @@ public:
 	const ValueType& getValue() const;
 
 private:
+	bool isOptional;
 	ValueType value;
 	const ValueType defaultValue;
 	cServer*& serverPointer;
 };
 
-class cChatCommandArgumentClientPlayer : public cChatCommandArgument<cChatCommandArgumentClientPlayer>
+class cChatCommandArgumentClientPlayer
 {
 public:
 	using ValueType = const cPlayer*;
@@ -206,18 +195,11 @@ public:
 	const ValueType& getValue() const;
 
 private:
+	bool isOptional;
 	ValueType value;
 	const ValueType defaultValue;
 	const std::shared_ptr<cClient>& activeClientPointer;
 };
-
-//------------------------------------------------------------------------------
-template <typename T>
-cChatCommandArgumentInt<T>::cChatCommandArgumentInt (std::string name_, bool isOptional_, ValueType defaultValue_) :
-	cChatCommandArgument<cChatCommandArgumentInt> (isOptional_),
-	name (std::move (name_)),
-	defaultValue (std::move (defaultValue_))
-{}
 
 //------------------------------------------------------------------------------
 template <typename T>
@@ -249,7 +231,7 @@ size_t cChatCommandArgumentInt<T>::parse (const std::string& command, size_t pos
 
 	if (!success)
 	{
-		if (this->isOptional)
+		if (isOptional)
 		{
 			value = defaultValue;
 			return position;
@@ -281,17 +263,10 @@ template <typename T>
 std::string cChatCommandArgumentInt<T>::toString() const
 {
 	std::stringstream result;
-	if (this->isOptional) result << "[";
+	if (isOptional) result << "[";
 	result << "<" << name << ">";
-	if (this->isOptional) result << "]";
+	if (isOptional) result << "]";
 	return result.str();
-}
-
-//------------------------------------------------------------------------------
-template <typename T>
-const typename cChatCommandArgumentInt<T>::ValueType& cChatCommandArgumentInt<T>::getValue() const
-{
-	return value;
 }
 
 #endif
