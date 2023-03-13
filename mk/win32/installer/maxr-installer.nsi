@@ -76,6 +76,8 @@ LangString TITLE_Section_Start_Menu_Link ${LANG_ENGLISH} "Start menu shortcut"
 LangString DESC_Section_Start_Menu_Link  ${LANG_ENGLISH} "Creates a link in the start menu."
 LangString TITLE_Section_Desktop_Link    ${LANG_ENGLISH} "Desktop shortcut"
 LangString DESC_Section_Desktop_Link     ${LANG_ENGLISH} "Creates a link on the desktop."
+LangString TITLE_Section_Portable_Instal ${LANG_ENGLISH} "Portable installation."
+LangString Desc_Section_Portable_Instal  ${LANG_ENGLISH} "Game will write user/game settings in installation folder instead of user folder. Use it when installing on USB key. Don't use it when installing on C:\Program files"
 LangString TITLE_Section_Group_Res       ${LANG_ENGLISH} "Import resources from original M.A.X."
 LangString DESC_Section_Group_Res        ${LANG_ENGLISH} "Import graphics, sounds and maps from a CD or installation of the original M.A.X. You can import the resources anytime later by starting the resinstaller tool."
 LangString TITLE_Section_Res_Graphics    ${LANG_ENGLISH} "Unit graphics"
@@ -97,6 +99,8 @@ LangString TITLE_Section_Start_Menu_Link ${LANG_FRENCH} "Raccourci dans le menu 
 LangString DESC_Section_Start_Menu_Link  ${LANG_FRENCH} "Crée un raccourci dans le menu démarrer."
 LangString TITLE_Section_Desktop_Link    ${LANG_FRENCH} "Raccourci sur le Bureau"
 LangString DESC_Section_Desktop_Link     ${LANG_FRENCH} "Crée un raccourci sur le bureau."
+LangString TITLE_Section_Portable_Instal ${LANG_FRENCH} "Installation portable."
+LangString Desc_Section_Portable_Instal  ${LANG_FRENCH} "Le jeu écrira les préferences utilisateur/de jeu dans le répertoire d'installation à la place du répéertoire utilisateur. A utiliser lors d'installation sur clé USB. Ne pas utiliser lors d'installation dans C:\Program files"
 LangString TITLE_Section_Group_Res       ${LANG_FRENCH} "Importer les ressources depuis le jeu original M.A.X."
 LangString DESC_Section_Group_Res        ${LANG_FRENCH} "Importer les graphiques, sons et cartes depuis le CD ou le dossier d'installation du jeu original M.A.X. Vous pouvez importer ces ressources ultérieurement via l'outils 'resinstaller'."
 LangString TITLE_Section_Res_Graphics    ${LANG_FRENCH} "Graphiques des unités"
@@ -143,12 +147,16 @@ Section "$(TITLE_Section_Desktop_Link)" Section_Desktop_Link
 	CreateShortCut "$DESKTOP\M.A.X. Reloaded.lnk" "$INSTDIR\${MAXR_EXE}"
 SectionEnd
 
+Section /o "$(TITLE_Section_Portable_Instal)" Section_Portable_Installation
+	CreateDirectory $INSTDIR\data\portable
+SectionEnd
+
 SectionGroup "$(TITLE_Section_Group_Res)" Section_Group_Res
-    Section "$(TITLE_Section_Res_Graphics)" Section_Res_Graphics
+    Section /o "$(TITLE_Section_Res_Graphics)" Section_Res_Graphics
         AddSize ${SIZE_RES_GRAPHIC}
     SectionEnd
 
-    Section "$(TITLE_Section_Res_Sound)" Section_Res_Sound
+    Section /o "$(TITLE_Section_Res_Sound)" Section_Res_Sound
         AddSize ${SIZE_RES_SOUND}
     SectionEnd
 SectionGroupEnd
@@ -184,6 +192,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Main}            $(DESC_Section_Main)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Start_Menu_Link} $(DESC_Section_Start_Menu_Link)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Desktop_Link}    $(DESC_Section_Desktop_Link)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Portable_Installation} $(DESC_Section_Portable_Instal)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Group_Res}       $(DESC_Section_Group_Res)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Res_Graphics}    $(DESC_Section_Res_Graphics)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Res_Sound}       $(DESC_Section_Res_Sound)

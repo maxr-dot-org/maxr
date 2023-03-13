@@ -126,26 +126,56 @@ cSettings& cSettings::getInstance()
 //------------------------------------------------------------------------------
 void cSettings::setPaths()
 {
-	homeDir = os::getHomeDir();
+	const auto portableDir = os::getCurrentExeDir() / "portable";
+	std::filesystem::path netLogDir;
+
+	if (std::filesystem::exists (portableDir))
+	{
+		homeDir = portableDir;
+		screeniesDir = portableDir / "screenies";
+		netLogDir = portableDir / "log_files";
+		userMapsDir = portableDir / "maps";
+	}
+	else
+	{
+		homeDir = os::getHomeDir();
+
+#if WIN32
+		const std::string maxrDir = std::string ("maxr");
+#else
+		const std::string maxrDir = std::string (".maxr");
+#endif
+		homeDir /= maxrDir;
+		std::filesystem::create_directories (homeDir);
+
+#ifdef __amigaos4__
+		screeniesDir = "";
+		netLogDir = "";
+		userMapsDir = "";
+#elif defined(MAC)
+		// store screenshots directly on the desktop of the user
+		screeniesDir = homeDir / "Desktop";
+		// store Log directly on the desktop of the user
+		netLogDir = homeDir / "Desktop";
+		userMapsDir = homeDir / "maps";
+#else
+		screeniesDir = homeDir / "screenies";
+		netLogDir = homeDir / "log_files";
+		userMapsDir = homeDir / "maps";
+#endif
+	}
+	std::filesystem::create_directories (userMapsDir);
 
 	// NOTE: I do not use cLog here on purpose.
 	// Logs on linux go somewhere to $HOME/.maxr/
 	// - as long as we can't access that we have to output everything to
 	// the terminal because game's root dir is usually write protected! -- beko
-
-#if WIN32
-	const std::string maxrDir = std::string ("maxr");
-#else
-	const std::string maxrDir = std::string (".maxr");
-#endif
-	homeDir /= maxrDir;
 	std::cout << "\n(II): Read home directory " << homeDir.string();
-	std::filesystem::create_directories (homeDir);
-
 	// set new place for logs
 	logPath = homeDir / "maxr.log";
 	std::cout << "\n(II): Starting logging to: " << logPath.string() << std::endl;
-	netLogPath = cSettings::getInstance().getUserLogDir() / os::formattedNow ("%Y-%m-%d-%H%M%S_net.log");
+	std::filesystem::create_directories (netLogDir);
+	netLogPath = netLogDir / os::formattedNow ("%Y-%m-%d-%H%M%S_net.log");
 
 	Log.setLogPath (logPath);
 	NetLog.setLogPath (netLogPath);
@@ -348,52 +378,11 @@ std::filesystem::path cSettings::getMvePath() const
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getUserMapsDir() const
 {
-#ifdef __amigaos4__
-	return "";
-#else
-	if (homeDir.empty()) return "";
-	auto mapFolder = homeDir / "maps";
-	std::filesystem::create_directories (mapFolder);
-	return mapFolder;
-#endif
+	return userMapsDir;
 }
 
 //------------------------------------------------------------------------------
 std::filesystem::path cSettings::getUserScreenshotsDir() const
 {
-#ifdef __amigaos4__
-	return "";
-#elif defined(MAC)
-	std::filesystem::path homeFolder = os::getHomeDir();
-	if (homeFolder.empty())
-		return "";
-	// store screenshots directly on the desktop of the user
-	return homeFolder / "Desktop";
-#else
-	if (homeDir.empty())
-		return "";
-	auto screenshotsFolder = homeDir / "screenies";
-	std::filesystem::create_directories (screenshotsFolder);
-	return screenshotsFolder;
-#endif
-}
-
-//------------------------------------------------------------------------------
-std::filesystem::path cSettings::getUserLogDir() const
-{
-#ifdef __amigaos4__
-	return "";
-#elif defined(MAC)
-	auto homeFolder = os::getHomeDir();
-	if (homeFolder.empty())
-		return "";
-	// store Log directly on the desktop of the user
-	return homeFolder / "Desktop";
-#else
-	if (homeDir.empty())
-		return "";
-	auto LogDir = homeDir / "log_files";
-	std::filesystem::create_directories (LogDir);
-	return LogDir;
-#endif
+	return screeniesDir;
 }

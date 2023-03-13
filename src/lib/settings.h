@@ -200,8 +200,6 @@ public:
 	 */
 	std::filesystem::path getUserScreenshotsDir() const;
 
-	std::filesystem::path getUserLogDir() const;
-
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
@@ -400,14 +398,18 @@ private:
 
 	mutable std::recursive_mutex docMutex;
 
-	/** sDataDir is where the data files are stored */
+	/** dataDir is where the data files are stored */
 	std::filesystem::path dataDir;
-	/** sLog is where the log goes - set in setPaths() **/
+	/** log is where the log goes - set in setPaths() */
 	std::filesystem::path logPath;
-	/** sNetLog is where the netlog goes - set in setPaths() **/
+	/** netLog is where the netlog goes - set in setPaths() */
 	std::filesystem::path netLogPath;
-	/** sHome is where the user has his $HOME dir - set in setPaths() **/
+	/** home is where the user has his $HOME dir - set in setPaths() */
 	std::filesystem::path homeDir;
+	/** screeniesDir is where screenshot will be done - set in setPaths() **/
+	std::filesystem::path screeniesDir;
+	/** userMapsDir is where user maps are - set in setPaths() **/
+	std::filesystem::path userMapsDir;
 
 	sGlobalSettings global;
 	sNetworkAddress network;

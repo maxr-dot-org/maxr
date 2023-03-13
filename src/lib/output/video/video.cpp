@@ -355,11 +355,13 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 			const auto timestr = os::formattedNow ("screenie_%Y-%m-%d_%H%M%S_");
 			std::filesystem::path screenshotfile;
 			int counter = 0;
+			const auto screenshotDir = cSettings::getInstance().getUserScreenshotsDir();
 			do
 			{
 				counter += 1;
-				screenshotfile = cSettings::getInstance().getUserScreenshotsDir() / (timestr + std::to_string (counter) + ".bmp");
+				screenshotfile = screenshotDir / (timestr + std::to_string (counter) + ".bmp");
 			} while (std::filesystem::exists (screenshotfile));
+			std::filesystem::create_directories (screenshotDir);
 			Log.info ("Screenshot saved to " + screenshotfile.string());
 			takeScreenShot (screenshotfile);
 
