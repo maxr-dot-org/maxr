@@ -238,7 +238,12 @@ void cDialogPreferences::saveValues()
 	settings.setAutosave (autosaveCheckBox->isChecked());
 	settings.setShowIntro (introCheckBox->isChecked());
 
-	settings.getVideoSettings().windowMode = windowCheckBox->isChecked();
+	bool needRestart = false;
+	if (settings.getVideoSettings().windowMode != windowCheckBox->isChecked())
+	{
+		settings.getVideoSettings().windowMode = windowCheckBox->isChecked();
+		needRestart = true;
+	}
 
 	settings.setScrollSpeed (scrollSpeedSlider->getValue());
 
@@ -260,11 +265,7 @@ void cDialogPreferences::saveValues()
 
 			if (Video.getResolutionX() != oldScreenX || Video.getResolutionY() != oldScreenY)
 			{
-				auto application = getActiveApplication();
-				if (application)
-				{
-					application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Comp~RestartRequired")));
-				}
+				needRestart = true;
 			}
 		}
 	}
@@ -274,6 +275,14 @@ void cDialogPreferences::saveValues()
 
 		// lngPack.i18n ("Text~Comp~ResolutionWarning")
 		// added info to old langpack if needed, else it can be removed from lang-files - nonsinn
+	}
+	if (needRestart)
+	{
+		auto application = getActiveApplication();
+		if (application)
+		{
+			application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Comp~RestartRequired")));
+		}
 	}
 	applySettings (Video, settings.getVideoSettings());
 	settings.saveInFile();
