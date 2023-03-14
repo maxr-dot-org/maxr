@@ -3989,32 +3989,48 @@ void showIntroduction()
 #endif
 }
 
-//-------------------------------------------------------------
-void createLogFile()
-{
-	std::string path;
 #ifdef WIN32
-	// write log file to user home dir
+std::string getHomeDir()
+{
 	char szPath[MAX_PATH];
 	if (SHGetFolderPathA (nullptr, CSIDL_PERSONAL, nullptr, 0, szPath) == S_OK)
 	{
-		path = szPath;
-		path += "\\maxr\\";
-		if (!DirExists (path))
-		{
-			if (makeDir (path) != 0)
-			{
-				path = "";
-			}
-		}
+		return szPath;
 	}
-	if (path.empty())
-	{
-		std::cout << "Warning: Couldn't determine home directory. Writing log to current directory instead.\n";
-	}
-
+	return "";
+}
 #endif
 
+//-------------------------------------------------------------
+void createLogFile (const std::string& dataDir)
+{
+	std::string path;
+	if (!dataDir.empty() && DirExists (dataDir + PATH_DELIMITER + "portable"))
+	{
+		path = dataDir + PATH_DELIMITER + "portable" + PATH_DELIMITER;
+	}
+	else
+	{
+#ifdef WIN32
+		path = getHomeDir();
+		if (path.empty())
+		{
+			std::cout << "Warning: Couldn't determine home directory. Writing log to current directory instead.\n";
+		}
+		else
+		{
+			path += "\\maxr\\";
+			if (!DirExists (path))
+			{
+				if (makeDir (path) != 0)
+				{
+					path = "";
+					std::cout << "Warning: Couldn't write in home directory. Writing log to current directory instead.\n";
+				}
+			}
+		}
+#endif
+	}
 	std::string fileName = path + "resinstaller.log";
 	logFile = SDL_RWFromFile (fileName.c_str(), "a");
 	if (logFile == nullptr)
@@ -4548,43 +4564,26 @@ int main (int argc, char* argv[])
 {
 	initialize();
 	showIntroduction();
-	createLogFile();
-	wasError = false;
 
 	sAppName = argv[0];
-
-	// look for paths in argv[]
-
 	// original M.A.X. Path (CD or installation)
-	if (argc > 1)
-		sMAXPath = argv[1];
-	else
-		sMAXPath = "";
+	sMAXPath = (argc > 1) ? argv[1] : "";
 
 	// M.A.X. Reloaded Path
-	if (argc > 2)
-		sOutputPath = argv[2];
-	else
-		sOutputPath = "";
+	sOutputPath =  (argc > 2) ? argv[2] : "";
 
 	// language german, english, french, italian
-	if (argc > 3)
-		sLanguage = argv[3];
-	else
-		sLanguage = "";
+	sLanguage = (argc > 3) ? argv[3] : "";
 
 	// Parameter for gNewGrafic
-	if (argc > 4)
-		sResChoice = argv[4];
-	else
-		sResChoice = "";
+	sResChoice = (argc > 4) ? argv[4] : "";
 
-	sResChoice = validateResources (sResChoice); // validate the parameter for importing the ressources
+	createLogFile(sOutputPath);
+	wasError = false;
 
-	if (std::string (argv[argc - 1]) == "/donotelevate")
-		bDoNotElevate = true;
-	else
-		bDoNotElevate = false;
+	sResChoice = validateResources (sResChoice); // validate the parameter for importing the resources
+
+	bDoNotElevate = (std::string (argv[argc - 1]) == "/donotelevate");
 
 	sMAXPath = getMAXPathFromUser (sMAXPath); // if the user canceled, sMAXPath will be empty (at least on MAC)
 	if (sMAXPath.size() == 0)
