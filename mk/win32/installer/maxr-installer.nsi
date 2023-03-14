@@ -126,17 +126,7 @@ Section "$(TITLE_Section_Main)" Section_Main
 
     # now install all files
     File /r "${FILESFOLDER}"
-
-    # create initial config file and set language
-    CreateDirectory "$DOCUMENTS\maxr"
-    SetOutPath "$DOCUMENTS\maxr"
-    SetOverwrite off ; do not overwrite an existing user config
-    File "maxr.json"
-    SetOverwrite on
-    SetOutPath $INSTDIR
-    Call ChangeLanguage
 SectionEnd
-
 
 Section "$(TITLE_Section_Start_Menu_Link)" Section_Start_Menu_Link
     CreateDirectory "$SMPROGRAMS\M.A.X. Reloaded"
@@ -150,7 +140,7 @@ Section "$(TITLE_Section_Desktop_Link)" Section_Desktop_Link
 SectionEnd
 
 Section /o "$(TITLE_Section_Portable_Instal)" Section_Portable_Installation
-    CreateDirectory $INSTDIR\data\portable
+    CreateDirectory "$INSTDIR\portable"
 SectionEnd
 
 SectionGroup "$(TITLE_Section_Group_Res)" Section_Group_Res
@@ -162,6 +152,27 @@ SectionGroup "$(TITLE_Section_Group_Res)" Section_Group_Res
         AddSize ${SIZE_RES_SOUND}
     SectionEnd
 SectionGroupEnd
+
+# hidden section for creating initial config
+Section "" Section_InitialConfig
+    Push $R0
+    # create initial config file and set language
+    SectionGetFlags ${Section_Portable_Installation} $R0
+    ${If} $R0 == ${SF_SELECTED}
+        CreateDirectory "$INSTDIR\portable"
+        SetOutPath "$INSTDIR\portable"
+    ${Else}
+        CreateDirectory "$DOCUMENTS\maxr"
+        SetOutPath "$DOCUMENTS\maxr"
+    ${EndIf}
+    SetOverwrite off ; do not overwrite an existing user config
+    File "maxr.json"
+    SetOverwrite on
+    Call ChangeLanguage
+    SetOutPath $INSTDIR
+
+    Pop $R0
+SectionEnd
 
 # hidden section for executing resinstaller
 VAR RES_OPTION
@@ -221,8 +232,11 @@ VAR FILE_LENGTH
 VAR LANGUAGE_CODE
 
 Function ChangeLanguage
+    Push $R0
+    Push $R1
     # open the maxr.json
-    FileOpen $MAX_JSON_FILE $DOCUMENTS\maxr\maxr.json a
+    FileOpen $MAX_JSON_FILE $OUTDIR\maxr.json a
+
     StrCpy $FILE_LENGTH "0"
 
     # get the code of the selected language
@@ -261,7 +275,8 @@ Function ChangeLanguage
     done:
 
     FileClose $MAX_JSON_FILE
-
+    Pop $R1
+    Pop $R0
 FunctionEnd
 
 Function LanguageDialog
