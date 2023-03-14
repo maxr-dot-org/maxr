@@ -197,7 +197,7 @@ void cSettings::loadFromJsonFile (const std::filesystem::path& path)
 	}
 	try
 	{
-		cJsonArchiveIn in (json);
+		cJsonArchiveIn in (json, false);
 		in >> *this;
 	}
 	catch (const std::exception& e)

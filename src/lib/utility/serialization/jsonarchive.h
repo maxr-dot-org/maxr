@@ -199,7 +199,7 @@ class cJsonArchiveIn
 public:
 	static const bool isWriter = false;
 
-	explicit cJsonArchiveIn (const nlohmann::json& json);
+	explicit cJsonArchiveIn (const nlohmann::json& json, bool strict = true);
 
 	//--------------------------------------------------------------------------
 	template <typename T>
@@ -241,7 +241,20 @@ private:
 		//check invalid characters in element and attribute names
 		assert (nvp.name.find_first_of ("<>\"= []?!&") == std::string::npos);
 
-		cJsonArchiveIn (json.at (nvp.name)) >> nvp.value;
+		if (strict)
+		{
+			cJsonArchiveIn (json.at (nvp.name), strict) >> nvp.value;
+		}
+		else {
+			auto it = json.find (nvp.name);
+
+			if (it != json.end()) {
+				cJsonArchiveIn (*it, strict) >> nvp.value;
+			}
+			else {
+				Log.warn ("Entry " + nvp.name + " is missing.");
+			}
+		}
 	}
 
 	//--------------------------------------------------------------------------
@@ -306,7 +319,7 @@ private:
 		std::size_t i = 0;
 		for (const auto& e : json)
 		{
-			cJsonArchiveIn (e) >> v[i++];
+			cJsonArchiveIn (e, strict) >> v[i++];
 		}
 	}
 
@@ -319,7 +332,7 @@ private:
 		assert (json.size() == N);
 		for (const auto& e : json)
 		{
-			cJsonArchiveIn (e) >> a[i++];
+			cJsonArchiveIn (e, strict) >> a[i++];
 		}
 	}
 
@@ -331,7 +344,7 @@ private:
 		auto it = list.begin();
 		for (const auto& e : json)
 		{
-			cJsonArchiveIn (e) >> *it++;
+			cJsonArchiveIn (e, strict) >> *it++;
 		}
 	}
 
@@ -342,7 +355,7 @@ private:
 		for (const auto& e : json)
 		{
 			std::pair<K, V> p;
-			cJsonArchiveIn (e) >> p;
+			cJsonArchiveIn (e, strict) >> p;
 			m.insert (p);
 		}
 	}
@@ -355,7 +368,7 @@ private:
 		for (const auto& e : json)
 		{
 			T item;
-			cJsonArchiveIn (e) >> item;
+			cJsonArchiveIn (e, strict) >> item;
 			v.insert (std::move (item));
 		}
 	}
@@ -377,6 +390,7 @@ private:
 
 private:
 	const nlohmann::json& json;
+	bool strict;
 };
 
 #endif

@@ -24,8 +24,10 @@ cJsonArchiveOut::cJsonArchiveOut (nlohmann::json& json) :
 	json (json)
 {
 }
+
 //------------------------------------------------------------------------------
-cJsonArchiveIn::cJsonArchiveIn (const nlohmann::json& json) :
-	json (json)
+cJsonArchiveIn::cJsonArchiveIn (const nlohmann::json& json, bool strict) :
+	json (json),
+	strict (strict)
 {
 }
