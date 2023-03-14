@@ -4207,7 +4207,7 @@ bool validateOutputPath (std::string& outputPath)
 	return false;
 }
 
-std::string validateRessources (std::string zChoices)
+std::string validateResources (std::string zChoices)
 {
 	if (zChoices.find ("all") != std::string::npos)
 	{
@@ -4223,10 +4223,10 @@ std::string validateRessources (std::string zChoices)
 void getResChoiceFromUser()
 {
 	std::string sChoiceFromUser = "";
-	// what kind of ressources should the resinstaller import into M.A.X. Reloaded
-	std::cout << "What kind of ressources should the resinstaller import into your M.A.X. Reloaded installation?" << std::endl;
+	// what kind of resources should the resinstaller import into M.A.X. Reloaded
+	std::cout << "What kind of resources should the resinstaller import into your M.A.X. Reloaded installation?" << std::endl;
 	std::cout << "========================================================================" << std::endl;
-	std::cout << "All Ressources       (all)" << std::endl;
+	std::cout << "All Resources        (all)" << std::endl;
 	std::cout << "==========================" << std::endl;
 	std::cout << "Building Sounds        (0)" << std::endl;
 	std::cout << "Vehicle Sounds         (1)" << std::endl;
@@ -4251,7 +4251,7 @@ void getResChoiceFromUser()
 		// convert string into lowercase
 		sChoiceFromUser[i] = tolower (sChoiceFromUser[i]);
 	}
-	sResChoice = validateRessources (sChoiceFromUser); // call validate function
+	sResChoice = validateResources (sChoiceFromUser); // call validate function
 }
 
 //-------------------------------------------------------------
@@ -4579,24 +4579,24 @@ int main (int argc, char* argv[])
 	else
 		sResChoice = "";
 
-	sResChoice = validateRessources (sResChoice); // validate the parameter for importing the ressources
+	sResChoice = validateResources (sResChoice); // validate the parameter for importing the ressources
 
 	if (std::string (argv[argc - 1]) == "/donotelevate")
 		bDoNotElevate = true;
 	else
 		bDoNotElevate = false;
 
-	sMAXPath = getMAXPathFromUser (sMAXPath); // if the user cancled, sMAXPath will be empty (at least on MAC)
+	sMAXPath = getMAXPathFromUser (sMAXPath); // if the user canceled, sMAXPath will be empty (at least on MAC)
 	if (sMAXPath.size() == 0)
 		exit (-1);
 
-	sOutputPath = getOutputPathFromUser (sOutputPath); // if the user cancled, sOutputPath will be empty (at least on MAC)
+	sOutputPath = getOutputPathFromUser (sOutputPath); // if the user canceled, sOutputPath will be empty (at least on MAC)
 	if (sOutputPath.size() == 0)
 		exit (-1);
 
 	if (sResChoice.empty())
 	{
-		// what ressources should the resinstaller import into M.A.X. Reloaded? Call user input!
+		// what resources should the resinstaller import into M.A.X. Reloaded? Call user input!
 		getResChoiceFromUser();
 	}
 
