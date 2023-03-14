@@ -14,6 +14,7 @@ ${StrStr}
 !define VERSION                    "0.2.10"
 !define NAME                       "M.A.X. Reloaded"
 !define FILESFOLDER                "..\..\..\data\" ;the folder to the files that should be installed with this installer
+!define DEDICATEDSERVER_EXE        "dedicatedserver.exe"
 !define RESINSTALLER_EXE           "resinstaller.exe"
 !define MAXR_EXE                   "maxr.exe"
 # estimated size of components (in kb):
@@ -138,17 +139,18 @@ SectionEnd
 
 
 Section "$(TITLE_Section_Start_Menu_Link)" Section_Start_Menu_Link
-	CreateDirectory "$SMPROGRAMS\M.A.X. Reloaded"
-	CreateShortCut  "$SMPROGRAMS\M.A.X. Reloaded\M.A.X. Reloaded.lnk" "$INSTDIR\${MAXR_EXE}"
-	CreateShortCut  "$SMPROGRAMS\M.A.X. Reloaded\resinstaller.lnk" "$INSTDIR\${RESINSTALLER_EXE}"
+    CreateDirectory "$SMPROGRAMS\M.A.X. Reloaded"
+    CreateShortCut  "$SMPROGRAMS\M.A.X. Reloaded\Dedicated Server.lnk" "$INSTDIR\${DEDICATEDSERVER_EXE}"
+    CreateShortCut  "$SMPROGRAMS\M.A.X. Reloaded\M.A.X. Reloaded.lnk" "$INSTDIR\${MAXR_EXE}"
+    CreateShortCut  "$SMPROGRAMS\M.A.X. Reloaded\resinstaller.lnk" "$INSTDIR\${RESINSTALLER_EXE}"
 SectionEnd
 
 Section "$(TITLE_Section_Desktop_Link)" Section_Desktop_Link
-	CreateShortCut "$DESKTOP\M.A.X. Reloaded.lnk" "$INSTDIR\${MAXR_EXE}"
+    CreateShortCut "$DESKTOP\M.A.X. Reloaded.lnk" "$INSTDIR\${MAXR_EXE}"
 SectionEnd
 
 Section /o "$(TITLE_Section_Portable_Instal)" Section_Portable_Installation
-	CreateDirectory $INSTDIR\data\portable
+    CreateDirectory $INSTDIR\data\portable
 SectionEnd
 
 SectionGroup "$(TITLE_Section_Group_Res)" Section_Group_Res
