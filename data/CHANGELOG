@@ -1,4 +1,22 @@
-Mechanized Assault & eXploration Reloaded 0.2.9
+Mechanized Assault & eXploration Reloaded 0.2.10 (March, 2023)
+=======================================================================
+-changed shortcut to toggle debug frames from CTRL+w to CTRL+ALT+w to reduce likelihood of enabling it by accident.
+-update path to bugtracker, fixes #1098
+-fixed #1006: write saved map positions (Alt + F5-8) to savegame file
+-refactoring client/server model (now all clients have full knowledge)
+-fixed cost calculation of pre game speed upgrades
+-fixed speed of submarines under bridges ; #1113
+-multiplayer games can be resumed without defeated players. Fixed #1032
+-requires C++14 compilers
+-allow to save game from dedicated server
+-maj of all French translations.
+-use new clan logo images
+-migrated from Xml to Json
+-migrated from Xml translation to gettext format (.po) using spiritless_po (so no .mo)
+-improve dedicatedserver support to simplify configuration from (pseudo) host
+-add alien support.
+
+Mechanized Assault & eXploration Reloaded 0.2.9 (June 4, 2016)
 =======================================================================
 -migrated from sdl to sdl2
 -changed movement control: press CTRL to fly over other units. Otherwise the other unit is selected.
@@ -41,8 +59,6 @@ Mechanized Assault & eXploration Reloaded 0.2.8 (May 5, 2012)
 -fixed many bugs in the reports menu
 -fixed non original behavior of stealth vehicles
 -tons of bugs and crashes fixed
-
-
 
 Mechanized Assault & eXploration Reloaded 0.2.7 (Dec 2, 2011)
 =======================================================================
@@ -220,7 +236,6 @@ Mechanized Assault & eXploration Reloaded 0.1.3 (Dec 23, 2007)
 -fixed many memoryleaks and improved memoryusage
 -improved surveyor AI
 -tons of bugs fixed
-
 
 Mechanized Assault & eXploration Reloaded 0.1.2 (Nov 26, 2007)
 =======================================================================

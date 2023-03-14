@@ -11,7 +11,7 @@
 ${StrStr}
 
 # --- Main defines ---
-!define VERSION                    "0.2.9"
+!define VERSION                    "0.2.10"
 !define NAME                       "M.A.X. Reloaded"
 !define FILESFOLDER                "..\..\..\data\" ;the folder to the files that should be installed with this installer
 !define RESINSTALLER_EXE           "resinstaller.exe"
