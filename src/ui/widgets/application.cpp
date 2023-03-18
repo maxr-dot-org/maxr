@@ -222,6 +222,7 @@ void cApplication::addRunnable (std::shared_ptr<cRunnable> runnable)
 //------------------------------------------------------------------------------
 std::shared_ptr<cRunnable> cApplication::removeRunnable (std::shared_ptr<cRunnable> runnable)
 {
+	if (runnables.empty()) return nullptr;
 	const auto it = ranges::find (runnables, runnable);
 
 	if (it != runnables.end())
