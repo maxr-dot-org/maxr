@@ -175,7 +175,14 @@ namespace serialization
 	template <typename Archive, typename T>
 	void save (Archive& archive, const std::shared_ptr<T>& value)
 	{
-		if (value) serialize (archive, *value);
+		if (value)
+		{
+			serialize (archive, *value);
+		}
+		else
+		{
+			throw std::runtime_error ("Unexpected null shared_ptr");
+		}
 	}
 	template <typename Archive, typename T>
 	void load (Archive& archive, std::shared_ptr<T>& value)
@@ -191,7 +198,14 @@ namespace serialization
 	template <typename Archive, typename T>
 	void save (Archive& archive, const std::unique_ptr<T>& value)
 	{
-		if (value) serialize (archive, *value);
+		if (value)
+		{
+			serialize (archive, *value);
+		}
+		else
+		{
+			throw std::runtime_error ("Unexpected null unique_ptr");
+		}
 	}
 	template <typename Archive, typename T>
 	void load (Archive& archive, std::unique_ptr<T>& value)
