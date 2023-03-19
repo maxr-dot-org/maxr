@@ -246,7 +246,7 @@ private:
 	struct sGlobalSettings
 	{
 		/** enable debug */
-		bool debug = true;
+		bool debug = false;
 		/** enable intro on start */
 		bool showIntro = true;
 		/** start in fastmode */
