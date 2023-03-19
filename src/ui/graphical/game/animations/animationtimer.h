@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_animations_animationtimerH
 #define ui_graphical_game_animations_animationtimerH
 
-#include "utility/runnable.h"
+#include "ui/widgets/runnable.h"
 #include "utility/signal/signal.h"
 
 #include <SDL_timer.h>

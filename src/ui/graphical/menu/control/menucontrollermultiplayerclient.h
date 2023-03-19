@@ -22,7 +22,7 @@
 
 #include "game/startup/lobbyclient.h"
 #include "ui/graphical/menu/control/initgamepreparation.h"
-#include "utility/runnable.h"
+#include "ui/widgets/runnable.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <memory>

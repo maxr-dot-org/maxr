@@ -21,7 +21,7 @@
 #define ui_graphical_menu_control_menucontrollermultiplayerhotseatH
 
 #include "game/logic/landingpositionmanager.h"
-#include "utility/runnable.h"
+#include "ui/widgets/runnable.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <memory>

@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_control_gameH
 #define ui_graphical_menu_control_gameH
 
-#include "utility/runnable.h"
+#include "ui/widgets/runnable.h"
 #include "utility/signal/signal.h"
 
 #include <memory>

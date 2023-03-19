@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_runnableH
-#define utility_runnableH
+#ifndef ui_widgets_runnableH
+#define ui_widgets_runnableH
 
 class cRunnable
 {
@@ -28,4 +28,4 @@ public:
 	virtual bool wantsToTerminate() const { return false; }
 };
 
-#endif // utility_runnableH
+#endif
