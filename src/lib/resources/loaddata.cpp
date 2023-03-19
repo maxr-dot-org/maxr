@@ -886,6 +886,8 @@ namespace
 	{
 		int id;
 		std::string path;
+		int insertionIndex = ++currentIndex;
+		static int currentIndex;
 
 		template <typename Archive>
 		void serialize (Archive& archive)
@@ -894,6 +896,8 @@ namespace
 			archive & NVP (path);
 		}
 	};
+
+	/*static*/ int sUnitDirectory::currentIndex = 0;
 
 	//--------------------------------------------------------------------------
 	void checkDuplicateId (std::vector<sUnitDirectory>& v)
@@ -907,6 +911,7 @@ namespace
 			it = std::adjacent_find (it + 1, v.end(), sameId);
 		}
 		v.erase (std::unique (v.begin(), v.end(), sameId), v.end());
+		std::sort (v.begin(), v.end(), [] (const auto& lhs, const auto& rhs) { return lhs.insertionIndex < rhs.insertionIndex; });
 	}
 
 	struct sBuildingsList
