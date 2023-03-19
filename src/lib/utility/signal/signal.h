@@ -205,10 +205,7 @@ void cSignal<void (Args...), MutexType>::disconnect (const F& f)
 
 	using should_deref = std::conditional_t<
 		std::is_pointer<test_type>::value,
-		std::conditional_t<
-			std::is_function<std::remove_pointer_t<test_type>>::value,
-			std::true_type,
-			std::false_type>,
+		std::is_function<std::remove_pointer_t<test_type>>,
 		std::false_type>;
 
 	std::unique_lock<MutexType> lock (mutex);
