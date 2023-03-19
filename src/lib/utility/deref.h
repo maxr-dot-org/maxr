@@ -23,24 +23,6 @@
 #include <type_traits>
 
 template <typename T>
-T& deref (T& x)
-{
-	return x;
-}
-
-template <typename T>
-T& deref (T* x)
-{
-	return *x;
-}
-
-//template <typename T>
-//T& deref (const std::unique_ptr<T>& x) { return *x; }
-
-//template <typename T>
-//T& deref (const std::shared_ptr<T>& x) { return *x; }
-
-template <typename T>
 const T& conditionalDeref (const T& t, std::false_type)
 {
 	return t;
