@@ -78,7 +78,7 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	//
 	// Resource Bar
 	//
-	cargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (411, 285), getPosition() + cPosition (411 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Cargo"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	cargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (411, 285), getPosition() + cPosition (411 + 42, 285 + 10)), lngPack.i18n ("Text~Title~Cargo"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 	metalBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (421, 301), getPosition() + cPosition (421 + 20, 301 + 115)), 0, 100, eResourceBarType::Metal, eOrientationType::Vertical));
 	metalBar->setStepSize (metalBarSteps);
 	signalConnectionManager.connect (metalBar->valueChanged, [this]() { metalChanged(); });
@@ -92,11 +92,11 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	//
 	// Gold Bar
 	//
-	creditLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 285), getPosition() + cPosition (362 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Credits"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	creditLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (360, 285), getPosition() + cPosition (360 + 44, 285 + 10)), lngPack.i18n ("Text~Title~Credits"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 	goldBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (372, 301), getPosition() + cPosition (372 + 20, 301 + 115)), 0, initialGold, eResourceBarType::Gold, eOrientationType::Vertical));
 	signalConnectionManager.connect (goldBar->valueChanged, [this]() { goldChanged(); });
 	goldBar->disable();
-	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 275), getPosition() + cPosition (362 + 40, 275 + 10)), std::to_string (initialGold), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (360, 275), getPosition() + cPosition (360 + 44, 275 + 10)), std::to_string (initialGold), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
 
 	//
 	// Upgrade Buttons
