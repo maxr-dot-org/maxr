@@ -203,7 +203,7 @@ msgid "Building31_Desc"
 msgstr "Réserve d'or\n\nEntrepose les réserves d'or extrait. Nécessite d'être connecté à une station minière."
 
 msgid "Building32_Name"
-msgstr "Unité de d'entreposage"
+msgstr "Unité d'entreposage"
 
 msgid "Building32_Desc"
 msgstr "Unité d'entreposage\n\nEntrepose les réserves de minerai extrait. Nécessite d'être connecté à une station minière."
