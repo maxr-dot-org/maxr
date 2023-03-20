@@ -638,6 +638,11 @@ void cUnicodeFont::showText (int x, int y, const std::string& text, eUnicodeFont
 			}
 		}
 	}
+	if (cSettings::getInstance().isDebug() && surface->w < offX)
+	{
+		Log.warn ("Cannot display entirely: '" + text + "'");
+		Log.debug ("surface weight: " + std::to_string (surface->w) + " < offX = " + std::to_string (offX));
+	}
 }
 
 void cUnicodeFont::showText (const cPosition& position, const std::string& text, eUnicodeFontType fonttype)
@@ -882,6 +887,10 @@ std::string cUnicodeFont::shortenStringToSize (const std::string& str, int size,
 			res.erase (res.length() - 1, res.length());
 		}
 		res += ".";
+		if (cSettings::getInstance().isDebug())
+		{
+			Log.warn ("shorten string : '" + str + "' to '"  + res + "'");
+		}
 	}
 	return res;
 }
