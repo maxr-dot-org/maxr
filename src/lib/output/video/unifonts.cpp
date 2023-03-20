@@ -574,11 +574,6 @@ const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset) con
 	return nullptr;
 }
 
-void cUnicodeFont::showText (SDL_Rect rDest, const std::string& sText, eUnicodeFontType fonttype)
-{
-	showText (rDest.x, rDest.y, sText, fonttype);
-}
-
 void cUnicodeFont::showText (int x, int y, const std::string& text, eUnicodeFontType fonttype)
 {
 	std::string sText (text);
@@ -686,7 +681,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const std::string& text, e
 			stringPart += "-";
 
 			// show the part of the word
-			showText (rDest, stringPart, fonttype);
+			showText (rDest.x, rDest.y, stringPart, fonttype);
 			rDest.y += getFontHeight (fonttype);
 
 			// erase the part from the line and from the hole text
@@ -695,7 +690,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const std::string& text, e
 		}
 
 		// draw the rest of the line
-		showText (rDest, drawString, fonttype);
+		showText (rDest.x, rDest.y, drawString, fonttype);
 		rDest.y += getFontHeight (fonttype);
 
 		sText.erase (0, drawString.length());
@@ -703,7 +698,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const std::string& text, e
 	}
 
 	// draw the rest of the text
-	showText (rDest, sText, fonttype);
+	showText (rDest.x, rDest.y, sText, fonttype);
 	rDest.y += getFontHeight (fonttype);
 
 	return rDest.y;
@@ -764,11 +759,6 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const std::string& text, eUni
 
 	// draw rest of text
 	return drawWithBreakLines (rDest, sText, fonttype);
-}
-
-void cUnicodeFont::showTextCentered (SDL_Rect rDest, const std::string& sText, eUnicodeFontType fonttype)
-{
-	showTextCentered (rDest.x, rDest.y, sText, fonttype);
 }
 
 void cUnicodeFont::showTextCentered (int x, int y, const std::string& sText, eUnicodeFontType fonttype)

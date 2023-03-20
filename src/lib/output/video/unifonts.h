@@ -88,14 +88,6 @@ public:
 	SDL_Surface* getTargetSurface() { return surface; }
 
 	/**
-	 * Wrapper for showText for easy use of SDL_Rects
-	 * @author beko
-	 * @param rdest destination to start drawing
-	 * @param sText text to draw
-	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
-	 */
-	void showText (SDL_Rect rDest, const std::string& sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
-	/**
 	 * Displays a text
 	 * @author beko
 	 * @param x position x to start drawing
@@ -120,15 +112,6 @@ public:
 	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 */
 	int showTextAsBlock (SDL_Rect rDest, const std::string& sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
-	/**
-	 * Displays a text centered on given X
-	 * @author beko
-	 * @param rDest DL_Rect for position.<br>Use X for position to center on.
-	 *              <br>Y is not taken care of!
-	 * @param sText text to draw
-	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
-	 */
-	void showTextCentered (SDL_Rect rDest, const std::string& sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 	/**
 	 * Displays a text centered on given X
 	 * @author beko
