@@ -28,7 +28,7 @@
 
 //------------------------------------------------------------------------------
 cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) :
-	cAbstractListViewItem (cPosition (50, 0)),
+	cAbstractListViewItem (cPosition (138, 0)),
 	player (&player_)
 {
 	readyImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (getSize().x() - 10, 0)));

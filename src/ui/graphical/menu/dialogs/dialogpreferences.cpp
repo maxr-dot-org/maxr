@@ -73,7 +73,7 @@ cDialogPreferences::cDialogPreferences() :
 	disableVoicesCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (245, 73 + 20 * 2), lngPack.i18n ("Text~Settings~Disable")));
 	signalConnectionManager.connect (disableVoicesCheckBox->toggled, [this]() { voicesMuteChanged(); });
 
-	playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 158), getPosition() + cPosition (135, 168)), lngPack.i18n ("Text~Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 158), getPosition() + cPosition (138, 168)), lngPack.i18n ("Text~Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
 	nameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (140, 154), getPosition() + cPosition (140 + 185, 154 + 18)), eLineEditFrameType::Box));
 
 	colorLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 175), getPosition() + cPosition (135, 185)), lngPack.i18n ("Text~Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
