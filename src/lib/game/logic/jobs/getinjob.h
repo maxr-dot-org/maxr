@@ -65,10 +65,13 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (loadedVehicleId);
 		archive & NVP (loadingUnitId);
 		archive & NVP (counter);
 		archive & NVP (startFlightHeight);
+		// clang-format on
 	}
 
 	int loadedVehicleId;

@@ -49,12 +49,15 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (vehicleID);
 		archive & NVP (buildingTypeID);
 		archive & NVP (buildSpeed);
 		archive & NVP (buildPosition);
 		archive & NVP (buildPath);
 		archive & NVP (pathEndPosition);
+		// clang-format on
 	}
 
 	int vehicleID;

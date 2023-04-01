@@ -105,6 +105,8 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (vehicleId);
 		archive & NVP (path);
 		archive & NVP (state);
@@ -116,6 +118,7 @@ public:
 		archive & NVP (pixelToMove);
 		archive & NVP (endMoveAction);
 		archive & NVP (stopOnDetectResource);
+		// clang-format on
 	}
 
 private:

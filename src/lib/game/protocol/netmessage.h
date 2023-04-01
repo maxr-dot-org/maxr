@@ -99,8 +99,11 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (type);
 		archive & NVP (playerNr);
+		// clang-format on
 	}
 
 	eNetMessageType type;
@@ -157,8 +160,11 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (packageVersion);
 		archive & NVP (packageRev);
+		// clang-format on
 	}
 };
 
@@ -194,10 +200,13 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (player);
 		archive & NVP (ready);
 		archive & NVP (packageVersion);
 		archive & NVP (packageRev);
+		// clang-format on
 		// socket is not serialized
 	}
 };
@@ -231,9 +240,12 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (playerNr);
 		archive & NVP (packageVersion);
 		archive & NVP (packageRev);
+		// clang-format on
 	}
 };
 
@@ -269,7 +281,10 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (reason);
+		// clang-format on
 	}
 };
 
@@ -312,9 +327,12 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (gameTime);
 		archive & NVP (checksum);
 		archive & NVP (ping);
+		// clang-format on
 	}
 };
 
@@ -352,12 +370,15 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (gameTime);
 		archive & NVP (crcOK);
 		archive & NVP (timeBuffer);
 		archive & NVP (ticksPerFrame);
 		archive & NVP (queueSize);
 		archive & NVP (eventCounter);
+		// clang-format on
 	}
 };
 
@@ -389,7 +410,10 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (seed);
+		// clang-format on
 	}
 };
 
@@ -424,8 +448,11 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (freezeModes);
 		archive & NVP (playerStates);
+		// clang-format on
 	}
 };
 
@@ -460,7 +487,10 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (report);
+		// clang-format on
 	}
 };
 
@@ -496,9 +526,12 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (slot);
 		archive & NVP (savingID);
 		archive & NVP (guiInfo);
+		// clang-format on
 	}
 };
 
@@ -533,8 +566,11 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (slot);
 		archive & NVP (savingID);
+		// clang-format on
 	}
 };
 
@@ -564,7 +600,10 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (data);
+		// clang-format on
 	}
 
 	std::vector<uint8_t> data;
@@ -601,8 +640,11 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (playerToSync);
 		archive & NVP (saveNumberForGuiInfo);
+		// clang-format on
 	}
 };
 
@@ -635,9 +677,12 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (mapName);
 		archive & NVP (mapCrc);
 		archive & NVP (playerList);
+		// clang-format on
 	}
 };
 

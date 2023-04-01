@@ -38,7 +38,10 @@ struct sID
 
 	bool operator== (const sID& ID) const;
 	bool operator!= (const sID& rhs) const { return !(*this == rhs); }
+	// clang-format off
+	// See https://github.com/llvm/llvm-project/issues/61911
 	bool operator< (const sID& rhs) const { return less_vehicleFirst (rhs); }
+	// clang-format on
 	bool less_vehicleFirst (const sID& ID) const;
 	bool less_buildingFirst (const sID& ID) const;
 
@@ -47,8 +50,11 @@ struct sID
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (firstPart);
 		archive & NVP (secondPart);
+		// clang-format on
 	}
 
 public:

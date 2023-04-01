@@ -41,6 +41,8 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (mapPosition);
 		archive & NVP (mapZoomFactor);
 		archive & NVP (surveyActive);
@@ -60,6 +62,7 @@ public:
 		archive & NVP (currentTurnResearchAreasFinished);
 		archive & NVP (selectedUnitIds);
 		archive & NVP (lockedUnitIds);
+		// clang-format on
 	}
 
 public:

@@ -162,7 +162,10 @@ public:
 	static std::unique_ptr<cVehicle> createFrom (Archive& archive)
 	{
 		int id;
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (id);
+		// clang-format on
 		auto res = std::make_unique<cVehicle> (id);
 		res->serialize (archive);
 		return res;
@@ -173,6 +176,8 @@ public:
 	{
 		cUnit::serializeThis (archive); //serialize cUnit members
 
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (surveyorAutoMoveActive);
 		archive & NVP (bandPosition);
 		archive & NVP (buildBigSavedPosition);
@@ -192,6 +197,7 @@ public:
 		archive & NVP (layMines);
 		archive & NVP (clearMines);
 		archive & NVP (flightHeight);
+		// clang-format on
 		commandoData.serialize (archive);
 	}
 

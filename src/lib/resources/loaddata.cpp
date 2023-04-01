@@ -25,13 +25,6 @@
 
 #include "loaddata.h"
 
-#include <SDL_mixer.h>
-#include <cpp17_workaround/filesystem.h>
-#include <iostream>
-#include <regex>
-#include <set>
-#include <sstream>
-
 #include "SDLutility/autosurface.h"
 #include "crashreporter/debug.h"
 #include "game/data/player/clans.h"
@@ -51,6 +44,13 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/serialization/jsonarchive.h"
+
+#include <SDL_mixer.h>
+#include <cpp17_workaround/filesystem.h>
+#include <iostream>
+#include <regex>
+#include <set>
+#include <sstream>
 
 #define PFEIL_COLOR 0xFF0000FF // color of a waypointarrow
 #define PFEILS_COLOR 0xFF00FF00 // color of a special waypointarrow
@@ -114,7 +114,8 @@ void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 	{
 		std::smatch res;
 
-		if (std::regex_match (p.first, res, reg)) {
+		if (std::regex_match (p.first, res, reg))
+		{
 			std::size_t maxSize = std::stoi (res[1]);
 			const char referenceLetter = 'a';
 
@@ -183,6 +184,7 @@ static int LoadGraphics (const std::filesystem::path& directory)
 	Log.info ("Loading Graphics");
 
 	Log.debug ("Gamegraphics...");
+	// clang-format off
 	if (!LoadGraphicToSurface (GraphicsData.gfx_Chand, directory / "hand.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Cno, directory / "no.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Cselect, directory / "select.pcx") ||
@@ -207,6 +209,7 @@ static int LoadGraphics (const std::filesystem::path& directory)
 	{
 		return 0;
 	}
+	// clang-format on
 	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil1, directory / "pf_1.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil2, directory / "pf_2.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil3, directory / "pf_3.pcx");
@@ -285,6 +288,8 @@ namespace
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (ammoMax);
 			archive & NVP (shotsMax);
 			archive & NVP (range);
@@ -294,6 +299,7 @@ namespace
 			archive & NVP (armor);
 			archive & NVP (hitpointsMax);
 			archive & NVP (scan);
+			// clang-format on
 		}
 	};
 
@@ -311,6 +317,8 @@ namespace
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (id);
 
 			archive & NVP (defaultName);
@@ -319,6 +327,7 @@ namespace
 			dynamicData.serialize (archive);
 			staticBuildingData.serialize (archive);
 			archive & NVP (graphic);
+			// clang-format on
 		}
 	};
 
@@ -336,6 +345,8 @@ namespace
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (id);
 
 			archive & NVP (defaultName);
@@ -344,6 +355,7 @@ namespace
 			dynamicData.serialize (archive);
 			staticVehicleData.serialize (archive);
 			archive & NVP (graphic);
+			// clang-format on
 		}
 	};
 } // namespace
@@ -391,7 +403,7 @@ static void LoadUnitData (sInitialVehicleData& vehicleData, const std::filesyste
 //------------------------------------------------------------------------------
 static bool checkUniqueness (const sID& id)
 {
-	if (ranges::any_of (UnitsDataGlobal.getStaticUnitsData(), [&](const auto& data) { return data.ID == id; }))
+	if (ranges::any_of (UnitsDataGlobal.getStaticUnitsData(), [&] (const auto& data) { return data.ID == id; }))
 	{
 		char szTmp[100];
 		snprintf (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.firstPart, id.secondPart);
@@ -892,8 +904,11 @@ namespace
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (id);
 			archive & NVP (path);
+			// clang-format on
 		}
 	};
 
@@ -922,8 +937,11 @@ namespace
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (special);
 			archive & NVP (buildings);
+			// clang-format on
 		}
 	};
 
@@ -934,7 +952,10 @@ namespace
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (vehicles);
+			// clang-format on
 		}
 	};
 

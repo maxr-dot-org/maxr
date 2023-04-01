@@ -48,9 +48,12 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (sourceUnitId);
 		archive & NVP (destUnitId);
 		archive & NVP (supplyType);
+		// clang-format on
 	}
 
 	unsigned int sourceUnitId;

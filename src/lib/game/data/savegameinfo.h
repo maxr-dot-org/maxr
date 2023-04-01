@@ -66,6 +66,8 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (saveVersion);
 		archive & NVP (gameVersion);
 		archive & NVP (gameName);
@@ -76,6 +78,7 @@ public:
 		archive & NVP (mapCrc);
 		archive & NVP (turn);
 		archive & NVP (number);
+		// clang-format on
 	}
 };
 

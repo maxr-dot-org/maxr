@@ -40,7 +40,10 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (jobs);
+		// clang-format on
 	}
 
 	void postLoad (const cModel&);

@@ -44,6 +44,8 @@ struct sBuildingUIStaticData
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (hasBetonUnderground);
 		archive & NVP (hasClanLogos);
 		archive & NVP (hasDamageEffect);
@@ -51,6 +53,7 @@ struct sBuildingUIStaticData
 		archive & NVP (hasPlayerColor);
 		archive & NVP (isAnimated);
 		archive & NVP (powerOnGraphic);
+		// clang-format on
 	}
 };
 

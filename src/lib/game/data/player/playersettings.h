@@ -28,8 +28,11 @@ struct sPlayerSettings
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (name);
 		archive & NVP (color);
+		// clang-format on
 	}
 
 	//------------------------------------------------------------------------------

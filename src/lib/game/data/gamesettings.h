@@ -98,6 +98,8 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (alienEnabled);
 		archive & NVP (bridgeheadType);
 		archive & NVP (clansEnabled);
@@ -114,6 +116,7 @@ public:
 		archive & NVP (victoryConditionType);
 		archive & NVP (victoryPoints);
 		archive & NVP (victoryTurns);
+		// clang-format on
 	}
 
 public:

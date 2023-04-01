@@ -38,7 +38,10 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (turn);
+		// clang-format on
 	}
 
 	mutable cSignal<void()> turnChanged;

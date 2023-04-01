@@ -49,10 +49,13 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (unitId);
 		archive & NVP (path);
 		archive & NVP (endMoveAction);
 		archive & NVP (stopOnDetectResource);
+		// clang-format on
 	}
 
 	std::forward_list<cPosition> path;

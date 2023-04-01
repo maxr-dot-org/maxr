@@ -47,9 +47,12 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (startGameTime);
 		archive & NVP (deadline);
 		archive & NVP (id);
+		// clang-format on
 	}
 
 private:
@@ -93,9 +96,12 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (deadlines);
 		archive & NVP (startTurnGameTime);
 		archive & NVP (nextDeadlineId);
+		// clang-format on
 	}
 
 private:

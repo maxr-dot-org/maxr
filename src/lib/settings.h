@@ -38,10 +38,13 @@ struct sVideoSettings
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (resolution);
 		archive & NVP (colourDepth);
 		archive & NVP (displayIndex);
 		archive & NVP (windowMode);
+		// clang-format on
 	}
 };
 
@@ -203,6 +206,8 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (global);
 		archive & NVP (network);
 		archive & NVP (player);
@@ -210,6 +215,7 @@ public:
 		archive & NVP (path);
 		archive & NVP (inGame);
 		archive & NVP (video);
+		// clang-format on
 	}
 
 	mutable cSignal<void()> animationsChanged;
@@ -263,6 +269,8 @@ private:
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (debug);
 			archive & NVP (showIntro);
 			archive & NVP (fastMode);
@@ -270,6 +278,7 @@ private:
 			archive & NVP (language);
 			archive & NVP (voiceLanguage);
 			archive & NVP (cacheSize);
+			// clang-format on
 		}
 	};
 
@@ -299,6 +308,8 @@ private:
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (enabled);
 			archive & NVP (musicVol);
 			archive & NVP (soundVol);
@@ -309,6 +320,7 @@ private:
 			archive & NVP (soundMute);
 			archive & NVP (voiceMute);
 			archive & NVP (sound3d);
+			// clang-format on
 		}
 	};
 
@@ -330,6 +342,8 @@ private:
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (font);
 			archive & NVP (fx);
 			archive & NVP (gfx);
@@ -342,6 +356,7 @@ private:
 			archive & NVP (vehicles);
 			archive & NVP (buildings);
 			archive & NVP (mve);
+			// clang-format on
 		}
 	};
 
@@ -369,6 +384,8 @@ private:
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (autosave);
 			archive & NVP (animations);
 			archive & NVP (shadows);
@@ -378,6 +395,7 @@ private:
 			archive & NVP (damageEffectsVehicles);
 			archive & NVP (makeTracks);
 			archive & NVP (scrollSpeed);
+			// clang-format on
 		}
 	};
 

@@ -196,6 +196,8 @@ public:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (data);
 		if (Archive::isWriter)
 		{
@@ -222,6 +224,7 @@ public:
 		archive & NVP (isBig);
 		archive & NVP (storageResCur);
 		archive & NVP (jobActive);
+		// clang-format on
 	}
 
 	void postLoad (cModel&);

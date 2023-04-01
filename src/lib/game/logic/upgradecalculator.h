@@ -291,9 +291,12 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (curResearchLevel);
 		archive & NVP (curResearchPoints);
 		archive & NVP (neededResearchPoints);
+		// clang-format on
 	}
 	//-------------------------------------------
 private:
@@ -339,11 +342,14 @@ struct sUnitUpgrade
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (nextPrice);
 		archive & NVP (purchased);
 		archive & NVP (curValue);
 		archive & NVP (startValue);
 		archive & NVP (type);
+		// clang-format on
 	}
 
 private:
@@ -376,7 +382,10 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (upgrades);
+		// clang-format on
 	}
 
 public:

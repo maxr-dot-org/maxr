@@ -60,7 +60,10 @@ public:
 	bool operator== (const cVersion& other) const;
 	bool operator!= (const cVersion& other) const;
 
+	// clang-format off
+	// See https://github.com/llvm/llvm-project/issues/61911
 	bool operator< (const cVersion& other) const;
+	// clang-format on
 	bool operator<= (const cVersion& other) const;
 	bool operator> (const cVersion& other) const;
 	bool operator>= (const cVersion& other) const;
@@ -68,9 +71,12 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (major);
 		archive & NVP (minor);
 		archive & NVP (revision);
+		// clang-format on
 	}
 
 private:

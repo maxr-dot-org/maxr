@@ -66,8 +66,11 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (type);
 		archive & NVP (remainingMetal);
+		// clang-format on
 	}
 
 private:
@@ -156,7 +159,10 @@ public:
 	static std::unique_ptr<cBuilding> createFrom (Archive& archive)
 	{
 		int id;
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (id);
+		// clang-format on
 		auto res = std::make_unique<cBuilding> (id);
 		res->serialize (archive);
 		return res;
@@ -167,6 +173,8 @@ public:
 	{
 		cUnit::serializeThis (archive); //serialize cUnit members
 
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (rubbleTyp);
 		archive & NVP (rubbleValue);
 		archive & NVP (BaseN);
@@ -191,6 +199,7 @@ public:
 		archive & NVP (isWorking);
 		archive & NVP (researchArea);
 		archive & NVP (buildList);
+		// clang-format on
 	}
 
 	void postLoad (cModel& model);

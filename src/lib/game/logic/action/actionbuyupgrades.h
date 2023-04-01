@@ -47,7 +47,10 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (unitUpgrades);
+		// clang-format on
 	}
 
 	std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;

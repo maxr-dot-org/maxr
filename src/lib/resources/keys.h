@@ -123,6 +123,8 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (keyExit);
 		archive & NVP (keyJumpToAction);
 		archive & NVP (keyEndTurn);
@@ -191,6 +193,7 @@ public:
 		archive & NVP (keyUnitMenuDestroy);
 
 		archive & NVP (mouseStyle);
+		// clang-format on
 	}
 
 private:

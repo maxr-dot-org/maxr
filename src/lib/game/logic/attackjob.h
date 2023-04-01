@@ -63,12 +63,15 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (aggressorId);
 		archive & NVP (targetPosition);
 		archive & NVP (lockedTargets);
 		archive & NVP (fireDir);
 		archive & NVP (counter);
 		archive & NVP (state);
+		// clang-format on
 	}
 
 private:

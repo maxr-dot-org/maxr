@@ -59,9 +59,12 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (resourceType);
 		archive & NVP (amount);
 		archive & NVP (increase);
+		// clang-format on
 	}
 
 	eResourceType resourceType;

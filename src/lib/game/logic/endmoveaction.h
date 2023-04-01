@@ -48,9 +48,12 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (vehicleID);
 		archive & NVP (endMoveAction);
 		archive & NVP (destID);
+		// clang-format on
 	}
 
 private:

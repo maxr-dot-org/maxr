@@ -30,8 +30,11 @@ struct sLandingUnit
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (unitID);
 		archive & NVP (cargo);
+		// clang-format on
 	}
 };
 

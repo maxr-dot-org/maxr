@@ -63,10 +63,13 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (player);
 		archive & NVP (nr);
 		archive & NVP (ready);
 		archive & NVP (defeated);
+		// clang-format on
 	}
 
 private:

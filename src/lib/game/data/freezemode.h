@@ -68,10 +68,13 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (waitForTurnEnd);
 		archive & NVP (pause);
 		archive & NVP (waitForClient);
 		archive & NVP (waitForServer);
+		// clang-format on
 	}
 
 	// These modes are triggered on server (and synchronized to clients):

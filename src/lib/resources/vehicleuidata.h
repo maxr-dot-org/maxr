@@ -47,12 +47,15 @@ struct sVehicleUIStaticData
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (buildUpGraphic);
 		archive & NVP (hasDamageEffect);
 		archive & NVP (hasOverlay);
 		archive & NVP (hasPlayerColor);
 		archive & NVP (isAnimated);
 		archive & NVP (hasFrames);
+		// clang-format on
 	}
 };
 

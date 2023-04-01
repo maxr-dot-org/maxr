@@ -39,7 +39,10 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (casualtiesPerPlayer);
+		// clang-format on
 	}
 	uint32_t getChecksum (uint32_t crc) const;
 
@@ -55,8 +58,11 @@ private:
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (unitID);
 			archive & NVP (numberOfLosses);
+			// clang-format on
 		}
 		uint32_t getChecksum (uint32_t crc) const;
 	};
@@ -68,8 +74,11 @@ private:
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & NVP (casualties);
 			archive & NVP (playerNr);
+			// clang-format on
 		}
 		uint32_t getChecksum (uint32_t crc) const;
 	};

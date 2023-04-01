@@ -53,8 +53,11 @@ struct sTurnstartReport
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (type);
 		archive & NVP (count);
+		// clang-format on
 	}
 
 	/** unit type of the report */
@@ -225,9 +228,14 @@ public:
 	template <typename Archive>
 	void save (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
+
 		archive & NVP (player);
 		archive & NVP (id);
 		archive & NVP (dynamicUnitsData);
+		// clang-format on
+
 		// should be saved in "correct order"
 		// references first to allow to restore pointers.
 		//
@@ -252,6 +260,9 @@ public:
 				}
 			}
 		}
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
+
 		archive & serialization::makeNvp ("vehicles", orderedVehicles);
 		archive & NVP (buildings);
 
@@ -264,10 +275,13 @@ public:
 		archive & NVP (credits);
 		archive & NVP (hasFinishedTurn);
 		archive & NVP (researchState);
+		// clang-format on
 	}
 	template <typename Archive>
 	void load (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (player);
 		archive & NVP (id);
 
@@ -300,11 +314,13 @@ public:
 		archive & NVP (credits);
 		archive & NVP (hasFinishedTurn);
 		archive & NVP (researchState);
+		// clang-format on
 	}
 
 	SERIALIZATION_SPLIT_MEMBER()
 
 	void postLoad (cModel&);
+
 private:
 	void upgradeUnitTypes (const std::vector<cResearch::eResearchArea>&, const cUnitsData& originalUnitsData);
 

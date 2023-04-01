@@ -58,7 +58,10 @@ private:
 		sStoredSound (sStoredSound&&) = default;
 		sStoredSound& operator= (sStoredSound&&) = default;
 
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/61911
 		bool operator< (const sStoredSound&) const;
+		// clang-format on
 
 		std::shared_ptr<cSoundEffect> sound;
 		unsigned int startGameTime;

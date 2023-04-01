@@ -63,8 +63,11 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (unitId);
 		archive & NVP (modifications);
+		// clang-format on
 	}
 
 private:
@@ -99,10 +102,13 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (num);
 		archive & NVP (description);
 		archive & NVP (name);
 		archive & NVP (stats);
+		// clang-format on
 	}
 
 private:
@@ -125,7 +131,10 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (clans);
+		// clang-format on
 	}
 
 private:

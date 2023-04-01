@@ -43,9 +43,12 @@ struct sMiningResource
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (metal);
 		archive & NVP (oil);
 		archive & NVP (gold);
+		// clang-format on
 	}
 
 	int metal = 0;

@@ -54,9 +54,12 @@ private:
 	template <typename Archive>
 	void serializeThis (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (turn);
 		archive & NVP (unitReports);
 		archive & NVP (researchAreas);
+		// clang-format on
 	}
 
 public:

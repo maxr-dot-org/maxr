@@ -142,6 +142,8 @@ struct sStaticCommonUnitData
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (muzzleType);
 		archive & NVP (canAttack);
 		archive & NVP (canBuild);
@@ -180,6 +182,7 @@ struct sStaticCommonUnitData
 		archive & NVP (storageUnitsMax);
 		archive & NVP (storageUnitsImageType);
 		archive & NVP (storeUnitsTypes);
+		// clang-format on
 	}
 };
 
@@ -204,6 +207,8 @@ struct sStaticBuildingData
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (canBeLandedOn);
 		archive & NVP (canMineMaxRes);
 		archive & NVP (canBeOverbuild);
@@ -217,6 +222,7 @@ struct sStaticBuildingData
 		archive & NVP (isBig);
 		archive & NVP (maxBuildFactor);
 		archive & NVP (modifiesSpeed);
+		// clang-format on
 	}
 };
 
@@ -241,6 +247,8 @@ struct sStaticVehicleData
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (animationMovement);
 		archive & NVP (canBuildPath);
 		archive & NVP (canClearArea);
@@ -253,6 +261,7 @@ struct sStaticVehicleData
 		archive & NVP (isHuman);
 		archive & NVP (isStorageType);
 		archive & NVP (makeTracks);
+		// clang-format on
 	}
 };
 
@@ -278,9 +287,12 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (ID);
 		archive & NVP (description);
 		archive & NVP (name);
+		// clang-format on
 		sStaticCommonUnitData::serialize (archive);
 		if (ID.isABuilding())
 			buildingData.serialize (archive);
@@ -368,6 +380,8 @@ public:
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (id);
 		archive & NVP (buildCosts);
 		archive & NVP (version);
@@ -383,6 +397,7 @@ public:
 		archive & NVP (scan);
 		archive & NVP (damage);
 		archive & NVP (armor);
+		// clang-format on
 
 		if (!Archive::isWriter)
 			crcCache = std::nullopt;
@@ -423,6 +438,8 @@ struct sSpecialBuildingsId
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (alienFactory);
 		archive & NVP (connector);
 		archive & NVP (landMine);
@@ -430,6 +447,7 @@ struct sSpecialBuildingsId
 		archive & NVP (seaMine);
 		archive & NVP (smallBeton);
 		archive & NVP (smallGenerator);
+		// clang-format on
 	}
 
 	[[nodiscard]] uint32_t computeChecksum (uint32_t crc) const;
@@ -450,9 +468,12 @@ struct sSpecialVehiclesId
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (constructor);
 		archive & NVP (engineer);
 		archive & NVP (surveyor);
+		// clang-format on
 	}
 
 	[[nodiscard]] uint32_t computeChecksum (uint32_t crc) const;
@@ -529,11 +550,14 @@ public:
 			crcCache = std::nullopt;
 		}
 
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (specialBuildings);
 		archive & NVP (specialVehicles);
 		archive & NVP (staticUnitData);
 		archive & NVP (dynamicUnitData);
 		archive & NVP (clanDynamicUnitData);
+		// clang-format on
 	}
 
 private:
