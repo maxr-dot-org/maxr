@@ -78,7 +78,7 @@ FIND_LIBRARY(VORBIS_LIBRARY
 
 if(WIN32)
 	SET (VORBISENC_LIBRARY "unused")
-elseif()
+else()
 	FIND_LIBRARY(VORBISENC_LIBRARY
 	  NAMES vorbisenc
 	  PATHS
@@ -90,6 +90,7 @@ elseif()
 	  /opt/csw/lib
 	  /opt/lib
 	  ../libs/libvorbis-1.2.0/lib/.libs
+	  ${DEPENDENCY_DIR}/libvorbis-1.2.0/lib
 	)
 endif()
 	  
