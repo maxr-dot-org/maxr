@@ -1,0 +1,41 @@
+name: ubuntu
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/**'
+      - '.github/workflows/ubuntu.yml'
+      - 'CMakeList.txt'
+
+  pull_request:
+    paths:
+      - 'src/**'
+      - '.github/workflows/ubuntu.yml'
+      - 'CMakeList.txt'
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: apt-get update
+      run: sudo apt-get update
+
+    - name: install SDL2
+      run: | # libsdl2-2.0-0 libsdl2-mixer-2.0-0 libsdl2-net-2.0-0
+        sudo apt-get install libsdl2-dev libsdl2-mixer-dev libsdl2-net-dev
+
+    - name: cmake --version
+      run: cmake --version
+
+    - name: test projects
+      run: |
+        mkdir build && cd build
+        cmake ..
+        make maxr_dedicatedserver maxr maxr_tests -j4
+        ./maxr_tests
+
