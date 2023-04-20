@@ -1,18 +1,10 @@
-# MAXR
+# MAXR ![Ubuntu-badge](https://github.com/MAX-Reloaded/maxr/workflows/ubuntu/badge.svg)
 
 ## Introduction
 
 Mechanized Assault & eXploration Reloaded
 
-A turn based strategy game based on M.A.X. created by fans as a community to make it's unique multiplayer experience possible on modern networks and systems. It is licensed under the GPL v2 and CC BY-SA 3.0 and is as such a free open source game written for the operating systems Linux, Mac and Windows.
-
-## Licence
-
-MAXR is dual licensed. While the game itself, including source and most assets, are released under the GPL v2 some files are not.
-
-For GPL v2 see `data/COPYING`
-
-For files unter CC BY-SA 3.0 see `data/COPYING.README `
+A turn based strategy game based on M.A.X. created by fans as a community to make it's unique multiplayer experience possible on modern networks and systems.
 
 # Building MAXR
 
@@ -33,7 +25,7 @@ Due the copyright we are not allowed to provide any game content
 from the original Mechanized Assault and Exploration (c) 1996 Interplay
 
 If you do own an original Mechanized Assault & Exploration CD
-(c) 1996 Interplay you can however make use of the tool *resinstaller*
+(c) 1996 Interplay you can however make use of the tool [resinstaller](https://github.com/MAX-Reloaded/resinstaller)
 and install the original gfx automagically from your existing M.A.X. copy.
 
 Resinstaller also takes care of sounds, videos, maps and music.
@@ -56,8 +48,6 @@ resinstaller has done it's magic.
 
 Please find additional files in `./data`:
 
-ABOUT `data/ABOUT`
-
-AUTHORS `data/AUTHORS`
-
-MANUAL `data/MANUAL`
+- [ABOUT](data/ABOUT)
+- [AUTHORS](data/AUTHORS)
+- [MANUAL](data/MANUAL)
