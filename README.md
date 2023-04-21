@@ -1,10 +1,11 @@
-# MAXR ![Ubuntu-badge](https://github.com/MAX-Reloaded/maxr/workflows/ubuntu/badge.svg)
+![maxr_icon](data/maxr.ico)
+# MAXR
 
 ## Introduction
 
 Mechanized Assault & eXploration Reloaded
 
-A turn based strategy game based on M.A.X. created by fans as a community to make it's unique multiplayer experience possible on modern networks and systems.
+A turn based strategy game based on [M.A.X.](https://en.wikipedia.org/wiki/Mechanized_Assault_%26_Exploration) created by fans as a community to make it's unique multiplayer experience possible on modern networks and systems.
 
 # Building MAXR
 
@@ -12,7 +13,7 @@ A turn based strategy game based on M.A.X. created by fans as a community to mak
 
 * Mac OS X
 * MS Windows
-* Linux
+* Linux ![Ubuntu-badge](https://github.com/MAX-Reloaded/maxr/workflows/ubuntu/badge.svg)
 
 Other UNIX-like operating systems may work too out of the box. Chances are huge if there's a build of SDL2 and CMake for the system.
 
