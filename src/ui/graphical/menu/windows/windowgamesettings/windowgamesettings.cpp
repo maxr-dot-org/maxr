@@ -324,9 +324,7 @@ cGameSettings cWindowGameSettings::getGameSettings() const
 
 	gameSettings.startCredits = *creditsGroup->getSelectedValue();
 
-	const auto victoryCondition = *victoryGroup->getSelectedValue();
-	const auto victoryType = victoryCondition.first;
-	const auto victoryCount = victoryCondition.second;
+	const auto [victoryType, victoryCount] = *victoryGroup->getSelectedValue();
 	gameSettings.victoryConditionType = victoryType;
 	switch (victoryType)
 	{

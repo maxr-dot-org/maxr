@@ -222,12 +222,11 @@ std::vector<std::pair<std::string, std::string>> cLanguage::getAllTranslations()
 {
 	std::vector<std::pair<std::string, std::string>> res;
 	const auto& catalog = pimpl->maxrCatalog;
-	for (const auto& p : catalog.GetIndex())
+	for (const auto& [key, index] : catalog.GetIndex())
 	{
-		const spiritless_po::Catalog::IndexDataT& index = p.second;
 		for (std::size_t i = 0; i != index.totalPlurals; ++i)
 		{
-			res.emplace_back (p.first, catalog.GetStringTable()[index.stringTableIndex + i]);
+			res.emplace_back (key, catalog.GetStringTable()[index.stringTableIndex + i]);
 		}
 	}
 	return res;

@@ -290,8 +290,8 @@ void cVideo::detectResolutions()
 
 		for (size_t i = 0; i < resolutions.size(); ++i)
 		{
-			const auto& resolution = resolutions[i];
-			Log.info ("cVideo: Display" + std::to_string (displayIndex) + " is offering detected video mode " + std::to_string (i) + " (" + std::to_string (resolution.first) + "x" + std::to_string (resolution.second) + ")");
+			const auto& [w, h] = resolutions[i];
+			Log.info ("cVideo: Display" + std::to_string (displayIndex) + " is offering detected video mode " + std::to_string (i) + " (" + std::to_string (w) + "x" + std::to_string (h) + ")");
 		}
 	}
 }

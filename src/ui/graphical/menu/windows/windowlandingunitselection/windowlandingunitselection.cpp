@@ -114,11 +114,11 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	//
 	// Initialization
 	//
-	for (const auto& p : initialUnits)
+	for (const auto& [unitId, cargo] : initialUnits)
 	{
-		auto& addedItem = addSelectedUnit (p.first);
-		addedItem.setCargo (p.second);
-		fixedSelectedUnits.emplace (&addedItem, p.second);
+		auto& addedItem = addSelectedUnit (unitId);
+		addedItem.setCargo (cargo);
+		fixedSelectedUnits.emplace (&addedItem, cargo);
 	}
 
 	generateSelectionList (true);

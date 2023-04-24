@@ -42,11 +42,8 @@ void cActionBuyUpgrades::execute (cModel& model) const
 
 	const cUnitsData& unitsdata = *model.getUnitsData();
 
-	for (size_t i = 0; i < unitUpgrades.size(); ++i)
+	for (const auto& [unitType, upgradesForUnit] : unitUpgrades)
 	{
-		const auto& unitType = unitUpgrades[i].first;
-		const auto& upgradesForUnit = unitUpgrades[i].second;
-
 		if (!unitsdata.isValidId (unitType)) return;
 
 		// check costs for upgrading this unit

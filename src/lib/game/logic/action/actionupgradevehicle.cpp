@@ -65,8 +65,8 @@ void cActionUpgradeVehicle::execute (cModel& model) const
 		}
 	}
 
-	for (const auto& x : result)
+	for (const auto& [id, upgrade] : result)
 	{
-		containingBuilding->getOwner()->unitsUpgraded (x.first, x.second.nr, x.second.costs);
+		containingBuilding->getOwner()->unitsUpgraded (id, upgrade.nr, upgrade.costs);
 	}
 }

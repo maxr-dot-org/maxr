@@ -145,10 +145,10 @@ template <typename T>
 template <typename K, typename T>
 [[nodiscard]] uint32_t calcCheckSum (const std::map<K, T>& data, uint32_t checksum)
 {
-	for (const auto& x : data)
+	for (const auto& [key, value] : data)
 	{
-		checksum = calcCheckSum (x.first, checksum);
-		checksum = calcCheckSum (x.second, checksum);
+		checksum = calcCheckSum (key, checksum);
+		checksum = calcCheckSum (value, checksum);
 	}
 	return checksum;
 }

@@ -348,11 +348,8 @@ void cActionInitNewGame::execute (cModel& model) const
 
 	// apply upgrades
 	int credits = model.getGameSettings()->startCredits;
-	for (const auto& upgrade : initPlayerData.unitUpgrades)
+	for (const auto& [unitId, upgradeValues] : initPlayerData.unitUpgrades)
 	{
-		const sID& unitId = upgrade.first;
-		const cUnitUpgrade& upgradeValues = upgrade.second;
-
 		if (!unitsdata.isValidId (unitId))
 		{
 			NetLog.error (" Apply upgrades failed. Unknown sID: " + unitId.getText());

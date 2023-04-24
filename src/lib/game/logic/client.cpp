@@ -248,11 +248,11 @@ void cClient::handleNetMessages()
 				freezeModes = msg->freezeModes;
 				if (waitForServer) freezeModes.enable (eFreezeMode::WaitForServer);
 
-				for (const auto& state : msg->playerStates)
+				for (const auto& [playerId, conn] : msg->playerStates)
 				{
-					if (model.getPlayer (state.first) == nullptr)
+					if (model.getPlayer (playerId) == nullptr)
 					{
-						NetLog.error (" Client: Invalid player id: " + std::to_string (state.first));
+						NetLog.error (" Client: Invalid player id: " + std::to_string (playerId));
 						break;
 					}
 				}
@@ -612,7 +612,7 @@ void cClient::report (std::unique_ptr<cSavedReport> report)
 }
 
 //------------------------------------------------------------------------------
-void cClient::sendGUISaveInfo(int slot, int savingId, const sPlayerGuiInfo& guiInfo, std::optional<cGameGuiState> gameGuiState)
+void cClient::sendGUISaveInfo (int slot, int savingId, const sPlayerGuiInfo& guiInfo, std::optional<cGameGuiState> gameGuiState)
 {
 	cNetMessageGUISaveInfo message (slot, savingId);
 	message.guiInfo = guiInfo;

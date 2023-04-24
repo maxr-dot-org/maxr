@@ -202,7 +202,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 			if (guiInfo.playerNr != client->getActivePlayer().getId()) return;
 
 			const cMap& map = *client->getModel().getMap();
-			if (ranges::any_of (guiInfo.guiInfo.savedPositions, [&](const auto& savedPosition) { return savedPosition && !map.isValidPosition (*savedPosition);}))
+			if (ranges::any_of (guiInfo.guiInfo.savedPositions, [&] (const auto& savedPosition) { return savedPosition && !map.isValidPosition (*savedPosition); }))
 			{
 				return;
 			}
@@ -1878,10 +1878,10 @@ void cGameGuiController::updateGuiInfoTexts()
 	{
 		std::string disconncetedPlayers;
 		std::string notRespondingPlayers;
-		for (const auto& playerState : playerConnectionStates)
+		for (const auto& [playerId, state] : playerConnectionStates)
 		{
-			const cPlayer& player = *activeClient->getModel().getPlayer (playerState.first);
-			if (playerState.second == ePlayerConnectionState::Disconnected)
+			const cPlayer& player = *activeClient->getModel().getPlayer (playerId);
+			if (state == ePlayerConnectionState::Disconnected)
 			{
 				if (!disconncetedPlayers.empty())
 				{
@@ -1889,7 +1889,7 @@ void cGameGuiController::updateGuiInfoTexts()
 				}
 				disconncetedPlayers += player.getName();
 			}
-			if (playerState.second == ePlayerConnectionState::NotResponding)
+			if (state == ePlayerConnectionState::NotResponding)
 			{
 				if (!notRespondingPlayers.empty())
 				{

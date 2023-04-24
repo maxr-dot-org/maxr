@@ -110,18 +110,18 @@ void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 {
 #if 1
 	std::regex reg{".*_([0-9]+)"};
-	for (const auto& p : language.getAllTranslations())
+	for (const auto& [key, translatedText] : language.getAllTranslations())
 	{
 		std::smatch res;
 
-		if (std::regex_match (p.first, res, reg))
+		if (std::regex_match (key, res, reg))
 		{
 			std::size_t maxSize = std::stoi (res[1]);
 			const char referenceLetter = 'a';
 
-			if (font.getTextWide (std::string (maxSize, referenceLetter)) < font.getTextWide (p.second))
+			if (font.getTextWide (std::string (maxSize, referenceLetter)) < font.getTextWide (translatedText))
 			{
-				Log.warn ("Maybe too long string for " + p.first + ": " + p.second);
+				Log.warn ("Maybe too long string for " + key + ": " + translatedText);
 			}
 		}
 	}
