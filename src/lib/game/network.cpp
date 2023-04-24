@@ -41,7 +41,7 @@ cSocket::cSocket (TCPsocket socket) :
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void cDataBuffer::reserve (unsigned int i)
+void cDataBuffer::reserve (std::uint32_t i)
 {
 	if (getFreeSpace() < i && length < UINT32_MAX - i)
 	{

@@ -80,7 +80,6 @@ private:
 	void pushReadyMessages (cSocket*);
 	int send (const cSocket*, const unsigned char* buffer, unsigned int length);
 
-	void updateSocketSet();
 	void cleanupClosedSockets();
 
 private:
