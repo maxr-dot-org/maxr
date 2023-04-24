@@ -609,7 +609,7 @@ std::optional<int> cUpgradeCalculator::lookupPrice (const PriceMap& prices, int 
 //------------------------------------------------------------------------------
 std::optional<int> cUpgradeCalculator::calcPrice (int curValue, int orgValue, eUpgradeType upgradeType, const cResearch& researchLevel) const
 {
-	auto researchArea = researchLevel.getResearchArea (upgradeType).value_or (0);
+	auto researchArea = researchLevel.getResearchArea (upgradeType).value_or (cResearch::eResearchArea::AttackResearch);
 	int bonusByResearch = calcChangeByResearch (orgValue, researchLevel.getCurResearchLevel (researchArea));
 	curValue -= bonusByResearch;
 
@@ -1444,7 +1444,7 @@ int sUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
 	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	sUnitUpgrade other (*this);
 	int cost = 0;
-	const auto researchArea = researchLevel.getResearchArea (upgradeType).value_or (0);
+	const auto researchArea = researchLevel.getResearchArea (upgradeType).value_or (cResearch::eResearchArea::AttackResearch);
 	const int bonusByResearch = uc.calcChangeByResearch (startValue, researchLevel.getCurResearchLevel (researchArea));
 
 	other.purchased = 0;
