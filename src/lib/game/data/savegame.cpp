@@ -34,8 +34,8 @@
 #include "utility/serialization/jsonarchive.h"
 #include "utility/serialization/serialization.h"
 
-#include <cpp17_workaround/filesystem.h>
-#include <cpp17_workaround/optional.h>
+#include <filesystem>
+#include <optional>
 #include <regex>
 
 #define SAVE_FORMAT_VERSION ((std::string) "1.0")

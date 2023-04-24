@@ -22,7 +22,7 @@
 
 #include <SDL_mixer.h>
 #include <chrono>
-#include <cpp17_workaround/filesystem.h>
+#include <filesystem>
 #include <memory>
 #include <string>
 

@@ -23,8 +23,8 @@
 
 #include <SDL_net.h>
 #include <atomic>
-#include <cpp17_workaround/optional.h>
 #include <mutex>
+#include <optional>
 #include <thread>
 #include <vector>
 

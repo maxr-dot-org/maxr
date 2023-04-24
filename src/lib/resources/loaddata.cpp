@@ -46,7 +46,7 @@
 #include "utility/serialization/jsonarchive.h"
 
 #include <SDL_mixer.h>
-#include <cpp17_workaround/filesystem.h>
+#include <filesystem>
 #include <iostream>
 #include <regex>
 #include <set>

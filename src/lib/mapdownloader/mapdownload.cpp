@@ -29,7 +29,7 @@
 #include "utility/log.h"
 #include "utility/string/tolower.h"
 
-#include <cpp17_workaround/filesystem.h>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>

@@ -24,12 +24,12 @@
 
 #include <SDL_endian.h>
 #include <array>
-#include <cpp17_workaround/optional.h>
 #include <cstddef>
 #include <cstdint>
 #include <forward_list>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 

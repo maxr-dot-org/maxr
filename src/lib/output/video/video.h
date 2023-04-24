@@ -25,7 +25,7 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-#include <cpp17_workaround/filesystem.h>
+#include <filesystem>
 
 struct SDL_Texture;
 struct SDL_Renderer;

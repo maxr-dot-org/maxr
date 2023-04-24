@@ -73,7 +73,8 @@ namespace
 	//--------------------------------------------------------------------------
 	std::vector<cPosition> getSurroundingPositions (const cPosition& pos, bool isBig)
 	{
-		if (isBig) {
+		if (isBig)
+		{
 			return {pos.relative (0, -1), pos.relative (1, -1), pos.relative (2, 0), pos.relative (2, 1), pos.relative (0, 2), pos.relative (1, 2), pos.relative (-1, 0), pos.relative (-1, 1)};
 		}
 		return {pos.relative (0, -1), pos.relative (1, 0), pos.relative (0, 1), pos.relative (-1, 0)};

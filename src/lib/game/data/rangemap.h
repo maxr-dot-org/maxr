@@ -23,7 +23,7 @@
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 
-#include <cpp17_workaround/optional.h>
+#include <optional>
 
 /**
 * This class is used to track, whether a position is a specific range to any

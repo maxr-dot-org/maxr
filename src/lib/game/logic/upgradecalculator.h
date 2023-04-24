@@ -24,8 +24,8 @@
 #include "utility/signal/signal.h"
 
 #include <array>
-#include <cpp17_workaround/optional.h>
 #include <map>
+#include <optional>
 
 class cResearch;
 class cUnitUpgrade;

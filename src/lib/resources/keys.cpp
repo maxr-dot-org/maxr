@@ -23,8 +23,6 @@
 #include "utility/log.h"
 #include "utility/serialization/jsonarchive.h"
 
-#include <cpp17_workaround/filesystem.h>
-
 cKeysList KeysList;
 
 namespace serialization

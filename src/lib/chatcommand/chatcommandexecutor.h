@@ -20,7 +20,6 @@
 #ifndef chatcommand_chatcommandexecutorH
 #define chatcommand_chatcommandexecutorH
 
-#include <cpp17_workaround/apply.h>
 #include <exception>
 #include <sstream>
 #include <string>

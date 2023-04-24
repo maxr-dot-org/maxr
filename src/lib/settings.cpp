@@ -26,7 +26,7 @@
 #include "utility/serialization/jsonarchive.h"
 #include "utility/string/tolower.h"
 
-#include <cpp17_workaround/filesystem.h>
+#include <filesystem>
 #include <iostream>
 #include <locale>
 #include <string>

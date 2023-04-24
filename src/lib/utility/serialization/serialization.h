@@ -30,10 +30,10 @@
 #include <array>
 #include <cassert>
 #include <chrono>
-#include <cpp17_workaround/optional.h>
 #include <forward_list>
 #include <map>
 #include <memory>
+#include <optional>
 #include <sstream>
 #include <string>
 #include <typeinfo>

@@ -23,7 +23,7 @@
 #include "game/logic/endmoveaction.h"
 #include "utility/position.h"
 
-#include <cpp17_workaround/optional.h>
+#include <optional>
 #include <forward_list>
 #include <memory>
 

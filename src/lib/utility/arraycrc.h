@@ -22,8 +22,8 @@
 
 #include "crc.h"
 
-#include <cpp17_workaround/optional.h>
 #include <cstdint>
+#include <optional>
 
 /**
 * This is a wrapper class around a dynamically allocated array.

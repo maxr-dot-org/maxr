@@ -27,7 +27,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/thread/concurrentqueue.h"
 
-#include <cpp17_workaround/filesystem.h>
+#include <filesystem>
 
 class cClient;
 class cLobbyServer;

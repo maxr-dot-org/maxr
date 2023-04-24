@@ -23,7 +23,7 @@
 #include "game/data/units/unitdata.h"
 #include "ui/graphical/game/control/mousemode/mousemode.h"
 
-#include <cpp17_workaround/optional.h>
+#include <optional>
 
 class cMouseModeSelectBuildPosition : public cMouseMode
 {

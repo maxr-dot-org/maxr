@@ -21,7 +21,7 @@
 #define utility_logH
 
 #include <atomic>
-#include <cpp17_workaround/filesystem.h>
+#include <filesystem>
 #include <fstream>
 #include <mutex>
 #include <string>

@@ -28,13 +28,13 @@
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 #include "resources/loaddata.h"
-#include "ui/uidefines.h"
 #include "ui/graphical/menu/windows/windowstart.h"
+#include "ui/uidefines.h"
 #include "ui/widgets/application.h"
 #include "utility/log.h"
 #include "utility/thread/ismainthread.h"
 
-#include <cpp17_workaround/filesystem.h>
+#include <filesystem>
 #include <future>
 #include <thread>
 

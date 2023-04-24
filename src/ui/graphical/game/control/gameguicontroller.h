@@ -28,8 +28,8 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <array>
-#include <cpp17_workaround/optional.h>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 

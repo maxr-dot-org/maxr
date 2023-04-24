@@ -24,7 +24,7 @@
 #include "ui/widgets/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-#include <cpp17_workaround/optional.h>
+#include <optional>
 
 /*
 ** Similar to regular radioGroup, but handles natively an association

@@ -25,7 +25,7 @@
 #include "game/data/units/unitdata.h"
 
 #include <SDL.h>
-#include <cpp17_workaround/filesystem.h>
+#include <filesystem>
 #include <vector>
 
 class cBuilding;
