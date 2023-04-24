@@ -137,38 +137,53 @@ namespace serialization
 	{
 		for (size_t i = 0; i < SIZE; i++)
 		{
+			// clang-format off
+			// See https://github.com/llvm/llvm-project/issues/44312
 			archive & makeNvp ("item", value[i]);
+			// clang-format on
 		}
 	}
 	//-------------------------------------------------------------------------
 	template <typename Archive, typename T1, typename T2>
 	void serialize (Archive& archive, std::pair<T1, T2>& value)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & makeNvp ("first", value.first);
 		archive & makeNvp ("second", value.second);
+		// clang-format on
 	}
 	//-------------------------------------------------------------------------
 	template <typename Archive>
 	void serialize (Archive& archive, cRgbColor& color)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & makeNvp ("r", color.r);
 		archive & makeNvp ("g", color.g);
 		archive & makeNvp ("b", color.b);
 		archive & makeNvp ("a", color.a);
+		// clang-format on
 	}
 
 	template <typename Archive>
 	void serialize (Archive& archive, cPosition& position)
 	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & serialization::makeNvp ("X", position[0]);
 		archive & serialization::makeNvp ("Y", position[1]);
+		// clang-format on
 	}
 
 	template <typename Archive>
 	void serialize (Archive& archive, cVector2& vec)
 	{
-		archive & serialization::makeNvp ("X", vec[0]);
-		archive & serialization::makeNvp ("Y", vec[1]);
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
+		archive& serialization::makeNvp ("X", vec[0]);
+		archive& serialization::makeNvp ("Y", vec[1]);
+		// clang-format on
 	}
 
 	//-------------------------------------------------------------------------
@@ -496,21 +511,22 @@ namespace serialization
 		serialization::serialize (archive, nvp.value);
 	}
 
-	#define SERIALIZATION_SPLIT_MEMBER()                     \
-	template <typename Archive>                              \
-	void serialize (Archive& archive)                        \
-	{                                                        \
-		serialization::detail::splitMember (archive, *this); \
-	}
+#define SERIALIZATION_SPLIT_MEMBER() \
+ template <typename Archive> \
+ void serialize (Archive& archive) \
+ { \
+  serialization::detail::splitMember (archive, *this); \
+ }
 
-	#define SERIALIZATION_SPLIT_FREE(T)                    \
-	namespace serialization {                              \
-	template <typename Archive>                            \
-	void serialize (Archive& archive, T& value)            \
-	{                                                      \
-		serialization::detail::splitFree (archive, value); \
-	}                                                      \
-	}
+#define SERIALIZATION_SPLIT_FREE(T) \
+ namespace serialization \
+ { \
+  template <typename Archive> \
+  void serialize (Archive& archive, T& value) \
+  { \
+   serialization::detail::splitFree (archive, value); \
+  } \
+ }
 
 } //namespace serialization
 
