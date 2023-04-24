@@ -30,6 +30,7 @@
 
 #include <SDL.h>
 #include <algorithm> // for transform toupper
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector> // for vectorLanguages
@@ -4022,7 +4023,7 @@ void createLogFile (const std::string& dataDir)
 			path += "\\maxr\\";
 			if (!DirExists (path))
 			{
-				if (makeDir (path) != 0)
+				if (!std::filesystem::create_directories(path))
 				{
 					path = "";
 					std::cout << "Warning: Couldn't write in home directory. Writing log to current directory instead.\n";
@@ -4570,7 +4571,7 @@ int main (int argc, char* argv[])
 	sMAXPath = (argc > 1) ? argv[1] : "";
 
 	// M.A.X. Reloaded Path
-	sOutputPath =  (argc > 2) ? argv[2] : "";
+	sOutputPath = (argc > 2) ? argv[2] : "";
 
 	// language german, english, french, italian
 	sLanguage = (argc > 3) ? argv[3] : "";
@@ -4578,7 +4579,7 @@ int main (int argc, char* argv[])
 	// Parameter for gNewGrafic
 	sResChoice = (argc > 4) ? argv[4] : "";
 
-	createLogFile(sOutputPath);
+	createLogFile (sOutputPath);
 	wasError = false;
 
 	sResChoice = validateResources (sResChoice); // validate the parameter for importing the resources

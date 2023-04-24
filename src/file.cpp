@@ -25,7 +25,6 @@
 #include <string>
 #include <sys/stat.h>
 #ifdef WIN32
-# include <direct.h>
 # include <io.h>
 #else
 # include <sys/types.h>
@@ -109,15 +108,6 @@ void copyFile (std::string source, std::string dest)
 
 	if (sourceFile) SDL_RWclose (sourceFile);
 	if (destFile) SDL_RWclose (destFile);
-}
-
-bool makeDir (const std::string& path)
-{
-#ifdef WIN32
-	return mkdir (path.c_str()) == 0;
-#else
-	return mkdir (path.c_str(), 0755) == 0;
-#endif
 }
 
 //--------------------------------------------------------------

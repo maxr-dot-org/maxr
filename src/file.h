@@ -27,7 +27,6 @@
 
 void copyFile (std::string source, std::string dest);
 SDL_RWops* openFile (std::string path, const char* mode);
-bool makeDir (const std::string& path);
 bool DirExists (const std::string& path);
 
 #endif //file_h
