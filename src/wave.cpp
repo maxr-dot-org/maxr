@@ -26,7 +26,6 @@
 #include "ogg_encode.h"
 
 #include <SDL.h>
-#include <string>
 
 cWaveFile::cWaveFile()
 {
@@ -90,7 +89,7 @@ int readSmplChunk (SDL_RWops* file, cWaveFile& waveFile)
 	return 1;
 }
 
-int loadWAV (std::string src, cWaveFile& waveFile)
+int loadWAV (const std::filesystem::path& src, cWaveFile& waveFile)
 {
 	SDL_RWops* file;
 	file = openFile (src, "rb");
@@ -99,7 +98,7 @@ int loadWAV (std::string src, cWaveFile& waveFile)
 	if (SDL_LoadWAV_RW (file, 0, &waveFile.spec, &waveFile.buffer, &waveFile.length) == nullptr)
 	{
 		SDL_RWclose (file);
-		throw InstallException ("File '" + src + "' may be corrupted" + TEXT_FILE_LF);
+		throw InstallException ("File '" + src.string() + "' may be corrupted" + TEXT_FILE_LF);
 	}
 	//load smpl chunk
 	readSmplChunk (file, waveFile);
@@ -108,7 +107,7 @@ int loadWAV (std::string src, cWaveFile& waveFile)
 	return 1;
 }
 
-void saveWAV (std::string dst, cWaveFile& waveFile)
+void saveWAV (const std::filesystem::path& dst, const cWaveFile& waveFile)
 {
 	int was_error = 0;
 	Chunk chunk;
@@ -116,14 +115,14 @@ void saveWAV (std::string dst, cWaveFile& waveFile)
 	Uint8* buf_pos;
 	Uint16 bytespersample;
 
-	SDL_AudioSpec* spec = &waveFile.spec;
+	const SDL_AudioSpec* spec = &waveFile.spec;
 	Uint32 audio_len = waveFile.length;
 	Uint8* audio_buf = waveFile.buffer;
 	// FMT chunk
 	WaveFMT* format = nullptr;
 
 	//open destiantion file
-	SDL_RWops* file = SDL_RWFromFile (dst.c_str(), "wb");
+	SDL_RWops* file = SDL_RWFromFile (dst.string().c_str(), "wb");
 	if (file == nullptr)
 	{
 		throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
@@ -220,7 +219,7 @@ done:
 	}
 }
 
-void copyPartOfWAV (std::string src, std::string dst, Uint8 nr)
+void copyPartOfWAV (const std::filesystem::path& src, const std::filesystem::path& dst, Uint8 nr)
 {
 	cWaveFile waveFile;
 
@@ -292,10 +291,10 @@ void copyPartOfWAV (std::string src, std::string dst, Uint8 nr)
 		if (waveFile.buffer) free (waveFile.buffer);
 		if (waveFile.smplChunk.ListofSampleLoops) free (waveFile.smplChunk.ListofSampleLoops);
 	}
-	END_INSTALL_FILE (dst)
+	END_INSTALL_FILE (dst.string())
 }
 
-void copyWAV (std::string src, std::string dst)
+void copyWAV (const std::filesystem::path& src, const std::filesystem::path& dst)
 {
 	if (oggEncode)
 	{
@@ -310,7 +309,7 @@ void copyWAV (std::string src, std::string dst)
 			if (waveFile.buffer) SDL_FreeWAV (waveFile.buffer);
 			if (waveFile.smplChunk.ListofSampleLoops) free (waveFile.smplChunk.ListofSampleLoops);
 		}
-		END_INSTALL_FILE (dst)
+		END_INSTALL_FILE (dst.string())
 	}
 	else
 	{

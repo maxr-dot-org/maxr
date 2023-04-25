@@ -28,7 +28,7 @@
 #include <string>
 #include <vorbis/vorbisenc.h>
 
-void encodeWAV (std::string fileName, cWaveFile& waveFile)
+void encodeWAV (std::filesystem::path fileName, cWaveFile& waveFile)
 {
 	static unsigned char serialNr = 0;
 	int ret;
@@ -43,13 +43,13 @@ void encodeWAV (std::string fileName, cWaveFile& waveFile)
 	vorbis_block vorbisBlock;
 
 	//if the file name ends with .wav it has to be replaced with .ogg
-	std::string extension = fileName.substr (fileName.length() - 4, fileName.length());
+	std::string extension = fileName.extension().string();
 	if (extension.compare (".wav") == 0 || extension.compare (".WAV") == 0)
 	{
-		fileName.replace (fileName.length() - 4, 4, ".ogg");
+		fileName.replace_extension (".ogg");
 	}
 
-	SDL_RWops* file = SDL_RWFromFile (fileName.c_str(), "wb");
+	SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
 	if (file == nullptr)
 	{
 		throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);

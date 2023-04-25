@@ -26,7 +26,7 @@
 #include <SDL.h>
 #include <string>
 
-int savePCX_8bpp (SDL_Surface* surface, std::string fileName)
+int savePCX_8bpp (SDL_Surface* surface, const std::filesystem::path& fileName)
 {
 	int Z_Index, S_Index; // PCX-Größenangaben
 
@@ -36,7 +36,7 @@ int savePCX_8bpp (SDL_Surface* surface, std::string fileName)
 	int i, z, s;
 	long Index; // Adresse des Pixels im Bild
 
-	SDL_RWops* file = SDL_RWFromFile (fileName.c_str(), "wb");
+	SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
 
 	if (file == nullptr)
 	{
@@ -116,7 +116,7 @@ int savePCX_8bpp (SDL_Surface* surface, std::string fileName)
 	return 1;
 }
 
-int savePCX_32bpp (SDL_Surface* surface, std::string fileName)
+int savePCX_32bpp (SDL_Surface* surface, const std::filesystem::path& fileName)
 {
 	int Z_Index, S_Index; // PCX-Größenangaben
 
@@ -126,7 +126,7 @@ int savePCX_32bpp (SDL_Surface* surface, std::string fileName)
 	int i, j, z, s;
 	long Index; // Adresse des Pixels im Bild
 
-	SDL_RWops* file = SDL_RWFromFile (fileName.c_str(), "wb");
+	SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
 
 	if (file == nullptr)
 	{
@@ -250,7 +250,7 @@ int savePCX_32bpp (SDL_Surface* surface, std::string fileName)
 	return 1;
 }
 
-int savePCX (SDL_Surface* surface, std::string fileName)
+int savePCX (SDL_Surface* surface, const std::filesystem::path& fileName)
 {
 	if (!surface)
 		return 0;
@@ -267,7 +267,7 @@ int savePCX (SDL_Surface* surface, std::string fileName)
 	return 0;
 }
 
-SDL_Surface* loadPCX (std::string name)
+SDL_Surface* loadPCX (const std::filesystem::path& name)
 {
 	Uint8* _ptr;
 	Uint8 byte;
@@ -277,11 +277,11 @@ SDL_Surface* loadPCX (std::string name)
 	SDL_RWops* file;
 
 	//open file
-	file = SDL_RWFromFile (name.c_str(), "rb");
+	file = SDL_RWFromFile (name.string().c_str(), "rb");
 
 	if (file == nullptr)
 	{
-		throw InstallException (std::string ("Couldn't open file") + name + TEXT_FILE_LF);
+		throw InstallException (std::string ("Couldn't open file") + name.string() + TEXT_FILE_LF);
 	}
 
 	//load data

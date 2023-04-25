@@ -21,10 +21,12 @@
 
 #ifndef ConverterH
 #define ConverterH
+
 #include "defines.h"
 #include "resinstaller.h"
 
 #include <SDL.h>
+#include <filesystem>
 
 struct sPixel
 {
@@ -86,9 +88,9 @@ public:
 SDL_Surface* getImageFromRes (std::string file_name, int imageNr = 0);
 void removePlayerColor (SDL_Surface* surface);
 int saveAllFiles();
-void copyFileFromRes (std::string src, std::string dst, int number = 0);
-void copyFileFromRes_rpc (std::string src, std::string dst, int number = 0);
-void copyImageFromFLC (std::string fileName, std::string dst);
+void copyFileFromRes (std::string src, const std::filesystem::path& dst, int number = 0);
+void copyFileFromRes_rpc (std::string src, const std::filesystem::path& dst, int number = 0);
+void copyImageFromFLC (const std::filesystem::path& fileName, const std::filesystem::path& dst);
 
 /** resizes (not scales!) a surface
 * @author Eiko

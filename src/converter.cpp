@@ -742,7 +742,7 @@ int saveAllFiles()
 	return 1;
 }
 
-void copyFileFromRes (std::string src, std::string dst, int number)
+void copyFileFromRes (std::string src, const std::filesystem::path& dst, int number)
 {
 	SDL_Surface* surface = nullptr;
 	try
@@ -751,11 +751,11 @@ void copyFileFromRes (std::string src, std::string dst, int number)
 		savePCX (surface, dst);
 		SDL_FreeSurface (surface);
 	}
-	END_INSTALL_FILE (dst)
+	END_INSTALL_FILE (dst.string())
 }
 
 //rpc stands for "remove player color"
-void copyFileFromRes_rpc (std::string src, std::string dst, int number)
+void copyFileFromRes_rpc (std::string src, const std::filesystem::path& dst, int number)
 {
 	SDL_Surface* surface = nullptr;
 	try
@@ -765,10 +765,10 @@ void copyFileFromRes_rpc (std::string src, std::string dst, int number)
 		savePCX (surface, dst);
 		SDL_FreeSurface (surface);
 	}
-	END_INSTALL_FILE (dst)
+	END_INSTALL_FILE (dst.string())
 }
 
-void copyImageFromFLC (std::string fileName, std::string dst)
+void copyImageFromFLC (const std::filesystem::path& fileName, const std::filesystem::path& dst)
 {
 	try
 	{
@@ -778,25 +778,25 @@ void copyImageFromFLC (std::string fileName, std::string dst)
 
 		if (file == nullptr)
 		{
-			throw InstallException ("FLC-File '" + fileName + "' not found" + TEXT_FILE_LF);
+			throw InstallException ("FLC-File '" + fileName.string() + "' not found" + TEXT_FILE_LF);
 		}
 
 		animation = FLI_Open (file, &error);
 		if (error != 0)
 		{
-			throw InstallException ("FLC-File '" + fileName + "' may be corrupted" + TEXT_FILE_LF);
+			throw InstallException ("FLC-File '" + fileName.string() + "' may be corrupted" + TEXT_FILE_LF);
 		}
 
 		error = FLI_NextFrame (animation);
 		if (error != 0)
 		{
 			FLI_Close (animation);
-			throw InstallException ("FLC-File '" + fileName + "' may be corrupted" + TEXT_FILE_LF);
+			throw InstallException ("FLC-File '" + fileName.string() + "' may be corrupted" + TEXT_FILE_LF);
 		}
 
 		savePCX (animation->surface, dst);
 	}
-	END_INSTALL_FILE (dst)
+	END_INSTALL_FILE (dst.string())
 }
 
 void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w)
