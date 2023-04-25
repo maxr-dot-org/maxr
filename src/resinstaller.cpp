@@ -44,7 +44,7 @@
 static bool bDoNotElevate = false;
 static std::string sAppName;
 static std::string sMAXPath;
-static std::string sVoicePath;
+static std::filesystem::path sVoicePath;
 std::string sOutputPath;
 static std::string sLanguage;
 static std::string sResChoice;
@@ -78,7 +78,7 @@ int installMVEs()
 	std::cout << "MVE files\n";
 
 	path = sOutputPath + "mve" + PATH_DELIMITER;
-	copyFile (sVoicePath + "MAXINT.MVE", path + "MAXINT.MVE");
+	copyFile (sVoicePath / "MAXINT.MVE", path + "MAXINT.MVE");
 	copyFile (sMAXPath + "MAXMVE1.MVE", path + "MAXMVE1.MVE");
 	copyFile (sMAXPath + "MAXMVE2.MVE", path + "MAXMVE2.MVE");
 
@@ -3557,105 +3557,105 @@ void installVoices()
 
 	path = sOutputPath + "voices" + PATH_DELIMITER;
 	waveExt = ".wav";
-	copyWAV (sVoicePath + "F001" + waveExtension, path + "ok1" + waveExt);
-	copyWAV (sVoicePath + "F004" + waveExtension, path + "ok2" + waveExt);
-	copyWAV (sVoicePath + "F006" + waveExtension, path + "ok3" + waveExt);
-	copyWAV (sVoicePath + "F005" + waveExtension, path + "ok4" + waveExt);
-	copyWAV (sVoicePath + "F007" + waveExtension, path + "commando_failed1" + waveExt);
-	copyWAV (sVoicePath + "F010" + waveExtension, path + "commando_failed2" + waveExt);
-	copyWAV (sVoicePath + "F012" + waveExtension, path + "commando_failed3" + waveExt);
-	copyWAV (sVoicePath + "F013" + waveExtension, path + "saved" + waveExt);
-	copyWAV (sVoicePath + "F053" + waveExtension, path + "start_none" + waveExt);
-	copyWAV (sVoicePath + "F070" + waveExtension, path + "detected1" + waveExt);
-	copyWAV (sVoicePath + "F071" + waveExtension, path + "detected2" + waveExt);
-	copyWAV (sVoicePath + "F085" + waveExtension, path + "reammo" + waveExt);
-	copyWAV (sVoicePath + "F089" + waveExtension, path + "reammo_all" + waveExt);
-	copyWAV (sVoicePath + "F093" + waveExtension, path + "research_complete" + waveExt);
-	copyWAV (sVoicePath + "F094" + waveExtension, path + "no_path1" + waveExt);
-	copyWAV (sVoicePath + "F095" + waveExtension, path + "no_path2" + waveExt);
-	copyWAV (sVoicePath + "F145" + waveExtension, path + "no_speed" + waveExt);
-	copyWAV (sVoicePath + "F150" + waveExtension, path + "status_yellow1" + waveExt);
-	copyWAV (sVoicePath + "F151" + waveExtension, path + "status_yellow2" + waveExt);
-	copyWAV (sVoicePath + "F154" + waveExtension, path + "status_red1" + waveExt);
-	copyWAV (sVoicePath + "F155" + waveExtension, path + "status_red2" + waveExt);
-	copyWAV (sVoicePath + "F158" + waveExtension, path + "sentry" + waveExt);
-	copyWAV (sVoicePath + "F162" + waveExtension, path + "build_done1" + waveExt); // for pio + constr
-	copyWAV (sVoicePath + "F165" + waveExtension, path + "build_done2" + waveExt); // for pio + constr
-	copyWAV (sVoicePath + "F166" + waveExtension, path + "start_one" + waveExt); // unit completed (in fac.)
-	copyWAV (sVoicePath + "F169" + waveExtension, path + "build_done3" + waveExt); // for factories
-	copyWAV (sVoicePath + "F216" + waveExtension, path + "build_done4" + waveExt); // for factories
-	copyWAV (sVoicePath + "F171" + waveExtension, path + "clearing" + waveExt);
-	copyWAV (sVoicePath + "F181" + waveExtension, path + "laying_mines" + waveExt);
-	copyWAV (sVoicePath + "F186" + waveExtension, path + "clearing_mines2" + waveExt);
-	copyWAV (sVoicePath + "F187" + waveExtension, path + "clearing_mines" + waveExt);
-	copyWAV (sVoicePath + "F191" + waveExtension, path + "surveying" + waveExt);
-	copyWAV (sVoicePath + "F192" + waveExtension, path + "surveying2" + waveExt);
-	copyWAV (sVoicePath + "F196" + waveExtension, path + "attacking1" + waveExt);
-	copyWAV (sVoicePath + "F198" + waveExtension, path + "attacking2" + waveExt);
-	copyWAV (sVoicePath + "F201" + waveExtension, path + "sub_detected" + waveExt);
-	copyWAV (sVoicePath + "F206" + waveExtension, path + "start_more" + waveExt);
-	copyWAV (sVoicePath + "F210" + waveExtension, path + "repaired_all1" + waveExt);
-	copyWAV (sVoicePath + "F211" + waveExtension, path + "repaired_all2" + waveExt);
-	copyWAV (sVoicePath + "F219" + waveExtension, path + "repaired2" + waveExt);
-	copyWAV (sVoicePath + "F220" + waveExtension, path + "repaired" + waveExt);
-	copyWAV (sVoicePath + "F224" + waveExtension, path + "transfer_done" + waveExt);
-	copyWAV (sVoicePath + "F229" + waveExtension, path + "attacking_us2" + waveExt);
-	copyWAV (sVoicePath + "F230" + waveExtension, path + "attacking_us3" + waveExt);
-	copyWAV (sVoicePath + "F232" + waveExtension, path + "attacking_us" + waveExt);
-	copyWAV (sVoicePath + "F234" + waveExtension, path + "destroyed_us1" + waveExt);
-	copyWAV (sVoicePath + "F234" + waveExtension, path + "destroyed_us2" + waveExt);
-	copyWAV (sVoicePath + "F239" + waveExtension, path + "unit_stolen1" + waveExt);
-	copyWAV (sVoicePath + "F242" + waveExtension, path + "unit_stolen2" + waveExt);
-	copyWAV (sVoicePath + "F243" + waveExtension, path + "unit_stolen_by_enemy" + waveExt);
-	copyWAV (sVoicePath + "F244" + waveExtension, path + "unit_disabled" + waveExt);
-	copyWAV (sVoicePath + "F247" + waveExtension, path + "unit_disabled_by_enemy1" + waveExt);
-	copyWAV (sVoicePath + "F249" + waveExtension, path + "unit_disabled_by_enemy2" + waveExt);
-	copyWAV (sVoicePath + "F250" + waveExtension, path + "attacking_enemy1" + waveExt);
-	copyWAV (sVoicePath + "F251" + waveExtension, path + "attacking_enemy2" + waveExt);
+	copyWAV (sVoicePath / ("F001" + waveExtension), path + "ok1" + waveExt);
+	copyWAV (sVoicePath / ("F004" + waveExtension), path + "ok2" + waveExt);
+	copyWAV (sVoicePath / ("F006" + waveExtension), path + "ok3" + waveExt);
+	copyWAV (sVoicePath / ("F005" + waveExtension), path + "ok4" + waveExt);
+	copyWAV (sVoicePath / ("F007" + waveExtension), path + "commando_failed1" + waveExt);
+	copyWAV (sVoicePath / ("F010" + waveExtension), path + "commando_failed2" + waveExt);
+	copyWAV (sVoicePath / ("F012" + waveExtension), path + "commando_failed3" + waveExt);
+	copyWAV (sVoicePath / ("F013" + waveExtension), path + "saved" + waveExt);
+	copyWAV (sVoicePath / ("F053" + waveExtension), path + "start_none" + waveExt);
+	copyWAV (sVoicePath / ("F070" + waveExtension), path + "detected1" + waveExt);
+	copyWAV (sVoicePath / ("F071" + waveExtension), path + "detected2" + waveExt);
+	copyWAV (sVoicePath / ("F085" + waveExtension), path + "reammo" + waveExt);
+	copyWAV (sVoicePath / ("F089" + waveExtension), path + "reammo_all" + waveExt);
+	copyWAV (sVoicePath / ("F093" + waveExtension), path + "research_complete" + waveExt);
+	copyWAV (sVoicePath / ("F094" + waveExtension), path + "no_path1" + waveExt);
+	copyWAV (sVoicePath / ("F095" + waveExtension), path + "no_path2" + waveExt);
+	copyWAV (sVoicePath / ("F145" + waveExtension), path + "no_speed" + waveExt);
+	copyWAV (sVoicePath / ("F150" + waveExtension), path + "status_yellow1" + waveExt);
+	copyWAV (sVoicePath / ("F151" + waveExtension), path + "status_yellow2" + waveExt);
+	copyWAV (sVoicePath / ("F154" + waveExtension), path + "status_red1" + waveExt);
+	copyWAV (sVoicePath / ("F155" + waveExtension), path + "status_red2" + waveExt);
+	copyWAV (sVoicePath / ("F158" + waveExtension), path + "sentry" + waveExt);
+	copyWAV (sVoicePath / ("F162" + waveExtension), path + "build_done1" + waveExt); // for pio + constr
+	copyWAV (sVoicePath / ("F165" + waveExtension), path + "build_done2" + waveExt); // for pio + constr
+	copyWAV (sVoicePath / ("F166" + waveExtension), path + "start_one" + waveExt); // unit completed (in fac.)
+	copyWAV (sVoicePath / ("F169" + waveExtension), path + "build_done3" + waveExt); // for factories
+	copyWAV (sVoicePath / ("F216" + waveExtension), path + "build_done4" + waveExt); // for factories
+	copyWAV (sVoicePath / ("F171" + waveExtension), path + "clearing" + waveExt);
+	copyWAV (sVoicePath / ("F181" + waveExtension), path + "laying_mines" + waveExt);
+	copyWAV (sVoicePath / ("F186" + waveExtension), path + "clearing_mines2" + waveExt);
+	copyWAV (sVoicePath / ("F187" + waveExtension), path + "clearing_mines" + waveExt);
+	copyWAV (sVoicePath / ("F191" + waveExtension), path + "surveying" + waveExt);
+	copyWAV (sVoicePath / ("F192" + waveExtension), path + "surveying2" + waveExt);
+	copyWAV (sVoicePath / ("F196" + waveExtension), path + "attacking1" + waveExt);
+	copyWAV (sVoicePath / ("F198" + waveExtension), path + "attacking2" + waveExt);
+	copyWAV (sVoicePath / ("F201" + waveExtension), path + "sub_detected" + waveExt);
+	copyWAV (sVoicePath / ("F206" + waveExtension), path + "start_more" + waveExt);
+	copyWAV (sVoicePath / ("F210" + waveExtension), path + "repaired_all1" + waveExt);
+	copyWAV (sVoicePath / ("F211" + waveExtension), path + "repaired_all2" + waveExt);
+	copyWAV (sVoicePath / ("F219" + waveExtension), path + "repaired2" + waveExt);
+	copyWAV (sVoicePath / ("F220" + waveExtension), path + "repaired" + waveExt);
+	copyWAV (sVoicePath / ("F224" + waveExtension), path + "transfer_done" + waveExt);
+	copyWAV (sVoicePath / ("F229" + waveExtension), path + "attacking_us2" + waveExt);
+	copyWAV (sVoicePath / ("F230" + waveExtension), path + "attacking_us3" + waveExt);
+	copyWAV (sVoicePath / ("F232" + waveExtension), path + "attacking_us" + waveExt);
+	copyWAV (sVoicePath / ("F234" + waveExtension), path + "destroyed_us1" + waveExt);
+	copyWAV (sVoicePath / ("F234" + waveExtension), path + "destroyed_us2" + waveExt);
+	copyWAV (sVoicePath / ("F239" + waveExtension), path + "unit_stolen1" + waveExt);
+	copyWAV (sVoicePath / ("F242" + waveExtension), path + "unit_stolen2" + waveExt);
+	copyWAV (sVoicePath / ("F243" + waveExtension), path + "unit_stolen_by_enemy" + waveExt);
+	copyWAV (sVoicePath / ("F244" + waveExtension), path + "unit_disabled" + waveExt);
+	copyWAV (sVoicePath / ("F247" + waveExtension), path + "unit_disabled_by_enemy1" + waveExt);
+	copyWAV (sVoicePath / ("F249" + waveExtension), path + "unit_disabled_by_enemy2" + waveExt);
+	copyWAV (sVoicePath / ("F250" + waveExtension), path + "attacking_enemy1" + waveExt);
+	copyWAV (sVoicePath / ("F251" + waveExtension), path + "attacking_enemy2" + waveExt);
 
 	//-------------------------------------------------------------
 	// fix differences between eng and ger original sound-files - nonsinn
 	// FIMXE / TODO : French-soundfile-check
 	//-------------------------------------------------------------
 	// landing screen
-	copyWAV (sVoicePath + "F176" + waveExtension, path + "landing1" + waveExt);
+	copyWAV (sVoicePath / ("F176" + waveExtension), path + "landing1" + waveExt);
 	if (sLanguage != "german")
 	{
-		copyWAV (sVoicePath + "F177" + waveExtension, path + "landing2" + waveExt);
-		copyWAV (sVoicePath + "F278" + waveExtension, path + "landing3" + waveExt);
+		copyWAV (sVoicePath / ("F177" + waveExtension), path + "landing2" + waveExt);
+		copyWAV (sVoicePath / ("F278" + waveExtension), path + "landing3" + waveExt);
 	}
 	else
 	{ /* install german lang */
-		copyWAV (sVoicePath + "F275" + waveExtension, path + "landing2" + waveExt);
-		copyWAV (sVoicePath + "F276" + waveExtension, path + "landing3" + waveExt);
+		copyWAV (sVoicePath / ("F275" + waveExtension), path + "landing2" + waveExt);
+		copyWAV (sVoicePath / ("F276" + waveExtension), path + "landing3" + waveExt);
 	}
 
 	// differenc of F270 (ammo low vs. empty)
-	copyWAV (sVoicePath + "F138" + waveExtension, path + "ammo_low1" + waveExt);
-	copyWAV (sVoicePath + "F142" + waveExtension, path + "ammo_empty1" + waveExt);
+	copyWAV (sVoicePath / ("F138" + waveExtension), path + "ammo_low1" + waveExt);
+	copyWAV (sVoicePath / ("F142" + waveExtension), path + "ammo_empty1" + waveExt);
 	if (sLanguage != "german")
 	{
-		copyWAV (sVoicePath + "F271" + waveExtension, path + "ammo_low2" + waveExt);
-		copyWAV (sVoicePath + "F142" + waveExtension, path + "ammo_empty2" + waveExt);
+		copyWAV (sVoicePath / ("F271" + waveExtension), path + "ammo_low2" + waveExt);
+		copyWAV (sVoicePath / ("F142" + waveExtension), path + "ammo_empty2" + waveExt);
 	}
 	else
 	{ /* install german lang */
-		copyWAV (sVoicePath + "F138" + waveExtension, path + "ammo_low2" + waveExt);
-		copyWAV (sVoicePath + "F270" + waveExtension, path + "ammo_empty2" + waveExt);
+		copyWAV (sVoicePath / ("F138" + waveExtension), path + "ammo_low2" + waveExt);
+		copyWAV (sVoicePath / ("F270" + waveExtension), path + "ammo_empty2" + waveExt);
 	}
 
 	// 20 sec left
 	if (sLanguage != "german")
 	{
-		copyWAV (sVoicePath + "F272" + waveExtension, path + "turn_end_20_sec1" + waveExt); // not used yet
-		copyWAV (sVoicePath + "F273" + waveExtension, path + "turn_end_20_sec2" + waveExt); // not used yet
-		copyWAV (sVoicePath + "F275" + waveExtension, path + "turn_end_20_sec3" + waveExt); // not used yet
+		copyWAV (sVoicePath / ("F272" + waveExtension), path + "turn_end_20_sec1" + waveExt); // not used yet
+		copyWAV (sVoicePath / ("F273" + waveExtension), path + "turn_end_20_sec2" + waveExt); // not used yet
+		copyWAV (sVoicePath / ("F275" + waveExtension), path + "turn_end_20_sec3" + waveExt); // not used yet
 	}
 	else
 	{ /* install german lang */
-		copyWAV (sVoicePath + "F271" + waveExtension, path + "turn_end_20_sec1" + waveExt); // not used yet
-		copyWAV (sVoicePath + "F272" + waveExtension, path + "turn_end_20_sec2" + waveExt); // not used yet
-		copyWAV (sVoicePath + "F273" + waveExtension, path + "turn_end_20_sec3" + waveExt); // not used yet
+		copyWAV (sVoicePath / ("F271" + waveExtension), path + "turn_end_20_sec1" + waveExt); // not used yet
+		copyWAV (sVoicePath / ("F272" + waveExtension), path + "turn_end_20_sec2" + waveExt); // not used yet
+		copyWAV (sVoicePath / ("F273" + waveExtension), path + "turn_end_20_sec3" + waveExt); // not used yet
 	}
 	//-------------------------------------------------------------
 
@@ -4528,23 +4528,23 @@ int main (int argc, char* argv[])
 		else if ((sLanguage == "german" || sLanguage == "GER") && bGerman)
 		{
 			if (bUppercase)
-				sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
+				sVoicePath = sMAXPath + "GERMAN";
 			else
-				sVoicePath = sMAXPath + "german" + PATH_DELIMITER;
+				sVoicePath = sMAXPath + "german";
 		}
 		else if ((sLanguage == "french" || sLanguage == "FRE") && bFrench)
 		{
 			if (bUppercase)
-				sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
+				sVoicePath = sMAXPath + "FRENCH";
 			else
-				sVoicePath = sMAXPath + "french" + PATH_DELIMITER;
+				sVoicePath = sMAXPath + "french";
 		}
 		else if ((sLanguage == "italian" || sLanguage == "ITA") && bItalian)
 		{
 			if (bUppercase)
-				sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
+				sVoicePath = sMAXPath + "ITALIAN";
 			else
-				sVoicePath = sMAXPath + "italian" + PATH_DELIMITER;
+				sVoicePath = sMAXPath + "italian";
 		}
 		else
 		{
@@ -4560,17 +4560,17 @@ int main (int argc, char* argv[])
 		if (languageChosen == 0) // english
 			sVoicePath = sMAXPath;
 		else if (languageChosen == 1 && bUppercase)
-			sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
+			sVoicePath = sMAXPath + "GERMAN";
 		else if (languageChosen == 1 && !bUppercase)
-			sVoicePath = sMAXPath + "german" + PATH_DELIMITER;
+			sVoicePath = sMAXPath + "german";
 		else if (languageChosen == 2 && bUppercase)
-			sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
+			sVoicePath = sMAXPath + "ITALIAN";
 		else if (languageChosen == 2 && !bUppercase)
-			sVoicePath = sMAXPath + "italian" + PATH_DELIMITER;
+			sVoicePath = sMAXPath + "italian";
 		else if (languageChosen == 3 && bUppercase)
-			sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
+			sVoicePath = sMAXPath + "FRENCH";
 		else if (languageChosen == 3 && !bUppercase)
-			sVoicePath = sMAXPath + "french" + PATH_DELIMITER;
+			sVoicePath = sMAXPath + "french";
 		else
 			sVoicePath = sMAXPath; // default - but should not happen
 #else
@@ -4633,12 +4633,12 @@ int main (int argc, char* argv[])
 					}
 					else if (!bUppercase && input == vectorLanguages[ii])
 					{
-						sVoicePath = sMAXPath + input + PATH_DELIMITER;
+						sVoicePath = sMAXPath + input;
 					}
 					else if (bUppercase && input == vectorLanguages[ii])
 					{
 						transform (input.begin(), input.end(), input.begin(), ::toupper);
-						sVoicePath = sMAXPath + input + PATH_DELIMITER;
+						sVoicePath = sMAXPath + input;
 					}
 				}
 			}
