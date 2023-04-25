@@ -6,13 +6,13 @@ on:
     paths:
       - 'src/**'
       - '.github/workflows/ubuntu.yml'
-      - 'CMakeList.txt'
+      - 'CMakeLists.txt'
 
   pull_request:
     paths:
       - 'src/**'
       - '.github/workflows/ubuntu.yml'
-      - 'CMakeList.txt'
+      - 'CMakeLists.txt'
 
 jobs:
   linux:
