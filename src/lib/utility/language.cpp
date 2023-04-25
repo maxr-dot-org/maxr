@@ -53,7 +53,7 @@ namespace
 	void openCatalog (spiritless_po::Catalog& catalog, const std::filesystem::path& path)
 	{
 		catalog.Clear();
-		std::ifstream file (path.string());
+		std::ifstream file (path);
 
 		if (!catalog.Add (file))
 		{

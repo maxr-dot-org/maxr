@@ -186,7 +186,7 @@ void cSettings::setPaths()
 //------------------------------------------------------------------------------
 void cSettings::loadFromJsonFile (const std::filesystem::path& path)
 {
-	std::ifstream file (path.string());
+	std::ifstream file (path);
 	nlohmann::json json;
 
 	if (!(file >> json))
@@ -254,7 +254,7 @@ void cSettings::saveInFile() const
 	cJsonArchiveOut out (json);
 	out << *this;
 
-	std::ofstream file ((homeDir / "maxr.json").string());
+	std::ofstream file (homeDir / "maxr.json");
 	file << json.dump (1);
 }
 

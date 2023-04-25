@@ -368,7 +368,7 @@ static void LoadUnitData (sInitialBuildingData& buildingData, const std::filesys
 	const auto path = directory / "data.json";
 	if (!std::filesystem::exists (path)) return;
 
-	std::ifstream file (path.string());
+	std::ifstream file (path);
 	nlohmann::json json;
 
 	if (!(file >> json))
@@ -389,7 +389,7 @@ static void LoadUnitData (sInitialVehicleData& vehicleData, const std::filesyste
 	auto path = directory / "data.json";
 	if (!std::filesystem::exists (path)) return;
 
-	std::ifstream file (path.string());
+	std::ifstream file (path);
 	nlohmann::json json;
 
 	if (!(file >> json))
@@ -975,7 +975,7 @@ static int LoadBuildings (bool includingUiData)
 		return 0;
 	}
 
-	std::ifstream file (buildingsJsonPath.string());
+	std::ifstream file (buildingsJsonPath);
 	nlohmann::json json;
 
 	if (!(file >> json))
@@ -1068,7 +1068,7 @@ static int LoadVehicles (bool includingUiData)
 		return 0;
 	}
 
-	std::ifstream file (vehicleJsonPath.string());
+	std::ifstream file (vehicleJsonPath);
 	nlohmann::json json;
 
 	if (!(file >> json))
@@ -1147,7 +1147,7 @@ static int LoadClans()
 		Log.error ("File doesn't exist: " + clansPath.string());
 		return 0;
 	}
-	std::ifstream file (clansPath.string());
+	std::ifstream file (clansPath);
 	nlohmann::json json;
 	if (!(file >> json))
 	{
@@ -1177,7 +1177,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 		Log.error ("file doesn't exist");
 		return 0;
 	}
-	std::ifstream file (musicPath.string());
+	std::ifstream file (musicPath);
 	nlohmann::json json;
 
 	if (!(file >> json))

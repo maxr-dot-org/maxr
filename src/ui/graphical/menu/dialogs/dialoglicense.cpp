@@ -116,7 +116,7 @@ void cDialogLicense::readAuthors()
 	cSettings::getInstance().getDataDir() / "AUTHORS";
 #endif
 
-	std::ifstream authorsFile (fileName.string());
+	std::ifstream authorsFile (fileName);
 
 	if (authorsFile.is_open())
 	{

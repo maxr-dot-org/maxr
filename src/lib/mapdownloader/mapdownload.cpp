@@ -103,12 +103,12 @@ uint32_t MapDownload::calculateCheckSum (const std::string& mapName)
 {
 	uint32_t result = 0;
 	auto filename = cSettings::getInstance().getMapsPath() / mapName;
-	std::ifstream file (filename.string(), std::ios::in | std::ios::binary | std::ios::ate);
+	std::ifstream file (filename, std::ios::in | std::ios::binary | std::ios::ate);
 	if (!file.is_open() && !cSettings::getInstance().getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
 		filename = cSettings::getInstance().getUserMapsDir() / mapName;
-		file.open (filename.string(), std::ios::in | std::ios::binary | std::ios::ate);
+		file.open (filename, std::ios::in | std::ios::binary | std::ios::ate);
 	}
 	if (file.is_open())
 	{
@@ -174,7 +174,7 @@ bool cMapReceiver::finished()
 	if (mapsFolder.empty())
 		mapsFolder = cSettings::getInstance().getMapsPath();
 	const auto filename = mapsFolder / mapName;
-	std::ofstream newMapFile (filename.string(), std::ios::out | std::ios::binary);
+	std::ofstream newMapFile (filename, std::ios::out | std::ios::binary);
 	if (newMapFile.bad())
 		return false;
 	newMapFile.write (readBuffer.data(), readBuffer.size());
@@ -238,12 +238,12 @@ bool cMapSender::getMapFileContent()
 {
 	// read map file in memory
 	auto filename = cSettings::getInstance().getMapsPath() / mapName;
-	std::ifstream file (filename.string(), std::ios::in | std::ios::binary | std::ios::ate);
+	std::ifstream file (filename, std::ios::in | std::ios::binary | std::ios::ate);
 	if (!file.is_open() && !cSettings::getInstance().getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
 		filename = cSettings::getInstance().getUserMapsDir() / mapName;
-		file.open (filename.string(), std::ios::in | std::ios::binary | std::ios::ate);
+		file.open (filename, std::ios::in | std::ios::binary | std::ios::ate);
 	}
 	if (!file.is_open())
 	{

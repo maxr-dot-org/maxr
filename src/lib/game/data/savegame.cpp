@@ -46,7 +46,7 @@ namespace
 	std::optional<nlohmann::json> loadDocument (int slot)
 	{
 		const auto fileName = cSavegame::getFileName (slot);
-		std::ifstream file (fileName.string());
+		std::ifstream file (fileName);
 		nlohmann::json json;
 		if (!(file >> json))
 		{
@@ -108,7 +108,7 @@ void cSavegame::save (const cModel& model, int slot, const std::string& saveName
 
 	std::filesystem::create_directories (cSettings::getInstance().getSavesPath());
 	{
-		std::ofstream file (getFileName (slot).string());
+		std::ofstream file (getFileName (slot));
 		file << json.dump (2);
 	}
 #if 1
@@ -140,7 +140,7 @@ void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 
 	std::filesystem::create_directories (cSettings::getInstance().getSavesPath());
 	int loadedSlot = guiInfo.slot;
-	std::ofstream file (getFileName (loadedSlot).string());
+	std::ofstream file (getFileName (loadedSlot));
 	file << json->dump (2);
 }
 

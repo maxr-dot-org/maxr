@@ -109,7 +109,7 @@ cKeysList::cKeysList() :
 //------------------------------------------------------------------------------
 void cKeysList::loadFromJsonFile (const std::filesystem::path& path)
 {
-	std::ifstream file (path.string());
+	std::ifstream file (path);
 	nlohmann::json json;
 
 	if (!(file >> json))
@@ -167,7 +167,7 @@ void cKeysList::saveToFile()
 
 	serialize (archive);
 
-	std::ofstream file ((cSettings::getInstance().getMaxrHomeDir() / "keys.json").string());
+	std::ofstream file (cSettings::getInstance().getMaxrHomeDir() / "keys.json");
 	file << json.dump (0);
 }
 
