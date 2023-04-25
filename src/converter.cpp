@@ -69,8 +69,7 @@ void cImage::saveFile()
 		return;
 	for (int iNum = 0; iNum < iImageCount; iNum++)
 	{
-		std::string sOutputname = sOutputPath;
-		sOutputname += name;
+		std::string sOutputname = name;
 		if (iImageCount > 1)
 		{
 			sOutputname += "_";
@@ -80,7 +79,7 @@ void cImage::saveFile()
 		}
 		sOutputname += ".pcx";
 
-		savePCX (Images[iNum].surface, sOutputname);
+		savePCX (Images[iNum].surface, sOutputPath / sOutputname);
 
 		std::cout << name;
 		if (iImageCount > 1)
@@ -751,7 +750,7 @@ void copyFileFromRes (std::string src, const std::filesystem::path& dst, int num
 		savePCX (surface, dst);
 		SDL_FreeSurface (surface);
 	}
-	END_INSTALL_FILE (dst.string())
+	END_INSTALL_FILE (dst)
 }
 
 //rpc stands for "remove player color"
@@ -765,7 +764,7 @@ void copyFileFromRes_rpc (std::string src, const std::filesystem::path& dst, int
 		savePCX (surface, dst);
 		SDL_FreeSurface (surface);
 	}
-	END_INSTALL_FILE (dst.string())
+	END_INSTALL_FILE (dst)
 }
 
 void copyImageFromFLC (const std::filesystem::path& fileName, const std::filesystem::path& dst)
@@ -796,7 +795,7 @@ void copyImageFromFLC (const std::filesystem::path& fileName, const std::filesys
 
 		savePCX (animation->surface, dst);
 	}
-	END_INSTALL_FILE (dst.string())
+	END_INSTALL_FILE (dst)
 }
 
 void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w)

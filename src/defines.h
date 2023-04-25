@@ -27,16 +27,10 @@
 #endif
 
 #ifdef WIN32
-# ifndef PATH_DELIMITER
-#  define PATH_DELIMITER "\\"
-# endif
 # ifndef TEXT_FILE_LF
 #  define TEXT_FILE_LF "\r\n"
 # endif
 #else
-# ifndef PATH_DELIMITER
-#  define PATH_DELIMITER "/"
-# endif
 # ifndef TEXT_FILE_LF
 #  define TEXT_FILE_LF "\n"
 # endif

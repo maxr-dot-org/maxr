@@ -87,7 +87,7 @@ void copyFile (const std::filesystem::path& source, const std::filesystem::path&
 			throw InstallException ("Couldn't copy file '" + source.string() + "' to '" + dest.string() + "'" + TEXT_FILE_LF);
 		}
 	}
-	END_INSTALL_FILE (dest.string());
+	END_INSTALL_FILE (dest);
 }
 
 //--------------------------------------------------------------

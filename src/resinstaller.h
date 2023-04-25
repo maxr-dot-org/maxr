@@ -24,6 +24,7 @@
 #include "defines.h"
 
 #include <SDL.h>
+#include <filesystem>
 #include <iostream>
 #include <locale>
 #include <string>
@@ -33,7 +34,7 @@
 # include <windows.h>
 #endif
 
-extern std::string sOutputPath;
+extern std::filesystem::path sOutputPath;
 extern SDL_RWops* res;
 extern SDL_RWops* logFile;
 
@@ -64,7 +65,7 @@ void trimQuotes (std::string& str);
 #define END_INSTALL_FILE(file) \
  catch (InstallException e) \
  { \
-  writeLog ("Error while installing file '" + file + "'" + TEXT_FILE_LF + e.message); \
+  writeLog ("Error while installing file '" + std::filesystem::path(file).string() + "'" + TEXT_FILE_LF + e.message); \
   iErrors++; \
   wasError = true; \
  } \
