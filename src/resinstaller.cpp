@@ -41,14 +41,14 @@
 # include <Shlobj.h>
 #endif
 
-bool bDoNotElevate = false;
-std::string sAppName;
-std::string sMAXPath;
-std::string sVoicePath;
+static bool bDoNotElevate = false;
+static std::string sAppName;
+static std::string sMAXPath;
+static std::string sVoicePath;
 std::string sOutputPath;
-std::string sLanguage;
-std::string sResChoice;
-std::string waveExtension;
+static std::string sLanguage;
+static std::string sResChoice;
+static std::string waveExtension;
 SDL_RWops* res = nullptr;
 SDL_RWops* logFile = nullptr;
 

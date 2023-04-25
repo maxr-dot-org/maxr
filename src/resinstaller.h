@@ -33,14 +33,7 @@
 # include <windows.h>
 #endif
 
-extern bool bDoNotElevate;
-extern std::string sAppName;
-extern std::string sMAXPath;
-extern std::string sVoicePath;
 extern std::string sOutputPath;
-extern std::string sLanguage;
-extern std::string sResChoice;
-extern std::string waveExtension;
 extern SDL_RWops* res;
 extern SDL_RWops* logFile;
 
