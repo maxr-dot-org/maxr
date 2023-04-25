@@ -21,113 +21,77 @@
 
 #include "file.h"
 
-#include <iostream>
-#include <string>
-#include <sys/stat.h>
-#ifdef WIN32
-# include <io.h>
-#else
-# include <sys/types.h>
-# include <unistd.h>
-#endif
 #include "converter.h"
 #include "resinstaller.h"
 
+#include <string>
+
+namespace
+{
+	std::string toLower (std::string s)
+	{
+		for (char& c : s)
+		{
+			c = tolower (c);
+		}
+		return s;
+	}
+
+	std::string toUpper (std::string s)
+	{
+		for (char& c : s)
+		{
+			c = toupper (c);
+		}
+		return s;
+	}
+
+} // namespace
+
 //first tries to open a file with lowercase name
 //if this fails, tries to open the file with uppercase name
-SDL_RWops* openFile (std::string path, const char* mode)
+SDL_RWops* openFile (const std::filesystem::path& path, const char* mode)
 {
-	//split string into path and filename
-	int pos = (int) path.rfind (PATH_DELIMITER);
-	std::string fileName = path.substr (pos + 1, path.length());
-	path = path.substr (0, pos + 1);
+	const std::string fileName = toUpper (path.filename().string());
+	const std::string lowerCaseFileName = toLower (fileName);
+	const auto dir = path.parent_path();
 
 	//try to open with lower case file name
-	int lenght = (int) fileName.size();
-	for (int i = 0; i < lenght; i++)
-	{
-		fileName[i] = tolower (fileName[i]);
-	}
-	std::string lowerCaseFileName = fileName;
-	SDL_RWops* file = SDL_RWFromFile ((path + fileName).c_str(), mode);
+	SDL_RWops* file = SDL_RWFromFile ((dir / fileName).string().c_str(), mode);
 	if (file != nullptr)
 	{
 		return file;
 	}
 
 	//try to open with upper case file name
-	for (int i = 0; i < lenght; i++)
-	{
-		fileName[i] = toupper (fileName[i]);
-	}
-	file = SDL_RWFromFile ((path + fileName).c_str(), mode);
+	file = SDL_RWFromFile ((path / fileName).string().c_str(), mode);
 	if (file != nullptr)
 	{
 		return file;
 	}
 
-	throw InstallException ("Couldn't open file '" + path + fileName + "' or '" + lowerCaseFileName + "'" + TEXT_FILE_LF);
+	throw InstallException ("Couldn't open file '" + (dir / fileName).string() + "' or '" + lowerCaseFileName + "'" + TEXT_FILE_LF);
 	return nullptr;
 }
 
-void copyFile (std::string source, std::string dest)
+void copyFile (const std::filesystem::path& source, const std::filesystem::path& dest)
 {
-	long int size;
-	unsigned char* buffer;
-	SDL_RWops* sourceFile = nullptr;
-	SDL_RWops* destFile = nullptr;
-
 	try
 	{
-		sourceFile = openFile (source, "rb");
+		auto lower_path = source.parent_path() / toLower (source.filename().string());
+		auto upper_path = source.parent_path() / toUpper (source.filename().string());
 
-		destFile = SDL_RWFromFile (dest.c_str(), "wb");
-		if (destFile == nullptr)
+		if ((std::filesystem::exists(lower_path) && !std::filesystem::copy_file (lower_path, dest))
+			|| (std::filesystem::exists(upper_path) && !std::filesystem::copy_file (upper_path, dest)))
 		{
-			throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
+			throw InstallException ("Couldn't copy file '" + source.string() + "' to '" + dest.string() + "'" + TEXT_FILE_LF);
 		}
-
-		SDL_RWseek (sourceFile, 0, SEEK_END);
-		size = SDL_RWtell (sourceFile);
-
-		buffer = (unsigned char*) malloc (size);
-		if (buffer == nullptr)
-		{
-			std::cout << "Out of memory\n";
-			exit (-1);
-		}
-
-		SDL_RWseek (sourceFile, 0, SEEK_SET);
-		SDL_RWread (sourceFile, buffer, 1, size);
-
-		SDL_RWwrite (destFile, buffer, 1, size);
-
-		free (buffer);
 	}
-	END_INSTALL_FILE (dest);
-
-	if (sourceFile) SDL_RWclose (sourceFile);
-	if (destFile) SDL_RWclose (destFile);
+	END_INSTALL_FILE (dest.string());
 }
 
 //--------------------------------------------------------------
-bool DirExists (const std::string& path)
+bool DirExists (const std::filesystem::path& path)
 {
-#ifdef WIN32
-	if (_access (path.c_str(), 0) == 0)
-	{
-		struct stat status;
-		stat (path.c_str(), &status);
-
-		if (status.st_mode & S_IFDIR)
-			return true;
-		else
-			return false; // The path is not a directory
-	}
-	else
-		return false;
-#else
-	struct stat st;
-	return stat (path.c_str(), &st) == 0 && (st.st_mode & S_IFDIR) != 0;
-#endif
+	return std::filesystem::exists (path) && std::filesystem::is_directory (path);
 }

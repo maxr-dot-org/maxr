@@ -23,10 +23,10 @@
 #define file_h
 
 #include <SDL.h>
-#include <string>
+#include <filesystem>
 
-void copyFile (std::string source, std::string dest);
-SDL_RWops* openFile (std::string path, const char* mode);
-bool DirExists (const std::string& path);
+void copyFile (const std::filesystem::path& source, const std::filesystem::path& dest);
+SDL_RWops* openFile (const std::filesystem::path& path, const char* mode);
+bool DirExists (const std::filesystem::path&);
 
 #endif //file_h
