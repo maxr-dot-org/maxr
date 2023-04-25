@@ -1,8 +1,0 @@
-build-linux:
-    tags:
-        - Linux
-    script:
-        - mkdir build && cd build
-        - cmake ..
-        - make maxr_dedicatedserver maxr maxr_tests -j4
-        - ./maxr_tests
