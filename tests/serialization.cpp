@@ -169,6 +169,7 @@ namespace
 	constexpr float f = 1.f / 3;
 	constexpr double d = 1. / 3;
 	const std::string s = "Maxr";
+	const std::filesystem::path path = "/usr/local/file.txt";
 	const std::vector<int> v{1, 1, 2, 3, 5, 8};
 	constexpr std::array<int, 6> a{4, 8, 15, 16, 23};
 	constexpr std::pair<int, int> p{40, 2};
@@ -184,6 +185,7 @@ namespace
 		checkBinarySaveLoadNvp (f);
 		checkBinarySaveLoadNvp (d);
 		checkBinarySaveLoadNvp (s);
+		checkBinarySaveLoadNvp (path);
 		checkBinarySaveLoadNvp (v);
 		checkBinarySaveLoadNvp (a);
 		checkBinarySaveLoadNvp (p);
@@ -200,6 +202,7 @@ namespace
 		checkBinarySaveLoad (f);
 		checkBinarySaveLoad (d);
 		checkBinarySaveLoad (s);
+		checkBinarySaveLoad (path);
 		checkBinarySaveLoad (v);
 		checkBinarySaveLoad (a);
 		checkBinarySaveLoad (p);
@@ -216,6 +219,7 @@ namespace
 		checkJsonSaveLoadNvp (f);
 		checkJsonSaveLoadNvp (d);
 		checkJsonSaveLoadNvp (s);
+		checkJsonSaveLoadNvp (path);
 		checkJsonSaveLoadNvp (v);
 		checkJsonSaveLoadNvp (a);
 		checkJsonSaveLoadNvp (p);
@@ -232,6 +236,7 @@ namespace
 		checkJsonSaveLoad (f);
 		checkJsonSaveLoad (d);
 		checkJsonSaveLoad (s);
+		checkJsonSaveLoad (path);
 		checkJsonSaveLoad (v);
 		checkJsonSaveLoad (a);
 		checkJsonSaveLoad (p);

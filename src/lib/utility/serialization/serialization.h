@@ -30,6 +30,7 @@
 #include <array>
 #include <cassert>
 #include <chrono>
+#include <filesystem>
 #include <forward_list>
 #include <map>
 #include <memory>
@@ -131,6 +132,7 @@ namespace serialization
 	//
 	// free serialization functions (for e. g. STL types, pointers)
 	//
+
 	//--------------------------------------------------------------------------
 	template <typename Archive, typename T, size_t SIZE>
 	void serialize (Archive& archive, std::array<T, SIZE>& value)
@@ -143,6 +145,7 @@ namespace serialization
 			// clang-format on
 		}
 	}
+
 	//-------------------------------------------------------------------------
 	template <typename Archive, typename T1, typename T2>
 	void serialize (Archive& archive, std::pair<T1, T2>& value)
@@ -153,6 +156,7 @@ namespace serialization
 		archive & makeNvp ("second", value.second);
 		// clang-format on
 	}
+
 	//-------------------------------------------------------------------------
 	template <typename Archive>
 	void serialize (Archive& archive, cRgbColor& color)
@@ -209,6 +213,7 @@ namespace serialization
 	{
 		serialization::detail::splitFree (archive, value);
 	}
+
 	//-------------------------------------------------------------------------
 	template <typename Archive, typename T>
 	void save (Archive& archive, const std::unique_ptr<T>& value)
@@ -232,6 +237,7 @@ namespace serialization
 	{
 		serialization::detail::splitFree (archive, value);
 	}
+
 	//-------------------------------------------------------------------------
 	template <typename Archive, typename T>
 	void save (Archive& archive, const std::vector<T>& value)
@@ -261,6 +267,7 @@ namespace serialization
 	{
 		serialization::detail::splitFree (archive, value);
 	}
+
 	//-------------------------------------------------------------------------
 	template <typename Archive>
 	void save (Archive& archive, const std::string& value)
@@ -288,6 +295,25 @@ namespace serialization
 	}
 	template <typename Archive>
 	void serialize (Archive& archive, std::string& value)
+	{
+		serialization::detail::splitFree (archive, value);
+	}
+
+	//-------------------------------------------------------------------------
+	template <typename Archive>
+	void save (Archive& archive, const std::filesystem::path& value)
+	{
+		archive << value.string();
+	}
+	template <typename Archive>
+	void load (Archive& archive, std::filesystem::path& value)
+	{
+		std::string s;
+		archive >> s;
+		value = s;
+	}
+	template <typename Archive>
+	void serialize (Archive& archive, std::filesystem::path& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
