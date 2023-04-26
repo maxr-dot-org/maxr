@@ -897,7 +897,7 @@ namespace
 	struct sUnitDirectory
 	{
 		int id;
-		std::string path;
+		std::filesystem::path path;
 		int insertionIndex = ++currentIndex;
 		static int currentIndex;
 
@@ -1192,17 +1192,17 @@ static int LoadMusic (const std::filesystem::path& directory)
 
 	if (!MusicFiles.start.empty())
 	{
-		MusicFiles.start = (directory / MusicFiles.start).string();
-		if (!std::filesystem::exists (MusicFiles.start)) Log.warn ("music files doesn't exist: " + MusicFiles.start);
+		MusicFiles.start = directory / MusicFiles.start;
+		if (!std::filesystem::exists (MusicFiles.start)) Log.warn ("music files doesn't exist: " + MusicFiles.start.string());
 	}
 	for (auto& filename : MusicFiles.backgrounds)
 	{
-		filename = (directory / filename).string();
+		filename = directory / filename;
 	}
 	auto it = std::stable_partition (MusicFiles.backgrounds.begin(), MusicFiles.backgrounds.end(), [] (const auto& p) { return std::filesystem::exists (p); });
 	for (auto it2 = it; it2 != MusicFiles.backgrounds.end(); ++it2)
 	{
-		Log.warn ("music files doesn't exist: " + *it2);
+		Log.warn ("music file doesn't exist: " + it2->string());
 	}
 	MusicFiles.backgrounds.erase (it, MusicFiles.backgrounds.end());
 	return 1;

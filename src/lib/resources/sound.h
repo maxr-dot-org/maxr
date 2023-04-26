@@ -119,11 +119,11 @@ public:
 
 struct sMusicFiles
 {
-	std::string start;
+	std::filesystem::path start;
 #if 0 // unused
-	std::string credit;
+	std::filesystem::path credit;
 #endif
-	std::vector<std::string> backgrounds;
+	std::vector<std::filesystem::path> backgrounds;
 
 	template <typename Archive>
 	void serialize (Archive& archive)

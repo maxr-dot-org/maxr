@@ -23,8 +23,8 @@
 
 #include <SDL_mixer.h>
 #include <chrono>
+#include <filesystem>
 #include <memory>
-#include <string>
 #include <vector>
 
 class cPosition;
@@ -47,7 +47,7 @@ public:
 	bool playSoundEffect (const cSoundChunk&);
 	bool playVoice (const cSoundChunk&);
 
-	void startMusic (const std::string& fileName);
+	void startMusic (const std::filesystem::path& fileName);
 	void startRandomMusic();
 	void stopMusic();
 
