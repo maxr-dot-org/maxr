@@ -1,0 +1,37 @@
+name: macos
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/**'
+      - '.github/workflows/macos.yml'
+      - 'CMakeLists.txt'
+
+  pull_request:
+    paths:
+      - 'src/**'
+      - '.github/workflows/macos.yml'
+      - 'CMakeLists.txt'
+
+jobs:
+  macos:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: install SDL2
+      run: brew install sdl2 sdl2_mixer sdl2_net
+
+    - name: cmake --version
+      run: cmake --version
+
+    - name: test projects
+      run: |
+        mkdir build && cd build
+        cmake ..
+        make maxr_dedicatedserver maxr maxr_tests -j4
+        ./maxr_tests
+
