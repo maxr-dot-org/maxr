@@ -1651,7 +1651,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 		if (sp < costs)
 		{
 			drawPathArrow (dest, ndest, true);
-			sp += vehicle.data.getSpeedMax();
+			sp = vehicle.data.getSpeedMax();
 		}
 		else
 		{
@@ -1665,7 +1665,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 
 	ndest.x += mx;
 	ndest.y += my;
-	drawPathArrow (dest, ndest, false);
+	drawPathArrow (dest, ndest, sp == 0);
 }
 
 //------------------------------------------------------------------------------
