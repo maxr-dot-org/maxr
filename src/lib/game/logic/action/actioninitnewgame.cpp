@@ -338,9 +338,9 @@ void cActionInitNewGame::execute (cModel& model) const
 	}
 	player.setLandingPos (updatedLandingPosition);
 
-	const bool allPlayerReady = ranges::find_if (model.getPlayerList(), [] (const auto& player) { return player->getLandingPos() == cPosition{-1, -1}; }) == model.getPlayerList().end();
+	const bool firstPlayerReady = 1 == ranges::count_if (model.getPlayerList(), [] (const auto& player) { return player->getLandingPos() != cPosition{-1, -1}; });
 
-	if (allPlayerReady)
+	if (firstPlayerReady)
 	{
 		placeInitialResources (model);
 		if (model.getGameSettings()->alienEnabled) addAliens (model);
