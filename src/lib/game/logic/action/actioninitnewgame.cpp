@@ -215,8 +215,8 @@ void placeInitialResources (cModel& model)
 
 		resSpots.push_back (candidate);
 	}
-	resSpotTypes.resize (resSpotCount);
-	for (std::size_t i = playerCount; i < resSpotCount; i++)
+	resSpotTypes.resize (resSpots.size());
+	for (std::size_t i = playerCount; i < resSpots.size(); i++)
 	{
 		std::map<eResourceType, double> amount;
 		for (std::size_t j = 0; j < i; j++)
@@ -241,7 +241,7 @@ void placeInitialResources (cModel& model)
 
 		resSpotTypes[i] = static_cast<eResourceType> (((resSpots[i].y() % 2) * 2) + (resSpots[i].x() % 2));
 	}
-	// reverse orcer to ensure that player res spot are not overwritten
+	// reverse order to ensure that player res spot are not overwritten
 	for (std::size_t i = resSpots.size(); i-- != 0;)
 	{
 		const auto& pos = resSpots[i];
