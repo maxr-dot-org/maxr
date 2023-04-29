@@ -321,16 +321,15 @@ std::string cDedicatedServer::getAvailableMapsString() const
 	if (cSettings::getInstance().getUserMapsDir().empty() == false)
 	{
 		std::vector<std::string> userMaps = os::getFilesOfDirectory (cSettings::getInstance().getUserMapsDir());
-		for (size_t i = 0; i != userMaps.size(); ++i)
+		for (const auto& userMap : userMaps)
 		{
-			if (Contains (maps, userMaps[i]) == false)
-				maps.push_back (userMaps[i]);
+			if (Contains (maps, userMap) == false)
+				maps.push_back (userMap);
 		}
 	}
 	oss << "----- Available maps: ------" << std::endl;
-	for (size_t i = 0; i != maps.size(); ++i)
+	for (const auto& mapFilename : maps)
 	{
-		std::string mapFilename = maps[i];
 		if (mapFilename.compare (mapFilename.length() - 3, 3, "WRL") == 0
 		    || mapFilename.compare (mapFilename.length() - 3, 3, "wrl") == 0)
 		{
