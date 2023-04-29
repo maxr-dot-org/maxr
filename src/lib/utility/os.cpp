@@ -21,6 +21,7 @@
 
 #include "utility/log.h"
 
+#include <filesystem>
 #include <iostream>
 
 #ifndef _WIN32
@@ -58,12 +59,7 @@ namespace os
 		//set home dir
 		TCHAR szPath[MAX_PATH];
 		SHGetFolderPath (nullptr, CSIDL_PERSONAL, nullptr, 0, szPath);
-# ifdef UNICODE
-		std::wstring home = szPath;
-# else
-		std::string home = szPath;
-# endif
-		return home;
+		return szPath;
 #elif __amigaos4__
 		return "";
 #elif MAC
@@ -86,15 +82,8 @@ namespace os
 		HMODULE hModule = GetModuleHandle (nullptr);
 
 		GetModuleFileName (hModule, szPath, MAX_PATH);
-# ifdef UNICODE
-		std::wstring exe = szPath;
-		const auto backslashString = L"\\";
-# else
-		std::string exe = szPath;
-		const auto backslashString = "\\";
-# endif
-		exe.erase (exe.rfind (backslashString), std::string::npos);
-		return exe;
+		const std::filesystem::path exe = szPath;
+		return exe.parent_path();
 #elif __amigaos4__
 		return "";
 #else
