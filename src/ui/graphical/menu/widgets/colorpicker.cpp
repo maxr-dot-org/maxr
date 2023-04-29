@@ -32,19 +32,19 @@ cRgbColorPicker::cRgbColorPicker (const cBox<cPosition>& area, const cRgbColor& 
 	startedPressInColor (false),
 	startedPressInBar (false)
 {
-	colorsImage = addChild (std::make_unique<cImage> (getPosition()));
+	colorsImage = emplaceChild<cImage> (getPosition());
 	colorsImage->setImage (createColorsSurface().get());
 	colorsImage->setConsumeClick (false);
 
-	colorBarImage = addChild (std::make_unique<cImage> (cPosition (colorsImage->getEndPosition().x() + 10, getPosition().y())));
+	colorBarImage = emplaceChild<cImage> (cPosition (colorsImage->getEndPosition().x() + 10, getPosition().y()));
 	colorBarImage->setImage (createColorBarSurface().get());
 	colorBarImage->setConsumeClick (false);
 
-	selectedColorMarker = addChild (std::make_unique<cImage> (getPosition()));
+	selectedColorMarker = emplaceChild<cImage> (getPosition());
 	selectedColorMarker->setImage (createColorMarkerSurface().get());
 	selectedColorMarker->setConsumeClick (false);
 
-	selectedColorHueMarker = addChild (std::make_unique<cImage> (getPosition()));
+	selectedColorHueMarker = emplaceChild<cImage> (getPosition());
 	selectedColorHueMarker->setImage (createColorHueMarkerSurface().get());
 	selectedColorHueMarker->setConsumeClick (false);
 

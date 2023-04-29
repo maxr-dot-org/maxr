@@ -43,15 +43,15 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	cWindow (LoadPCX (GFXOD_OPTIONS)),
 	forHotSeatGame (forHotSeatGame_)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Others~Game_Options"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Others~Game_Options"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	int currentLine = 57;
 	const int lineHeight = 16;
 
 	// Resources
 	auto addResourceRadioGroup = [&] (const std::string& resourceName) {
-		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), resourceName + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-		auto* radioGroup = addChild (std::make_unique<cRadioGroupValue<eGameSettingsResourceAmount>>());
+		emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), resourceName + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+		auto* radioGroup = emplaceChild<cRadioGroupValue<eGameSettingsResourceAmount>>();
 		radioGroup->emplaceCheckBox (eGameSettingsResourceAmount::Limited, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Limited"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 		radioGroup->emplaceCheckBox (eGameSettingsResourceAmount::Normal, getPosition() + cPosition (240 + 86, currentLine), lngPack.i18n ("Text~Option~Normal"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 		radioGroup->emplaceCheckBox (eGameSettingsResourceAmount::High, getPosition() + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~High"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
@@ -65,8 +65,8 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	goldGroup = addResourceRadioGroup (lngPack.i18n ("Text~Title~Gold"));
 
 	// Density
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (240, currentLine + 10)), lngPack.i18n ("Text~Title~Resource_Density") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	densityGroup = addChild (std::make_unique<cRadioGroupValue<eGameSettingsResourceDensity>>());
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (240, currentLine + 10)), lngPack.i18n ("Text~Title~Resource_Density") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	densityGroup = emplaceChild<cRadioGroupValue<eGameSettingsResourceDensity>>();
 
 	densityGroup->emplaceCheckBox (eGameSettingsResourceDensity::Sparse, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Sparse"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	densityGroup->emplaceCheckBox (eGameSettingsResourceDensity::Normal, getPosition() + cPosition (240 + 86, currentLine), lngPack.i18n ("Text~Option~Normal"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
@@ -75,15 +75,15 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	currentLine += lineHeight * 2;
 
 	// Bridgehead
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~BridgeHead") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	bridgeheadGroup = addChild (std::make_unique<cRadioGroupValue<eGameSettingsBridgeheadType>>());
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~BridgeHead") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	bridgeheadGroup = emplaceChild<cRadioGroupValue<eGameSettingsBridgeheadType>>();
 	bridgeheadGroup->emplaceCheckBox (eGameSettingsBridgeheadType::Mobile, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Mobile"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	bridgeheadGroup->emplaceCheckBox (eGameSettingsBridgeheadType::Definite, getPosition() + cPosition (240 + 173, currentLine), lngPack.i18n ("Text~Option~Definite"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	currentLine += lineHeight;
 
 	// alien
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Alien_Tech") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	alienGroup = addChild (std::make_unique<cRadioGroupValue<bool>>());
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Alien_Tech") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	alienGroup = emplaceChild<cRadioGroupValue<bool>>();
 	alienGroup->emplaceCheckBox (false, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Off"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	alienGroup->emplaceCheckBox (true, getPosition() + cPosition (240 + 173, currentLine), lngPack.i18n ("Text~Option~On"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	currentLine += lineHeight;
@@ -93,9 +93,9 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	//
 	if (!forHotSeatGame)
 	{
-		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Game_Type") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+		emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Game_Type") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	}
-	gameTypeGroup = addChild (std::make_unique<cRadioGroupValue<eGameSettingsGameType>>());
+	gameTypeGroup = emplaceChild<cRadioGroupValue<eGameSettingsGameType>>();
 	auto* gameTypeTurnsCheckBox = gameTypeGroup->emplaceCheckBox (eGameSettingsGameType::Turns, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Type_Turns"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	gameTypeGroup->emplaceCheckBox (eGameSettingsGameType::Simultaneous, getPosition() + cPosition (240 + 173, currentLine), lngPack.i18n ("Text~Option~Type_Simu"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	signalConnectionManager.connect (gameTypeTurnsCheckBox->toggled, [this, gameTypeTurnsCheckBox]() {
@@ -112,8 +112,8 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	currentLine += lineHeight * 2;
 
 	// Clans
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Clans") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	clansGroup = addChild (std::make_unique<cRadioGroupValue<bool>>());
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Clans") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	clansGroup = emplaceChild<cRadioGroupValue<bool>>();
 	clansGroup->emplaceCheckBox (true, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Option~On"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	clansGroup->emplaceCheckBox (false, getPosition() + cPosition (240 + 64, currentLine), lngPack.i18n ("Text~Option~Off"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	currentLine += lineHeight * 2;
@@ -121,9 +121,9 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	auto savedLine = currentLine;
 
 	// Credits
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Credits_start") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Credits_start") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	currentLine += lineHeight;
-	creditsGroup = addChild (std::make_unique<cRadioGroupValue<int>>());
+	creditsGroup = emplaceChild<cRadioGroupValue<int>>();
 
 	creditsGroup->emplaceCheckBox (cGameSettings::defaultCreditsNone, getPosition() + cPosition (140, currentLine), lngPack.i18n ("Text~Option~None") + " (" + std::to_string (cGameSettings::defaultCreditsNone) + ")", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 	currentLine += lineHeight;
@@ -144,8 +144,8 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	// Victory conditions
 	//
 	currentLine = savedLine;
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (300, currentLine), getPosition() + cPosition (402, currentLine + 10)), lngPack.i18n ("Text~Comp~GameEndsAt") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	victoryGroup = addChild (std::make_unique<cRadioGroupValue<std::pair<eGameSettingsVictoryCondition, int>>>());
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (300, currentLine), getPosition() + cPosition (402, currentLine + 10)), lngPack.i18n ("Text~Comp~GameEndsAt") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	victoryGroup = emplaceChild<cRadioGroupValue<std::pair<eGameSettingsVictoryCondition, int>>>();
 	currentLine += lineHeight;
 
 	savedLine = currentLine;
@@ -176,8 +176,8 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 
 	// Turn Limit
 	currentLine = savedLine2;
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Turn_limit") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	turnLimitGroup = addChild (std::make_unique<cRadioGroupValue<int>>());
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Turn_limit") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	turnLimitGroup = emplaceChild<cRadioGroupValue<int>>();
 	turnLimitGroup->emplaceCheckBox (unlimited, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Settings~Unlimited_11"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	turnLimitGroup->emplaceCheckBox (cGameSettings::defaultTurnLimitOption0.count(), getPosition() + cPosition (240 + 85, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption0.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	turnLimitGroup->emplaceCheckBox (cGameSettings::defaultTurnLimitOption1.count(), getPosition() + cPosition (240 + 85 + 40, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption1.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
@@ -194,8 +194,8 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	currentLine += lineHeight;
 
 	// Turn End Deadline
-	turnEndDeadlineLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Turn_end") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	endTurnDeadlineGroup = addChild (std::make_unique<cRadioGroupValue<int>>());
+	turnEndDeadlineLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Turn_end") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	endTurnDeadlineGroup = emplaceChild<cRadioGroupValue<int>>();
 	endTurnDeadlineGroup->emplaceCheckBox (unlimited, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Text~Settings~Unlimited_11"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	endTurnDeadlineGroup->emplaceCheckBox (cGameSettings::defaultEndTurnDeadlineOption0.count(), getPosition() + cPosition (240 + 85, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption0.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	endTurnDeadlineGroup->emplaceCheckBox (cGameSettings::defaultEndTurnDeadlineOption1.count(), getPosition() + cPosition (240 + 85 + 40, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption1.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
@@ -214,10 +214,10 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	//
 	// Buttons
 	//
-	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
+	auto okButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK"));
 	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
-	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
+	auto backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 }
 

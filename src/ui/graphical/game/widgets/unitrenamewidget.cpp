@@ -31,9 +31,9 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 	activeUnit (nullptr),
 	player (nullptr)
 {
-	selectedUnitStatusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 10), getPosition() + cPosition (width, 10 + 110)), "", eUnicodeFontType::LatinSmallWhite, eAlignmentType::Left));
-	selectedUnitNamePrefixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), "", eUnicodeFontType::LatinSmallGreen, eAlignmentType::Left));
-	selectedUnitNameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), eLineEditFrameType::None, eUnicodeFontType::LatinSmallGreen));
+	selectedUnitStatusLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 10), getPosition() + cPosition (width, 10 + 110)), "", eUnicodeFontType::LatinSmallWhite, eAlignmentType::Left);
+	selectedUnitNamePrefixLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), "", eUnicodeFontType::LatinSmallGreen, eAlignmentType::Left);
+	selectedUnitNameEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), eLineEditFrameType::None, eUnicodeFontType::LatinSmallGreen);
 
 	signalConnectionManager.connect (selectedUnitNameEdit->returnPressed, [this]() {
 		if (activeUnit)

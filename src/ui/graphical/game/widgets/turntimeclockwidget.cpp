@@ -29,7 +29,7 @@
 cTurnTimeClockWidget::cTurnTimeClockWidget (const cBox<cPosition>& area) :
 	cWidget (area)
 {
-	textLabel = addChild (std::make_unique<cLabel> (area, "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	textLabel = emplaceChild<cLabel> (area, "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 }
 
 //------------------------------------------------------------------------------

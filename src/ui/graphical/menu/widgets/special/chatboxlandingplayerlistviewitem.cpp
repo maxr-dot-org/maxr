@@ -60,14 +60,14 @@ cChatBoxLandingPlayerListViewItem::cChatBoxLandingPlayerListViewItem (const cPla
 {
 	const auto& player = playerLandingStatus.getPlayer();
 
-	readyImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (getSize().x() - 10, 0)));
+	readyImage = emplaceChild<cImage> (getPosition() + cPosition (getSize().x() - 10, 0));
 
-	colorImage = addChild (std::make_unique<cImage> (getPosition()));
+	colorImage = emplaceChild<cImage> (getPosition());
 
 	updatePlayerColor();
 	updatePlayerHasSelectedPosition();
 
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (colorImage->getEndPosition().x() + 4, 0), getPosition() + cPosition (getSize().x() - readyImage->getSize().x(), readyImage->getSize().y())), player.getName()));
+	nameLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (colorImage->getEndPosition().x() + 4, 0), getPosition() + cPosition (getSize().x() - readyImage->getSize().x(), readyImage->getSize().y())), player.getName());
 
 	fitToChildren();
 

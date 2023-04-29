@@ -37,9 +37,9 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 {
 	auto* font = cUnicodeFont::font.get();
 
-	colorPicker = addChild (std::make_unique<cRgbColorPicker> (cBox<cPosition> (getPosition() + cPosition (35, 35), getPosition() + cPosition (35 + 160, 35 + 135)), color));
+	colorPicker = emplaceChild<cRgbColorPicker> (cBox<cPosition> (getPosition() + cPosition (35, 35), getPosition() + cPosition (35 + 160, 35 + 135)), color);
 
-	selectedColorImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (210, 35)));
+	selectedColorImage = emplaceChild<cImage> (getPosition() + cPosition (210, 35));
 	selectedColorImage->setImage (createSelectedColorSurface().get());
 
 	signalConnectionManager.connect (colorPicker->selectedColorChanged, [this]() {
@@ -51,15 +51,15 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 		blueValueLineEdit->setText (std::to_string (color.b));
 	});
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (210, 100), getPosition() + cPosition (210 + 20, 100 + font->getFontHeight())), "R:"));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (210, 120), getPosition() + cPosition (210 + 20, 120 + font->getFontHeight())), "G:"));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (210, 140), getPosition() + cPosition (210 + 20, 140 + font->getFontHeight())), "B:"));
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (210, 100), getPosition() + cPosition (210 + 20, 100 + font->getFontHeight())), "R:");
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (210, 120), getPosition() + cPosition (210 + 20, 120 + font->getFontHeight())), "G:");
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (210, 140), getPosition() + cPosition (210 + 20, 140 + font->getFontHeight())), "B:");
 
-	redValueLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 100), getPosition() + cPosition (230 + 25, 100 + font->getFontHeight()))));
+	redValueLineEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 100), getPosition() + cPosition (230 + 25, 100 + font->getFontHeight())));
 	redValueLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 255));
-	greenValueLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 120), getPosition() + cPosition (230 + 25, 120 + font->getFontHeight()))));
+	greenValueLineEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 120), getPosition() + cPosition (230 + 25, 120 + font->getFontHeight())));
 	greenValueLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 255));
-	blueValueLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 140), getPosition() + cPosition (230 + 25, 140 + font->getFontHeight()))));
+	blueValueLineEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 140), getPosition() + cPosition (230 + 25, 140 + font->getFontHeight())));
 	blueValueLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 255));
 
 	redValueLineEdit->setText (std::to_string (color.r));
@@ -113,11 +113,11 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 	greenValueLineEdit->disable();
 	blueValueLineEdit->disable();
 
-	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (200, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), eUnicodeFontType::LatinNormal));
+	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (200, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), eUnicodeFontType::LatinNormal);
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { done(); });
 
-	cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal));
+	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal);
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { canceled(); });
 }

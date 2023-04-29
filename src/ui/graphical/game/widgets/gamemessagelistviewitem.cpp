@@ -30,7 +30,7 @@ cGameMessageListViewItem::cGameMessageListViewItem (const std::string& message, 
 	endMargin (2, 2)
 {
 	const cBox<cPosition> labelArea (getPosition() + beginMargin, getPosition() + cPosition (getSize().x() - 1, 50) - endMargin);
-	messageLabel = addChild (std::make_unique<cLabel> (labelArea, message));
+	messageLabel = emplaceChild<cLabel> (labelArea, message);
 	messageLabel->setWordWrap (true);
 	messageLabel->resizeToTextHeight();
 	messageLabel->setConsumeClick (false);

@@ -59,21 +59,21 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_, const cUnitsData
 	else
 		surface = nullptr;
 
-	auto unitDetails = addChild (std::make_unique<cUnitDetailsHud> (cBox<cPosition> (cPosition (unitImageSize + 3 + 75 + 3, 0), cPosition (unitImageSize + 3 + 75 + 3 + 155, 48)), true));
+	auto unitDetails = emplaceChild<cUnitDetailsHud> (cBox<cPosition> (cPosition (unitImageSize + 3 + 75 + 3, 0), cPosition (unitImageSize + 3 + 75 + 3 + 155, 48)), true);
 	unitDetails->setPlayer (unit.getOwner());
 	unitDetails->setUnit (&unit);
 
-	unitImage = addChild (std::make_unique<cImage> (cPosition (0, (unitDetails->getSize().y() - unitImageSize) / 2), surface.get()));
+	unitImage = emplaceChild<cImage> (cPosition (0, (unitDetails->getSize().y() - unitImageSize) / 2), surface.get());
 	unitImage->setConsumeClick (false);
 
-	auto nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x() + 3, 0), cPosition (unitDetails->getPosition().x() - 3, unitDetails->getEndPosition().y())), getDisplayName (unit), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	auto nameLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x() + 3, 0), cPosition (unitDetails->getPosition().x() - 3, unitDetails->getEndPosition().y())), getDisplayName (unit), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical);
 	nameLabel->setWordWrap (true);
 	nameLabel->setConsumeClick (false);
 
-	auto positionLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitDetails->getEndPosition().x() + 5, 0), cPosition (unitDetails->getEndPosition().x() + 5 + 50, unitDetails->getEndPosition().y())), std::to_string (unit.getPosition().x()) + "," + std::to_string (unit.getPosition().y()), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::CenterVerical));
+	auto positionLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (unitDetails->getEndPosition().x() + 5, 0), cPosition (unitDetails->getEndPosition().x() + 5 + 50, unitDetails->getEndPosition().y())), std::to_string (unit.getPosition().x()) + "," + std::to_string (unit.getPosition().y()), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::CenterVerical);
 	positionLabel->setConsumeClick (false);
 
-	statusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (positionLabel->getEndPosition().x(), 0), cPosition (positionLabel->getEndPosition().x() + 120, unitDetails->getEndPosition().y())), getStatusStr (unit, unit.getOwner(), unitsData), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	statusLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (positionLabel->getEndPosition().x(), 0), cPosition (positionLabel->getEndPosition().x() + 120, unitDetails->getEndPosition().y())), getStatusStr (unit, unit.getOwner(), unitsData), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical);
 	statusLabel->setConsumeClick (false);
 
 	fitToChildren();

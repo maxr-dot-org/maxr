@@ -35,17 +35,17 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 	cWindow (LoadPCX (GFXOD_DIALOG_RESEARCH), eWindowBackgrounds::Alpha),
 	player (player_)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 19), getPosition() + cPosition (getArea().getMaxCorner().x(), 19 + 10)), lngPack.i18n ("Text~Title~Labs"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 19), getPosition() + cPosition (getArea().getMaxCorner().x(), 19 + 10)), lngPack.i18n ("Text~Title~Labs"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (23, 52), getPosition() + cPosition (23 + 40, 52 + 10)), lngPack.i18n ("Text~Comp~Labs"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (160, 52), getPosition() + cPosition (160 + 75, 52 + 10)), lngPack.i18n ("Text~Comp~Themes"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (291, 52), getPosition() + cPosition (291 + 44, 52 + 10)), lngPack.i18n ("Text~Comp~Turns"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (23, 52), getPosition() + cPosition (23 + 40, 52 + 10)), lngPack.i18n ("Text~Comp~Labs"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (160, 52), getPosition() + cPosition (160 + 75, 52 + 10)), lngPack.i18n ("Text~Comp~Themes"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (291, 52), getPosition() + cPosition (291 + 44, 52 + 10)), lngPack.i18n ("Text~Comp~Turns"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (193, 294), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
+	auto doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (193, 294), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal);
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
-	auto cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (91, 294), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal));
+	auto cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (91, 294), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal);
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
@@ -73,7 +73,7 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 
 	for (size_t i = 0; i < rows; ++i)
 	{
-		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (183, 72 + 28 * i), getPosition() + cPosition (183 + 50, 72 + 28 * i + 10)), themeNames[i], eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+		emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (183, 72 + 28 * i), getPosition() + cPosition (183 + 50, 72 + 28 * i + 10)), themeNames[i], eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 
 		auto src = themeImageSrcs[i];
 
@@ -82,21 +82,21 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 		SDL_SetColorKey (image.get(), SDL_TRUE, 0x00FF00FF);
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, image.get(), nullptr);
 
-		addChild (std::make_unique<cImage> (getPosition() + cPosition (172 - src.w / 2, 78 - src.h / 2 + 28 * i), image.get()));
+		emplaceChild<cImage> (getPosition() + cPosition (172 - src.w / 2, 78 - src.h / 2 + 28 * i), image.get());
 
-		researchCenterCountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (24, 72 + 28 * i), getPosition() + cPosition (24 + 38, 72 + 28 * i + 10)), "0", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		researchCenterCountLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (24, 72 + 28 * i), getPosition() + cPosition (24 + 38, 72 + 28 * i + 10)), "0", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-		percentageLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (236, 72 + 28 * i), getPosition() + cPosition (236 + 44, 72 + 28 * i + 10)), "+" + std::to_string (player.getResearchState().getCurResearchLevel (static_cast<cResearch::eResearchArea> (i))) + "%", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		percentageLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (236, 72 + 28 * i), getPosition() + cPosition (236 + 44, 72 + 28 * i + 10)), "+" + std::to_string (player.getResearchState().getCurResearchLevel (static_cast<cResearch::eResearchArea> (i))) + "%", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-		turnsLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (291, 72 + 28 * i), getPosition() + cPosition (291 + 44, 72 + 28 * i + 10)), "0", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		turnsLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (291, 72 + 28 * i), getPosition() + cPosition (291 + 44, 72 + 28 * i + 10)), "0", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-		sliders[i] = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (90, 70 + 28 * i), cPosition (90 + 51, 70 + 28 * i + 15)), 0, player.getResearchCentersWorkingTotal(), eOrientationType::Horizontal, eSliderHandleType::Horizontal, eSliderType::Invisible));
+		sliders[i] = emplaceChild<cSlider> (cBox<cPosition> (cPosition (90, 70 + 28 * i), cPosition (90 + 51, 70 + 28 * i + 15)), 0, player.getResearchCentersWorkingTotal(), eOrientationType::Horizontal, eSliderHandleType::Horizontal, eSliderType::Invisible);
 		signalConnectionManager.connect (sliders[i]->valueChanged, [this, i]() { handleSliderValueChanged (i); });
 
-		decreaseButtons[i] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (71, 70 + 28 * i), ePushButtonType::ArrowLeftSmall));
+		decreaseButtons[i] = emplaceChild<cPushButton> (getPosition() + cPosition (71, 70 + 28 * i), ePushButtonType::ArrowLeftSmall);
 		signalConnectionManager.connect (decreaseButtons[i]->clicked, [this, i]() { sliders[i]->decrease (1); });
 
-		increaseButtons[i] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (143, 70 + 28 * i), ePushButtonType::ArrowRightSmall));
+		increaseButtons[i] = emplaceChild<cPushButton> (getPosition() + cPosition (143, 70 + 28 * i), ePushButtonType::ArrowRightSmall);
 		signalConnectionManager.connect (increaseButtons[i]->clicked, [this, i]() { sliders[i]->increase (1); });
 	}
 

@@ -45,22 +45,22 @@ cDialogLicense::cDialogLicense() :
 {
 	auto* font = cUnicodeFont::font.get();
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight())), "\"M.A.X.R.\"", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight())), "\"M.A.X.R.\"", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	headerLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30 + font->getFontHeight()), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight() * 2)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	headerLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 30 + font->getFontHeight()), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight() * 2)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 35 + font->getFontHeight() * 3), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight() * 3 + 142)), "", eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
+	textLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 35 + font->getFontHeight() * 3), getPosition() + cPosition (35 + 232, 30 + font->getFontHeight() * 3 + 142)), "", eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top);
 	textLabel->setWordWrap (true);
 
-	auto okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), eUnicodeFontType::LatinNormal));
+	auto okButton = emplaceChild<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), eUnicodeFontType::LatinNormal);
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { close(); });
 
-	upButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (241, 187), ePushButtonType::ArrowUpSmall));
+	upButton = emplaceChild<cPushButton> (getPosition() + cPosition (241, 187), ePushButtonType::ArrowUpSmall);
 	signalConnectionManager.connect (upButton->clicked, [this]() { pageUp(); });
 
-	downButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (261, 187), ePushButtonType::ArrowDownSmall));
+	downButton = emplaceChild<cPushButton> (getPosition() + cPosition (261, 187), ePushButtonType::ArrowDownSmall);
 	signalConnectionManager.connect (downButton->clicked, [this]() { pageDown(); });
 
 	readAuthors();

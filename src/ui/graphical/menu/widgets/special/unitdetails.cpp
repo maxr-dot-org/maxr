@@ -38,8 +38,8 @@ cUnitDetails::cUnitDetails (const cPosition& position) :
 {
 	for (size_t i = 0; i < maxRows; ++i)
 	{
-		amountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (position + cPosition (5, 3 + rowHeight * i), position + cPosition (5 + 21, 3 + rowHeight * i + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Right));
-		nameLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (position + cPosition (30, 3 + rowHeight * i), position + cPosition (30 + 55, 3 + rowHeight * i + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+		amountLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (position + cPosition (5, 3 + rowHeight * i), position + cPosition (5 + 21, 3 + rowHeight * i + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Right);
+		nameLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (position + cPosition (30, 3 + rowHeight * i), position + cPosition (30 + 55, 3 + rowHeight * i + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	}
 
 	const cPosition size (250, 170);

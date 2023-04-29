@@ -52,9 +52,9 @@ cScrollBar::cScrollBar (const cPosition& position, int width, eScrollBarStyle st
 			break;
 	}
 
-	backButton = addChild (std::make_unique<cPushButton> (getPosition(), backButtonType));
+	backButton = emplaceChild<cPushButton> (getPosition(), backButtonType);
 
-	forwardButton = addChild (std::make_unique<cPushButton> (getPosition(), forwardButtonType));
+	forwardButton = emplaceChild<cPushButton> (getPosition(), forwardButtonType);
 	auto forwardButtonOffset = orientation == eOrientationType::Horizontal ? cPosition (width - forwardButton->getSize().x(), 0) : cPosition (0, width - forwardButton->getSize().y());
 	forwardButtonOffset.x() = std::max (forwardButtonOffset.x(), 0);
 	forwardButtonOffset.y() = std::max (forwardButtonOffset.y(), 0);
@@ -76,7 +76,7 @@ cScrollBar::cScrollBar (const cPosition& position, int width, eScrollBarStyle st
 		}
 	}
 
-	slider = addChild (std::make_unique<cSlider> (cBox<cPosition> (sliderStartPos, sliderEndPos), 0, 0, orientation, sliderHandleType, sliderType));
+	slider = emplaceChild<cSlider> (cBox<cPosition> (sliderStartPos, sliderEndPos), 0, 0, orientation, sliderHandleType, sliderType);
 	slider->setValue (5);
 	fitToChildren();
 

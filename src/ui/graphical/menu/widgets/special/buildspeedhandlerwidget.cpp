@@ -31,12 +31,12 @@ cBuildSpeedHandlerWidget::cBuildSpeedHandlerWidget (const cPosition& position) :
 	cWidget (position)
 {
 	cBox<cPosition> area (position, position);
-	auto speedGroup = addChild (std::make_unique<cRadioGroup>());
+	auto speedGroup = emplaceChild<cRadioGroup>();
 	for (size_t i = 0; i < elementsCount; ++i)
 	{
 		const auto factor = 1 << i;
-		turnLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (80, 5 + 25 * i), getPosition() + cPosition (80 + 35, 5 + 25 * i + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-		costLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (120, 5 + 25 * i), getPosition() + cPosition (120 + 35, 5 + 25 * i + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		turnLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (80, 5 + 25 * i), getPosition() + cPosition (80 + 35, 5 + 25 * i + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+		costLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (120, 5 + 25 * i), getPosition() + cPosition (120 + 35, 5 + 25 * i + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 		buttons[i] = speedGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (0, 25 * i), lngPack.i18n ("Text~Others~Build_7") + " x" + std::to_string (factor), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 
 		area.add (turnLabels[i]->getArea());

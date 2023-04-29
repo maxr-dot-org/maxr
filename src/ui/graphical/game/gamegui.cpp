@@ -80,30 +80,30 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	resize (hudOwning->getSize());
 
-	gameMap = addChild (std::make_unique<cGameMapWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, animationTimer, soundManager, frameCounter));
+	gameMap = emplaceChild<cGameMapWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, animationTimer, soundManager, frameCounter);
 
-	messageList = addChild (std::make_unique<cGameMessageListView> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition().x() - cHud::panelRightWidth - 4, cHud::panelTopHeight + 200))));
+	messageList = emplaceChild<cGameMessageListView> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition().x() - cHud::panelRightWidth - 4, cHud::panelTopHeight + 200)));
 
 	hud = addChild (std::move (hudOwning));
 
 	hud->setMinimalZoomFactor (gameMap->computeMinimalZoomFactor());
 
-	chatBox = addChild (std::make_unique<cChatBox<cLobbyChatBoxListViewItem, cChatBoxPlayerListViewItem>> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition().y() - cHud::panelBottomHeight - 12 - 100), getEndPosition() - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
+	chatBox = emplaceChild<cChatBox<cLobbyChatBoxListViewItem, cChatBoxPlayerListViewItem>> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition().y() - cHud::panelBottomHeight - 12 - 100), getEndPosition() - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12)));
 
-	miniMap = addChild (std::make_unique<cMiniMapWidget> (cBox<cPosition> (cPosition (15, 356), cPosition (15 + 112, 356 + 112)), staticMap));
+	miniMap = emplaceChild<cMiniMapWidget> (cBox<cPosition> (cPosition (15, 356), cPosition (15 + 112, 356 + 112)), staticMap);
 
-	debugOutput = addChild (std::make_unique<cDebugOutputWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition().x() - cHud::panelRightWidth - 8, getEndPosition().y() - cHud::panelBottomHeight - 8))));
+	debugOutput = emplaceChild<cDebugOutputWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition().x() - cHud::panelRightWidth - 8, getEndPosition().y() - cHud::panelBottomHeight - 8)));
 	debugOutput->setGameMap (gameMap);
 	debugOutput->disable();
 
-	hudPanels = addChild (std::make_unique<cHudPanels> (getPosition(), getSize().y(), animationTimer));
+	hudPanels = emplaceChild<cHudPanels> (getPosition(), getSize().y(), animationTimer);
 
 	auto font = cUnicodeFont::font.get();
-	primiaryInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig))), "", eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
+	primiaryInfoLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig))), "", eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top);
 	primiaryInfoLabel->disable();
 	primiaryInfoLabel->hide();
 
-	additionalInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig)), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig) + font->getFontHeight (eUnicodeFontType::LatinNormal))), "", eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
+	additionalInfoLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig)), cPosition (getEndPosition().x() - cHud::panelRightWidth, 235 + font->getFontHeight (eUnicodeFontType::LatinBig) + font->getFontHeight (eUnicodeFontType::LatinNormal))), "", eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top);
 	additionalInfoLabel->disable();
 	additionalInfoLabel->hide();
 

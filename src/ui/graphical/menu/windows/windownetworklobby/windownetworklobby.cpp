@@ -51,30 +51,30 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	localPlayer (std::make_shared<cPlayerBasicData> (cPlayerBasicData::fromSettings())),
 	saveGameInfo (-1)
 {
-	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), title, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), title, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	mapImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (33, 106)));
-	mapNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (90 - 70, 65), getPosition() + cPosition (90 + 70, 65 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	mapImage = emplaceChild<cImage> (getPosition() + cPosition (33, 106));
+	mapNameLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (90 - 70, 65), getPosition() + cPosition (90 + 70, 65 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	settingsTextLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (192, 52), getPosition() + cPosition (192 + 246, 52 + 175)), ""));
+	settingsTextLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (192, 52), getPosition() + cPosition (192 + 246, 52 + 175)), "");
 	settingsTextLabel->setWordWrap (true);
 
-	chatLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (20, 424), getPosition() + cPosition (20 + 430, 424 + 10))));
+	chatLineEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (20, 424), getPosition() + cPosition (20 + 430, 424 + 10)));
 	signalConnectionManager.connect (chatLineEdit->returnPressed, [this]() { triggerChatMessage (true); });
-	sendButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 416), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Send")));
+	sendButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 416), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Send"));
 	signalConnectionManager.connect (sendButton->clicked, [this]() { triggerChatMessage (false); });
-	chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition() + cPosition (14, 284), getPosition() + cPosition (14 + 439, 284 + 124)), eScrollBarStyle::Classic));
+	chatList = emplaceChild<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition() + cPosition (14, 284), getPosition() + cPosition (14 + 439, 284 + 124)), eScrollBarStyle::Classic);
 	chatList->disableSelectable();
 	chatList->setBeginMargin (cPosition (12, 12));
 	chatList->setEndMargin (cPosition (10, 10));
 	chatList->setScrollOffset (cUnicodeFont::font->getFontHeight() + 3);
 
-	ipLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 245), getPosition() + cPosition (20 + 170, 245 + 10)), lngPack.i18n ("Text~Title~IP"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	portLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (228, 245), getPosition() + cPosition (228 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Port"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (352, 245), getPosition() + cPosition (352 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	colorLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 245), getPosition() + cPosition (500 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	ipLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 245), getPosition() + cPosition (20 + 170, 245 + 10)), lngPack.i18n ("Text~Title~IP"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	portLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (228, 245), getPosition() + cPosition (228 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Port"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	playerNameLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (352, 245), getPosition() + cPosition (352 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	colorLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 245), getPosition() + cPosition (500 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 
-	ipLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (20, 260), getPosition() + cPosition (20 + 178, 260 + 10))));
+	ipLineEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (20, 260), getPosition() + cPosition (20 + 178, 260 + 10)));
 	if (disableIp)
 	{
 		ipLineEdit->setText ("-");
@@ -84,15 +84,15 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	{
 		ipLineEdit->setText (cSettings::getInstance().getNetworkAddress().ip);
 	}
-	portLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 260), getPosition() + cPosition (230 + 95, 260 + 10))));
+	portLineEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (230, 260), getPosition() + cPosition (230 + 95, 260 + 10)));
 	portLineEdit->setText (std::to_string (cSettings::getInstance().getNetworkAddress().port));
 	portLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 65535));
-	restoreDefaultPortButton = addChild (std::make_unique<cImage> (getPosition() + cPosition (230 + 82, 254), GraphicsData.gfx_Cpfeil2.get()));
+	restoreDefaultPortButton = emplaceChild<cImage> (getPosition() + cPosition (230 + 82, 254), GraphicsData.gfx_Cpfeil2.get());
 	signalConnectionManager.connect (restoreDefaultPortButton->clicked, [this]() {
 		portLineEdit->setText (std::to_string (DEFAULTPORT));
 	});
 
-	auto nameLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (353, 260), getPosition() + cPosition (353 + 95, 260 + 10))));
+	auto nameLineEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (353, 260), getPosition() + cPosition (353 + 95, 260 + 10)));
 	nameLineEdit->setText (localPlayer->getName());
 	signalConnectionManager.connect (nameLineEdit->returnPressed, [this, nameLineEdit]() {
 		auto application = getActiveApplication();
@@ -100,30 +100,30 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	});
 	signalConnectionManager.connect (nameLineEdit->editingFinished, [&, nameLineEdit] (eValidatorState) { localPlayer->setName (nameLineEdit->getText()); });
 
-	mapButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 42), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Choose_Planet")));
+	mapButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 42), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Choose_Planet"));
 	signalConnectionManager.connect (mapButton->clicked, [this]() { triggeredSelectMap(); });
 
-	settingsButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 77), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Options")));
+	settingsButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 77), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Options"));
 	signalConnectionManager.connect (settingsButton->clicked, [this]() { triggeredSelectSettings(); });
 
-	loadButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 120), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Game_Load")));
+	loadButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 120), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Game_Load"));
 	signalConnectionManager.connect (loadButton->clicked, [this]() { triggeredSelectSaveGame(); });
 
-	playersList = addChild (std::make_unique<cListView<cLobbyPlayerListViewItem>> (cBox<cPosition> (getPosition() + cPosition (465, 284), getPosition() + cPosition (465 + 167, 284 + 124)), eScrollBarStyle::Classic));
+	playersList = emplaceChild<cListView<cLobbyPlayerListViewItem>> (cBox<cPosition> (getPosition() + cPosition (465, 284), getPosition() + cPosition (465 + 167, 284 + 124)), eScrollBarStyle::Classic);
 	playersList->disableSelectable();
 	playersList->setBeginMargin (cPosition (12, 12));
 	playersList->setEndMargin (cPosition (10, 10));
 	playersList->setItemDistance (4);
 
-	auto colorSelector = addChild (std::make_unique<cColorSelector> (getPosition() + cPosition (478, 256), localPlayer->getColor()));
+	auto colorSelector = emplaceChild<cColorSelector> (getPosition() + cPosition (478, 256), localPlayer->getColor());
 	signalConnectionManager.connect (colorSelector->onColorChanged, [this] (const cRgbColor& color) {
 		localPlayer->setColor (color);
 	});
 
-	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
+	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK"));
 	signalConnectionManager.connect (okButton->clicked, [this]() { triggeredStartGame(); });
 
-	auto backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
+	auto backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	updateSettingsText();

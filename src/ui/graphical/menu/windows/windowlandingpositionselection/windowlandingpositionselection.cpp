@@ -54,30 +54,30 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 	auto hudImageOwned = std::make_unique<cImage> (cPosition (0, 0), createHudSurface().get());
 	hudImageOwned->disableAtTransparent();
 
-	mapWidget = addChild (std::make_unique<cLandingPositionSelectionMap> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImageOwned->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, fixedBridgeHead, landingUnits, unitsData));
+	mapWidget = emplaceChild<cLandingPositionSelectionMap> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImageOwned->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, fixedBridgeHead, landingUnits, unitsData);
 	signalConnectionManager.connect (mapWidget->clickedTile, [this] (const cPosition& tilePos) { mapClicked (tilePos); });
 
-	circlesImage = addChild (std::make_unique<cImage> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight)));
+	circlesImage = emplaceChild<cImage> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight));
 	circlesImage->disable();
 
 	auto hudImage = addChild (std::move (hudImageOwned));
 
-	backButton = addChild (std::make_unique<cPushButton> (cPosition (35, hudImage->getEndPosition().y() - 40), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), eUnicodeFontType::LatinNormal));
+	backButton = emplaceChild<cPushButton> (cPosition (35, hudImage->getEndPosition().y() - 40), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
-	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), "", eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::Center)));
+	infoLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), "", eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::Center));
 	infoLabel->setWordWrap (true);
 	infoLabel->disable();
 
 	if (withChatBox)
 	{
-		chatBox = addChild (std::make_unique<cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, hudImage->getEndPosition().y() - cHud::panelBottomHeight - 12 - 100), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
+		chatBox = emplaceChild<cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, hudImage->getEndPosition().y() - cHud::panelBottomHeight - 12 - 100), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12)));
 
 		signalConnectionManager.connect (chatBox->commandEntered, [this] (const std::string& message) {
 			onCommandEntered (message);
 		});
 
-		toggleChatBoxButton = addChild (std::make_unique<cCheckBox> (cPosition (35, hudImage->getEndPosition().y() - 65), lngPack.i18n ("Text~Others~Chat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+		toggleChatBoxButton = emplaceChild<cCheckBox> (cPosition (35, hudImage->getEndPosition().y() - 65), lngPack.i18n ("Text~Others~Chat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular);
 		toggleChatBoxButton->setChecked (true);
 		signalConnectionManager.connect (toggleChatBoxButton->toggled, [this]() {
 			if (toggleChatBoxButton->isChecked())

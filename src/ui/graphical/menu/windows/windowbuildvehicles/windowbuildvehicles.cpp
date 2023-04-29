@@ -42,12 +42,12 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), unitsData, *building_.getOwner()),
 	building (building_)
 {
-	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10))));
+	auto turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10)));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
-	speedHandler = addChild (std::make_unique<cBuildSpeedHandlerWidget> (getPosition() + cPosition (292, 345)));
+	speedHandler = emplaceChild<cBuildSpeedHandlerWidget> (getPosition() + cPosition (292, 345));
 
 	selectionUnitList->resize (cPosition (154, 380));
 	selectionUnitList->setItemDistance (2);
@@ -64,7 +64,7 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 	backButton->moveTo (getPosition() + cPosition (300, 452));
 	okButton->moveTo (getPosition() + cPosition (387, 452));
 
-	repeatCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (447, 322), lngPack.i18n ("Text~Comp~Repeat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Standard));
+	repeatCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (447, 322), lngPack.i18n ("Text~Comp~Repeat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Standard);
 
 	generateSelectionList (building, map, *unitsData);
 	generateBuildList (building);

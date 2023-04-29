@@ -113,11 +113,11 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	signalConnectionManager.connect (animationTimer->triggered50ms, [this]() { runOwnedEffects(); });
 	signalConnectionManager.connect (animationTimer->triggered100ms, [this]() { renewDamageEffects(); });
 
-	unitMenu = addChild (std::make_unique<cUnitContextMenuWidget>());
+	unitMenu = emplaceChild<cUnitContextMenuWidget>();
 	unitMenu->disable();
 	unitMenu->hide();
 
-	rightMouseButtonScrollerWidget = addChild (std::make_unique<cRightMouseButtonScrollerWidget> (animationTimer));
+	rightMouseButtonScrollerWidget = emplaceChild<cRightMouseButtonScrollerWidget> (animationTimer);
 	signalConnectionManager.connect (rightMouseButtonScrollerWidget->scroll, [this] (const cPosition& offset) { scroll (offset); });
 	signalConnectionManager.connect (rightMouseButtonScrollerWidget->mouseFocusReleased, [this]() { mouseFocusReleased(); });
 	signalConnectionManager.connect (rightMouseButtonScrollerWidget->stoppedScrolling, [this]() { updateMouseCursor(); });

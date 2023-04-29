@@ -167,7 +167,7 @@ template <typename ItemType>
 cListView<ItemType>::cListView (const cBox<cPosition>& area, eScrollBarStyle scrollBarStyle, bool allowMultiSelection, cSoundChunk* clickSound_) :
 	cListView<ItemType> (area, allowMultiSelection, clickSound_)
 {
-	scrollBar = addChild (std::make_unique<cScrollBar> (getPosition(), getSize().y(), scrollBarStyle, eOrientationType::Vertical));
+	scrollBar = emplaceChild<cScrollBar> (getPosition(), getSize().y(), scrollBarStyle, eOrientationType::Vertical);
 	scrollBar->move (cPosition (getSize().x() - scrollBar->getSize().x() + 1, 0));
 
 	signalConnectionManager.connect (scrollBar->forwardClicked, [this]() { scrollDown(); });

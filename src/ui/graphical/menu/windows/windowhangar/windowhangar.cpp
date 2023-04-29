@@ -70,33 +70,33 @@ void cWindowHangar::retranslate()
 //------------------------------------------------------------------------------
 void cWindowHangar::initialize()
 {
-	infoImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (11, 13)));
+	infoImage = emplaceChild<cImage> (getPosition() + cPosition (11, 13));
 
-	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (21, 23), getPosition() + cPosition (21 + 280, 23 + 220)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	infoLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (21, 23), getPosition() + cPosition (21 + 280, 23 + 220)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	infoLabel->setWordWrap (true);
 
-	infoTextCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (291, 264), lngPack.i18n ("Text~Comp~Description"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left));
+	infoTextCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (291, 264), lngPack.i18n ("Text~Comp~Description"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left);
 	infoTextCheckBox->setChecked (true);
 	signalConnectionManager.connect (infoTextCheckBox->toggled, [this]() { infoCheckBoxToggled(); });
 
-	unitDetails = addChild (std::make_unique<cUnitDetails> (getPosition() + cPosition (16, 297)));
+	unitDetails = emplaceChild<cUnitDetails> (getPosition() + cPosition (16, 297));
 
-	selectionUnitList = addChild (std::make_unique<cListView<cUnitListViewItemBuy>> (cBox<cPosition> (getPosition() + cPosition (477, 50), getPosition() + cPosition (477 + 154, 50 + 326))));
+	selectionUnitList = emplaceChild<cListView<cUnitListViewItemBuy>> (cBox<cPosition> (getPosition() + cPosition (477, 50), getPosition() + cPosition (477 + 154, 50 + 326)));
 	selectionUnitList->setEndMargin (cPosition (2, 10));
 	signalConnectionManager.connect (selectionUnitList->itemClicked, [this] (cUnitListViewItemBuy& unitItem) { selectionUnitClicked (unitItem); });
 	signalConnectionManager.connect (selectionUnitList->selectionChanged, [this]() { handleSelectionChanged(); });
 
-	selectionListUpButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (471, 387), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
+	selectionListUpButton = emplaceChild<cPushButton> (getPosition() + cPosition (471, 387), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu);
 	signalConnectionManager.connect (selectionListUpButton->clicked, [this]() { selectionUnitList->pageUp(); });
 
-	selectionListDownButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (491, 387), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
+	selectionListDownButton = emplaceChild<cPushButton> (getPosition() + cPosition (491, 387), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu);
 	signalConnectionManager.connect (selectionListDownButton->clicked, [this]() { selectionUnitList->pageDown(); });
 
-	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
+	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal);
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
-	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), eUnicodeFontType::LatinNormal));
+	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), eUnicodeFontType::LatinNormal);
 	backButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 }

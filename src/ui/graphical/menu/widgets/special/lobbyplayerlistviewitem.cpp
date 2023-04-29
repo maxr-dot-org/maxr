@@ -34,15 +34,15 @@ cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasic
 {
 	assert (player != nullptr);
 
-	readyImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (getSize().x() - 10, 0)));
+	readyImage = emplaceChild<cImage> (getPosition() + cPosition (getSize().x() - 10, 0));
 	signalConnectionManager.connect (readyImage->clicked, [this]() { readyClicked(); });
 
-	colorImage = addChild (std::make_unique<cImage> (getPosition()));
+	colorImage = emplaceChild<cImage> (getPosition());
 
 	updatePlayerColor();
 	updatePlayerReady();
 
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (colorImage->getEndPosition().x() + 4, 0), cPosition (readyImage->getPosition().x(), readyImage->getEndPosition().y())), player->getName()));
+	nameLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (colorImage->getEndPosition().x() + 4, 0), cPosition (readyImage->getPosition().x(), readyImage->getEndPosition().y())), player->getName());
 	nameLabel->setConsumeClick (false);
 
 	fitToChildren();

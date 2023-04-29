@@ -31,7 +31,7 @@ cWindowNetworkLobbyClient::cWindowNetworkLobbyClient() :
 {
 	setIsHost (false);
 
-	connectButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Connect")));
+	connectButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Connect"));
 	signalConnectionManager.connect (connectButton->clicked, [this]() { triggeredConnect(); });
 
 	signalConnectionManager.connect (ipLineEdit->returnPressed, [this]() {

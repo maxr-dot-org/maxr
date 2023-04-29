@@ -32,18 +32,18 @@
 cDialogSelfDestruction::cDialogSelfDestruction (const cUnit& unit, std::shared_ptr<cAnimationTimer> animationTimer) :
 	cWindow (LoadPCX (GFXOD_DESTRUCTION), eWindowBackgrounds::Alpha)
 {
-	armButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (88, 14), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Hot"), eUnicodeFontType::LatinNormal));
+	armButton = emplaceChild<cPushButton> (getPosition() + cPosition (88, 14), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Hot"), eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (armButton->clicked, [this]() { armcClicked(); });
 
-	destroyButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (15, 13), ePushButtonType::Destroy));
+	destroyButton = emplaceChild<cPushButton> (getPosition() + cPosition (15, 13), ePushButtonType::Destroy);
 	destroyButton->lock();
 	signalConnectionManager.connect (destroyButton->clicked, [this]() { triggeredDestruction(); });
 
-	cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (88, 46), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal));
+	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (88, 46), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal);
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
-	protectionGlass = addChild (std::make_unique<cProtectionGlass> (getPosition() + cPosition (15, 13), std::move (animationTimer)));
+	protectionGlass = emplaceChild<cProtectionGlass> (getPosition() + cPosition (15, 13), std::move (animationTimer));
 	signalConnectionManager.connect (protectionGlass->opened, [this]() {
 		destroyButton->unlock();
 	});

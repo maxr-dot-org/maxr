@@ -214,7 +214,7 @@ void cSlider::createHandle (eSliderHandleType handleType)
 {
 	if (handle) return;
 
-	handle = addChild (std::make_unique<cSliderHandle> (getPosition(), handleType, orientation));
+	handle = emplaceChild<cSliderHandle> (getPosition(), handleType, orientation);
 
 	setHandleMinMaxPosition();
 

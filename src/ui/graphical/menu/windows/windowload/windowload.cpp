@@ -45,21 +45,21 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, s
 	selectedSaveNumber (-1),
 	saveGamesGetter (saveGamesGetter)
 {
-	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 12), getPosition() + cPosition (getArea().getMaxCorner().x(), 12 + 10)), lngPack.i18n ("Text~Title~Load"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 12), getPosition() + cPosition (getArea().getMaxCorner().x(), 12 + 10)), lngPack.i18n ("Text~Title~Load"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (525, 16), cPosition (525 + 60, 16 + 10))));
+	auto turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (525, 16), cPosition (525 + 60, 16 + 10)));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
-	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (353, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Back")));
+	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (353, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { close(); });
 
-	loadButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (514, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Load")));
+	loadButton = emplaceChild<cPushButton> (getPosition() + cPosition (514, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Load"));
 	signalConnectionManager.connect (loadButton->clicked, [this]() { handleLoadClicked(); });
 	loadButton->lock();
 
-	auto upButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (33, 438), ePushButtonType::ArrowUpBig));
+	auto upButton = emplaceChild<cPushButton> (getPosition() + cPosition (33, 438), ePushButtonType::ArrowUpBig);
 	signalConnectionManager.connect (upButton->clicked, [this]() { handleUpClicked(); });
-	auto downButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (63, 438), ePushButtonType::ArrowDownBig));
+	auto downButton = emplaceChild<cPushButton> (getPosition() + cPosition (63, 438), ePushButtonType::ArrowDownBig);
 	signalConnectionManager.connect (downButton->clicked, [this]() { handleDownClicked(); });
 
 	for (size_t x = 0; x < columns; x++)
@@ -67,7 +67,7 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, s
 		for (size_t y = 0; y < rows; y++)
 		{
 			const auto index = rows * x + y;
-			saveSlots[index] = addChild (std::make_unique<cSaveSlotWidget> (getPosition() + cPosition (17 + 402 * x, 45 + 76 * y)));
+			saveSlots[index] = emplaceChild<cSaveSlotWidget> (getPosition() + cPosition (17 + 402 * x, 45 + 76 * y));
 			signalConnectionManager.connect (saveSlots[index]->clicked, [this, index]() { handleSlotClicked (index); });
 			signalConnectionManager.connect (saveSlots[index]->doubleClicked, [this, index]() { handleSlotDoubleClicked (index); });
 		}

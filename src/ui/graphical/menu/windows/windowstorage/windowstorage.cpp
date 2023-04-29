@@ -60,7 +60,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	}
 	setSurface (std::move (background));
 
-	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 17), cPosition (523 + 62, 17 + 10))));
+	auto turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 17), cPosition (523 + 62, 17 + 10)));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
 	//
@@ -77,23 +77,23 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 		{
 			const auto index = x + y * columns;
 
-			activateButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), eUnicodeFontType::LatinNormal));
+			activateButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), eUnicodeFontType::LatinNormal);
 			signalConnectionManager.connect (activateButtons[index]->clicked, [this, index]() { activateClicked (index); });
 
-			reloadButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", eUnicodeFontType::LatinNormal));
+			reloadButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", eUnicodeFontType::LatinNormal);
 			signalConnectionManager.connect (reloadButtons[index]->clicked, [this, index]() { reloadClicked (index); });
 
-			repairButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", eUnicodeFontType::LatinNormal));
+			repairButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", eUnicodeFontType::LatinNormal);
 			signalConnectionManager.connect (repairButtons[index]->clicked, [this, index]() { repairClicked (index); });
 
-			upgradeButtons[index] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", eUnicodeFontType::LatinNormal));
+			upgradeButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", eUnicodeFontType::LatinNormal);
 			signalConnectionManager.connect (upgradeButtons[index]->clicked, [this, index]() { upgradeClicked (index); });
 
-			unitImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (17 + x * stepImageX, 9 + y * 236)));
-			unitNames[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (17 + x * stepImageX + 5, 9 + y * 236 + 5), getPosition() + cPosition (17 + x * stepImageX + 5 + nameLabelX, 9 + y * 236 + 5 + 118)), ""));
+			unitImages[index] = emplaceChild<cImage> (getPosition() + cPosition (17 + x * stepImageX, 9 + y * 236));
+			unitNames[index] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (17 + x * stepImageX + 5, 9 + y * 236 + 5), getPosition() + cPosition (17 + x * stepImageX + 5 + nameLabelX, 9 + y * 236 + 5 + 118)), "");
 			unitNames[index]->setWordWrap (true);
 
-			unitDetails[index] = addChild (std::make_unique<cUnitDetailsStored> (cBox<cPosition> (getPosition() + cPosition (17 + x * stepImageX + (canStorePlanes ? 35 : 0), 145 + y * 236), getPosition() + cPosition (17 + x * stepImageX + 130 + (canStorePlanes ? 35 : 0), 145 + y * 236 + 40))));
+			unitDetails[index] = emplaceChild<cUnitDetailsStored> (cBox<cPosition> (getPosition() + cPosition (17 + x * stepImageX + (canStorePlanes ? 35 : 0), 145 + y * 236), getPosition() + cPosition (17 + x * stepImageX + 130 + (canStorePlanes ? 35 : 0), 145 + y * 236 + 40)));
 		}
 	}
 
@@ -112,33 +112,33 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 		});
 	}
 
-	metalBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (536, 85), getPosition() + cPosition (536 + 40, 85 + 10)), std::to_string (metalValue), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-	metalBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (546, 106), getPosition() + cPosition (546 + 20, 106 + 115)), 0, metalValue, eResourceBarType::Metal, eOrientationType::Vertical));
+	metalBarAmountLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (536, 85), getPosition() + cPosition (536 + 40, 85 + 10)), std::to_string (metalValue), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	metalBar = emplaceChild<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (546, 106), getPosition() + cPosition (546 + 20, 106 + 115)), 0, metalValue, eResourceBarType::Metal, eOrientationType::Vertical);
 	signalConnectionManager.connect (metalBar->valueChanged, [this]() { metalBarAmountLabel->setText (std::to_string (metalBar->getValue())); });
 	metalBar->disable();
 
 	//
 	// Buttons
 	//
-	upButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (504, 426), ePushButtonType::ArrowUpBig));
+	upButton = emplaceChild<cPushButton> (getPosition() + cPosition (504, 426), ePushButtonType::ArrowUpBig);
 	signalConnectionManager.connect (upButton->clicked, [this]() { upClicked(); });
 
-	downButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (532, 426), ePushButtonType::ArrowDownBig));
+	downButton = emplaceChild<cPushButton> (getPosition() + cPosition (532, 426), ePushButtonType::ArrowDownBig);
 	signalConnectionManager.connect (downButton->clicked, [this]() { downClicked(); });
 
-	activateAllButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 246), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), eUnicodeFontType::LatinNormal));
+	activateAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (activateAllButton->clicked, [this]() { activateAllClicked(); });
 
-	reloadAllButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 246 + 25), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", eUnicodeFontType::LatinNormal));
+	reloadAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246 + 25), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (reloadAllButton->clicked, [this]() { reloadAllClicked(); });
 
-	repairAllButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 246 + 25 * 2), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", eUnicodeFontType::LatinNormal));
+	repairAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246 + 25 * 2), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (repairAllButton->clicked, [this]() { repairAllClicked(); });
 
-	upgradeAllButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 246 + 25 * 3), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", eUnicodeFontType::LatinNormal));
+	upgradeAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246 + 25 * 3), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (upgradeAllButton->clicked, [this]() { upgradeAllClicked(); });
 
-	doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (518, 371), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
+	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 371), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
 	updateUnitsWidgets();

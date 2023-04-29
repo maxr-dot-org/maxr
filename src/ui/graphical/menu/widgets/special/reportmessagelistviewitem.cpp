@@ -39,7 +39,7 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 {
 	const int unitImageSize = 32;
 
-	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImageSize, 0), cPosition (450, 0)), getMessage (report, model), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	auto textLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (unitImageSize, 0), cPosition (450, 0)), getMessage (report, model), eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical);
 	textLabel->setWordWrap (true);
 	textLabel->resizeToTextHeight();
 	textLabel->setConsumeClick (false);
@@ -71,7 +71,7 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 			const auto& uiData = *UnitsUiData.getBuildingUI (unitId);
 			uiData.render_simple (*unitSurface, dest, zoomFactor, nullptr);
 		}
-		addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageSize) / 2), unitSurface.get()));
+		emplaceChild<cImage> (cPosition (0, (totalHeight - unitImageSize) / 2), unitSurface.get());
 	}
 
 	fitToChildren();

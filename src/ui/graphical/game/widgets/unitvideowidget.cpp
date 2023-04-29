@@ -35,7 +35,7 @@ cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr
 	fliAnimation (nullptr, FLI_Close),
 	playing (true)
 {
-	currentFrameImage = addChild (std::make_unique<cImage> (getPosition()));
+	currentFrameImage = emplaceChild<cImage> (getPosition());
 
 	currentFrameImage->clicked.connect ([this]() { clicked(); });
 

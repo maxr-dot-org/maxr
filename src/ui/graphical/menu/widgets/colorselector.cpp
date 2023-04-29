@@ -30,9 +30,9 @@
 cColorSelector::cColorSelector (const cPosition& pos, const cRgbColor& color) :
 	cWidget (cBox<cPosition> (pos, pos + cPosition (140, 20))), color (color)
 {
-	auto prevColorButton = addChild (std::make_unique<cPushButton> (getPosition(), ePushButtonType::ArrowLeftSmall, &SoundData.SNDObjectMenu));
-	colorImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (27, 4)));
-	auto nextColorButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (118, 0), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
+	auto prevColorButton = emplaceChild<cPushButton> (getPosition(), ePushButtonType::ArrowLeftSmall, &SoundData.SNDObjectMenu);
+	colorImage = emplaceChild<cImage> (getPosition() + cPosition (27, 4));
+	auto nextColorButton = emplaceChild<cPushButton> (getPosition() + cPosition (118, 0), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu);
 	setColor (color);
 	signalConnectionManager.connect (colorImage->clicked, [this]() {
 		auto application = getActiveApplication();

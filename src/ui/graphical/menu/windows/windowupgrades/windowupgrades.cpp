@@ -34,55 +34,55 @@ cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const c
 	cWindowHangar (LoadPCX (GFXOD_UPGRADE), unitsData, player),
 	filterState (filterState_)
 {
-	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Upgrades_Menu"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Upgrades_Menu"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10))));
+	auto turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10)));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
 	//
 	// Unit Filters
 	//
-	tankCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467, 411), eCheckBoxType::Tank));
+	tankCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (467, 411), eCheckBoxType::Tank);
 	tankCheckBox->setChecked (filterState->TankChecked);
 	signalConnectionManager.connect (tankCheckBox->toggled, [this]() { generateSelectionList (false); });
 
-	planeCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33, 411), eCheckBoxType::Plane));
+	planeCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (467 + 33, 411), eCheckBoxType::Plane);
 	planeCheckBox->setChecked (filterState->PlaneChecked);
 	signalConnectionManager.connect (planeCheckBox->toggled, [this]() { generateSelectionList (false); });
 
-	shipCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33 * 2, 411), eCheckBoxType::Ship));
+	shipCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (467 + 33 * 2, 411), eCheckBoxType::Ship);
 	shipCheckBox->setChecked (filterState->ShipChecked);
 	signalConnectionManager.connect (shipCheckBox->toggled, [this]() { generateSelectionList (false); });
 
-	buildingCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33 * 3, 411), eCheckBoxType::Building));
+	buildingCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (467 + 33 * 3, 411), eCheckBoxType::Building);
 	buildingCheckBox->setChecked (filterState->BuildingChecked);
 	signalConnectionManager.connect (buildingCheckBox->toggled, [this]() { generateSelectionList (false); });
 
-	tntCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (467 + 33 * 4, 411), eCheckBoxType::Tnt));
+	tntCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (467 + 33 * 4, 411), eCheckBoxType::Tnt);
 	tntCheckBox->setChecked (filterState->TNTChecked);
 	signalConnectionManager.connect (tntCheckBox->toggled, [this]() { generateSelectionList (false); });
 
 	//
 	// Gold Bar
 	//
-	creditLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 285), getPosition() + cPosition (362 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Credits"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-	goldBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (372, 301), getPosition() + cPosition (372 + 20, 301 + 115)), 0, player.getCredits(), eResourceBarType::Gold, eOrientationType::Vertical));
+	creditLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 285), getPosition() + cPosition (362 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Credits"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	goldBar = emplaceChild<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (372, 301), getPosition() + cPosition (372 + 20, 301 + 115)), 0, player.getCredits(), eResourceBarType::Gold, eOrientationType::Vertical);
 	signalConnectionManager.connect (goldBar->valueChanged, [this]() { goldChanged(); });
 	goldBar->disable();
-	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 275), getPosition() + cPosition (362 + 40, 275 + 10)), std::to_string (player.getCredits()), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	goldBarAmountLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 275), getPosition() + cPosition (362 + 40, 275 + 10)), std::to_string (player.getCredits()), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	//
 	// Upgrade Buttons
 	//
 	for (size_t i = 0; i < maxUpgradeButtons; ++i)
 	{
-		upgradeDecreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (283, 293 + 19 * i), ePushButtonType::ArrowLeftSmall, &SoundData.SNDObjectMenu));
+		upgradeDecreaseButton[i] = emplaceChild<cPushButton> (getPosition() + cPosition (283, 293 + 19 * i), ePushButtonType::ArrowLeftSmall, &SoundData.SNDObjectMenu);
 		signalConnectionManager.connect (upgradeDecreaseButton[i]->clicked, [this, i]() { upgradeDecreaseClicked (i); });
 
-		upgradeIncreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (283 + 18, 293 + 19 * i), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
+		upgradeIncreaseButton[i] = emplaceChild<cPushButton> (getPosition() + cPosition (283 + 18, 293 + 19 * i), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu);
 		signalConnectionManager.connect (upgradeIncreaseButton[i]->clicked, [this, i]() { upgradeIncreaseClicked (i); });
 
-		upgradeCostLabel[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (283 + 40, 293 + 2 + 19 * i), getPosition() + cPosition (283 + 40 + 40, 293 + 2 + 19 * i + 10)), ""));
+		upgradeCostLabel[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (283 + 40, 293 + 2 + 19 * i), getPosition() + cPosition (283 + 40 + 40, 293 + 2 + 19 * i + 10)), "");
 	}
 
 	generateSelectionList (true);

@@ -43,31 +43,31 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 	cWindow (LoadPCX (GFXOD_DIALOG_TRANSFER), eWindowBackgrounds::Alpha),
 	resourceType (getCommonResourceType (sourceUnit, destinationUnit))
 {
-	transferLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (142, 48), getPosition() + cPosition (142 + 32, 48 + 15)), "", eUnicodeFontType::LatinBig, eAlignmentType::CenterHorizontal));
+	transferLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (142, 48), getPosition() + cPosition (142 + 32, 48 + 15)), "", eUnicodeFontType::LatinBig, eAlignmentType::CenterHorizontal);
 
-	arrowImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (140, 77)));
+	arrowImage = emplaceChild<cImage> (getPosition() + cPosition (140, 77));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 105), getPosition() + cPosition (40 + 80, 105 + 10)), getName (sourceUnit), eUnicodeFontType::LatinSmallWhite, eAlignmentType::CenterHorizontal));
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (190, 105), getPosition() + cPosition (210 + 80, 105 + 10)), getName (destinationUnit), eUnicodeFontType::LatinSmallWhite, eAlignmentType::CenterHorizontal));
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 105), getPosition() + cPosition (40 + 80, 105 + 10)), getName (sourceUnit), eUnicodeFontType::LatinSmallWhite, eAlignmentType::CenterHorizontal);
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (190, 105), getPosition() + cPosition (210 + 80, 105 + 10)), getName (destinationUnit), eUnicodeFontType::LatinSmallWhite, eAlignmentType::CenterHorizontal);
 
-	sourceUnitCargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (18, 60), getPosition() + cPosition (18 + 20, 60 + 10)), "", eUnicodeFontType::LatinSmallWhite, eAlignmentType::CenterHorizontal));
-	destinationUnitCargoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (272, 60), getPosition() + cPosition (272 + 20, 60 + 10)), "", eUnicodeFontType::LatinSmallWhite, eAlignmentType::CenterHorizontal));
+	sourceUnitCargoLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (18, 60), getPosition() + cPosition (18 + 20, 60 + 10)), "", eUnicodeFontType::LatinSmallWhite, eAlignmentType::CenterHorizontal);
+	destinationUnitCargoLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (272, 60), getPosition() + cPosition (272 + 20, 60 + 10)), "", eUnicodeFontType::LatinSmallWhite, eAlignmentType::CenterHorizontal);
 
-	auto sourceUnitImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (39, 26)));
-	auto destinationUnitImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (208, 26)));
+	auto sourceUnitImage = emplaceChild<cImage> (getPosition() + cPosition (39, 26));
+	auto destinationUnitImage = emplaceChild<cImage> (getPosition() + cPosition (208, 26));
 
-	resourceBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (43, 159), getPosition() + cPosition (43 + 223, 159 + 16)), 0, 100, getResourceBarType (sourceUnit, destinationUnit), eOrientationType::Horizontal));
+	resourceBar = emplaceChild<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (43, 159), getPosition() + cPosition (43 + 223, 159 + 16)), 0, 100, getResourceBarType (sourceUnit, destinationUnit), eOrientationType::Horizontal);
 	signalConnectionManager.connect (resourceBar->valueChanged, [this]() { transferValueChanged(); });
-	auto increaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (279, 159), ePushButtonType::ArrowRightSmall));
+	auto increaseButton = emplaceChild<cPushButton> (getPosition() + cPosition (279, 159), ePushButtonType::ArrowRightSmall);
 	signalConnectionManager.connect (increaseButton->clicked, [this]() { resourceBar->increase (1); });
-	auto decreaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (17, 159), ePushButtonType::ArrowLeftSmall));
+	auto decreaseButton = emplaceChild<cPushButton> (getPosition() + cPosition (17, 159), ePushButtonType::ArrowLeftSmall);
 	signalConnectionManager.connect (decreaseButton->clicked, [this]() { resourceBar->decrease (1); });
 
-	doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (159, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
+	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (159, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal);
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
-	cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (71, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal));
+	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (71, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal);
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 

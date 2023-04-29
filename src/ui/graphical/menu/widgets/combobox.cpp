@@ -35,18 +35,18 @@ cComboBox::cComboBox (const cBox<cPosition>& area) :
 	auto font = cUnicodeFont::font.get();
 
 	const cBox<cPosition> listViewArea (cPosition (area.getMinCorner().x(), area.getMaxCorner().y() - 1), cPosition (area.getMaxCorner().x() - 3, area.getMaxCorner().y() + 5));
-	listView = addChild (std::make_unique<cListView<cTextListViewItem>> (listViewArea, eScrollBarStyle::Modern));
+	listView = emplaceChild<cListView<cTextListViewItem>> (listViewArea, eScrollBarStyle::Modern);
 	listView->setBeginMargin (cPosition (2, 2));
 	listView->setEndMargin (cPosition (2, 0));
 	listView->setItemDistance (0);
 	listView->hide();
 	listView->disable();
 
-	downButton = addChild (std::make_unique<cCheckBox> (getEndPosition(), eCheckBoxType::ArrowDownSmall));
+	downButton = emplaceChild<cCheckBox> (getEndPosition(), eCheckBoxType::ArrowDownSmall);
 	downButton->move (downButton->getSize() * -1);
 
 	const cBox<cPosition> lineEditArea (getPosition() + cPosition (2, (area.getSize().y() - font->getFontHeight (eUnicodeFontType::LatinNormal)) / 2) + 1, cPosition (getEndPosition().x() - downButton->getSize().x() - 2, getPosition().y() + (area.getSize().y() - font->getFontHeight (eUnicodeFontType::LatinNormal)) / 2 + font->getFontHeight (eUnicodeFontType::LatinNormal)));
-	lineEdit = addChild (std::make_unique<cLineEdit> (lineEditArea));
+	lineEdit = emplaceChild<cLineEdit> (lineEditArea);
 	lineEdit->setReadOnly (true);
 
 	signalConnectionManager.connect (lineEdit->clicked, [this, area]() {

@@ -52,16 +52,16 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	cWindow (LoadPCX (GFXOD_MINEMANAGER)),
 	building (building_)
 {
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), lngPack.i18n ("Text~Title~Mine"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), lngPack.i18n ("Text~Title~Mine"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (525, 16), cPosition (525 + 60, 16 + 10))));
+	auto turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (525, 16), cPosition (525 + 60, 16 + 10)));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
 	for (size_t i = 0; i < 3; ++i)
 	{
-		metalBars[i] = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (174, 70 + 37 * i), getPosition() + cPosition (174 + 240, 70 + 37 * i + 30)), 0, 100, eResourceBarType::Metal, eOrientationType::Horizontal));
-		oilBars[i] = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (174, 190 + 37 * i), getPosition() + cPosition (174 + 240, 190 + 37 * i + 30)), 0, 100, eResourceBarType::Oil, eOrientationType::Horizontal));
-		goldBars[i] = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (174, 310 + 37 * i), getPosition() + cPosition (174 + 240, 310 + 37 * i + 30)), 0, 100, eResourceBarType::Gold, eOrientationType::Horizontal));
+		metalBars[i] = emplaceChild<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (174, 70 + 37 * i), getPosition() + cPosition (174 + 240, 70 + 37 * i + 30)), 0, 100, eResourceBarType::Metal, eOrientationType::Horizontal);
+		oilBars[i] = emplaceChild<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (174, 190 + 37 * i), getPosition() + cPosition (174 + 240, 190 + 37 * i + 30)), 0, 100, eResourceBarType::Oil, eOrientationType::Horizontal);
+		goldBars[i] = emplaceChild<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (174, 310 + 37 * i), getPosition() + cPosition (174 + 240, 310 + 37 * i + 30)), 0, 100, eResourceBarType::Gold, eOrientationType::Horizontal);
 
 		if (i > 0)
 		{
@@ -70,7 +70,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 			goldBars[i]->disable();
 		}
 
-		noneBars[i] = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (174, 70 + 120 * i), getPosition() + cPosition (174 + 240, 70 + 120 * i + 30)), 0, 100, eResourceBarType::Blocked, eOrientationType::Horizontal));
+		noneBars[i] = emplaceChild<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (174, 70 + 120 * i), getPosition() + cPosition (174 + 240, 70 + 120 * i + 30)), 0, 100, eResourceBarType::Blocked, eOrientationType::Horizontal);
 		noneBars[i]->disable();
 		noneBars[i]->setInverted (true);
 		noneBars[i]->setValue (0);
@@ -83,11 +83,11 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 		else
 			resourceName = lngPack.i18n ("Text~Title~Gold");
 
-		resourceLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 121 * i + 10)), resourceName, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-		usageLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 + 121 * i + 10)), lngPack.i18n ("Text~Others~Usage_7"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
-		reserveLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 * 2 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 * 2 + 121 * i + 10)), lngPack.i18n ("Text~Comp~Reserve"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+		resourceLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 121 * i + 10)), resourceName, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+		usageLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 + 121 * i + 10)), lngPack.i18n ("Text~Others~Usage_7"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+		reserveLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 * 2 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 * 2 + 121 * i + 10)), lngPack.i18n ("Text~Comp~Reserve"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-		auto decreaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (139, 70 + 120 * i), ePushButtonType::ArrowLeftBig));
+		auto decreaseButton = emplaceChild<cPushButton> (getPosition() + cPosition (139, 70 + 120 * i), ePushButtonType::ArrowLeftBig);
 		signalConnectionManager.connect (decreaseButton->clicked, [this, i]() {
 			if (i == 0)
 				metalBars[0]->decrease (1);
@@ -96,7 +96,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 			else if (i == 2)
 				goldBars[0]->decrease (1);
 		});
-		auto increaseButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (421, 70 + 120 * i), ePushButtonType::ArrowRightBig));
+		auto increaseButton = emplaceChild<cPushButton> (getPosition() + cPosition (421, 70 + 120 * i), ePushButtonType::ArrowRightBig);
 		signalConnectionManager.connect (increaseButton->clicked, [this, i]() {
 			if (i == 0 && metalBars[0]->getValue() + noneBars[i]->getValue() < metalBars[0]->getMaxValue())
 				metalBars[0]->increase (1);
@@ -111,9 +111,9 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	// above the resource bars.
 	for (size_t i = 0; i < 3; ++i)
 	{
-		metalLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 78 + 37 * i), getPosition() + cPosition (174 + 240, 78 + 37 * i + 15)), "Metal", eUnicodeFontType::LatinBig, eAlignmentType::CenterHorizontal));
-		oilLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 198 + 37 * i), getPosition() + cPosition (174 + 240, 198 + 37 * i + 15)), "Oil", eUnicodeFontType::LatinBig, eAlignmentType::CenterHorizontal));
-		goldLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 318 + 37 * i), getPosition() + cPosition (174 + 240, 318 + 37 * i + 15)), "Gold", eUnicodeFontType::LatinBig, eAlignmentType::CenterHorizontal));
+		metalLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 78 + 37 * i), getPosition() + cPosition (174 + 240, 78 + 37 * i + 15)), "Metal", eUnicodeFontType::LatinBig, eAlignmentType::CenterHorizontal);
+		oilLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 198 + 37 * i), getPosition() + cPosition (174 + 240, 198 + 37 * i + 15)), "Oil", eUnicodeFontType::LatinBig, eAlignmentType::CenterHorizontal);
+		goldLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (174, 318 + 37 * i), getPosition() + cPosition (174 + 240, 318 + 37 * i + 15)), "Gold", eUnicodeFontType::LatinBig, eAlignmentType::CenterHorizontal);
 
 		// disable the label so that they will not receive any mouse events
 		metalLabels[i]->disable();
@@ -141,7 +141,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	signalConnectionManager.connect (oilBars[0]->valueChanged, [this]() { handleOilChanged(); });
 	signalConnectionManager.connect (goldBars[0]->valueChanged, [this]() { handleGoldChanged(); });
 
-	doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (514, 430), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Done")));
+	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (514, 430), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Done"));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 

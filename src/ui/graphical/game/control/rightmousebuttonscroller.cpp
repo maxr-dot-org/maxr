@@ -59,7 +59,7 @@ cRightMouseButtonScrollerWidget::cRightMouseButtonScrollerWidget (std::shared_pt
 		}
 	}
 
-	startIndicator = addChild (std::make_unique<cImage> (cPosition (0, 0), image.get()));
+	startIndicator = emplaceChild<cImage> (cPosition (0, 0), image.get());
 	startIndicator->disable();
 }
 

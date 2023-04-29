@@ -57,10 +57,10 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	else
 		surface = nullptr;
 
-	unitImage = addChild (std::make_unique<cImage> (cPosition (0, 0), surface.get()));
+	unitImage = emplaceChild<cImage> (cPosition (0, 0), surface.get());
 	unitImage->setConsumeClick (false);
 
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x() + 3, 0), cPosition (width, unitImage->getEndPosition().y())), getStaticUnitName (data), eUnicodeFontType::LatinSmallWhite, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	nameLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition().x() + 3, 0), cPosition (width, unitImage->getEndPosition().y())), getStaticUnitName (data), eUnicodeFontType::LatinSmallWhite, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical);
 	nameLabel->setWordWrap (true);
 	nameLabel->setConsumeClick (false);
 

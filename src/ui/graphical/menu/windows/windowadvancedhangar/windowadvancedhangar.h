@@ -83,15 +83,15 @@ cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface 
 template <typename SelectedUnitItemType>
 void cWindowAdvancedHangar<SelectedUnitItemType>::initialize()
 {
-	selectedUnitList = addChild (std::make_unique<cListView<SelectedUnitItemType>> (cBox<cPosition> (getPosition() + cPosition (330, 14), getPosition() + cPosition (330 + 130, 12 + 220))));
+	selectedUnitList = emplaceChild<cListView<SelectedUnitItemType>> (cBox<cPosition> (getPosition() + cPosition (330, 14), getPosition() + cPosition (330 + 130, 12 + 220)));
 	selectedUnitList->setEndMargin (cPosition (2, 9));
 	signalConnectionManager.connect (selectedUnitList->itemClicked, [this] (SelectedUnitItemType& unitItem) { selectedUnitClicked (unitItem); });
 	signalConnectionManager.connect (selectedUnitList->selectionChanged, [this]() { handleSelectionChanged(); });
 
-	selectedListUpButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (327, 240), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
+	selectedListUpButton = emplaceChild<cPushButton> (getPosition() + cPosition (327, 240), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu);
 	signalConnectionManager.connect (selectedListUpButton->clicked, [this]() { selectedUnitList->pageUp(); });
 
-	selectedListDownButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (348, 240), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
+	selectedListDownButton = emplaceChild<cPushButton> (getPosition() + cPosition (348, 240), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu);
 	signalConnectionManager.connect (selectedListDownButton->clicked, [this]() { selectedUnitList->pageDown(); });
 
 	signalConnectionManager.connect (selectionUnitClickedSecondTime, [this] (const cUnitListViewItemBuy& unitItem) { handleSelectionUnitClickedSecondTime (unitItem); });

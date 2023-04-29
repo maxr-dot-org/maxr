@@ -29,6 +29,7 @@ public:
 	explicit cFrame (const cBox<cPosition>& area);
 
 	using cWidget::addChild;
+	using cWidget::emplaceChild;
 };
 
 #endif

@@ -26,11 +26,11 @@
 cEditableCheckBox::cEditableCheckBox (const cBox<cPosition>& area, const std::string& prefix, const std::string& suffix, eUnicodeFontType fontType) :
 	cWidget (area)
 {
-	checkBox = addChild (std::make_unique<cCheckBox> (area.getMinCorner(), prefix, fontType, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	checkBox = emplaceChild<cCheckBox> (area.getMinCorner(), prefix, fontType, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	auto prefixSize = cUnicodeFont::font->getTextWide (prefix + ".", fontType);
 	auto suffixSize = cUnicodeFont::font->getTextWide (suffix + ".", fontType);
-	lineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (area.getMinCorner() + cPosition (prefixSize, 0), area.getMaxCorner() + cPosition (-suffixSize, 0))));
-	suffixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (area.getMaxCorner().x() - suffixSize, area.getMinCorner().y()), area.getMaxCorner()), suffix, eUnicodeFontType::LatinNormal, eAlignmentType::Right));
+	lineEdit = emplaceChild<cLineEdit> (cBox<cPosition> (area.getMinCorner() + cPosition (prefixSize, 0), area.getMaxCorner() + cPosition (-suffixSize, 0)));
+	suffixLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (area.getMaxCorner().x() - suffixSize, area.getMinCorner().y()), area.getMaxCorner()), suffix, eUnicodeFontType::LatinNormal, eAlignmentType::Right);
 
 	signalConnectionManager.connect (checkBox->toggled, [this]() {
 		if (checkBox->isChecked())

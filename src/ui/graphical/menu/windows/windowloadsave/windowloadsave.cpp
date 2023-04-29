@@ -29,10 +29,10 @@
 cWindowLoadSave::cWindowLoadSave (std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindowLoad (std::move (turnTimeClock))
 {
-	exitButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (246, 438), ePushButtonType::Huge, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
+	exitButton = emplaceChild<cPushButton> (getPosition() + cPosition (246, 438), ePushButtonType::Huge, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit"));
 	signalConnectionManager.connect (exitButton->clicked, [this]() { exit(); });
 
-	saveButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (132, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Save")));
+	saveButton = emplaceChild<cPushButton> (getPosition() + cPosition (132, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Save"));
 	signalConnectionManager.connect (saveButton->clicked, [this]() { handleSaveClicked(); });
 	saveButton->lock();
 }

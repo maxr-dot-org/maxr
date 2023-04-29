@@ -49,13 +49,13 @@
 cWindowSinglePlayer::cWindowSinglePlayer() :
 	cWindowMain (lngPack.i18n ("Text~Others~Single_Player"))
 {
-	newGameButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_New")));
+	newGameButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_New"));
 	signalConnectionManager.connect (newGameButton->clicked, [this]() { newGameClicked(); });
 
-	loadGameButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_Load")));
+	loadGameButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_Load"));
 	signalConnectionManager.connect (loadGameButton->clicked, [this]() { loadGameClicked(); });
 
-	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back")));
+	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 }
 

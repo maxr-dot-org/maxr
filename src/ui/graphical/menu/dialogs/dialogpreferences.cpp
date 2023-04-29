@@ -50,59 +50,59 @@ cDialogPreferences::cDialogPreferences() :
 	SDL_Rect dest = {140, 154, 0, 0};
 	SDL_BlitSurface (getSurface(), &src, getSurface(), &dest);
 
-	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 15), getPosition() + cPosition (getArea().getMaxCorner().x(), 25)), lngPack.i18n ("Text~Settings~Preferences"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 15), getPosition() + cPosition (getArea().getMaxCorner().x(), 25)), lngPack.i18n ("Text~Settings~Preferences"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	volumeLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56), getPosition() + cPosition (135, 66)), lngPack.i18n ("Text~Settings~Volume"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	volumeLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56), getPosition() + cPosition (135, 66)), lngPack.i18n ("Text~Settings~Volume"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 
-	musicLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20), getPosition() + cPosition (135, 66 + 20)), lngPack.i18n ("Text~Settings~Music"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	musicVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20), getPosition() + cPosition (240, 70 + 20)), 0, 128, eOrientationType::Horizontal));
+	musicLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20), getPosition() + cPosition (135, 66 + 20)), lngPack.i18n ("Text~Settings~Music"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	musicVolumeSlider = emplaceChild<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20), getPosition() + cPosition (240, 70 + 20)), 0, 128, eOrientationType::Horizontal);
 	signalConnectionManager.connect (musicVolumeSlider->valueChanged, [this]() { musicVolumeChanged(); });
-	disableMusicCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (245, 73), lngPack.i18n ("Text~Settings~Disable")));
+	disableMusicCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (245, 73), lngPack.i18n ("Text~Settings~Disable"));
 	signalConnectionManager.connect (disableMusicCheckBox->toggled, [this]() { musicMuteChanged(); });
 
-	effectsLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20 * 2), getPosition() + cPosition (135, 66 + 20 * 2)), lngPack.i18n ("Text~Settings~Effects"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	effectsVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20 * 2), getPosition() + cPosition (240, 70 + 20 * 2)), 0, 128, eOrientationType::Horizontal));
+	effectsLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20 * 2), getPosition() + cPosition (135, 66 + 20 * 2)), lngPack.i18n ("Text~Settings~Effects"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	effectsVolumeSlider = emplaceChild<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20 * 2), getPosition() + cPosition (240, 70 + 20 * 2)), 0, 128, eOrientationType::Horizontal);
 	signalConnectionManager.connect (effectsVolumeSlider->valueChanged, [this]() { effectsVolumeChanged(); });
-	disableEffectsCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (245, 73 + 20), lngPack.i18n ("Text~Settings~Disable")));
+	disableEffectsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (245, 73 + 20), lngPack.i18n ("Text~Settings~Disable"));
 	signalConnectionManager.connect (disableEffectsCheckBox->toggled, [this]() { effectsMuteChanged(); });
-	effects3DCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (340, 73 + 20), "3D"));
+	effects3DCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (340, 73 + 20), "3D");
 
-	voicesLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20 * 3), getPosition() + cPosition (135, 66 + 20 * 3)), lngPack.i18n ("Text~Settings~Voices"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	voicesVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20 * 3), getPosition() + cPosition (240, 70 + 20 * 3)), 0, 128, eOrientationType::Horizontal));
+	voicesLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20 * 3), getPosition() + cPosition (135, 66 + 20 * 3)), lngPack.i18n ("Text~Settings~Voices"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	voicesVolumeSlider = emplaceChild<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20 * 3), getPosition() + cPosition (240, 70 + 20 * 3)), 0, 128, eOrientationType::Horizontal);
 	signalConnectionManager.connect (voicesVolumeSlider->valueChanged, [this]() { voicesVolumeChanged(); });
-	disableVoicesCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (245, 73 + 20 * 2), lngPack.i18n ("Text~Settings~Disable")));
+	disableVoicesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (245, 73 + 20 * 2), lngPack.i18n ("Text~Settings~Disable"));
 	signalConnectionManager.connect (disableVoicesCheckBox->toggled, [this]() { voicesMuteChanged(); });
 
-	playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 158), getPosition() + cPosition (138, 168)), lngPack.i18n ("Text~Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	nameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (140, 154), getPosition() + cPosition (140 + 185, 154 + 18)), eLineEditFrameType::Box));
+	playerNameLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 158), getPosition() + cPosition (138, 168)), lngPack.i18n ("Text~Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	nameEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (140, 154), getPosition() + cPosition (140 + 185, 154 + 18)), eLineEditFrameType::Box);
 
-	colorLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 175), getPosition() + cPosition (135, 185)), lngPack.i18n ("Text~Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	colorSelector = addChild (std::make_unique<cColorSelector> (getPosition() + cPosition (160, 172), cRgbColor::black()));
+	colorLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 175), getPosition() + cPosition (135, 185)), lngPack.i18n ("Text~Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	colorSelector = emplaceChild<cColorSelector> (getPosition() + cPosition (160, 172), cRgbColor::black());
 
-	scrollSpeedLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 257), getPosition() + cPosition (135, 267)), lngPack.i18n ("Text~Settings~Scrollspeed"), eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	scrollSpeedSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 254), getPosition() + cPosition (240, 271)), 0, 128, eOrientationType::Horizontal));
+	scrollSpeedLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 257), getPosition() + cPosition (135, 267)), lngPack.i18n ("Text~Settings~Scrollspeed"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	scrollSpeedSlider = emplaceChild<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 254), getPosition() + cPosition (240, 271)), 0, 128, eOrientationType::Horizontal);
 
-	animationCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (25, 193), lngPack.i18n ("Text~Settings~Animation")));
-	shadowsCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (25, 193 + 20), lngPack.i18n ("Text~Settings~Shadows")));
-	aplhaCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (25, 193 + 20 * 2), lngPack.i18n ("Text~Settings~Alphaeffects")));
-	demageBuildingsCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (210, 193), lngPack.i18n ("Text~Settings~ShowDamage")));
-	demageVehiclesCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (210, 193 + 20), lngPack.i18n ("Text~Settings~ShowDamageVehicle")));
-	tracksCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (210, 193 + 20 * 2), lngPack.i18n ("Text~Settings~Tracks")));
+	animationCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193), lngPack.i18n ("Text~Settings~Animation"));
+	shadowsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20), lngPack.i18n ("Text~Settings~Shadows"));
+	aplhaCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20 * 2), lngPack.i18n ("Text~Settings~Alphaeffects"));
+	demageBuildingsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193), lngPack.i18n ("Text~Settings~ShowDamage"));
+	demageVehiclesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20), lngPack.i18n ("Text~Settings~ShowDamageVehicle"));
+	tracksCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20 * 2), lngPack.i18n ("Text~Settings~Tracks"));
 
-	autosaveCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (25, 294), lngPack.i18n ("Text~Settings~Autosave")));
-	introCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (25, 294 + 20), lngPack.i18n ("Text~Settings~Intro")));
-	windowCheckBox = addChild (std::make_unique<cCheckBox> (getPosition() + cPosition (25, 294 + 20 * 2), lngPack.i18n ("Text~Settings~Window")));
+	autosaveCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294), lngPack.i18n ("Text~Settings~Autosave"));
+	introCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294 + 20), lngPack.i18n ("Text~Settings~Intro"));
+	windowCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294 + 20 * 2), lngPack.i18n ("Text~Settings~Window"));
 
-	doneButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (208, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal));
+	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (208, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal);
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
-	cancelButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (118, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal));
+	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (118, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal);
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { cancelClicked(); });
 
-	languageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298 + 20), getPosition() + cPosition (140 + 95, 298 + 20 + 10)), lngPack.i18n ("Text~Settings~Language") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Right));
-	languagesComboBox = addChild (std::make_unique<cComboBox> (cBox<cPosition> (getPosition() + cPosition (240, 294 + 20), getPosition() + cPosition (240 + 100, 294 + 20 + 17))));
+	languageLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298 + 20), getPosition() + cPosition (140 + 95, 298 + 20 + 10)), lngPack.i18n ("Text~Settings~Language") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Right);
+	languagesComboBox = emplaceChild<cComboBox> (cBox<cPosition> (getPosition() + cPosition (240, 294 + 20), getPosition() + cPosition (240 + 100, 294 + 20 + 17)));
 	signalConnectionManager.connect (languagesComboBox->onItemChanged, [this] (const std::string& selectedLanguage) {
 		auto& settings = cSettings::getInstance();
 		if (iequals (selectedLanguage, settings.getLanguage()))
@@ -119,8 +119,8 @@ cDialogPreferences::cDialogPreferences() :
 		}
 	});
 
-	resolutionLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298), getPosition() + cPosition (140 + 95, 298 + 10)), lngPack.i18n ("Text~Settings~Resolution") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Right));
-	resolutionsComboBox = addChild (std::make_unique<cComboBox> (cBox<cPosition> (getPosition() + cPosition (240, 294), getPosition() + cPosition (240 + 100, 294 + 17))));
+	resolutionLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298), getPosition() + cPosition (140 + 95, 298 + 10)), lngPack.i18n ("Text~Settings~Resolution") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Right);
+	resolutionsComboBox = emplaceChild<cComboBox> (cBox<cPosition> (getPosition() + cPosition (240, 294), getPosition() + cPosition (240 + 100, 294 + 17)));
 
 	loadValues();
 }

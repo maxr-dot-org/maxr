@@ -39,12 +39,12 @@ cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::sha
 	cWindowHangar (LoadPCX (GFXOD_BUILD_SCREEN), unitsData, *vehicle_.getOwner()),
 	vehicle (vehicle_)
 {
-	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Vehicle"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Vehicle"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10))));
+	auto turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10)));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
-	speedHandler = addChild (std::make_unique<cBuildSpeedHandlerWidget> (getPosition() + cPosition (292, 345)));
+	speedHandler = emplaceChild<cBuildSpeedHandlerWidget> (getPosition() + cPosition (292, 345));
 
 	selectionUnitList->resize (cPosition (154, 380));
 	selectionUnitList->setItemDistance (2);
@@ -57,7 +57,7 @@ cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::sha
 
 	if (vehicle.getStaticData().canBuildPath)
 	{
-		pathButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (338, 428), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Path"), eUnicodeFontType::LatinNormal));
+		pathButton = emplaceChild<cPushButton> (getPosition() + cPosition (338, 428), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Path"), eUnicodeFontType::LatinNormal);
 		signalConnectionManager.connect (pathButton->clicked, [this]() { donePath(); });
 	}
 

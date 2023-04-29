@@ -43,8 +43,8 @@ cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) 
 
 	for (size_t i = 0; i < maxRows; ++i)
 	{
-		amountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (3, 2 + rowHeight * i), getPosition() + cPosition (3 + 35, 2 + rowHeight * i + rowHeight)), "", eUnicodeFontType::LatinSmallWhite, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Bottom));
-		nameLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 2 + rowHeight * i), getPosition() + cPosition (40 + 40, 2 + rowHeight * i + rowHeight)), "", eUnicodeFontType::LatinSmallWhite, toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom));
+		amountLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (3, 2 + rowHeight * i), getPosition() + cPosition (3 + 35, 2 + rowHeight * i + rowHeight)), "", eUnicodeFontType::LatinSmallWhite, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Bottom);
+		nameLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 2 + rowHeight * i), getPosition() + cPosition (40 + 40, 2 + rowHeight * i + rowHeight)), "", eUnicodeFontType::LatinSmallWhite, toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom);
 	}
 
 	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));

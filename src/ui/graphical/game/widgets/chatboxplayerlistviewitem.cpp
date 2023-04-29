@@ -31,14 +31,14 @@ cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) 
 	cAbstractListViewItem (cPosition (138, 0)),
 	player (&player_)
 {
-	readyImage = addChild (std::make_unique<cImage> (getPosition() + cPosition (getSize().x() - 10, 0)));
+	readyImage = emplaceChild<cImage> (getPosition() + cPosition (getSize().x() - 10, 0));
 
-	colorImage = addChild (std::make_unique<cImage> (getPosition()));
+	colorImage = emplaceChild<cImage> (getPosition());
 
 	updatePlayerColor();
 	updatePlayerFinishedTurn();
 
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (colorImage->getEndPosition().x() + 4, 0), getPosition() + cPosition (getSize().x() - readyImage->getSize().x(), readyImage->getSize().y())), player->getName()));
+	nameLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (colorImage->getEndPosition().x() + 4, 0), getPosition() + cPosition (getSize().x() - readyImage->getSize().x(), readyImage->getSize().y())), player->getName());
 	nameLabel->setConsumeClick (false);
 
 	fitToChildren();

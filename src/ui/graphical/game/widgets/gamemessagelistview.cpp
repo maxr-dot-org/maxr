@@ -26,7 +26,7 @@ cGameMessageListView::cGameMessageListView (const cBox<cPosition>& area) :
 	cWidget (area),
 	maximalDisplayTime (15)
 {
-	listView = addChild (std::make_unique<cListView<cGameMessageListViewItem>> (area, false, nullptr));
+	listView = emplaceChild<cListView<cGameMessageListViewItem>> (area, false, nullptr);
 	listView->setBeginMargin (cPosition (0, 0));
 	listView->setEndMargin (cPosition (0, 0));
 	listView->setItemDistance (0);

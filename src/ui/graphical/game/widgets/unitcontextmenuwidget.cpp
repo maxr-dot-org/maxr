@@ -44,7 +44,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 
 	cBox<cPosition> area (getPosition(), getPosition());
 	cPosition nextButtonPosition = getPosition();
-	auto mouseActionGroup = addChild (std::make_unique<cRadioGroup> (true));
+	auto mouseActionGroup = emplaceChild<cRadioGroup> (true);
 
 	// Attack
 	if (unitHasAttackEntry (unit, player))
@@ -59,7 +59,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Build:
 	if (unitHasBuildEntry (unit, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Build_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Build_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { buildClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -69,7 +69,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Distribute:
 	if (unitHasDistributeEntry (building, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Distribution_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Distribution_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { distributeClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -88,7 +88,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Start:
 	if (unitHasStartEntry (building, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Start_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Start_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { startClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -98,7 +98,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	const cVehicle* vehicle = dynamic_cast<const cVehicle*> (unit);
 	if (unitHasAutoEntry (vehicle, player))
 	{
-		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Auto_7"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
+		auto button = emplaceChild<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Auto_7"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu);
 		button->setChecked (vehicle->isSurveyorAutoMoveActive());
 		button->toggled.connect ([this]() { autoToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
@@ -108,7 +108,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Stop:
 	if (unitHasStopEntry (unit, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Stop_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Stop_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { stopClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -117,7 +117,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Remove:
 	if (unitHasRemoveEntry (vehicle, player, map))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Clear_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Clear_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { removeClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -126,7 +126,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Manual fire
 	if (unitHasManualFireEntry (unit, player))
 	{
-		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~ManualFireMode_7"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
+		auto button = emplaceChild<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~ManualFireMode_7"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu);
 		button->setChecked (unit->isManualFireActive());
 		button->toggled.connect ([this]() { manualFireToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
@@ -136,7 +136,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Sentry status:
 	if (unitHasSentryEntry (unit, player))
 	{
-		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Sentry"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
+		auto button = emplaceChild<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Sentry"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu);
 		button->setChecked (unit->isSentryActive());
 		button->toggled.connect ([this]() { sentryToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
@@ -146,7 +146,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Activate
 	if (unitHasActivateEntry (unit, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Active_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Active_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { activateClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -175,7 +175,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// research
 	if (unitHasResearchEntry (building, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Research"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Research"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { researchClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -184,7 +184,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// gold upgrades screen
 	if (unitHasBuyEntry (building, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Upgrademenu_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Upgrademenu_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { buyUpgradesClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -193,7 +193,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Update this
 	if (unitHasUpgradeThisEntry (building, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Upgradethis_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Upgradethis_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { upgradeThisClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -202,7 +202,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Update all
 	if (unitHasUpgradeAllEntry (building, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~UpgradeAll_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~UpgradeAll_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { upgradeAllClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -211,7 +211,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Self destruct
 	if (unitHasSelfDestroyEntry (building, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Destroy_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Destroy_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { selfDestroyClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -240,7 +240,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Lay mines:
 	if (unitHasLayMinesEntry (vehicle, player))
 	{
-		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Seed"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
+		auto button = emplaceChild<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Seed"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu);
 		button->setChecked (vehicle->isUnitLayingMines());
 		button->toggled.connect ([this]() { layMinesToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
@@ -250,7 +250,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Collect/clear mines:
 	if (unitHasCollectMinesEntry (vehicle, player))
 	{
-		auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Clear_7"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
+		auto button = emplaceChild<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Clear_7"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu);
 		button->setChecked (vehicle->isUnitClearingMines());
 		button->toggled.connect ([this]() { collectMinesToggled(); });
 		nextButtonPosition.y() += button->getSize().y();
@@ -280,7 +280,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Info
 	if (unitHasInfoEntry (unit, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Info_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Info_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { infoClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());
@@ -289,7 +289,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	// Done
 	if (unitHasDoneEntry (unit, player))
 	{
-		auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Done_7"), eUnicodeFontType::LatinSmallWhite));
+		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Text~Others~Done_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { doneClicked(); });
 		nextButtonPosition.y() += button->getSize().y();
 		area.add (button->getArea());

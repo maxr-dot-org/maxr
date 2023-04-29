@@ -34,19 +34,19 @@
 cWindowMultiPlayer::cWindowMultiPlayer() :
 	cWindowMain (lngPack.i18n ("Text~Others~Multi_Player"))
 {
-	hostButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~TCPIP_Host")));
+	hostButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~TCPIP_Host"));
 	signalConnectionManager.connect (hostButton->clicked, [this]() { tcpHostClicked(); });
 
-	clientButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~TCPIP_Client")));
+	clientButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~TCPIP_Client"));
 	signalConnectionManager.connect (clientButton->clicked, [this]() { tcpClientClicked(); });
 
-	newHotSeatButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~HotSeat_New")));
+	newHotSeatButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~HotSeat_New"));
 	signalConnectionManager.connect (newHotSeatButton->clicked, [this]() { newHotSeatClicked(); });
 
-	loadHotSeatButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~HotSeat_Load")));
+	loadHotSeatButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~HotSeat_Load"));
 	signalConnectionManager.connect (loadHotSeatButton->clicked, [this]() { loadHotSeatClicked(); });
 
-	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back")));
+	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 }
 

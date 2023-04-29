@@ -38,7 +38,7 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 {
 	assert (unitsData);
 	assert (clanData);
-	titleLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	//
 	// Clan Images
@@ -61,10 +61,10 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 
 			auto image = LoadPCX (clanLogoPaths[index]);
 			SDL_SetColorKey (image.get(), SDL_TRUE, 0xFF00FF);
-			clanImages[index] = addChild (std::make_unique<cImage> (getPosition() + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image.get(), &SoundData.SNDHudButton));
+			clanImages[index] = emplaceChild<cImage> (getPosition() + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image.get(), &SoundData.SNDHudButton);
 			signalConnectionManager.connect (clanImages[index]->clicked, [this, index]() { clanClicked (clanImages[index]); });
 
-			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (37 + 155 * column, 144 + 150 * row), getPosition() + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), getClanName (clanData->getClans()[index]), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+			clanTitles[index] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (37 + 155 * column, 144 + 150 * row), getPosition() + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), getClanName (clanData->getClans()[index]), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 		}
 	}
 	clanTitles[selectedClan]->setText (">" + getClanName (clanData->getClans()[selectedClan]) + "<");
@@ -72,17 +72,17 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 	//
 	// Clan Description
 	//
-	clanDescription1 = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (47, 362), getPosition() + cPosition (47 + 550, 362 + 50)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	clanDescription2 = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (380, 362), getPosition() + cPosition (380 + 217, 362 + 50)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left));
-	clanShortDescription = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (47, 349), getPosition() + cPosition (47 + 550, 349 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left));
+	clanDescription1 = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (47, 362), getPosition() + cPosition (47 + 550, 362 + 50)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	clanDescription2 = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (380, 362), getPosition() + cPosition (380 + 217, 362 + 50)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	clanShortDescription = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (47, 349), getPosition() + cPosition (47 + 550, 349 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 
 	//
 	// Buttons
 	//
-	okButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
+	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK"));
 	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
-	backButton = addChild (std::make_unique<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
+	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	updateClanDescription();

@@ -34,13 +34,13 @@ cSaveSlotWidget::cSaveSlotWidget (const cPosition& position) :
 	empty (true),
 	renameable (false)
 {
-	numberLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (13, 28), getPosition() + cPosition (13 + 20, 28 + 15)), "", eUnicodeFontType::LatinBig));
+	numberLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (13, 28), getPosition() + cPosition (13 + 20, 28 + 15)), "", eUnicodeFontType::LatinBig);
 	numberLabel->setConsumeClick (false);
-	timeLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (42, 19), getPosition() + cPosition (42 + 98, 19 + 10)), ""));
+	timeLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (42, 19), getPosition() + cPosition (42 + 98, 19 + 10)), "");
 	timeLabel->setConsumeClick (false);
-	typeLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition() + cPosition (145, 19), getPosition() + cPosition (145 + 46, 19 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal));
+	typeLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (145, 19), getPosition() + cPosition (145 + 46, 19 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 	typeLabel->setConsumeClick (false);
-	nameLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (42, 42), getPosition() + cPosition (42 + 148, 42 + 10))));
+	nameLineEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (42, 42), getPosition() + cPosition (42 + 148, 42 + 10)));
 	nameLineEdit->setReadOnly (true);
 
 	resize (cPosition (203, 71));
