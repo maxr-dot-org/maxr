@@ -147,7 +147,7 @@ bool cPushButton::handleMouseReleased (cApplication& application, cMouse& mouse,
 //------------------------------------------------------------------------------
 bool cPushButton::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (button == eMouseButtonType::Left)
+	if (button == eMouseButtonType::Left && !isLocked)
 	{
 		if (clickSound) cSoundDevice::getInstance().playSoundEffect (*clickSound);
 		clicked();
