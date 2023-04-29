@@ -378,6 +378,12 @@ protected:
 	template <typename WidgetType>
 	WidgetType* addChild (std::unique_ptr<WidgetType> child);
 
+	template <typename WidgetType, typename... Ts>
+	WidgetType* emplaceChild (Ts&&... args)
+	{
+		return addChild (std::make_unique<WidgetType> (std::forward<Ts> (args)...));
+	}
+
 	void setParent (cWidget* parent);
 
 	/**
