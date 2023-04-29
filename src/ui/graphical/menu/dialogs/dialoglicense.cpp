@@ -58,9 +58,13 @@ cDialogLicense::cDialogLicense() :
 	signalConnectionManager.connect (okButton->clicked, [this]() { close(); });
 
 	upButton = emplaceChild<cPushButton> (getPosition() + cPosition (241, 187), ePushButtonType::ArrowUpSmall);
+	upButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_PAGEUP)));
+	upButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_UP)));
 	signalConnectionManager.connect (upButton->clicked, [this]() { pageUp(); });
 
 	downButton = emplaceChild<cPushButton> (getPosition() + cPosition (261, 187), ePushButtonType::ArrowDownSmall);
+	downButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_PAGEDOWN)));
+	downButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_DOWN)));
 	signalConnectionManager.connect (downButton->clicked, [this]() { pageDown(); });
 
 	readAuthors();
