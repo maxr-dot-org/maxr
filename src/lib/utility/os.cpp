@@ -23,23 +23,16 @@
 
 #include <iostream>
 
-#ifdef _WIN32
-# include <direct.h>
-# include <io.h>
-#else
+#ifndef _WIN32
 # include <dirent.h>
 #endif
 
 #ifdef WIN32
-# include <direct.h>
 # include <shlobj.h>
-# include <sys/stat.h>
-# include <sys/types.h>
 #else
 # include <sys/stat.h>
 # include <unistd.h>
 #endif
-
 #include <ctime>
 
 namespace os
@@ -49,31 +42,11 @@ namespace os
 	std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& directory)
 	{
 		std::vector<std::string> files;
-#ifdef _WIN32
-		_finddata_t DataFile;
-		intptr_t const lFile = _findfirst ((directory / "*.*").string().c_str(), &DataFile);
-		if (lFile != -1)
+
+		for (auto it = std::filesystem::directory_iterator{directory}; it != std::filesystem::directory_iterator{}; ++it)
 		{
-			do
-			{
-				if (DataFile.attrib & _A_SUBDIR) continue;
-				if (DataFile.name[0] == '.') continue;
-				files.push_back (DataFile.name);
-			} while (_findnext (lFile, &DataFile) == 0);
-			_findclose (lFile);
+			files.push_back (it->path().filename().string());
 		}
-#else
-		if (DIR* const dir = opendir (directory.string().c_str()))
-		{
-			while (struct dirent* const entry = readdir (dir))
-			{
-				char const* const name = entry->d_name;
-				if (name[0] == '.') continue;
-				files.push_back (name);
-			}
-			closedir (dir);
-		}
-#endif
 		return files;
 	}
 
