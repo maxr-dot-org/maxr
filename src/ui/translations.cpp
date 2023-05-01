@@ -237,18 +237,20 @@ std::string getClanStatsDescription (const cClanUnitStat& clanUnitStat, const cU
 			{eClanModification::Speed, lngPack.i18n ("Text~Others~Speed_7"), data->getSpeedMax() / 4},
 		};
 
-	for (auto& e : t)
+	for (const auto& e : t)
 	{
-		if (clanUnitStat.hasModification (e.type) == false) continue;
-		result += sep;
-		result += e.text;
-		result += GetModificatorString (e.originalValue, clanUnitStat.getModificationValue (e.type));
-		sep = commaSep;
+		if (const auto modif = clanUnitStat.getModificationValue (e.type))
+		{
+			result += sep;
+			result += e.text;
+			result += GetModificatorString (e.originalValue, *modif);
+			sep = commaSep;
+		}
 	}
-	if (clanUnitStat.hasModification (eClanModification::Built_Costs))
+	if (const auto modif = clanUnitStat.getModificationValue (eClanModification::Built_Costs))
 	{
 		result += sep;
-		int nrTurns = clanUnitStat.getModificationValue (eClanModification::Built_Costs);
+		int nrTurns = *modif;
 		if (originalData.getStaticUnitData (data->getId()).vehicleData.isHuman == false) nrTurns /= clanUnitStat.getUnitId().isAVehicle() == 0 ? 2 : 3;
 
 		result += std::to_string (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");

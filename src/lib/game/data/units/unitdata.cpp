@@ -233,26 +233,25 @@ void cUnitsData::initializeClanUnitData (const cClanData& clanData)
 
 		// make a copy of the vehicle's stats
 		clanListVehicles = dynamicUnitData;
-		for (size_t j = 0; j != dynamicUnitData.size(); ++j)
+		for (cDynamicUnitData& clanVehicle : clanListVehicles)
 		{
-			cDynamicUnitData& clanVehicle = clanListVehicles[j];
 			const cClanUnitStat* changedStat = clan.getUnitStat (clanVehicle.getId());
 			if (changedStat == nullptr) continue;
 
-			if (changedStat->hasModification (eClanModification::Damage))
-				clanVehicle.setDamage (changedStat->getModificationValue (eClanModification::Damage));
-			if (changedStat->hasModification (eClanModification::Range))
-				clanVehicle.setRange (changedStat->getModificationValue (eClanModification::Range));
-			if (changedStat->hasModification (eClanModification::Armor))
-				clanVehicle.setArmor (changedStat->getModificationValue (eClanModification::Armor));
-			if (changedStat->hasModification (eClanModification::Hitpoints))
-				clanVehicle.setHitpointsMax (changedStat->getModificationValue (eClanModification::Hitpoints));
-			if (changedStat->hasModification (eClanModification::Scan))
-				clanVehicle.setScan (changedStat->getModificationValue (eClanModification::Scan));
-			if (changedStat->hasModification (eClanModification::Speed))
-				clanVehicle.setSpeedMax (changedStat->getModificationValue (eClanModification::Speed) * 4);
-			if (changedStat->hasModification (eClanModification::Built_Costs))
-				clanVehicle.setBuildCost (changedStat->getModificationValue (eClanModification::Built_Costs));
+			if (const auto modif = changedStat->getModificationValue (eClanModification::Damage))
+				clanVehicle.setDamage (*modif);
+			if (const auto modif = changedStat->getModificationValue (eClanModification::Range))
+				clanVehicle.setRange (*modif);
+			if (const auto modif = changedStat->getModificationValue (eClanModification::Armor))
+				clanVehicle.setArmor (*modif);
+			if (const auto modif = changedStat->getModificationValue (eClanModification::Hitpoints))
+				clanVehicle.setHitpointsMax (*modif);
+			if (const auto modif = changedStat->getModificationValue (eClanModification::Scan))
+				clanVehicle.setScan (*modif);
+			if (const auto modif = changedStat->getModificationValue (eClanModification::Speed))
+				clanVehicle.setSpeedMax (*modif * 4);
+			if (const auto modif = changedStat->getModificationValue (eClanModification::Built_Costs))
+				clanVehicle.setBuildCost (*modif);
 		}
 	}
 }

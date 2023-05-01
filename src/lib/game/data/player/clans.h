@@ -24,6 +24,7 @@
 #include "utility/serialization/serialization.h"
 
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -57,8 +58,7 @@ public:
 
 	sID getUnitId() const { return unitId; }
 
-	int getModificationValue (eClanModification) const;
-	bool hasModification (eClanModification) const;
+	std::optional<int> getModificationValue (eClanModification) const;
 
 	template <typename Archive>
 	void serialize (Archive& archive)

@@ -46,18 +46,12 @@ void cClanUnitStat::addModification (eClanModification area, int value)
 }
 
 //--------------------------------------------------
-bool cClanUnitStat::hasModification (eClanModification key) const
-{
-	return modifications.find (key) != modifications.end();
-}
-
-//--------------------------------------------------
-int cClanUnitStat::getModificationValue (eClanModification key) const
+std::optional<int> cClanUnitStat::getModificationValue (eClanModification key) const
 {
 	auto it = modifications.find (key);
 	if (it != modifications.end())
 		return it->second;
-	return 0;
+	return std::nullopt;
 }
 
 //--------------------------------------------------
