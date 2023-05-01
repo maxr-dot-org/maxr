@@ -515,9 +515,6 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	const cStaticUnitData& getConstructorData() const { return getStaticUnitData (getConstructorID()); }
-	const cStaticUnitData& getEngineerData() const { return getStaticUnitData (getEngineerID()); }
-	const cStaticUnitData& getSurveyorData() const { return getStaticUnitData (getSurveyorID()); }
 	const cStaticUnitData& getRubbleSmallData() const { return rubbleSmall; }
 	const cStaticUnitData& getRubbleBigData() const { return rubbleBig; }
 

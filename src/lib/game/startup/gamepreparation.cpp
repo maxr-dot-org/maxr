@@ -26,9 +26,9 @@ std::vector<std::pair<sID, int>> computeInitialLandingUnits (int clan, const cGa
 {
 	if (gameSettings.bridgeheadType == eGameSettingsBridgeheadType::Mobile) return {};
 
-	const auto constructorID = unitsData.getConstructorData().ID;
-	const auto engineerID = unitsData.getEngineerData().ID;
-	const auto surveyorID = unitsData.getSurveyorData().ID;
+	const auto constructorID = unitsData.getConstructorID();
+	const auto engineerID = unitsData.getEngineerID();
+	const auto surveyorID = unitsData.getSurveyorID();
 
 	std::vector<std::pair<sID, int>> initialLandingUnits{
 		{constructorID, 40},
