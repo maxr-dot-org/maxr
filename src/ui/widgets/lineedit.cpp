@@ -296,7 +296,7 @@ void cLineEdit::doPosDecrease (int& pos)
 	if (pos > 0)
 	{
 		unsigned char c = text[pos - 1];
-		while (((c & 0xE0) != 0xE0) && ((c & 0xC0) != 0xC0) && ((c & 0x80) == 0x80))
+		while ((c & 0xC0) == 0x80)
 		{
 			if (pos <= 1)
 			{
