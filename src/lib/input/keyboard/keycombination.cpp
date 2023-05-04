@@ -47,8 +47,8 @@ static const struct
 		{SDLK_LEFTPAREN, "("},
 		{SDLK_RIGHTPAREN, ")"},
 		{SDLK_ASTERISK, "*"},
-		{SDLK_PLUS, "+"},
-		{SDLK_COMMA, ","},
+		{SDLK_PLUS, "PLUS"}, // '+' used as combination
+		{SDLK_COMMA, "COMMA"}, // ',' used as separator
 		{SDLK_MINUS, "-"},
 		{SDLK_PERIOD, "."},
 		{SDLK_SLASH, "/"},
@@ -166,7 +166,7 @@ cKeyCombination::cKeyCombination (const std::string& sequence)
 
 		if (end == std::string::npos) break;
 
-		start += end + 1;
+		start = end + 1;
 	}
 }
 
