@@ -21,13 +21,13 @@
 #define utility_string_iequalsH
 
 #include <cctype>
-#include <string>
+#include <string_view>
 
 /**
  * Case insensitive string comparison.
  * (very basic implementation; does not support Unicode encoded strings!)
  */
-static inline bool iequals (const std::string& a, const std::string& b)
+static inline bool iequals (const std::string_view& a, const std::string_view& b)
 {
 	if (a.size() != b.size()) return false;
 

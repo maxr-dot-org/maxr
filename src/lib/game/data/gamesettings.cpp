@@ -20,7 +20,6 @@
 #include "gamesettings.h"
 
 #include "utility/crc.h"
-#include "utility/string/iequals.h"
 #include "utility/tounderlyingtype.h"
 
 #include <algorithm>
