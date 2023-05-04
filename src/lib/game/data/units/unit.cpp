@@ -490,6 +490,7 @@ void cUnit::upgradeToCurrentVersion()
 	data.setShotsMax (upgradeVersion->getShotsMax());
 	data.setDamage (upgradeVersion->getDamage());
 	data.setBuildCost (upgradeVersion->getBuildCost());
+	statusChanged();
 }
 
 //------------------------------------------------------------------------------

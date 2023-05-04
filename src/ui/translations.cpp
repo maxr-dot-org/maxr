@@ -315,18 +315,37 @@ std::string getDisplayName (const cUnit& unit)
 	return unit.getDisplayName (getStaticUnitName (unit.getStaticUnitData()));
 }
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	std::string getDatedString (const cUnit& unit, const cPlayer* whoWantsToKnow)
+	{
+		if (unit.getOwner() == whoWantsToKnow && whoWantsToKnow)
+		{
+			const cDynamicUnitData& upgraded = *whoWantsToKnow->getUnitDataCurrentVersion (unit.data.getId());
+			if (unit.data.getVersion() != upgraded.getVersion())
+			{
+				return "\n" + lngPack.i18n ("Text~Comp~Dated");
+			}
+		}
+		return "";
+	}
+} // namespace
+
 //------------------------------------------------------------------------------
 /** Returns a string with the current state */
 //------------------------------------------------------------------------------
 std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKnow, const cUnitsData& unitsData)
 {
 	auto font = cUnicodeFont::font.get();
+	std::string dated = getDatedString (building, whoWantsToKnow);
+
 	if (building.isDisabled())
 	{
 		std::string sText;
 		sText = lngPack.i18n ("Text~Comp~Disabled") + " (";
 		sText += std::to_string (building.getDisabledTurns()) + ")";
-		return sText;
+		return sText + dated;
 	}
 	if (building.isUnitWorking() || building.factoryHasJustFinishedBuilding())
 	{
@@ -353,7 +372,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 					sText += std::to_string (iRound) + ")";
 				}
 
-				return sText;
+				return sText + dated;
 			}
 			else //new unit is rdy + which kind of unit
 			{
@@ -367,14 +386,14 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 					sText += "\n";
 					sText += unitName;
 				}
-				return sText;
+				return sText + dated;
 			}
 		}
 
 		// Research Center
 		if (building.getStaticData().canResearch && building.getOwner() == whoWantsToKnow && building.getOwner())
 		{
-			return lngPack.i18n ("Text~Comp~Working") + "\n" + getResearchAreaStatus (*building.getOwner());
+			return lngPack.i18n ("Text~Comp~Working") + "\n" + getResearchAreaStatus (*building.getOwner()) + dated;
 		}
 
 		// Goldraffinerie:
@@ -386,17 +405,17 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 			sText += std::to_string (building.getOwner()->getCredits());
 			return sText;
 		}
-		return lngPack.i18n ("Text~Comp~Working");
+		return lngPack.i18n ("Text~Comp~Working") + dated;
 	}
 
 	if (building.isAttacking())
-		return lngPack.i18n ("Text~Comp~AttackingStatusStr");
+		return lngPack.i18n ("Text~Comp~AttackingStatusStr") + dated;
 	else if (building.isBeeingAttacked())
-		return lngPack.i18n ("Text~Comp~IsBeeingAttacked");
+		return lngPack.i18n ("Text~Comp~IsBeeingAttacked") + dated;
 	else if (building.isSentryActive())
-		return lngPack.i18n ("Text~Comp~Sentry");
+		return lngPack.i18n ("Text~Comp~Sentry") + dated;
 	else if (building.isManualFireActive())
-		return lngPack.i18n ("Text~Comp~ReactionFireOff");
+		return lngPack.i18n ("Text~Comp~ReactionFireOff") + dated;
 
 	//GoldRaf idle + gold-amount
 	if (building.getStaticData().convertsGold && building.getOwner() == whoWantsToKnow && building.getOwner() && !building.isUnitWorking())
@@ -405,16 +424,16 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 		sText = lngPack.i18n ("Text~Comp~Waits") + "\n";
 		sText += lngPack.i18n ("Text~Title~Credits") + lngPack.i18n ("Text~Punctuation~Colon");
 		sText += std::to_string (building.getOwner()->getCredits());
-		return sText;
+		return sText + dated;
 	}
 
 	//Research centre idle + projects
 	// Research Center
 	if (building.getStaticData().canResearch && building.getOwner() == whoWantsToKnow && building.getOwner() && !building.isUnitWorking())
 	{
-		return lngPack.i18n ("Text~Comp~Waits") + "\n" + getResearchAreaStatus (*building.getOwner());
+		return lngPack.i18n ("Text~Comp~Waits") + "\n" + getResearchAreaStatus (*building.getOwner()) + dated;
 	}
-	return lngPack.i18n ("Text~Comp~Waits");
+	return lngPack.i18n ("Text~Comp~Waits") + dated;
 }
 
 //------------------------------------------------------------------------------
@@ -422,16 +441,18 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 //------------------------------------------------------------------------------
 std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const cUnitsData& unitsData)
 {
+	std::string dated = getDatedString(vehicle, player);
+
 	auto font = cUnicodeFont::font.get();
 	if (vehicle.isDisabled())
 	{
 		std::string sText;
 		sText = lngPack.i18n ("Text~Comp~Disabled") + " (";
 		sText += std::to_string (vehicle.getDisabledTurns()) + ")";
-		return sText;
+		return sText + dated;
 	}
 	else if (vehicle.isSurveyorAutoMoveActive())
-		return lngPack.i18n ("Text~Comp~Surveying");
+		return lngPack.i18n ("Text~Comp~Surveying") + dated;
 	else if (vehicle.isUnitBuildingABuilding())
 	{
 		if (vehicle.getOwner() != player)
@@ -455,7 +476,7 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 					sText += std::to_string (vehicle.getBuildTurns());
 					sText += ")";
 				}
-				return sText;
+				return sText + dated;
 			}
 			else //small building is rdy + activate after engineere moves away
 			{
@@ -469,22 +490,22 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 					sText += "\n";
 					sText += getStaticUnitName (unitsData.getStaticUnitData (vehicle.getBuildingType()));
 				}
-				return sText;
+				return sText + dated;
 			}
 		}
 	}
 	else if (vehicle.isUnitClearingMines())
-		return lngPack.i18n ("Text~Comp~Clearing_Mine");
+		return lngPack.i18n ("Text~Comp~Clearing_Mine") + dated;
 	else if (vehicle.isUnitLayingMines())
-		return lngPack.i18n ("Text~Comp~Laying");
+		return lngPack.i18n ("Text~Comp~Laying") + dated;
 	else if (vehicle.isUnitClearing())
 	{
 		if (vehicle.getClearingTurns())
 		{
-			return lngPack.i18n ("Text~Comp~Clearing", std::to_string (vehicle.getClearingTurns()));
+			return lngPack.i18n ("Text~Comp~Clearing", std::to_string (vehicle.getClearingTurns())) + dated;
 		}
 		else
-			return lngPack.i18n ("Text~Comp~Clearing_Fin");
+			return lngPack.i18n ("Text~Comp~Clearing_Fin") + dated;
 	}
 	// generate other infos for normal non-unit-related-events and infiltrators
 	std::string sTmp;
@@ -513,10 +534,10 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 			sTmp += getRankString (vehicle.getCommandoData());
 		}
 
-		return sTmp;
+		return sTmp + dated;
 	}
 
-	return lngPack.i18n ("Text~Comp~Waits");
+	return lngPack.i18n ("Text~Comp~Waits") + dated;
 }
 
 //------------------------------------------------------------------------------
@@ -712,7 +733,7 @@ std::string getMessage (const cSavedReport& report, const cModel& model)
 	{
 		auto pos = *savedReportUnit->getPosition();
 		const auto* unit = model.getUnitFromID (savedReportUnit->getUnitId());
-		assert(unit != nullptr);
+		assert (unit != nullptr);
 
 		return "[" + std::to_string (pos.x()) + ", " + std::to_string (pos.y()) + "] " + getText (*unit, *savedReportUnit);
 	}

@@ -80,7 +80,7 @@ msgid "Text~Comp~CommandoRank_Veteran"
 msgstr "Habile"
 
 msgid "Text~Comp~Dated"
-msgstr "datés"
+msgstr "daté"
 
 msgid "Text~Comp~Defeated"
 msgstr "Joueur %s a perdu"
