@@ -39,12 +39,14 @@ enum class eGameSettingsResourceDensity;
 enum class eGameSettingsBridgeheadType;
 enum class eGameSettingsGameType;
 enum class eGameSettingsVictoryCondition;
+enum class eResourceType;
 
 std::string toTranslatedString (eGameSettingsResourceAmount);
 std::string toTranslatedString (eGameSettingsResourceDensity);
 std::string toTranslatedString (eGameSettingsBridgeheadType);
 std::string toTranslatedString (eGameSettingsGameType);
 std::string toTranslatedString (eGameSettingsVictoryCondition);
+std::string toTranslatedString (eResourceType);
 
 std::string getClanStatsDescription (const cClanUnitStat&, const cUnitsData& originalData);
 std::vector<std::string> getClanStatsDescription (const cClan&, const cUnitsData& originalData);

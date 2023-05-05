@@ -25,6 +25,7 @@
 #include "game/data/units/unit.h"
 #include "output/video/video.h"
 #include "ui/graphical/game/widgets/unitdetailshud.h"
+#include "ui/translations.h"
 #include "ui/widgets/label.h"
 #include "utility/language.h"
 
@@ -101,12 +102,13 @@ void cUnitDetailsStored::reset()
 	const cVehicle* vehicle = dynamic_cast<const cVehicle*> (unit);
 	const auto storedResources = vehicle->getStoredResources();
 	const auto storagedResMax = vehicle->getStaticUnitData().storageResMax;
+	const auto title = toTranslatedString (unit->getStaticUnitData().storeResType);
 	switch (unit->getStaticUnitData().storeResType)
 	{
 		case eResourceType::None: break;
-		case eResourceType::Metal: drawRow (1, eUnitDataSymbolType::Metal, storedResources, storagedResMax, lngPack.i18n ("Text~Title~Metal")); break;
-		case eResourceType::Oil: drawRow (1, eUnitDataSymbolType::Oil, storedResources, storagedResMax, lngPack.i18n ("Text~Title~Oil")); break;
-		case eResourceType::Gold: drawRow (1, eUnitDataSymbolType::Gold, storedResources, storagedResMax, lngPack.i18n ("Text~Title~Gold")); break;
+		case eResourceType::Metal: drawRow (1, eUnitDataSymbolType::Metal, storedResources, storagedResMax, title); break;
+		case eResourceType::Oil: drawRow (1, eUnitDataSymbolType::Oil, storedResources, storagedResMax, title); break;
+		case eResourceType::Gold: drawRow (1, eUnitDataSymbolType::Gold, storedResources, storagedResMax, title); break;
 	}
 }
 

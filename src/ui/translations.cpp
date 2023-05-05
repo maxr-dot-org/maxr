@@ -211,6 +211,19 @@ std::string toTranslatedString (eGameSettingsVictoryCondition condition)
 }
 
 //------------------------------------------------------------------------------
+std::string toTranslatedString (eResourceType type)
+{
+	switch (type)
+	{
+		case eResourceType::Gold: return lngPack.i18n ("Text~Title~Gold");
+		case eResourceType::Metal: return lngPack.i18n ("Text~Title~Metal");
+		case eResourceType::Oil: return lngPack.i18n ("Text~Title~Oil");
+		case eResourceType::None: return "";
+	}
+	return "";
+}
+
+//------------------------------------------------------------------------------
 std::string getClanStatsDescription (const cClanUnitStat& clanUnitStat, const cUnitsData& originalData)
 {
 	const cDynamicUnitData* data = &originalData.getDynamicUnitData (clanUnitStat.getUnitId());
@@ -441,7 +454,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 //------------------------------------------------------------------------------
 std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const cUnitsData& unitsData)
 {
-	std::string dated = getDatedString(vehicle, player);
+	std::string dated = getDatedString (vehicle, player);
 
 	auto font = cUnicodeFont::font.get();
 	if (vehicle.isDisabled())
