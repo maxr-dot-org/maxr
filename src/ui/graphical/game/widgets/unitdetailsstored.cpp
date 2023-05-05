@@ -97,6 +97,17 @@ void cUnitDetailsStored::reset()
 	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"));
 
 	if (unit->getStaticUnitData().canAttack) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo(), data.getAmmoMax(), lngPack.i18n ("Text~Others~Ammo_7"));
+
+	const cVehicle* vehicle = dynamic_cast<const cVehicle*> (unit);
+	const auto storedResources = vehicle->getStoredResources();
+	const auto storagedResMax = vehicle->getStaticUnitData().storageResMax;
+	switch (unit->getStaticUnitData().storeResType)
+	{
+		case eResourceType::None: break;
+		case eResourceType::Metal: drawRow (1, eUnitDataSymbolType::Metal, storedResources, storagedResMax, lngPack.i18n ("Text~Title~Metal")); break;
+		case eResourceType::Oil: drawRow (1, eUnitDataSymbolType::Oil, storedResources, storagedResMax, lngPack.i18n ("Text~Title~Oil")); break;
+		case eResourceType::Gold: drawRow (1, eUnitDataSymbolType::Gold, storedResources, storagedResMax, lngPack.i18n ("Text~Title~Gold")); break;
+	}
 }
 
 //------------------------------------------------------------------------------
