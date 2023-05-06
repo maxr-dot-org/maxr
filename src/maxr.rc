@@ -1,6 +1,8 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource.h"
+#define IDI_ICON 101
+#define IDI_SMALL 102
+#define IDB_BITMAP1 103
 
 /////////////////////////////////////////////////////////////////////////////
 //
