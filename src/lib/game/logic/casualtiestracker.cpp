@@ -32,15 +32,13 @@ void cCasualtiesTracker::logCasualty (const cUnit& unit)
 	if (!unit.getOwner()) return;
 	if (unit.isABuilding() && unit.data.getBuildCost() <= 2) return;
 
-	const auto& unitType = unit.data.getId();
-	const int playerNr = unit.getOwner()->getId();
-	setCasualty (unitType, getCasualtiesOfUnitType (unitType, playerNr) + 1, playerNr);
-
+	increaseCasualty (unit.data.getId(), unit.getOwner()->getId());
+	unit.forEachStoredUnits ([this] (const auto& storedVehicle) { increaseCasualty (storedVehicle.data.getId(), storedVehicle.getOwner()->getId()); });
 	casualtiesChanged();
 }
 
 //--------------------------------------------------------------------------
-void cCasualtiesTracker::setCasualty (sID unitType, int numberOfLosses, int playerNr)
+void cCasualtiesTracker::increaseCasualty (sID unitType, int playerNr)
 {
 	auto signalCaller = makeScopedOperation ([=]() { casualtyChanged (unitType, playerNr); });
 
@@ -50,12 +48,12 @@ void cCasualtiesTracker::setCasualty (sID unitType, int numberOfLosses, int play
 	{
 		if (unitType == casualty.unitID)
 		{
-			casualty.numberOfLosses = numberOfLosses;
+			++casualty.numberOfLosses;
 			return;
 		}
 	}
 	Casualty newCasualtyEntry;
-	newCasualtyEntry.numberOfLosses = numberOfLosses;
+	newCasualtyEntry.numberOfLosses = 1;
 	newCasualtyEntry.unitID = unitType;
 	for (size_t i = 0; i != casualties.size(); ++i)
 	{

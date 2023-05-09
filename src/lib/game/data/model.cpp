@@ -361,6 +361,7 @@ void cModel::deleteUnit (cUnit* unit)
 			cVehicle* vehicle = static_cast<cVehicle*> (unit);
 			owningPtr = owner->removeUnit (*vehicle);
 		}
+		unit->forEachStoredUnits ([owner](const auto& storedVehicle) { owner->removeUnit (storedVehicle); });
 	}
 	helperJobs.onRemoveUnit (*unit);
 

@@ -85,7 +85,7 @@ private:
 	mutable std::vector<CasualtiesOfPlayer> casualtiesPerPlayer;
 
 	std::vector<Casualty>& getCasualtiesOfPlayer (int playerNr) const;
-	void setCasualty (sID unitType, int numberOfLosses, int playerNr);
+	void increaseCasualty (sID unitType, int playerNr);
 };
 
 #endif // game_logic_casualtiestrackerH
