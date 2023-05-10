@@ -156,24 +156,8 @@ public:
 	bool getIsBig() const { return isBig; }
 	void setIsBig (bool value);
 
-	template <typename F>
-	void forEachStoredUnits(F func) const
-	{
-		for (const auto* storedVehicle : storedUnits) {
-			storedVehicle->forEachStoredUnits (func);
-			func (*storedVehicle);
-		}
-	}
-
-	template <typename F>
-	void forEachStoredUnits (F func)
-	{
-		for (auto* storedVehicle : storedUnits)
-		{
-			storedVehicle->forEachStoredUnits (func);
-			func (*storedVehicle);
-		}
-	}
+	void forEachStoredUnits (std::function<void (const cVehicle&)> func) const;
+	void forEachStoredUnits (std::function<void (cVehicle&)> func);
 
 
 	virtual uint32_t getChecksum (uint32_t crc) const;

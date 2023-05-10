@@ -126,6 +126,26 @@ void cUnit::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& m
 }
 
 //------------------------------------------------------------------------------
+void cUnit::forEachStoredUnits (std::function<void (const cVehicle&)> func) const
+{
+	for (const auto* storedVehicle : storedUnits)
+	{
+		storedVehicle->forEachStoredUnits (func);
+		func (*storedVehicle);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cUnit::forEachStoredUnits (std::function<void (cVehicle&)> func)
+{
+	for (auto* storedVehicle : storedUnits)
+	{
+		storedVehicle->forEachStoredUnits (func);
+		func (*storedVehicle);
+	}
+}
+
+//------------------------------------------------------------------------------
 void cUnit::setDetectedByPlayer (const cPlayer* player)
 {
 	int playerId = player->getId();
