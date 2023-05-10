@@ -70,7 +70,7 @@ void cUnitRenameWidget::setUnit (const cUnit* unit, const cUnitsData& unitsData)
 
 	if (unit)
 	{
-		selectedUnitNamePrefixLabel->setText (unit->getNamePrefix());
+		selectedUnitNamePrefixLabel->setText (getNamePrefix (*unit));
 		selectedUnitNameEdit->setText (getName (*unit));
 		selectedUnitStatusLabel->setText (getStatusStr (*unit, player, unitsData));
 

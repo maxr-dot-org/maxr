@@ -57,6 +57,7 @@ std::string getClanDescription (const cClan&);
 std::string getStaticUnitName (const cStaticUnitData&);
 std::string getStaticUnitDescription (const cStaticUnitData&);
 
+std::string getNamePrefix (const cUnit& unit);
 std::string getName (const cUnit&);
 std::string getDisplayName (const cUnit&);
 

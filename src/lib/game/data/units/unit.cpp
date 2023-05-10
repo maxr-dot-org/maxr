@@ -31,7 +31,6 @@
 #include "utility/listhelpers.h"
 #include "utility/mathtools.h"
 #include "utility/position.h"
-#include "utility/string/roman.h"
 
 #include <algorithm>
 
@@ -314,26 +313,6 @@ std::optional<std::string> cUnit::getCustomName() const
 {
 	if (!customName.empty()) return customName;
 	return std::nullopt;
-}
-
-//------------------------------------------------------------------------------
-/** generates the name for the unit depending on the version number */
-//------------------------------------------------------------------------------
-std::string cUnit::getNamePrefix() const
-{
-	std::string rome = "MK ";
-	// +1, because the numbers in the name start at 1, not at 0
-	unsigned int nr = data.getVersion() + 1;
-
-	return "MK " + to_roman (nr);
-}
-
-//------------------------------------------------------------------------------
-/** Returns the displayed name of the unit */
-//------------------------------------------------------------------------------
-std::string cUnit::getDisplayName (const std::string& defaultName) const
-{
-	return getNamePrefix() + " " + getCustomName().value_or (defaultName);
 }
 
 //------------------------------------------------------------------------------

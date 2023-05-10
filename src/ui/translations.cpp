@@ -50,6 +50,7 @@
 #include "game/logic/movejob.h"
 #include "output/video/unifonts.h"
 #include "utility/language.h"
+#include "utility/string/roman.h"
 
 #include <cassert>
 
@@ -316,6 +317,15 @@ std::string getStaticUnitDescription (const cStaticUnitData& unitData)
 		return translatedDescription;
 	return unitData.getDefaultDescription();
 }
+
+//------------------------------------------------------------------------------
+/** generates the name for the unit depending on the version number */
+//------------------------------------------------------------------------------
+std::string getNamePrefix (const cUnit& unit)
+{
+	return "MK " + to_roman (unit.data.getVersion() + 1) + " ";
+}
+
 //------------------------------------------------------------------------------
 std::string getName (const cUnit& unit)
 {
@@ -325,7 +335,7 @@ std::string getName (const cUnit& unit)
 //------------------------------------------------------------------------------
 std::string getDisplayName (const cUnit& unit)
 {
-	return unit.getDisplayName (getStaticUnitName (unit.getStaticUnitData()));
+	return getNamePrefix (unit) + getName (unit);
 }
 
 namespace

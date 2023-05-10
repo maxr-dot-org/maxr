@@ -46,7 +46,7 @@ cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const
 	counter (10),
 	state (eAJState::Rotating)
 {
-	NetLog.debug (" cAttackJob: Started attack, aggressor: " + aggressor.getDisplayName (aggressor.getStaticUnitData().getDefaultName()) + ", ID: " + std::to_string (aggressor.getId()) + " @" + std::to_string (model.getGameTime()));
+	NetLog.debug (" cAttackJob: Started attack, aggressor ID: " + std::to_string (aggressor.getId()) + " @" + std::to_string (model.getGameTime()));
 	assert (!aggressor.isAVehicle() || !static_cast<cVehicle&> (aggressor).isUnitMoving());
 
 	fireDir = calcFireDir (aggressor);
@@ -203,7 +203,7 @@ void cAttackJob::lockTarget (const cMap& map, const cUnit& aggressor)
 				{
 					target->setIsBeeinAttacked (true);
 					lockedTargets.push_back (target->iID);
-					NetLog.debug (" cAttackJob: locked target " + target->getDisplayName (target->getStaticUnitData().getDefaultName()) + " (ID: " + std::to_string (target->iID) + ") at (" + std::to_string (targetPosition.x() + x) + "," + std::to_string (targetPosition.y() + y) + ")");
+					NetLog.debug (" cAttackJob: locked target ID: " + std::to_string (target->iID) + " at (" + std::to_string (targetPosition.x() + x) + "," + std::to_string (targetPosition.y() + y) + ")");
 				}
 			}
 		}
@@ -448,8 +448,7 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 		target->data.setHitpoints (remainingHp);
 		target->setHasBeenAttacked (true);
 
-		std::string name = target->getDisplayName (target->getStaticUnitData().getDefaultName());
-		NetLog.debug (" cAttackJob: target hit: " + name + ", ID: " + std::to_string (target->getId()) + ", remaining hp: " + std::to_string (remainingHp) + " @" + std::to_string (model.getGameTime()));
+		NetLog.debug (" cAttackJob: target hit ID: " + std::to_string (target->getId()) + ", remaining hp: " + std::to_string (remainingHp) + " @" + std::to_string (model.getGameTime()));
 
 		if (remainingHp <= 0)
 		{
