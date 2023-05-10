@@ -24,7 +24,9 @@
 
 //------------------------------------------------------------------------------
 cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
-	cSavedReportUnit (unit)
+	cSavedReportUnit (unit),
+	playerOwnerName (unit.getOwner() ? unit.getOwner()->getName()
+                                     : "")
 {}
 
 //------------------------------------------------------------------------------
@@ -36,8 +38,6 @@ eSavedReportType cSavedReportDetected::getType() const
 //------------------------------------------------------------------------------
 bool cSavedReportDetected::isSubmarine (const cModel& model) const
 {
-	const auto* unit = model.getUnitFromID (getUnitId());
-	assert (unit != nullptr);
-	const auto& staticUnitData = unit->getStaticUnitData();
+	const auto& staticUnitData = model.getUnitsData()->getStaticUnitData (getUnitId());
 	return (staticUnitData.isStealthOn & eTerrainFlag::Sea) && staticUnitData.canAttack;
 }

@@ -332,6 +332,15 @@ std::string getName (const cUnit& unit)
 	return unit.getCustomName().value_or (getStaticUnitName (unit.getStaticUnitData()));
 }
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	std::string getDisplayName (const cUnitsData& unitsData, sID id, int version, std::optional<std::string> customName)
+	{
+		return "MK " + to_roman (version + 1) + " " + customName.value_or (getStaticUnitName (unitsData.getStaticUnitData (id)));
+	}
+} // namespace
+
 //------------------------------------------------------------------------------
 std::string getDisplayName (const cUnit& unit)
 {
@@ -574,29 +583,32 @@ std::string getStatusStr (const cUnit& unit, const cPlayer* whoWantsToKnow, cons
 namespace
 {
 	//--------------------------------------------------------------------------
-	std::string getText (const cUnit& unit, const cSavedReportDetected&)
+	std::string getText (const cUnit& unit, const cSavedReportDetected& report)
 	{
-		const auto playerName = unit.getOwner() ? unit.getOwner()->getName() : "";
-		return getDisplayName (unit) + " (" + playerName + ") " + lngPack.i18n ("Text~Comp~Detected");
 	}
 
 	//--------------------------------------------------------------------------
-	std::string getText (const cUnit& unit, const cSavedReportUnit& report)
+	std::string getText (const cUnitsData& unitsData, const cSavedReportUnit& report)
 	{
+		const auto& unitId = report.getUnitId();
+		const auto& unitVersion = report.getUnitVersion();
+		const auto& unitCustomName = report.getUnitCustomName();
+		const auto& displayName = getDisplayName (unitsData, unitId, unitVersion, unitCustomName);
+
 		switch (report.getType())
 		{
 			case eSavedReportType::Attacked:
-				return lngPack.i18n ("Text~Comp~Attacked", getDisplayName (unit));
+				return lngPack.i18n ("Text~Comp~Attacked", displayName);
 			case eSavedReportType::AttackingEnemy:
-				return lngPack.i18n ("Text~Comp~AttackingEnemy", getDisplayName (unit));
+				return lngPack.i18n ("Text~Comp~AttackingEnemy", displayName);
 			case eSavedReportType::CapturedByEnemy:
-				return lngPack.i18n ("Text~Comp~CapturedByEnemy", getDisplayName (unit));
+				return lngPack.i18n ("Text~Comp~CapturedByEnemy", displayName);
 			case eSavedReportType::Destroyed:
-				return lngPack.i18n ("Text~Comp~Destroyed", getDisplayName (unit));
+				return lngPack.i18n ("Text~Comp~Destroyed", displayName);
 			case eSavedReportType::Detected:
-				return getText (unit, static_cast<const cSavedReportDetected&> (report));
+				return displayName + " (" + static_cast<const cSavedReportDetected&> (report).getPlayerOwnerName() + ") " + lngPack.i18n ("Text~Comp~Detected");
 			case eSavedReportType::Disabled:
-				return getDisplayName (unit) + " " + lngPack.i18n ("Text~Comp~Disabled");
+				return displayName + " " + lngPack.i18n ("Text~Comp~Disabled");
 			case eSavedReportType::PathInterrupted:
 				return lngPack.i18n ("Text~Comp~Path_interrupted");
 			case eSavedReportType::SurveyorAiConfused:
@@ -755,10 +767,8 @@ std::string getMessage (const cSavedReport& report, const cModel& model)
 	if (auto* savedReportUnit = dynamic_cast<const cSavedReportUnit*> (&report))
 	{
 		auto pos = *savedReportUnit->getPosition();
-		const auto* unit = model.getUnitFromID (savedReportUnit->getUnitId());
-		assert (unit != nullptr);
 
-		return "[" + std::to_string (pos.x()) + ", " + std::to_string (pos.y()) + "] " + getText (*unit, *savedReportUnit);
+		return "[" + std::to_string (pos.x()) + ", " + std::to_string (pos.y()) + "] " + getText (*model.getUnitsData(), *savedReportUnit);
 	}
 
 	switch (report.getType())

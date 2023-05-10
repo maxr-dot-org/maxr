@@ -37,6 +37,32 @@ public:
 
 	eSavedReportType getType() const override;
 	bool isSubmarine (const cModel&) const;
+
+	void serialize (cBinaryArchiveIn& archive) override
+	{
+		cSavedReportUnit::serialize (archive);
+		serializeThis (archive);
+	}
+	void serialize (cJsonArchiveOut& archive) override
+	{
+		cSavedReportUnit::serialize (archive);
+		serializeThis (archive);
+	}
+
+	std::string getPlayerOwnerName() const { return playerOwnerName; }
+
+private:
+	template <typename Archive>
+	void serializeThis (Archive& archive)
+	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
+		archive & NVP (playerOwnerName);
+		// clang-format on
+	}
+
+private:
+	std::string playerOwnerName;
 };
 
 #endif

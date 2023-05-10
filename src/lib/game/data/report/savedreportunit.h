@@ -51,8 +51,9 @@ public:
 		serializeThis (archive);
 	}
 
-	int getUnitId() const { return unitId; }
-
+	sID getUnitId() const { return unitId; }
+	int getUnitVersion() const { return version; }
+	std::optional<std::string> getUnitCustomName() const { return customName; }
 	std::optional<cPosition> getPosition() const override;
 
 private:
@@ -62,11 +63,15 @@ private:
 		// clang-format off
 		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (unitId);
+		archive & NVP (version);
+		archive & NVP (customName);
 		archive & NVP (position);
 		// clang-format on
 	}
 
-	int unitId;
+	sID unitId;
+	unsigned int version;
+	std::optional<std::string> customName;
 	cPosition position;
 };
 

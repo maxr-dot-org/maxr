@@ -21,7 +21,9 @@
 
 //------------------------------------------------------------------------------
 cSavedReportUnit::cSavedReportUnit (const cUnit& unit) :
-	unitId (unit.getId()),
+	unitId (unit.getStaticUnitData().ID),
+	version (unit.data.getVersion()),
+	customName (unit.getCustomName()),
 	position (unit.getPosition())
 {}
 
