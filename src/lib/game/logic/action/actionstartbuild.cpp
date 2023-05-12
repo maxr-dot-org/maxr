@@ -71,6 +71,8 @@ void cActionStartBuild::execute (cModel& model) const
 
 	if (vehicle->getStaticUnitData().canBuild != data.buildAs) return;
 
+	vehicle->setSentryActive (false);
+
 	std::array<int, 3> turboBuildRounds;
 	std::array<int, 3> turboBuildCosts;
 	int buildcost = vehicle->getOwner()->getUnitDataCurrentVersion (buildingTypeID)->getBuildCost();
