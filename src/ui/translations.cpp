@@ -582,10 +582,6 @@ std::string getStatusStr (const cUnit& unit, const cPlayer* whoWantsToKnow, cons
 
 namespace
 {
-	//--------------------------------------------------------------------------
-	std::string getText (const cUnit& unit, const cSavedReportDetected& report)
-	{
-	}
 
 	//--------------------------------------------------------------------------
 	std::string getText (const cUnitsData& unitsData, const cSavedReportUnit& report)
