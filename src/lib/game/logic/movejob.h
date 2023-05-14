@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_logic_movejobs2H
-#define game_logic_movejobs2H
+#ifndef game_logic_movejobsH
+#define game_logic_movejobsH
 
 #include "game/logic/endmoveaction.h"
 #include "utility/position.h"

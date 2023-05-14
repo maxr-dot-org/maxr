@@ -158,8 +158,6 @@ void cMoveJob::changeVehicleOffset (cVehicle& vehicle, int offset) const
 //------------------------------------------------------------------------------
 void cMoveJob::startMove (cModel& model, cVehicle& vehicle)
 {
-	cMap& map = *model.getMap();
-
 	if (path.empty() || state == eMoveJobState::Stopping)
 	{
 		state = eMoveJobState::Finished;
@@ -167,26 +165,23 @@ void cMoveJob::startMove (cModel& model, cVehicle& vehicle)
 		vehicle.WalkFrame = 0;
 		return;
 	}
-
 	if (state == eMoveJobState::Waiting)
 	{
 		return;
 	}
-
 	if (vehicle.isBeeingAttacked())
 	{
 		// suspend movejobs of attacked vehicles
 		return;
 	}
-
-	bool nextFieldFree = handleCollision (model, vehicle);
-	if (!nextFieldFree)
+	if (!handleCollision (model, vehicle))
 	{
 		vehicle.setMoving (false);
 		return;
 	}
 
-	int nextCosts = cPathCalculator::calcNextCost (vehicle.getPosition(), path.front(), &vehicle, &map);
+	cMap& map = *model.getMap();
+	const int nextCosts = cPathCalculator::calcNextCost (vehicle.getPosition(), path.front(), &vehicle, &map);
 	if (vehicle.data.getSpeed() < nextCosts)
 	{
 		savedSpeed += vehicle.data.getSpeed();
@@ -231,8 +226,7 @@ bool cMoveJob::handleCollision (cModel& model, cVehicle& vehicle)
 	const auto mine = map.getField (path.front()).getMine();
 	if (mine && mine->getOwner() != vehicle.getOwner() && vehicle.getOwner() && vehicle.getOwner()->canSeeUnit (*mine, map))
 	{
-		bool pathFound = recalculatePath (model, vehicle);
-		return pathFound;
+		return recalculatePath (model, vehicle);
 	}
 
 	if (map.possiblePlace (vehicle, path.front(), false))
@@ -255,8 +249,7 @@ bool cMoveJob::handleCollision (cModel& model, cVehicle& vehicle)
 	}
 
 	// field is definitely blocked. Try to find another path to destination
-	bool pathFound = recalculatePath (model, vehicle);
-	return pathFound;
+	return recalculatePath (model, vehicle);
 }
 
 //------------------------------------------------------------------------------
