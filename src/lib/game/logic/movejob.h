@@ -131,14 +131,6 @@ private:
 	};
 
 	/**
-	* calculates the needed rotation before the next movement
-	*/
-	void calcNextDir (const cVehicle&);
-	/**
-	* moves the vehicle by 'offset' pixel in direction of 'nextDir'
-	*/
-	void changeVehicleOffset (cVehicle&, int offset) const;
-	/**
 	* triggers all actions, that need to be done before starting a movement step
 	*/
 	void startMove (cModel&, cVehicle&);
@@ -151,10 +143,6 @@ private:
 
 	bool recalculatePath (cModel&, cVehicle&);
 
-	/**
-	* check, if the unit finished the current movement step
-	*/
-	bool reachedField (cVehicle&) const;
 	/**
 	* actually execute the movement
 	*/
@@ -178,7 +166,7 @@ private:
 	/** movement points, that are taken to the next turn, to prevent that the player looses movement points due to rounding issues */
 	unsigned int savedSpeed = 0;
 	/** direction the vehicle must be rotated to, before moving */
-	unsigned int nextDir = 0;
+	std::optional<unsigned int> nextDir;
 	/** 100 ms timer tick */
 	unsigned int timer100ms = 1;
 	/** 50 ms timer tick */

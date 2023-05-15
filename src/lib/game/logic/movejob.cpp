@@ -34,6 +34,49 @@ static const int directionDy[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
 
 constexpr double MOVE_ACCELERATION = 0.08; // change of vehicle speed per tick
 
+namespace
+{
+	/**
+	* calculates the needed rotation before the next movement
+	*/
+	std::optional<int> calcNextDir (const cVehicle& vehicle, const cPosition& dest)
+	{
+		const cPosition diff = dest - vehicle.getPosition();
+
+		for (int i = 0; i != 8; ++i)
+		{
+			if (diff.x() == directionDx[i] && diff.y() == directionDy[i])
+			{
+				return i;
+			}
+		}
+		return std::nullopt;
+	}
+
+	/**
+	* moves the vehicle by 'offset' pixel in direction of 'nextDir'
+	*/
+	void changeVehicleOffset (cVehicle& vehicle, int offset, int dir)
+	{
+		auto newOffset = vehicle.getMovementOffset();
+		newOffset.x() += directionDx[dir] * offset;
+		newOffset.y() += directionDy[dir] * offset;
+
+		vehicle.setMovementOffset (newOffset);
+	}
+
+	/**
+	* check, if the unit finished the current movement step
+	*/
+	bool reachedField (cVehicle& vehicle)
+	{
+		const auto& offset = vehicle.getMovementOffset();
+		const auto dir = vehicle.dir;
+		return (offset.x() * directionDx[dir] >= 0 && offset.y() * directionDy[dir] >= 0);
+	}
+
+} // namespace
+
 //------------------------------------------------------------------------------
 cMoveJob::cMoveJob() :
 	state (eMoveJobState::Finished)
@@ -42,9 +85,9 @@ cMoveJob::cMoveJob() :
 //------------------------------------------------------------------------------
 cMoveJob::cMoveJob (const std::forward_list<cPosition>& path, cVehicle& vehicle, cModel& model) :
 	vehicleId (vehicle.getId()),
-	path (path)
+	path (path),
+	state (eMoveJobState::Waiting)
 {
-	startMove (model, vehicle);
 }
 
 //------------------------------------------------------------------------------
@@ -77,11 +120,15 @@ void cMoveJob::run (cModel& model)
 	timer50ms++;
 	if (timer50ms == 5) timer50ms = 0;
 
-	if (nextDir != static_cast<unsigned int> (vehicle->dir))
+	if (!nextDir)
+	{
+		startMove (model, *vehicle);
+	}
+	else if (nextDir != static_cast<unsigned int> (vehicle->dir))
 	{
 		if (timer100ms == 0)
 		{
-			vehicle->rotateTo (nextDir);
+			vehicle->rotateTo (*nextDir);
 		}
 	}
 	else if (!reachedField (*vehicle))
@@ -130,34 +177,9 @@ void cMoveJob::stop (cVehicle& vehicle)
 }
 
 //------------------------------------------------------------------------------
-void cMoveJob::calcNextDir (const cVehicle& vehicle)
-{
-	if (path.empty()) return;
-
-	const cPosition diff = path.front() - vehicle.getPosition();
-
-	for (int i = 0; i != 8; ++i)
-	{
-		if (diff.x() == directionDx[i] && diff.y() == directionDy[i])
-		{
-			nextDir = i;
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
-void cMoveJob::changeVehicleOffset (cVehicle& vehicle, int offset) const
-{
-	auto newOffset = vehicle.getMovementOffset();
-	newOffset.x() += directionDx[nextDir] * offset;
-	newOffset.y() += directionDy[nextDir] * offset;
-
-	vehicle.setMovementOffset (newOffset);
-}
-
-//------------------------------------------------------------------------------
 void cMoveJob::startMove (cModel& model, cVehicle& vehicle)
 {
+	nextDir = std::nullopt;
 	if (path.empty() || state == eMoveJobState::Stopping)
 	{
 		state = eMoveJobState::Finished;
@@ -197,7 +219,7 @@ void cMoveJob::startMove (cModel& model, cVehicle& vehicle)
 	// start the move
 
 	vehicle.setMoving (true);
-	calcNextDir (vehicle);
+	nextDir = calcNextDir (vehicle, path.front());
 
 	vehicle.triggerLandingTakeOff (model);
 
@@ -213,7 +235,8 @@ void cMoveJob::startMove (cModel& model, cVehicle& vehicle)
 	path.pop_front();
 
 	vehicle.setMovementOffset (cPosition (0, 0));
-	changeVehicleOffset (vehicle, -64);
+	changeVehicleOffset (vehicle, -64, *nextDir);
+
 	NetLog.debug (" cMoveJob: Vehicle (ID: " + std::to_string (vehicle.getId()) + ") moved to " + toString (vehicle.getPosition()) + " @" + std::to_string (model.getGameTime()));
 }
 
@@ -288,13 +311,6 @@ bool cMoveJob::recalculatePath (cModel& model, cVehicle& vehicle)
 }
 
 //------------------------------------------------------------------------------
-bool cMoveJob::reachedField (cVehicle& vehicle) const
-{
-	const auto& offset = vehicle.getMovementOffset();
-	return (offset.x() * directionDx[nextDir] >= 0 && offset.y() * directionDy[nextDir] >= 0);
-}
-
-//------------------------------------------------------------------------------
 void cMoveJob::moveVehicle (cModel& model, cVehicle& vehicle)
 {
 	updateSpeed (vehicle, *model.getMap());
@@ -316,7 +332,7 @@ void cMoveJob::moveVehicle (cModel& model, cVehicle& vehicle)
 		model.triggeredAddTracks (vehicle);
 	}
 
-	changeVehicleOffset (vehicle, pixelToMove / 100);
+	changeVehicleOffset (vehicle, pixelToMove / 100, vehicle.dir);
 	pixelToMove %= 100;
 
 	if (reachedField (vehicle))
@@ -372,6 +388,7 @@ void cMoveJob::updateSpeed (cVehicle& vehicle, const cMap& map)
 void cMoveJob::endMove (cModel& model, cVehicle& vehicle)
 {
 	const cMap& map = *model.getMap();
+	nextDir.reset();
 	vehicle.setMovementOffset (cPosition (0, 0));
 
 	vehicle.detectOtherUnits (map);
