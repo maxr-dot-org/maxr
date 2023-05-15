@@ -28,21 +28,17 @@ class cVehicle;
 class cModel;
 class cUnit;
 
-enum class eEndMoveActionType
-{
-	None,
-	Load,
-	Attack
-};
 
 class cEndMoveAction
 {
 public:
-	cEndMoveAction();
-	cEndMoveAction (const cVehicle&, const cUnit& destUnit, eEndMoveActionType);
+	static cEndMoveAction None();
+	static cEndMoveAction Attacking (const cUnit& destUnit);
+	static cEndMoveAction Load (const cUnit& destUnit);
+	static cEndMoveAction GetIn (const cUnit& destUnit);
 
-	void execute (cModel&);
-	eEndMoveActionType getType() const;
+	void execute (cModel&, cVehicle&);
+	bool isAttacking() const { return endMoveAction == eEndMoveActionType::Attack; }
 	uint32_t getChecksum (uint32_t crc) const;
 
 	template <typename Archive>
@@ -50,18 +46,28 @@ public:
 	{
 		// clang-format off
 		// See https://github.com/llvm/llvm-project/issues/44312
-		archive & NVP (vehicleID);
 		archive & NVP (endMoveAction);
 		archive & NVP (destID);
 		// clang-format on
 	}
 
 private:
-	void executeLoadAction (cModel&);
-	void executeAttackAction (cModel&);
+	enum class eEndMoveActionType
+	{
+		None,
+		Load,
+		GetIn,
+		Attack
+	};
+
+	cEndMoveAction();
+	cEndMoveAction (const cUnit& destUnit, eEndMoveActionType);
+
+	void executeGetInAction (cModel&, cVehicle&);
+	void executeLoadAction (cModel&, cVehicle&);
+	void executeAttackAction (cModel&, cVehicle&);
 
 private:
-	int vehicleID;
 	eEndMoveActionType endMoveAction;
 	int destID;
 };

@@ -79,14 +79,16 @@ namespace
 
 //------------------------------------------------------------------------------
 cMoveJob::cMoveJob() :
-	state (eMoveJobState::Finished)
+	state (eMoveJobState::Finished),
+	endMoveAction (cEndMoveAction::None())
 {}
 
 //------------------------------------------------------------------------------
 cMoveJob::cMoveJob (const std::forward_list<cPosition>& path, cVehicle& vehicle, cModel& model) :
 	vehicleId (vehicle.getId()),
 	path (path),
-	state (eMoveJobState::Waiting)
+	state (eMoveJobState::Waiting),
+	endMoveAction (cEndMoveAction::None())
 {
 }
 
@@ -431,7 +433,7 @@ void cMoveJob::endMove (cModel& model, cVehicle& vehicle)
 		vehicle.setMoving (false);
 		vehicle.WalkFrame = 0;
 
-		endMoveAction.execute (model);
+		endMoveAction.execute (model, vehicle);
 		vehicle.continuePathBuilding (model);
 		vehicle.triggerLandingTakeOff (model);
 	}

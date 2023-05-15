@@ -760,8 +760,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::Load);
-						client.startMove (vehicle, path, emat);
+						client.startMove (vehicle, path, cEndMoveAction::GetIn (*overVehicle));
 					}
 					else
 					{
@@ -781,8 +780,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::Load);
-						client.startMove (*overVehicle, path, emat);
+						client.startMove (*overVehicle, path, cEndMoveAction::Load (unit));
 					}
 					else
 					{
@@ -806,8 +804,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						cEndMoveAction emat (*overVehicle, unit, eEndMoveActionType::Load);
-						client.startMove (*overVehicle, path, emat);
+						client.startMove (*overVehicle, path, cEndMoveAction::Load (unit));
 					}
 					else
 					{
@@ -827,8 +824,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						cEndMoveAction emat (*overPlane, unit, eEndMoveActionType::Load);
-						client.startMove (*overPlane, path, emat);
+						client.startMove (*overPlane, path, cEndMoveAction::Load (unit));
 					}
 					else
 					{
@@ -861,8 +857,7 @@ void cGameGuiController::connectClient (cClient& client)
 				const auto path = pc.calcPath();
 				if (!path.empty())
 				{
-					cEndMoveAction emat (vehicle, *target, eEndMoveActionType::Attack);
-					client.startMove (vehicle, path, emat);
+					client.startMove (vehicle, path, cEndMoveAction::Attacking (*target));
 				}
 				else
 				{

@@ -26,29 +26,54 @@
 #include "jobs/getinjob.h"
 #include "utility/crc.h"
 
-cEndMoveAction::cEndMoveAction (const cVehicle& vehicle, const cUnit& destUnit, eEndMoveActionType type) :
-	vehicleID (vehicle.getId()),
+//------------------------------------------------------------------------------
+/* static */ cEndMoveAction cEndMoveAction::None()
+{
+	return {};
+}
+//------------------------------------------------------------------------------
+/* static */ cEndMoveAction cEndMoveAction::Attacking (const cUnit& destUnit)
+{
+	return {destUnit, eEndMoveActionType::Attack};
+}
+
+//------------------------------------------------------------------------------
+/* static */ cEndMoveAction cEndMoveAction::GetIn (const cUnit& destUnit)
+{
+	return {destUnit, eEndMoveActionType::GetIn};
+}
+
+//------------------------------------------------------------------------------
+/* static */ cEndMoveAction cEndMoveAction::Load (const cUnit& destUnit)
+{
+	return {destUnit, eEndMoveActionType::Load};
+}
+
+//------------------------------------------------------------------------------
+cEndMoveAction::cEndMoveAction (const cUnit& destUnit, eEndMoveActionType type) :
 	endMoveAction (type),
 	destID (destUnit.getId())
 {}
 
 //------------------------------------------------------------------------------
 cEndMoveAction::cEndMoveAction() :
-	vehicleID (-1),
 	endMoveAction (eEndMoveActionType::None),
 	destID (-1)
 {}
 
 //------------------------------------------------------------------------------
-void cEndMoveAction::execute (cModel& model)
+void cEndMoveAction::execute (cModel& model, cVehicle& vehicle)
 {
 	switch (endMoveAction)
 	{
+		case eEndMoveActionType::GetIn:
+			executeGetInAction (model, vehicle);
+			break;
 		case eEndMoveActionType::Load:
-			executeLoadAction (model);
+			executeLoadAction (model, vehicle);
 			break;
 		case eEndMoveActionType::Attack:
-			executeAttackAction (model);
+			executeAttackAction (model, vehicle);
 			break;
 		default:
 			break;
@@ -56,15 +81,8 @@ void cEndMoveAction::execute (cModel& model)
 }
 
 //------------------------------------------------------------------------------
-eEndMoveActionType cEndMoveAction::getType() const
-{
-	return endMoveAction;
-}
-
-//------------------------------------------------------------------------------
 uint32_t cEndMoveAction::getChecksum (uint32_t crc) const
 {
-	crc = calcCheckSum (vehicleID, crc);
 	crc = calcCheckSum (endMoveAction, crc);
 	crc = calcCheckSum (destID, crc);
 
@@ -72,34 +90,47 @@ uint32_t cEndMoveAction::getChecksum (uint32_t crc) const
 }
 
 //------------------------------------------------------------------------------
-void cEndMoveAction::executeLoadAction (cModel& model)
+void cEndMoveAction::executeGetInAction (cModel& model, cVehicle& vehicle)
 {
-	// get the vehicle
-	cVehicle* loadedVehicle = model.getVehicleFromID (vehicleID);
-	if (loadedVehicle == nullptr) return;
-
 	// get the target unit
-	cUnit* loadingUnit = model.getUnitFromID (destID);
-	if (loadingUnit == nullptr) return;
+	cVehicle* transporter = model.getVehicleFromID (destID);
+	if (transporter == nullptr) return;
 
-	if (!loadingUnit->canLoad (loadedVehicle)) return;
+	if (!transporter->canLoad (&vehicle)) return;
 
-	if (loadingUnit->getStaticUnitData().factorAir > 0)
+	if (transporter->getStaticUnitData().factorAir > 0)
 	{
-		model.addJob (std::make_unique<cAirTransportLoadJob> (*loadedVehicle, *loadingUnit));
+		model.addJob (std::make_unique<cAirTransportLoadJob> (vehicle, *transporter));
 	}
 	else
 	{
-		model.addJob (std::make_unique<cGetInJob> (*loadedVehicle, *loadingUnit));
+		model.addJob (std::make_unique<cGetInJob> (vehicle, *transporter));
 	}
 }
 
 //------------------------------------------------------------------------------
-void cEndMoveAction::executeAttackAction (cModel& model)
+void cEndMoveAction::executeLoadAction (cModel& model, cVehicle& vehicle)
 {
-	// get the vehicle
-	cUnit* vehicle = model.getUnitFromID (vehicleID);
-	if (vehicle == nullptr || !vehicle->getOwner()) return;
+	// get the target unit
+	cVehicle* cargo = model.getVehicleFromID (destID);
+	if (cargo == nullptr) return;
+
+	if (!vehicle.canLoad (cargo)) return;
+
+	if (vehicle.getStaticUnitData().factorAir > 0)
+	{
+		model.addJob (std::make_unique<cAirTransportLoadJob> (*cargo, vehicle));
+	}
+	else
+	{
+		model.addJob (std::make_unique<cGetInJob> (*cargo, vehicle));
+	}
+}
+
+//------------------------------------------------------------------------------
+void cEndMoveAction::executeAttackAction (cModel& model, cVehicle& vehicle)
+{
+	if (!vehicle.getOwner()) return;
 
 	// get the target unit
 	const cUnit* destUnit = model.getUnitFromID (destID);
@@ -109,10 +140,10 @@ void cEndMoveAction::executeAttackAction (cModel& model)
 	cMapView mapView (model.getMap(), nullptr);
 
 	// check, whether the attack is now possible
-	if (!vehicle->canAttackObjectAt (position, mapView, true, true)) return;
+	if (!vehicle.canAttackObjectAt (position, mapView, true, true)) return;
 
 	// is the target in sight?
-	if (!vehicle->getOwner()->canSeeUnit (*destUnit, *model.getMap())) return;
+	if (!vehicle.getOwner()->canSeeUnit (*destUnit, *model.getMap())) return;
 
-	model.addAttackJob (*vehicle, position);
+	model.addAttackJob (vehicle, position);
 }

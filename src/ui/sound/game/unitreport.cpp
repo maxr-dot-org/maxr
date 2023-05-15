@@ -53,7 +53,7 @@ namespace
 		else if (vehicle.data.getHitpoints() > vehicle.data.getHitpointsMax() / 2)
 		{
 			// Status green
-			if (vehicle.getMoveJob() && vehicle.getMoveJob()->getEndMoveAction().getType() == eEndMoveActionType::Attack)
+			if (vehicle.getMoveJob() && vehicle.getMoveJob()->getEndMoveAction().isAttacking())
 			{
 				soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
 			}

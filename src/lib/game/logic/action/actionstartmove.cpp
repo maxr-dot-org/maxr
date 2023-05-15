@@ -35,11 +35,13 @@ cActionStartMove::cActionStartMove (const cVehicle& vehicle, const std::forward_
 cActionStartMove::cActionStartMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectResource) :
 	path (path),
 	unitId (vehicle.getId()),
+	endMoveAction (cEndMoveAction::None()),
 	stopOnDetectResource (stopOnDetectResource)
 {}
 
 //------------------------------------------------------------------------------
-cActionStartMove::cActionStartMove (cBinaryArchiveOut& archive)
+cActionStartMove::cActionStartMove (cBinaryArchiveOut& archive) :
+	endMoveAction (cEndMoveAction::None())
 {
 	serializeThis (archive);
 }
