@@ -24,18 +24,10 @@
 #include "game/logic/pathcalculator.h"
 
 //------------------------------------------------------------------------------
-cActionStartMove::cActionStartMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat) :
+cActionStartMove::cActionStartMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat, bool stopOnDetectResource) :
 	path (path),
 	unitId (vehicle.getId()),
 	endMoveAction (emat),
-	stopOnDetectResource (false)
-{}
-
-//------------------------------------------------------------------------------
-cActionStartMove::cActionStartMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectResource) :
-	path (path),
-	unitId (vehicle.getId()),
-	endMoveAction (cEndMoveAction::None()),
 	stopOnDetectResource (stopOnDetectResource)
 {}
 

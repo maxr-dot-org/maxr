@@ -102,7 +102,7 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 
 		if (!path.empty())
 		{
-			client.startMove (vehicle, path, true);
+			client.startMove (vehicle, path, cEndMoveAction::None(), true);
 			counter = ACTION_TIMEOUT;
 		}
 		else
@@ -302,7 +302,7 @@ void cSurveyorAi::planLongMove (const std::vector<std::unique_ptr<cSurveyorAi>>&
 		const auto path = pc.calcPath();
 		if (!path.empty())
 		{
-			client.startMove (vehicle, path, true);
+			client.startMove (vehicle, path, cEndMoveAction::None(), true);
 			counter = ACTION_TIMEOUT;
 		}
 		else

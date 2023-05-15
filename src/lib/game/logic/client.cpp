@@ -531,15 +531,9 @@ void cClient::startBuildPath (const cVehicle& vehicle, sID buildingTypeID, int b
 }
 
 //------------------------------------------------------------------------------
-void cClient::startMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, bool stopOnDetectResource)
+void cClient::startMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat, bool stopOnDetectResource)
 {
-	sendNetMessage (cActionStartMove (vehicle, path, stopOnDetectResource));
-}
-
-//------------------------------------------------------------------------------
-void cClient::startMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat)
-{
-	sendNetMessage (cActionStartMove (vehicle, path, emat));
+	sendNetMessage (cActionStartMove (vehicle, path, emat, stopOnDetectResource));
 }
 
 //------------------------------------------------------------------------------
