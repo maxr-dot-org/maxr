@@ -23,14 +23,20 @@
 #include "game/logic/endmoveaction.h"
 #include "utility/position.h"
 
-#include <optional>
 #include <forward_list>
 #include <memory>
+#include <optional>
 
 #define MOVE_SPEED 4 // maximum speed (pixel per gametime tick) of vehicle movements
 
 class cMap;
 class cVehicle;
+
+enum class eStopOn
+{
+	Never,
+	DetectResource
+};
 
 class cMoveJob
 {
@@ -90,7 +96,7 @@ public:
 	const cEndMoveAction& getEndMoveAction() const { return endMoveAction; }
 
 	/** used for the surveyor ai, so it can recalculate its steps, when resources are detected */
-	void setStopOnDetectResource (bool value) { stopOnDetectResource = value; }
+	void setStopOn (eStopOn value) { stopOn = value; }
 
 	uint32_t getChecksum (uint32_t crc) const;
 
@@ -117,7 +123,7 @@ public:
 		archive & NVP (currentSpeed);
 		archive & NVP (pixelToMove);
 		archive & NVP (endMoveAction);
-		archive & NVP (stopOnDetectResource);
+		archive & NVP (stopOn);
 		// clang-format on
 	}
 
@@ -179,7 +185,7 @@ private:
 	cEndMoveAction endMoveAction;
 
 	/** give the surveyor ai the chance to calc a new path, when resources are found. */
-	bool stopOnDetectResource = false;
+	eStopOn stopOn = eStopOn::Never;
 };
 
 #endif

@@ -725,7 +725,7 @@ void cGameGuiController::connectClient (cClient& client)
 		const auto path = pc.calcPath();
 		if (!path.empty())
 		{
-			client.startMove (vehicle, path, cEndMoveAction::None(), false);
+			client.startMove (vehicle, path, eStopOn::Never, cEndMoveAction::None());
 		}
 		else
 		{
@@ -760,7 +760,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						client.startMove (vehicle, path, cEndMoveAction::GetIn (*overVehicle), false);
+						client.startMove (vehicle, path, eStopOn::Never, cEndMoveAction::GetIn (*overVehicle));
 					}
 					else
 					{
@@ -780,7 +780,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						client.startMove (*overVehicle, path, cEndMoveAction::Load (unit), false);
+						client.startMove (*overVehicle, path, eStopOn::Never, cEndMoveAction::Load (unit));
 					}
 					else
 					{
@@ -804,7 +804,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						client.startMove (*overVehicle, path, cEndMoveAction::Load (unit), false);
+						client.startMove (*overVehicle, path, eStopOn::Never, cEndMoveAction::Load (unit));
 					}
 					else
 					{
@@ -824,7 +824,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						client.startMove (*overPlane, path, cEndMoveAction::Load (unit), false);
+						client.startMove (*overPlane, path, eStopOn::Never, cEndMoveAction::Load (unit));
 					}
 					else
 					{
@@ -857,7 +857,7 @@ void cGameGuiController::connectClient (cClient& client)
 				const auto path = pc.calcPath();
 				if (!path.empty())
 				{
-					client.startMove (vehicle, path, cEndMoveAction::Attacking (*target), false);
+					client.startMove (vehicle, path, eStopOn::Never, cEndMoveAction::Attacking (*target));
 				}
 				else
 				{
@@ -893,7 +893,7 @@ void cGameGuiController::connectClient (cClient& client)
 			const auto path = pc.calcPath();
 			if (!path.empty())
 			{
-				client.startMove (selectedVehicle, path, cEndMoveAction::None(), false);
+				client.startMove (selectedVehicle, path, eStopOn::Never, cEndMoveAction::None());
 			}
 			else
 			{
@@ -1810,7 +1810,7 @@ void cGameGuiController::sendStartGroupMoveAction (std::vector<cVehicle*> group,
 			auto& path = paths[i];
 			if (mapView->possiblePlace (*vehicle, path.front(), true) || Contains (startedMoves, mapView->getField (path.front()).getVehicle()))
 			{
-				activeClient->startMove (*vehicle, path, cEndMoveAction::None(), false);
+				activeClient->startMove (*vehicle, path, eStopOn::Never, cEndMoveAction::None());
 				moveStarted = true;
 				startedMoves.push_back (vehicle);
 				vehicle = nullptr;
@@ -1827,7 +1827,7 @@ void cGameGuiController::sendStartGroupMoveAction (std::vector<cVehicle*> group,
 	{
 		const auto& vehicle = group[i];
 		const auto& path = paths[i];
-		activeClient->startMove (*vehicle, path, cEndMoveAction::None(), false);
+		activeClient->startMove (*vehicle, path, eStopOn::Never, cEndMoveAction::None());
 	}
 }
 

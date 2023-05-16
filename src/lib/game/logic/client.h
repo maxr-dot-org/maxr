@@ -104,7 +104,7 @@ public:
 	void setAutoMove (const cVehicle&, bool);
 	void startBuild (const cVehicle&, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition);
 	void startBuildPath (const cVehicle&, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition);
-	void startMove (const cVehicle&, const std::forward_list<cPosition>& path, cEndMoveAction, bool stopOnDetectResource);
+	void startMove (const cVehicle&, const std::forward_list<cPosition>& path, eStopOn, cEndMoveAction);
 	void startTurn();
 	void startWork (const cBuilding&);
 	void disable (const cVehicle& infiltrator, const cUnit& target);

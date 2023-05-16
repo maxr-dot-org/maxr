@@ -420,8 +420,8 @@ void cMoveJob::endMove (cModel& model, cVehicle& vehicle)
 
 	if (vehicle.getStaticData().canSurvey)
 	{
-		bool resourceFound = vehicle.doSurvey (map);
-		if (resourceFound && stopOnDetectResource)
+		const bool resourceFound = vehicle.doSurvey (map);
+		if (resourceFound && stopOn == eStopOn::DetectResource)
 		{
 			path.clear();
 		}
@@ -467,7 +467,7 @@ uint32_t cMoveJob::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (currentSpeed, crc);
 	crc = calcCheckSum (pixelToMove, crc);
 	crc = calcCheckSum (endMoveAction, crc);
-	crc = calcCheckSum (stopOnDetectResource, crc);
+	crc = calcCheckSum (stopOn, crc);
 
 	return crc;
 }

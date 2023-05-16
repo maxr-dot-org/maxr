@@ -25,10 +25,12 @@
 
 #include <forward_list>
 
+enum class eStopOn;
+
 class cActionStartMove : public cActionT<cAction::eActiontype::StartMove>
 {
 public:
-	cActionStartMove (const cVehicle&, const std::forward_list<cPosition>& path, cEndMoveAction, bool stopOnDetectResource);
+	cActionStartMove (const cVehicle&, const std::forward_list<cPosition>& path, eStopOn, cEndMoveAction);
 	cActionStartMove (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override
@@ -53,14 +55,14 @@ private:
 		archive & NVP (unitId);
 		archive & NVP (path);
 		archive & NVP (endMoveAction);
-		archive & NVP (stopOnDetectResource);
+		archive & NVP (stopOn);
 		// clang-format on
 	}
 
 	std::forward_list<cPosition> path;
 	unsigned int unitId;
 	cEndMoveAction endMoveAction;
-	bool stopOnDetectResource;
+	eStopOn stopOn;
 };
 
 #endif // game_logic_actionStartMoveH

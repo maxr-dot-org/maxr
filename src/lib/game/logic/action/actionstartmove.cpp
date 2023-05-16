@@ -24,11 +24,11 @@
 #include "game/logic/pathcalculator.h"
 
 //------------------------------------------------------------------------------
-cActionStartMove::cActionStartMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, cEndMoveAction emat, bool stopOnDetectResource) :
+cActionStartMove::cActionStartMove (const cVehicle& vehicle, const std::forward_list<cPosition>& path, eStopOn stopOn, cEndMoveAction emat) :
 	path (path),
 	unitId (vehicle.getId()),
 	endMoveAction (emat),
-	stopOnDetectResource (stopOnDetectResource)
+	stopOn (stopOn)
 {}
 
 //------------------------------------------------------------------------------
@@ -109,6 +109,6 @@ void cActionStartMove::execute (cModel& model) const
 	if (movejob)
 	{
 		movejob->setEndMoveAction (endMoveAction);
-		movejob->setStopOnDetectResource (stopOnDetectResource);
+		movejob->setStopOn (stopOn);
 	}
 }
