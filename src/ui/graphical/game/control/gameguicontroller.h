@@ -60,6 +60,7 @@ class cWindowUpgradesFilterState;
 
 enum class ePlayerConnectionState;
 enum class eResourceType;
+enum class eStart;
 
 struct sID;
 struct sMiningResource;
@@ -152,7 +153,7 @@ private:
 	void savePosition (size_t index);
 	void jumpToSavedPosition (size_t index);
 
-	void sendStartGroupMoveAction (std::vector<cVehicle*> group, const cPosition& destination);
+	void sendStartGroupMoveAction (std::vector<cVehicle*> group, const cPosition& destination, eStart);
 
 	void updateChangeAllowed();
 	void updateEndButtonState();

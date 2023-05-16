@@ -23,6 +23,7 @@
 #include "game/connectionmanager.h"
 #include "game/data/model.h"
 #include "game/logic/gametimer.h"
+#include "game/logic/action/actionstartmove.h"
 #include "game/protocol/netmessage.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -104,7 +105,7 @@ public:
 	void setAutoMove (const cVehicle&, bool);
 	void startBuild (const cVehicle&, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition);
 	void startBuildPath (const cVehicle&, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition);
-	void startMove (const cVehicle&, const std::forward_list<cPosition>& path, eStopOn, cEndMoveAction);
+	void startMove (const cVehicle&, const std::forward_list<cPosition>& path, eStart, eStopOn, cEndMoveAction);
 	void startTurn();
 	void startWork (const cBuilding&);
 	void disable (const cVehicle& infiltrator, const cUnit& target);

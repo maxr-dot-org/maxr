@@ -452,7 +452,6 @@ cMoveJob* cModel::addMoveJob (cVehicle& vehicle, const std::forward_list<cPositi
 		}
 	}
 	auto moveJob = std::make_unique<cMoveJob> (path, vehicle, *this);
-	moveJob->resume();
 	vehicle.setMoveJob (moveJob.get());
 
 	moveJobs.push_back (std::move (moveJob));
@@ -857,7 +856,8 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 	{
 		std::forward_list<cPosition> path;
 		path.push_front (bestPosition);
-		addMoveJob (*stealthVehicle, path);
+		auto moveJob = addMoveJob (*stealthVehicle, path);
+		moveJob->resume();
 		return;
 	}
 

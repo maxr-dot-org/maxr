@@ -133,6 +133,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 		const cPosition oldPosition = getPosition();
 		if (found_next && model.addMoveJob (*this, nextPosition))
 		{
+			getMoveJob()->resume();
 			model.addBuilding (oldPosition, getBuildingType(), getOwner());
 			setBuildingABuilding (false);
 		}

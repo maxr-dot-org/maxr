@@ -84,7 +84,7 @@ void cActionFinishBuild::finishABuilding (cModel& model, cVehicle& vehicle) cons
 	}
 
 	// drive away from the building lot
-	model.addMoveJob (vehicle, escapePosition);
+	model.addMoveJob (vehicle, escapePosition)->resume();
 }
 
 //------------------------------------------------------------------------------

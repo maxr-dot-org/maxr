@@ -22,12 +22,19 @@
 
 #include "ui/graphical/game/control/mouseaction/mouseaction.h"
 
+enum class eStart;
+
 class cMouseActionMove : public cMouseAction
 {
 public:
+	explicit cMouseActionMove (eStart);
+
 	bool executeLeftClick (cGameMapWidget&, const cMapView&, const cPosition& mapPosition, cUnitSelection&, bool changeAllowed) const override;
 	bool doesChangeState() const override;
 	bool isSingleAction() const override;
+
+private:
+	eStart start;
 };
 
 #endif // ui_graphical_game_control_mouseaction_mouseactionmoveH

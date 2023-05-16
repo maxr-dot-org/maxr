@@ -48,6 +48,8 @@ class cAnimation;
 class cRightMouseButtonScrollerWidget;
 class cFrameCounter;
 
+enum class eStart;
+
 class cGameMapWidget : public cClickableWidget
 {
 	friend class cDebugOutputWidget;
@@ -134,8 +136,8 @@ public:
 	cSignal<void (const cUnit&)> triggeredUnitHelp;
 	cSignal<void (const cUnit&, const cUnit&)> triggeredTransfer;
 	cSignal<void (const cVehicle&, const cPosition&)> triggeredEndBuilding;
-	cSignal<void (const cVehicle&, const cPosition&)> triggeredMoveSingle;
-	cSignal<void (const std::vector<cVehicle*>&, const cPosition&)> triggeredMoveGroup;
+	cSignal<void (const cVehicle&, const cPosition&, eStart)> triggeredMoveSingle;
+	cSignal<void (const std::vector<cVehicle*>&, const cPosition&, eStart)> triggeredMoveGroup;
 	cSignal<void (const cVehicle&, const cPosition&)> selectedBuildPosition;
 	cSignal<void (const cVehicle&, const cPosition&)> selectedBuildPathDestination;
 	cSignal<void (const cUnit&, size_t, const cPosition&)> triggeredActivateAt;

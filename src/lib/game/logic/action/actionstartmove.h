@@ -27,10 +27,16 @@
 
 enum class eStopOn;
 
+enum class eStart
+{
+	Deferred,
+	Immediate
+};
+
 class cActionStartMove : public cActionT<cAction::eActiontype::StartMove>
 {
 public:
-	cActionStartMove (const cVehicle&, const std::forward_list<cPosition>& path, eStopOn, cEndMoveAction);
+	cActionStartMove (const cVehicle&, const std::forward_list<cPosition>& path, eStart, eStopOn, cEndMoveAction);
 	cActionStartMove (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override
@@ -55,6 +61,7 @@ private:
 		archive & NVP (unitId);
 		archive & NVP (path);
 		archive & NVP (endMoveAction);
+		archive & NVP (start);
 		archive & NVP (stopOn);
 		// clang-format on
 	}
@@ -62,6 +69,7 @@ private:
 	std::forward_list<cPosition> path;
 	unsigned int unitId;
 	cEndMoveAction endMoveAction;
+	eStart start;
 	eStopOn stopOn;
 };
 

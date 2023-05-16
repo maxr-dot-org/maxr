@@ -24,6 +24,7 @@
 #include "game/data/map/mapview.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "game/logic/action/actionstartmove.h"
 #include "input/keyboard/keyboard.h"
 #include "input/mouse/cursor/mousecursoramount.h"
 #include "input/mouse/cursor/mousecursorattack.h"
@@ -128,7 +129,11 @@ std::unique_ptr<cMouseAction> cMouseModeDefault::getMouseAction (const cPosition
 		case eActionType::Attack: return std::make_unique<cMouseActionAttack>();
 		case eActionType::Select: return std::make_unique<cMouseActionSelect>();
 		case eActionType::ActivateFinished: return std::make_unique<cMouseActionActivateFinished>();
-		case eActionType::Move: return std::make_unique<cMouseActionMove>();
+		case eActionType::Move:
+		{
+			eStart start = cKeyboard::getInstance().isAnyModifierActive (KeyModifierFlags (eKeyModifierType::Shift)) ? eStart::Deferred : eStart::Immediate;
+			return std::make_unique<cMouseActionMove> (start);
+		}
 		default: return nullptr;
 	}
 }

@@ -720,20 +720,20 @@ void cGameGuiController::connectClient (cClient& client)
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredEndBuilding, [&] (const cVehicle& vehicle, const cPosition& destination) {
 		client.finishBuild (vehicle, destination);
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveSingle, [&] (const cVehicle& vehicle, const cPosition& destination) {
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveSingle, [&] (const cVehicle& vehicle, const cPosition& destination, eStart start) {
 		cPathCalculator pc (vehicle, *mapView, destination, false);
 		const auto path = pc.calcPath();
 		if (!path.empty())
 		{
-			client.startMove (vehicle, path, eStopOn::Never, cEndMoveAction::None());
+			client.startMove (vehicle, path, start, eStopOn::Never, cEndMoveAction::None());
 		}
 		else
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceNoPath, getRandom (VoiceData.VOINoPath)));
 		}
 	});
-	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveGroup, [&] (const std::vector<cVehicle*>& vehicles, const cPosition& destination) {
-		sendStartGroupMoveAction (vehicles, destination);
+	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredMoveGroup, [&] (const std::vector<cVehicle*>& vehicles, const cPosition& destination, eStart start) {
+		sendStartGroupMoveAction (vehicles, destination, start);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredActivateAt, [&] (const cUnit& unit, size_t index, const cPosition& position) {
 		client.activateUnit (unit, *unit.storedUnits[index], position);
@@ -760,7 +760,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						client.startMove (vehicle, path, eStopOn::Never, cEndMoveAction::GetIn (*overVehicle));
+						client.startMove (vehicle, path, eStart::Immediate, eStopOn::Never, cEndMoveAction::GetIn (*overVehicle));
 					}
 					else
 					{
@@ -780,7 +780,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						client.startMove (*overVehicle, path, eStopOn::Never, cEndMoveAction::Load (unit));
+						client.startMove (*overVehicle, path, eStart::Immediate, eStopOn::Never, cEndMoveAction::Load (unit));
 					}
 					else
 					{
@@ -804,7 +804,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						client.startMove (*overVehicle, path, eStopOn::Never, cEndMoveAction::Load (unit));
+						client.startMove (*overVehicle, path, eStart::Immediate, eStopOn::Never, cEndMoveAction::Load (unit));
 					}
 					else
 					{
@@ -824,7 +824,7 @@ void cGameGuiController::connectClient (cClient& client)
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						client.startMove (*overPlane, path, eStopOn::Never, cEndMoveAction::Load (unit));
+						client.startMove (*overPlane, path, eStart::Immediate, eStopOn::Never, cEndMoveAction::Load (unit));
 					}
 					else
 					{
@@ -857,7 +857,7 @@ void cGameGuiController::connectClient (cClient& client)
 				const auto path = pc.calcPath();
 				if (!path.empty())
 				{
-					client.startMove (vehicle, path, eStopOn::Never, cEndMoveAction::Attacking (*target));
+					client.startMove (vehicle, path, eStart::Immediate, eStopOn::Never, cEndMoveAction::Attacking (*target));
 				}
 				else
 				{
@@ -885,7 +885,7 @@ void cGameGuiController::connectClient (cClient& client)
 		const auto selectedVehiclesCount = unitSelection.getSelectedVehiclesCount();
 		if (selectedVehiclesCount > 1)
 		{
-			sendStartGroupMoveAction (unitSelection.getSelectedVehicles(), destination);
+			sendStartGroupMoveAction (unitSelection.getSelectedVehicles(), destination, eStart::Immediate);
 		}
 		else if (selectedVehiclesCount == 1)
 		{
@@ -893,7 +893,7 @@ void cGameGuiController::connectClient (cClient& client)
 			const auto path = pc.calcPath();
 			if (!path.empty())
 			{
-				client.startMove (selectedVehicle, path, eStopOn::Never, cEndMoveAction::None());
+				client.startMove (selectedVehicle, path, eStart::Immediate, eStopOn::Never, cEndMoveAction::None());
 			}
 			else
 			{
@@ -1772,7 +1772,7 @@ std::shared_ptr<const cUnitsData> cGameGuiController::getUnitsData() const
 }
 
 //------------------------------------------------------------------------------
-void cGameGuiController::sendStartGroupMoveAction (std::vector<cVehicle*> group, const cPosition& destination)
+void cGameGuiController::sendStartGroupMoveAction (std::vector<cVehicle*> group, const cPosition& destination, eStart start)
 {
 	if (group.size() == 0) return;
 
@@ -1810,7 +1810,7 @@ void cGameGuiController::sendStartGroupMoveAction (std::vector<cVehicle*> group,
 			auto& path = paths[i];
 			if (mapView->possiblePlace (*vehicle, path.front(), true) || Contains (startedMoves, mapView->getField (path.front()).getVehicle()))
 			{
-				activeClient->startMove (*vehicle, path, eStopOn::Never, cEndMoveAction::None());
+				activeClient->startMove (*vehicle, path, start, eStopOn::Never, cEndMoveAction::None());
 				moveStarted = true;
 				startedMoves.push_back (vehicle);
 				vehicle = nullptr;
@@ -1827,7 +1827,7 @@ void cGameGuiController::sendStartGroupMoveAction (std::vector<cVehicle*> group,
 	{
 		const auto& vehicle = group[i];
 		const auto& path = paths[i];
-		activeClient->startMove (*vehicle, path, eStopOn::Never, cEndMoveAction::None());
+		activeClient->startMove (*vehicle, path, start, eStopOn::Never, cEndMoveAction::None());
 	}
 }
 

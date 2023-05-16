@@ -25,6 +25,11 @@
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
+cMouseActionMove::cMouseActionMove (eStart start) :
+	start (start)
+{}
+
+//------------------------------------------------------------------------------
 bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
@@ -38,9 +43,9 @@ bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cM
 		else
 		{
 			if (unitSelection.getSelectedVehiclesCount() > 1)
-				gameMapWidget.triggeredMoveGroup (unitSelection.getSelectedVehicles(), mapPosition);
+				gameMapWidget.triggeredMoveGroup (unitSelection.getSelectedVehicles(), mapPosition, start);
 			else
-				gameMapWidget.triggeredMoveSingle (*unitSelection.getSelectedVehicle(), mapPosition);
+				gameMapWidget.triggeredMoveSingle (*unitSelection.getSelectedVehicle(), mapPosition, start);
 		}
 		return true;
 	}
