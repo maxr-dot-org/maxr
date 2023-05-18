@@ -22,6 +22,7 @@
 #include "SDLutility/drawing.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
+#include "game/data/units/unitdata.h"
 #include "game/data/units/vehicle.h"
 #include "resources/buildinguidata.h"
 #include "resources/uidata.h"
@@ -82,10 +83,4 @@ void cUnitListViewItem::draw (SDL_Surface& destination, const cBox<cPosition>& c
 		dest.getMaxCorner() += cPosition (1, 1);
 		drawSelectionCorner (destination, dest, cRgbColor (224, 224, 224), 8, cBox<cPosition> (clipRect.getMinCorner() - 1, clipRect.getMaxCorner() + 1));
 	}
-}
-
-//------------------------------------------------------------------------------
-const sID& cUnitListViewItem::getUnitId() const
-{
-	return unitId;
 }

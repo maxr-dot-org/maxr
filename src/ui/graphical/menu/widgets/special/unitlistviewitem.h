@@ -20,13 +20,13 @@
 #ifndef ui_graphical_menu_widgets_special_unitlistviewitemH
 #define ui_graphical_menu_widgets_special_unitlistviewitemH
 
-#include "game/data/units/unitdata.h"
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
+#include "game/data/units/id.h"
 
 class cImage;
 class cLabel;
 class cPlayer;
-struct sID;
+class cUnitsData;
 
 class cUnitListViewItem : public cAbstractListViewItem
 {
@@ -39,7 +39,7 @@ public:
 
 	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
 
-	const sID& getUnitId() const;
+	const sID& getUnitId() const { return unitId; }
 
 protected:
 	cImage* unitImage;
