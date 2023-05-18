@@ -32,6 +32,47 @@
 #include <cassert>
 
 //------------------------------------------------------------------------------
+/* static */ cPosition cPushButton::getButtonSize (ePushButtonType buttonType)
+{
+	switch (buttonType)
+	{
+		default:
+		case ePushButtonType::StandardBig: return cPosition (200, 29);
+		case ePushButtonType::StandardSmall: return cPosition (150, 29);
+		case ePushButtonType::Huge: return cPosition (109, 40);
+		case ePushButtonType::ArrowUpBig: return cPosition (28, 29);
+		case ePushButtonType::ArrowDownBig: return cPosition (28, 29);
+		case ePushButtonType::ArrowLeftBig: return cPosition (28, 29);
+		case ePushButtonType::ArrowRightBig: return cPosition (28, 29);
+		case ePushButtonType::ArrowUpSmall: return cPosition (18, 17);
+		case ePushButtonType::ArrowDownSmall: return cPosition (18, 17);
+		case ePushButtonType::ArrowLeftSmall: return cPosition (18, 17);
+		case ePushButtonType::ArrowRightSmall: return cPosition (18, 17);
+		case ePushButtonType::ArrowUpBar: return cPosition (17, 17);
+		case ePushButtonType::ArrowDownBar: return cPosition (17, 17);
+		case ePushButtonType::Angular: return cPosition (78, 23);
+		case ePushButtonType::HudHelp: return cPosition (26, 24);
+		case ePushButtonType::HudCenter: return cPosition (21, 22);
+		case ePushButtonType::HudReport: return cPosition (49, 20);
+		case ePushButtonType::HudChat: return cPosition (49, 20);
+		case ePushButtonType::HudNext: return cPosition (39, 23);
+		case ePushButtonType::HudPrev: return cPosition (38, 23);
+		case ePushButtonType::HudDone: return cPosition (26, 24);
+		case ePushButtonType::HudEnd: return cPosition (70, 17);
+		case ePushButtonType::HudPreferences: return cPosition (67, 20);
+		case ePushButtonType::HudFiles: return cPosition (67, 20);
+		case ePushButtonType::HudPlay: return cPosition (19, 18);
+		case ePushButtonType::HudStop: return cPosition (19, 19);
+		case ePushButtonType::UnitContextMenu: return cPosition (42, 21);
+		case ePushButtonType::Destroy: return cPosition (59, 56);
+		case ePushButtonType::ArrowUpSmallModern: return cPosition (16, 8);
+		case ePushButtonType::ArrowDownSmallModern: return cPosition (16, 8);
+		case ePushButtonType::ArrowLeftSmallModern: return cPosition (8, 16);
+		case ePushButtonType::ArrowRightSmallModern: return cPosition (8, 16);
+	}
+}
+
+//------------------------------------------------------------------------------
 cPushButton::cPushButton (const cBox<cPosition>& area) :
 	cClickableWidget (area),
 	buttonType (ePushButtonType::Invisible),
@@ -192,7 +233,7 @@ void cPushButton::renewSurface()
 		return;
 	}
 
-	cPosition size;
+	cPosition size = getButtonSize (buttonType);
 	SDL_Rect src;
 	switch (buttonType)
 	{
@@ -200,162 +241,130 @@ void cPushButton::renewSurface()
 		case ePushButtonType::StandardBig:
 			src.x = 0;
 			src.y = (isPressed || isLocked) ? 29 : 0;
-			size = cPosition (200, 29);
 			break;
 		case ePushButtonType::StandardSmall:
 			src.x = 0;
 			src.y = (isPressed || isLocked) ? 87 : 58;
-			size = cPosition (150, 29);
 			break;
 		case ePushButtonType::Huge:
 			src.x = (isPressed || isLocked) ? 109 : 0;
 			src.y = 116;
-			size = cPosition (109, 40);
 			break;
 		case ePushButtonType::ArrowUpBig:
 			src.x = (isPressed || isLocked) ? 125 : 97;
 			src.y = 157;
-			size = cPosition (28, 29);
 			break;
 		case ePushButtonType::ArrowDownBig:
 			src.x = (isPressed || isLocked) ? 181 : 153;
 			src.y = 157;
-			size = cPosition (28, 29);
 			break;
 		case ePushButtonType::ArrowLeftBig:
 			src.x = (isPressed || isLocked) ? 293 : 265;
 			src.y = 157;
-			size = cPosition (28, 29);
 			break;
 		case ePushButtonType::ArrowRightBig:
 			src.x = (isPressed || isLocked) ? 237 : 209;
 			src.y = 157;
-			size = cPosition (28, 29);
 			break;
 		case ePushButtonType::ArrowUpSmall:
-			size = cPosition (18, 17);
 			src.x = (isPressed || isLocked) ? 151 + size.x() : 151;
 			src.y = 59;
 			break;
 		case ePushButtonType::ArrowDownSmall:
-			size = cPosition (18, 17);
 			src.x = (isPressed || isLocked) ? 187 + size.x() : 187;
 			src.y = 59;
 			break;
 		case ePushButtonType::ArrowLeftSmall:
-			size = cPosition (18, 17);
 			src.x = (isPressed || isLocked) ? 151 + size.x() : 151;
 			src.y = 76;
 			break;
 		case ePushButtonType::ArrowRightSmall:
-			size = cPosition (18, 17);
 			src.x = (isPressed || isLocked) ? 187 + size.x() : 187;
 			src.y = 76;
 			break;
 		case ePushButtonType::ArrowUpBar:
-			size = cPosition (17, 17);
 			src.x = (isPressed || isLocked) ? 201 + size.x() : 201;
 			src.y = 1;
 			break;
 		case ePushButtonType::ArrowDownBar:
-			size = cPosition (17, 17);
 			src.x = (isPressed || isLocked) ? 201 + size.x() : 201;
 			src.y = 18;
 			break;
 		case ePushButtonType::Angular:
-			size = cPosition (78, 23);
 			src.x = (isPressed || isLocked) ? size.x() : 0;
 			src.y = 196;
 			break;
 		case ePushButtonType::HudHelp:
 			src.x = (isPressed || isLocked) ? 366 : 268;
 			src.y = (isPressed || isLocked) ? 0 : 151;
-			size = cPosition (26, 24);
 			break;
 		case ePushButtonType::HudCenter:
 			src.x = (isPressed || isLocked) ? 0 : 139;
 			src.y = (isPressed || isLocked) ? 21 : 149;
-			size = cPosition (21, 22);
 			break;
 		case ePushButtonType::HudReport:
 			src.x = (isPressed || isLocked) ? 210 : 245;
 			src.y = (isPressed || isLocked) ? 21 : 130;
-			size = cPosition (49, 20);
 			break;
 		case ePushButtonType::HudChat:
 			src.x = (isPressed || isLocked) ? 160 : 196;
 			src.y = (isPressed || isLocked) ? 21 : 129;
-			size = cPosition (49, 20);
 			break;
 		case ePushButtonType::HudNext:
 			src.x = (isPressed || isLocked) ? 288 : 158;
 			src.y = (isPressed || isLocked) ? 0 : 172;
-			size = cPosition (39, 23);
 			break;
 		case ePushButtonType::HudPrev:
 			src.x = (isPressed || isLocked) ? 327 : 198;
 			src.y = (isPressed || isLocked) ? 0 : 172;
-			size = cPosition (38, 23);
 			break;
 		case ePushButtonType::HudDone:
 			src.x = (isPressed || isLocked) ? 262 : 132;
 			src.y = (isPressed || isLocked) ? 0 : 172;
-			size = cPosition (26, 24);
 			break;
 		case ePushButtonType::HudEnd:
 			src.x = (isPressed || isLocked) ? 22 : 0;
 			src.y = (isPressed || isLocked) ? 21 : 151;
-			size = cPosition (70, 17);
 			break;
 		case ePushButtonType::HudPreferences:
 			src.x = (isPressed || isLocked) ? 195 : 0;
 			src.y = (isPressed || isLocked) ? 0 : 169;
-			size = cPosition (67, 20);
 			break;
 		case ePushButtonType::HudFiles:
 			src.x = (isPressed || isLocked) ? 93 : 71;
 			src.y = (isPressed || isLocked) ? 21 : 151;
-			size = cPosition (67, 20);
 			break;
 		case ePushButtonType::HudPlay:
 			src.x = (isPressed || isLocked) ? 157 : 0;
 			src.y = (isPressed || isLocked) ? 0 : 132;
-			size = cPosition (19, 18);
 			break;
 		case ePushButtonType::HudStop:
 			src.x = (isPressed || isLocked) ? 176 : 19;
 			src.y = (isPressed || isLocked) ? 0 : 132;
-			size = cPosition (19, 19);
 			break;
 		case ePushButtonType::UnitContextMenu:
 			src.x = 0;
 			src.y = (isPressed || isLocked) ? 21 : 0;
-			size = cPosition (42, 21);
 			break;
 		case ePushButtonType::Destroy:
 			src.x = (isPressed || isLocked) ? 6 : 15;
 			src.y = (isPressed || isLocked) ? 269 : 13;
-			size = cPosition (59, 56);
 			break;
 		case ePushButtonType::ArrowUpSmallModern:
 			src.x = 224;
 			src.y = (isPressed || isLocked) ? 75 : 83;
-			size = cPosition (16, 8);
 			break;
 		case ePushButtonType::ArrowDownSmallModern:
 			src.x = 224;
 			src.y = (isPressed || isLocked) ? 59 : 67;
-			size = cPosition (16, 8);
 			break;
 		case ePushButtonType::ArrowLeftSmallModern:
 			src.x = (isPressed || isLocked) ? 272 : 264;
 			src.y = 59;
-			size = cPosition (8, 16);
 			break;
 		case ePushButtonType::ArrowRightSmallModern:
 			src.x = (isPressed || isLocked) ? 256 : 248;
 			src.y = 59;
-			size = cPosition (8, 16);
 			break;
 	}
 	resize (size);
