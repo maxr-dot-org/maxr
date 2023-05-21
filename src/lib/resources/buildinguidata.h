@@ -72,6 +72,7 @@ struct sBuildingUIData
 	* draws the main image of the building onto the given surface
 	*/
 	void render (unsigned long long animationTime, SDL_Surface&, const SDL_Rect& dest, float zoomFactor, const cBuilding&, bool drawShadow, bool drawConcrete) const;
+	void render_simple (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, int clan, std::optional<cRgbColor> playerColor, int frameNr = 0, int alpha = 254) const;
 	void render_simple (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, const cPlayer* owner, int frameNr = 0, int alpha = 254) const;
 	void render_simple (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, const cBuilding&, unsigned long long animationTime = 0, int alpha = 254) const;
 

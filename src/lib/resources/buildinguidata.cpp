@@ -115,6 +115,12 @@ namespace
 //------------------------------------------------------------------------------
 void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, const cPlayer* owner, int frameNr, int alpha) const
 {
+	render_simple(surface, dest, zoomFactor, owner ? owner->getClan() : -1, owner ? std::make_optional(owner->getColor()) : std::nullopt, frameNr, alpha);
+}
+
+//------------------------------------------------------------------------------
+void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, int clan, std::optional<cRgbColor> playerColor, int frameNr, int alpha) const
+{
 	// read the size:
 	SDL_Rect src;
 	src.x = 0;
@@ -131,8 +137,8 @@ void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest,
 	}
 
 	// blit the players color and building graphic
-	if (staticData.hasPlayerColor && owner)
-		SDL_BlitSurface (cPlayerColor::getTexture (owner->getColor()), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
+	if (staticData.hasPlayerColor && playerColor)
+		SDL_BlitSurface (cPlayerColor::getTexture (*playerColor), nullptr, GraphicsData.gfx_tmp.get(), nullptr);
 	else
 		SDL_FillRect (GraphicsData.gfx_tmp.get(), nullptr, 0x00FF00FF);
 
@@ -153,8 +159,8 @@ void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest,
 		src.w = (int) (128 * zoomFactor);
 		src.h = (int) (128 * zoomFactor);
 		// select clan image
-		if (owner && owner->getClan() != -1)
-			src.x = (int) ((owner->getClan() + 1) * 128 * zoomFactor);
+		if (clan != -1)
+			src.x = (int) ((clan + 1) * 128 * zoomFactor);
 		SDL_BlitSurface (img.get(), &src, GraphicsData.gfx_tmp.get(), nullptr);
 	}
 	else

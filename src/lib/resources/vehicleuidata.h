@@ -73,6 +73,7 @@ public:
 	sVehicleUIData& operator= (const sVehicleUIData&) = delete;
 	sVehicleUIData& operator= (sVehicleUIData&&) = default;
 
+	void render_simple (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, const sStaticVehicleData&, std::optional<cRgbColor> playerColor, int dir = 0, int walkFrame = 0, int alpha = 254) const;
 	void render_simple (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, const sStaticVehicleData&, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254) const;
 	void drawOverlayAnimation (SDL_Surface&, const SDL_Rect& dest, float zoomFactor, int frameNr = 0, int alpha = 254) const;
 

@@ -148,10 +148,16 @@ void sVehicleUIData::render_BuildingOrBigClearing (const cVehicle& vehicle, cons
 //------------------------------------------------------------------------------
 void sVehicleUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, const sStaticVehicleData& vehicleData, const cPlayer* owner, int dir, int walkFrame, int alpha) const
 {
+	render_simple(surface, dest, zoomFactor, vehicleData, owner ? std::make_optional(owner->getColor()) : std::nullopt, dir, walkFrame, alpha);
+}
+
+//------------------------------------------------------------------------------
+void sVehicleUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, const sStaticVehicleData& vehicleData, std::optional<cRgbColor> playerColor, int dir, int walkFrame, int alpha) const
+{
 	// draw player color
-	if (owner)
+	if (playerColor)
 	{
-		SDL_Surface* src = cPlayerColor::getTexture (owner->getColor());
+		SDL_Surface* src = cPlayerColor::getTexture (*playerColor);
 		SDL_Surface* dst = GraphicsData.gfx_tmp.get();
 		SDL_BlitSurface (src, nullptr, dst, nullptr);
 	}
