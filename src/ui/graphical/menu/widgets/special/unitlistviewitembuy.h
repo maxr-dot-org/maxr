@@ -29,6 +29,12 @@ public:
 
 	void markAsInsufficient();
 	void unmarkAsInsufficient();
+
+	void hidePrice();
+	void showPrice();
+
+private:
+	cLabel* costLabel;
 };
 
 #endif // ui_graphical_menu_widgets_special_unitlistviewitembuyH

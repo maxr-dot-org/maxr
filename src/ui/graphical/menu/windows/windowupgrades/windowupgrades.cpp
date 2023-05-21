@@ -25,6 +25,7 @@
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
+#include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "ui/uidefines.h"
 #include "ui/widgets/label.h"
 #include "utility/language.h"
@@ -224,7 +225,8 @@ void cWindowUpgrades::generateSelectionList (bool select)
 			if (data.factorGround > 0 && !tank) continue;
 		}
 
-		const auto& item = addSelectionUnit (data.ID);
+		auto& item = addSelectionUnit (data.ID);
+		item.hidePrice();
 		if (select)
 		{
 			setSelectedSelectionItem (item);

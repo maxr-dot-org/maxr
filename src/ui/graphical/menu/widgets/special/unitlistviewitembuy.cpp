@@ -27,7 +27,7 @@
 cUnitListViewItemBuy::cUnitListViewItemBuy (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData& unitsData) :
 	cUnitListViewItem (width, unitId, owner, unitsData)
 {
-	auto costLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (width - 15, 0), cPosition (width, unitImage->getEndPosition().y())), std::to_string (owner.getUnitDataCurrentVersion (unitId)->getBuildCost()), eUnicodeFontType::LatinSmallYellow, toEnumFlag (eAlignmentType::Right) | eAlignmentType::CenterVerical);
+	costLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (width - 15, 0), cPosition (width, unitImage->getEndPosition().y())), std::to_string (owner.getUnitDataCurrentVersion (unitId)->getBuildCost()), eUnicodeFontType::LatinSmallYellow, toEnumFlag (eAlignmentType::Right) | eAlignmentType::CenterVerical);
 	costLabel->setConsumeClick (false);
 
 	nameLabel->resize (nameLabel->getSize() - cPosition (15, 0));
@@ -43,4 +43,15 @@ void cUnitListViewItemBuy::markAsInsufficient()
 void cUnitListViewItemBuy::unmarkAsInsufficient()
 {
 	nameLabel->setFont (eUnicodeFontType::LatinSmallWhite);
+}
+
+//------------------------------------------------------------------------------
+void cUnitListViewItemBuy::hidePrice()
+{
+	costLabel->hide();
+}
+//------------------------------------------------------------------------------
+void cUnitListViewItemBuy::showPrice()
+{
+	costLabel->show();
 }
