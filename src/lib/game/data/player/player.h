@@ -329,10 +329,11 @@ private:
 
 	void refreshScanMaps();
 
-public:
+private:
 	std::vector<cDynamicUnitData> dynamicUnitsData; // Current version of vehicles.
+
+public:
 	bool isDefeated = false; // true if the player has been defeated
-	int numEcos = 0; // number of ecospheres. call countEcoSpheres to update.
 
 private:
 	sPlayerSettings player;
