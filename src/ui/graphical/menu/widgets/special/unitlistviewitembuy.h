@@ -27,6 +27,8 @@ class cUnitListViewItemBuy : public cUnitListViewItem
 public:
 	cUnitListViewItemBuy (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData&);
 
+	bool isCostVisible() const;
+	int getCost() const { return cost; }
 	void markAsInsufficient();
 	void unmarkAsInsufficient();
 
@@ -34,6 +36,7 @@ public:
 	void showPrice();
 
 private:
+	int cost;
 	cLabel* costLabel;
 };
 

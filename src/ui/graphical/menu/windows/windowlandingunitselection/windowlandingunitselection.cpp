@@ -324,7 +324,15 @@ void cWindowLandingUnitSelection::generateSelectionList (bool select)
 			if (data.factorGround > 0 && !tank) continue;
 		}
 
-		const auto& item = addSelectionUnit (data.ID);
+		auto& item = addSelectionUnit (data.ID);
+		if (data.ID.isABuilding() || data.vehicleData.isHuman || data.factorAir > 0 || (data.factorSea > 0 && data.factorGround == 0))
+		{
+			item.hidePrice();
+		}
+		else if (goldBar->getValue() < item.getCost())
+		{
+			item.markAsInsufficient();
+		}
 		if (select)
 		{
 			setSelectedSelectionItem (item);
@@ -384,6 +392,19 @@ void cWindowLandingUnitSelection::metalChanged()
 void cWindowLandingUnitSelection::goldChanged()
 {
 	goldBarAmountLabel->setText (std::to_string (goldBar->getValue()));
+	for (std::size_t i = 0; i != selectionUnitList->getItemsCount(); ++i)
+	{
+		auto& item = selectionUnitList->getItem (i);
+
+		if (item.isCostVisible() && goldBar->getValue() < item.getCost())
+		{
+			item.markAsInsufficient();
+		}
+		else
+		{
+			item.unmarkAsInsufficient();
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
