@@ -117,9 +117,9 @@ AutoSurface LoadPCX (const std::filesystem::path& name)
 	}
 	// Load the image.
 	bufferedFile.seek (8, SEEK_SET);
-	Uint16 const x = bufferedFile.readLE16() + 1;
-	Uint16 const y = bufferedFile.readLE16() + 1;
-	AutoSurface s (SDL_CreateRGBSurface (0, x, y, 32, 0, 0, 0, 0));
+	Uint16 const width = bufferedFile.readLE16() + 1;
+	Uint16 const height = bufferedFile.readLE16() + 1;
+	AutoSurface s (SDL_CreateRGBSurface (0, width, height, 32, 0, 0, 0, 0));
 	if (!s)
 	{
 		Log.error (SDL_GetError());
@@ -127,54 +127,49 @@ AutoSurface LoadPCX (const std::filesystem::path& name)
 	}
 	SDL_SetColorKey (s.get(), SDL_TRUE, 0xFF00FF);
 
-	Uint32* const buf = static_cast<Uint32*> (s->pixels);
+	Uint32* const pixels = static_cast<Uint32*> (s->pixels);
 	bufferedFile.seek (128, RW_SEEK_SET);
-	int k = 0;
-	int i = 0;
+	int x = 0;
+	int y = 0;
 	do
 	{
-		char tmp[2];
-		bufferedFile.read (tmp, 1, 1);
-		unsigned char const temp = tmp[0];
-		if (temp >= 0xC0)
+		unsigned char c;
+		bufferedFile.read (&c, 1, 1);
+		if (c >= 0xC0)
 		{
-			int z = temp - 192;
-			if (z + k > x)
-				z = x - k;
-			bufferedFile.read (tmp, 1, 1);
-			unsigned char const temp = tmp[0];
-			for (int j = 0; j < z; ++j)
+			const int count = std::min (c - 0xC0, width - x);
+			bufferedFile.read (&c, 1, 1);
+			for (int i = 0; i < count; ++i)
 			{
-				buf[k + i * x] = temp;
-				++k;
-				if (k == x) break;
+				pixels[x + y * width] = c;
+				++x;
 			}
 		}
 		else
 		{
-			buf[k + i * x] = temp;
-			++k;
+			pixels[x + y * width] = c;
+			++x;
 		}
-		if (k == x)
+		if (x == width)
 		{
-			k = 0;
-			++i;
+			x = 0;
+			++y;
 		}
-	} while (i != y);
+	} while (y != height);
 
 	// Convert from palette to true colour.
-	int colors[256];
-	bufferedFile.seek (-768, SEEK_END);
+	Uint32 palette[256];
+	bufferedFile.seek (-256 * 3, SEEK_END);
 	for (int i = 0; i != 256; ++i)
 	{
 		Uint8 rgb[3];
 
 		bufferedFile.read (rgb, sizeof (rgb), 1);
-		colors[i] = SDL_MapRGB (s->format, rgb[0], rgb[1], rgb[2]);
+		palette[i] = SDL_MapRGB (s->format, rgb[0], rgb[1], rgb[2]);
 	}
-	for (int i = 0; i != x * y; ++i)
+	for (int i = 0; i != width * height; ++i)
 	{
-		buf[i] = colors[buf[i]];
+		pixels[i] = palette[pixels[i]];
 	}
 	return s;
 }
