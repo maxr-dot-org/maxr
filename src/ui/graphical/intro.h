@@ -17,39 +17,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_menu_windows_windowstartH
-#define ui_graphical_menu_windows_windowstartH
+#ifndef ui_graphical_introH
+#define ui_graphical_introH
 
-#include "ui/graphical/menu/windows/windowmain.h"
-#include "utility/signal/signalconnectionmanager.h"
+bool hasIntro();
+void showIntro();
 
-class cPushButton;
-
-class cWindowStart : public cWindowMain
-{
-public:
-	cWindowStart();
-	~cWindowStart();
-
-	void retranslate() override;
-
-	void handleActivated (cApplication& application, bool firstTime) override;
-
-private:
-	cSignalConnectionManager signalConnectionManager;
-
-	cPushButton* singlePlayerButton = nullptr;
-	cPushButton* multiPlayerButton = nullptr;
-	cPushButton* preferencesButton = nullptr;
-	cPushButton* introButton = nullptr;
-	cPushButton* licenseButton = nullptr;
-	cPushButton* exitButton = nullptr;
-
-	void singlePlayerClicked();
-	void multiPlayerClicked();
-	void preferencesClicked();
-	void licenceClicked();
-	void exitClicked();
-};
-
-#endif // ui_graphical_menu_windows_windowstartH
+#endif

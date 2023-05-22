@@ -28,6 +28,7 @@
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 #include "resources/loaddata.h"
+#include "ui/graphical/intro.h"
 #include "ui/graphical/menu/windows/windowstart.h"
 #include "ui/uidefines.h"
 #include "ui/widgets/application.h"
@@ -74,42 +75,6 @@ static int initSound()
 	}
 	Log.info ("Sound started");
 	return 0;
-}
-
-static void showIntro()
-{
-	const auto filename = cSettings::getInstance().getMvePath() / "MAXINT.MVE";
-
-	if (!std::filesystem::exists (filename))
-	{
-		Log.warn ("Couldn't find movie " + filename.string());
-	}
-	// Close maxr sound for intro movie
-	cSoundDevice::getInstance().close();
-
-	Log.debug ("Starting movie " + filename.string());
-	const int mvereturn = MVEPlayer (filename.string().c_str(),
-	                                 Video.getResolutionX(),
-	                                 Video.getResolutionY(),
-	                                 !Video.getWindowMode(),
-	                                 MAXR_ICON.string().c_str(),
-	                                 !cSettings::getInstance().isSoundMute());
-	Log.debug ("MVEPlayer returned " + std::to_string (mvereturn));
-	//FIXME: make this case sensitive - my mve is e.g. completely lower cases -- beko
-
-	// reinit maxr sound
-	if (cSettings::getInstance().isSoundEnabled())
-	{
-		try
-		{
-			cSoundDevice::getInstance().initialize (cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize());
-		}
-		catch (std::runtime_error& e)
-		{
-			Log.debug ("Can't reinit sound after playing intro" + std::to_string (mvereturn));
-			Log.debug (e.what());
-		}
-	}
 }
 
 struct AtExit

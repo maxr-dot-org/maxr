@@ -216,6 +216,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, co
 	/*************/
 	/* main loop */
 	/*************/
+	QUITTING = 0;
 	AutoSurface frame_buf;
 	while (!QUITTING)
 	{

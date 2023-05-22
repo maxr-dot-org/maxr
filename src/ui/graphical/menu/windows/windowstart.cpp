@@ -22,6 +22,7 @@
 #include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "settings.h"
+#include "ui/graphical/intro.h"
 #include "ui/graphical/menu/dialogs/dialoglicense.h"
 #include "ui/graphical/menu/dialogs/dialogpreferences.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
@@ -45,7 +46,14 @@ cWindowStart::cWindowStart() :
 	preferencesButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Settings~Preferences"));
 	signalConnectionManager.connect (preferencesButton->clicked, [this]() { preferencesClicked(); });
 
-	licenseButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani"));
+	introButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Settings~Intro"));
+	signalConnectionManager.connect (introButton->clicked, [this]() { showIntro(); });
+	if (!hasIntro())
+	{
+		introButton->lock();
+	}
+
+	licenseButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 4), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani"));
 	signalConnectionManager.connect (licenseButton->clicked, [this]() { licenceClicked(); });
 
 	exitButton = emplaceChild<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit"));
@@ -65,6 +73,7 @@ void cWindowStart::retranslate()
 	singlePlayerButton->setText (lngPack.i18n ("Text~Others~Single_Player"));
 	multiPlayerButton->setText (lngPack.i18n ("Text~Others~Multi_Player"));
 	preferencesButton->setText (lngPack.i18n ("Text~Settings~Preferences"));
+	introButton->setText (lngPack.i18n ("Text~Settings~Intro"));
 	licenseButton->setText (lngPack.i18n ("Text~Others~Mani"));
 	exitButton->setText (lngPack.i18n ("Text~Others~Exit"));
 }
