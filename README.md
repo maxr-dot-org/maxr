@@ -11,7 +11,7 @@ A turn based strategy game based on [M.A.X.](https://en.wikipedia.org/wiki/Mecha
 
 ## Supported Platforms
 
-* Mac OS X
+* Mac OS X ![Mac-OS-badge](https://github.com/MAX-Reloaded/maxr/workflows/macos/badge.svg)
 * MS Windows
 * Linux ![Ubuntu-badge](https://github.com/MAX-Reloaded/maxr/workflows/ubuntu/badge.svg)
 
