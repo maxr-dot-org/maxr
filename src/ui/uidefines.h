@@ -38,7 +38,6 @@
 #define GFXOD_SAVELOAD         GFXOD ("load_save_menu.pcx")
 #define GFXOD_PLANET_SELECT    GFXOD ("planet_select.pcx")
 #define GFXOD_CLAN_SELECT      GFXOD ("clanselection.pcx")
-#define GFXOD_PLAYERHS_SELECT  GFXOD ("hotseatplayers.pcx")
 #define GFXOD_HANGAR           GFXOD ("hangar.pcx")
 #define GFXOD_BUILD_SCREEN     GFXOD ("build_screen.pcx")
 #define GFXOD_FAC_BUILD_SCREEN GFXOD ("fac_build_screen.pcx")

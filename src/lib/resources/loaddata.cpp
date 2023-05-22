@@ -242,10 +242,11 @@ static int LoadGraphics (const std::filesystem::path& directory)
 	LoadGraphicToSurface (GraphicsData.gfx_player_ready, directory / "player_ready.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_hud_chatbox, directory / "hud_chatbox.pcx");
 
+#if 0
 	GraphicsData.DialogPath = cSettings::getInstance().getGfxPath() / "dialog.pcx";
 	GraphicsData.Dialog2Path = cSettings::getInstance().getGfxPath() / "dialog2.pcx";
 	GraphicsData.Dialog3Path = cSettings::getInstance().getGfxPath() / "dialog3.pcx";
-
+#endif
 	Log.debug ("Shadowgraphics...");
 	// Shadow:
 	createShadowGfx();

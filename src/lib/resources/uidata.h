@@ -94,10 +94,6 @@ public:
 	AutoSurface gfx_menu_buttons;
 	AutoSurface gfx_player_ready;
 	AutoSurface gfx_hud_chatbox;
-
-	std::filesystem::path DialogPath;
-	std::filesystem::path Dialog2Path;
-	std::filesystem::path Dialog3Path;
 };
 
 // Effects - Class containing all effect surfaces /////////////////////////////
