@@ -37,7 +37,11 @@ class cAnimationTimer;
 
 class cUnitVideoWidget : public cWidget
 {
-	using FliAnimationPointerType = std::unique_ptr<FLI_Animation, void (*) (FLI_Animation*)>;
+	struct FliAnimationCloser
+	{
+		void operator() (FLI_Animation* anim) const { FLI_Close (anim); }
+	};
+	using FliAnimationPointerType = std::unique_ptr<FLI_Animation, FliAnimationCloser>;
 
 public:
 	cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer>);

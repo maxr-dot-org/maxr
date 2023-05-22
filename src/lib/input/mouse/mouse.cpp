@@ -28,7 +28,6 @@
 
 //------------------------------------------------------------------------------
 cMouse::cMouse() :
-	sdlCursor (nullptr, SDL_FreeCursor),
 	doubleClickTime (500)
 {
 	setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand), true);
@@ -106,7 +105,7 @@ bool cMouse::setCursor (std::unique_ptr<cMouseCursor> cursor_, bool force)
 	auto cursorSurface = cursor_->getSurface();
 	auto hotPoint = cursor_->getHotPoint();
 
-	auto newSdlCursor = SdlCursorPtrType (SDL_CreateColorCursor (cursorSurface, hotPoint.x(), hotPoint.y()), SDL_FreeCursor);
+	auto newSdlCursor = SdlCursorPtrType (SDL_CreateColorCursor (cursorSurface, hotPoint.x(), hotPoint.y()));
 
 	SDL_SetCursor (newSdlCursor.get());
 

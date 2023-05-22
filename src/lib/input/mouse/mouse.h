@@ -142,7 +142,11 @@ public:
 	void hide();
 
 private:
-	using SdlCursorPtrType = std::unique_ptr<SDL_Cursor, void (*) (SDL_Cursor*)>;
+	struct SdlCursorDeleter
+	{
+		void operator() (SDL_Cursor* cursor) const { SDL_FreeCursor (cursor); }
+	};
+	using SdlCursorPtrType = std::unique_ptr<SDL_Cursor, SdlCursorDeleter>;
 
 	cSignalConnectionManager signalConnectionManager;
 
