@@ -2,11 +2,13 @@ MECHANIZED ASSAULT AND EXPLORATION RELOADED MANUAL
 
 OPTIONS
 
-Startoptionen and gamesettings are configured in maxr.xml. To change
-settings simply open the file in a texteditor (not word!) or change
+Start options and gamesettings are configured in maxr.json.
+To change settings simply open the file in a texteditor or change
 settings ingame (not all options are offered ingame however).
 
 CONTROLS
+
+Can be changed in maxr/keys.json
 
 F1		Go to event
 F2		Remove disconnected player (server only)
@@ -35,12 +37,19 @@ c		clear or clear mine
 l		load or lay mine
 d		disable or distribution menu or destroy
 u		upgrade
-LShift		[*not working*] calculate path (but don't move)
+LShift		calculate path (but don't move)
 ESC		end game
 
 COMMANDS
 
-In-game console (TAB or chat-button) offers a variet of commands:
+In-game console (TAB or chat-button) offers a variety of commands:
+
+/help                         Show this help message
+/cache size <wert>            set the number of rendered units stored in the graphic cache. The higher the value, the faster runs maxr
+/cache flush                  when you have some strange graphic artefacts thy this command. It deletes all units from the graphic cache, so they are rerendered.
+/pause                        Pause the game
+/resume                       Resume a paused the game
+/crash                        Simulate a crash (require Crash Reporter)
 
 /base [server/client/off]     shows the informations of the client or the server(only available on the host) to basecamps
 /sentry [server/off]          shows covered areas by unity on sentry
@@ -48,18 +57,25 @@ In-game console (TAB or chat-button) offers a variet of commands:
 /trace [server/client/off]    shows additional information of the client or the server(only available on the host) about current field
 /ajobs [on/off]               shows additional information about attackjobs
 /players [on/off]             shows additional information about all players in the game
-/resync [id]	              resyncs all units of the player with the overgiven number or all players if no number was set.
-/kick [id]                    removes a player from the game.
+/sync debug                   Enable/disable debug information about the sync state of the game data
+/debug stealth                Enable/disable debug information about the stealth state of units
+
+/* Not implemented */
 /disconnect [id]              closes connection to a player and starts waiting for reconnection.
+/resync [id]	              resyncs all units of the player with the overgiven number or all players if no number was set.
 /deadline <seconds>           sets deadline for turnend to given seconds
 /fps [on/off]                 shows frames per second
-/cache size <wert>		set the number of rendered units stored in the graphic cache. The higher the value, the faster runs maxr
-/cache flush			when you have some strange graphic artefacts thy this command. It deletes all units from the graphic cache, so they are rerendered.
-/cache debug [on/off]		display debug statistics of the graphic cache
-/credits [name/id] [value]    sets the credits of a player to the given value
+/cache debug [on/off]         display debug statistics of the graphic cache
+
+/kick [id]                    removes a player from the game.
+/turnend [seconds]            Set a new turn end deadline. Use a value < 0 to disable the deadline entirely
+/turnlimit [seconds]          Set a new turn limit. Use a value <= 0 to disable the limit entirely
+/mark                         Add a mark to the log file
 
 Next commands are considered as cheats and will show up in gamechat
 
+/* Not implemented */
+/credits [name/id] [value]    sets the credits of a player to the given value
 /survey            shows all mapresources (only in singleplayer or on the host)
 /color [0-7]       sets new color for active player
 /fog off           disabled fog for a short period
