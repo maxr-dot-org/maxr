@@ -77,16 +77,8 @@ bool cMouseModeEnter::canExecuteAction (const cPosition& mapPosition) const
 	const auto overBuilding = map->getField (mapPosition).getBuilding();
 	const auto overVehicle = map->getField (mapPosition).getVehicle();
 
-	if (overBuilding)
-	{
-		return overBuilding->canLoad (selectedVehicle, false);
-	}
-	else if (overVehicle)
-	{
-		return overVehicle->canLoad (selectedVehicle, false);
-	}
-
-	return false;
+	return (overBuilding && overBuilding->canLoad (selectedVehicle, false))
+	    || (overVehicle && overVehicle->canLoad (selectedVehicle, false));
 }
 
 //------------------------------------------------------------------------------
