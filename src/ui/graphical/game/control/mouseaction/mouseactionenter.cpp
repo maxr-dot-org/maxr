@@ -30,24 +30,26 @@
 //------------------------------------------------------------------------------
 bool cMouseActionEnter::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
-	const auto selectedUnit = unitSelection.getSelectedUnit();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
-	if (!selectedUnit) return false;
+	if (!selectedVehicle) return false;
 
 	const auto& field = map.getField (mapPosition);
 	const auto overBuilding = field.getBuilding();
 	const auto overVehicle = field.getVehicle();
 
-	if (overBuilding)
+	if (overBuilding && overBuilding->canLoad (selectedVehicle, false))
 	{
-		gameMapWidget.triggeredLoadAt (*overBuilding, selectedUnit->getPosition());
+		gameMapWidget.triggeredLoadAt (*overBuilding, selectedVehicle->getPosition());
+		return true;
 	}
-	else if (overVehicle)
+	else if (overVehicle && overVehicle->canLoad (selectedVehicle, false))
 	{
-		gameMapWidget.triggeredLoadAt (*overVehicle, selectedUnit->getPosition());
+		gameMapWidget.triggeredLoadAt (*overVehicle, selectedVehicle->getPosition());
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 //------------------------------------------------------------------------------

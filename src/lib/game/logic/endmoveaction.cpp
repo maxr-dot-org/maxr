@@ -93,7 +93,7 @@ uint32_t cEndMoveAction::getChecksum (uint32_t crc) const
 void cEndMoveAction::executeGetInAction (cModel& model, cVehicle& vehicle)
 {
 	// get the target unit
-	cVehicle* transporter = model.getVehicleFromID (destID);
+	cUnit* transporter = model.getUnitFromID (destID);
 	if (transporter == nullptr) return;
 
 	if (!transporter->canLoad (&vehicle)) return;
