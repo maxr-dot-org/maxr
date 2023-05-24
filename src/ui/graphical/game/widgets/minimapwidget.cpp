@@ -31,6 +31,8 @@
 #include "ui/widgets/application.h"
 #include "ui/uidefines.h"
 
+static constexpr cRgbColor neutralColor = cRgbColor::black();
+
 //------------------------------------------------------------------------------
 cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap) :
 	cClickableWidget (area),
@@ -316,32 +318,32 @@ void cMiniMapWidget::drawUnits()
 			const cMapFieldView& field = mapView->getField (mapPosition);
 
 			// draw building
-			const cBuilding* building = field.getBuilding();
-			if (building && building->getOwner())
+			if (const cBuilding* building = field.getBuilding())
 			{
 				if (!attackUnitsOnly || building->getStaticUnitData().canAttack)
 				{
-					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (building->getOwner()->getColor(), surface->format));
+					const auto color = building->getOwner() ? building->getOwner()->getColor() : neutralColor;
+					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (color, surface->format));
 				}
 			}
 
 			// draw vehicle
-			const cVehicle* vehicle = field.getVehicle();
-			if (vehicle && vehicle->getOwner())
+			if (const cVehicle* vehicle = field.getVehicle())
 			{
 				if (!attackUnitsOnly || vehicle->getStaticUnitData().canAttack)
 				{
-					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (vehicle->getOwner()->getColor(), surface->format));
+					const auto color = vehicle->getOwner() ? vehicle->getOwner()->getColor() : neutralColor;
+					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (color, surface->format));
 				}
 			}
 
 			// draw plane
-			vehicle = field.getPlane();
-			if (vehicle && vehicle->getOwner())
+			if (const cVehicle* vehicle = field.getPlane())
 			{
 				if (!attackUnitsOnly || vehicle->getStaticUnitData().canAttack)
 				{
-					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (vehicle->getOwner()->getColor(), surface->format));
+					const auto color = vehicle->getOwner() ? vehicle->getOwner()->getColor() : neutralColor;
+					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (color, surface->format));
 				}
 			}
 		}
