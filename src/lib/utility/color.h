@@ -32,8 +32,13 @@ class cLabColor;
 class cRgbColor
 {
 public:
-	cRgbColor() = default;
-	cRgbColor (unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 0xFF);
+	constexpr cRgbColor() = default;
+	constexpr cRgbColor (unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 0xFF) : r (red),
+		g (green),
+		b (blue),
+		a (alpha)
+	{
+	}
 
 	bool operator== (const cRgbColor& other) const;
 	bool operator!= (const cRgbColor& other) const;
@@ -54,15 +59,15 @@ public:
 	uint32_t getChecksum (uint32_t crc) const;
 
 	// predefined colors
-	inline static cRgbColor red (unsigned char alpha_ = 0xFF) { return cRgbColor (0xFF, 0, 0, alpha_); }
-	inline static cRgbColor green (unsigned char alpha_ = 0xFF) { return cRgbColor (0, 0xFF, 0, alpha_); }
-	inline static cRgbColor blue (unsigned char alpha_ = 0xFF) { return cRgbColor (0, 0, 0xFF, alpha_); }
-	inline static cRgbColor yellow (unsigned char alpha_ = 0xFF) { return cRgbColor (0xFF, 0xFF, 0, alpha_); }
-	inline static cRgbColor black (unsigned char alpha_ = 0xFF) { return cRgbColor (0, 0, 0, alpha_); }
-	inline static cRgbColor white (unsigned char alpha_ = 0xFF) { return cRgbColor (0xFF, 0xFF, 0xFF, alpha_); }
-	inline static cRgbColor transparent() { return cRgbColor (0, 0, 0, 0); }
+	static constexpr cRgbColor red (unsigned char alpha_ = 0xFF) { return cRgbColor (0xFF, 0, 0, alpha_); }
+	static constexpr cRgbColor green (unsigned char alpha_ = 0xFF) { return cRgbColor (0, 0xFF, 0, alpha_); }
+	static constexpr cRgbColor blue (unsigned char alpha_ = 0xFF) { return cRgbColor (0, 0, 0xFF, alpha_); }
+	static constexpr cRgbColor yellow (unsigned char alpha_ = 0xFF) { return cRgbColor (0xFF, 0xFF, 0, alpha_); }
+	static constexpr cRgbColor black (unsigned char alpha_ = 0xFF) { return cRgbColor (0, 0, 0, alpha_); }
+	static constexpr cRgbColor white (unsigned char alpha_ = 0xFF) { return cRgbColor (0xFF, 0xFF, 0xFF, alpha_); }
+	static constexpr cRgbColor transparent() { return cRgbColor (0, 0, 0, 0); }
 
-	inline static cRgbColor random (unsigned char alpha_ = 0xFF)
+	static cRgbColor random (unsigned char alpha_ = 0xFF)
 	{
 		static std::random_device rd;
 		static std::mt19937 engine (rd());

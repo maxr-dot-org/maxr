@@ -26,14 +26,6 @@
 #include <cassert>
 
 //------------------------------------------------------------------------------
-cRgbColor::cRgbColor (unsigned char red_, unsigned char green_, unsigned char blue_, unsigned char alpha_) :
-	r (red_),
-	g (green_),
-	b (blue_),
-	a (alpha_)
-{}
-
-//------------------------------------------------------------------------------
 bool cRgbColor::operator== (const cRgbColor& other) const
 {
 	return r == other.r && g == other.g && b == other.b && a == other.a;
