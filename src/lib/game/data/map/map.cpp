@@ -685,6 +685,10 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		{
 			return false;
 		}
+		if (field.getPlane() && field.getPlane()->getFlightHeight() == 0)
+		{
+			return false;
+		}
 		if (b_it != b_end)
 		{
 			// only base buildings and rubble is allowed on the same field with a vehicle
