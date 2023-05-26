@@ -94,29 +94,34 @@ void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, cons
 //------------------------------------------------------------------------------
 void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int cornerSize)
 {
+	constexpr int selectionCornerLineThickness = 3;
 	const cPosition size = rectangle.getMaxCorner() - rectangle.getMinCorner();
-
-	SDL_Rect line_h = {rectangle.getMinCorner().x(), rectangle.getMinCorner().y(), cornerSize, 1};
-
 	const auto sdlColor = toMappedSdlRGBAColor (color, surface.format);
 
+	// cornersize is CellW or CellW*2(largeUnit)/4, or 16 for 32p (largest) cells.
+	const int t = selectionCornerLineThickness;
+	const int cx = rectangle.getMinCorner().x() - 1;
+	const int cy = rectangle.getMinCorner().y() - 1;
+
+	SDL_Rect line_h = {cx, cy, cornerSize, t};
+
 	SDL_FillRect (&surface, &line_h, sdlColor);
-	line_h.x += size.x() - cornerSize;
+	line_h.x += size.x() - cornerSize + 2;
 	SDL_FillRect (&surface, &line_h, sdlColor);
-	line_h.x = rectangle.getMinCorner().x();
-	line_h.y += size.y() - 1;
+	line_h.x = cx;
+	line_h.y += size.y() - (t - 2);
 	SDL_FillRect (&surface, &line_h, sdlColor);
-	line_h.x += size.x() - cornerSize;
+	line_h.x += size.x() - cornerSize + 2;
 	SDL_FillRect (&surface, &line_h, sdlColor);
 
-	SDL_Rect line_v = {rectangle.getMinCorner().x(), rectangle.getMinCorner().y(), 1, cornerSize};
+	SDL_Rect line_v = {cx, cy, t, cornerSize};
 	SDL_FillRect (&surface, &line_v, sdlColor);
-	line_v.y += size.y() - cornerSize;
+	line_v.y += size.y() - cornerSize + 2;
 	SDL_FillRect (&surface, &line_v, sdlColor);
-	line_v.x += size.x() - 1;
-	line_v.y = rectangle.getMinCorner().y();
+	line_v.x += size.x() - (t - 2);
+	line_v.y = cy;
 	SDL_FillRect (&surface, &line_v, sdlColor);
-	line_v.y += size.y() - cornerSize;
+	line_v.y += size.y() - cornerSize + 2;
 	SDL_FillRect (&surface, &line_v, sdlColor);
 }
 
