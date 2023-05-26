@@ -26,6 +26,8 @@
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/startup/lobbypreparationdata.h"
+#include "settings.h"
+#include "ui/graphical/intro.h"
 #include "ui/widgets/application.h"
 
 //------------------------------------------------------------------------------
@@ -89,6 +91,11 @@ void cLocalSingleplayerGameNew::runGamePreparation (cApplication& application)
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameNew::start (cApplication& application, cServer& server)
 {
+	if (cSettings::getInstance().shouldShowIntro())
+	{
+		showBeginGameScene();
+	}
+
 	client = std::make_shared<cClient> (connectionManager);
 	const auto& lobbyPreparation = lobbyClient.getLobbyPreparationData();
 	client->setPreparationData (lobbyPreparation);

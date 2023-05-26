@@ -22,6 +22,7 @@
 #include "output/video/video.h"
 #include "ui/uidefines.h"
 #include "utility/log.h"
+#include "utility/random.h"
 
 #include <filesystem>
 
@@ -34,6 +35,8 @@ static void showScene (const std::filesystem::path& filename)
 	}
 	// Close maxr sound for movie
 	cSoundDevice::getInstance().close();
+	const int oldCursorStatus = SDL_ShowCursor (SDL_QUERY);
+	SDL_ShowCursor (SDL_DISABLE);
 
 	Log.debug ("Starting movie " + filename.string());
 	const int mvereturn = MVEPlayer (filename.string().c_str(),
@@ -43,6 +46,7 @@ static void showScene (const std::filesystem::path& filename)
 	                                 MAXR_ICON.string().c_str(),
 	                                 !cSettings::getInstance().isSoundMute());
 	Log.debug ("MVEPlayer returned " + std::to_string (mvereturn));
+	SDL_ShowCursor (oldCursorStatus);
 
 	// reinit maxr sound
 	if (cSettings::getInstance().isSoundEnabled())
@@ -75,4 +79,11 @@ bool hasIntro()
 void showIntro()
 {
 	showScene (getIntroPath());
+}
+
+//------------------------------------------------------------------------------
+void showBeginGameScene()
+{
+	const std::array<std::string, 2> mves{"MAXMVE1.MVE", "MAXMVE2.MVE"};
+	showScene (cSettings::getInstance().getMvePath() / getRandom (mves));
 }

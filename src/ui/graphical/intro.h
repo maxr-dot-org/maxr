@@ -23,4 +23,6 @@
 bool hasIntro();
 void showIntro();
 
+void showBeginGameScene();
+
 #endif

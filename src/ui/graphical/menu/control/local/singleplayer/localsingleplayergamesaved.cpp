@@ -24,11 +24,18 @@
 #include "game/data/report/savedreport.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
+#include "settings.h"
+#include "ui/graphical/intro.h"
 #include "ui/widgets/application.h"
 
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameSaved::start (cApplication& application)
 {
+	if (cSettings::getInstance().shouldShowIntro())
+	{
+		showBeginGameScene();
+	}
+
 	auto connectionManager = std::make_shared<cConnectionManager>();
 
 	//set up server
