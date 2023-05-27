@@ -21,7 +21,6 @@
 
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
-#include "game/data/report/unit/savedreportsurveyoraiconfused.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/client.h"
 #include "utility/listhelpers.h"

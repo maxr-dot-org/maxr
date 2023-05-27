@@ -19,7 +19,6 @@
 
 #include "game/data/player/player.h"
 
-#include "game/data/report/savedreport.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/client.h"

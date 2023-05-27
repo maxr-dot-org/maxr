@@ -22,8 +22,6 @@
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "game/data/player/player.h"
-#include "game/data/report/savedreportsimple.h"
-#include "game/data/report/special/savedreportresourcechanged.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/client.h"
 #include "game/logic/fxeffects.h"

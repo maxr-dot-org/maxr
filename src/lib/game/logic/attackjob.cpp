@@ -22,8 +22,6 @@
 #include "game/data/map/map.h"
 #include "game/data/model.h"
 #include "game/data/player/player.h"
-#include "game/data/report/unit/savedreportattacked.h"
-#include "game/data/report/unit/savedreportdestroyed.h"
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
