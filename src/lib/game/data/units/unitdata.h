@@ -324,6 +324,10 @@ public:
 	int getVersion() const;
 	void setVersion (int value);
 
+	bool canBeUpgradedTo (const cDynamicUnitData&) const;
+	void makeVersionDirty();
+	void markLastVersionUsed();
+
 	int getSpeed() const;
 	void setSpeed (int value);
 
@@ -385,6 +389,7 @@ public:
 		archive & NVP (id);
 		archive & NVP (buildCosts);
 		archive & NVP (version);
+		archive & NVP (dirtyVersion);
 		archive & NVP (speedCur);
 		archive & NVP (speedMax);
 		archive & NVP (hitpointsCur);
@@ -411,6 +416,8 @@ private:
 	int buildCosts = 0;
 
 	int version = 0;
+	bool dirtyVersion = false; // version should not be increased when stats change
+	                           // but when unit uses (via upgrape/build) the last version .
 
 	int speedCur = 0;
 	int speedMax = 0;

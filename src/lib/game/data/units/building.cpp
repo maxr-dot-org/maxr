@@ -591,7 +591,7 @@ bool cBuilding::buildingCanBeUpgraded() const
 {
 	if (!getOwner()) return false;
 	const cDynamicUnitData& upgraded = *getOwner()->getUnitDataCurrentVersion (data.getId());
-	return data.getVersion() != upgraded.getVersion() && subBase && subBase->getResourcesStored().metal >= 2;
+	return data.canBeUpgradedTo (upgraded) && subBase && subBase->getResourcesStored().metal >= 2;
 }
 
 //-----------------------------------------------------------------------------

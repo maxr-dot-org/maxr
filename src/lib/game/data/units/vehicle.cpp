@@ -134,6 +134,13 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 		if (found_next && model.addMoveJob (*this, nextPosition))
 		{
 			getMoveJob()->resume();
+			if (getOwner())
+			{
+				if (auto* unitData = getOwner()->getUnitDataCurrentVersion (getBuildingType()))
+				{
+					unitData->markLastVersionUsed();
+				}
+			}
 			model.addBuilding (oldPosition, getBuildingType(), getOwner());
 			setBuildingABuilding (false);
 		}
@@ -144,6 +151,13 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 				// add building immediately
 				// if it doesn't require the engineer to drive away
 				setBuildingABuilding (false);
+				if (getOwner())
+				{
+					if (auto* unitData = getOwner()->getUnitDataCurrentVersion (getBuildingType()))
+					{
+						unitData->markLastVersionUsed();
+					}
+				}
 				model.addBuilding (getPosition(), getBuildingType(), getOwner());
 			}
 			BuildPath = false;
@@ -155,6 +169,13 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 		// add building immediately
 		// if it doesn't require the engineer to drive away
 		setBuildingABuilding (false);
+		if (getOwner())
+		{
+			if (auto* unitData = getOwner()->getUnitDataCurrentVersion (getBuildingType()))
+			{
+				unitData->markLastVersionUsed();
+			}
+		}
 		model.addBuilding (getPosition(), getBuildingType(), getOwner());
 	}
 }

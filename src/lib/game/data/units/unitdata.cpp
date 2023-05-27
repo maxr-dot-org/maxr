@@ -439,6 +439,30 @@ int cDynamicUnitData::getVersion() const
 }
 
 //------------------------------------------------------------------------------
+bool cDynamicUnitData::canBeUpgradedTo (const cDynamicUnitData& other) const
+{
+	return other.dirtyVersion || version < other.version;
+}
+
+//------------------------------------------------------------------------------
+void cDynamicUnitData::makeVersionDirty()
+{
+	dirtyVersion = true;
+	crcCache = std::nullopt;
+}
+
+//------------------------------------------------------------------------------
+void cDynamicUnitData::markLastVersionUsed()
+{
+	if (!dirtyVersion)
+	{
+		return;
+	}
+	dirtyVersion = false;
+	setVersion (version + 1);
+}
+
+//------------------------------------------------------------------------------
 void cDynamicUnitData::setVersion (int value)
 {
 	std::swap (version, value);
@@ -623,6 +647,7 @@ uint32_t cDynamicUnitData::getChecksum (uint32_t crc) const
 		*crcCache = calcCheckSum (id, *crcCache);
 		*crcCache = calcCheckSum (buildCosts, *crcCache);
 		*crcCache = calcCheckSum (version, *crcCache);
+		*crcCache = calcCheckSum (dirtyVersion, *crcCache);
 		*crcCache = calcCheckSum (speedCur, *crcCache);
 		*crcCache = calcCheckSum (speedMax, *crcCache);
 		*crcCache = calcCheckSum (hitpointsCur, *crcCache);

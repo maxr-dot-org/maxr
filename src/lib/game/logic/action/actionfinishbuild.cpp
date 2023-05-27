@@ -66,6 +66,13 @@ void cActionFinishBuild::finishABuilding (cModel& model, cVehicle& vehicle) cons
 	model.sideStepStealthUnit (escapePosition, vehicle);
 	if (!map->possiblePlace (vehicle, escapePosition, false)) return;
 
+	if (vehicle.getOwner())
+	{
+		if (auto* unitData = vehicle.getOwner()->getUnitDataCurrentVersion (vehicle.getBuildingType()))
+		{
+			unitData->markLastVersionUsed();
+		}
+	}
 	model.addBuilding (vehicle.getPosition(), vehicle.getBuildingType(), vehicle.getOwner());
 
 	// end building
@@ -104,6 +111,13 @@ void cActionFinishBuild::finishAVehicle (cModel& model, cBuilding& building) con
 	model.sideStepStealthUnit (escapePosition, unitData, building.getOwner());
 	if (!map->possiblePlaceVehicle (unitData, escapePosition, building.getOwner())) return;
 
+	if (building.getOwner())
+	{
+		if (auto* unitData = building.getOwner()->getUnitDataCurrentVersion (buildingListItem.getType()))
+		{
+			unitData->markLastVersionUsed();
+		}
+	}
 	auto& vehicle = model.addVehicle (escapePosition, buildingListItem.getType(), building.getOwner());
 	if (!vehicle.canLand (*map))
 	{

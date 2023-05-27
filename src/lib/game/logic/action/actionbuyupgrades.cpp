@@ -55,7 +55,7 @@ void cActionBuyUpgrades::execute (cModel& model) const
 
 		// everything ok, upgrade the unit
 		player->setCredits (player->getCredits() - costs);
+		currentUnitData.makeVersionDirty();
 		upgradesForUnit.updateUnitData (currentUnitData);
-		currentUnitData.setVersion (currentUnitData.getVersion() + 1);
 	}
 }

@@ -355,7 +355,7 @@ namespace
 		if (unit.getOwner() == whoWantsToKnow && whoWantsToKnow)
 		{
 			const cDynamicUnitData& upgraded = *whoWantsToKnow->getUnitDataCurrentVersion (unit.data.getId());
-			if (unit.data.getVersion() != upgraded.getVersion())
+			if (unit.data.canBeUpgradedTo (upgraded))
 			{
 				return "\n" + lngPack.i18n ("Text~Comp~Dated");
 			}

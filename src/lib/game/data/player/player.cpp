@@ -544,7 +544,6 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::eResearchArea>& are
 	for (auto& unitData : dynamicUnitsData)
 	{
 		const cDynamicUnitData& originalData = originalUnitsData.getDynamicUnitData (unitData.getId(), getClan());
-		bool incrementVersion = false;
 		for (auto researchArea : areasReachingNextLevel)
 		{
 			if (unitData.getId().isABuilding() && researchArea == cResearch::eResearchArea::SpeedResearch) continue;
@@ -584,11 +583,11 @@ void cPlayer::upgradeUnitTypes (const std::vector<cResearch::eResearchArea>& are
 					case cResearch::eResearchArea::CostResearch: unitData.setBuildCost (unitData.getBuildCost() + newResearchBonus - oldResearchBonus); break;
 				}
 				if (researchArea != cResearch::eResearchArea::CostResearch) // don't increment the version, if the only change are the costs
-					incrementVersion = true;
+				{
+					unitData.makeVersionDirty();
+				}
 			}
 		}
-		if (incrementVersion)
-			unitData.setVersion (unitData.getVersion() + 1);
 	}
 }
 
