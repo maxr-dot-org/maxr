@@ -429,7 +429,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMapView& map, b
 void cUnit::upgradeToCurrentVersion()
 {
 	if (owner == nullptr) return;
-	cDynamicUnitData* upgradeVersion = owner->getUnitDataCurrentVersion (data.getId());
+	cDynamicUnitData* upgradeVersion = owner->getLastUnitData (data.getId());
 	if (upgradeVersion == nullptr) return;
 	upgradeVersion->markLastVersionUsed();
 

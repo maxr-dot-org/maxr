@@ -111,14 +111,14 @@ void cPlayer::setCredits (int credits_)
 }
 
 //------------------------------------------------------------------------------
-cDynamicUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id)
+cDynamicUnitData* cPlayer::getLastUnitData (const sID& id)
 {
 	const cPlayer* constMe = this;
-	return const_cast<cDynamicUnitData*> (constMe->getUnitDataCurrentVersion (id));
+	return const_cast<cDynamicUnitData*> (constMe->getLastUnitData (id));
 }
 
 //------------------------------------------------------------------------------
-const cDynamicUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id) const
+const cDynamicUnitData* cPlayer::getLastUnitData (const sID& id) const
 {
 	for (const auto& data : dynamicUnitsData)
 	{

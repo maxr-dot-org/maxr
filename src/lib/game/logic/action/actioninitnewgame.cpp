@@ -355,7 +355,7 @@ void cActionInitNewGame::execute (cModel& model) const
 			NetLog.error (" Apply upgrades failed. Unknown sID: " + unitId.getText());
 			return;
 		}
-		int costs = upgradeValues.calcTotalCosts (unitsdata.getDynamicUnitData (unitId, player.getClan()), *player.getUnitDataCurrentVersion (unitId), player.getResearchState());
+		int costs = upgradeValues.calcTotalCosts (unitsdata.getDynamicUnitData (unitId, player.getClan()), *player.getLastUnitData (unitId), player.getResearchState());
 		if (costs <= 0)
 		{
 			NetLog.error (" Apply upgrades failed. Couldn't calculate costs.");
@@ -367,7 +367,7 @@ void cActionInitNewGame::execute (cModel& model) const
 			NetLog.error (" Apply upgrade failed. Used more than the available credits.");
 			return;
 		}
-		upgradeValues.updateUnitData (*player.getUnitDataCurrentVersion (unitId));
+		upgradeValues.updateUnitData (*player.getLastUnitData (unitId));
 	}
 
 	// land vehicles

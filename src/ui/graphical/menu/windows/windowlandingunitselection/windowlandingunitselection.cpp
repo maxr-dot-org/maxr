@@ -190,7 +190,7 @@ void cWindowLandingUnitSelection::setActiveUnit (const sID& unitId)
 	{
 		unitUpgrade = &unitUpgrades[unitId];
 
-		unitUpgrade->init (unitsData->getDynamicUnitData (unitId, getPlayer().getClan()), *getPlayer().getUnitDataCurrentVersion (unitId), unitsData->getStaticUnitData (unitId), getPlayer().getResearchState());
+		unitUpgrade->init (unitsData->getDynamicUnitData (unitId, getPlayer().getClan()), *getPlayer().getLastUnitData (unitId), unitsData->getStaticUnitData (unitId), getPlayer().getResearchState());
 	}
 	else
 	{

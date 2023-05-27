@@ -47,7 +47,7 @@ void cActionUpgradeBuilding::execute (cModel& model) const
 	int totalCosts = 0;
 	cSubBase& subbase = *building->subBase;
 	int availableMetal = subbase.getResourcesStored().metal;
-	cDynamicUnitData& upgradedData = *building->getOwner()->getUnitDataCurrentVersion (building->data.getId());
+	cDynamicUnitData& upgradedData = *building->getOwner()->getLastUnitData (building->data.getId());
 	upgradedData.markLastVersionUsed();
 	cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	const int upgradeCost = uc.getMaterialCostForUpgrading (upgradedData.getBuildCost());

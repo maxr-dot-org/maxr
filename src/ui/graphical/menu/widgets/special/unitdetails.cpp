@@ -82,7 +82,7 @@ void cUnitDetails::setUnit (const sID& unitId_, const cPlayer* owner, const cUni
 
 	staticUnitData = &unitsData.getStaticUnitData (unitId);
 	playerOriginalData = &unitsData.getDynamicUnitData (unitId, owner ? owner->getClan() : -1);
-	playerCurrentData = owner ? owner->getUnitDataCurrentVersion (unitId) : playerOriginalData;
+	playerCurrentData = owner ? owner->getLastUnitData (unitId) : playerOriginalData;
 
 	if (unitObjectCurrentData_ == nullptr)
 	{

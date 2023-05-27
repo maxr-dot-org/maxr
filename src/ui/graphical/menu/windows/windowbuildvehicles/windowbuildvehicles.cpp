@@ -115,7 +115,7 @@ void cWindowBuildVehicles::setActiveUnit (const sID& unitId)
 	cWindowAdvancedHangar::setActiveUnit (unitId);
 	if (!building.getOwner()) return;
 
-	const auto& vehicleData = *building.getOwner()->getUnitDataCurrentVersion (unitId);
+	const auto& vehicleData = *building.getOwner()->getLastUnitData (unitId);
 	auto selectedUnit = selectedUnitList->getSelectedItem();
 	const auto remainingMetal = selectedUnit ? selectedUnit->getRemainingMetal() : -1;
 	std::array<int, 3> turns;

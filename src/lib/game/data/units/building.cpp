@@ -590,7 +590,7 @@ bool cBuilding::buildingCanBeStarted() const
 bool cBuilding::buildingCanBeUpgraded() const
 {
 	if (!getOwner()) return false;
-	const cDynamicUnitData& upgraded = *getOwner()->getUnitDataCurrentVersion (data.getId());
+	const cDynamicUnitData& upgraded = *getOwner()->getLastUnitData (data.getId());
 	return data.canBeUpgradedTo (upgraded) && subBase && subBase->getResourcesStored().metal >= 2;
 }
 

@@ -136,7 +136,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 			getMoveJob()->resume();
 			if (getOwner())
 			{
-				if (auto* unitData = getOwner()->getUnitDataCurrentVersion (getBuildingType()))
+				if (auto* unitData = getOwner()->getLastUnitData (getBuildingType()))
 				{
 					unitData->markLastVersionUsed();
 				}
@@ -153,7 +153,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 				setBuildingABuilding (false);
 				if (getOwner())
 				{
-					if (auto* unitData = getOwner()->getUnitDataCurrentVersion (getBuildingType()))
+					if (auto* unitData = getOwner()->getLastUnitData (getBuildingType()))
 					{
 						unitData->markLastVersionUsed();
 					}
@@ -171,7 +171,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 		setBuildingABuilding (false);
 		if (getOwner())
 		{
-			if (auto* unitData = getOwner()->getUnitDataCurrentVersion (getBuildingType()))
+			if (auto* unitData = getOwner()->getLastUnitData (getBuildingType()))
 			{
 				unitData->markLastVersionUsed();
 			}

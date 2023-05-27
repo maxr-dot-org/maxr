@@ -49,7 +49,7 @@ void cActionUpgradeVehicle::execute (cModel& model) const
 		if (vehicle->getId() == vehicleId || vehicleId == 0)
 		{
 			// check unit version
-			cDynamicUnitData& upgradedData = *vehicle->getOwner()->getUnitDataCurrentVersion (vehicle->data.getId());
+			cDynamicUnitData& upgradedData = *vehicle->getOwner()->getLastUnitData (vehicle->data.getId());
 			upgradedData.markLastVersionUsed();
 			if (vehicle->data.getVersion() >= upgradedData.getVersion()) continue; // already up to date
 

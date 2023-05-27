@@ -75,7 +75,7 @@ void cActionStartBuild::execute (cModel& model) const
 
 	std::array<int, 3> turboBuildRounds;
 	std::array<int, 3> turboBuildCosts;
-	int buildcost = vehicle->getOwner()->getUnitDataCurrentVersion (buildingTypeID)->getBuildCost();
+	int buildcost = vehicle->getOwner()->getLastUnitData (buildingTypeID)->getBuildCost();
 	vehicle->calcTurboBuild (turboBuildRounds, turboBuildCosts, buildcost);
 
 	if (turboBuildCosts[buildSpeed] > vehicle->getStoredResources() || turboBuildRounds[buildSpeed] <= 0)

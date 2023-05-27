@@ -26,7 +26,7 @@
 //------------------------------------------------------------------------------
 cUnitListViewItemBuy::cUnitListViewItemBuy (unsigned int width, const sID& unitId, const cPlayer& owner, const cUnitsData& unitsData) :
 	cUnitListViewItem (width, unitId, owner, unitsData),
-	cost (owner.getUnitDataCurrentVersion (unitId)->getBuildCost())
+	cost (owner.getLastUnitData (unitId)->getBuildCost())
 {
 	costLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (width - 15, 0), cPosition (width, unitImage->getEndPosition().y())), std::to_string (cost), eUnicodeFontType::LatinSmallYellow, toEnumFlag (eAlignmentType::Right) | eAlignmentType::CenterVerical);
 	costLabel->setConsumeClick (false);

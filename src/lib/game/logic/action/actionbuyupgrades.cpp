@@ -48,7 +48,7 @@ void cActionBuyUpgrades::execute (cModel& model) const
 
 		// check costs for upgrading this unit
 		const auto& originalUnitData = unitsdata.getDynamicUnitData (unitType, player->getClan());
-		auto& currentUnitData = *player->getUnitDataCurrentVersion (unitType);
+		auto& currentUnitData = *player->getLastUnitData (unitType);
 		int costs = upgradesForUnit.calcTotalCosts (originalUnitData, currentUnitData, player->getResearchState());
 		if (costs <= 0) continue;
 		if (costs > player->getCredits()) continue;

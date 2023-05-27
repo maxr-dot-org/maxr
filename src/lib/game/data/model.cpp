@@ -190,7 +190,7 @@ const cPlayer* cModel::getActiveTurnPlayer() const
 cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlayer* player)
 {
 	const auto& staticUnitData = unitsData->getStaticUnitData (id);
-	const auto& dynamicUnitData = player ? *player->getUnitDataCurrentVersion (id) : unitsData->getDynamicUnitData (id);
+	const auto& dynamicUnitData = player ? *player->getLastUnitData (id) : unitsData->getDynamicUnitData (id);
 	auto addedBuilding = std::make_shared<cBuilding> (&staticUnitData, &dynamicUnitData, player, nextUnitId++);
 
 	addedBuilding->setPosition (position);
@@ -241,7 +241,7 @@ cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlaye
 cVehicle& cModel::addVehicle (const cPosition& position, const sID& id, cPlayer* player)
 {
 	const auto& staticUnitData = unitsData->getStaticUnitData (id);
-	const auto& dynamicUnitData = player ? *player->getUnitDataCurrentVersion (id) : unitsData->getDynamicUnitData (id);
+	const auto& dynamicUnitData = player ? *player->getLastUnitData (id) : unitsData->getDynamicUnitData (id);
 	auto addedVehicle = std::make_shared<cVehicle> (staticUnitData, dynamicUnitData, player, nextUnitId++);
 	addedVehicle->setPosition (position);
 

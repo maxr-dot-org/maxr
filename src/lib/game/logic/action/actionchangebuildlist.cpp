@@ -134,7 +134,7 @@ void cActionChangeBuildList::execute (cModel& model) const
 	{
 		std::array<int, 3> turboBuildRounds;
 		std::array<int, 3> turboBuildCosts;
-		int cost = building->getOwner()->getUnitDataCurrentVersion (building->getBuildListItem (0).getType())->getBuildCost();
+		int cost = building->getOwner()->getLastUnitData (building->getBuildListItem (0).getType())->getBuildCost();
 		building->calcTurboBuild (turboBuildRounds, turboBuildCosts, cost, remainingMetal);
 		building->getBuildListItem (0).setRemainingMetal (turboBuildCosts[buildSpeed]);
 

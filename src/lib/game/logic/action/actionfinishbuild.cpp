@@ -68,7 +68,7 @@ void cActionFinishBuild::finishABuilding (cModel& model, cVehicle& vehicle) cons
 
 	if (vehicle.getOwner())
 	{
-		if (auto* unitData = vehicle.getOwner()->getUnitDataCurrentVersion (vehicle.getBuildingType()))
+		if (auto* unitData = vehicle.getOwner()->getLastUnitData (vehicle.getBuildingType()))
 		{
 			unitData->markLastVersionUsed();
 		}
@@ -113,7 +113,7 @@ void cActionFinishBuild::finishAVehicle (cModel& model, cBuilding& building) con
 
 	if (building.getOwner())
 	{
-		if (auto* unitData = building.getOwner()->getUnitDataCurrentVersion (buildingListItem.getType()))
+		if (auto* unitData = building.getOwner()->getLastUnitData (buildingListItem.getType()))
 		{
 			unitData->markLastVersionUsed();
 		}
@@ -143,7 +143,7 @@ void cActionFinishBuild::finishAVehicle (cModel& model, cBuilding& building) con
 		{
 			std::array<int, 3> turboBuildRounds;
 			std::array<int, 3> turboBuildCosts;
-			building.calcTurboBuild (turboBuildRounds, turboBuildCosts, building.getOwner()->getUnitDataCurrentVersion (buildingListItem.getType())->getBuildCost());
+			building.calcTurboBuild (turboBuildRounds, turboBuildCosts, building.getOwner()->getLastUnitData (buildingListItem.getType())->getBuildCost());
 			buildingListItem.setRemainingMetal (turboBuildCosts[building.getBuildSpeed()]);
 		}
 		building.startWork();

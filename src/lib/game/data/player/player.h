@@ -96,9 +96,9 @@ public:
 	int getCredits() const { return credits; }
 	void setCredits (int credits);
 
-	/** Get the most modern version of a unit (including all his upgrades). */
-	cDynamicUnitData* getUnitDataCurrentVersion (const sID&);
-	const cDynamicUnitData* getUnitDataCurrentVersion (const sID&) const;
+	/** Get the most modern version of a unit (including all its upgrades). */
+	cDynamicUnitData* getLastUnitData (const sID&);
+	const cDynamicUnitData* getLastUnitData (const sID&) const;
 
 	void setLandingPos (const cPosition& position) { landingPos = position; }
 	const cPosition& getLandingPos() const { return landingPos; }
