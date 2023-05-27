@@ -80,10 +80,11 @@ void cUnitRenameWidget::setUnit (const cUnit* unit, const cUnitsData& unitsData)
 				selectedUnitNameEdit->setText (getName (*activeUnit));
 			}
 		});
-		unitSignalConnectionManager.connect (unit->statusChanged, [&]() {
+		unitSignalConnectionManager.connect (unit->statusChanged, [this]() {
 			if (activeUnit)
 			{
-				selectedUnitStatusLabel->setText (getStatusStr (*activeUnit, player, unitsData));
+				selectedUnitNamePrefixLabel->setText (getNamePrefix (*activeUnit));
+				selectedUnitStatusLabel->setText (getStatusStr (*activeUnit, player, *this->unitsData));
 			}
 		});
 	}
