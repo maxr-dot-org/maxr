@@ -46,7 +46,25 @@ namespace os
 
 		for (auto it = std::filesystem::directory_iterator{directory}; it != std::filesystem::directory_iterator{}; ++it)
 		{
-			files.push_back (it->path().filename().string());
+			if (!std::filesystem::is_directory (it->path()))
+			{
+				files.push_back (it->path().filename().string());
+			}
+		}
+		return files;
+	}
+
+	//--------------------------------------------------------------------------
+	std::vector<std::string> getDirectories (const std::filesystem::path& directory)
+	{
+		std::vector<std::string> files;
+
+		for (auto it = std::filesystem::directory_iterator{directory}; it != std::filesystem::directory_iterator{}; ++it)
+		{
+			if (std::filesystem::is_directory (it->path()))
+			{
+				files.push_back (it->path().filename().string());
+			}
 		}
 		return files;
 	}

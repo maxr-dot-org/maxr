@@ -14,9 +14,6 @@ Maxr doesn't use libintl but [spiritless_po](https://github.com/oo13/spiritless_
 	msginit --input=data/languages/maxr.pot --locale=LANG --output=data/languages/LANG/maxr.po
 	```
 
-	Maxr doesn't auto detect new languages, so it would require to also add it in preference selection manually
-
-
 - To update LANG, use
 
 	```
