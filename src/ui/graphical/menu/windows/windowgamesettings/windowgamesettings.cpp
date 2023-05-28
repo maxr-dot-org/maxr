@@ -151,7 +151,7 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	savedLine = currentLine;
 	for (auto turn : cGameSettings::defaultVictoryTurnsOptions)
 	{
-		victoryGroup->emplaceCheckBox ({eGameSettingsVictoryCondition::Turns, turn}, getPosition() + cPosition (380, currentLine), std::to_string (turn) + " " + lngPack.i18n ("Text~Comp~Turns"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
+		victoryGroup->emplaceCheckBox ({eGameSettingsVictoryCondition::Turns, turn}, getPosition() + cPosition (380, currentLine), " " + lngPack.plural ("Text~Comp~Turn(s)", turn), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 		currentLine += lineHeight;
 	}
 	const auto customTurnArea = cBox<cPosition> (getPosition() + cPosition (330, currentLine), getPosition() + cPosition (420, currentLine + 10));
@@ -162,7 +162,7 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	currentLine = savedLine;
 	for (auto point : cGameSettings::defaultVictoryPointsOptions)
 	{
-		victoryGroup->emplaceCheckBox ({eGameSettingsVictoryCondition::Points, point}, getPosition() + cPosition (500, currentLine), std::to_string (point) + " " + lngPack.i18n ("Text~Comp~Points"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
+		victoryGroup->emplaceCheckBox ({eGameSettingsVictoryCondition::Points, point}, getPosition() + cPosition (500, currentLine), " " + lngPack.plural ("Text~Comp~Point(s)", point), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true);
 		currentLine += lineHeight;
 	}
 	const auto customPointArea = cBox<cPosition> (getPosition() + cPosition (440, currentLine), getPosition() + cPosition (540, currentLine + 10));

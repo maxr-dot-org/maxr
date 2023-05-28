@@ -49,29 +49,14 @@
 namespace
 {
 	//--------------------------------------------------------------------------
-	std::string plural (int n, const std::string& sing, const std::string& plu)
-	{
-		// TODO: Plural rules are language dependant
-		// - Russian has 3 forms, Chinese 1 form, ...
-		//          | eng  | fre  | ...
-		// singular | == 1 | <= 1 |
-		// plural   | != 1 | 1 <  |
-		// we should have `i18n (key, n)`
-		std::stringstream ss;
-		ss << n << " ";
-		ss << lngPack.i18n (n == 1 ? sing : plu);
-		return ss.str();
-	}
-
-	//--------------------------------------------------------------------------
 	std::string getVictoryString (const cGameSettings& gameSettings)
 	{
 		switch (gameSettings.victoryConditionType)
 		{
 			case eGameSettingsVictoryCondition::Turns:
-				return lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings.victoryTurns, "Text~Comp~Turn_5", "Text~Comp~Turns");
+				return lngPack.i18n ("Text~Comp~GameEndsAt") + " " + lngPack.plural ("Text~Comp~Turn(s)", gameSettings.victoryTurns);
 			case eGameSettingsVictoryCondition::Points:
-				return lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings.victoryPoints, "Text~Comp~Point", "Text~Comp~Points");
+				return lngPack.i18n ("Text~Comp~GameEndsAt") + " " + lngPack.plural ("Text~Comp~Point(s)", gameSettings.victoryPoints);
 			case eGameSettingsVictoryCondition::Death:
 				return lngPack.i18n ("Text~Comp~NoLimit");
 		}
@@ -177,7 +162,7 @@ cWindowReports::cWindowReports (const cModel& model,
 	{
 		const auto& player = players[i];
 
-		std::string playerText = player->getName() + lngPack.i18n ("Text~Punctuation~Colon") + plural (player->getScore (turnClock->getTurn()), "Text~Comp~Point", "Text~Comp~Points") + ", " + plural (player->getNumEcoSpheres(), "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
+		std::string playerText = player->getName() + lngPack.i18n ("Text~Punctuation~Colon") + lngPack.plural ("Text~Comp~Point(s)", player->getScore (turnClock->getTurn())) + ", " + lngPack.plural ("Text~Comp~EcoSphere(s)", player->getNumEcoSpheres());
 
 		AutoSurface colorSurface (SDL_CreateRGBSurface (0, 8, 8, Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect (colorSurface.get(), nullptr, toMappedSdlRGBAColor (player->getColor(), colorSurface->format));
@@ -234,7 +219,7 @@ void cWindowReports::retranslate()
 	{
 		const auto& player = players[i];
 
-		std::string playerText = player->getName() + lngPack.i18n ("Text~Punctuation~Colon") + plural (player->getScore (turnClock->getTurn()), "Text~Comp~Point", "Text~Comp~Points") + ", " + plural (player->getNumEcoSpheres(), "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
+		std::string playerText = player->getName() + lngPack.i18n ("Text~Punctuation~Colon") + lngPack.plural ("Text~Comp~Point(s)", player->getScore (turnClock->getTurn())) + ", " + lngPack.plural ("Text~Comp~EcoSphere(s)", player->getNumEcoSpheres());
 
 		ecosphereLabels[i]->setText (playerText);
 	}

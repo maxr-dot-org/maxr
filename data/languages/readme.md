@@ -5,7 +5,7 @@ Maxr doesn't use libintl but [spiritless_po](https://github.com/oo13/spiritless_
 - For extraction we use:
 
 	```
-	xgettext --c++ -o data/languages/maxr.pot -s -k -ki18n -kplural:2,3 --no-location `find . -name "*.cpp"` `find . -name "*.h"`
+	xgettext --c++ -o data/languages/maxr.pot -s -k -ki18n -kplural:1,1 --no-location `find . -name "*.cpp"` `find . -name "*.h"`
 	```
 
 - For new LANG (change with your own), use

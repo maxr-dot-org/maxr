@@ -338,8 +338,7 @@ void cWindowNetworkLobby::updateSettingsText()
 	{
 		if (gameSettings)
 		{
-			auto additionalGameEndString = gameSettings->victoryConditionType == eGameSettingsVictoryCondition::Turns ? (" " + std::to_string (gameSettings->victoryTurns) + " ") : (gameSettings->victoryConditionType == eGameSettingsVictoryCondition::Points ? (" " + std::to_string (gameSettings->victoryPoints) + " ") : " ");
-			text += lngPack.i18n ("Text~Comp~GameEndsAt") + additionalGameEndString + toTranslatedString (gameSettings->victoryConditionType) + "\n";
+			text += lngPack.i18n ("Text~Comp~GameEndsAt") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->victoryConditionType, gameSettings->victoryTurns, gameSettings->victoryPoints) + "\n";
 			text += lngPack.i18n ("Text~Title~Metal") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->metalAmount) + "\n";
 			text += lngPack.i18n ("Text~Title~Oil") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->oilAmount) + "\n";
 			text += lngPack.i18n ("Text~Title~Gold") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->goldAmount) + "\n";

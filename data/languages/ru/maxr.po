@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"POT-Creation-Date: 2023-05-28 23:29+0200\n"
 "PO-Revision-Date: 2021-07-29 21:44+0200\n"
 "Last-Translator:\n"
 "Language-Team: Russian\n"
@@ -89,11 +89,12 @@ msgstr "%s повреждено"
 msgid "Text~Comp~Disabled"
 msgstr "сломано"
 
-msgid "Text~Comp~EcoSphere"
-msgstr "эко-сфера"
-
-msgid "Text~Comp~EcoSpheres"
-msgstr "эко-сферы"
+#, fuzzy
+msgid "Text~Comp~EcoSphere(s)"
+msgid_plural "Text~Comp~EcoSphere(s)"
+msgstr[0] "%d эко-сфера"
+msgstr[1] "%d эко-сферы"
+msgstr[2] "%d эко-сферы"
 
 msgid "Text~Comp~End_Game"
 msgstr "Действительно выйти? \n\nНесохранённые данные будут утеряны."
@@ -167,8 +168,12 @@ msgstr "Биться насмерть!"
 msgid "Text~Comp~Path_interrupted"
 msgstr "Возведение построек по заданному маршруту не может быть продолжено."
 
-msgid "Text~Comp~Point"
-msgstr "очко"
+#, fuzzy
+msgid "Text~Comp~Point(s)"
+msgid_plural "Text~Comp~Point(s)"
+msgstr[0] "%d очко"
+msgstr[1] "%d очки"
+msgstr[2] "%d очки"
 
 msgid "Text~Comp~Points"
 msgstr "очки"
@@ -220,6 +225,13 @@ msgstr "Недостаточно рабочих, здание отключено
 
 msgid "Text~Comp~Themes"
 msgstr "темы"
+
+#, fuzzy
+msgid "Text~Comp~Turn(s)"
+msgid_plural "Text~Comp~Turn(s)"
+msgstr[0] "%d Ход"
+msgstr[1] "%d Ходы"
+msgstr[2] "%d Ходы"
 
 msgid "Text~Comp~Turn_5"
 msgstr "Ход"

@@ -45,7 +45,7 @@ std::string toTranslatedString (eGameSettingsResourceAmount);
 std::string toTranslatedString (eGameSettingsResourceDensity);
 std::string toTranslatedString (eGameSettingsBridgeheadType);
 std::string toTranslatedString (eGameSettingsGameType);
-std::string toTranslatedString (eGameSettingsVictoryCondition);
+std::string toTranslatedString (eGameSettingsVictoryCondition, int turn, int point);
 std::string toTranslatedString (eResourceType);
 
 std::string getClanStatsDescription (const cClanUnitStat&, const cUnitsData& originalData);

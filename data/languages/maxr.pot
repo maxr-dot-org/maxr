@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"POT-Creation-Date: 2023-05-28 23:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 msgid "Text~Comp~Adjustments_Fuel_Decreased"
 msgstr ""
@@ -95,11 +96,10 @@ msgstr ""
 msgid "Text~Comp~Disabled"
 msgstr ""
 
-msgid "Text~Comp~EcoSphere"
-msgstr ""
-
-msgid "Text~Comp~EcoSpheres"
-msgstr ""
+msgid "Text~Comp~EcoSphere(s)"
+msgid_plural "Text~Comp~EcoSphere(s)"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Text~Comp~End_Game"
 msgstr ""
@@ -173,8 +173,11 @@ msgstr ""
 msgid "Text~Comp~Path_interrupted"
 msgstr ""
 
-msgid "Text~Comp~Point"
-msgstr ""
+msgid "Text~Comp~Point(s)"
+msgid_plural "Text~Comp~Point(s)"
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "Text~Comp~Points"
 msgstr ""
 
@@ -222,6 +225,11 @@ msgstr ""
 
 msgid "Text~Comp~Themes"
 msgstr ""
+
+msgid "Text~Comp~Turn(s)"
+msgid_plural "Text~Comp~Turn(s)"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Text~Comp~Turn_5"
 msgstr ""
@@ -926,6 +934,9 @@ msgid "Text~Title~Human"
 msgstr ""
 
 msgid "Text~Title~IP"
+msgstr ""
+
+msgid "Text~Title~Labs"
 msgstr ""
 
 msgid "Text~Title~Load"

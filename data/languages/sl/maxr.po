@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 21:33+0200\n"
+"POT-Creation-Date: 2023-05-28 23:29+0200\n"
 "PO-Revision-Date: 2021-07-29 22:02+0200\n"
 "Last-Translator:\n"
 "Language-Team: Slovenian\n"
@@ -89,11 +89,13 @@ msgstr "%s zaznan"
 msgid "Text~Comp~Disabled"
 msgstr "onemogočeno delovanje"
 
-msgid "Text~Comp~EcoSphere"
-msgstr "Eko-sfera"
-
-msgid "Text~Comp~EcoSpheres"
-msgstr "Eko-sfere"
+#, fuzzy
+msgid "Text~Comp~EcoSphere(s)"
+msgid_plural "Text~Comp~EcoSphere(s)"
+msgstr[0] "%d Eko-sfera"
+msgstr[1] "%d Eko-sfere"
+msgstr[2] "%d Eko-sfere"
+msgstr[3] "%d Eko-sfere"
 
 msgid "Text~Comp~End_Game"
 msgstr "Res želite zaključiti?\n\nNeshranjeni napredek bo izgubljen."
@@ -167,8 +169,13 @@ msgstr "Boj do konca!"
 msgid "Text~Comp~Path_interrupted"
 msgstr "Ukaza za izgradnjo poti ni možno obnoviti."
 
-msgid "Text~Comp~Point"
-msgstr "točka"
+#, fuzzy
+msgid "Text~Comp~Point(s)"
+msgid_plural "Text~Comp~Point(s)"
+msgstr[0] "%d točka"
+msgstr[1] "%d Točk"
+msgstr[2] "%d Točk"
+msgstr[3] "%d Točk"
 
 msgid "Text~Comp~Points"
 msgstr "Točk"
@@ -220,6 +227,14 @@ msgstr "Pomanjkanje delavcev; izključujem zgradbo."
 
 msgid "Text~Comp~Themes"
 msgstr "Teme"
+
+#, fuzzy
+msgid "Text~Comp~Turn(s)"
+msgid_plural "Text~Comp~Turn(s)"
+msgstr[0] "%d Potezo"
+msgstr[1] "%d Potez"
+msgstr[2] "%d Potez"
+msgstr[3] "%d Potez"
 
 msgid "Text~Comp~Turn_5"
 msgstr "Potezo"

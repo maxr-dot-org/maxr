@@ -196,14 +196,14 @@ std::string toTranslatedString (eGameSettingsGameType type)
 }
 
 //------------------------------------------------------------------------------
-std::string toTranslatedString (eGameSettingsVictoryCondition condition)
+std::string toTranslatedString (eGameSettingsVictoryCondition condition, int turn, int point)
 {
 	switch (condition)
 	{
 		case eGameSettingsVictoryCondition::Turns:
-			return lngPack.i18n ("Text~Comp~Turns");
+			return lngPack.plural ("Text~Comp~Turn(s)", turn);
 		case eGameSettingsVictoryCondition::Points:
-			return lngPack.i18n ("Text~Comp~Points");
+			return lngPack.plural ("Text~Comp~Point(s)", point);
 		case eGameSettingsVictoryCondition::Death:
 			return lngPack.i18n ("Text~Comp~NoLimit");
 	}
@@ -267,7 +267,7 @@ std::string getClanStatsDescription (const cClanUnitStat& clanUnitStat, const cU
 		int nrTurns = *modif;
 		if (originalData.getStaticUnitData (data->getId()).vehicleData.isHuman == false) nrTurns /= clanUnitStat.getUnitId().isAVehicle() == 0 ? 2 : 3;
 
-		result += std::to_string (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");
+		result += lngPack.plural ("Text~Comp~Turn(s)", nrTurns);
 	}
 	return result;
 }
