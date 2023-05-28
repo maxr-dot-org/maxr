@@ -40,7 +40,7 @@ msgid "Text~Comp~CapturedByEnemy"
 msgstr "Feind hat %s erbeutet"
 
 msgid "Text~Comp~Cheat"
-msgstr "hat einen Cheat benutzt:"
+msgstr "%s hat einen Cheat benutzt:"
 
 msgid "Text~Comp~Clearing"
 msgstr "beim räumen (%s)"
@@ -451,7 +451,7 @@ msgid "Text~Multiplayer~No_Response"
 msgstr "Warte auf Netzwerkantwort von Spieler %s"
 
 msgid "Text~Multiplayer~Not_Ready"
-msgstr "ist nicht bereit"
+msgstr "%s ist nicht bereit"
 
 msgid "Text~Multiplayer~Option_NoSet"
 msgstr "--keine Optionen gewählt--"

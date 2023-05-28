@@ -42,7 +42,7 @@ msgid "Text~Comp~CapturedByEnemy"
 msgstr "%s je sovražnik zajel"
 
 msgid "Text~Comp~Cheat"
-msgstr "uporaba goljufije"
+msgstr "%s uporaba goljufije"
 
 msgid "Text~Comp~Clearing"
 msgstr "Čiščenje (%s)"
@@ -429,7 +429,7 @@ msgid "Text~Multiplayer~No_Response"
 msgstr "Čakam na mrežni odziv igralca %s"
 
 msgid "Text~Multiplayer~Not_Ready"
-msgstr "ni pripravljen"
+msgstr "%s ni pripravljen"
 
 msgid "Text~Multiplayer~Option_NoSet"
 msgstr "--možnosti niso nastavljene--"

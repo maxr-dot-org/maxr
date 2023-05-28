@@ -41,7 +41,7 @@ msgid "Text~Comp~CapturedByEnemy"
 msgstr "%s is buitgemaakt door de vijand"
 
 msgid "Text~Comp~Cheat"
-msgstr "valsspelen gebruikt"
+msgstr "%s valsspelen gebruikt"
 
 msgid "Text~Comp~Clearing"
 msgstr "Opruimen (%s)"
@@ -428,7 +428,7 @@ msgid "Text~Multiplayer~No_Response"
 msgstr "Wachten op netwerk reactie speler %s"
 
 msgid "Text~Multiplayer~Not_Ready"
-msgstr "is niet gereed"
+msgstr "%s is niet gereed"
 
 msgid "Text~Multiplayer~Option_NoSet"
 msgstr "--Geen opties ingesteld--"

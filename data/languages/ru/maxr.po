@@ -42,7 +42,7 @@ msgid "Text~Comp~CapturedByEnemy"
 msgstr "Враг захватил %s"
 
 msgid "Text~Comp~Cheat"
-msgstr "использован чит"
+msgstr "%s использован чит"
 
 msgid "Text~Comp~Clearing"
 msgstr "убирает (%s)"
@@ -429,7 +429,7 @@ msgid "Text~Multiplayer~No_Response"
 msgstr ""
 
 msgid "Text~Multiplayer~Not_Ready"
-msgstr "не готов"
+msgstr "%s не готов"
 
 msgid "Text~Multiplayer~Option_NoSet"
 msgstr "--не выбраны опции--"

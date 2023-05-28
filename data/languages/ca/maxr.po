@@ -41,7 +41,7 @@ msgid "Text~Comp~CapturedByEnemy"
 msgstr "%s ha sigut capturat per l'enemic"
 
 msgid "Text~Comp~Cheat"
-msgstr "Se ha utilitzat un truc"
+msgstr "%s Se ha utilitzat un truc"
 
 msgid "Text~Comp~Clearing"
 msgstr "Netejant (%s)"
@@ -428,7 +428,7 @@ msgid "Text~Multiplayer~No_Response"
 msgstr "Esperando respuesta de la red del jugador %s"
 
 msgid "Text~Multiplayer~Not_Ready"
-msgstr "no esta listo"
+msgstr "%s no esta listo"
 
 msgid "Text~Multiplayer~Option_NoSet"
 msgstr "--opciones no seleccionadas--"

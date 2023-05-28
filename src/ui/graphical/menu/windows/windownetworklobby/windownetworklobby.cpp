@@ -250,8 +250,7 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 		if (missingSettings) addInfoEntry (lngPack.i18n ("Text~Multiplayer~Missing_Settings"));
 		for (const auto& player : notReadyPlayers)
 		{
-			// TODO: use insertText
-			addInfoEntry (player.getName() + " " + lngPack.i18n ("Text~Multiplayer~Not_Ready"));
+			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Not_Ready", player.getName()));
 		}
 		// TODO: missing translations
 		if (!notReadyPlayers.empty()) addInfoEntry ("Not all players are ready...");

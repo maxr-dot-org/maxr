@@ -50,7 +50,7 @@ msgid "Text~Comp~CapturedByEnemy"
 msgstr "%s a été capturé par l'enemi"
 
 msgid "Text~Comp~Cheat"
-msgstr "a triché :"
+msgstr "%s a triché :"
 
 msgid "Text~Comp~Clearing"
 msgstr "Nettoyage (%s)"
@@ -464,7 +464,7 @@ msgid "Text~Multiplayer~No_Response"
 msgstr "En attente de réponse réseau du joueur %s"
 
 msgid "Text~Multiplayer~Not_Ready"
-msgstr "n'est pas prêt"
+msgstr "%s n'est pas prêt"
 
 msgid "Text~Multiplayer~Option_NoSet"
 msgstr "--pas d'options choisies--"
