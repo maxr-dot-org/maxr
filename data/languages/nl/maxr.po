@@ -83,7 +83,7 @@ msgid "Text~Comp~Destroyed"
 msgstr "%s vernietigd"
 
 msgid "Text~Comp~Detected"
-msgstr "ontdekt"
+msgstr "%s ontdekt"
 
 msgid "Text~Comp~Disabled"
 msgstr "uitgeschakeld"

@@ -84,7 +84,7 @@ msgid "Text~Comp~Destroyed"
 msgstr "%s - здание разрушено"
 
 msgid "Text~Comp~Detected"
-msgstr "повреждено"
+msgstr "%s повреждено"
 
 msgid "Text~Comp~Disabled"
 msgstr "сломано"

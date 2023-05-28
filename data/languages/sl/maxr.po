@@ -84,7 +84,7 @@ msgid "Text~Comp~Destroyed"
 msgstr "%s uničen"
 
 msgid "Text~Comp~Detected"
-msgstr "zaznan"
+msgstr "%s zaznan"
 
 msgid "Text~Comp~Disabled"
 msgstr "onemogočeno delovanje"

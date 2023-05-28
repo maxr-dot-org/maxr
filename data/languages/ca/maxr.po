@@ -83,7 +83,7 @@ msgid "Text~Comp~Destroyed"
 msgstr "Jugador %s destruït"
 
 msgid "Text~Comp~Detected"
-msgstr "detectat"
+msgstr "%s detectat"
 
 msgid "Text~Comp~Disabled"
 msgstr "desactivat"

@@ -82,7 +82,7 @@ msgid "Text~Comp~Destroyed"
 msgstr "%s zerstört"
 
 msgid "Text~Comp~Detected"
-msgstr "entdeckt"
+msgstr "%s entdeckt"
 
 msgid "Text~Comp~Disabled"
 msgstr "außer Gefecht gesetzt"

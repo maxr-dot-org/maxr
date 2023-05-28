@@ -602,7 +602,11 @@ namespace
 			case eSavedReportType::Destroyed:
 				return lngPack.i18n ("Text~Comp~Destroyed", displayName);
 			case eSavedReportType::Detected:
-				return displayName + " (" + static_cast<const cSavedReportDetected&> (report).getPlayerOwnerName() + ") " + lngPack.i18n ("Text~Comp~Detected");
+			{
+				const auto& savedReport = static_cast<const cSavedReportDetected&> (report);
+				const auto playerName = savedReport.getPlayerOwnerName().empty() ? "" : " (" + savedReport.getPlayerOwnerName() + ") ";
+				return lngPack.i18n ("Text~Comp~Detected", displayName + playerName);
+			}
 			case eSavedReportType::Disabled:
 				return displayName + " " + lngPack.i18n ("Text~Comp~Disabled");
 			case eSavedReportType::PathInterrupted:

@@ -92,7 +92,7 @@ msgid "Text~Comp~Destroyed"
 msgstr "%s détruit"
 
 msgid "Text~Comp~Detected"
-msgstr "détecté"
+msgstr "%s détecté"
 
 msgid "Text~Comp~Disabled"
 msgstr "désactivé"
