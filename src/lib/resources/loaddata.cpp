@@ -1194,7 +1194,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 	if (!MusicFiles.start.empty())
 	{
 		MusicFiles.start = directory / MusicFiles.start;
-		if (!std::filesystem::exists (MusicFiles.start)) Log.warn ("music files doesn't exist: " + MusicFiles.start.string());
+		if (!std::filesystem::exists (MusicFiles.start)) Log.warn ("music file doesn't exist: " + MusicFiles.start.string());
 	}
 	for (auto& filename : MusicFiles.backgrounds)
 	{
