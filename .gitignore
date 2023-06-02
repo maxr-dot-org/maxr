@@ -1,3 +1,6 @@
 /build/
 /config.*
 /data_resinstaller/
+/data/SDL2.dll
+/data/SDL2_mixer.dll
+/data/SDL2_net.dll
