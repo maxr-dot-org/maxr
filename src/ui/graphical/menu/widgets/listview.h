@@ -507,7 +507,6 @@ bool cListView<ItemType>::handleKeyPressed (cApplication& application, cKeyboard
 		default:
 			return false;
 	}
-	return false;
 }
 
 //------------------------------------------------------------------------------

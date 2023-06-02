@@ -72,8 +72,6 @@ namespace
 
 	TEST_CASE ("ChatCommand_Choice")
 	{
-		const std::string name = "test";
-		const std::string desc = "dummy desc";
 		const std::vector<std::string> choices{"a", "b", "c"};
 		std::map<std::string, std::size_t> map_counter;
 		auto action = [&] (const std::string& s) { ++map_counter[s]; };

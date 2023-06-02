@@ -173,7 +173,6 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 		header >> serialization::makeNvp ("type", info.type);
 		header >> serialization::makeNvp ("date", info.date);
 
-		int numPlayers = 0;
 		for (auto& playerJson : json->at ("model").at ("players"))
 		{
 			cJsonArchiveIn archive (playerJson);

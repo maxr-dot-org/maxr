@@ -66,7 +66,6 @@
 		if (unit->isDisabled()) return false;
 		return commando.getStaticData().canDisable && unit->getStaticUnitData().canBeDisabled;
 	}
-	return true;
 }
 
 //------------------------------------------------------------------------------

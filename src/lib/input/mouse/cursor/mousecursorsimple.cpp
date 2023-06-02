@@ -100,7 +100,6 @@ cPosition cMouseCursorSimple::getHotPoint() const
 		default:
 			return cPosition (0, 0);
 	}
-	return cPosition (0, 0);
 }
 
 //------------------------------------------------------------------------------

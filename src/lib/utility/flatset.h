@@ -59,10 +59,8 @@ public:
 	using key_compare = Compare;
 	using value_compare = Compare;
 	using allocator_type = Allocator;
-	using pointer = typename Allocator::pointer;
-	using const_pointer = typename Allocator::const_pointer;
-	using reference = typename Allocator::reference;
-	using const_reference = typename Allocator::const_reference;
+	using pointer = typename std::allocator_traits<Allocator>::pointer;
+	using const_pointer = typename std::allocator_traits<Allocator>::const_pointer;
 	using iterator = typename DataType::iterator;
 	using const_iterator = typename DataType::const_iterator;
 	using reverse_iterator = typename DataType::reverse_iterator;

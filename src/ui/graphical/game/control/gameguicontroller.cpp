@@ -1352,7 +1352,6 @@ void cGameGuiController::showBuildBuildingsWindow (const cVehicle& vehicle)
 			const auto& buildingData = model.getUnitsData()->getStaticUnitData (buildingId);
 			if (buildingData.buildingData.isBig)
 			{
-				const auto& map = model.getMap();
 				if (!gameGui->getGameMap().startFindBuildPosition (buildingId))
 				{
 					addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::Producing_PositionBlocked), activeClient->getActivePlayer().getId());

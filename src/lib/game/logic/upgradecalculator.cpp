@@ -1308,7 +1308,6 @@ bool cResearch::doResearch (int researchPoints, eResearchArea researchArea)
 
 		if (curResearchPoints[static_cast<int> (researchArea)] >= *neededResearchPoints[static_cast<int> (researchArea)])
 		{
-			const auto oldLevel = curResearchLevel[static_cast<int> (researchArea)];
 			const auto oldNeededPoints = neededResearchPoints[static_cast<int> (researchArea)];
 
 			curResearchPoints[static_cast<int> (researchArea)] = 0;

@@ -124,7 +124,6 @@ std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveOut& archive)
 		case eActiontype::SetAutoMove: return std::make_unique<cActionSetAutoMove> (archive);
 		default:
 			throw std::runtime_error ("Unknown action type " + std::to_string (static_cast<int> (action)));
-			return nullptr;
 	}
 }
 

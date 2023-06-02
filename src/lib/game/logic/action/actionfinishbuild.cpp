@@ -113,9 +113,9 @@ void cActionFinishBuild::finishAVehicle (cModel& model, cBuilding& building) con
 
 	if (building.getOwner())
 	{
-		if (auto* unitData = building.getOwner()->getLastUnitData (buildingListItem.getType()))
+		if (auto* dynamicUnitData = building.getOwner()->getLastUnitData (buildingListItem.getType()))
 		{
-			unitData->markLastVersionUsed();
+			dynamicUnitData->markLastVersionUsed();
 		}
 	}
 	auto& vehicle = model.addVehicle (escapePosition, buildingListItem.getType(), building.getOwner());

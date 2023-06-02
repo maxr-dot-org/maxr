@@ -54,7 +54,6 @@ bool cPathDestHandler::hasReachedDestination (const cPosition& position) const
 		default:
 			return true;
 	}
-	return false;
 }
 
 int cPathDestHandler::heuristicCost (const cPosition& source) const

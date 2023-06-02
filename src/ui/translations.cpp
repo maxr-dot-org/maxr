@@ -540,8 +540,8 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 			return lngPack.i18n ("Text~Comp~Clearing_Fin") + dated;
 	}
 	// generate other infos for normal non-unit-related-events and infiltrators
-	std::string sTmp;
 	{
+		std::string sTmp;
 		if (vehicle.getMoveJob() && vehicle.getMoveJob()->getEndMoveAction().isAttacking())
 			sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
 		else if (vehicle.getMoveJob())
@@ -568,8 +568,6 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 
 		return sTmp + dated;
 	}
-
-	return lngPack.i18n ("Text~Comp~Waits") + dated;
 }
 
 //------------------------------------------------------------------------------

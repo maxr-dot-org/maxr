@@ -159,7 +159,7 @@ Uint32 getPixel (const SDL_Surface& surface, const cPosition& position)
 			break;
 
 		case 3:
-			if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+			if constexpr (SDL_BYTEORDER == SDL_BIG_ENDIAN)
 				return p[0] << 16 | p[1] << 8 | p[2];
 			else
 				return p[0] | p[1] << 8 | p[2] << 16;
@@ -191,7 +191,7 @@ void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel)
 			break;
 
 		case 3:
-			if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+			if constexpr (SDL_BYTEORDER == SDL_BIG_ENDIAN)
 			{
 				p[0] = (pixel >> 16) & 0xff;
 				p[1] = (pixel >> 8) & 0xff;

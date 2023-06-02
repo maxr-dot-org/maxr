@@ -361,7 +361,7 @@ void cModel::deleteUnit (cUnit* unit)
 			cVehicle* vehicle = static_cast<cVehicle*> (unit);
 			owningPtr = owner->removeUnit (*vehicle);
 		}
-		unit->forEachStoredUnits ([owner](const auto& storedVehicle) { owner->removeUnit (storedVehicle); });
+		unit->forEachStoredUnits ([owner] (const auto& storedVehicle) { owner->removeUnit (storedVehicle); });
 	}
 	helperJobs.onRemoveUnit (*unit);
 
@@ -653,8 +653,7 @@ void cModel::handleTurnEnd()
 			{
 				turnEnded();
 
-				const auto player = gameSettings->gameType == eGameSettingsGameType::Simultaneous ? nullptr : activeTurnPlayer;
-				const auto resumedMJobOwners = resumeMoveJobs (player);
+				const auto resumedMJobOwners = resumeMoveJobs (gameSettings->gameType == eGameSettingsGameType::Simultaneous ? nullptr : activeTurnPlayer);
 				for (const auto& player : resumedMJobOwners)
 				{
 					player->turnEndMovementsStarted();
@@ -666,7 +665,7 @@ void cModel::handleTurnEnd()
 		break;
 		case eTurnEndState::ExecuteRemainingMovements:
 		{
-			const bool activeMoveJob = ranges::any_of (moveJobs, [](const auto& moveJob) { return moveJob->isActive(); });
+			const bool activeMoveJob = ranges::any_of (moveJobs, [] (const auto& moveJob) { return moveJob->isActive(); });
 			if (!activeMoveJob)
 			{
 				turnEndState = eTurnEndState::ExecuteTurnStart;
@@ -822,8 +821,8 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 			}
 			if (stealthVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Sea)
 			{
-				if (ranges::any_of (playerList, [&](auto& player) {
-					return player.get() != stealthVehicle->getOwner() && player->hasSeaDetection (currentPosition);
+				if (ranges::any_of (playerList, [&] (auto& player) {
+						return player.get() != stealthVehicle->getOwner() && player->hasSeaDetection (currentPosition);
 					}))
 				{
 					detectOnDest = true;

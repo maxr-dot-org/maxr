@@ -48,5 +48,4 @@ bool cSavedReportSimple::isAlert() const
 		default:
 			return false;
 	}
-	return false;
 }

@@ -364,7 +364,6 @@ private:
 	template <typename T, typename Cmp>
 	void popValue (cFlatSet<T, Cmp>& v)
 	{
-		std::size_t i = 0;
 		for (const auto& e : json)
 		{
 			T item;
