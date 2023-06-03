@@ -2,6 +2,7 @@
 
 ![Ubuntu-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/ubuntu/badge.svg)
 ![Macos-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/macos/badge.svg)
+![premake5-windows-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/premake5-windows/badge.svg)
 
 ## Introduction
 
