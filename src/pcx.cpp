@@ -194,10 +194,6 @@ int savePCX_32bpp (SDL_Surface* surface, const std::filesystem::path& fileName)
 			bild[Index] = NrColors;
 			NrColors++;
 		}
-		if (bild[Index] > 200)
-		{
-			int ichBrechInsEssen = 0;
-		}
 	}
 
 	// RLC berechnen
