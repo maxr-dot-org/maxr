@@ -1,6 +1,7 @@
 # Resinstaller
 
 ![Ubuntu-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/ubuntu/badge.svg)
+![Macos-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/macos/badge.svg)
 
 ## Introduction
 
