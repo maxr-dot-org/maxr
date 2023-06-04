@@ -52,6 +52,7 @@ workspace "Resinstaller"
 project "resinstaller"
 	kind "ConsoleApp"
 	-- targetdir "maxr/data"
+	uuid "9DEEC088-8951-502D-32D7-88E31E191CB0"
 	debugdir "../maxr/data"
 	
 	targetname "resinstaller"
