@@ -1,0 +1,168 @@
+newoption {
+	trigger = "to",
+	value   = "path",
+	description = "Set the output location for the generated files"
+}
+
+if (_ACTION == nil) then
+	return
+end
+
+local locationDir = _OPTIONS["to"] or path.join("solution", _ACTION, "maxr")
+
+local nugetPackages = {
+	"sdl2.nuget:2.26.5", "sdl2.nuget.redist:2.26.5",
+	"sdl2_mixer.nuget:2.6.3", "sdl2_mixer.nuget.redist:2.6.3",
+	"sdl2_net.nuget:2.2.0", "sdl2_net.nuget.redist:2.2.0",
+	-- "CrashRpt2.CPP:1.5.3", "CrashRpt2.CPP.redist:1.5.3",
+}
+
+workspace "Maxr"
+	location(locationDir)
+	configurations {"Debug", "Release"}
+
+	language "C++"
+	cppdialect "C++17"
+
+	objdir(path.join(locationDir, "obj")) -- premake adds $(configName)/$(AppName)
+	startproject "maxr"
+
+	externalwarnings "Off"
+
+	filter { "action:vs*" }
+		nuget(nugetPackages)
+	filter { "toolset:msc*" }
+		--defines { "USE_CRASH_RPT" }
+		defines { "_CRT_SECURE_NO_WARNINGS" } -- 4996: '$func': This function or variable may be unsafe. Consider using $func2 instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+		disablewarnings {
+			"4100", -- '%var': unreferenced formal parameter
+			"4244", -- '=': conversion from '$type1' to '$type2', possible loss of data
+			"4245", -- '=': conversion from '$type1' to '$type2', signed/unsigned mismatch
+			"4389", -- '==': signed/unsigned mismatch
+			"4456", -- declaration of '$var' hides previous local declaration
+			"4457", -- declaration of '$var' hides function parameter
+			"4458", -- declaration of '$var' hides class member
+			"4459", -- declaration of '$var' hides global declaration
+			"4701", -- potentially uninitialized local variable '$var' used
+			"4702", -- unreachable code -- TODO: REMOVE use latest spiritless_po
+		}
+
+	filter { "configurations:Debug" }
+		symbols "On"
+		defines { "DEBUG" }
+		optimize "Off"
+
+	filter { "configurations:Release" }
+		symbols "Off"
+		defines { "NDEBUG" }
+		optimize "On"
+
+	filter "system:windows"
+		defines { "WIN32" }
+
+project "maxr"
+	kind "ConsoleApp"
+	targetdir "data"
+
+	filter { "configurations:Release" }
+		targetname "maxr"
+	filter { "configurations:Debug" }
+		targetname "maxr_%{_ACTION}_%{cfg.buildcfg}"
+	filter {}
+
+	warnings "Extra"
+	flags { "FatalWarnings"}
+
+	files { "src/ui/**.cpp", "src/ui/**.h", "src/maxr.rc" }
+	includedirs { "src", "src/lib" }
+	links { "maxr_lib", "SDL_flic", "mveplayer" }
+
+project "dedicated_server"
+	kind "ConsoleApp"
+	targetdir "data"
+	filter { "configurations:Release" }
+		targetname "dedicatedserver"
+	filter { "configurations:Debug" }
+		targetname "dedicatedserver_%{_ACTION}_%{cfg.buildcfg}"
+	filter {}
+
+	warnings "Extra"
+	flags { "FatalWarnings"}
+
+	files { "src/dedicatedserver/**.cpp", "src/dedicated_server/**.h", "src/maxr.rc" }
+	includedirs { "src", "src/lib" }
+	links { "maxr_lib", "SDL_flic", "mveplayer" }
+
+project "tests"
+	kind "ConsoleApp"
+	targetdir(path.join(locationDir, "bin/%{cfg.buildcfg}"))
+	targetname "maxr_tests"
+
+	warnings "Extra"
+	flags { "FatalWarnings"}
+
+	files { "tests/**.cpp", "tests/**.h" }
+	includedirs { "src", "src/lib" }
+	links { "maxr_lib" }
+
+project "maxr_lib"
+	kind "StaticLib"
+
+	targetdir("%{cfg.objdir}")
+	targetname "maxr_lib"
+
+	warnings "Extra"
+	flags { "FatalWarnings"}
+
+	files { "src/lib/**.cpp", "src/lib/**.h", "src/**.in", "src/.clang-format", "CMakeList.txt" }
+	includedirs { "src", "src/lib" }
+	externalincludedirs { "src/3rd/spiritless_po/include" }
+
+group "3rd"
+project "mveplayer"
+	kind "StaticLib"
+
+	targetdir("%{cfg.objdir}")
+	targetname "mveplayer"
+
+	files { "src/3rd/mveplayer/**.cpp", "src/3rd/mveplayer/**.h" }
+	includedirs { "src", "src/lib" }
+
+project "SDL_flic"
+	kind "StaticLib"
+
+	targetdir("%{cfg.objdir}")
+	targetname "SDL_flic"
+
+	files { "src/3rd/SDL_flic/**.c", "src/3rd/SDL_flic/**.h" }
+
+if premake.action.supports("None") then
+project "doctest" -- header only
+	kind "None"
+
+	files { "src/3rd/doctest/**.*" }
+
+project "nlohmann" -- header only
+	kind "None"
+
+	files { "src/3rd/nlohmann/**.*" }
+
+project "spiritless_po" -- header only
+	kind "None"
+
+	files { "src/3rd/spiritless_po/**.*" }
+group ""
+project "data" -- data
+	kind "None"
+
+	files { "data/**.*" }
+	removefiles { "data/**.dll", "data/**.exe" }
+end
+
+if os.isdir(path.join(locationDir, "../resinstaller")) then
+group "resinstaller"
+externalproject "resinstaller"
+	kind "ConsoleApp"
+	location(path.join(locationDir, "../resinstaller"))
+	uuid "9DEEC088-8951-502D-32D7-88E31E191CB0"
+end
