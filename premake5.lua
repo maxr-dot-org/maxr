@@ -1,10 +1,14 @@
-local root = path.getabsolute(".")
+newoption {
+	trigger = "to",
+	value   = "path",
+	description = "Set the output location for the generated files"
+}
 
 if (_ACTION == nil) then
 	return
 end
 
-local locationDir = path.join(root, "../solution", _ACTION, "resinstaller")
+local locationDir = _OPTIONS["to"] or path.join("solution", _ACTION, "resinstaller")
 
 local nugetPackages = {
 	"sdl2.nuget:2.26.5", "sdl2.nuget.redist:2.26.5",

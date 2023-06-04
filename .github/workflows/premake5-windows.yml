@@ -38,10 +38,16 @@ jobs:
         cp premake-build/bin/release/premake5.exe ./
 
     - name: run premake5
-      run: ./premake5.exe vs2022
+      run: ./premake5.exe vs2022 to=solution/vs2022/resinstaller
 
     - name: build
       run: |
-        cd ../solution/vs2022/resinstaller/
+        cd solution/vs2022/resinstaller
         nuget install packages.config -OutputDirectory packages
         msbuild.exe /property:Configuration=Release Resinstaller.sln
+
+    - name: upload resinstaller.exe
+      uses: actions/upload-artifact@v3
+      with:
+        name: resinstaller
+        path: solution/vs2022/resinstaller/bin/Release
