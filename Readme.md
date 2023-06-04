@@ -1,7 +1,9 @@
 # Resinstaller
 
-![Ubuntu-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/ubuntu/badge.svg)
-![Macos-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/macos/badge.svg)
+![CMake-ubuntu-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/ubuntu/badge.svg)
+![CMake-macos-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/macos/badge.svg)
+![premake5-ubuntu-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/premake5-ubuntu/badge.svg)
+![premake5-macos-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/premake5-macos/badge.svg)
 ![premake5-windows-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/premake5-windows/badge.svg)
 
 ## Introduction

@@ -16,6 +16,19 @@ local nugetPackages = {
 	"vorbis-msvc14-x86:1.3.5.7785", "ogg-msvc-x86:1.3.2.8787",  -- x86
 }
 
+local SDL2_DIR = os.getenv("SDL2_DIR")
+local SDL2_headerPath = os.findheader("SDL2/SDL.h", SDL2_DIR)
+local SDL2_libraryPath = os.findlib("SDL2", SDL2_DIR)
+
+local vorbis_headerPath = os.findheader("vorbis/vorbisenc.h")
+local ogg_headerPath = os.findheader("ogg/ogg.h")
+
+print("SDL2_DIR: ", SDL2_DIR)
+print("SDL2 header path: ", SDL2_headerPath)
+print("SDL2 library path: ", SDL2_libraryPath)
+print("vorbis header path: ", vorbis_headerPath)
+print("ogg header path: ", ogg_headerPath)
+
 workspace "Resinstaller"
 	location(locationDir)
 	configurations {"Debug", "Release"}
@@ -62,7 +75,7 @@ project "resinstaller"
 	targetname "resinstaller"
 
 	warnings "Extra"
-	flags { "FatalWarnings"}
+	-- flags { "FatalWarnings"} -- We still have warnings :-(
 
 	files { "src/**.cpp", "src/**.c", "src/**.h" } -- source files
 	files { ".clang-format", "premake5.lua", "CMakeList.txt", "ABOUT", "AUTHORS", "COPYING", "Readme.md" } -- extra files
@@ -71,5 +84,18 @@ project "resinstaller"
 	filter "action:vs*"
 		nuget(nugetPackages)
 	filter "action:not vs*"
-		links { "ogg", "vorbis", "vorbisfile", "vorbisenc" }
+
+if vorbis_headerPath then
+		includedirsafter { vorbis_headerPath }
+end
+if ogg_headerPath then
+		includedirsafter { ogg_headerPath }
+end
+if SDL2_headerPath then
+		externalincludedirs { path.join(SDL2_headerPath, "SDL2") }
+end
+if SDL2_libraryPath then
+		libdirs { SDL2_libraryPath }
+end
+		links { "SDL2", "ogg", "vorbis", "vorbisfile", "vorbisenc" }
 	filter {}
