@@ -241,11 +241,13 @@ msgstr "Kérlek várd meg, míg az összes lépés végrehajtódik"
 msgid "Text~Comp~Turns"
 msgstr "Kör"
 
-msgid "Text~Comp~Upgrades_Done"
-msgstr "Felfejlesztve"
+msgid "Text~Comp~Upgrade(s)_Done"
+msgid_plural "Text~Comp~Upgrade(s)_Done"
+msgstr[0] "Felfejlesztve %d egység"
+msgstr[1] "Felfejlesztve %d egység"
 
-msgid "Text~Comp~Upgrades_Done2"
-msgstr "egység %s típusúvá"
+msgid "Text~Comp~Of_Type"
+msgstr "%s típusúvá"
 
 msgid "Text~Comp~Waits"
 msgstr "várakozik"

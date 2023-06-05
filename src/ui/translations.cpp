@@ -696,7 +696,7 @@ namespace
 	std::string getMessage (const cModel& model, const cSavedReportUpgraded& report)
 	{
 		const auto& unitName = getStaticUnitName (model.getUnitsData()->getStaticUnitData (report.getUnitId()));
-		return lngPack.i18n ("Text~Comp~Upgrades_Done") + " " + std::to_string (report.getUnitsCount()) + " " + lngPack.i18n ("Text~Comp~Upgrades_Done2", unitName) + " (" + lngPack.i18n ("Text~Others~Costs") + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (report.getCosts()) + ")";
+		return lngPack.plural ("Text~Comp~Upgrade(s)_Done", report.getUnitsCount()) + " " + lngPack.i18n ("Text~Comp~Of_Type", unitName) + " (" + lngPack.i18n ("Text~Others~Costs") + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (report.getCosts()) + ")";
 	}
 
 	//------------------------------------------------------------------------------

@@ -246,10 +246,12 @@ msgstr ""
 msgid "Text~Comp~Turns"
 msgstr ""
 
-msgid "Text~Comp~Upgrades_Done"
-msgstr ""
+msgid "Text~Comp~Upgrade(s)_Done"
+msgid_plural "Text~Comp~Upgrade(s)_Done"
+msgstr[0] ""
+msgstr[1] ""
 
-msgid "Text~Comp~Upgrades_Done2"
+msgid "Text~Comp~Of_Type"
 msgstr ""
 
 msgid "Text~Comp~Waits"

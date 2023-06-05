@@ -241,11 +241,13 @@ msgstr "Per favor espera fins que tots els movimients s'hagin completat"
 msgid "Text~Comp~Turns"
 msgstr "Torns"
 
-msgid "Text~Comp~Upgrades_Done"
-msgstr "Actualitzat"
+msgid "Text~Comp~Upgrade(s)_Done"
+msgid_plural "Text~Comp~Upgrade(s)_Done"
+msgstr[0] "Actualitzat %d unitat"
+msgstr[1] "Actualitzat %d unitats"
 
-msgid "Text~Comp~Upgrades_Done2"
-msgstr "unitat(s) de tipus %s"
+msgid "Text~Comp~Of_Type"
+msgstr "de tipus %s"
 
 msgid "Text~Comp~Waits"
 msgstr "esperant"

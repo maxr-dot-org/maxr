@@ -256,11 +256,13 @@ msgstr "Veuillez attendre que tous les mouvements soient terminés"
 msgid "Text~Comp~Turns"
 msgstr "Tours"
 
-msgid "Text~Comp~Upgrades_Done"
-msgstr "Mis à jour"
+msgid "Text~Comp~Upgrade(s)_Done"
+msgid_plural "Text~Comp~Upgrade(s)_Done"
+msgstr[0] "Mis à jour %d unité"
+msgstr[1] "Mis à jour %d unités"
 
-msgid "Text~Comp~Upgrades_Done2"
-msgstr "unité(s) de type %s"
+msgid "Text~Comp~Of_Type"
+msgstr "de type %s"
 
 msgid "Text~Comp~Waits"
 msgstr "en attente"

@@ -241,11 +241,13 @@ msgstr "Wacht tot alle verplaatsingen klaar zijn"
 msgid "Text~Comp~Turns"
 msgstr "Beurten"
 
-msgid "Text~Comp~Upgrades_Done"
-msgstr "Opwaarderen uitgevoerd"
+msgid "Text~Comp~Upgrade(s)_Done"
+msgid_plural "Text~Comp~Upgrade(s)_Done"
+msgstr[0] "Opwaarderen uitgevoerd %d eenheid"
+msgstr[1] "Opwaarderen uitgevoerd %d heden"
 
-msgid "Text~Comp~Upgrades_Done2"
-msgstr "Eenheid/heden van het type %s"
+msgid "Text~Comp~Of_Type"
+msgstr "van het type %s"
 
 msgid "Text~Comp~Waits"
 msgstr "wacht"

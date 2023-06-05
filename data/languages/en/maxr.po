@@ -253,11 +253,13 @@ msgstr "Please wait until all movements are completed"
 msgid "Text~Comp~Turns"
 msgstr "Turns"
 
-msgid "Text~Comp~Upgrades_Done"
-msgstr "Upgraded"
+msgid "Text~Comp~Upgrade(s)_Done"
+msgid_plural "Text~Comp~Upgrade(s)_Done"
+msgstr[0] "Upgraded %d unit"
+msgstr[1] "Upgraded %d units"
 
-msgid "Text~Comp~Upgrades_Done2"
-msgstr "unit(s) of type %s"
+msgid "Text~Comp~Of_Type"
+msgstr "of type %s"
 
 msgid "Text~Comp~Waits"
 msgstr "waiting"

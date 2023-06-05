@@ -248,10 +248,13 @@ msgstr "Подождите пока закончатся все перемеще
 msgid "Text~Comp~Turns"
 msgstr "Ходы"
 
-msgid "Text~Comp~Upgrades_Done"
-msgstr "Улучшенение завершено"
+msgid "Text~Comp~Upgrade(s)_Done"
+msgid_plural "Text~Comp~Upgrade(s)_Done"
+msgstr[0] "Улучшенение завершено %d"
+msgstr[1] "Улучшенение завершено %d"
+msgstr[2] "Улучшенение завершено %d"
 
-msgid "Text~Comp~Upgrades_Done2"
+msgid "Text~Comp~Of_Type"
 msgstr "(единиц типа %s)"
 
 msgid "Text~Comp~Waits"
