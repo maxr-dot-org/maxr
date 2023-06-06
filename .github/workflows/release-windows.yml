@@ -1,0 +1,60 @@
+name: release-windows
+
+on:
+  workflow_dispatch:
+  label:
+    types:
+      - created
+
+jobs:
+  release-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        repository: MAX-Reloaded/resinstaller
+        path: resinstaller
+
+    - name: checkout premake5
+      uses: actions/checkout@v3
+      with:
+        repository: premake/premake-core
+        path: premake-build
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1.3
+
+    - name: Build premake5
+      run: |
+        $vcvarall_path = vswhere -find VC\Auxiliary\Build\vcvarsall.bat
+        cmd.exe /c "call ""$vcvarall_path"" x86_amd64 && cd premake-build && nmake -f Bootstrap.mak MSDEV=vs2022 windows-msbuild PLATFORM=Win32 CONFIG=release"
+        cp premake-build/bin/release/premake5.exe ./
+
+    - name: run premake5
+      run: |
+        ./premake5.exe vs2022 --to=../solution/vs2022/resinstaller --file=resinstaller/premake5.lua
+        ./premake5.exe vs2022 --to=solution/vs2022/maxr
+
+    - name: build
+      run: |
+        cd solution/vs2022/resinstaller
+        nuget install packages.config -OutputDirectory packages
+        cd ../maxr
+        nuget install packages.config -OutputDirectory packages
+        msbuild.exe /property:Configuration=Release Maxr.sln
+
+    - name: Create nsis installer
+      uses: joncloud/makensis-action@publish
+      with:
+        script-file: mk/win32/installer/maxr-installer.nsi
+
+    - name: Upload maxr
+      uses: actions/upload-artifact@v3
+      with:
+        name: maxr-installer.exe
+        path: mk/win32/installer/maxr-*.exe
