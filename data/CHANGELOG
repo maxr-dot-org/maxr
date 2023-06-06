@@ -1,3 +1,27 @@
+Mechanized Assault & eXploration Reloaded 0.2.11 (June, 2023)
+=======================================================================
+-requires C++17 compilers
+-fix crash when not enough place for initial resources placement.
+-fix map initialization for multi-player.
+-disable shortcut for locked button.
+-key combination/sequence (Use COMMA/PLUS for special key '+'/','; fix case with 3+ items).
+-add *dated* state for unit status string.
+-display resource capacity for unit in transporter
+-handle storedUnits for casualties report and unit list report.
+-building stops sentry.
+-allow to have preview path (Shift+Left-Mouse-Button).
+-don't show unit's price in upgrade refinery.
+-In cWindowLandingUnitSelection, hide price for non-buyable units. `markAsInsufficient` items when needed.
+-add button to re-show the intro.
+-fix `cMouseModeEnter::canExecuteAction` when transporter is at same place at utility building (connector/road/platform).
+-landed planes blocks ground.
+-draw also neutral(alien) units on minimap.
+-show scene before game start (for solo game).
+-unit version ("MK X") changes when upgrade is "used", not changed.
+-update display when unit version changes.
+-report alien detected.
+-handle plural for some translations.
+
 Mechanized Assault & eXploration Reloaded 0.2.10 (March, 2023)
 =======================================================================
 -changed shortcut to toggle debug frames from CTRL+w to CTRL+ALT+w to reduce likelihood of enabling it by accident.
