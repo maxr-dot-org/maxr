@@ -61,7 +61,7 @@ workspace "Maxr"
 		defines { "WIN32" }
 
 project "maxr"
-	kind "ConsoleApp"
+	kind "WindowedApp"
 	targetdir "data"
 
 	filter { "configurations:Release" }
