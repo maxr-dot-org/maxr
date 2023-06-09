@@ -2,9 +2,9 @@ name: release-windows
 
 on:
   workflow_dispatch:
-  label:
-    types:
-      - created
+  push:
+    tags:
+      - 'release-*'
 
 jobs:
   release-windows:
@@ -47,6 +47,9 @@ jobs:
         cd ../maxr
         nuget install packages.config -OutputDirectory packages
         msbuild.exe /property:Configuration=Release Maxr.sln
+
+    - name: copy resinstaller
+      run: cp solution/vs2022/resinstaller/bin/Release/resinstaller.exe data/
 
     - name: Create nsis installer
       uses: joncloud/makensis-action@publish
