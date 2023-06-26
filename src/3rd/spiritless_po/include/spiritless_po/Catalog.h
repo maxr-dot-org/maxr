@@ -9,8 +9,8 @@
     \endparblock
 */
 
-#ifndef SRIRITLESS_PO_CATALOG_H_
-#define SRIRITLESS_PO_CATALOG_H_
+#ifndef SPIRITLESS_PO_CATALOG_H_
+#define SPIRITLESS_PO_CATALOG_H_
 
 #include "Common.h"
 #include "MetadataParser.h"
@@ -375,4 +375,4 @@ namespace spiritless_po {
     }
 } // namespace spiritless_po
 
-#endif // SRIRITLESS_PO_CATALOG_H_
+#endif // SPIRITLESS_PO_CATALOG_H_

@@ -23,6 +23,10 @@ Files: spiritless_po.doxygen test/CMakeLists.txt test/main.cpp sample/dump.cpp
 Copyright: © 2022 OOTA, Masato
 License: CC0-1.0
 
+Files: test/meson.build
+Copyright: © 2023 OOTA, Masato
+License: CC0-1.0
+
 
 License: Boost
  Boost Software License - Version 1.0 - August 17th, 2003

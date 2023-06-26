@@ -9,8 +9,8 @@
     \endparblock
 */
 
-#ifndef SRIRITLESS_PO_METADATA_PARSER_H_
-#define SRIRITLESS_PO_METADATA_PARSER_H_
+#ifndef SPIRITLESS_PO_METADATA_PARSER_H_
+#define SPIRITLESS_PO_METADATA_PARSER_H_
 
 #include <string>
 #include <unordered_map>
@@ -68,4 +68,4 @@ namespace spiritless_po {
     } // namespace MetadataParser
 } // namespace spiritless_po
 
-#endif // SRIRITLESS_PO_METADATA_PARSER_H_
+#endif // SPIRITLESS_PO_METADATA_PARSER_H_

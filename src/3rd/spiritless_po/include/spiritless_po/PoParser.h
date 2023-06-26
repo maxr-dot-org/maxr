@@ -9,8 +9,8 @@
     \endparblock
 */
 
-#ifndef SRIRITLESS_PO_PO_PARSER_H_
-#define SRIRITLESS_PO_PO_PARSER_H_
+#ifndef SPIRITLESS_PO_PO_PARSER_H_
+#define SPIRITLESS_PO_PO_PARSER_H_
 
 #include "Common.h"
 
@@ -377,8 +377,8 @@ namespace spiritless_po {
         for (;;) {
             const char c = it.Get();
             it.Next();
-            std::size_t val = 0;
             if (c == '\\') {
+                std::size_t val = 0;
                 const char c2 = it.Get();
                 it.Next();
                 switch (c2) {
@@ -429,8 +429,6 @@ namespace spiritless_po {
                 s += c;
             }
         }
-        assert(0);
-        return;
     }
 
     // Pick out a flag of the line.
@@ -605,4 +603,4 @@ namespace spiritless_po {
     }
 } // namespace spiritless_po
 
-#endif // SRIRITLESS_PO_PO_PARSER_H_
+#endif // SPIRITLESS_PO_PO_PARSER_H_

@@ -24,34 +24,34 @@
 //#define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_PRINT_EXECUTE
 
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE ENABLE_ASSERT
-#undef SRIRITLESS_PO_PLURAL_PARSER_H_
+#undef SPIRITLESS_PO_PLURAL_PARSER_H_
 #include "spiritless_po/PluralParser.h"
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE
 
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE INTERPRETER
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_INTERPRETER
-#undef SRIRITLESS_PO_PLURAL_PARSER_H_
+#undef SPIRITLESS_PO_PLURAL_PARSER_H_
 #include "spiritless_po/PluralParser.h"
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_INTERPRETER
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE
 
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE DEBUG_32BIT_NUM
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_NUMBER
-#undef SRIRITLESS_PO_PLURAL_PARSER_H_
+#undef SPIRITLESS_PO_PLURAL_PARSER_H_
 #include "spiritless_po/PluralParser.h"
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_NUMBER
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE
 
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE DEBUG_32BIT_IF
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_IF
-#undef SRIRITLESS_PO_PLURAL_PARSER_H_
+#undef SPIRITLESS_PO_PLURAL_PARSER_H_
 #include "spiritless_po/PluralParser.h"
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_IF
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE
 
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE DEBUG_32BIT_ELSE
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_ELSE
-#undef SRIRITLESS_PO_PLURAL_PARSER_H_
+#undef SPIRITLESS_PO_PLURAL_PARSER_H_
 #include "spiritless_po/PluralParser.h"
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_ELSE
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE
@@ -59,7 +59,7 @@
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE DEBUG_32BIT_IF_ELSE
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_IF
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_ELSE
-#undef SRIRITLESS_PO_PLURAL_PARSER_H_
+#undef SPIRITLESS_PO_PLURAL_PARSER_H_
 #include "spiritless_po/PluralParser.h"
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_IF
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_ELSE
@@ -69,7 +69,7 @@
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_NUMBER
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_IF
 #define SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_ELSE
-#undef SRIRITLESS_PO_PLURAL_PARSER_H_
+#undef SPIRITLESS_PO_PLURAL_PARSER_H_
 #include "spiritless_po/PluralParser.h"
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_NUMBER
 #undef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_USE_32BIT_IF
@@ -164,28 +164,28 @@ namespace {
         PLURAL_FORMS(PE21),
     };
 
-    NumT compiled_plural_00(NumT n) { return PE00; };
-    NumT compiled_plural_01(NumT n) { return PE01; };
-    NumT compiled_plural_02(NumT n) { return PE02; };
-    NumT compiled_plural_03(NumT n) { return PE03; };
-    NumT compiled_plural_04(NumT n) { return PE04; };
-    NumT compiled_plural_05(NumT n) { return PE05; };
-    NumT compiled_plural_06(NumT n) { return PE06; };
-    NumT compiled_plural_07(NumT n) { return PE07; };
-    NumT compiled_plural_08(NumT n) { return PE08; };
-    NumT compiled_plural_09(NumT n) { return PE09; };
-    NumT compiled_plural_10(NumT n) { return PE10; };
-    NumT compiled_plural_11(NumT n) { return PE11; };
-    NumT compiled_plural_12(NumT n) { return PE12; };
-    NumT compiled_plural_13(NumT n) { return PE13; };
-    NumT compiled_plural_14(NumT n) { return PE14; };
-    NumT compiled_plural_15(NumT n) { return PE15; };
-    NumT compiled_plural_16(NumT n) { return PE16; };
-    NumT compiled_plural_17(NumT n) { return PE17; };
-    NumT compiled_plural_18(NumT n) { return PE18; };
-    NumT compiled_plural_19(NumT n) { return PE19; };
-    NumT compiled_plural_20(NumT n) { return PE20; };
-    NumT compiled_plural_21(NumT n) { return PE21; };
+    NumT compiled_plural_00(NumT) { return PE00; }
+    NumT compiled_plural_01(NumT n) { return PE01; }
+    NumT compiled_plural_02(NumT n) { return PE02; }
+    NumT compiled_plural_03(NumT n) { return PE03; }
+    NumT compiled_plural_04(NumT n) { return PE04; }
+    NumT compiled_plural_05(NumT n) { return PE05; }
+    NumT compiled_plural_06(NumT n) { return PE06; }
+    NumT compiled_plural_07(NumT n) { return PE07; }
+    NumT compiled_plural_08(NumT n) { return PE08; }
+    NumT compiled_plural_09(NumT n) { return PE09; }
+    NumT compiled_plural_10(NumT n) { return PE10; }
+    NumT compiled_plural_11(NumT n) { return PE11; }
+    NumT compiled_plural_12(NumT n) { return PE12; }
+    NumT compiled_plural_13(NumT n) { return PE13; }
+    NumT compiled_plural_14(NumT n) { return PE14; }
+    NumT compiled_plural_15(NumT n) { return PE15; }
+    NumT compiled_plural_16(NumT n) { return PE16; }
+    NumT compiled_plural_17(NumT n) { return PE17; }
+    NumT compiled_plural_18(NumT n) { return PE18; }
+    NumT compiled_plural_19(NumT n) { return PE19; }
+    NumT compiled_plural_20(NumT n) { return PE20; }
+    NumT compiled_plural_21(NumT n) { return PE21; }
 
     NumT (*compiled_plural_funcs[])(NumT) = {
         compiled_plural_00,

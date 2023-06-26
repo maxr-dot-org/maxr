@@ -9,9 +9,9 @@
     \endparblock
 */
 
-#ifndef SRIRITLESS_PO_H_
-#define SRIRITLESS_PO_H_
+#ifndef SPIRITLESS_PO_H_
+#define SPIRITLESS_PO_H_
 
 #include "spiritless_po/Catalog.h"
 
-#endif // SRIRITLESS_PO_H_
+#endif // SPIRITLESS_PO_H_

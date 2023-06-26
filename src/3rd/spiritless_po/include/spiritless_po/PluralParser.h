@@ -9,8 +9,8 @@
     \endparblock
 */
 
-#ifndef SRIRITLESS_PO_PLURAL_PARSER_H_
-#define SRIRITLESS_PO_PLURAL_PARSER_H_
+#ifndef SPIRITLESS_PO_PLURAL_PARSER_H_
+#define SPIRITLESS_PO_PLURAL_PARSER_H_
 
 #include <algorithm>
 #include <cassert>
@@ -130,7 +130,7 @@ namespace SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE {
             // program and max_data_size must be bug-free.
             FunctionType(const std::vector<PluralParser::Opcode> &program,
                          size_t max_data_size);
-            FunctionType(CompiledPluralFunctionT func);
+            explicit FunctionType(CompiledPluralFunctionT func);
 
             NumT Read32(size_t &i) const;
 
@@ -221,10 +221,10 @@ namespace SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE {
 
 
 #ifndef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_PRINT
-    inline void PluralParser::DebugPrintOpcode(Opcode op)
+    inline void PluralParser::DebugPrintOpcode(Opcode)
     {
     }
-    inline void PluralParser::DebugPrintCode(const std::vector<Opcode> &cd)
+    inline void PluralParser::DebugPrintCode(const std::vector<Opcode> &)
     {
     }
     inline void PluralParser::DebugPrintCode() const
@@ -339,7 +339,7 @@ namespace SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE {
 
 
     inline PluralParser::FunctionType::FunctionType()
-        : FunctionType([](NumT n) -> NumT { return 0; })
+        : FunctionType([](NumT) -> NumT { return 0; })
     {
     }
 
@@ -382,7 +382,7 @@ namespace SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE {
 #ifdef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_PRINT_EXECUTE
         PluralParser::DebugPrintCode(code);
 #endif
-        size_t top = -1;
+        size_t top = static_cast<size_t>(-1);
         for (size_t i = 0; i < code.size() && code[i] != END; ++i) {
 #ifdef SPIRITLESS_PO_DEBUG_PLURAL_PARSER_PRINT_EXECUTE
             std::cout << i << ": ";
@@ -607,7 +607,7 @@ namespace SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE {
         static std::map<decltype(code), CompiledPluralFunctionT> func_map {
             {
                 { NUM, 0 },
-                [](NumT n) -> NumT { return 0; }
+                [](NumT) -> NumT { return 0; }
             },
             {
                 { VAR, NUM, 1, EQ, VAR, NUM, 10, MOD, NUM, 1, EQ, OR, IF, 4, NUM, 0, ELSE, 2, NUM, 1 },
@@ -779,7 +779,7 @@ namespace SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE {
     inline void PluralParser::InsertAddress32(size_t adrs_index, size_t jump_length)
     {
         code.resize(code.size() + 3);
-        std::copy(code.begin() + adrs_index + 1, code.end(),
+        std::copy(code.begin() + adrs_index + 1, code.end() - 3,
                   code.begin() + adrs_index + 4);
         code[adrs_index + 0] = (jump_length >> 24) & 0xFF;
         code[adrs_index + 1] = (jump_length >> 16) & 0xFF;
@@ -828,13 +828,13 @@ namespace SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE {
             code[if_adrs_index - 1] = IF32;
             else_adrs_index += 3;
         } else {
-            code[if_adrs_index] = if_length;
+            code[if_adrs_index] = static_cast<Opcode>(if_length);
         }
         if (else_length_is_32bit) {
             InsertAddress32(else_adrs_index, else_length);
             code[else_adrs_index - 1] = ELSE32;
         } else {
-            code[else_adrs_index] = else_length;
+            code[else_adrs_index] = static_cast<Opcode>(else_length);
         }
     }
 
@@ -845,7 +845,7 @@ namespace SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE {
         if (n <= 0xFF) {
             // Practically, the immediate number is always 8 bit.
             PushOpcode(NUM, it);
-            code.push_back(n);
+            code.push_back(static_cast<Opcode>(n));
             return;
         }
 #endif
@@ -1087,7 +1087,7 @@ namespace SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE {
                     const NumT v = GetNumber(it, end);
                     PushImmediateNumber(v, it);
                     return;
-                } catch (ExpressionError &e) {
+                } catch (const ExpressionError &) {
                     // fall through
                 }
             }
@@ -1100,4 +1100,4 @@ namespace SPIRITLESS_PO_DEBUG_PLURAL_PARSER_NAMESPACE {
 #endif
 } // namespace spiritless_po
 
-#endif // SRIRITLESS_PO_PLURAL_PARSER_H_
+#endif // SPIRITLESS_PO_PLURAL_PARSER_H_

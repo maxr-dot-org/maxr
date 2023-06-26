@@ -9,8 +9,8 @@
     \endparblock
 */
 
-#ifndef SRIRITLESS_PO_COMMON_H_
-#define SRIRITLESS_PO_COMMON_H_
+#ifndef SPIRITLESS_PO_COMMON_H_
+#define SPIRITLESS_PO_COMMON_H_
 
 namespace spiritless_po {
     /** The context separator that is compatible with GNU Gettext. */
@@ -18,4 +18,4 @@ namespace spiritless_po {
 
 } // namespace spiritless_po
 
-#endif // SRIRITLESS_PO_COMMON_H_
+#endif // SPIRITLESS_PO_COMMON_H_
