@@ -11,7 +11,7 @@ end
 local locationDir = _OPTIONS["to"] or path.join("solution", _ACTION, "maxr")
 
 local nugetPackages = {
-	"sdl2.nuget:2.26.5", "sdl2.nuget.redist:2.26.5",
+	"sdl2.nuget:2.28.0", "sdl2.nuget.redist:2.28.0",
 	"sdl2_mixer.nuget:2.6.3", "sdl2_mixer.nuget.redist:2.6.3",
 	"sdl2_net.nuget:2.2.0", "sdl2_net.nuget.redist:2.2.0",
 	-- "CrashRpt2.CPP:1.5.3", "CrashRpt2.CPP.redist:1.5.3",
