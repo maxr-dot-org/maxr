@@ -32,14 +32,14 @@ cDialogYesNo::cDialogYesNo (const std::string& text) :
 	auto textLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 35), getPosition() + cPosition (267, 173)), text, eUnicodeFontType::LatinNormal, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top);
 	textLabel->setWordWrap (true);
 
-	yesButton = emplaceChild<cPushButton> (getPosition() + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Yes"), eUnicodeFontType::LatinNormal);
+	yesButton = emplaceChild<cPushButton> (getPosition() + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Others~Yes"), eUnicodeFontType::LatinNormal);
 	yesButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (yesButton->clicked, [this]() {
 		yesClicked();
 		close();
 	});
 
-	noButton = emplaceChild<cPushButton> (getPosition() + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~No"), eUnicodeFontType::LatinNormal);
+	noButton = emplaceChild<cPushButton> (getPosition() + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Others~No"), eUnicodeFontType::LatinNormal);
 	noButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (noButton->clicked, [this]() {
 		noClicked();
@@ -56,6 +56,6 @@ void cDialogYesNo::retranslate()
 {
 	cWindow::retranslate();
 
-	yesButton->setText (lngPack.i18n ("Text~Others~Yes"));
-	noButton->setText (lngPack.i18n ("Text~Others~No"));
+	yesButton->setText (lngPack.i18n ("Others~Yes"));
+	noButton->setText (lngPack.i18n ("Others~No"));
 }

@@ -63,11 +63,11 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 	auto decreaseButton = emplaceChild<cPushButton> (getPosition() + cPosition (17, 159), ePushButtonType::ArrowLeftSmall);
 	signalConnectionManager.connect (decreaseButton->clicked, [this]() { resourceBar->decrease (1); });
 
-	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (159, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal);
+	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (159, 200), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
-	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (71, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal);
+	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (71, 200), ePushButtonType::Angular, lngPack.i18n ("Others~Cancel"), eUnicodeFontType::LatinNormal);
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
@@ -99,8 +99,8 @@ void cNewDialogTransfer::retranslate()
 {
 	cWindow::retranslate();
 
-	doneButton->setText (lngPack.i18n ("Text~Others~Done"));
-	cancelButton->setText (lngPack.i18n ("Text~Others~Cancel"));
+	doneButton->setText (lngPack.i18n ("Others~Done"));
+	cancelButton->setText (lngPack.i18n ("Others~Cancel"));
 }
 
 //------------------------------------------------------------------------------
@@ -275,6 +275,6 @@ void cNewDialogTransfer::closeOnUnitDestruction()
 	auto application = getActiveApplication();
 	if (application)
 	{
-		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Others~Unit_destroyed")));
+		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Others~Unit_destroyed")));
 	}
 }

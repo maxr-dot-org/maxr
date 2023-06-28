@@ -62,7 +62,7 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 
 	auto hudImage = addChild (std::move (hudImageOwned));
 
-	backButton = emplaceChild<cPushButton> (cPosition (35, hudImage->getEndPosition().y() - 40), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), eUnicodeFontType::LatinNormal);
+	backButton = emplaceChild<cPushButton> (cPosition (35, hudImage->getEndPosition().y() - 40), ePushButtonType::Angular, lngPack.i18n ("Others~Back"), eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	infoLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImage->getEndPosition() - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), "", eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::Center));
@@ -77,7 +77,7 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 			onCommandEntered (message);
 		});
 
-		toggleChatBoxButton = emplaceChild<cCheckBox> (cPosition (35, hudImage->getEndPosition().y() - 65), lngPack.i18n ("Text~Others~Chat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular);
+		toggleChatBoxButton = emplaceChild<cCheckBox> (cPosition (35, hudImage->getEndPosition().y() - 65), lngPack.i18n ("Others~Chat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular);
 		toggleChatBoxButton->setChecked (true);
 		signalConnectionManager.connect (toggleChatBoxButton->toggled, [this]() {
 			if (toggleChatBoxButton->isChecked())
@@ -111,10 +111,10 @@ void cWindowLandingPositionSelection::retranslate()
 {
 	cWindow::retranslate();
 
-	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+	backButton->setText (lngPack.i18n ("Others~Back"));
 	if (toggleChatBoxButton)
 	{
-		toggleChatBoxButton->setText (lngPack.i18n ("Text~Others~Chat"));
+		toggleChatBoxButton->setText (lngPack.i18n ("Others~Chat"));
 	}
 }
 
@@ -134,9 +134,9 @@ void cWindowLandingPositionSelection::applyReselectionState (eLandingPositionSta
 		disallowSelection();
 
 	if (state == eLandingPositionState::Warning)
-		setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Warning"));
+		setInfoMessage (lngPack.i18n ("Comp~Landing_Warning"));
 	else if (state == eLandingPositionState::TooClose)
-		setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
+		setInfoMessage (lngPack.i18n ("Comp~Landing_Too_Close"));
 	else
 		setInfoMessage ("");
 }
@@ -209,7 +209,7 @@ void cWindowLandingPositionSelection::handleActivated (cApplication& application
 	if (firstTime)
 	{
 		cSoundDevice::getInstance().playVoice (getRandom (VoiceData.VOILanding));
-		setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Select"));
+		setInfoMessage (lngPack.i18n ("Comp~Landing_Select"));
 	}
 	application.addRunnable (animationTimer);
 	cWindow::handleActivated (application, firstTime);

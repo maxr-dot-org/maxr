@@ -35,30 +35,30 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 	cWindow (LoadPCX (GFXOD_DIALOG_RESEARCH), eWindowBackgrounds::Alpha),
 	player (player_)
 {
-	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 19), getPosition() + cPosition (getArea().getMaxCorner().x(), 19 + 10)), lngPack.i18n ("Text~Title~Labs"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 19), getPosition() + cPosition (getArea().getMaxCorner().x(), 19 + 10)), lngPack.i18n ("Title~Labs"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (23, 52), getPosition() + cPosition (23 + 40, 52 + 10)), lngPack.i18n ("Text~Comp~Labs"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
-	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (160, 52), getPosition() + cPosition (160 + 75, 52 + 10)), lngPack.i18n ("Text~Comp~Themes"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
-	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (291, 52), getPosition() + cPosition (291 + 44, 52 + 10)), lngPack.i18n ("Text~Comp~Turns"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (23, 52), getPosition() + cPosition (23 + 40, 52 + 10)), lngPack.i18n ("Comp~Labs"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (160, 52), getPosition() + cPosition (160 + 75, 52 + 10)), lngPack.i18n ("Comp~Themes"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (291, 52), getPosition() + cPosition (291 + 44, 52 + 10)), lngPack.i18n ("Comp~Turns"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	auto doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (193, 294), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal);
+	auto doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (193, 294), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
-	auto cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (91, 294), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal);
+	auto cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (91, 294), ePushButtonType::Angular, lngPack.i18n ("Others~Cancel"), eUnicodeFontType::LatinNormal);
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
 	const std::string themeNames[rows] =
 		{
-			lngPack.i18n ("Text~Others~Attack"),
-			lngPack.i18n ("Text~Others~Shots_7"),
-			lngPack.i18n ("Text~Others~Range"),
-			lngPack.i18n ("Text~Others~Armor_7"),
-			lngPack.i18n ("Text~Others~Hitpoints_7"),
-			lngPack.i18n ("Text~Others~Speed"),
-			lngPack.i18n ("Text~Others~Scan"),
-			lngPack.i18n ("Text~Others~Costs")};
+			lngPack.i18n ("Others~Attack"),
+			lngPack.i18n ("Others~Shots_7"),
+			lngPack.i18n ("Others~Range"),
+			lngPack.i18n ("Others~Armor_7"),
+			lngPack.i18n ("Others~Hitpoints_7"),
+			lngPack.i18n ("Others~Speed"),
+			lngPack.i18n ("Others~Scan"),
+			lngPack.i18n ("Others~Costs")};
 
 	const SDL_Rect themeImageSrcs[rows] =
 		{

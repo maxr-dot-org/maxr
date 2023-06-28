@@ -42,7 +42,7 @@ namespace
 		int perTurn = prod - need;
 		std::string text = std::to_string (need) + " (";
 		if (perTurn > 0) text += "+";
-		text += std::to_string (perTurn) + " / " + lngPack.i18n ("Text~Comp~Turn_5") + ")";
+		text += std::to_string (perTurn) + " / " + lngPack.i18n ("Comp~Turn_5") + ")";
 		return text;
 	}
 } // namespace
@@ -52,7 +52,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	cWindow (LoadPCX (GFXOD_MINEMANAGER)),
 	building (building_)
 {
-	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), lngPack.i18n ("Text~Title~Mine"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 11), getPosition() + cPosition (getArea().getMaxCorner().x(), 11 + 10)), lngPack.i18n ("Title~Mine"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	auto turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (525, 16), cPosition (525 + 60, 16 + 10)));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
@@ -77,15 +77,15 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 
 		std::string resourceName;
 		if (i == 0)
-			resourceName = lngPack.i18n ("Text~Title~Metal");
+			resourceName = lngPack.i18n ("Title~Metal");
 		else if (i == 1)
-			resourceName = lngPack.i18n ("Text~Title~Oil");
+			resourceName = lngPack.i18n ("Title~Oil");
 		else
-			resourceName = lngPack.i18n ("Text~Title~Gold");
+			resourceName = lngPack.i18n ("Title~Gold");
 
 		resourceLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 121 * i + 10)), resourceName, eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
-		usageLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 + 121 * i + 10)), lngPack.i18n ("Text~Others~Usage_7"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
-		reserveLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 * 2 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 * 2 + 121 * i + 10)), lngPack.i18n ("Text~Comp~Reserve"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+		usageLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 + 121 * i + 10)), lngPack.i18n ("Others~Usage_7"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+		reserveLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (40, 78 + 37 * 2 + 121 * i), getPosition() + cPosition (40 + 80, 78 + 37 * 2 + 121 * i + 10)), lngPack.i18n ("Comp~Reserve"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 		auto decreaseButton = emplaceChild<cPushButton> (getPosition() + cPosition (139, 70 + 120 * i), ePushButtonType::ArrowLeftBig);
 		signalConnectionManager.connect (decreaseButton->clicked, [this, i]() {
@@ -141,7 +141,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	signalConnectionManager.connect (oilBars[0]->valueChanged, [this]() { handleOilChanged(); });
 	signalConnectionManager.connect (goldBars[0]->valueChanged, [this]() { handleGoldChanged(); });
 
-	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (514, 430), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Done"));
+	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (514, 430), ePushButtonType::Huge, lngPack.i18n ("Others~Done"));
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
@@ -156,19 +156,19 @@ void cWindowResourceDistribution::retranslate()
 {
 	cWindow::retranslate();
 
-	titleLabel->setText (lngPack.i18n ("Text~Title~Mine"));
+	titleLabel->setText (lngPack.i18n ("Title~Mine"));
 
-	resourceLabels[0]->setText (lngPack.i18n ("Text~Title~Metal"));
-	resourceLabels[1]->setText (lngPack.i18n ("Text~Title~Oil"));
-	resourceLabels[2]->setText (lngPack.i18n ("Text~Title~Gold"));
+	resourceLabels[0]->setText (lngPack.i18n ("Title~Metal"));
+	resourceLabels[1]->setText (lngPack.i18n ("Title~Oil"));
+	resourceLabels[2]->setText (lngPack.i18n ("Title~Gold"));
 	for (size_t i = 0; i < 3; ++i)
 	{
-		usageLabels[i]->setText (lngPack.i18n ("Text~Others~Usage_7"));
-		reserveLabels[i]->setText (lngPack.i18n ("Text~Comp~Reserve"));
+		usageLabels[i]->setText (lngPack.i18n ("Others~Usage_7"));
+		reserveLabels[i]->setText (lngPack.i18n ("Comp~Reserve"));
 	}
 	setBarLabels();
 
-	doneButton->setText (lngPack.i18n ("Text~Others~Done"));
+	doneButton->setText (lngPack.i18n ("Others~Done"));
 }
 
 sMiningResource cWindowResourceDistribution::getProduction() const
@@ -306,6 +306,6 @@ void cWindowResourceDistribution::closeOnUnitDestruction()
 	auto application = getActiveApplication();
 	if (application)
 	{
-		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Others~Unit_destroyed")));
+		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Others~Unit_destroyed")));
 	}
 }

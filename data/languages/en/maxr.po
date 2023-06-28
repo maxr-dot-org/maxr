@@ -16,1103 +16,1103 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Text~Comp~Adjustments_Fuel_Decreased"
+msgid "Comp~Adjustments_Fuel_Decreased"
 msgstr "Adjustments made: fuel mining decreased by %s"
 
-msgid "Text~Comp~Adjustments_Fuel_Increased"
+msgid "Comp~Adjustments_Fuel_Increased"
 msgstr "Adjustments made: fuel mining increased by %s"
 
-msgid "Text~Comp~Adjustments_Gold_Decreased"
+msgid "Comp~Adjustments_Gold_Decreased"
 msgstr "Adjustments made: gold mining decreased by %s"
 
-msgid "Text~Comp~Adjustments_Gold_Increased"
+msgid "Comp~Adjustments_Gold_Increased"
 msgstr "Adjustments made: gold mining increased by %s"
 
-msgid "Text~Comp~Adjustments_Metal_Decreased"
+msgid "Comp~Adjustments_Metal_Decreased"
 msgstr "Adjustments made: raw materials mining decreased by %s"
 
-msgid "Text~Comp~Adjustments_Metal_Increased"
+msgid "Comp~Adjustments_Metal_Increased"
 msgstr "Adjustments made: raw materials mining increased by %s"
 
-msgid "Text~Comp~Attacked"
+msgid "Comp~Attacked"
 msgstr "%s is under attack"
 
-msgid "Text~Comp~AttackingEnemy"
+msgid "Comp~AttackingEnemy"
 msgstr "%s is attacking the enemy"
 
-msgid "Text~Comp~AttackingStatusStr"
+msgid "Comp~AttackingStatusStr"
 msgstr "attacking"
 
-msgid "Text~Comp~Building_Disabled"
+msgid "Comp~Building_Disabled"
 msgstr "Building turned off"
 
-msgid "Text~Comp~CapturedByEnemy"
+msgid "Comp~CapturedByEnemy"
 msgstr "%s has been captured by the enemy"
 
-msgid "Text~Comp~Cheat"
+msgid "Comp~Cheat"
 msgstr "%s used cheat"
 
-msgid "Text~Comp~Clearing"
+msgid "Comp~Clearing"
 msgstr "clearing (%s)"
 
-msgid "Text~Comp~Clearing_Fin"
+msgid "Comp~Clearing_Fin"
 msgstr "clearing done"
 
-msgid "Text~Comp~Clearing_Mine"
+msgid "Comp~Clearing_Mine"
 msgstr "clearing mines"
 
-msgid "Text~Comp~CommandoRank_Average"
+msgid "Comp~CommandoRank_Average"
 msgstr "Average"
 
-msgid "Text~Comp~CommandoRank_Elite"
+msgid "Comp~CommandoRank_Elite"
 msgstr "Elite"
 
-msgid "Text~Comp~CommandoRank_Expert"
+msgid "Comp~CommandoRank_Expert"
 msgstr "Expert"
 
-msgid "Text~Comp~CommandoRank_GrandMaster"
+msgid "Comp~CommandoRank_GrandMaster"
 msgstr "Grand Master"
 
-msgid "Text~Comp~CommandoRank_Greenhorn"
+msgid "Comp~CommandoRank_Greenhorn"
 msgstr "Greenhorn"
 
-msgid "Text~Comp~CommandoRank_Veteran"
+msgid "Comp~CommandoRank_Veteran"
 msgstr "Veteran"
 
-msgid "Text~Comp~Dated"
+msgid "Comp~Dated"
 msgstr "dated"
 
-msgid "Text~Comp~Defeated"
+msgid "Comp~Defeated"
 msgstr "Player %s defeated"
 
-msgid "Text~Comp~Description"
+msgid "Comp~Description"
 msgstr "Description"
 
-msgid "Text~Comp~Destroyed"
+msgid "Comp~Destroyed"
 msgstr "%s destroyed"
 
-msgid "Text~Comp~Detected"
+msgid "Comp~Detected"
 msgstr "%s detected"
 
-msgid "Text~Comp~Disabled"
+msgid "Comp~Disabled"
 msgstr "disabled"
 
-msgid "Text~Comp~EcoSphere(s)"
-msgid_plural "Text~Comp~EcoSphere(s)"
+msgid "Comp~EcoSphere(s)"
+msgid_plural "Comp~EcoSphere(s)"
 msgstr[0] "%d Eco-sphere"
 msgstr[1] "%d Eco-spheres"
 
-msgid "Text~Comp~End_Game"
+msgid "Comp~End_Game"
 msgstr "Confirm Exit\n\nUnsaved game data will be lost."
 
-msgid "Text~Comp~Energy_Insufficient"
+msgid "Comp~Energy_Insufficient"
 msgstr "Cannot turn on, power needed"
 
-msgid "Text~Comp~Energy_IsNeeded"
+msgid "Comp~Energy_IsNeeded"
 msgstr "Cannot turn off generator, power needed."
 
-msgid "Text~Comp~Energy_Low"
+msgid "Comp~Energy_Low"
 msgstr "Lack of power, energy consumer turned off."
 
-msgid "Text~Comp~Energy_ToLow"
+msgid "Comp~Energy_ToLow"
 msgstr "More power needed, generator turned on."
 
-msgid "Text~Comp~Finished"
+msgid "Comp~Finished"
 msgstr "is finished"
 
-msgid "Text~Comp~Finished2"
+msgid "Comp~Finished2"
 msgstr "are finished"
 
-msgid "Text~Comp~Fuel_Insufficient"
+msgid "Comp~Fuel_Insufficient"
 msgstr "Cannot start, fuel needed."
 
-msgid "Text~Comp~Fuel_Low"
+msgid "Comp~Fuel_Low"
 msgstr "Fuel needed, generator turned off."
 
-msgid "Text~Comp~GameEndsAt"
+msgid "Comp~GameEndsAt"
 msgstr "Game ends at"
 
-msgid "Text~Comp~Gold_Insufficient"
+msgid "Comp~Gold_Insufficient"
 msgstr "Cannot start, gold needed."
 
-msgid "Text~Comp~Gold_Low"
+msgid "Comp~Gold_Low"
 msgstr "More gold needed, refinery turned off."
 
-msgid "Text~Comp~IsBeeingAttacked"
+msgid "Comp~IsBeeingAttacked"
 msgstr "Is beeing attacked"
 
-msgid "Text~Comp~Labs"
+msgid "Comp~Labs"
 msgstr "Labs"
 
-msgid "Text~Comp~Landing_Select"
+msgid "Comp~Landing_Select"
 msgstr "Please select starting location."
 
-msgid "Text~Comp~Landing_Too_Close"
+msgid "Comp~Landing_Too_Close"
 msgstr "Landing position is too close to an other player. Please reselect your position."
 
-msgid "Text~Comp~Landing_Warning"
+msgid "Comp~Landing_Warning"
 msgstr "Landing position is near an other player. Please confirm the position by clicking in the red circle or select another position."
 
-msgid "Text~Comp~Laying"
+msgid "Comp~Laying"
 msgstr "minelaying"
 
-msgid "Text~Comp~Metal_Insufficient"
+msgid "Comp~Metal_Insufficient"
 msgstr "Cannot start, raw materials needed."
 
-msgid "Text~Comp~Metal_Low"
+msgid "Comp~Metal_Low"
 msgstr "More raw materials needed, factory turned off."
 
-msgid "Text~Comp~Moving"
+msgid "Comp~Moving"
 msgstr "moving"
 
-msgid "Text~Comp~MovingToAttack"
+msgid "Comp~MovingToAttack"
 msgstr "moving to attack"
 
-msgid "Text~Comp~NoLimit"
+msgid "Comp~NoLimit"
 msgstr "Fight to the death!"
 
-msgid "Text~Comp~Path_interrupted"
+msgid "Comp~Path_interrupted"
 msgstr "Pathbuilding order could not be resumed."
 
-msgid "Text~Comp~Point(s)"
-msgid_plural "Text~Comp~Point(s)"
+msgid "Comp~Point(s)"
+msgid_plural "Comp~Point(s)"
 msgstr[0] "%d point"
 msgstr[1] "%d points"
 
-msgid "Text~Comp~Points"
+msgid "Comp~Points"
 msgstr "points"
 
-msgid "Text~Comp~Producing"
+msgid "Comp~Producing"
 msgstr "Building"
 
-msgid "Text~Comp~Producing_Fin"
+msgid "Comp~Producing_Fin"
 msgstr "finished building"
 
-msgid "Text~Comp~Producing_InsufficientMaterial"
+msgid "Comp~Producing_InsufficientMaterial"
 msgstr "Insufficient raw materials to build"
 
-msgid "Text~Comp~Producing_PositionBlocked"
+msgid "Comp~Producing_PositionBlocked"
 msgstr "Buildposition blocked"
 
-msgid "Text~Comp~ReactionFireOff"
+msgid "Comp~ReactionFireOff"
 msgstr "Reaction Fire Off"
 
-msgid "Text~Comp~Repeat"
+msgid "Comp~Repeat"
 msgstr "Again"
 
-msgid "Text~Comp~Reserve"
+msgid "Comp~Reserve"
 msgstr "Reserve"
 
-msgid "Text~Comp~ResolutionWarning"
+msgid "Comp~ResolutionWarning"
 msgstr "Warning: Unsupported videomode in config"
 
-msgid "Text~Comp~RestartRequired"
+msgid "Comp~RestartRequired"
 msgstr "Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change."
 
-msgid "Text~Comp~Screenshot_Done"
+msgid "Comp~Screenshot_Done"
 msgstr "Screenshot saved to %s"
 
-msgid "Text~Comp~Sentry"
+msgid "Comp~Sentry"
 msgstr "on sentry"
 
-msgid "Text~Comp~Stolen"
+msgid "Comp~Stolen"
 msgstr "stolen"
 
-msgid "Text~Comp~SuddenDeath"
+msgid "Comp~SuddenDeath"
 msgstr "Sudden death! The first player to increase their score wins!"
 
-msgid "Text~Comp~Surveying"
+msgid "Comp~Surveying"
 msgstr "surveying"
 
-msgid "Text~Comp~Team_Insufficient"
+msgid "Comp~Team_Insufficient"
 msgstr "Cannot start, workers needed."
 
-msgid "Text~Comp~Team_Low"
+msgid "Comp~Team_Low"
 msgstr "Workers needed, building turned off."
 
-msgid "Text~Comp~Themes"
+msgid "Comp~Themes"
 msgstr "Themes"
 
-msgid "Text~Comp~Turn(s)"
-msgid_plural "Text~Comp~Turn(s)"
+msgid "Comp~Turn(s)"
+msgid_plural "Comp~Turn(s)"
 msgstr[0] "%d Turn"
 msgstr[1] "%d Turns"
 
-msgid "Text~Comp~Turn_5"
+msgid "Comp~Turn_5"
 msgstr "Turn"
 
-msgid "Text~Comp~Turn_Automove"
+msgid "Comp~Turn_Automove"
 msgstr "Executing remaining movements"
 
-msgid "Text~Comp~Turn_Start"
+msgid "Comp~Turn_Start"
 msgstr "Start turn %s"
 
-msgid "Text~Comp~Turn_Wait"
+msgid "Comp~Turn_Wait"
 msgstr "Please wait until all movements are completed"
 
-msgid "Text~Comp~Turns"
+msgid "Comp~Turns"
 msgstr "Turns"
 
-msgid "Text~Comp~Upgrade(s)_Done"
-msgid_plural "Text~Comp~Upgrade(s)_Done"
+msgid "Comp~Upgrade(s)_Done"
+msgid_plural "Comp~Upgrade(s)_Done"
 msgstr[0] "Upgraded %d unit"
 msgstr[1] "Upgraded %d units"
 
-msgid "Text~Comp~Of_Type"
+msgid "Comp~Of_Type"
 msgstr "of type %s"
 
-msgid "Text~Comp~Waits"
+msgid "Comp~Waits"
 msgstr "waiting"
 
-msgid "Text~Comp~Wins"
+msgid "Comp~Wins"
 msgstr "Player %s wins"
 
-msgid "Text~Comp~Working"
+msgid "Comp~Working"
 msgstr "working"
 
-msgid "Text~Error_Messages~ERROR_File_Not_Found"
+msgid "Error_Messages~ERROR_File_Not_Found"
 msgstr "File not found: %s"
 
-msgid "Text~Error_Messages~ERROR_Map_Loading"
+msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Error while loading map"
 
-msgid "Text~Error_Messages~ERROR_Missing_Translation"
+msgid "Error_Messages~ERROR_Missing_Translation"
 msgstr "missing translation: %s"
 
-msgid "Text~Error_Messages~ERROR_Save_Incompatible"
+msgid "Error_Messages~ERROR_Save_Incompatible"
 msgstr "Savegames from Maxr versions before %s are not compatible."
 
-msgid "Text~Error_Messages~ERROR_Save_Loading"
+msgid "Error_Messages~ERROR_Save_Loading"
 msgstr "Error while loading saved game"
 
-msgid "Text~Error_Messages~ERROR_Save_Writing"
+msgid "Error_Messages~ERROR_Save_Writing"
 msgstr "Error while writing save game file"
 
-msgid "Text~Error_Messages~INFO_Language_initialised"
+msgid "Error_Messages~INFO_Language_initialised"
 msgstr "Language is now initialized"
 
-msgid "Text~Error_Messages~INFO_Not_Implemented"
+msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Not yet implemented"
 
-msgid "Text~Init~Buildings"
+msgid "Init~Buildings"
 msgstr "Loading buildings..."
 
-msgid "Text~Init~Clans"
+msgid "Init~Clans"
 msgstr "Loading clans..."
 
-msgid "Text~Init~Effects"
+msgid "Init~Effects"
 msgstr "Loading effects..."
 
-msgid "Text~Init~Fonts"
+msgid "Init~Fonts"
 msgstr "Loading fonts..."
 
-msgid "Text~Init~GFX"
+msgid "Init~GFX"
 msgstr "Loading graphics..."
 
-msgid "Text~Init~Keys"
+msgid "Init~Keys"
 msgstr "Loading keys..."
 
-msgid "Text~Init~Lang"
+msgid "Init~Lang"
 msgstr "Loading language pack..."
 
-msgid "Text~Init~Music"
+msgid "Init~Music"
 msgstr "Loading music..."
 
-msgid "Text~Init~Sounds"
+msgid "Init~Sounds"
 msgstr "Loading sounds..."
 
-msgid "Text~Init~Terrain"
+msgid "Init~Terrain"
 msgstr "Loading terrain..."
 
-msgid "Text~Init~Vehicles"
+msgid "Init~Vehicles"
 msgstr "Loading vehicles..."
 
-msgid "Text~Init~Voices"
+msgid "Init~Voices"
 msgstr "Loading voices..."
 
-msgid "Text~Main~Credits_Doc"
+msgid "Main~Credits_Doc"
 msgstr "Michael Mönch's M.A.X. (Remake by DoctorDeath)"
 
-msgid "Text~Main~Credits_MM"
+msgid "Main~Credits_MM"
 msgstr "Michael Mönch's M.A.X. (Original by Interplay)"
 
-msgid "Text~Main~Credits_Reloaded"
+msgid "Main~Credits_Reloaded"
 msgstr "M.A.X.R. based on Interplay's Mechanized Assault and eXploration"
 
-msgid "Text~Main~Game_Subtitle"
+msgid "Main~Game_Subtitle"
 msgstr "Mechanized Assault and eXploration Reloaded"
 
-msgid "Text~Main~Game_Title"
+msgid "Main~Game_Title"
 msgstr "M.A.X.R."
 
-msgid "Text~Main~Remarks~Not_yet_implemented"
+msgid "Main~Remarks~Not_yet_implemented"
 msgstr "(*) not yet implemented"
 
-msgid "Text~Main~Version"
+msgid "Main~Version"
 msgstr "version v%s"
 
-msgid "Text~Multiplayer~Abort_Waiting"
+msgid "Multiplayer~Abort_Waiting"
 msgstr "Server, press F2 to abort waiting."
 
-msgid "Text~Multiplayer~Connection_Terminated"
+msgid "Multiplayer~Connection_Terminated"
 msgstr "Connection terminated."
 
-msgid "Text~Multiplayer~Deadline"
+msgid "Multiplayer~Deadline"
 msgstr "This turn will end in %s seconds."
 
-msgid "Text~Multiplayer~Disconnect_Not_In_Save"
+msgid "Multiplayer~Disconnect_Not_In_Save"
 msgstr "You will be disconnected because you are not listed in the savegame."
 
-msgid "Text~Multiplayer~Gameversion_Error"
+msgid "Multiplayer~Gameversion_Error"
 msgstr "Couldn't connect: Gameversion of server is: %s."
 
-msgid "Text~Multiplayer~Gameversion_Own"
+msgid "Multiplayer~Gameversion_Own"
 msgstr "Your version is: %s."
 
-msgid "Text~Multiplayer~Gameversion_Warning_Client"
+msgid "Multiplayer~Gameversion_Warning_Client"
 msgstr "Warning: Gameversion of server is: %s."
 
-msgid "Text~Multiplayer~Gameversion_Warning_Server"
+msgid "Multiplayer~Gameversion_Warning_Server"
 msgstr "Warning: Gameversion of player is: %s."
 
-msgid "Text~Multiplayer~Go"
+msgid "Multiplayer~Go"
 msgstr "Let's go"
 
-msgid "Text~Multiplayer~Go_Abort"
+msgid "Multiplayer~Go_Abort"
 msgstr "Go aborted"
 
-msgid "Text~Multiplayer~Go_Check"
+msgid "Multiplayer~Go_Check"
 msgstr "Check for go"
 
-msgid "Text~Multiplayer~Go_Host"
+msgid "Multiplayer~Go_Host"
 msgstr "Host wants to go: Ready to go"
 
-msgid "Text~Multiplayer~Go_Host_No"
+msgid "Multiplayer~Go_Host_No"
 msgstr "Host wants to go: No go"
 
-msgid "Text~Multiplayer~Go_Ready"
+msgid "Multiplayer~Go_Ready"
 msgstr "Ready to go"
 
-msgid "Text~Multiplayer~Go_Ready_No"
+msgid "Multiplayer~Go_Ready_No"
 msgstr "not ready to go"
 
-msgid "Text~Multiplayer~Host_command"
+msgid "Multiplayer~Host_command"
 msgstr "Host entered following command '%s'"
 
-msgid "Text~Multiplayer~Lost_Connection"
+msgid "Multiplayer~Lost_Connection"
 msgstr "Lost connection to %s."
 
-msgid "Text~Multiplayer~MapDL_Cancel"
+msgid "Multiplayer~MapDL_Cancel"
 msgstr "Aborted"
 
-msgid "Text~Multiplayer~MapDL_Download"
+msgid "Multiplayer~MapDL_Download"
 msgstr "map %s from server."
 
-msgid "Text~Multiplayer~MapDL_DownloadInvalid"
+msgid "Multiplayer~MapDL_DownloadInvalid"
 msgstr "original M.A.X. map %s from server (licensed)!"
 
-msgid "Text~Multiplayer~MapDL_DownloadRequest"
+msgid "Multiplayer~MapDL_DownloadRequest"
 msgstr "Map not installed: Requesting to download custom"
 
-msgid "Text~Multiplayer~MapDL_DownloadRequestInvalid"
+msgid "Multiplayer~MapDL_DownloadRequestInvalid"
 msgstr "Map not installed: Not allowed to download"
 
-msgid "Text~Multiplayer~MapDL_Finished"
+msgid "Multiplayer~MapDL_Finished"
 msgstr "Map download finished."
 
-msgid "Text~Multiplayer~MapDL_Percent"
+msgid "Multiplayer~MapDL_Percent"
 msgstr "Map download: %s%"
 
-msgid "Text~Multiplayer~MapDL_Upload"
+msgid "Multiplayer~MapDL_Upload"
 msgstr "Uploading map to %s..."
 
-msgid "Text~Multiplayer~MapDL_UploadFinished"
+msgid "Multiplayer~MapDL_UploadFinished"
 msgstr "Map upload to %s finished."
 
-msgid "Text~Multiplayer~Map_NoSet"
+msgid "Multiplayer~Map_NoSet"
 msgstr "--no map selected--"
 
-msgid "Text~Multiplayer~Missing_Settings"
+msgid "Multiplayer~Missing_Settings"
 msgstr "Options, map or savegame are not set"
 
-msgid "Text~Multiplayer~Network_Closed"
+msgid "Multiplayer~Network_Closed"
 msgstr "Connection closed"
 
-msgid "Text~Multiplayer~Network_Connected"
+msgid "Multiplayer~Network_Connected"
 msgstr "Connected"
 
-msgid "Text~Multiplayer~Network_Connected_Not"
+msgid "Multiplayer~Network_Connected_Not"
 msgstr "Not connected"
 
-msgid "Text~Multiplayer~Network_Connecting"
+msgid "Multiplayer~Network_Connecting"
 msgstr "Connecting to %s"
 
-msgid "Text~Multiplayer~Network_Error_Connect"
+msgid "Multiplayer~Network_Error_Connect"
 msgstr "Could not connect to server"
 
-msgid "Text~Multiplayer~Network_Error_Socket"
+msgid "Multiplayer~Network_Error_Socket"
 msgstr "Error opening socket"
 
-msgid "Text~Multiplayer~Network_New"
+msgid "Multiplayer~Network_New"
 msgstr "New connection"
 
-msgid "Text~Multiplayer~Network_Open"
+msgid "Multiplayer~Network_Open"
 msgstr "Game open (Port: %s)"
 
-msgid "Text~Multiplayer~Network_Syncing"
+msgid "Multiplayer~Network_Syncing"
 msgstr "Synchronizing..."
 
-msgid "Text~Multiplayer~No_Map_No_Ready"
+msgid "Multiplayer~No_Map_No_Ready"
 msgstr "Can not load map %s. You can not go ready."
 
-msgid "Text~Multiplayer~No_Response"
+msgid "Multiplayer~No_Response"
 msgstr "Waiting for network response from player %s"
 
-msgid "Text~Multiplayer~Not_Ready"
+msgid "Multiplayer~Not_Ready"
 msgstr "%s is not ready"
 
-msgid "Text~Multiplayer~Option_NoSet"
+msgid "Multiplayer~Option_NoSet"
 msgstr "--no options set--"
 
-msgid "Text~Multiplayer~Pause"
+msgid "Multiplayer~Pause"
 msgstr "Game has been paused."
 
-msgid "Text~Multiplayer~Player1"
+msgid "Multiplayer~Player1"
 msgstr "Player 1"
 
-msgid "Text~Multiplayer~Player2"
+msgid "Multiplayer~Player2"
 msgstr "Player 2"
 
-msgid "Text~Multiplayer~Player3"
+msgid "Multiplayer~Player3"
 msgstr "Player 3"
 
-msgid "Text~Multiplayer~Player4"
+msgid "Multiplayer~Player4"
 msgstr "Player 4"
 
-msgid "Text~Multiplayer~Player5"
+msgid "Multiplayer~Player5"
 msgstr "Player 5"
 
-msgid "Text~Multiplayer~Player6"
+msgid "Multiplayer~Player6"
 msgstr "Player 6"
 
-msgid "Text~Multiplayer~Player7"
+msgid "Multiplayer~Player7"
 msgstr "Player 7"
 
-msgid "Text~Multiplayer~Player8"
+msgid "Multiplayer~Player8"
 msgstr "Player 8"
 
-msgid "Text~Multiplayer~Player_Amount"
+msgid "Multiplayer~Player_Amount"
 msgstr "Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum."
 
-msgid "Text~Multiplayer~Player_Color_Taken"
+msgid "Multiplayer~Player_Color_Taken"
 msgstr "Playercolor already in use, please select an other color to be unique"
 
-msgid "Text~Multiplayer~Player_Few"
+msgid "Multiplayer~Player_Few"
 msgstr "Not enough players!"
 
-msgid "Text~Multiplayer~Player_Joined"
+msgid "Multiplayer~Player_Joined"
 msgstr "%s has joined"
 
-msgid "Text~Multiplayer~Player_Left"
+msgid "Multiplayer~Player_Left"
 msgstr "%s has left the game"
 
-msgid "Text~Multiplayer~Player_Many"
+msgid "Multiplayer~Player_Many"
 msgstr "Too many players!"
 
-msgid "Text~Multiplayer~Player_MustHost"
+msgid "Multiplayer~Player_MustHost"
 msgstr "must be host in turn based game!"
 
-msgid "Text~Multiplayer~Player_Name_Taken"
+msgid "Multiplayer~Player_Name_Taken"
 msgstr "Playername already in use, please select an other name to be unique"
 
-msgid "Text~Multiplayer~Player_Turn"
+msgid "Multiplayer~Player_Turn"
 msgstr "%s:\nBegin turn."
 
-msgid "Text~Multiplayer~Player_Turn_End"
+msgid "Multiplayer~Player_Turn_End"
 msgstr "%s ended turn"
 
-msgid "Text~Multiplayer~Player_Wrong"
+msgid "Multiplayer~Player_Wrong"
 msgstr "Missing a correct player's name"
 
-msgid "Text~Multiplayer~Reconnect"
+msgid "Multiplayer~Reconnect"
 msgstr "This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?"
 
-msgid "Text~Multiplayer~Reconnect_Already_Connected"
+msgid "Multiplayer~Reconnect_Already_Connected"
 msgstr "Reconnecting forbidden by server. A player with your name is already connected."
 
-msgid "Text~Multiplayer~Reconnect_Not_Part_Of_Game"
+msgid "Multiplayer~Reconnect_Not_Part_Of_Game"
 msgstr "Reconnecting forbidden by server. You are not part of the game."
 
-msgid "Text~Multiplayer~Save_Only_Host"
+msgid "Multiplayer~Save_Only_Host"
 msgstr "Only the host can save the current games."
 
-msgid "Text~Multiplayer~Server_Not_Running"
+msgid "Multiplayer~Server_Not_Running"
 msgstr "The server is not running."
 
-msgid "Text~Multiplayer~Wait_For_Server"
+msgid "Multiplayer~Wait_For_Server"
 msgstr "Waiting for network response from server"
 
-msgid "Text~Multiplayer~Wait_Reconnect"
+msgid "Multiplayer~Wait_Reconnect"
 msgstr "Waiting for reconnection of player %s"
 
-msgid "Text~Multiplayer~Wait_TurnEnd"
+msgid "Multiplayer~Wait_TurnEnd"
 msgstr "Please wait while turn end is executed."
 
-msgid "Text~Multiplayer~Wait_Until"
+msgid "Multiplayer~Wait_Until"
 msgstr "Please wait until %s has finished his turn."
 
-msgid "Text~Multiplayer~Waiting"
+msgid "Multiplayer~Waiting"
 msgstr "Waiting for other players..."
 
-msgid "Text~Option~Definite"
+msgid "Option~Definite"
 msgstr "Built (original)"
 
-msgid "Text~Option~Dense"
+msgid "Option~Dense"
 msgstr "Dense"
 
-msgid "Text~Option~High"
+msgid "Option~High"
 msgstr "High"
 
-msgid "Text~Option~Limited"
+msgid "Option~Limited"
 msgstr "Limited"
 
-msgid "Text~Option~Low"
+msgid "Option~Low"
 msgstr "Low"
 
-msgid "Text~Option~Mobile"
+msgid "Option~Mobile"
 msgstr "Must build"
 
-msgid "Text~Option~More"
+msgid "Option~More"
 msgstr "More"
 
-msgid "Text~Option~None"
+msgid "Option~None"
 msgstr "None"
 
-msgid "Text~Option~Normal"
+msgid "Option~Normal"
 msgstr "Normal"
 
-msgid "Text~Option~Off"
+msgid "Option~Off"
 msgstr "off"
 
-msgid "Text~Option~On"
+msgid "Option~On"
 msgstr "on"
 
-msgid "Text~Option~Sparse"
+msgid "Option~Sparse"
 msgstr "Sparse"
 
-msgid "Text~Option~TooMuch"
+msgid "Option~TooMuch"
 msgstr "Too Much"
 
-msgid "Text~Option~Type_Simu"
+msgid "Option~Type_Simu"
 msgstr "Simultaneous"
 
-msgid "Text~Option~Type_Turns"
+msgid "Option~Type_Turns"
 msgstr "Turn based"
 
-msgid "Text~Others~Active"
+msgid "Others~Active"
 msgstr "Active"
 
-msgid "Text~Others~ActiveAll_9"
+msgid "Others~ActiveAll_9"
 msgstr "Activ All"
 
-msgid "Text~Others~Active_7"
+msgid "Others~Active_7"
 msgstr "Activ."
 
-msgid "Text~Others~Air_Units"
+msgid "Others~Air_Units"
 msgstr "Airunits"
 
-msgid "Text~Others~Ammo"
+msgid "Others~Ammo"
 msgstr "Ammunition"
 
-msgid "Text~Others~Ammo_7"
+msgid "Others~Ammo_7"
 msgstr "Ammo"
 
-msgid "Text~Others~Armor"
+msgid "Others~Armor"
 msgstr "Armor"
 
-msgid "Text~Others~Armor_7"
+msgid "Others~Armor_7"
 msgstr "Armor"
 
-msgid "Text~Others~Attack"
+msgid "Others~Attack"
 msgstr "Attack"
 
-msgid "Text~Others~Attack_7"
+msgid "Others~Attack_7"
 msgstr "Attack"
 
-msgid "Text~Others~Auto_7"
+msgid "Others~Auto_7"
 msgstr "Auto"
 
-msgid "Text~Others~Back"
+msgid "Others~Back"
 msgstr "Back"
 
-msgid "Text~Others~Build_7"
+msgid "Others~Build_7"
 msgstr "Build"
 
-msgid "Text~Others~Buy"
+msgid "Others~Buy"
 msgstr "Buy"
 
-msgid "Text~Others~Cancel"
+msgid "Others~Cancel"
 msgstr "Cancel"
 
-msgid "Text~Others~Cargo_7"
+msgid "Others~Cargo_7"
 msgstr "Cargo"
 
-msgid "Text~Others~Chat"
+msgid "Others~Chat"
 msgstr "Chat"
 
-msgid "Text~Others~Clear_7"
+msgid "Others~Clear_7"
 msgstr "Clear"
 
-msgid "Text~Others~Color"
+msgid "Others~Color"
 msgstr "Color"
 
-msgid "Text~Others~Costs"
+msgid "Others~Costs"
 msgstr "Costs"
 
-msgid "Text~Others~Damaged_Units"
+msgid "Others~Damaged_Units"
 msgstr "Damaged units"
 
-msgid "Text~Others~Destroy_7"
+msgid "Others~Destroy_7"
 msgstr "Delete"
 
-msgid "Text~Others~Disable_7"
+msgid "Others~Disable_7"
 msgstr "Disable"
 
-msgid "Text~Others~Disadvantages_8cut"
+msgid "Others~Disadvantages_8cut"
 msgstr "Disadvantages"
 
-msgid "Text~Others~Distribution_7"
+msgid "Others~Distribution_7"
 msgstr "Distr."
 
-msgid "Text~Others~Done"
+msgid "Others~Done"
 msgstr "Done"
 
-msgid "Text~Others~Done_7"
+msgid "Others~Done_7"
 msgstr "Done"
 
-msgid "Text~Others~End"
+msgid "Others~End"
 msgstr "End"
 
-msgid "Text~Others~Enter_7"
+msgid "Others~Enter_7"
 msgstr "Enter"
 
-msgid "Text~Others~Exit"
+msgid "Others~Exit"
 msgstr "Exit"
 
-msgid "Text~Others~Fight_Units"
+msgid "Others~Fight_Units"
 msgstr "Fighting units"
 
-msgid "Text~Others~Files"
+msgid "Others~Files"
 msgstr "Files"
 
-msgid "Text~Others~Fog"
+msgid "Others~Fog"
 msgstr "Fog"
 
-msgid "Text~Others~Game_Load"
+msgid "Others~Game_Load"
 msgstr "Load Game"
 
-msgid "Text~Others~Game_New"
+msgid "Others~Game_New"
 msgstr "New Game"
 
-msgid "Text~Others~Game_Options"
+msgid "Others~Game_Options"
 msgstr "Game Options"
 
-msgid "Text~Others~Grid"
+msgid "Others~Grid"
 msgstr "Grid"
 
-msgid "Text~Others~Ground_Units"
+msgid "Others~Ground_Units"
 msgstr "Landunits"
 
-msgid "Text~Others~Hitpoints"
+msgid "Others~Hitpoints"
 msgstr "Hitpoints"
 
-msgid "Text~Others~Hitpoints_7"
+msgid "Others~Hitpoints_7"
 msgstr "Hits"
 
-msgid "Text~Others~Host_Start"
+msgid "Others~Host_Start"
 msgstr "Start Host"
 
-msgid "Text~Others~Hot"
+msgid "Others~Hot"
 msgstr "Hot"
 
-msgid "Text~Others~HotSeat_Load"
+msgid "Others~HotSeat_Load"
 msgstr "Load Hot Seat"
 
-msgid "Text~Others~HotSeat_New"
+msgid "Others~HotSeat_New"
 msgstr "New Hot Seat"
 
-msgid "Text~Others~Included"
+msgid "Others~Included"
 msgstr "Included:"
 
-msgid "Text~Others~Info_7"
+msgid "Others~Info_7"
 msgstr "Info"
 
-msgid "Text~Others~Limited_To"
+msgid "Others~Limited_To"
 msgstr "Limited to:"
 
-msgid "Text~Others~Load"
+msgid "Others~Load"
 msgstr "Load"
 
-msgid "Text~Others~Load_7"
+msgid "Others~Load_7"
 msgstr "Load"
 
-msgid "Text~Others~Log"
+msgid "Others~Log"
 msgstr "Log"
 
-msgid "Text~Others~Mani"
+msgid "Others~Mani"
 msgstr "Manifestation"
 
-msgid "Text~Others~ManualFireMode_7"
+msgid "Others~ManualFireMode_7"
 msgstr "Manual"
 
-msgid "Text~Others~Multi_Player"
+msgid "Others~Multi_Player"
 msgstr "Multiplayer"
 
-msgid "Text~Others~No"
+msgid "Others~No"
 msgstr "No"
 
-msgid "Text~Others~OK"
+msgid "Others~OK"
 msgstr "OK"
 
-msgid "Text~Others~Path"
+msgid "Others~Path"
 msgstr "Path"
 
-msgid "Text~Others~Power"
+msgid "Others~Power"
 msgstr "Power"
 
-msgid "Text~Others~Proceed_4"
+msgid "Others~Proceed_4"
 msgstr "Do"
 
-msgid "Text~Others~Produce_7"
+msgid "Others~Produce_7"
 msgstr "Produces"
 
-msgid "Text~Others~Produce_Units"
+msgid "Others~Produce_Units"
 msgstr "Producing units"
 
-msgid "Text~Others~Range"
+msgid "Others~Range"
 msgstr "Range"
 
-msgid "Text~Others~Range_7"
+msgid "Others~Range_7"
 msgstr "Range"
 
-msgid "Text~Others~Reload"
+msgid "Others~Reload"
 msgstr "Reload"
 
-msgid "Text~Others~ReloadAll_9"
+msgid "Others~ReloadAll_9"
 msgstr "Reload All"
 
-msgid "Text~Others~Reload_7"
+msgid "Others~Reload_7"
 msgstr "Reload"
 
-msgid "Text~Others~Repair"
+msgid "Others~Repair"
 msgstr "Repair"
 
-msgid "Text~Others~RepairAll_9"
+msgid "Others~RepairAll_9"
 msgstr "Rep. All"
 
-msgid "Text~Others~Repair_7"
+msgid "Others~Repair_7"
 msgstr "Repair"
 
-msgid "Text~Others~Reports"
+msgid "Others~Reports"
 msgstr "Reports"
 
-msgid "Text~Others~Research"
+msgid "Others~Research"
 msgstr "Research"
 
-msgid "Text~Others~Save"
+msgid "Others~Save"
 msgstr "Save"
 
-msgid "Text~Others~Scan"
+msgid "Others~Scan"
 msgstr "Scan"
 
-msgid "Text~Others~Scan_7"
+msgid "Others~Scan_7"
 msgstr "Scan"
 
-msgid "Text~Others~Score"
+msgid "Others~Score"
 msgstr "Score"
 
-msgid "Text~Others~Sea_Units"
+msgid "Others~Sea_Units"
 msgstr "Seaunits"
 
-msgid "Text~Others~Seed"
+msgid "Others~Seed"
 msgstr "Seed"
 
-msgid "Text~Others~Seed_7"
+msgid "Others~Seed_7"
 msgstr "Seed"
 
-msgid "Text~Others~Sentry"
+msgid "Others~Sentry"
 msgstr "Sentry"
 
-msgid "Text~Others~Settings"
+msgid "Others~Settings"
 msgstr "Settings"
 
-msgid "Text~Others~Shots"
+msgid "Others~Shots"
 msgstr "Shots"
 
-msgid "Text~Others~Shots_7"
+msgid "Others~Shots_7"
 msgstr "Shots"
 
-msgid "Text~Others~Single_Player"
+msgid "Others~Single_Player"
 msgstr "Singleplayer (No AI)"
 
-msgid "Text~Others~Speed"
+msgid "Others~Speed"
 msgstr "Speed"
 
-msgid "Text~Others~Speed_7"
+msgid "Others~Speed_7"
 msgstr "Speed"
 
-msgid "Text~Others~Start_7"
+msgid "Others~Start_7"
 msgstr "Start"
 
-msgid "Text~Others~Stationary_Units"
+msgid "Others~Stationary_Units"
 msgstr "Stationary Units"
 
-msgid "Text~Others~Status"
+msgid "Others~Status"
 msgstr "Status"
 
-msgid "Text~Others~Steal_7"
+msgid "Others~Steal_7"
 msgstr "Steal"
 
-msgid "Text~Others~Stealth_Units"
+msgid "Others~Stealth_Units"
 msgstr "Stealth units"
 
-msgid "Text~Others~Stop_7"
+msgid "Others~Stop_7"
 msgstr "Stop"
 
-msgid "Text~Others~Survey"
+msgid "Others~Survey"
 msgstr "Survey"
 
-msgid "Text~Others~TCPIP_Client"
+msgid "Others~TCPIP_Client"
 msgstr "TCP/IP Client"
 
-msgid "Text~Others~TCPIP_Host"
+msgid "Others~TCPIP_Host"
 msgstr "TCP/IP Host"
 
-msgid "Text~Others~Teams_7"
+msgid "Others~Teams_7"
 msgstr "Teams"
 
-msgid "Text~Others~Total"
+msgid "Others~Total"
 msgstr "Total"
 
-msgid "Text~Others~Transfer_7"
+msgid "Others~Transfer_7"
 msgstr "X-fer"
 
-msgid "Text~Others~Unit_destroyed"
+msgid "Others~Unit_destroyed"
 msgstr "Unit destroyed!"
 
-msgid "Text~Others~Units"
+msgid "Others~Units"
 msgstr "Units"
 
-msgid "Text~Others~Upgrade"
+msgid "Others~Upgrade"
 msgstr "Upgrade"
 
-msgid "Text~Others~UpgradeAll_7"
+msgid "Others~UpgradeAll_7"
 msgstr "Up.all"
 
-msgid "Text~Others~UpgradeAll_9"
+msgid "Others~UpgradeAll_9"
 msgstr "Upgrd.All"
 
-msgid "Text~Others~Upgrademenu_7"
+msgid "Others~Upgrademenu_7"
 msgstr "Up.Menu"
 
-msgid "Text~Others~Upgradethis_7"
+msgid "Others~Upgradethis_7"
 msgstr "Upgrade"
 
-msgid "Text~Others~Usage_7"
+msgid "Others~Usage_7"
 msgstr "Usage"
 
-msgid "Text~Others~Yes"
+msgid "Others~Yes"
 msgstr "Yes"
 
-msgid "Text~Punctuation~Colon"
+msgid "Punctuation~Colon"
 msgstr ": "
 
-msgid "Text~Settings~Alphaeffects"
+msgid "Settings~Alphaeffects"
 msgstr "Alphaeffects"
 
-msgid "Text~Settings~Animation"
+msgid "Settings~Animation"
 msgstr "Animations"
 
-msgid "Text~Settings~Autosave"
+msgid "Settings~Autosave"
 msgstr "Autosave"
 
-msgid "Text~Settings~Disable"
+msgid "Settings~Disable"
 msgstr "Disable"
 
-msgid "Text~Settings~Effects"
+msgid "Settings~Effects"
 msgstr "Effects"
 
-msgid "Text~Settings~Intro"
+msgid "Settings~Intro"
 msgstr "Show intro"
 
-msgid "Text~Settings~Language"
+msgid "Settings~Language"
 msgstr "Language"
 
-msgid "Text~Settings~Music"
+msgid "Settings~Music"
 msgstr "Music"
 
-msgid "Text~Settings~Preferences"
+msgid "Settings~Preferences"
 msgstr "Preferences"
 
-msgid "Text~Settings~Resolution"
+msgid "Settings~Resolution"
 msgstr "Resolution"
 
-msgid "Text~Settings~Scrollspeed"
+msgid "Settings~Scrollspeed"
 msgstr "Scrollspeed"
 
-msgid "Text~Settings~Shadows"
+msgid "Settings~Shadows"
 msgstr "Shadows"
 
-msgid "Text~Settings~ShowDamage"
+msgid "Settings~ShowDamage"
 msgstr "Buildingdamage"
 
-msgid "Text~Settings~ShowDamageVehicle"
+msgid "Settings~ShowDamageVehicle"
 msgstr "Vehicledamage"
 
-msgid "Text~Settings~Tracks"
+msgid "Settings~Tracks"
 msgstr "Vehicletracks"
 
-msgid "Text~Settings~Unlimited_11"
+msgid "Settings~Unlimited_11"
 msgstr "No limit"
 
-msgid "Text~Settings~Voices"
+msgid "Settings~Voices"
 msgstr "Voices"
 
-msgid "Text~Settings~Volume"
+msgid "Settings~Volume"
 msgstr "Volume"
 
-msgid "Text~Settings~Window"
+msgid "Settings~Window"
 msgstr "Windowed"
 
-msgid "Text~Title~Alien_Tech"
+msgid "Title~Alien_Tech"
 msgstr "Alien remains"
 
-msgid "Text~Title~BridgeHead"
+msgid "Title~BridgeHead"
 msgstr "Starting Base"
 
-msgid "Text~Title~Build_Factory"
+msgid "Title~Build_Factory"
 msgstr "Factory Menu"
 
-msgid "Text~Title~Build_Vehicle"
+msgid "Title~Build_Vehicle"
 msgstr "Construction Menu"
 
-msgid "Text~Title~Cargo"
+msgid "Title~Cargo"
 msgstr "Cargo"
 
-msgid "Text~Title~Choose_Clan"
+msgid "Title~Choose_Clan"
 msgstr "Choose Clan"
 
-msgid "Text~Title~Choose_Planet"
+msgid "Title~Choose_Planet"
 msgstr "Choose planet"
 
-msgid "Text~Title~Choose_Units"
+msgid "Title~Choose_Units"
 msgstr "Choose Units"
 
-msgid "Text~Title~Clan"
+msgid "Title~Clan"
 msgstr "Clan"
 
-msgid "Text~Title~Clans"
+msgid "Title~Clans"
 msgstr "Clans"
 
-msgid "Text~Title~Color"
+msgid "Title~Color"
 msgstr "Color:"
 
-msgid "Text~Title~Computer"
+msgid "Title~Computer"
 msgstr "Computer"
 
-msgid "Text~Title~Connect"
+msgid "Title~Connect"
 msgstr "Connect"
 
-msgid "Text~Title~Credits"
+msgid "Title~Credits"
 msgstr "Credit"
 
-msgid "Text~Title~Credits_start"
+msgid "Title~Credits_start"
 msgstr "Credit at gamestart"
 
-msgid "Text~Title~Custom_11"
+msgid "Title~Custom_11"
 msgstr "Custom"
 
-msgid "Text~Title~Game_Type"
+msgid "Title~Game_Type"
 msgstr "Game Type"
 
-msgid "Text~Title~Gold"
+msgid "Title~Gold"
 msgstr "Gold"
 
-msgid "Text~Title~HotSeat"
+msgid "Title~HotSeat"
 msgstr "Hot Seat"
 
-msgid "Text~Title~Human"
+msgid "Title~Human"
 msgstr "Human"
 
-msgid "Text~Title~IP"
+msgid "Title~IP"
 msgstr "IP"
 
-msgid "Text~Title~Labs"
+msgid "Title~Labs"
 msgstr "Research menu"
 
-msgid "Text~Title~Load"
+msgid "Title~Load"
 msgstr "Load Menu"
 
-msgid "Text~Title~LoadSave"
+msgid "Title~LoadSave"
 msgstr "Load/Save Menu"
 
-msgid "Text~Title~MainMenu"
+msgid "Title~MainMenu"
 msgstr "Main Menu"
 
-msgid "Text~Title~Map"
+msgid "Title~Map"
 msgstr "Map: %s"
 
-msgid "Text~Title~Metal"
+msgid "Title~Metal"
 msgstr "Raw Materials"
 
-msgid "Text~Title~Mine"
+msgid "Title~Mine"
 msgstr "Allocation menu"
 
-msgid "Text~Title~Nobody"
+msgid "Title~Nobody"
 msgstr "Nobody"
 
-msgid "Text~Title~Oil"
+msgid "Title~Oil"
 msgstr "Fuel"
 
-msgid "Text~Title~Options"
+msgid "Title~Options"
 msgstr "Options"
 
-msgid "Text~Title~Player_Name"
+msgid "Title~Player_Name"
 msgstr "Player Name:"
 
-msgid "Text~Title~Player_Select"
+msgid "Title~Player_Select"
 msgstr "Player options"
 
-msgid "Text~Title~Players"
+msgid "Title~Players"
 msgstr "Players:"
 
-msgid "Text~Title~Port"
+msgid "Title~Port"
 msgstr "Port"
 
-msgid "Text~Title~Resource"
+msgid "Title~Resource"
 msgstr "Resource density"
 
-msgid "Text~Title~Resource_Density"
+msgid "Title~Resource_Density"
 msgstr "Resource frequency"
 
-msgid "Text~Title~Savegame"
+msgid "Title~Savegame"
 msgstr "Saved Game:"
 
-msgid "Text~Title~Send"
+msgid "Title~Send"
 msgstr "Send"
 
-msgid "Text~Title~Team"
+msgid "Title~Team"
 msgstr "Team"
 
-msgid "Text~Title~Turn_end"
+msgid "Title~Turn_end"
 msgstr "Turn end"
 
-msgid "Text~Title~Turn_limit"
+msgid "Title~Turn_limit"
 msgstr "Turn limit"
 
-msgid "Text~Title~Unitinfo"
+msgid "Title~Unitinfo"
 msgstr "Unit status screen"
 
-msgid "Text~Title~Upgrades_Menu"
+msgid "Title~Upgrades_Menu"
 msgstr "Upgrades menu"
 

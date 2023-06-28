@@ -37,7 +37,7 @@
 cWindowMapSelection::cWindowMapSelection() :
 	cWindow (LoadPCX (GFXOD_PLANET_SELECT))
 {
-	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Planet"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Title~Choose_Planet"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	//
 	// Map Images
@@ -64,11 +64,11 @@ cWindowMapSelection::cWindowMapSelection() :
 	downButton = emplaceChild<cPushButton> (getPosition() + cPosition (321, 435), ePushButtonType::ArrowDownBig);
 	signalConnectionManager.connect (downButton->clicked, [this]() { downClicked(); });
 
-	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK"));
+	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Others~OK"));
 	okButton->lock();
 	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
-	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back"));
+	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	loadMaps();
@@ -81,9 +81,9 @@ cWindowMapSelection::cWindowMapSelection() :
 void cWindowMapSelection::retranslate()
 {
 	cWindow::retranslate();
-	titleLabel->setText (lngPack.i18n ("Text~Title~Choose_Planet"));
-	okButton->setText (lngPack.i18n ("Text~Others~OK"));
-	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+	titleLabel->setText (lngPack.i18n ("Title~Choose_Planet"));
+	okButton->setText (lngPack.i18n ("Others~OK"));
+	backButton->setText (lngPack.i18n ("Others~Back"));
 }
 
 //------------------------------------------------------------------------------

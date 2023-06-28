@@ -107,9 +107,9 @@ void cUnitDetailsHud::reset()
 	const auto& data = unit->data;
 	const auto& staticData = unit->getStaticUnitData();
 
-	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"));
+	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Others~Hitpoints_7"));
 
-	if (data.getSpeedMax() > 0) drawRow (2, eUnitDataSymbolType::Speed, data.getSpeed() / 4, data.getSpeedMax() / 4, lngPack.i18n ("Text~Others~Speed_7"));
+	if (data.getSpeedMax() > 0) drawRow (2, eUnitDataSymbolType::Speed, data.getSpeed() / 4, data.getSpeedMax() / 4, lngPack.i18n ("Others~Speed_7"));
 
 	if (staticData.buildingData.canScore && unit->getOwner())
 	{
@@ -118,8 +118,8 @@ void cUnitDetailsHud::reset()
 		const auto totalScore = unit->getOwner()->getScore();
 		const auto goalScore = (gameSettings && gameSettings->victoryConditionType == eGameSettingsVictoryCondition::Points) ? gameSettings->victoryPoints : totalScore;
 
-		drawRow (1, eUnitDataSymbolType::Human, unitScore, unitScore, lngPack.i18n ("Text~Others~Score"));
-		drawRow (2, eUnitDataSymbolType::Human, totalScore, goalScore, lngPack.i18n ("Text~Others~Total"));
+		drawRow (1, eUnitDataSymbolType::Human, unitScore, unitScore, lngPack.i18n ("Others~Score"));
+		drawRow (2, eUnitDataSymbolType::Human, totalScore, goalScore, lngPack.i18n ("Others~Total"));
 	}
 	else if ((staticData.storeResType != eResourceType::None || staticData.storageUnitsMax > 0) && unit->getOwner() == player)
 	{
@@ -140,7 +140,7 @@ void cUnitDetailsHud::reset()
 				case eResourceType::None: break;
 			}
 
-			drawRow (1, symbolType, unit->getStoredResources(), staticData.storageResMax, lngPack.i18n ("Text~Others~Cargo_7"));
+			drawRow (1, symbolType, unit->getStoredResources(), staticData.storageResMax, lngPack.i18n ("Others~Cargo_7"));
 
 			if (unit->isABuilding())
 			{
@@ -152,13 +152,13 @@ void cUnitDetailsHud::reset()
 				switch (staticData.storeResType)
 				{
 					case eResourceType::Metal:
-						drawRow (2, symbolType, stored.metal, maxStored.metal, lngPack.i18n ("Text~Others~Total"));
+						drawRow (2, symbolType, stored.metal, maxStored.metal, lngPack.i18n ("Others~Total"));
 						break;
 					case eResourceType::Oil:
-						drawRow (2, symbolType, stored.oil, maxStored.oil, lngPack.i18n ("Text~Others~Total"));
+						drawRow (2, symbolType, stored.oil, maxStored.oil, lngPack.i18n ("Others~Total"));
 						break;
 					case eResourceType::Gold:
-						drawRow (2, symbolType, stored.gold, maxStored.gold, lngPack.i18n ("Text~Others~Total"));
+						drawRow (2, symbolType, stored.gold, maxStored.gold, lngPack.i18n ("Others~Total"));
 						break;
 					case eResourceType::None: break;
 				}
@@ -182,46 +182,46 @@ void cUnitDetailsHud::reset()
 				case eStorageUnitsImageType::None: break;
 			}
 
-			drawRow (1, symbolType, unit->storedUnits.size(), staticData.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo_7"));
+			drawRow (1, symbolType, unit->storedUnits.size(), staticData.storageUnitsMax, lngPack.i18n ("Others~Cargo_7"));
 		}
 	}
 	else if (staticData.canAttack && (staticData.ID.isAVehicle() || !staticData.buildingData.explodesOnContact))
 	{
-		if (unit->getOwner() == player) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo(), data.getAmmoMax(), lngPack.i18n ("Text~Others~Ammo_7"));
+		if (unit->getOwner() == player) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo(), data.getAmmoMax(), lngPack.i18n ("Others~Ammo_7"));
 
-		drawRow (3, eUnitDataSymbolType::Shots, data.getShots(), data.getShotsMax(), lngPack.i18n ("Text~Others~Shots_7"));
+		drawRow (3, eUnitDataSymbolType::Shots, data.getShots(), data.getShotsMax(), lngPack.i18n ("Others~Shots_7"));
 	}
 	else if (staticData.produceEnergy && unit->isABuilding())
 	{
 		const auto& building = static_cast<const cBuilding&> (*unit);
-		drawRow (1, eUnitDataSymbolType::Energy, (building.isUnitWorking() ? staticData.produceEnergy : 0), staticData.produceEnergy, lngPack.i18n ("Text~Others~Power"));
+		drawRow (1, eUnitDataSymbolType::Energy, (building.isUnitWorking() ? staticData.produceEnergy : 0), staticData.produceEnergy, lngPack.i18n ("Others~Power"));
 
 		if (unit->getOwner() == player)
 		{
-			drawRow (2, eUnitDataSymbolType::Energy, building.subBase->getEnergyProd(), building.subBase->getMaxEnergyProd(), lngPack.i18n ("Text~Others~Total"));
-			drawRow (3, eUnitDataSymbolType::Energy, building.subBase->getEnergyNeed(), building.subBase->getMaxEnergyNeed(), lngPack.i18n ("Text~Others~Usage_7"));
+			drawRow (2, eUnitDataSymbolType::Energy, building.subBase->getEnergyProd(), building.subBase->getMaxEnergyProd(), lngPack.i18n ("Others~Total"));
+			drawRow (3, eUnitDataSymbolType::Energy, building.subBase->getEnergyNeed(), building.subBase->getMaxEnergyNeed(), lngPack.i18n ("Others~Usage_7"));
 		}
 	}
 	else if (staticData.produceHumans && unit->isABuilding())
 	{
 		const auto& building = static_cast<const cBuilding&> (*unit);
-		drawRow (1, eUnitDataSymbolType::Human, staticData.produceHumans, staticData.produceHumans, lngPack.i18n ("Text~Others~Teams_7"));
+		drawRow (1, eUnitDataSymbolType::Human, staticData.produceHumans, staticData.produceHumans, lngPack.i18n ("Others~Teams_7"));
 
 		if (unit->getOwner() == player)
 		{
-			drawRow (2, eUnitDataSymbolType::Human, building.subBase->getHumanProd(), building.subBase->getHumanProd(), lngPack.i18n ("Text~Others~Total"));
-			drawRow (3, eUnitDataSymbolType::Human, building.subBase->getHumanNeed(), building.subBase->getMaxHumanNeed(), lngPack.i18n ("Text~Others~Usage_7"));
+			drawRow (2, eUnitDataSymbolType::Human, building.subBase->getHumanProd(), building.subBase->getHumanProd(), lngPack.i18n ("Others~Total"));
+			drawRow (3, eUnitDataSymbolType::Human, building.subBase->getHumanNeed(), building.subBase->getMaxHumanNeed(), lngPack.i18n ("Others~Usage_7"));
 		}
 	}
 	else if (staticData.needsHumans && unit->isABuilding())
 	{
 		const auto& building = static_cast<const cBuilding&> (*unit);
 		if (building.isUnitWorking())
-			drawRow (1, eUnitDataSymbolType::Human, staticData.needsHumans, staticData.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
+			drawRow (1, eUnitDataSymbolType::Human, staticData.needsHumans, staticData.needsHumans, lngPack.i18n ("Others~Usage_7"));
 		else
-			drawRow (1, eUnitDataSymbolType::Human, 0, staticData.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
+			drawRow (1, eUnitDataSymbolType::Human, 0, staticData.needsHumans, lngPack.i18n ("Others~Usage_7"));
 
-		if (unit->getOwner() == player) drawRow (2, eUnitDataSymbolType::Human, building.subBase->getHumanNeed(), building.subBase->getMaxHumanNeed(), lngPack.i18n ("Text~Others~Total"));
+		if (unit->getOwner() == player) drawRow (2, eUnitDataSymbolType::Human, building.subBase->getHumanNeed(), building.subBase->getMaxHumanNeed(), lngPack.i18n ("Others~Total"));
 	}
 }
 

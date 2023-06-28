@@ -49,7 +49,7 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& prefix,
 	auto font = cUnicodeFont::font.get();
 	if (!prefix.empty())
 	{
-		const auto prefixText = addColon ? prefix + lngPack.i18n ("Text~Punctuation~Colon") : prefix;
+		const auto prefixText = addColon ? prefix + lngPack.i18n ("Punctuation~Colon") : prefix;
 		prefixTextWidth = std::max (desiredPrefixTextWidth, font->getTextWide (prefixText));
 		prefixLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (prefixTextWidth, 10)), prefixText);
 		prefixLabel->setConsumeClick (false);

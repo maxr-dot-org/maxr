@@ -46,48 +46,48 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	surface = generateSurface();
 	resize (cPosition (surface->w, surface->h));
 
-	endButton = emplaceChild<cPushButton> (cPosition (391, 4), ePushButtonType::HudEnd, lngPack.i18n ("Text~Others~End"), eUnicodeFontType::LatinNormal);
+	endButton = emplaceChild<cPushButton> (cPosition (391, 4), ePushButtonType::HudEnd, lngPack.i18n ("Others~End"), eUnicodeFontType::LatinNormal);
 	endButton->addClickShortcut (KeysList.keyEndTurn);
 	signalConnectionManager.connect (endButton->clicked, [this]() { endClicked(); });
 
-	preferencesButton = emplaceChild<cPushButton> (cPosition (86, 4), ePushButtonType::HudPreferences, lngPack.i18n ("Text~Others~Settings"), eUnicodeFontType::LatinSmallWhite);
+	preferencesButton = emplaceChild<cPushButton> (cPosition (86, 4), ePushButtonType::HudPreferences, lngPack.i18n ("Others~Settings"), eUnicodeFontType::LatinSmallWhite);
 	signalConnectionManager.connect (preferencesButton->clicked, [this]() { preferencesClicked(); });
-	filesButton = emplaceChild<cPushButton> (cPosition (17, 3), ePushButtonType::HudFiles, lngPack.i18n ("Text~Others~Files"), eUnicodeFontType::LatinSmallWhite);
+	filesButton = emplaceChild<cPushButton> (cPosition (17, 3), ePushButtonType::HudFiles, lngPack.i18n ("Others~Files"), eUnicodeFontType::LatinSmallWhite);
 	signalConnectionManager.connect (filesButton->clicked, [this]() { filesClicked(); });
 
-	surveyButton = emplaceChild<cCheckBox> (cPosition (2, 296), lngPack.i18n ("Text~Others~Survey"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_00, false, &SoundData.SNDHudSwitch);
+	surveyButton = emplaceChild<cCheckBox> (cPosition (2, 296), lngPack.i18n ("Others~Survey"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_00, false, &SoundData.SNDHudSwitch);
 	surveyShortcut = &surveyButton->addClickShortcut (KeysList.keySurvey);
 	signalConnectionManager.connect (surveyButton->toggled, [this]() { surveyToggled(); });
 
-	hitsButton = emplaceChild<cCheckBox> (cPosition (57, 296), lngPack.i18n ("Text~Others~Hitpoints_7"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_01, false, &SoundData.SNDHudSwitch);
+	hitsButton = emplaceChild<cCheckBox> (cPosition (57, 296), lngPack.i18n ("Others~Hitpoints_7"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_01, false, &SoundData.SNDHudSwitch);
 	hitsShortcut = &hitsButton->addClickShortcut (KeysList.keyHitpoints);
 	signalConnectionManager.connect (hitsButton->toggled, [this]() { hitsToggled(); });
 
-	scanButton = emplaceChild<cCheckBox> (cPosition (112, 296), lngPack.i18n ("Text~Others~Scan"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_02, false, &SoundData.SNDHudSwitch);
+	scanButton = emplaceChild<cCheckBox> (cPosition (112, 296), lngPack.i18n ("Others~Scan"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_02, false, &SoundData.SNDHudSwitch);
 	scanShortcut = &scanButton->addClickShortcut (KeysList.keyScan);
 	signalConnectionManager.connect (scanButton->toggled, [this]() { scanToggled(); });
 
-	statusButton = emplaceChild<cCheckBox> (cPosition (2, 296 + 18), lngPack.i18n ("Text~Others~Status"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_10, false, &SoundData.SNDHudSwitch);
+	statusButton = emplaceChild<cCheckBox> (cPosition (2, 296 + 18), lngPack.i18n ("Others~Status"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_10, false, &SoundData.SNDHudSwitch);
 	statusShortcut = &statusButton->addClickShortcut (KeysList.keyStatus);
 	signalConnectionManager.connect (statusButton->toggled, [this]() { statusToggled(); });
 
-	ammoButton = emplaceChild<cCheckBox> (cPosition (57, 296 + 18), lngPack.i18n ("Text~Others~Ammo"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_11, false, &SoundData.SNDHudSwitch);
+	ammoButton = emplaceChild<cCheckBox> (cPosition (57, 296 + 18), lngPack.i18n ("Others~Ammo"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_11, false, &SoundData.SNDHudSwitch);
 	ammoShortcut = &ammoButton->addClickShortcut (KeysList.keyAmmo);
 	signalConnectionManager.connect (ammoButton->toggled, [this]() { ammoToggled(); });
 
-	gridButton = emplaceChild<cCheckBox> (cPosition (112, 296 + 18), lngPack.i18n ("Text~Others~Grid"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_12, false, &SoundData.SNDHudSwitch);
+	gridButton = emplaceChild<cCheckBox> (cPosition (112, 296 + 18), lngPack.i18n ("Others~Grid"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_12, false, &SoundData.SNDHudSwitch);
 	gridShortcut = &gridButton->addClickShortcut (KeysList.keyGrid);
 	signalConnectionManager.connect (gridButton->toggled, [this]() { gridToggled(); });
 
-	colorButton = emplaceChild<cCheckBox> (cPosition (2, 296 + 18 + 16), lngPack.i18n ("Text~Others~Color"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_20, false, &SoundData.SNDHudSwitch);
+	colorButton = emplaceChild<cCheckBox> (cPosition (2, 296 + 18 + 16), lngPack.i18n ("Others~Color"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_20, false, &SoundData.SNDHudSwitch);
 	colorShortcut = &colorButton->addClickShortcut (KeysList.keyColors);
 	signalConnectionManager.connect (colorButton->toggled, [this]() { colorToggled(); });
 
-	rangeButton = emplaceChild<cCheckBox> (cPosition (57, 296 + 18 + 16), lngPack.i18n ("Text~Others~Range"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, &SoundData.SNDHudSwitch);
+	rangeButton = emplaceChild<cCheckBox> (cPosition (57, 296 + 18 + 16), lngPack.i18n ("Others~Range"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, &SoundData.SNDHudSwitch);
 	rangeShortcut = &rangeButton->addClickShortcut (KeysList.keyRange);
 	signalConnectionManager.connect (rangeButton->toggled, [this]() { rangeToggled(); });
 
-	fogButton = emplaceChild<cCheckBox> (cPosition (112, 296 + 18 + 16), lngPack.i18n ("Text~Others~Fog"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_22, false, &SoundData.SNDHudSwitch);
+	fogButton = emplaceChild<cCheckBox> (cPosition (112, 296 + 18 + 16), lngPack.i18n ("Others~Fog"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_22, false, &SoundData.SNDHudSwitch);
 	fogShortcut = &fogButton->addClickShortcut (KeysList.keyFog);
 	signalConnectionManager.connect (fogButton->toggled, [this]() { fogToggled(); });
 
@@ -105,9 +105,9 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	centerButton->addClickShortcut (KeysList.keyCenterUnit);
 	signalConnectionManager.connect (centerButton->clicked, [this]() { centerClicked(); });
 
-	reportsButton = emplaceChild<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Text~Others~Log"));
+	reportsButton = emplaceChild<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Others~Log"));
 	signalConnectionManager.connect (reportsButton->clicked, [this]() { reportsClicked(); });
-	chatButton = emplaceChild<cCheckBox> (cPosition (51, 252), lngPack.i18n ("Text~Others~Chat"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudChat);
+	chatButton = emplaceChild<cCheckBox> (cPosition (51, 252), lngPack.i18n ("Others~Chat"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudChat);
 	signalConnectionManager.connect (chatButton->toggled, [this]() { chatToggled(); });
 
 	auto nextButton = emplaceChild<cPushButton> (cPosition (124, 227), ePushButtonType::HudNext, ">>");
@@ -116,7 +116,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	auto prevButton = emplaceChild<cPushButton> (cPosition (60, 227), ePushButtonType::HudPrev, "<<");
 	prevButton->addClickShortcut (KeysList.keyUnitPrev);
 	signalConnectionManager.connect (prevButton->clicked, [this]() { prevClicked(); });
-	doneButton = emplaceChild<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed_4"));
+	doneButton = emplaceChild<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Others~Proceed_4"));
 	doneButton->addClickShortcut (KeysList.keyUnitDone);
 	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
@@ -160,21 +160,21 @@ void cHud::retranslate()
 {
 	cWidget::retranslate();
 
-	endButton->setText (lngPack.i18n ("Text~Others~End"));
-	preferencesButton->setText (lngPack.i18n ("Text~Others~Settings"));
-	filesButton->setText (lngPack.i18n ("Text~Others~Files"));
-	surveyButton->setText (lngPack.i18n ("Text~Others~Survey"));
-	hitsButton->setText (lngPack.i18n ("Text~Others~Hitpoints_7"));
-	scanButton->setText (lngPack.i18n ("Text~Others~Scan"));
-	statusButton->setText (lngPack.i18n ("Text~Others~Status"));
-	ammoButton->setText (lngPack.i18n ("Text~Others~Ammo"));
-	gridButton->setText (lngPack.i18n ("Text~Others~Grid"));
-	colorButton->setText (lngPack.i18n ("Text~Others~Color"));
-	rangeButton->setText (lngPack.i18n ("Text~Others~Range"));
-	fogButton->setText (lngPack.i18n ("Text~Others~Fog"));
-	reportsButton->setText (lngPack.i18n ("Text~Others~Log"));
-	chatButton->setText (lngPack.i18n ("Text~Others~Chat"));
-	doneButton->setText (lngPack.i18n ("Text~Others~Proceed_4"));
+	endButton->setText (lngPack.i18n ("Others~End"));
+	preferencesButton->setText (lngPack.i18n ("Others~Settings"));
+	filesButton->setText (lngPack.i18n ("Others~Files"));
+	surveyButton->setText (lngPack.i18n ("Others~Survey"));
+	hitsButton->setText (lngPack.i18n ("Others~Hitpoints_7"));
+	scanButton->setText (lngPack.i18n ("Others~Scan"));
+	statusButton->setText (lngPack.i18n ("Others~Status"));
+	ammoButton->setText (lngPack.i18n ("Others~Ammo"));
+	gridButton->setText (lngPack.i18n ("Others~Grid"));
+	colorButton->setText (lngPack.i18n ("Others~Color"));
+	rangeButton->setText (lngPack.i18n ("Others~Range"));
+	fogButton->setText (lngPack.i18n ("Others~Fog"));
+	reportsButton->setText (lngPack.i18n ("Others~Log"));
+	chatButton->setText (lngPack.i18n ("Others~Chat"));
+	doneButton->setText (lngPack.i18n ("Others~Proceed_4"));
 }
 
 //------------------------------------------------------------------------------

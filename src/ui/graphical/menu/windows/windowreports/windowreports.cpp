@@ -54,11 +54,11 @@ namespace
 		switch (gameSettings.victoryConditionType)
 		{
 			case eGameSettingsVictoryCondition::Turns:
-				return lngPack.i18n ("Text~Comp~GameEndsAt") + " " + lngPack.plural ("Text~Comp~Turn(s)", gameSettings.victoryTurns);
+				return lngPack.i18n ("Comp~GameEndsAt") + " " + lngPack.plural ("Comp~Turn(s)", gameSettings.victoryTurns);
 			case eGameSettingsVictoryCondition::Points:
-				return lngPack.i18n ("Text~Comp~GameEndsAt") + " " + lngPack.plural ("Text~Comp~Point(s)", gameSettings.victoryPoints);
+				return lngPack.i18n ("Comp~GameEndsAt") + " " + lngPack.plural ("Comp~Point(s)", gameSettings.victoryPoints);
 			case eGameSettingsVictoryCondition::Death:
-				return lngPack.i18n ("Text~Comp~NoLimit");
+				return lngPack.i18n ("Comp~NoLimit");
 		}
 		return "";
 	}
@@ -79,22 +79,22 @@ cWindowReports::cWindowReports (const cModel& model,
 	turnTimeClockWidget->setTurnTimeClock (model.getTurnTimeClock());
 
 	auto typeButtonGroup = emplaceChild<cRadioGroup>();
-	unitsRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71), lngPack.i18n ("Text~Others~Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
-	disadvantagesRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29), lngPack.i18n ("Text~Others~Disadvantages_8cut"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
-	scoreRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29 * 2), lngPack.i18n ("Text~Others~Score"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
-	reportsRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29 * 3), lngPack.i18n ("Text~Others~Reports"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+	unitsRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71), lngPack.i18n ("Others~Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+	disadvantagesRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29), lngPack.i18n ("Others~Disadvantages_8cut"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+	scoreRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29 * 2), lngPack.i18n ("Others~Score"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+	reportsRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (524, 71 + 29 * 3), lngPack.i18n ("Others~Reports"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 
 	signalConnectionManager.connect (unitsRadioButton->toggled, [this]() { updateActiveFrame(); });
 	signalConnectionManager.connect (disadvantagesRadioButton->toggled, [this]() { updateActiveFrame(); });
 	signalConnectionManager.connect (scoreRadioButton->toggled, [this]() { updateActiveFrame(); });
 	signalConnectionManager.connect (reportsRadioButton->toggled, [this]() { updateActiveFrame(); });
 
-	includedLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 207), getPosition() + cPosition (497 + 100, 207 + font->getFontHeight())), lngPack.i18n ("Text~Others~Included"));
+	includedLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 207), getPosition() + cPosition (497 + 100, 207 + font->getFontHeight())), lngPack.i18n ("Others~Included"));
 
-	planesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 218), lngPack.i18n ("Text~Others~Air_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
-	groundCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 218 + 18), lngPack.i18n ("Text~Others~Ground_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
-	seaCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 218 + 18 * 2), lngPack.i18n ("Text~Others~Sea_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
-	stationaryCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 218 + 18 * 3), lngPack.i18n ("Text~Others~Stationary_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
+	planesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 218), lngPack.i18n ("Others~Air_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
+	groundCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 218 + 18), lngPack.i18n ("Others~Ground_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
+	seaCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 218 + 18 * 2), lngPack.i18n ("Others~Sea_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
+	stationaryCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 218 + 18 * 3), lngPack.i18n ("Others~Stationary_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
 
 	planesCheckBox->setChecked (true);
 	groundCheckBox->setChecked (true);
@@ -106,19 +106,19 @@ cWindowReports::cWindowReports (const cModel& model,
 	signalConnectionManager.connect (seaCheckBox->toggled, [this]() { handleFilterChanged(); });
 	signalConnectionManager.connect (stationaryCheckBox->toggled, [this]() { handleFilterChanged(); });
 
-	limitedToLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 299), getPosition() + cPosition (497 + 100, 299 + font->getFontHeight())), lngPack.i18n ("Text~Others~Limited_To"));
+	limitedToLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (497, 299), getPosition() + cPosition (497 + 100, 299 + font->getFontHeight())), lngPack.i18n ("Others~Limited_To"));
 
-	produceCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 312), lngPack.i18n ("Text~Others~Produce_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
-	fightCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 312 + 18), lngPack.i18n ("Text~Others~Fight_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
-	damagedCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 312 + 18 * 2), lngPack.i18n ("Text~Others~Damaged_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
-	stealthCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 312 + 18 * 3), lngPack.i18n ("Text~Others~Stealth_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
+	produceCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 312), lngPack.i18n ("Others~Produce_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
+	fightCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 312 + 18), lngPack.i18n ("Others~Fight_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
+	damagedCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 312 + 18 * 2), lngPack.i18n ("Others~Damaged_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
+	stealthCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (496, 312 + 18 * 3), lngPack.i18n ("Others~Stealth_Units"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard);
 
 	signalConnectionManager.connect (produceCheckBox->toggled, [this]() { handleFilterChanged(); });
 	signalConnectionManager.connect (fightCheckBox->toggled, [this]() { handleFilterChanged(); });
 	signalConnectionManager.connect (damagedCheckBox->toggled, [this]() { handleFilterChanged(); });
 	signalConnectionManager.connect (stealthCheckBox->toggled, [this]() { handleFilterChanged(); });
 
-	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (524, 395), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal);
+	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (524, 395), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { close(); });
 
@@ -162,7 +162,7 @@ cWindowReports::cWindowReports (const cModel& model,
 	{
 		const auto& player = players[i];
 
-		std::string playerText = player->getName() + lngPack.i18n ("Text~Punctuation~Colon") + lngPack.plural ("Text~Comp~Point(s)", player->getScore (turnClock->getTurn())) + ", " + lngPack.plural ("Text~Comp~EcoSphere(s)", player->getNumEcoSpheres());
+		std::string playerText = player->getName() + lngPack.i18n ("Punctuation~Colon") + lngPack.plural ("Comp~Point(s)", player->getScore (turnClock->getTurn())) + ", " + lngPack.plural ("Comp~EcoSphere(s)", player->getNumEcoSpheres());
 
 		AutoSurface colorSurface (SDL_CreateRGBSurface (0, 8, 8, Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect (colorSurface.get(), nullptr, toMappedSdlRGBAColor (player->getColor(), colorSurface->format));
@@ -186,26 +186,26 @@ void cWindowReports::retranslate()
 {
 	cWindow::retranslate();
 
-	unitsRadioButton->setText (lngPack.i18n ("Text~Others~Units"));
-	disadvantagesRadioButton->setText (lngPack.i18n ("Text~Others~Disadvantages_8cut"));
-	scoreRadioButton->setText (lngPack.i18n ("Text~Others~Score"));
-	reportsRadioButton->setText (lngPack.i18n ("Text~Others~Reports"));
+	unitsRadioButton->setText (lngPack.i18n ("Others~Units"));
+	disadvantagesRadioButton->setText (lngPack.i18n ("Others~Disadvantages_8cut"));
+	scoreRadioButton->setText (lngPack.i18n ("Others~Score"));
+	reportsRadioButton->setText (lngPack.i18n ("Others~Reports"));
 
-	includedLabel->setText (lngPack.i18n ("Text~Others~Included"));
+	includedLabel->setText (lngPack.i18n ("Others~Included"));
 
-	planesCheckBox->setText (lngPack.i18n ("Text~Others~Air_Units"));
-	groundCheckBox->setText (lngPack.i18n ("Text~Others~Ground_Units"));
-	seaCheckBox->setText (lngPack.i18n ("Text~Others~Sea_Units"));
-	stationaryCheckBox->setText (lngPack.i18n ("Text~Others~Stationary_Units"));
+	planesCheckBox->setText (lngPack.i18n ("Others~Air_Units"));
+	groundCheckBox->setText (lngPack.i18n ("Others~Ground_Units"));
+	seaCheckBox->setText (lngPack.i18n ("Others~Sea_Units"));
+	stationaryCheckBox->setText (lngPack.i18n ("Others~Stationary_Units"));
 
-	limitedToLabel->setText (lngPack.i18n ("Text~Others~Limited_To"));
+	limitedToLabel->setText (lngPack.i18n ("Others~Limited_To"));
 
-	produceCheckBox->setText (lngPack.i18n ("Text~Others~Produce_Units"));
-	fightCheckBox->setText (lngPack.i18n ("Text~Others~Fight_Units"));
-	damagedCheckBox->setText (lngPack.i18n ("Text~Others~Damaged_Units"));
-	stealthCheckBox->setText (lngPack.i18n ("Text~Others~Stealth_Units"));
+	produceCheckBox->setText (lngPack.i18n ("Others~Produce_Units"));
+	fightCheckBox->setText (lngPack.i18n ("Others~Fight_Units"));
+	damagedCheckBox->setText (lngPack.i18n ("Others~Damaged_Units"));
+	stealthCheckBox->setText (lngPack.i18n ("Others~Stealth_Units"));
 
-	doneButton->setText (lngPack.i18n ("Text~Others~Done"));
+	doneButton->setText (lngPack.i18n ("Others~Done"));
 
 	const auto gameSettings = model.getGameSettings();
 	if (gameSettings)
@@ -219,7 +219,7 @@ void cWindowReports::retranslate()
 	{
 		const auto& player = players[i];
 
-		std::string playerText = player->getName() + lngPack.i18n ("Text~Punctuation~Colon") + lngPack.plural ("Text~Comp~Point(s)", player->getScore (turnClock->getTurn())) + ", " + lngPack.plural ("Text~Comp~EcoSphere(s)", player->getNumEcoSpheres());
+		std::string playerText = player->getName() + lngPack.i18n ("Punctuation~Colon") + lngPack.plural ("Comp~Point(s)", player->getScore (turnClock->getTurn())) + ", " + lngPack.plural ("Comp~EcoSphere(s)", player->getNumEcoSpheres());
 
 		ecosphereLabels[i]->setText (playerText);
 	}

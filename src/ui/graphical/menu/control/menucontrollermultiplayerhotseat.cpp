@@ -125,14 +125,14 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers()
 
 		const std::string playerNames[] =
 			{
-				lngPack.i18n ("Text~Multiplayer~Player1"),
-				lngPack.i18n ("Text~Multiplayer~Player2"),
-				lngPack.i18n ("Text~Multiplayer~Player3"),
-				lngPack.i18n ("Text~Multiplayer~Player4"),
-				lngPack.i18n ("Text~Multiplayer~Player5"),
-				lngPack.i18n ("Text~Multiplayer~Player6"),
-				lngPack.i18n ("Text~Multiplayer~Player7"),
-				lngPack.i18n ("Text~Multiplayer~Player8")};
+				lngPack.i18n ("Multiplayer~Player1"),
+				lngPack.i18n ("Multiplayer~Player2"),
+				lngPack.i18n ("Multiplayer~Player3"),
+				lngPack.i18n ("Multiplayer~Player4"),
+				lngPack.i18n ("Multiplayer~Player5"),
+				lngPack.i18n ("Multiplayer~Player6"),
+				lngPack.i18n ("Multiplayer~Player7"),
+				lngPack.i18n ("Multiplayer~Player8")};
 
 		std::vector<cPlayerBasicData> players;
 		int playerNum = 0;
@@ -171,7 +171,7 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers()
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHotSeat::startNextPlayerGamePreperation (size_t playerIndex)
 {
-	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", game->getPlayer (playerIndex).getName()), eWindowBackgrounds::Black));
+	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Multiplayer~Player_Turn", game->getPlayer (playerIndex).getName()), eWindowBackgrounds::Black));
 	dialog->done.connect ([this, playerIndex]() {
 		if (game->getGameSettings()->clansEnabled)
 		{
@@ -294,7 +294,7 @@ void cMenuControllerMultiplayerHotSeat::reselectLandingPosition (size_t reselect
 	auto playerIndex = invalidLandingPositionPlayers[reselectIndex].first;
 	auto landingState = invalidLandingPositionPlayers[reselectIndex].second;
 
-	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", game->getPlayer (playerIndex).getName()), eWindowBackgrounds::Black));
+	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Multiplayer~Player_Turn", game->getPlayer (playerIndex).getName()), eWindowBackgrounds::Black));
 	dialog->done.connect ([=]() {
 		auto windowLandingPositionSelection = application.show (playerLandingSelectionWindows[playerIndex]);
 

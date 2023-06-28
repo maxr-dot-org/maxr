@@ -40,7 +40,7 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	cWindowAdvancedHangar<cUnitListViewItemCargo> (LoadPCX (GFXOD_HANGAR), unitsData, playerColor, playerClan),
 	selectedCargoUnit (nullptr)
 {
-	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (474, 12), getPosition() + cPosition (474 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Choose_Units"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (474, 12), getPosition() + cPosition (474 + 157, 12 + 10)), lngPack.i18n ("Title~Choose_Units"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	//
 	// Unit Filters
@@ -67,17 +67,17 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 
 	auto updateBuyGroup = emplaceChild<cRadioGroup>();
 
-	buyCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (542, 445), lngPack.i18n ("Text~Others~Buy"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
+	buyCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (542, 445), lngPack.i18n ("Others~Buy"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
 	buyCheckBox->setChecked (true);
 	signalConnectionManager.connect (buyCheckBox->toggled, [this]() { generateSelectionList (false); });
 
-	upgradeCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (542, 445 + 17), lngPack.i18n ("Text~Others~Upgrade"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
+	upgradeCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (getPosition() + cPosition (542, 445 + 17), lngPack.i18n ("Others~Upgrade"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
 	signalConnectionManager.connect (upgradeCheckBox->toggled, [this]() { generateSelectionList (false); });
 
 	//
 	// Resource Bar
 	//
-	cargoLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (411, 285), getPosition() + cPosition (411 + 42, 285 + 10)), lngPack.i18n ("Text~Title~Cargo"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	cargoLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (411, 285), getPosition() + cPosition (411 + 42, 285 + 10)), lngPack.i18n ("Title~Cargo"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 	metalBar = emplaceChild<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (421, 301), getPosition() + cPosition (421 + 20, 301 + 115)), 0, 100, eResourceBarType::Metal, eOrientationType::Vertical);
 	metalBar->setStepSize (metalBarSteps);
 	signalConnectionManager.connect (metalBar->valueChanged, [this]() { metalChanged(); });
@@ -91,7 +91,7 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cRgbColor playerColor,
 	//
 	// Gold Bar
 	//
-	creditLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (360, 285), getPosition() + cPosition (360 + 44, 285 + 10)), lngPack.i18n ("Text~Title~Credits"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	creditLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (360, 285), getPosition() + cPosition (360 + 44, 285 + 10)), lngPack.i18n ("Title~Credits"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 	goldBar = emplaceChild<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (372, 301), getPosition() + cPosition (372 + 20, 301 + 115)), 0, initialGold, eResourceBarType::Gold, eOrientationType::Vertical);
 	signalConnectionManager.connect (goldBar->valueChanged, [this]() { goldChanged(); });
 	goldBar->disable();
@@ -137,12 +137,12 @@ void cWindowLandingUnitSelection::retranslate()
 {
 	cWindow::retranslate();
 
-	titleLabel->setText (lngPack.i18n ("Text~Title~Choose_Units"));
-	buyCheckBox->setText (lngPack.i18n ("Text~Others~Buy"));
+	titleLabel->setText (lngPack.i18n ("Title~Choose_Units"));
+	buyCheckBox->setText (lngPack.i18n ("Others~Buy"));
 
-	upgradeCheckBox->setText (lngPack.i18n ("Text~Others~Upgrade"));
-	cargoLabel->setText (lngPack.i18n ("Text~Title~Cargo"));
-	creditLabel->setText (lngPack.i18n ("Text~Title~Credits"));
+	upgradeCheckBox->setText (lngPack.i18n ("Others~Upgrade"));
+	cargoLabel->setText (lngPack.i18n ("Title~Cargo"));
+	creditLabel->setText (lngPack.i18n ("Title~Credits"));
 }
 
 //------------------------------------------------------------------------------

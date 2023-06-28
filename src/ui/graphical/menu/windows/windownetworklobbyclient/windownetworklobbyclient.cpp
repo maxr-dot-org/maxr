@@ -27,11 +27,11 @@
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobbyClient::cWindowNetworkLobbyClient() :
-	cWindowNetworkLobby (lngPack.i18n ("Text~Others~TCPIP_Client"), false)
+	cWindowNetworkLobby (lngPack.i18n ("Others~TCPIP_Client"), false)
 {
 	setIsHost (false);
 
-	connectButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Connect"));
+	connectButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Title~Connect"));
 	signalConnectionManager.connect (connectButton->clicked, [this]() { triggeredConnect(); });
 
 	signalConnectionManager.connect (ipLineEdit->returnPressed, [this]() {
@@ -43,9 +43,9 @@ cWindowNetworkLobbyClient::cWindowNetworkLobbyClient() :
 void cWindowNetworkLobbyClient::retranslate()
 {
 	cWindowNetworkLobby::retranslate();
-	setTitle (lngPack.i18n ("Text~Others~TCPIP_Client"));
+	setTitle (lngPack.i18n ("Others~TCPIP_Client"));
 
-	connectButton->setText (lngPack.i18n ("Text~Title~Connect"));
+	connectButton->setText (lngPack.i18n ("Title~Connect"));
 }
 
 //------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ void cWindowNetworkLobbyClient::bindConnections (cLobbyClient& lobbyClient)
 
 		sNetworkAddress address{getIp(), getPort()};
 
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connecting", address.toString())); // e.g. Connecting to 127.0.0.1:55800
+		addInfoEntry (lngPack.i18n ("Multiplayer~Network_Connecting", address.toString())); // e.g. Connecting to 127.0.0.1:55800
 		disablePortEdit();
 		disableIpEdit();
 

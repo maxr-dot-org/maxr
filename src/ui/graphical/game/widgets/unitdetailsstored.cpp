@@ -95,9 +95,9 @@ void cUnitDetailsStored::reset()
 
 	const auto& data = unit->data;
 
-	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"));
+	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Others~Hitpoints_7"));
 
-	if (unit->getStaticUnitData().canAttack) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo(), data.getAmmoMax(), lngPack.i18n ("Text~Others~Ammo_7"));
+	if (unit->getStaticUnitData().canAttack) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo(), data.getAmmoMax(), lngPack.i18n ("Others~Ammo_7"));
 
 	const cVehicle* vehicle = dynamic_cast<const cVehicle*> (unit);
 	const auto storedResources = vehicle->getStoredResources();

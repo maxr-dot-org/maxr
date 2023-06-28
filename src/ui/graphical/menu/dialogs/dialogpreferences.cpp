@@ -50,58 +50,58 @@ cDialogPreferences::cDialogPreferences() :
 	SDL_Rect dest = {140, 154, 0, 0};
 	SDL_BlitSurface (getSurface(), &src, getSurface(), &dest);
 
-	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 15), getPosition() + cPosition (getArea().getMaxCorner().x(), 25)), lngPack.i18n ("Text~Settings~Preferences"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 15), getPosition() + cPosition (getArea().getMaxCorner().x(), 25)), lngPack.i18n ("Settings~Preferences"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	volumeLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56), getPosition() + cPosition (135, 66)), lngPack.i18n ("Text~Settings~Volume"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	volumeLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56), getPosition() + cPosition (135, 66)), lngPack.i18n ("Settings~Volume"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 
-	musicLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20), getPosition() + cPosition (135, 66 + 20)), lngPack.i18n ("Text~Settings~Music"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	musicLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20), getPosition() + cPosition (135, 66 + 20)), lngPack.i18n ("Settings~Music"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	musicVolumeSlider = emplaceChild<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20), getPosition() + cPosition (240, 70 + 20)), 0, 128, eOrientationType::Horizontal);
 	signalConnectionManager.connect (musicVolumeSlider->valueChanged, [this]() { musicVolumeChanged(); });
-	disableMusicCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (245, 73), lngPack.i18n ("Text~Settings~Disable"));
+	disableMusicCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (245, 73), lngPack.i18n ("Settings~Disable"));
 	signalConnectionManager.connect (disableMusicCheckBox->toggled, [this]() { musicMuteChanged(); });
 
-	effectsLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20 * 2), getPosition() + cPosition (135, 66 + 20 * 2)), lngPack.i18n ("Text~Settings~Effects"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	effectsLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20 * 2), getPosition() + cPosition (135, 66 + 20 * 2)), lngPack.i18n ("Settings~Effects"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	effectsVolumeSlider = emplaceChild<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20 * 2), getPosition() + cPosition (240, 70 + 20 * 2)), 0, 128, eOrientationType::Horizontal);
 	signalConnectionManager.connect (effectsVolumeSlider->valueChanged, [this]() { effectsVolumeChanged(); });
-	disableEffectsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (245, 73 + 20), lngPack.i18n ("Text~Settings~Disable"));
+	disableEffectsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (245, 73 + 20), lngPack.i18n ("Settings~Disable"));
 	signalConnectionManager.connect (disableEffectsCheckBox->toggled, [this]() { effectsMuteChanged(); });
 	effects3DCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (340, 73 + 20), "3D");
 
-	voicesLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20 * 3), getPosition() + cPosition (135, 66 + 20 * 3)), lngPack.i18n ("Text~Settings~Voices"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	voicesLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 56 + 20 * 3), getPosition() + cPosition (135, 66 + 20 * 3)), lngPack.i18n ("Settings~Voices"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	voicesVolumeSlider = emplaceChild<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 53 + 20 * 3), getPosition() + cPosition (240, 70 + 20 * 3)), 0, 128, eOrientationType::Horizontal);
 	signalConnectionManager.connect (voicesVolumeSlider->valueChanged, [this]() { voicesVolumeChanged(); });
-	disableVoicesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (245, 73 + 20 * 2), lngPack.i18n ("Text~Settings~Disable"));
+	disableVoicesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (245, 73 + 20 * 2), lngPack.i18n ("Settings~Disable"));
 	signalConnectionManager.connect (disableVoicesCheckBox->toggled, [this]() { voicesMuteChanged(); });
 
-	playerNameLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 158), getPosition() + cPosition (138, 168)), lngPack.i18n ("Text~Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	playerNameLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 158), getPosition() + cPosition (138, 168)), lngPack.i18n ("Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	nameEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (140, 154), getPosition() + cPosition (140 + 185, 154 + 18)), eLineEditFrameType::Box);
 
-	colorLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 175), getPosition() + cPosition (135, 185)), lngPack.i18n ("Text~Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	colorLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 175), getPosition() + cPosition (135, 185)), lngPack.i18n ("Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	colorSelector = emplaceChild<cColorSelector> (getPosition() + cPosition (160, 172), cRgbColor::black());
 
-	scrollSpeedLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 257), getPosition() + cPosition (135, 267)), lngPack.i18n ("Text~Settings~Scrollspeed"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	scrollSpeedLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 257), getPosition() + cPosition (135, 267)), lngPack.i18n ("Settings~Scrollspeed"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	scrollSpeedSlider = emplaceChild<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 254), getPosition() + cPosition (240, 271)), 0, 128, eOrientationType::Horizontal);
 
-	animationCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193), lngPack.i18n ("Text~Settings~Animation"));
-	shadowsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20), lngPack.i18n ("Text~Settings~Shadows"));
-	aplhaCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20 * 2), lngPack.i18n ("Text~Settings~Alphaeffects"));
-	demageBuildingsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193), lngPack.i18n ("Text~Settings~ShowDamage"));
-	demageVehiclesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20), lngPack.i18n ("Text~Settings~ShowDamageVehicle"));
-	tracksCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20 * 2), lngPack.i18n ("Text~Settings~Tracks"));
+	animationCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193), lngPack.i18n ("Settings~Animation"));
+	shadowsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20), lngPack.i18n ("Settings~Shadows"));
+	aplhaCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20 * 2), lngPack.i18n ("Settings~Alphaeffects"));
+	demageBuildingsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193), lngPack.i18n ("Settings~ShowDamage"));
+	demageVehiclesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20), lngPack.i18n ("Settings~ShowDamageVehicle"));
+	tracksCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20 * 2), lngPack.i18n ("Settings~Tracks"));
 
-	autosaveCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294), lngPack.i18n ("Text~Settings~Autosave"));
-	introCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294 + 20), lngPack.i18n ("Text~Settings~Intro"));
-	windowCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294 + 20 * 2), lngPack.i18n ("Text~Settings~Window"));
+	autosaveCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294), lngPack.i18n ("Settings~Autosave"));
+	introCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294 + 20), lngPack.i18n ("Settings~Intro"));
+	windowCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294 + 20 * 2), lngPack.i18n ("Settings~Window"));
 
-	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (208, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal);
+	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (208, 383), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
-	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (118, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), eUnicodeFontType::LatinNormal);
+	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (118, 383), ePushButtonType::Angular, lngPack.i18n ("Others~Cancel"), eUnicodeFontType::LatinNormal);
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { cancelClicked(); });
 
-	languageLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298 + 20), getPosition() + cPosition (140 + 95, 298 + 20 + 10)), lngPack.i18n ("Text~Settings~Language") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Right);
+	languageLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298 + 20), getPosition() + cPosition (140 + 95, 298 + 20 + 10)), lngPack.i18n ("Settings~Language") + lngPack.i18n ("Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Right);
 	languagesComboBox = emplaceChild<cComboBox> (cBox<cPosition> (getPosition() + cPosition (240, 294 + 20), getPosition() + cPosition (240 + 100, 294 + 20 + 17)));
 	signalConnectionManager.connect (languagesComboBox->onItemChanged, [this] (const std::string& selectedLanguage) {
 		auto& settings = cSettings::getInstance();
@@ -119,7 +119,7 @@ cDialogPreferences::cDialogPreferences() :
 		}
 	});
 
-	resolutionLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298), getPosition() + cPosition (140 + 95, 298 + 10)), lngPack.i18n ("Text~Settings~Resolution") + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Right);
+	resolutionLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298), getPosition() + cPosition (140 + 95, 298 + 10)), lngPack.i18n ("Settings~Resolution") + lngPack.i18n ("Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Right);
 	resolutionsComboBox = emplaceChild<cComboBox> (cBox<cPosition> (getPosition() + cPosition (240, 294), getPosition() + cPosition (240 + 100, 294 + 17)));
 
 	loadValues();
@@ -132,33 +132,33 @@ cDialogPreferences::~cDialogPreferences()
 //------------------------------------------------------------------------------
 void cDialogPreferences::retranslate()
 {
-	titleLabel->setText (lngPack.i18n ("Text~Settings~Preferences"));
-	volumeLabel->setText (lngPack.i18n ("Text~Settings~Volume"));
-	musicLabel->setText (lngPack.i18n ("Text~Settings~Music"));
-	effectsLabel->setText (lngPack.i18n ("Text~Settings~Effects"));
-	voicesLabel->setText (lngPack.i18n ("Text~Settings~Voices"));
-	playerNameLabel->setText (lngPack.i18n ("Text~Title~Player_Name"));
-	colorLabel->setText (lngPack.i18n ("Text~Title~Color"));
-	scrollSpeedLabel->setText (lngPack.i18n ("Text~Settings~Scrollspeed"));
-	languageLabel->setText (lngPack.i18n ("Text~Settings~Language") + lngPack.i18n ("Text~Punctuation~Colon"));
-	resolutionLabel->setText (lngPack.i18n ("Text~Settings~Resolution") + lngPack.i18n ("Text~Punctuation~Colon"));
+	titleLabel->setText (lngPack.i18n ("Settings~Preferences"));
+	volumeLabel->setText (lngPack.i18n ("Settings~Volume"));
+	musicLabel->setText (lngPack.i18n ("Settings~Music"));
+	effectsLabel->setText (lngPack.i18n ("Settings~Effects"));
+	voicesLabel->setText (lngPack.i18n ("Settings~Voices"));
+	playerNameLabel->setText (lngPack.i18n ("Title~Player_Name"));
+	colorLabel->setText (lngPack.i18n ("Title~Color"));
+	scrollSpeedLabel->setText (lngPack.i18n ("Settings~Scrollspeed"));
+	languageLabel->setText (lngPack.i18n ("Settings~Language") + lngPack.i18n ("Punctuation~Colon"));
+	resolutionLabel->setText (lngPack.i18n ("Settings~Resolution") + lngPack.i18n ("Punctuation~Colon"));
 
-	doneButton->setText (lngPack.i18n ("Text~Others~Done"));
-	cancelButton->setText (lngPack.i18n ("Text~Others~Cancel"));
+	doneButton->setText (lngPack.i18n ("Others~Done"));
+	cancelButton->setText (lngPack.i18n ("Others~Cancel"));
 
-	disableMusicCheckBox->setText (lngPack.i18n ("Text~Settings~Disable"));
-	disableEffectsCheckBox->setText (lngPack.i18n ("Text~Settings~Disable"));
+	disableMusicCheckBox->setText (lngPack.i18n ("Settings~Disable"));
+	disableEffectsCheckBox->setText (lngPack.i18n ("Settings~Disable"));
 	effects3DCheckBox->setText ("3D"); // TODO: Missing translation
-	disableVoicesCheckBox->setText (lngPack.i18n ("Text~Settings~Disable"));
-	animationCheckBox->setText (lngPack.i18n ("Text~Settings~Animation"));
-	shadowsCheckBox->setText (lngPack.i18n ("Text~Settings~Shadows"));
-	aplhaCheckBox->setText (lngPack.i18n ("Text~Settings~Alphaeffects"));
-	demageBuildingsCheckBox->setText (lngPack.i18n ("Text~Settings~ShowDamage"));
-	demageVehiclesCheckBox->setText (lngPack.i18n ("Text~Settings~ShowDamageVehicle"));
-	tracksCheckBox->setText (lngPack.i18n ("Text~Settings~Tracks"));
-	autosaveCheckBox->setText (lngPack.i18n ("Text~Settings~Autosave"));
-	introCheckBox->setText (lngPack.i18n ("Text~Settings~Intro"));
-	windowCheckBox->setText (lngPack.i18n ("Text~Settings~Window"));
+	disableVoicesCheckBox->setText (lngPack.i18n ("Settings~Disable"));
+	animationCheckBox->setText (lngPack.i18n ("Settings~Animation"));
+	shadowsCheckBox->setText (lngPack.i18n ("Settings~Shadows"));
+	aplhaCheckBox->setText (lngPack.i18n ("Settings~Alphaeffects"));
+	demageBuildingsCheckBox->setText (lngPack.i18n ("Settings~ShowDamage"));
+	demageVehiclesCheckBox->setText (lngPack.i18n ("Settings~ShowDamageVehicle"));
+	tracksCheckBox->setText (lngPack.i18n ("Settings~Tracks"));
+	autosaveCheckBox->setText (lngPack.i18n ("Settings~Autosave"));
+	introCheckBox->setText (lngPack.i18n ("Settings~Intro"));
+	windowCheckBox->setText (lngPack.i18n ("Settings~Window"));
 }
 
 //------------------------------------------------------------------------------
@@ -273,7 +273,7 @@ void cDialogPreferences::saveValues()
 	{
 		// TODO: handle invalid resolution?!
 
-		// lngPack.i18n ("Text~Comp~ResolutionWarning")
+		// lngPack.i18n ("Comp~ResolutionWarning")
 		// added info to old langpack if needed, else it can be removed from lang-files - nonsinn
 	}
 	if (needRestart)
@@ -281,7 +281,7 @@ void cDialogPreferences::saveValues()
 		auto application = getActiveApplication();
 		if (application)
 		{
-			application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Comp~RestartRequired")));
+			application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Comp~RestartRequired")));
 		}
 	}
 	applySettings (Video, settings.getVideoSettings());

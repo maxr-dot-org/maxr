@@ -80,7 +80,7 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 	});
 
 	signalConnectionManager.connect (lobbyClient.onReconnectGame, [this] (std::shared_ptr<cClient> client) {
-		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Multiplayer~Reconnect")));
+		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Multiplayer~Reconnect")));
 		signalConnectionManager.connect (yesNoDialog->yesClicked, [=]() {
 			reconnectToGame (client);
 		});
@@ -210,7 +210,7 @@ void cMenuControllerMultiplayerClient::startSavedGame (std::shared_ptr<cClient> 
 		{
 			reset();
 			start();
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
+			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Multiplayer~Lost_Connection", "server"));
 		}
 	});
 }
@@ -244,7 +244,7 @@ void cMenuControllerMultiplayerClient::startNewGame (std::shared_ptr<cClient> cl
 		{
 			reset();
 			start();
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
+			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Multiplayer~Lost_Connection", "server"));
 		}
 	});
 }
@@ -269,7 +269,7 @@ void cMenuControllerMultiplayerClient::reconnectToGame (std::shared_ptr<cClient>
 		{
 			reset();
 			start();
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
+			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Multiplayer~Lost_Connection", "server"));
 		}
 	});
 }

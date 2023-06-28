@@ -24,9 +24,9 @@
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobbyHost::cWindowNetworkLobbyHost() :
-	cWindowNetworkLobby (lngPack.i18n ("Text~Others~TCPIP_Host"), true)
+	cWindowNetworkLobby (lngPack.i18n ("Others~TCPIP_Host"), true)
 {
-	startButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Host_Start"));
+	startButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 200), ePushButtonType::StandardSmall, lngPack.i18n ("Others~Host_Start"));
 	signalConnectionManager.connect (startButton->clicked, [this]() { triggeredStartHost(); });
 }
 
@@ -35,6 +35,6 @@ void cWindowNetworkLobbyHost::retranslate()
 {
 	cWindowNetworkLobby::retranslate();
 
-	setTitle (lngPack.i18n ("Text~Others~TCPIP_Host"));
-	startButton->setText (lngPack.i18n ("Text~Others~Host_Start"));
+	setTitle (lngPack.i18n ("Others~TCPIP_Host"));
+	startButton->setText (lngPack.i18n ("Others~Host_Start"));
 }

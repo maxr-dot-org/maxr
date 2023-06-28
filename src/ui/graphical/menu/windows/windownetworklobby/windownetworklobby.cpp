@@ -61,7 +61,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 
 	chatLineEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (20, 424), getPosition() + cPosition (20 + 430, 424 + 10)));
 	signalConnectionManager.connect (chatLineEdit->returnPressed, [this]() { triggerChatMessage (true); });
-	sendButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 416), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Send"));
+	sendButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 416), ePushButtonType::StandardSmall, lngPack.i18n ("Title~Send"));
 	signalConnectionManager.connect (sendButton->clicked, [this]() { triggerChatMessage (false); });
 	chatList = emplaceChild<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition() + cPosition (14, 284), getPosition() + cPosition (14 + 439, 284 + 124)), eScrollBarStyle::Classic);
 	chatList->disableSelectable();
@@ -69,10 +69,10 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	chatList->setEndMargin (cPosition (10, 10));
 	chatList->setScrollOffset (cUnicodeFont::font->getFontHeight() + 3);
 
-	ipLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 245), getPosition() + cPosition (20 + 170, 245 + 10)), lngPack.i18n ("Text~Title~IP"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
-	portLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (228, 245), getPosition() + cPosition (228 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Port"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
-	playerNameLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (352, 245), getPosition() + cPosition (352 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
-	colorLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 245), getPosition() + cPosition (500 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	ipLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (20, 245), getPosition() + cPosition (20 + 170, 245 + 10)), lngPack.i18n ("Title~IP"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	portLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (228, 245), getPosition() + cPosition (228 + 90, 245 + 10)), lngPack.i18n ("Title~Port"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	playerNameLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (352, 245), getPosition() + cPosition (352 + 90, 245 + 10)), lngPack.i18n ("Title~Player_Name"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	colorLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 245), getPosition() + cPosition (500 + 90, 245 + 10)), lngPack.i18n ("Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 
 	ipLineEdit = emplaceChild<cLineEdit> (cBox<cPosition> (getPosition() + cPosition (20, 260), getPosition() + cPosition (20 + 178, 260 + 10)));
 	if (disableIp)
@@ -100,13 +100,13 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	});
 	signalConnectionManager.connect (nameLineEdit->editingFinished, [&, nameLineEdit] (eValidatorState) { localPlayer->setName (nameLineEdit->getText()); });
 
-	mapButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 42), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Choose_Planet"));
+	mapButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 42), ePushButtonType::StandardSmall, lngPack.i18n ("Title~Choose_Planet"));
 	signalConnectionManager.connect (mapButton->clicked, [this]() { triggeredSelectMap(); });
 
-	settingsButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 77), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Options"));
+	settingsButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 77), ePushButtonType::StandardSmall, lngPack.i18n ("Title~Options"));
 	signalConnectionManager.connect (settingsButton->clicked, [this]() { triggeredSelectSettings(); });
 
-	loadButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 120), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Game_Load"));
+	loadButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 120), ePushButtonType::StandardSmall, lngPack.i18n ("Others~Game_Load"));
 	signalConnectionManager.connect (loadButton->clicked, [this]() { triggeredSelectSaveGame(); });
 
 	playersList = emplaceChild<cListView<cLobbyPlayerListViewItem>> (cBox<cPosition> (getPosition() + cPosition (465, 284), getPosition() + cPosition (465 + 167, 284 + 124)), eScrollBarStyle::Classic);
@@ -120,10 +120,10 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 		localPlayer->setColor (color);
 	});
 
-	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK"));
+	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 450), ePushButtonType::StandardBig, lngPack.i18n ("Others~OK"));
 	signalConnectionManager.connect (okButton->clicked, [this]() { triggeredStartGame(); });
 
-	auto backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back"));
+	auto backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 450), ePushButtonType::StandardBig, lngPack.i18n ("Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	updateSettingsText();
@@ -137,19 +137,19 @@ void cWindowNetworkLobby::retranslate()
 {
 	cWindow::retranslate();
 
-	sendButton->setText (lngPack.i18n ("Text~Title~Send"));
+	sendButton->setText (lngPack.i18n ("Title~Send"));
 
-	ipLabel->setText (lngPack.i18n ("Text~Title~IP"));
-	portLabel->setText (lngPack.i18n ("Text~Title~Port"));
-	playerNameLabel->setText (lngPack.i18n ("Text~Title~Player_Name"));
-	colorLabel->setText (lngPack.i18n ("Text~Title~Color"));
+	ipLabel->setText (lngPack.i18n ("Title~IP"));
+	portLabel->setText (lngPack.i18n ("Title~Port"));
+	playerNameLabel->setText (lngPack.i18n ("Title~Player_Name"));
+	colorLabel->setText (lngPack.i18n ("Title~Color"));
 
-	mapButton->setText (lngPack.i18n ("Text~Title~Choose_Planet"));
-	settingsButton->setText (lngPack.i18n ("Text~Title~Options"));
-	loadButton->setText (lngPack.i18n ("Text~Others~Game_Load"));
+	mapButton->setText (lngPack.i18n ("Title~Choose_Planet"));
+	settingsButton->setText (lngPack.i18n ("Title~Options"));
+	loadButton->setText (lngPack.i18n ("Others~Game_Load"));
 
-	okButton->setText (lngPack.i18n ("Text~Others~OK"));
-	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+	okButton->setText (lngPack.i18n ("Others~OK"));
+	backButton->setText (lngPack.i18n ("Others~Back"));
 
 	updateSettingsText();
 }
@@ -164,29 +164,29 @@ void cWindowNetworkLobby::setTitle (const std::string& title)
 void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 {
 	signalConnectionManager.connect (lobbyClient.onLocalPlayerConnected, [this]() {
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connected"));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Network_Connected"));
 	});
 	signalConnectionManager.connect (lobbyClient.onDifferentVersion, [this] (const std::string& version, const std::string& revision) {
 		if (version != PACKAGE_VERSION)
 		{
-			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Error", version));
-			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Own", PACKAGE_VERSION));
+			addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Error", version));
+			addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Own", PACKAGE_VERSION));
 			return;
 		}
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Warning_Client", version + " " + revision));
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Own", (std::string) PACKAGE_VERSION + " " + PACKAGE_REV));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Warning_Client", version + " " + revision));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Own", (std::string) PACKAGE_VERSION + " " + PACKAGE_REV));
 	});
 	signalConnectionManager.connect (lobbyClient.onConnectionFailed, [this] (eDeclineConnectionReason reason) {
 		switch (reason)
 		{
 			case eDeclineConnectionReason::NotPartOfTheGame:
-				addInfoEntry (lngPack.i18n ("Text~Multiplayer~Reconnect_Not_Part_Of_Game"));
+				addInfoEntry (lngPack.i18n ("Multiplayer~Reconnect_Not_Part_Of_Game"));
 				break;
 			case eDeclineConnectionReason::AlreadyConnected:
-				addInfoEntry (lngPack.i18n ("Text~Multiplayer~Reconnect_Already_Connected"));
+				addInfoEntry (lngPack.i18n ("Multiplayer~Reconnect_Already_Connected"));
 				break;
 			default:
-				addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Connect"));
+				addInfoEntry (lngPack.i18n ("Multiplayer~Network_Error_Connect"));
 				break;
 		}
 		enablePortEdit();
@@ -194,14 +194,14 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 	});
 	signalConnectionManager.connect (lobbyClient.onConnectionClosed, [this]() {
 		removePlayers();
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Lost_Connection", "server"));
 
 		enablePortEdit();
 		enableIpEdit();
 	});
 
 	signalConnectionManager.connect (lobbyClient.onNoMapNoReady, [this] (const std::string& mapName) {
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", mapName));
+		addInfoEntry (lngPack.i18n ("Multiplayer~No_Map_No_Ready", mapName));
 	});
 	signalConnectionManager.connect (lobbyClient.onIncompatibleMap, [this] (const std::string& mapName, const std::filesystem::path& localPath) {
 		addInfoEntry ("You have an incompatible version of the"); //TODO: translate
@@ -210,13 +210,13 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 		addInfoEntry ("Move it away or delete it, then reconnect.");
 	});
 	signalConnectionManager.connect (lobbyClient.onMapDownloadRequest, [this] (const std::string& mapName) {
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadRequest"));
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Download", mapName));
+		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_DownloadRequest"));
+		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_Download", mapName));
 	});
 
 	signalConnectionManager.connect (lobbyClient.onMissingOriginalMap, [this] (const std::string& mapName) {
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadRequestInvalid"));
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadInvalid", mapName));
+		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_DownloadRequestInvalid"));
+		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_DownloadInvalid", mapName));
 	});
 
 	signalConnectionManager.connect (lobbyClient.onDownloadMapPercentChanged, [this] (std::size_t percent) {
@@ -227,17 +227,17 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 	});
 	signalConnectionManager.connect (lobbyClient.onDownloadMapFinished, [this] (std::shared_ptr<cStaticMap> staticMap) {
 		setStaticMap (staticMap);
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Finished"));
+		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_Finished"));
 	});
 
 	signalConnectionManager.connect (lobbyClient.onPlayersList, [this] (const cPlayerBasicData& localPlayer, const std::vector<cPlayerBasicData>& players) {
 		updatePlayerList (localPlayer, players);
 	});
 	signalConnectionManager.connect (lobbyClient.onDuplicatedPlayerColor, [this]() {
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Color_Taken"));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Player_Color_Taken"));
 	});
 	signalConnectionManager.connect (lobbyClient.onDuplicatedPlayerName, [this]() {
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Name_Taken"));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Player_Name_Taken"));
 	});
 
 	signalConnectionManager.connect (lobbyClient.onOptionsChanged, [this] (std::shared_ptr<cGameSettings> settings, std::shared_ptr<cStaticMap> map, const cSaveGameInfo& saveGameInfo) {
@@ -247,10 +247,10 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 	});
 
 	signalConnectionManager.connect (lobbyClient.onCannotEndLobby, [this] (bool missingSettings, const std::vector<cPlayerBasicData>& notReadyPlayers, bool hostNotInSavegame, const std::vector<cPlayerBasicData>& missingPlayers) {
-		if (missingSettings) addInfoEntry (lngPack.i18n ("Text~Multiplayer~Missing_Settings"));
+		if (missingSettings) addInfoEntry (lngPack.i18n ("Multiplayer~Missing_Settings"));
 		for (const auto& player : notReadyPlayers)
 		{
-			addInfoEntry (lngPack.i18n ("Text~Multiplayer~Not_Ready", player.getName()));
+			addInfoEntry (lngPack.i18n ("Multiplayer~Not_Ready", player.getName()));
 		}
 		// TODO: missing translations
 		if (!notReadyPlayers.empty()) addInfoEntry ("Not all players are ready...");
@@ -259,11 +259,11 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 		{
 			addInfoEntry ("Missing player: " + player.getName());
 		}
-		if (!missingPlayers.empty()) addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
+		if (!missingPlayers.empty()) addInfoEntry (lngPack.i18n ("Multiplayer~Player_Wrong"));
 	});
 
 	signalConnectionManager.connect (lobbyClient.onDisconnectNotInSavedGame, [this]() {
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Disconnect_Not_In_Save"));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Disconnect_Not_In_Save"));
 	});
 
 	signalConnectionManager.connect (triggeredChatMessage, [&lobbyClient, this]() {
@@ -297,25 +297,25 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 void cWindowNetworkLobby::bindConnections (cLobbyServer& lobbyServer)
 {
 	signalConnectionManager.connect (lobbyServer.onClientConnected, [this] (const cPlayerBasicData& newPlayer) {
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Joined", newPlayer.getName()));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Player_Joined", newPlayer.getName()));
 	});
 	signalConnectionManager.connect (lobbyServer.onClientDisconnected, [this] (const cPlayerBasicData& oldPlayer) {
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Left", oldPlayer.getName()));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Player_Left", oldPlayer.getName()));
 	});
 	signalConnectionManager.connect (lobbyServer.onDifferentVersion, [this] (const std::string& version, const std::string& revision) {
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Warning_Server", version + " " + revision));
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Gameversion_Own", (std::string) PACKAGE_VERSION + " " + PACKAGE_REV));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Warning_Server", version + " " + revision));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Own", (std::string) PACKAGE_VERSION + " " + PACKAGE_REV));
 	});
 }
 
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::updateSettingsText()
 {
-	std::string text = lngPack.i18n ("Text~Main~Version", PACKAGE_VERSION) + "\n";
+	std::string text = lngPack.i18n ("Main~Version", PACKAGE_VERSION) + "\n";
 
 	if (saveGameInfo.number >= 0)
 	{
-		text += lngPack.i18n ("Text~Title~Savegame") + "\n  " + saveGameInfo.gameName + "\n\n" + lngPack.i18n ("Text~Title~Players") + "\n";
+		text += lngPack.i18n ("Title~Savegame") + "\n  " + saveGameInfo.gameName + "\n\n" + lngPack.i18n ("Title~Players") + "\n";
 		for (const auto& player : saveGameInfo.players)
 		{
 			text += player.getName() + "\n";
@@ -324,12 +324,12 @@ void cWindowNetworkLobby::updateSettingsText()
 	}
 	if (staticMap != nullptr)
 	{
-		text += lngPack.i18n ("Text~Title~Map", staticMap->getName());
+		text += lngPack.i18n ("Title~Map", staticMap->getName());
 		text += " (" + std::to_string (staticMap->getSize().x()) + "x" + std::to_string (staticMap->getSize().y()) + ")\n";
 	}
 	else if (saveGameInfo.number < 0)
 	{
-		text += lngPack.i18n ("Text~Multiplayer~Map_NoSet") + "\n";
+		text += lngPack.i18n ("Multiplayer~Map_NoSet") + "\n";
 	}
 
 	text += "\n";
@@ -338,27 +338,27 @@ void cWindowNetworkLobby::updateSettingsText()
 	{
 		if (gameSettings)
 		{
-			text += lngPack.i18n ("Text~Comp~GameEndsAt") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->victoryConditionType, gameSettings->victoryTurns, gameSettings->victoryPoints) + "\n";
-			text += lngPack.i18n ("Text~Title~Metal") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->metalAmount) + "\n";
-			text += lngPack.i18n ("Text~Title~Oil") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->oilAmount) + "\n";
-			text += lngPack.i18n ("Text~Title~Gold") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->goldAmount) + "\n";
-			text += lngPack.i18n ("Text~Title~Resource_Density") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->resourceDensity) + "\n";
-			text += lngPack.i18n ("Text~Title~Credits") + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (gameSettings->startCredits) + "\n";
-			text += lngPack.i18n ("Text~Title~BridgeHead") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->bridgeheadType) + "\n";
-			text += lngPack.i18n ("Text~Title~Clans") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->clansEnabled ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
-			text += lngPack.i18n ("Text~Title~Game_Type") + lngPack.i18n ("Text~Punctuation~Colon") + toTranslatedString (gameSettings->gameType) + "\n";
-			text += lngPack.i18n ("Text~Title~Turn_limit") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->turnLimitActive ? std::to_string (gameSettings->turnLimit.count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
+			text += lngPack.i18n ("Comp~GameEndsAt") + lngPack.i18n ("Punctuation~Colon") + toTranslatedString (gameSettings->victoryConditionType, gameSettings->victoryTurns, gameSettings->victoryPoints) + "\n";
+			text += lngPack.i18n ("Title~Metal") + lngPack.i18n ("Punctuation~Colon") + toTranslatedString (gameSettings->metalAmount) + "\n";
+			text += lngPack.i18n ("Title~Oil") + lngPack.i18n ("Punctuation~Colon") + toTranslatedString (gameSettings->oilAmount) + "\n";
+			text += lngPack.i18n ("Title~Gold") + lngPack.i18n ("Punctuation~Colon") + toTranslatedString (gameSettings->goldAmount) + "\n";
+			text += lngPack.i18n ("Title~Resource_Density") + lngPack.i18n ("Punctuation~Colon") + toTranslatedString (gameSettings->resourceDensity) + "\n";
+			text += lngPack.i18n ("Title~Credits") + lngPack.i18n ("Punctuation~Colon") + std::to_string (gameSettings->startCredits) + "\n";
+			text += lngPack.i18n ("Title~BridgeHead") + lngPack.i18n ("Punctuation~Colon") + toTranslatedString (gameSettings->bridgeheadType) + "\n";
+			text += lngPack.i18n ("Title~Clans") + lngPack.i18n ("Punctuation~Colon") + (gameSettings->clansEnabled ? lngPack.i18n ("Option~On") : lngPack.i18n ("Option~Off")) + "\n";
+			text += lngPack.i18n ("Title~Game_Type") + lngPack.i18n ("Punctuation~Colon") + toTranslatedString (gameSettings->gameType) + "\n";
+			text += lngPack.i18n ("Title~Turn_limit") + lngPack.i18n ("Punctuation~Colon") + (gameSettings->turnLimitActive ? std::to_string (gameSettings->turnLimit.count()) + "s" : lngPack.i18n ("Settings~Unlimited_11")) + "\n";
 			if (gameSettings->gameType == eGameSettingsGameType::Simultaneous)
 			{
-				text += lngPack.i18n ("Text~Title~Turn_end") + lngPack.i18n ("Text~Punctuation~Colon") + (gameSettings->turnEndDeadlineActive ? std::to_string (gameSettings->turnEndDeadline.count()) + "s" : lngPack.i18n ("Text~Settings~Unlimited_11")) + "\n";
+				text += lngPack.i18n ("Title~Turn_end") + lngPack.i18n ("Punctuation~Colon") + (gameSettings->turnEndDeadlineActive ? std::to_string (gameSettings->turnEndDeadline.count()) + "s" : lngPack.i18n ("Settings~Unlimited_11")) + "\n";
 			}
 		}
 		else
-			text += lngPack.i18n ("Text~Multiplayer~Option_NoSet") + "\n";
+			text += lngPack.i18n ("Multiplayer~Option_NoSet") + "\n";
 	}
 	if (saveGameInfo.number >= 0)
 	{
-		text += lngPack.i18n ("Text~Comp~Turn_5") + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (saveGameInfo.turn) + "\n";
+		text += lngPack.i18n ("Comp~Turn_5") + lngPack.i18n ("Punctuation~Colon") + std::to_string (saveGameInfo.turn) + "\n";
 	}
 	settingsTextLabel->setText (text);
 }
@@ -494,13 +494,13 @@ void cWindowNetworkLobby::setSaveGame (const cSaveGameInfo& saveInfo_)
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::setMapDownloadPercent (int percent)
 {
-	mapNameLabel->setText (lngPack.i18n ("Text~Multiplayer~MapDL_Percent", std::to_string (percent)));
+	mapNameLabel->setText (lngPack.i18n ("Multiplayer~MapDL_Percent", std::to_string (percent)));
 }
 
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::setMapDownloadCanceled()
 {
-	mapNameLabel->setText (lngPack.i18n ("Text~Multiplayer~MapDL_Cancel"));
+	mapNameLabel->setText (lngPack.i18n ("Multiplayer~MapDL_Cancel"));
 }
 
 //------------------------------------------------------------------------------

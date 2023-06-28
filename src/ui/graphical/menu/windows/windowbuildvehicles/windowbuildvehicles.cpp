@@ -42,7 +42,7 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), unitsData, *building_.getOwner()),
 	building (building_)
 {
-	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Title~Build_Factory"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	auto turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10)));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
@@ -64,7 +64,7 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 	backButton->moveTo (getPosition() + cPosition (300, 452));
 	okButton->moveTo (getPosition() + cPosition (387, 452));
 
-	repeatCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (447, 322), lngPack.i18n ("Text~Comp~Repeat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Standard);
+	repeatCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (447, 322), lngPack.i18n ("Comp~Repeat"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::Standard);
 
 	generateSelectionList (building, map, *unitsData);
 	generateBuildList (building);
@@ -80,8 +80,8 @@ void cWindowBuildVehicles::retranslate()
 {
 	cWindowAdvancedHangar<cUnitListViewItemBuild>::retranslate();
 
-	titleLabel->setText (lngPack.i18n ("Text~Title~Build_Factory"));
-	repeatCheckBox->setText (lngPack.i18n ("Text~Comp~Repeat"));
+	titleLabel->setText (lngPack.i18n ("Title~Build_Factory"));
+	repeatCheckBox->setText (lngPack.i18n ("Comp~Repeat"));
 }
 
 //------------------------------------------------------------------------------
@@ -208,6 +208,6 @@ void cWindowBuildVehicles::closeOnUnitDestruction()
 	auto application = getActiveApplication();
 	if (application)
 	{
-		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Others~Unit_destroyed")));
+		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Others~Unit_destroyed")));
 	}
 }

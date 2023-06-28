@@ -49,12 +49,12 @@ cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& ap
 {
 	signalConnectionManager.connect (lobbyServer.onMapRequested, [this] (const cPlayerBasicData& player) {
 		if (!windowNetworkLobby) return;
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", player.getName()));
+		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_Upload", player.getName()));
 	});
 
 	signalConnectionManager.connect (lobbyServer.onMapUploaded, [this] (const cPlayerBasicData& player) {
 		if (!windowNetworkLobby) return;
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_UploadFinished", player.getName()));
+		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_UploadFinished", player.getName()));
 	});
 
 	signalConnectionManager.connect (lobbyClient.onChatMessage, [this] (const std::string& playerName, const std::string& message) {
@@ -102,7 +102,7 @@ cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& ap
 	// Handled client side.
 
 	signalConnectionManager.connect (lobbyServer.onErrorLoadSavedGame, [this] (int /*slot*/) {
-		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Loading")));
+		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Loading")));
 	});
 	lobbyClient.connectToLocalServer (lobbyServer);
 }
@@ -182,7 +182,7 @@ void cMenuControllerMultiplayerHost::handleSelectSaveGame()
 			cStaticMap staticMap;
 			if (!staticMap.loadMap (saveGame.mapName))
 			{
-				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Map_Loading")));
+				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Map_Loading")));
 				return;
 			}
 			else if (MapDownload::calculateCheckSum (saveGame.mapName) != saveGame.mapCrc)
@@ -201,7 +201,7 @@ void cMenuControllerMultiplayerHost::checkGameStart()
 {
 	if (!connectionManager->isServerOpen())
 	{
-		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Server_Not_Running"));
+		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Multiplayer~Server_Not_Running"));
 		return;
 	}
 	lobbyClient.askToFinishLobby();
@@ -256,13 +256,13 @@ void cMenuControllerMultiplayerHost::startHost()
 		case eOpenServerResult::AlreadyOpened: return;
 		case eOpenServerResult::Success:
 		{
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Open", std::to_string (windowNetworkLobby->getPort())));
+			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Multiplayer~Network_Open", std::to_string (windowNetworkLobby->getPort())));
 			windowNetworkLobby->disablePortEdit();
 			break;
 		}
 		case eOpenServerResult::Failed:
 		{
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Socket"));
+			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Multiplayer~Network_Error_Socket"));
 			break;
 		}
 	}

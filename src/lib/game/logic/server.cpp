@@ -50,7 +50,7 @@ cServer::cServer (std::shared_ptr<cConnectionManager> connectionManager) :
 	model.newTurnStarted.connect ([this] (const sNewTurnReport&) {
 		if (cSettings::getInstance().shouldAutosave())
 		{
-			saveGameState (10, lngPack.i18n ("Text~Comp~Turn_5") + " " + std::to_string (model.getTurnCounter()->getTurn()) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
+			saveGameState (10, lngPack.i18n ("Comp~Turn_5") + " " + std::to_string (model.getTurnCounter()->getTurn()) + " - " + lngPack.i18n ("Settings~Autosave"));
 		}
 		disableFreezeMode (eFreezeMode::WaitForTurnend);
 	});

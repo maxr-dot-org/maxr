@@ -35,7 +35,7 @@ cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const c
 	cWindowHangar (LoadPCX (GFXOD_UPGRADE), unitsData, player),
 	filterState (filterState_)
 {
-	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Upgrades_Menu"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Title~Upgrades_Menu"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	auto turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10)));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
@@ -66,7 +66,7 @@ cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const c
 	//
 	// Gold Bar
 	//
-	creditLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 285), getPosition() + cPosition (362 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Credits"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	creditLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (362, 285), getPosition() + cPosition (362 + 40, 285 + 10)), lngPack.i18n ("Title~Credits"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 	goldBar = emplaceChild<cResourceBar> (cBox<cPosition> (getPosition() + cPosition (372, 301), getPosition() + cPosition (372 + 20, 301 + 115)), 0, player.getCredits(), eResourceBarType::Gold, eOrientationType::Vertical);
 	signalConnectionManager.connect (goldBar->valueChanged, [this]() { goldChanged(); });
 	goldBar->disable();
@@ -94,8 +94,8 @@ cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const c
 void cWindowUpgrades::retranslate()
 {
 	cWindowHangar::retranslate();
-	titleLabel->setText (lngPack.i18n ("Text~Title~Upgrades_Menu"));
-	creditLabel->setText (lngPack.i18n ("Text~Title~Credits"));
+	titleLabel->setText (lngPack.i18n ("Title~Upgrades_Menu"));
+	creditLabel->setText (lngPack.i18n ("Title~Credits"));
 }
 
 //------------------------------------------------------------------------------

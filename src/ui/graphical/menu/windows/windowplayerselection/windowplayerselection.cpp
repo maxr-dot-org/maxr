@@ -35,18 +35,18 @@ cWindowPlayerSelection::cWindowPlayerSelection() :
 	cWindow (LoadPCX (GFXOD_PLAYER_SELECT)) // 4 players
 // cWindow (LoadPCX (GFXOD_HOTSEAT)) // 8 players
 {
-	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~HotSeat"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Title~HotSeat"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	teamLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (65, 35), getPosition() + cPosition (65 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Team"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
-	humanLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (165, 35), getPosition() + cPosition (165 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Human"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
-	computerLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (275, 35), getPosition() + cPosition (275 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Computer"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
-	nobodyLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (385, 35), getPosition() + cPosition (385 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Nobody"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
-	//emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 35), getPosition() + cPosition (500 + 70, 35 + 10)), lngPack.i18n ("Text~Title~Clan"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	teamLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (65, 35), getPosition() + cPosition (65 + 70, 35 + 10)), lngPack.i18n ("Title~Team"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	humanLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (165, 35), getPosition() + cPosition (165 + 70, 35 + 10)), lngPack.i18n ("Title~Human"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	computerLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (275, 35), getPosition() + cPosition (275 + 70, 35 + 10)), lngPack.i18n ("Title~Computer"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	nobodyLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (385, 35), getPosition() + cPosition (385 + 70, 35 + 10)), lngPack.i18n ("Title~Nobody"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	//emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (500, 35), getPosition() + cPosition (500 + 70, 35 + 10)), lngPack.i18n ("Title~Clan"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
-	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK"));
+	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Others~OK"));
 	signalConnectionManager.connect (okButton->clicked, [this]() { done(); });
 
-	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back"));
+	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { close(); });
 
 	humanPlayerSurface = AutoSurface (LoadPCX (GFXOD_PLAYER_HUMAN));
@@ -66,7 +66,7 @@ cWindowPlayerSelection::cWindowPlayerSelection() :
 			const auto application = getActiveApplication();
 			if (!application) return;
 
-			application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented")));
+			application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~INFO_Not_Implemented")));
 		});
 		noPlayerImages[i] = emplaceChild<cImage> (getPosition() + cPosition (175 + 109 * 2, 67 + 92 * i), nullptr, &SoundData.SNDHudButton);
 		signalConnectionManager.connect (noPlayerImages[i]->clicked, [this, i]() { setPlayerType (i, ePlayerType::None); });
@@ -80,15 +80,15 @@ void cWindowPlayerSelection::retranslate()
 {
 	cWindow::retranslate();
 
-	titleLabel->setText (lngPack.i18n ("Text~Title~HotSeat"));
+	titleLabel->setText (lngPack.i18n ("Title~HotSeat"));
 
-	teamLabel->setText (lngPack.i18n ("Text~Title~Team"));
-	humanLabel->setText (lngPack.i18n ("Text~Title~Human"));
-	computerLabel->setText (lngPack.i18n ("Text~Title~Computer"));
-	nobodyLabel->setText (lngPack.i18n ("Text~Title~Nobody"));
+	teamLabel->setText (lngPack.i18n ("Title~Team"));
+	humanLabel->setText (lngPack.i18n ("Title~Human"));
+	computerLabel->setText (lngPack.i18n ("Title~Computer"));
+	nobodyLabel->setText (lngPack.i18n ("Title~Nobody"));
 
-	okButton->setText (lngPack.i18n ("Text~Others~OK"));
-	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+	okButton->setText (lngPack.i18n ("Others~OK"));
+	backButton->setText (lngPack.i18n ("Others~Back"));
 }
 
 //------------------------------------------------------------------------------

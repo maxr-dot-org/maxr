@@ -47,15 +47,15 @@
 
 //------------------------------------------------------------------------------
 cWindowSinglePlayer::cWindowSinglePlayer() :
-	cWindowMain (lngPack.i18n ("Text~Others~Single_Player"))
+	cWindowMain (lngPack.i18n ("Others~Single_Player"))
 {
-	newGameButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_New"));
+	newGameButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Others~Game_New"));
 	signalConnectionManager.connect (newGameButton->clicked, [this]() { newGameClicked(); });
 
-	loadGameButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Game_Load"));
+	loadGameButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Others~Game_Load"));
 	signalConnectionManager.connect (loadGameButton->clicked, [this]() { loadGameClicked(); });
 
-	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Others~Back"));
+	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, lngPack.i18n ("Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 }
 
@@ -67,11 +67,11 @@ cWindowSinglePlayer::~cWindowSinglePlayer()
 void cWindowSinglePlayer::retranslate()
 {
 	cWindowMain::retranslate();
-	setTitle (lngPack.i18n ("Text~Others~Single_Player"));
+	setTitle (lngPack.i18n ("Others~Single_Player"));
 
-	newGameButton->setText (lngPack.i18n ("Text~Others~Game_New"));
-	loadGameButton->setText (lngPack.i18n ("Text~Others~Game_Load"));
-	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+	newGameButton->setText (lngPack.i18n ("Others~Game_New"));
+	loadGameButton->setText (lngPack.i18n ("Others~Game_Load"));
+	backButton->setText (lngPack.i18n ("Others~Back"));
 }
 
 //------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ void cWindowSinglePlayer::loadGameClicked()
 		{
 			Log.error ("Could not start saved game.");
 			Log.error (e.what());
-			application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Loading")));
+			application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Loading")));
 			return;
 		}
 

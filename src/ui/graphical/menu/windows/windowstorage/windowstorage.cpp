@@ -77,16 +77,16 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 		{
 			const auto index = x + y * columns;
 
-			activateButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), eUnicodeFontType::LatinNormal);
+			activateButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, lngPack.i18n ("Others~Active"), eUnicodeFontType::LatinNormal);
 			signalConnectionManager.connect (activateButtons[index]->clicked, [this, index]() { activateClicked (index); });
 
-			reloadButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", eUnicodeFontType::LatinNormal);
+			reloadButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Others~Reload") : "", eUnicodeFontType::LatinNormal);
 			signalConnectionManager.connect (reloadButtons[index]->clicked, [this, index]() { reloadClicked (index); });
 
-			repairButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", eUnicodeFontType::LatinNormal);
+			repairButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Others~Repair") : "", eUnicodeFontType::LatinNormal);
 			signalConnectionManager.connect (repairButtons[index]->clicked, [this, index]() { repairClicked (index); });
 
-			upgradeButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", eUnicodeFontType::LatinNormal);
+			upgradeButtons[index] = emplaceChild<cPushButton> (getPosition() + cPosition (78 + startX + x * stepX, 188 + 23 + y * 236), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Others~Upgrade") : "", eUnicodeFontType::LatinNormal);
 			signalConnectionManager.connect (upgradeButtons[index]->clicked, [this, index]() { upgradeClicked (index); });
 
 			unitImages[index] = emplaceChild<cImage> (getPosition() + cPosition (17 + x * stepImageX, 9 + y * 236));
@@ -126,19 +126,19 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	downButton = emplaceChild<cPushButton> (getPosition() + cPosition (532, 426), ePushButtonType::ArrowDownBig);
 	signalConnectionManager.connect (downButton->clicked, [this]() { downClicked(); });
 
-	activateAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Active"), eUnicodeFontType::LatinNormal);
+	activateAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246), ePushButtonType::Angular, lngPack.i18n ("Others~Active"), eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (activateAllButton->clicked, [this]() { activateAllClicked(); });
 
-	reloadAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246 + 25), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", eUnicodeFontType::LatinNormal);
+	reloadAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246 + 25), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Others~Reload") : "", eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (reloadAllButton->clicked, [this]() { reloadAllClicked(); });
 
-	repairAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246 + 25 * 2), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", eUnicodeFontType::LatinNormal);
+	repairAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246 + 25 * 2), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Others~Repair") : "", eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (repairAllButton->clicked, [this]() { repairAllClicked(); });
 
-	upgradeAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246 + 25 * 3), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", eUnicodeFontType::LatinNormal);
+	upgradeAllButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 246 + 25 * 3), ePushButtonType::Angular, canRepairReloadUpgrade ? lngPack.i18n ("Others~Upgrade") : "", eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (upgradeAllButton->clicked, [this]() { upgradeAllClicked(); });
 
-	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 371), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal);
+	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (518, 371), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
 	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
 	updateUnitsWidgets();
@@ -155,25 +155,25 @@ void cWindowStorage::retranslate()
 
 	for (auto* activateButton : activateButtons)
 	{
-		activateButton->setText (lngPack.i18n ("Text~Others~Active"));
+		activateButton->setText (lngPack.i18n ("Others~Active"));
 	}
 	for (auto* reloadButton : reloadButtons)
 	{
-		reloadButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "");
+		reloadButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Others~Reload") : "");
 	}
 	for (auto* repairButton : repairButtons)
 	{
-		repairButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "");
+		repairButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Others~Repair") : "");
 	}
 	for (auto* upgradeButton : upgradeButtons)
 	{
-		upgradeButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "");
+		upgradeButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Others~Upgrade") : "");
 	}
-	activateAllButton->setText (lngPack.i18n ("Text~Others~Active"));
-	reloadAllButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "");
-	repairAllButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "");
-	upgradeAllButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "");
-	doneButton->setText (lngPack.i18n ("Text~Others~Done"));
+	activateAllButton->setText (lngPack.i18n ("Others~Active"));
+	reloadAllButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Others~Reload") : "");
+	repairAllButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Others~Repair") : "");
+	upgradeAllButton->setText (canRepairReloadUpgrade ? lngPack.i18n ("Others~Upgrade") : "");
+	doneButton->setText (lngPack.i18n ("Others~Done"));
 }
 
 //------------------------------------------------------------------------------
@@ -206,7 +206,7 @@ void cWindowStorage::updateUnitName (const cVehicle& storedUnit, size_t position
 	const auto& upgraded = *storedUnit.getOwner()->getLastUnitData (storedUnit.data.getId());
 	if (storedUnit.data.getVersion() != upgraded.getVersion())
 	{
-		name += "\n(" + lngPack.i18n ("Text~Comp~Dated") + ")";
+		name += "\n(" + lngPack.i18n ("Comp~Dated") + ")";
 	}
 	unitNames[positionIndex]->setText (name);
 }
@@ -396,6 +396,6 @@ void cWindowStorage::closeOnUnitDestruction()
 	auto application = getActiveApplication();
 	if (application)
 	{
-		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Others~Unit_destroyed")));
+		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Others~Unit_destroyed")));
 	}
 }

@@ -1258,7 +1258,7 @@ eLoadingState LoadData (bool includingUiData)
 	if (includingUiData)
 	{
 		// Load Keys
-		MakeLog (lngPack.i18n ("Text~Init~Keys"), 0, 3);
+		MakeLog (lngPack.i18n ("Init~Keys"), 0, 3);
 
 		try
 		{
@@ -1274,7 +1274,7 @@ eLoadingState LoadData (bool includingUiData)
 		Log.mark();
 
 		// Load Fonts
-		MakeLog (lngPack.i18n ("Text~Init~Fonts"), 0, 4);
+		MakeLog (lngPack.i18n ("Init~Fonts"), 0, 4);
 		// -- little bit crude but fonts are already loaded.
 		// what to do with this now? -- beko
 		// Really loaded with new cUnicodeFont
@@ -1282,7 +1282,7 @@ eLoadingState LoadData (bool includingUiData)
 		Log.mark();
 
 		// Load Graphics
-		MakeLog (lngPack.i18n ("Text~Init~GFX"), 0, 5);
+		MakeLog (lngPack.i18n ("Init~GFX"), 0, 5);
 
 		if (LoadGraphics (cSettings::getInstance().getGfxPath()) != 1)
 		{
@@ -1297,7 +1297,7 @@ eLoadingState LoadData (bool includingUiData)
 		Log.mark();
 
 		// Load Effects
-		MakeLog (lngPack.i18n ("Text~Init~Effects"), 0, 6);
+		MakeLog (lngPack.i18n ("Init~Effects"), 0, 6);
 		Log.info ("Loading Effects");
 		EffectsData.load (cSettings::getInstance().getFxPath());
 		MakeLog ("", 1, 6);
@@ -1305,7 +1305,7 @@ eLoadingState LoadData (bool includingUiData)
 	}
 
 	// Load Vehicles
-	MakeLog (lngPack.i18n ("Text~Init~Vehicles"), 0, 7);
+	MakeLog (lngPack.i18n ("Init~Vehicles"), 0, 7);
 
 	if (LoadVehicles (includingUiData) != 1)
 	{
@@ -1319,7 +1319,7 @@ eLoadingState LoadData (bool includingUiData)
 	Log.mark();
 
 	// Load Buildings
-	MakeLog (lngPack.i18n ("Text~Init~Buildings"), 0, 8);
+	MakeLog (lngPack.i18n ("Init~Buildings"), 0, 8);
 
 	if (LoadBuildings (includingUiData) != 1)
 	{
@@ -1332,7 +1332,7 @@ eLoadingState LoadData (bool includingUiData)
 	}
 	Log.mark();
 
-	MakeLog (lngPack.i18n ("Text~Init~Clans"), 0, 9);
+	MakeLog (lngPack.i18n ("Init~Clans"), 0, 9);
 
 	// Load Clan Settings
 	if (LoadClans() != 1)
@@ -1348,7 +1348,7 @@ eLoadingState LoadData (bool includingUiData)
 	if (includingUiData)
 	{
 		// Load Music
-		MakeLog (lngPack.i18n ("Text~Init~Music"), 0, 10);
+		MakeLog (lngPack.i18n ("Init~Music"), 0, 10);
 
 		if (LoadMusic (cSettings::getInstance().getMusicPath()) != 1)
 		{
@@ -1362,14 +1362,14 @@ eLoadingState LoadData (bool includingUiData)
 		Log.mark();
 
 		// Load Sounds
-		MakeLog (lngPack.i18n ("Text~Init~Sounds"), 0, 11);
+		MakeLog (lngPack.i18n ("Init~Sounds"), 0, 11);
 		Log.info ("Loading Sounds");
 		SoundData.load (cSettings::getInstance().getSoundsPath());
 		MakeLog ("", 1, 11);
 		Log.mark();
 
 		// Load Voices
-		MakeLog (lngPack.i18n ("Text~Init~Voices"), 0, 12);
+		MakeLog (lngPack.i18n ("Init~Voices"), 0, 12);
 		Log.info ("Loading Voices");
 		VoiceData.load (cSettings::getInstance().getVoicesPath());
 		MakeLog ("", 1, 12);

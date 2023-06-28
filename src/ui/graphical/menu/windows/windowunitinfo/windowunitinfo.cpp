@@ -37,7 +37,7 @@
 cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const cPlayer* owner, const cUnitsData& unitsData) :
 	cWindow (LoadPCX (GFXOD_HELP), eWindowBackgrounds::Black)
 {
-	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Unitinfo"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Title~Unitinfo"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	auto infoImage = emplaceChild<cImage> (getPosition() + cPosition (11, 13));
 
@@ -46,7 +46,7 @@ cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const
 
 	auto unitDetails = emplaceChild<cUnitDetails> (getPosition() + cPosition (16, 297));
 
-	auto okButton = emplaceChild<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), eUnicodeFontType::LatinNormal);
+	auto okButton = emplaceChild<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
 	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { close(); });
 
@@ -72,6 +72,6 @@ cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const
 void cWindowUnitInfo::retranslate()
 {
 	cWindow::retranslate();
-	titleLabel->setText (lngPack.i18n ("Text~Title~Unitinfo"));
-	okButton->setText (lngPack.i18n ("Text~Others~Done"));
+	titleLabel->setText (lngPack.i18n ("Title~Unitinfo"));
+	okButton->setText (lngPack.i18n ("Others~Done"));
 }

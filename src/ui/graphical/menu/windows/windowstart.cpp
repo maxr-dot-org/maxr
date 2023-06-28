@@ -35,28 +35,28 @@
 
 //------------------------------------------------------------------------------
 cWindowStart::cWindowStart() :
-	cWindowMain (lngPack.i18n ("Text~Title~MainMenu"))
+	cWindowMain (lngPack.i18n ("Title~MainMenu"))
 {
-	singlePlayerButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Single_Player"));
+	singlePlayerButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Others~Single_Player"));
 	signalConnectionManager.connect (singlePlayerButton->clicked, [this]() { singlePlayerClicked(); });
 
-	multiPlayerButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Multi_Player"));
+	multiPlayerButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Others~Multi_Player"));
 	signalConnectionManager.connect (multiPlayerButton->clicked, [this]() { multiPlayerClicked(); });
 
-	preferencesButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Settings~Preferences"));
+	preferencesButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Settings~Preferences"));
 	signalConnectionManager.connect (preferencesButton->clicked, [this]() { preferencesClicked(); });
 
-	introButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Settings~Intro"));
+	introButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Settings~Intro"));
 	signalConnectionManager.connect (introButton->clicked, [this]() { showIntro(); });
 	if (!hasIntro())
 	{
 		introButton->lock();
 	}
 
-	licenseButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 4), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani"));
+	licenseButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 190 + buttonSpace * 4), ePushButtonType::StandardBig, lngPack.i18n ("Others~Mani"));
 	signalConnectionManager.connect (licenseButton->clicked, [this]() { licenceClicked(); });
 
-	exitButton = emplaceChild<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit"));
+	exitButton = emplaceChild<cPushButton> (getPosition() + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, &SoundData.SNDMenuButton, lngPack.i18n ("Others~Exit"));
 	signalConnectionManager.connect (exitButton->clicked, [this]() { exitClicked(); });
 }
 
@@ -68,14 +68,14 @@ cWindowStart::~cWindowStart()
 void cWindowStart::retranslate()
 {
 	cWindowMain::retranslate();
-	setTitle (lngPack.i18n ("Text~Title~MainMenu"));
+	setTitle (lngPack.i18n ("Title~MainMenu"));
 
-	singlePlayerButton->setText (lngPack.i18n ("Text~Others~Single_Player"));
-	multiPlayerButton->setText (lngPack.i18n ("Text~Others~Multi_Player"));
-	preferencesButton->setText (lngPack.i18n ("Text~Settings~Preferences"));
-	introButton->setText (lngPack.i18n ("Text~Settings~Intro"));
-	licenseButton->setText (lngPack.i18n ("Text~Others~Mani"));
-	exitButton->setText (lngPack.i18n ("Text~Others~Exit"));
+	singlePlayerButton->setText (lngPack.i18n ("Others~Single_Player"));
+	multiPlayerButton->setText (lngPack.i18n ("Others~Multi_Player"));
+	preferencesButton->setText (lngPack.i18n ("Settings~Preferences"));
+	introButton->setText (lngPack.i18n ("Settings~Intro"));
+	licenseButton->setText (lngPack.i18n ("Others~Mani"));
+	exitButton->setText (lngPack.i18n ("Others~Exit"));
 }
 
 //------------------------------------------------------------------------------

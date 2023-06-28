@@ -288,7 +288,7 @@ void cGameGuiController::addShortcut (cKeySequence key, Action action)
 void cGameGuiController::initShortcuts()
 {
 	addShortcut (KeysList.keyExit, [this]() {
-		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Comp~End_Game")));
+		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Comp~End_Game")));
 		signalConnectionManager.connect (yesNoDialog->yesClicked, [this]() {
 			gameGui->exit();
 		});
@@ -1251,7 +1251,7 @@ void cGameGuiController::connectReportSources (cClient& client)
 void cGameGuiController::showNextPlayerDialog()
 {
 	soundManager->mute();
-	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", activeClient->getActivePlayer().getName()), eWindowBackgrounds::Black));
+	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Multiplayer~Player_Turn", activeClient->getActivePlayer().getName()), eWindowBackgrounds::Black));
 	signalConnectionManager.connect (dialog->done, [this]() {
 		soundManager->unmute();
 		activeClient->startTurn();
@@ -1263,7 +1263,7 @@ void cGameGuiController::showFilesWindow()
 {
 	auto loadSaveWindow = application.show (std::make_shared<cWindowLoadSave> (getTurnTimeClock()));
 	loadSaveWindow->exit.connect ([this, loadSaveWindow]() {
-		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Comp~End_Game")));
+		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Comp~End_Game")));
 		signalConnectionManager.connect (yesNoDialog->yesClicked, [&, loadSaveWindow]() {
 			loadSaveWindow->close();
 			gameGui->exit();
@@ -1271,14 +1271,14 @@ void cGameGuiController::showFilesWindow()
 	});
 	loadSaveWindow->load.connect ([this, loadSaveWindow] (const cSaveGameInfo& saveInfo) {
 		// loading games while game is running is not yet implemented
-		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented")));
+		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~INFO_Not_Implemented")));
 	});
 	loadSaveWindow->save.connect ([this, loadSaveWindow] (int saveNumber, const std::string& name) {
 		try
 		{
 			if (server == nullptr)
 			{
-				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Save_Only_Host")));
+				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Multiplayer~Save_Only_Host")));
 				return;
 			}
 			server->saveGameState (saveNumber, name);
@@ -1289,7 +1289,7 @@ void cGameGuiController::showFilesWindow()
 		catch (std::runtime_error& e)
 		{
 			Log.error (e.what());
-			application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Writing")));
+			application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Writing")));
 		}
 	});
 }
@@ -1866,7 +1866,7 @@ void cGameGuiController::updateGuiInfoTexts()
 	// set overlay into message
 	if (freezeModes.isEnabled (eFreezeMode::Pause))
 	{
-		gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Pause"), "");
+		gameGui->setInfoTexts (lngPack.i18n ("Multiplayer~Pause"), "");
 	}
 	else if (freezeModes.isEnabled (eFreezeMode::WaitForClient))
 	{
@@ -1894,26 +1894,26 @@ void cGameGuiController::updateGuiInfoTexts()
 		}
 		if (!disconncetedPlayers.empty())
 		{
-			std::string s = server ? lngPack.i18n ("Text~Multiplayer~Abort_Waiting") : "";
-			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect", disconncetedPlayers), s);
+			std::string s = server ? lngPack.i18n ("Multiplayer~Abort_Waiting") : "";
+			gameGui->setInfoTexts (lngPack.i18n ("Multiplayer~Wait_Reconnect", disconncetedPlayers), s);
 		}
 		else if (!notRespondingPlayers.empty())
 		{
-			gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~No_Response", notRespondingPlayers), "");
+			gameGui->setInfoTexts (lngPack.i18n ("Multiplayer~No_Response", notRespondingPlayers), "");
 		}
 	}
 	else if (freezeModes.isEnabled (eFreezeMode::WaitForTurnend))
 	{
-		gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_TurnEnd"), "");
+		gameGui->setInfoTexts (lngPack.i18n ("Multiplayer~Wait_TurnEnd"), "");
 	}
 	else if (freezeModes.isEnabled (eFreezeMode::WaitForServer))
 	{
-		gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_For_Server"), "");
+		gameGui->setInfoTexts (lngPack.i18n ("Multiplayer~Wait_For_Server"), "");
 	}
 	else if (activeClient->getModel().getActiveTurnPlayer() != getActivePlayer().get() && model.getGameSettings()->gameType == eGameSettingsGameType::Turns)
 	{
 		const std::string& name = activeClient->getModel().getActiveTurnPlayer()->getName();
-		gameGui->setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", name), "");
+		gameGui->setInfoTexts (lngPack.i18n ("Multiplayer~Wait_Until", name), "");
 	}
 	else
 	{

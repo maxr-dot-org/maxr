@@ -39,7 +39,7 @@ cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::sha
 	cWindowHangar (LoadPCX (GFXOD_BUILD_SCREEN), unitsData, *vehicle_.getOwner()),
 	vehicle (vehicle_)
 {
-	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Vehicle"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (328, 12), getPosition() + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Title~Build_Vehicle"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	auto turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10)));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
@@ -57,7 +57,7 @@ cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::sha
 
 	if (vehicle.getStaticData().canBuildPath)
 	{
-		pathButton = emplaceChild<cPushButton> (getPosition() + cPosition (338, 428), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Path"), eUnicodeFontType::LatinNormal);
+		pathButton = emplaceChild<cPushButton> (getPosition() + cPosition (338, 428), ePushButtonType::Angular, lngPack.i18n ("Others~Path"), eUnicodeFontType::LatinNormal);
 		signalConnectionManager.connect (pathButton->clicked, [this]() { donePath(); });
 	}
 
@@ -73,10 +73,10 @@ void cWindowBuildBuildings::retranslate()
 {
 	cWindowHangar::retranslate();
 
-	titleLabel->setText (lngPack.i18n ("Text~Title~Build_Vehicle"));
+	titleLabel->setText (lngPack.i18n ("Title~Build_Vehicle"));
 	if (pathButton)
 	{
-		pathButton->setText (lngPack.i18n ("Text~Others~Path"));
+		pathButton->setText (lngPack.i18n ("Others~Path"));
 	}
 }
 
@@ -136,6 +136,6 @@ void cWindowBuildBuildings::closeOnUnitDestruction()
 	auto application = getActiveApplication();
 	if (application)
 	{
-		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Others~Unit_destroyed")));
+		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Others~Unit_destroyed")));
 	}
 }

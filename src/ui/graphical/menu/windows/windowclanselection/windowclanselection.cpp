@@ -38,7 +38,7 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 {
 	assert (unitsData);
 	assert (clanData);
-	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 13), getPosition() + cPosition (getArea().getMaxCorner().x(), 23)), lngPack.i18n ("Title~Choose_Clan"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	//
 	// Clan Images
@@ -79,10 +79,10 @@ cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> un
 	//
 	// Buttons
 	//
-	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK"));
+	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Others~OK"));
 	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
-	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back"));
+	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 
 	updateClanDescription();
@@ -97,9 +97,9 @@ void cWindowClanSelection::retranslate()
 {
 	cWindow::retranslate();
 
-	titleLabel->setText (lngPack.i18n ("Text~Title~Choose_Clan"));
-	okButton->setText (lngPack.i18n ("Text~Others~OK"));
-	backButton->setText (lngPack.i18n ("Text~Others~Back"));
+	titleLabel->setText (lngPack.i18n ("Title~Choose_Clan"));
+	okButton->setText (lngPack.i18n ("Others~OK"));
+	backButton->setText (lngPack.i18n ("Others~Back"));
 }
 
 //------------------------------------------------------------------------------

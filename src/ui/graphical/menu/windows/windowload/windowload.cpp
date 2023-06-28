@@ -45,15 +45,15 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, s
 	selectedSaveNumber (-1),
 	saveGamesGetter (saveGamesGetter)
 {
-	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 12), getPosition() + cPosition (getArea().getMaxCorner().x(), 12 + 10)), lngPack.i18n ("Text~Title~Load"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 12), getPosition() + cPosition (getArea().getMaxCorner().x(), 12 + 10)), lngPack.i18n ("Title~Load"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	auto turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (525, 16), cPosition (525 + 60, 16 + 10)));
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
-	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (353, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Back"));
+	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (353, 438), ePushButtonType::Huge, lngPack.i18n ("Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { close(); });
 
-	loadButton = emplaceChild<cPushButton> (getPosition() + cPosition (514, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Load"));
+	loadButton = emplaceChild<cPushButton> (getPosition() + cPosition (514, 438), ePushButtonType::Huge, lngPack.i18n ("Others~Load"));
 	signalConnectionManager.connect (loadButton->clicked, [this]() { handleLoadClicked(); });
 	loadButton->lock();
 
@@ -86,9 +86,9 @@ void cWindowLoad::retranslate()
 {
 	cWindow::retranslate();
 
-	titleLabel->setText (lngPack.i18n ("Text~Title~Load"));
-	backButton->setText (lngPack.i18n ("Text~Others~Back"));
-	loadButton->setText (lngPack.i18n ("Text~Others~Load"));
+	titleLabel->setText (lngPack.i18n ("Title~Load"));
+	backButton->setText (lngPack.i18n ("Others~Back"));
+	loadButton->setText (lngPack.i18n ("Others~Load"));
 }
 
 //------------------------------------------------------------------------------
@@ -162,12 +162,12 @@ void cWindowLoad::handleSlotDoubleClicked (size_t index)
 	auto saveInfo = getSaveFile (saveNumber);
 	if (cVersion (saveInfo->saveVersion) == cVersion ("0.0"))
 	{
-		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Loading")));
+		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Loading")));
 		return;
 	}
 	if (cVersion (saveInfo->saveVersion) < cVersion (MINIMUM_REQUIRED_SAVE_VERSION))
 	{
-		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Incompatible", MINIMUM_REQUIRED_MAXR_VERSION)));
+		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Incompatible", MINIMUM_REQUIRED_MAXR_VERSION)));
 		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName (saveNumber).string() + " is not compatible");
 		return;
 	}
@@ -276,12 +276,12 @@ void cWindowLoad::handleLoadClicked()
 	auto saveInfo = getSaveFile (selectedSaveNumber);
 	if (cVersion (saveInfo->saveVersion) == cVersion ("0.0"))
 	{
-		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Loading")));
+		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Loading")));
 		return;
 	}
 	if (cVersion (saveInfo->saveVersion) < cVersion (MINIMUM_REQUIRED_SAVE_VERSION))
 	{
-		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~ERROR_Save_Incompatible", MINIMUM_REQUIRED_MAXR_VERSION)));
+		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Incompatible", MINIMUM_REQUIRED_MAXR_VERSION)));
 		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName (selectedSaveNumber).string() + " is not compatible");
 		return;
 	}

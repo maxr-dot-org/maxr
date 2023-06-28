@@ -305,7 +305,7 @@ void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& 
 
 			for (const auto& player : server->model.playerList)
 			{
-				font->showText (drawPosition.x(), drawPosition.y(), "Client " + std::to_string (player->getId()) + lngPack.i18n ("Text~Punctuation~Colon"), eUnicodeFontType::LatinSmallWhite);
+				font->showText (drawPosition.x(), drawPosition.y(), "Client " + std::to_string (player->getId()) + lngPack.i18n ("Punctuation~Colon"), eUnicodeFontType::LatinSmallWhite);
 				drawPosition.y() += font->getFontHeight (eUnicodeFontType::LatinSmallWhite);
 
 				font->showText (drawPosition.x() + 10, drawPosition.y(), "Client time: ", eUnicodeFontType::LatinSmallWhite);
@@ -555,7 +555,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	{
 		const auto& item = building.getBuildListItem (i);
 		auto itemName = getStaticUnitName (client->getModel().getUnitsData()->getStaticUnitData (item.getType()));
-		font->showText (drawPosition, "  build " + std::to_string (i) + lngPack.i18n ("Text~Punctuation~Colon") + item.getType().getText() + " \"" + itemName + "\"", eUnicodeFontType::LatinSmallWhite);
+		font->showText (drawPosition, "  build " + std::to_string (i) + lngPack.i18n ("Punctuation~Colon") + item.getType().getText() + " \"" + itemName + "\"", eUnicodeFontType::LatinSmallWhite);
 		drawPosition.y() += 8;
 	}
 }

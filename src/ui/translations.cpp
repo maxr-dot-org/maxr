@@ -75,17 +75,17 @@ namespace
 		const std::string suffix = (level > 0) ? " +" + std::to_string (level) : "";
 
 		if (level < 1)
-			return lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn") + suffix;
+			return lngPack.i18n ("Comp~CommandoRank_Greenhorn") + suffix;
 		else if (level < 3)
-			return lngPack.i18n ("Text~Comp~CommandoRank_Average") + suffix;
+			return lngPack.i18n ("Comp~CommandoRank_Average") + suffix;
 		else if (level < 6)
-			return lngPack.i18n ("Text~Comp~CommandoRank_Veteran") + suffix;
+			return lngPack.i18n ("Comp~CommandoRank_Veteran") + suffix;
 		else if (level < 11)
-			return lngPack.i18n ("Text~Comp~CommandoRank_Expert") + suffix;
+			return lngPack.i18n ("Comp~CommandoRank_Expert") + suffix;
 		else if (level < 19)
-			return lngPack.i18n ("Text~Comp~CommandoRank_Elite") + suffix;
+			return lngPack.i18n ("Comp~CommandoRank_Elite") + suffix;
 		else
-			return lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster") + suffix;
+			return lngPack.i18n ("Comp~CommandoRank_GrandMaster") + suffix;
 	}
 
 	//--------------------------------------------------------------------------
@@ -93,14 +93,14 @@ namespace
 	{
 		switch (area)
 		{
-			case cResearch::eResearchArea::AttackResearch: return lngPack.i18n ("Text~Others~Attack");
-			case cResearch::eResearchArea::ShotsResearch: return lngPack.i18n ("Text~Others~Shots_7");
-			case cResearch::eResearchArea::RangeResearch: return lngPack.i18n ("Text~Others~Range");
-			case cResearch::eResearchArea::ArmorResearch: return lngPack.i18n ("Text~Others~Armor_7");
-			case cResearch::eResearchArea::HitpointsResearch: return lngPack.i18n ("Text~Others~Hitpoints_7");
-			case cResearch::eResearchArea::SpeedResearch: return lngPack.i18n ("Text~Others~Speed");
-			case cResearch::eResearchArea::ScanResearch: return lngPack.i18n ("Text~Others~Scan");
-			case cResearch::eResearchArea::CostResearch: return lngPack.i18n ("Text~Others~Costs");
+			case cResearch::eResearchArea::AttackResearch: return lngPack.i18n ("Others~Attack");
+			case cResearch::eResearchArea::ShotsResearch: return lngPack.i18n ("Others~Shots_7");
+			case cResearch::eResearchArea::RangeResearch: return lngPack.i18n ("Others~Range");
+			case cResearch::eResearchArea::ArmorResearch: return lngPack.i18n ("Others~Armor_7");
+			case cResearch::eResearchArea::HitpointsResearch: return lngPack.i18n ("Others~Hitpoints_7");
+			case cResearch::eResearchArea::SpeedResearch: return lngPack.i18n ("Others~Speed");
+			case cResearch::eResearchArea::ScanResearch: return lngPack.i18n ("Others~Scan");
+			case cResearch::eResearchArea::CostResearch: return lngPack.i18n ("Others~Costs");
 		}
 		return "";
 	}
@@ -112,7 +112,7 @@ namespace
 		if (workingCenterCount > 0)
 		{
 			const auto remainingTurnCount = player.getResearchState().getRemainingTurns (area, player.getResearchCentersWorkingOnArea (area));
-			return toTranslatedString (area) + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (remainingTurnCount) + "\n";
+			return toTranslatedString (area) + lngPack.i18n ("Punctuation~Colon") + std::to_string (remainingTurnCount) + "\n";
 		}
 		return "";
 	}
@@ -135,13 +135,13 @@ std::string toTranslatedString (eGameSettingsResourceAmount amount)
 	switch (amount)
 	{
 		case eGameSettingsResourceAmount::Limited:
-			return lngPack.i18n ("Text~Option~Limited");
+			return lngPack.i18n ("Option~Limited");
 		case eGameSettingsResourceAmount::Normal:
-			return lngPack.i18n ("Text~Option~Normal");
+			return lngPack.i18n ("Option~Normal");
 		case eGameSettingsResourceAmount::High:
-			return lngPack.i18n ("Text~Option~High");
+			return lngPack.i18n ("Option~High");
 		case eGameSettingsResourceAmount::TooMuch:
-			return lngPack.i18n ("Text~Option~TooMuch");
+			return lngPack.i18n ("Option~TooMuch");
 	}
 	assert (false);
 	return "";
@@ -153,13 +153,13 @@ std::string toTranslatedString (eGameSettingsResourceDensity density)
 	switch (density)
 	{
 		case eGameSettingsResourceDensity::Sparse:
-			return lngPack.i18n ("Text~Option~Sparse");
+			return lngPack.i18n ("Option~Sparse");
 		case eGameSettingsResourceDensity::Normal:
-			return lngPack.i18n ("Text~Option~Normal");
+			return lngPack.i18n ("Option~Normal");
 		case eGameSettingsResourceDensity::Dense:
-			return lngPack.i18n ("Text~Option~Dense");
+			return lngPack.i18n ("Option~Dense");
 		case eGameSettingsResourceDensity::TooMuch:
-			return lngPack.i18n ("Text~Option~TooMuch");
+			return lngPack.i18n ("Option~TooMuch");
 	}
 	assert (false);
 	return "";
@@ -171,9 +171,9 @@ std::string toTranslatedString (eGameSettingsBridgeheadType type)
 	switch (type)
 	{
 		case eGameSettingsBridgeheadType::Definite:
-			return lngPack.i18n ("Text~Option~Definite");
+			return lngPack.i18n ("Option~Definite");
 		case eGameSettingsBridgeheadType::Mobile:
-			return lngPack.i18n ("Text~Option~Mobile");
+			return lngPack.i18n ("Option~Mobile");
 	}
 	assert (false);
 	return "";
@@ -185,9 +185,9 @@ std::string toTranslatedString (eGameSettingsGameType type)
 	switch (type)
 	{
 		case eGameSettingsGameType::Simultaneous:
-			return lngPack.i18n ("Text~Option~Type_Simu");
+			return lngPack.i18n ("Option~Type_Simu");
 		case eGameSettingsGameType::Turns:
-			return lngPack.i18n ("Text~Option~Type_Turns");
+			return lngPack.i18n ("Option~Type_Turns");
 		case eGameSettingsGameType::HotSeat:
 			return "Hot Seat"; // TODO: translation?!
 	}
@@ -201,11 +201,11 @@ std::string toTranslatedString (eGameSettingsVictoryCondition condition, int tur
 	switch (condition)
 	{
 		case eGameSettingsVictoryCondition::Turns:
-			return lngPack.plural ("Text~Comp~Turn(s)", turn);
+			return lngPack.plural ("Comp~Turn(s)", turn);
 		case eGameSettingsVictoryCondition::Points:
-			return lngPack.plural ("Text~Comp~Point(s)", point);
+			return lngPack.plural ("Comp~Point(s)", point);
 		case eGameSettingsVictoryCondition::Death:
-			return lngPack.i18n ("Text~Comp~NoLimit");
+			return lngPack.i18n ("Comp~NoLimit");
 	}
 	assert (false);
 	return "";
@@ -216,9 +216,9 @@ std::string toTranslatedString (eResourceType type)
 {
 	switch (type)
 	{
-		case eResourceType::Gold: return lngPack.i18n ("Text~Title~Gold");
-		case eResourceType::Metal: return lngPack.i18n ("Text~Title~Metal");
-		case eResourceType::Oil: return lngPack.i18n ("Text~Title~Oil");
+		case eResourceType::Gold: return lngPack.i18n ("Title~Gold");
+		case eResourceType::Metal: return lngPack.i18n ("Title~Metal");
+		case eResourceType::Oil: return lngPack.i18n ("Title~Oil");
 		case eResourceType::None: return "";
 	}
 	return "";
@@ -231,7 +231,7 @@ std::string getClanStatsDescription (const cClanUnitStat& clanUnitStat, const cU
 
 	if (data == nullptr) return "Unknown";
 
-	std::string result = getStaticUnitName (originalData.getStaticUnitData (clanUnitStat.getUnitId())) + lngPack.i18n ("Text~Punctuation~Colon");
+	std::string result = getStaticUnitName (originalData.getStaticUnitData (clanUnitStat.getUnitId())) + lngPack.i18n ("Punctuation~Colon");
 	const char* const commaSep = ", ";
 	const char* sep = "";
 
@@ -243,12 +243,12 @@ std::string getClanStatsDescription (const cClanUnitStat& clanUnitStat, const cU
 	} t[] =
 		{
 			// ToDo / Fixme if #756 fixed, use the non "_7" version of the text files
-			{eClanModification::Damage, lngPack.i18n ("Text~Others~Attack_7"), data->getDamage()},
-			{eClanModification::Range, lngPack.i18n ("Text~Others~Range"), data->getRange()},
-			{eClanModification::Armor, lngPack.i18n ("Text~Others~Armor_7"), data->getArmor()},
-			{eClanModification::Hitpoints, lngPack.i18n ("Text~Others~Hitpoints_7"), data->getHitpointsMax()},
-			{eClanModification::Scan, lngPack.i18n ("Text~Others~Scan_7"), data->getScan()},
-			{eClanModification::Speed, lngPack.i18n ("Text~Others~Speed_7"), data->getSpeedMax() / 4},
+			{eClanModification::Damage, lngPack.i18n ("Others~Attack_7"), data->getDamage()},
+			{eClanModification::Range, lngPack.i18n ("Others~Range"), data->getRange()},
+			{eClanModification::Armor, lngPack.i18n ("Others~Armor_7"), data->getArmor()},
+			{eClanModification::Hitpoints, lngPack.i18n ("Others~Hitpoints_7"), data->getHitpointsMax()},
+			{eClanModification::Scan, lngPack.i18n ("Others~Scan_7"), data->getScan()},
+			{eClanModification::Speed, lngPack.i18n ("Others~Speed_7"), data->getSpeedMax() / 4},
 		};
 
 	for (const auto& e : t)
@@ -267,7 +267,7 @@ std::string getClanStatsDescription (const cClanUnitStat& clanUnitStat, const cU
 		int nrTurns = *modif;
 		if (originalData.getStaticUnitData (data->getId()).vehicleData.isHuman == false) nrTurns /= clanUnitStat.getUnitId().isAVehicle() == 0 ? 2 : 3;
 
-		result += lngPack.plural ("Text~Comp~Turn(s)", nrTurns);
+		result += lngPack.plural ("Comp~Turn(s)", nrTurns);
 	}
 	return result;
 }
@@ -357,7 +357,7 @@ namespace
 			const cDynamicUnitData& upgraded = *whoWantsToKnow->getLastUnitData (unit.data.getId());
 			if (unit.data.canBeUpgradedTo (upgraded))
 			{
-				return "\n" + lngPack.i18n ("Text~Comp~Dated");
+				return "\n" + lngPack.i18n ("Comp~Dated");
 			}
 		}
 		return "";
@@ -375,7 +375,7 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 	if (building.isDisabled())
 	{
 		std::string sText;
-		sText = lngPack.i18n ("Text~Comp~Disabled") + " (";
+		sText = lngPack.i18n ("Comp~Disabled") + " (";
 		sText += std::to_string (building.getDisabledTurns()) + ")";
 		return sText + dated;
 	}
@@ -393,13 +393,13 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 				int iRound;
 
 				iRound = (int) ceilf (buildListItem.getRemainingMetal() / (float) building.getMetalPerRound());
-				sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n ("Text~Punctuation~Colon");
+				sText = lngPack.i18n ("Comp~Producing") + lngPack.i18n ("Punctuation~Colon");
 				sText += unitName + " (";
 				sText += std::to_string (iRound) + ")";
 
 				if (font->getTextWide (sText, eUnicodeFontType::LatinSmallWhite) > 126)
 				{
-					sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n ("Text~Punctuation~Colon") + "\n";
+					sText = lngPack.i18n ("Comp~Producing") + lngPack.i18n ("Punctuation~Colon") + "\n";
 					sText += unitName + " (";
 					sText += std::to_string (iRound) + ")";
 				}
@@ -408,13 +408,13 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 			}
 			else //new unit is rdy + which kind of unit
 			{
-				sText = lngPack.i18n ("Text~Comp~Producing_Fin");
-				sText += lngPack.i18n ("Text~Punctuation~Colon");
+				sText = lngPack.i18n ("Comp~Producing_Fin");
+				sText += lngPack.i18n ("Punctuation~Colon");
 				sText += unitName;
 
 				if (font->getTextWide (sText) > 126)
 				{
-					sText = lngPack.i18n ("Text~Comp~Producing_Fin") + lngPack.i18n ("Text~Punctuation~Colon");
+					sText = lngPack.i18n ("Comp~Producing_Fin") + lngPack.i18n ("Punctuation~Colon");
 					sText += "\n";
 					sText += unitName;
 				}
@@ -425,36 +425,36 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 		// Research Center
 		if (building.getStaticData().canResearch && building.getOwner() == whoWantsToKnow && building.getOwner())
 		{
-			return lngPack.i18n ("Text~Comp~Working") + "\n" + getResearchAreaStatus (*building.getOwner()) + dated;
+			return lngPack.i18n ("Comp~Working") + "\n" + getResearchAreaStatus (*building.getOwner()) + dated;
 		}
 
 		// Goldraffinerie:
 		if (building.getStaticData().convertsGold && building.getOwner() == whoWantsToKnow && building.getOwner())
 		{
 			std::string sText;
-			sText = lngPack.i18n ("Text~Comp~Working") + "\n";
-			sText += lngPack.i18n ("Text~Title~Credits") + lngPack.i18n ("Text~Punctuation~Colon");
+			sText = lngPack.i18n ("Comp~Working") + "\n";
+			sText += lngPack.i18n ("Title~Credits") + lngPack.i18n ("Punctuation~Colon");
 			sText += std::to_string (building.getOwner()->getCredits());
 			return sText;
 		}
-		return lngPack.i18n ("Text~Comp~Working") + dated;
+		return lngPack.i18n ("Comp~Working") + dated;
 	}
 
 	if (building.isAttacking())
-		return lngPack.i18n ("Text~Comp~AttackingStatusStr") + dated;
+		return lngPack.i18n ("Comp~AttackingStatusStr") + dated;
 	else if (building.isBeeingAttacked())
-		return lngPack.i18n ("Text~Comp~IsBeeingAttacked") + dated;
+		return lngPack.i18n ("Comp~IsBeeingAttacked") + dated;
 	else if (building.isSentryActive())
-		return lngPack.i18n ("Text~Comp~Sentry") + dated;
+		return lngPack.i18n ("Comp~Sentry") + dated;
 	else if (building.isManualFireActive())
-		return lngPack.i18n ("Text~Comp~ReactionFireOff") + dated;
+		return lngPack.i18n ("Comp~ReactionFireOff") + dated;
 
 	//GoldRaf idle + gold-amount
 	if (building.getStaticData().convertsGold && building.getOwner() == whoWantsToKnow && building.getOwner() && !building.isUnitWorking())
 	{
 		std::string sText;
-		sText = lngPack.i18n ("Text~Comp~Waits") + "\n";
-		sText += lngPack.i18n ("Text~Title~Credits") + lngPack.i18n ("Text~Punctuation~Colon");
+		sText = lngPack.i18n ("Comp~Waits") + "\n";
+		sText += lngPack.i18n ("Title~Credits") + lngPack.i18n ("Punctuation~Colon");
 		sText += std::to_string (building.getOwner()->getCredits());
 		return sText + dated;
 	}
@@ -463,9 +463,9 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 	// Research Center
 	if (building.getStaticData().canResearch && building.getOwner() == whoWantsToKnow && building.getOwner() && !building.isUnitWorking())
 	{
-		return lngPack.i18n ("Text~Comp~Waits") + "\n" + getResearchAreaStatus (*building.getOwner()) + dated;
+		return lngPack.i18n ("Comp~Waits") + "\n" + getResearchAreaStatus (*building.getOwner()) + dated;
 	}
-	return lngPack.i18n ("Text~Comp~Waits") + dated;
+	return lngPack.i18n ("Comp~Waits") + dated;
 }
 
 //------------------------------------------------------------------------------
@@ -479,30 +479,30 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 	if (vehicle.isDisabled())
 	{
 		std::string sText;
-		sText = lngPack.i18n ("Text~Comp~Disabled") + " (";
+		sText = lngPack.i18n ("Comp~Disabled") + " (";
 		sText += std::to_string (vehicle.getDisabledTurns()) + ")";
 		return sText + dated;
 	}
 	else if (vehicle.isSurveyorAutoMoveActive())
-		return lngPack.i18n ("Text~Comp~Surveying") + dated;
+		return lngPack.i18n ("Comp~Surveying") + dated;
 	else if (vehicle.isUnitBuildingABuilding())
 	{
 		if (vehicle.getOwner() != player)
-			return lngPack.i18n ("Text~Comp~Producing");
+			return lngPack.i18n ("Comp~Producing");
 		else
 		{
 			std::string sText;
 			if (vehicle.getBuildTurns())
 			{
-				sText = lngPack.i18n ("Text~Comp~Producing");
-				sText += lngPack.i18n ("Text~Punctuation~Colon");
+				sText = lngPack.i18n ("Comp~Producing");
+				sText += lngPack.i18n ("Punctuation~Colon");
 				sText += getStaticUnitName (unitsData.getStaticUnitData (vehicle.getBuildingType())) + " (";
 				sText += std::to_string (vehicle.getBuildTurns());
 				sText += ")";
 
 				if (font->getTextWide (sText) > 126)
 				{
-					sText = lngPack.i18n ("Text~Comp~Producing") + lngPack.i18n ("Text~Punctuation~Colon");
+					sText = lngPack.i18n ("Comp~Producing") + lngPack.i18n ("Punctuation~Colon");
 					sText += "\n";
 					sText += getStaticUnitName (unitsData.getStaticUnitData (vehicle.getBuildingType())) + " (";
 					sText += std::to_string (vehicle.getBuildTurns());
@@ -512,13 +512,13 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 			}
 			else //small building is rdy + activate after engineere moves away
 			{
-				sText = lngPack.i18n ("Text~Comp~Producing_Fin");
-				sText += lngPack.i18n ("Text~Punctuation~Colon");
+				sText = lngPack.i18n ("Comp~Producing_Fin");
+				sText += lngPack.i18n ("Punctuation~Colon");
 				sText += getStaticUnitName (unitsData.getStaticUnitData (vehicle.getBuildingType()));
 
 				if (font->getTextWide (sText) > 126)
 				{
-					sText = lngPack.i18n ("Text~Comp~Producing_Fin") + lngPack.i18n ("Text~Punctuation~Colon");
+					sText = lngPack.i18n ("Comp~Producing_Fin") + lngPack.i18n ("Punctuation~Colon");
 					sText += "\n";
 					sText += getStaticUnitName (unitsData.getStaticUnitData (vehicle.getBuildingType()));
 				}
@@ -527,35 +527,35 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 		}
 	}
 	else if (vehicle.isUnitClearingMines())
-		return lngPack.i18n ("Text~Comp~Clearing_Mine") + dated;
+		return lngPack.i18n ("Comp~Clearing_Mine") + dated;
 	else if (vehicle.isUnitLayingMines())
-		return lngPack.i18n ("Text~Comp~Laying") + dated;
+		return lngPack.i18n ("Comp~Laying") + dated;
 	else if (vehicle.isUnitClearing())
 	{
 		if (vehicle.getClearingTurns())
 		{
-			return lngPack.i18n ("Text~Comp~Clearing", std::to_string (vehicle.getClearingTurns())) + dated;
+			return lngPack.i18n ("Comp~Clearing", std::to_string (vehicle.getClearingTurns())) + dated;
 		}
 		else
-			return lngPack.i18n ("Text~Comp~Clearing_Fin") + dated;
+			return lngPack.i18n ("Comp~Clearing_Fin") + dated;
 	}
 	// generate other infos for normal non-unit-related-events and infiltrators
 	{
 		std::string sTmp;
 		if (vehicle.getMoveJob() && vehicle.getMoveJob()->getEndMoveAction().isAttacking())
-			sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
+			sTmp = lngPack.i18n ("Comp~MovingToAttack");
 		else if (vehicle.getMoveJob())
-			sTmp = lngPack.i18n ("Text~Comp~Moving");
+			sTmp = lngPack.i18n ("Comp~Moving");
 		else if (vehicle.isAttacking())
-			sTmp = lngPack.i18n ("Text~Comp~AttackingStatusStr");
+			sTmp = lngPack.i18n ("Comp~AttackingStatusStr");
 		else if (vehicle.isBeeingAttacked())
-			sTmp = lngPack.i18n ("Text~Comp~IsBeeingAttacked");
+			sTmp = lngPack.i18n ("Comp~IsBeeingAttacked");
 		else if (vehicle.isManualFireActive())
-			sTmp = lngPack.i18n ("Text~Comp~ReactionFireOff");
+			sTmp = lngPack.i18n ("Comp~ReactionFireOff");
 		else if (vehicle.isSentryActive())
-			sTmp = lngPack.i18n ("Text~Comp~Sentry");
+			sTmp = lngPack.i18n ("Comp~Sentry");
 		else
-			sTmp = lngPack.i18n ("Text~Comp~Waits");
+			sTmp = lngPack.i18n ("Comp~Waits");
 
 		// extra info only for infiltrators
 		// TODO should it be original behavior (as it is now) or
@@ -592,23 +592,23 @@ namespace
 		switch (report.getType())
 		{
 			case eSavedReportType::Attacked:
-				return lngPack.i18n ("Text~Comp~Attacked", displayName);
+				return lngPack.i18n ("Comp~Attacked", displayName);
 			case eSavedReportType::AttackingEnemy:
-				return lngPack.i18n ("Text~Comp~AttackingEnemy", displayName);
+				return lngPack.i18n ("Comp~AttackingEnemy", displayName);
 			case eSavedReportType::CapturedByEnemy:
-				return lngPack.i18n ("Text~Comp~CapturedByEnemy", displayName);
+				return lngPack.i18n ("Comp~CapturedByEnemy", displayName);
 			case eSavedReportType::Destroyed:
-				return lngPack.i18n ("Text~Comp~Destroyed", displayName);
+				return lngPack.i18n ("Comp~Destroyed", displayName);
 			case eSavedReportType::Detected:
 			{
 				const auto& savedReport = static_cast<const cSavedReportDetected&> (report);
 				const auto playerName = savedReport.getPlayerOwnerName().empty() ? "" : " (" + savedReport.getPlayerOwnerName() + ") ";
-				return lngPack.i18n ("Text~Comp~Detected", displayName + playerName);
+				return lngPack.i18n ("Comp~Detected", displayName + playerName);
 			}
 			case eSavedReportType::Disabled:
-				return displayName + " " + lngPack.i18n ("Text~Comp~Disabled");
+				return displayName + " " + lngPack.i18n ("Comp~Disabled");
 			case eSavedReportType::PathInterrupted:
-				return lngPack.i18n ("Text~Comp~Path_interrupted");
+				return lngPack.i18n ("Comp~Path_interrupted");
 			case eSavedReportType::SurveyorAiConfused:
 				return "Surveyor AI: I'm totally confused. Don't know what to do...";
 		}
@@ -618,13 +618,13 @@ namespace
 	//--------------------------------------------------------------------------
 	std::string getMessage (const cSavedReportChat& report)
 	{
-		return report.getPlayerName() + lngPack.i18n ("Text~Punctuation~Colon") + report.getText();
+		return report.getPlayerName() + lngPack.i18n ("Punctuation~Colon") + report.getText();
 	}
 
 	//------------------------------------------------------------------------------
 	std::string getMessage (const cSavedReportHostCommand& report)
 	{
-		return lngPack.i18n ("Text~Multiplayer~Host_command", report.getCommand());
+		return lngPack.i18n ("Multiplayer~Host_command", report.getCommand());
 	}
 
 	//------------------------------------------------------------------------------
@@ -632,7 +632,7 @@ namespace
 	{
 		auto player = model.getPlayer (report.getPlayerId());
 		assert (player != nullptr);
-		return lngPack.i18n ("Text~Multiplayer~Lost_Connection", player->getName());
+		return lngPack.i18n ("Multiplayer~Lost_Connection", player->getName());
 	}
 
 	//------------------------------------------------------------------------------
@@ -640,7 +640,7 @@ namespace
 	{
 		auto player = model.getPlayer (report.getPlayerId());
 		assert (player != nullptr);
-		return lngPack.i18n ("Text~Comp~Defeated", player->getName());
+		return lngPack.i18n ("Comp~Defeated", player->getName());
 	}
 
 	//------------------------------------------------------------------------------
@@ -648,7 +648,7 @@ namespace
 	{
 		auto player = model.getPlayer (report.getPlayerId());
 		assert (player != nullptr);
-		return lngPack.i18n ("Text~Multiplayer~Player_Left", player->getName());
+		return lngPack.i18n ("Multiplayer~Player_Left", player->getName());
 	}
 
 	//------------------------------------------------------------------------------
@@ -656,7 +656,7 @@ namespace
 	{
 		auto player = model.getPlayer (report.getPlayerId());
 		assert (player != nullptr);
-		return lngPack.i18n ("Text~Multiplayer~Player_Turn_End", player->getName());
+		return lngPack.i18n ("Multiplayer~Player_Turn_End", player->getName());
 	}
 
 	//------------------------------------------------------------------------------
@@ -664,7 +664,7 @@ namespace
 	{
 		auto player = model.getPlayer (report.getPlayerId());
 		assert (player != nullptr);
-		return lngPack.i18n ("Text~Comp~Wins", player->getName());
+		return lngPack.i18n ("Comp~Wins", player->getName());
 	}
 
 	//------------------------------------------------------------------------------
@@ -675,18 +675,18 @@ namespace
 		{
 			switch (report.getResourceType())
 			{
-				case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Increased", std::to_string (amount));
-				case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Increased", std::to_string (amount));
-				case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Increased", std::to_string (amount));
+				case eResourceType::Gold: return lngPack.i18n ("Comp~Adjustments_Gold_Increased", std::to_string (amount));
+				case eResourceType::Oil: return lngPack.i18n ("Comp~Adjustments_Fuel_Increased", std::to_string (amount));
+				case eResourceType::Metal: return lngPack.i18n ("Comp~Adjustments_Metal_Increased", std::to_string (amount));
 			}
 		}
 		else
 		{
 			switch (report.getResourceType())
 			{
-				case eResourceType::Gold: return lngPack.i18n ("Text~Comp~Adjustments_Gold_Decreased", std::to_string (amount));
-				case eResourceType::Oil: return lngPack.i18n ("Text~Comp~Adjustments_Fuel_Decreased", std::to_string (amount));
-				case eResourceType::Metal: return lngPack.i18n ("Text~Comp~Adjustments_Metal_Decreased", std::to_string (amount));
+				case eResourceType::Gold: return lngPack.i18n ("Comp~Adjustments_Gold_Decreased", std::to_string (amount));
+				case eResourceType::Oil: return lngPack.i18n ("Comp~Adjustments_Fuel_Decreased", std::to_string (amount));
+				case eResourceType::Metal: return lngPack.i18n ("Comp~Adjustments_Metal_Decreased", std::to_string (amount));
 			}
 		}
 		throw std::runtime_error ("Unknown resourceType " + std::to_string (static_cast<int> (report.getResourceType())));
@@ -696,13 +696,13 @@ namespace
 	std::string getMessage (const cModel& model, const cSavedReportUpgraded& report)
 	{
 		const auto& unitName = getStaticUnitName (model.getUnitsData()->getStaticUnitData (report.getUnitId()));
-		return lngPack.plural ("Text~Comp~Upgrade(s)_Done", report.getUnitsCount()) + " " + lngPack.i18n ("Text~Comp~Of_Type", unitName) + " (" + lngPack.i18n ("Text~Others~Costs") + lngPack.i18n ("Text~Punctuation~Colon") + std::to_string (report.getCosts()) + ")";
+		return lngPack.plural ("Comp~Upgrade(s)_Done", report.getUnitsCount()) + " " + lngPack.i18n ("Comp~Of_Type", unitName) + " (" + lngPack.i18n ("Others~Costs") + lngPack.i18n ("Punctuation~Colon") + std::to_string (report.getCosts()) + ")";
 	}
 
 	//------------------------------------------------------------------------------
 	std::string getMessage (const cModel& model, const cSavedReportTurnStart& report)
 	{
-		std::string message = lngPack.i18n ("Text~Comp~Turn_Start", std::to_string (report.turn));
+		std::string message = lngPack.i18n ("Comp~Turn_Start", std::to_string (report.turn));
 
 		if (!report.unitReports.empty())
 		{
@@ -724,26 +724,26 @@ namespace
 			// plural   | != 1 | 1 <  |
 			// we should have `i18n (key, n)`
 			if (totalUnitsCount == 1)
-				message += " " + lngPack.i18n ("Text~Comp~Finished") + ".";
+				message += " " + lngPack.i18n ("Comp~Finished") + ".";
 			else if (totalUnitsCount > 1)
-				message += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";
+				message += " " + lngPack.i18n ("Comp~Finished2") + ".";
 		}
 
 		if (!report.researchAreas.empty())
 		{
 			message += "\n";
-			message += lngPack.i18n ("Text~Others~Research") + " " + lngPack.i18n ("Text~Comp~Finished") + lngPack.i18n ("Text~Punctuation~Colon");
+			message += lngPack.i18n ("Others~Research") + " " + lngPack.i18n ("Comp~Finished") + lngPack.i18n ("Punctuation~Colon");
 
 			const std::string themeNames[8] =
 				{
-					lngPack.i18n ("Text~Others~Attack"),
-					lngPack.i18n ("Text~Others~Shots"),
-					lngPack.i18n ("Text~Others~Range"),
-					lngPack.i18n ("Text~Others~Armor"),
-					lngPack.i18n ("Text~Others~Hitpoints"),
-					lngPack.i18n ("Text~Others~Speed"),
-					lngPack.i18n ("Text~Others~Scan"),
-					lngPack.i18n ("Text~Others~Costs")};
+					lngPack.i18n ("Others~Attack"),
+					lngPack.i18n ("Others~Shots"),
+					lngPack.i18n ("Others~Range"),
+					lngPack.i18n ("Others~Armor"),
+					lngPack.i18n ("Others~Hitpoints"),
+					lngPack.i18n ("Others~Speed"),
+					lngPack.i18n ("Others~Scan"),
+					lngPack.i18n ("Others~Costs")};
 
 			const char* sep = "";
 			for (const auto researchArea : report.researchAreas)
@@ -772,41 +772,41 @@ std::string getMessage (const cSavedReport& report, const cModel& model)
 	switch (report.getType())
 	{
 		case eSavedReportType::MetalInsufficient:
-			return lngPack.i18n ("Text~Comp~Metal_Insufficient");
+			return lngPack.i18n ("Comp~Metal_Insufficient");
 		case eSavedReportType::FuelInsufficient:
-			return lngPack.i18n ("Text~Comp~Fuel_Insufficient");
+			return lngPack.i18n ("Comp~Fuel_Insufficient");
 		case eSavedReportType::GoldInsufficient:
-			return lngPack.i18n ("Text~Comp~Gold_Insufficient");
+			return lngPack.i18n ("Comp~Gold_Insufficient");
 		case eSavedReportType::EnergyInsufficient:
-			return lngPack.i18n ("Text~Comp~Energy_Insufficient");
+			return lngPack.i18n ("Comp~Energy_Insufficient");
 		case eSavedReportType::TeamInsufficient:
-			return lngPack.i18n ("Text~Comp~Team_Insufficient");
+			return lngPack.i18n ("Comp~Team_Insufficient");
 		case eSavedReportType::MetalLow:
-			return lngPack.i18n ("Text~Comp~Metal_Low");
+			return lngPack.i18n ("Comp~Metal_Low");
 		case eSavedReportType::FuelLow:
-			return lngPack.i18n ("Text~Comp~Fuel_Low");
+			return lngPack.i18n ("Comp~Fuel_Low");
 		case eSavedReportType::GoldLow:
-			return lngPack.i18n ("Text~Comp~Gold_Low");
+			return lngPack.i18n ("Comp~Gold_Low");
 		case eSavedReportType::EnergyLow:
-			return lngPack.i18n ("Text~Comp~Energy_Low");
+			return lngPack.i18n ("Comp~Energy_Low");
 		case eSavedReportType::TeamLow:
-			return lngPack.i18n ("Text~Comp~Team_Low");
+			return lngPack.i18n ("Comp~Team_Low");
 		case eSavedReportType::EnergyToLow:
-			return lngPack.i18n ("Text~Comp~Energy_ToLow");
+			return lngPack.i18n ("Comp~Energy_ToLow");
 		case eSavedReportType::EnergyIsNeeded:
-			return lngPack.i18n ("Text~Comp~Energy_IsNeeded");
+			return lngPack.i18n ("Comp~Energy_IsNeeded");
 		case eSavedReportType::BuildingDisabled:
-			return lngPack.i18n ("Text~Comp~Building_Disabled");
+			return lngPack.i18n ("Comp~Building_Disabled");
 		case eSavedReportType::Producing_InsufficientMaterial:
-			return lngPack.i18n ("Text~Comp~Producing_InsufficientMaterial");
+			return lngPack.i18n ("Comp~Producing_InsufficientMaterial");
 		case eSavedReportType::Producing_PositionBlocked:
-			return lngPack.i18n ("Text~Comp~Producing_PositionBlocked");
+			return lngPack.i18n ("Comp~Producing_PositionBlocked");
 		case eSavedReportType::TurnWait:
-			return lngPack.i18n ("Text~Comp~Turn_Wait");
+			return lngPack.i18n ("Comp~Turn_Wait");
 		case eSavedReportType::TurnAutoMove:
-			return lngPack.i18n ("Text~Comp~Turn_Automove");
+			return lngPack.i18n ("Comp~Turn_Automove");
 		case eSavedReportType::SuddenDeath:
-			return lngPack.i18n ("Text~Comp~SuddenDeath");
+			return lngPack.i18n ("Comp~SuddenDeath");
 
 		case eSavedReportType::Chat:
 			return getMessage (static_cast<const cSavedReportChat&> (report));
