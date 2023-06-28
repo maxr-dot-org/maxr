@@ -44,7 +44,6 @@ workspace "Maxr"
 			"4458", -- declaration of '$var' hides class member
 			"4459", -- declaration of '$var' hides global declaration
 			"4701", -- potentially uninitialized local variable '$var' used
-			"4702", -- unreachable code -- TODO: REMOVE use latest spiritless_po
 		}
 
 	filter { "configurations:Debug" }
