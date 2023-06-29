@@ -6,15 +6,15 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Maxr 0.3.0\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-28 23:29+0200\n"
+"POT-Creation-Date: 2023-06-29 08:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
@@ -170,6 +170,9 @@ msgstr ""
 msgid "Comp~NoLimit"
 msgstr ""
 
+msgid "Comp~Of_Type"
+msgstr ""
+
 msgid "Comp~Path_interrupted"
 msgstr ""
 
@@ -250,9 +253,6 @@ msgid "Comp~Upgrade(s)_Done"
 msgid_plural "Comp~Upgrade(s)_Done"
 msgstr[0] ""
 msgstr[1] ""
-
-msgid "Comp~Of_Type"
-msgstr ""
 
 msgid "Comp~Waits"
 msgstr ""

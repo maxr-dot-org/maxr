@@ -5,7 +5,7 @@ Maxr doesn't use libintl but [spiritless_po](https://github.com/oo13/spiritless_
 - For extraction we use:
 
 	```
-	xgettext --c++ -o data/languages/maxr.pot -s -k -ki18n -kplural:1,1 --no-location `find . -name "*.cpp"` `find . -name "*.h"`
+	xgettext --c++ -o data/languages/maxr.pot -s -k -ki18n -kplural:1,1 --no-location `find ../../src "(" -name "*.cpp" -or -name "*.h" ")" -not -wholename "../../src/3rd/*.*"`
 	```
 
 - For new LANG (change with your own), use
@@ -17,8 +17,10 @@ Maxr doesn't use libintl but [spiritless_po](https://github.com/oo13/spiritless_
 - To update LANG, use
 
 	```
-	msgmerge --update -s --no-location data/languages/LANG/maxr.po data/languages/maxr.pot
+	msgmerge --update -s --no-location --no-wrap LANG/maxr.po maxr.pot
 	```
+
+There is `update_translations.sh` for convenience to update pot and all supported languages.
 
 Current languages are:
 

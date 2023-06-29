@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-28 23:29+0200\n"
+"POT-Creation-Date: 2023-06-29 08:54+0200\n"
 "PO-Revision-Date: 2021-07-29 22:04+0200\n"
 "Last-Translator:\n"
 "Language-Team: Hungarian\n"
@@ -16,13 +16,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#, fuzzy
+msgid "Comp~Adjustments_Fuel_Decreased"
+msgstr "Módosítás történt, nőtt az üzemanyag kitermelés: %s"
+
 msgid "Comp~Adjustments_Fuel_Increased"
 msgstr "Módosítás történt, nőtt az üzemanyag kitermelés: %s"
 
 msgid "Comp~Adjustments_Gold_Decreased"
 msgstr "Módosítás történt, csökkent az aranykitermelés: %s"
 
+#, fuzzy
+msgid "Comp~Adjustments_Gold_Increased"
+msgstr "Módosítás történt, csökkent az aranykitermelés: %s"
+
 msgid "Comp~Adjustments_Metal_Decreased"
+msgstr "Módosítás történt, csökkent a nyersanyag kitermelés: %s"
+
+#, fuzzy
+msgid "Comp~Adjustments_Metal_Increased"
 msgstr "Módosítás történt, csökkent a nyersanyag kitermelés: %s"
 
 msgid "Comp~Attacked"
@@ -39,9 +51,6 @@ msgstr "Épület működésképtelen"
 
 msgid "Comp~CapturedByEnemy"
 msgstr ""
-
-msgid "Comp~Cheat"
-msgstr "%s csaláskód:"
 
 msgid "Comp~Clearing"
 msgstr "Takarít (%s)"
@@ -94,7 +103,10 @@ msgstr[0] "%d ökoszféra"
 msgstr[1] "%d ökoszféra"
 
 msgid "Comp~End_Game"
-msgstr "Kilépés Megerősítése\n\nA nem mentett játékadatok elvesznek."
+msgstr ""
+"Kilépés Megerősítése\n"
+"\n"
+"A nem mentett játékadatok elvesznek."
 
 msgid "Comp~Energy_Insufficient"
 msgstr "Nem lehet elindítani, több energiára van szükség"
@@ -162,6 +174,9 @@ msgstr ""
 msgid "Comp~NoLimit"
 msgstr "Harc a végsőkig!"
 
+msgid "Comp~Of_Type"
+msgstr "%s típusúvá"
+
 msgid "Comp~Path_interrupted"
 msgstr ""
 
@@ -176,10 +191,15 @@ msgstr "pontnál"
 msgid "Comp~Producing"
 msgstr "Épít"
 
-msgid "Comp~Producing_Err"
-msgstr "Az építési terület nem tiszta, vagy nincs elegendő nyersanyag"
-
 msgid "Comp~Producing_Fin"
+msgstr "Gyártás befejezve"
+
+#, fuzzy
+msgid "Comp~Producing_InsufficientMaterial"
+msgstr "Nincs elegendő arany az elindításhoz."
+
+#, fuzzy
+msgid "Comp~Producing_PositionBlocked"
 msgstr "Gyártás befejezve"
 
 msgid "Comp~ReactionFireOff"
@@ -191,9 +211,6 @@ msgstr "Újra"
 msgid "Comp~Reserve"
 msgstr "Tartalék"
 
-msgid "Comp~ResolutionWarning"
-msgstr "Figyelem: Nem támogatott videó mód a beállításban"
-
 msgid "Comp~RestartRequired"
 msgstr ""
 
@@ -202,9 +219,6 @@ msgstr "Pillanatkép elmentve: "
 
 msgid "Comp~Sentry"
 msgstr "őrtáll"
-
-msgid "Comp~Stolen"
-msgstr "ellopva"
 
 msgid "Comp~SuddenDeath"
 msgstr "Hirtelen halál! Aki elsőnek növeli a pontjait, az nyer!"
@@ -246,9 +260,6 @@ msgid_plural "Comp~Upgrade(s)_Done"
 msgstr[0] "Felfejlesztve %d egység"
 msgstr[1] "Felfejlesztve %d egység"
 
-msgid "Comp~Of_Type"
-msgstr "%s típusúvá"
-
 msgid "Comp~Waits"
 msgstr "várakozik"
 
@@ -258,17 +269,20 @@ msgstr ""
 msgid "Comp~Working"
 msgstr "működik"
 
-msgid "Error_Messages~ERROR_File_Not_Found"
-msgstr "Nincs meg a fájl: %s"
-
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Hiba a térkép betöltése közben"
 
-msgid "Error_Messages~ERROR_Missing_Translation"
-msgstr "hiányzik a fordítás: %s"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Incompatible"
+msgstr "Hiba a térkép betöltése közben"
 
-msgid "Error_Messages~INFO_Language_initialised"
-msgstr "A nyelv inicializálva lett"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Loading"
+msgstr "Hiba a térkép betöltése közben"
+
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Writing"
+msgstr "Hiba a térkép betöltése közben"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Még nincs implementálva"
@@ -291,17 +305,11 @@ msgstr "Grafika betöltése..."
 msgid "Init~Keys"
 msgstr "Billentyűk betöltése..."
 
-msgid "Init~Lang"
-msgstr "Nyelvcsomag betöltése..."
-
 msgid "Init~Music"
 msgstr "Zene betöltése..."
 
 msgid "Init~Sounds"
 msgstr "Hanhatások betöltése..."
-
-msgid "Init~Terrain"
-msgstr "Terep betöltése..."
 
 msgid "Init~Vehicles"
 msgstr "Járművek betöltése..."
@@ -309,23 +317,8 @@ msgstr "Járművek betöltése..."
 msgid "Init~Voices"
 msgstr "Hangok betöltése..."
 
-msgid "Main~Credits_Doc"
-msgstr "Michael Mönch's M.A.X. (Remake DoctorDeath-től)"
-
-msgid "Main~Credits_MM"
-msgstr "Michael Mönch's M.A.X. (Eredeti az Interplay-től)"
-
 msgid "Main~Credits_Reloaded"
 msgstr "M.A.X.R. készült az Interplay M.A.X. című játéka alapján"
-
-msgid "Main~Game_Subtitle"
-msgstr "Mechanized Assault and eXploration Reloaded"
-
-msgid "Main~Game_Title"
-msgstr "M.A.X.R."
-
-msgid "Main~Remarks~Not_yet_implemented"
-msgstr "(*) még nincs implementálva"
 
 msgid "Main~Version"
 msgstr "Verzió V%s"
@@ -333,35 +326,24 @@ msgstr "Verzió V%s"
 msgid "Multiplayer~Abort_Waiting"
 msgstr "Kiszolgáló, a várakozás megszakításához nyomj F2-őt."
 
-msgid "Multiplayer~Connection_Terminated"
-msgstr "A kapcsolat lezárult."
-
-msgid "Multiplayer~Deadline"
-msgstr "A körnek %s másoedpercen belül vége."
-
 msgid "Multiplayer~Disconnect_Not_In_Save"
 msgstr "Le leszel csatlakoztatva, mert nem szerepelsz a mentett játékban."
 
-msgid "Multiplayer~Go"
-msgstr "Indítás"
-
-msgid "Multiplayer~Go_Abort"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Error"
 msgstr "Indítás megszakítva"
 
-msgid "Multiplayer~Go_Check"
-msgstr "Pipáld be az indításhoz"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Own"
+msgstr "Nincs elég játékos!"
 
-msgid "Multiplayer~Go_Host"
-msgstr "A Host állapota: Készenáll"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Client"
+msgstr "Nem fut a szerver"
 
-msgid "Multiplayer~Go_Host_No"
-msgstr "A Host állapota: Nem áll készen"
-
-msgid "Multiplayer~Go_Ready"
-msgstr "Indulhat a játék"
-
-msgid "Multiplayer~Go_Ready_No"
-msgstr "nem indulhat a játék"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Server"
+msgstr "Nem fut a szerver"
 
 msgid "Multiplayer~Host_command"
 msgstr ""
@@ -402,14 +384,8 @@ msgstr "--nincs Térkép kiválasztva--"
 msgid "Multiplayer~Missing_Settings"
 msgstr "Nincsenek beállítva a paraméterek, a térkép vagy a játékmentés"
 
-msgid "Multiplayer~Network_Closed"
-msgstr "A kapcsolat bezárult"
-
 msgid "Multiplayer~Network_Connected"
 msgstr "Csatlakozva"
-
-msgid "Multiplayer~Network_Connected_Not"
-msgstr "Nincs kapcsolat"
 
 msgid "Multiplayer~Network_Connecting"
 msgstr "Csatlakozás: %s"
@@ -420,14 +396,8 @@ msgstr "Nem lehet hozzá csatlakozni: szerver"
 msgid "Multiplayer~Network_Error_Socket"
 msgstr "Hiba - a socket nem megnyitható"
 
-msgid "Multiplayer~Network_New"
-msgstr "Új csatlakozás"
-
 msgid "Multiplayer~Network_Open"
 msgstr "Játék megnyitva (Port: %s)"
-
-msgid "Multiplayer~Network_Syncing"
-msgstr "Szinkronizálás..."
 
 msgid "Multiplayer~No_Map_No_Ready"
 msgstr "A %s térkép nem tölthető be. Így nem indíthatod a játékot."
@@ -468,26 +438,14 @@ msgstr "Játékos 7"
 msgid "Multiplayer~Player8"
 msgstr "Játékos 8"
 
-msgid "Multiplayer~Player_Amount"
-msgstr "Kérlek állítsd be a játékosok számát. HotSeat játék esetén legalább két emberi játékos kell. Maximum 8 játékos lehet."
-
 msgid "Multiplayer~Player_Color_Taken"
 msgstr ""
-
-msgid "Multiplayer~Player_Few"
-msgstr "Nincs elég játékos!"
 
 msgid "Multiplayer~Player_Joined"
 msgstr "%s csatlakozott a játékhoz"
 
 msgid "Multiplayer~Player_Left"
 msgstr "%s elhagyta a játékot"
-
-msgid "Multiplayer~Player_Many"
-msgstr "Túl sok játékos!"
-
-msgid "Multiplayer~Player_MustHost"
-msgstr "Körökre osztott játéknál lennie kell host-nak!"
 
 msgid "Multiplayer~Player_Name_Taken"
 msgstr ""
@@ -504,8 +462,13 @@ msgstr "Az egyik játékosnak nem megfelelő a neve!"
 msgid "Multiplayer~Reconnect"
 msgstr "Ez a játék már fut. Ha megszakadt a kapcsolatod a játékkal, újracsatlakozhatsz. Szeretnél újra csatlakozni?"
 
-msgid "Multiplayer~Reconnect_Forbidden"
-msgstr "A szerver nem engedélyezi az újracsatlakozást."
+#, fuzzy
+msgid "Multiplayer~Reconnect_Already_Connected"
+msgstr "Csatlakozva"
+
+#, fuzzy
+msgid "Multiplayer~Reconnect_Not_Part_Of_Game"
+msgstr "Le leszel csatlakoztatva, mert nem szerepelsz a mentett játékban."
 
 msgid "Multiplayer~Save_Only_Host"
 msgstr "Csak a kiszolgáló mentheti el a játékot."
@@ -524,9 +487,6 @@ msgstr ""
 
 msgid "Multiplayer~Wait_Until"
 msgstr "Kérlek várd meg míg %s befejezi a körét."
-
-msgid "Multiplayer~Waiting"
-msgstr "Várakozás a többi játékosra..."
 
 msgid "Option~Definite"
 msgstr "Felépült (eredeti)"
@@ -575,9 +535,6 @@ msgstr "Körökre osztott"
 
 msgid "Others~Active"
 msgstr "Aktiválás"
-
-msgid "Others~ActiveAll_9"
-msgstr ""
 
 msgid "Others~Active_7"
 msgstr "Aktív"
@@ -656,6 +613,10 @@ msgstr "Kész"
 
 msgid "Others~End"
 msgstr "Vége"
+
+#, fuzzy
+msgid "Others~Enter_7"
+msgstr "Kész"
 
 msgid "Others~Exit"
 msgstr "Kilépés"
@@ -759,17 +720,11 @@ msgstr "Lőtáv"
 msgid "Others~Reload"
 msgstr ""
 
-msgid "Others~ReloadAll_9"
-msgstr ""
-
 msgid "Others~Reload_7"
 msgstr "Újratöltés"
 
 msgid "Others~Repair"
 msgstr "Javítás"
-
-msgid "Others~RepairAll_9"
-msgstr ""
 
 msgid "Others~Repair_7"
 msgstr "Javítás"
@@ -796,9 +751,6 @@ msgid "Others~Sea_Units"
 msgstr "Vízi egységek"
 
 msgid "Others~Seed"
-msgstr "Seed"
-
-msgid "Others~Seed_7"
 msgstr "Seed"
 
 msgid "Others~Sentry"
@@ -869,9 +821,6 @@ msgstr "Fejlesztés"
 
 msgid "Others~UpgradeAll_7"
 msgstr "Összes fejl."
-
-msgid "Others~UpgradeAll_9"
-msgstr ""
 
 msgid "Others~Upgrademenu_7"
 msgstr "Fejlesztések"
@@ -969,9 +918,6 @@ msgstr "Bolygóválasztás"
 msgid "Title~Choose_Units"
 msgstr ""
 
-msgid "Title~Clan"
-msgstr ""
-
 msgid "Title~Clans"
 msgstr "Klánok"
 
@@ -1014,9 +960,6 @@ msgstr "Fejlesztés Menü"
 msgid "Title~Load"
 msgstr "Betöltés Menü"
 
-msgid "Title~LoadSave"
-msgstr "Betöltés/Mentés Menü"
-
 msgid "Title~MainMenu"
 msgstr "Főmenü"
 
@@ -1041,17 +984,11 @@ msgstr "Beállítások"
 msgid "Title~Player_Name"
 msgstr "Játékosnév:"
 
-msgid "Title~Player_Select"
-msgstr "Játékos beállítások"
-
 msgid "Title~Players"
 msgstr "Játékosok:"
 
 msgid "Title~Port"
 msgstr "Port"
-
-msgid "Title~Resource"
-msgstr "Nyersanyagsűrűség"
 
 msgid "Title~Resource_Density"
 msgstr "Nyersanyag gyakoriság"
@@ -1077,3 +1014,107 @@ msgstr "Egységstátusz képernyő"
 msgid "Title~Upgrades_Menu"
 msgstr ""
 
+#~ msgid "Comp~Cheat"
+#~ msgstr "%s csaláskód:"
+
+#~ msgid "Comp~Producing_Err"
+#~ msgstr "Az építési terület nem tiszta, vagy nincs elegendő nyersanyag"
+
+#~ msgid "Comp~ResolutionWarning"
+#~ msgstr "Figyelem: Nem támogatott videó mód a beállításban"
+
+#~ msgid "Comp~Stolen"
+#~ msgstr "ellopva"
+
+#~ msgid "Error_Messages~ERROR_File_Not_Found"
+#~ msgstr "Nincs meg a fájl: %s"
+
+#~ msgid "Error_Messages~ERROR_Missing_Translation"
+#~ msgstr "hiányzik a fordítás: %s"
+
+#~ msgid "Error_Messages~INFO_Language_initialised"
+#~ msgstr "A nyelv inicializálva lett"
+
+#~ msgid "Init~Lang"
+#~ msgstr "Nyelvcsomag betöltése..."
+
+#~ msgid "Init~Terrain"
+#~ msgstr "Terep betöltése..."
+
+#~ msgid "Main~Credits_Doc"
+#~ msgstr "Michael Mönch's M.A.X. (Remake DoctorDeath-től)"
+
+#~ msgid "Main~Credits_MM"
+#~ msgstr "Michael Mönch's M.A.X. (Eredeti az Interplay-től)"
+
+#~ msgid "Main~Game_Subtitle"
+#~ msgstr "Mechanized Assault and eXploration Reloaded"
+
+#~ msgid "Main~Game_Title"
+#~ msgstr "M.A.X.R."
+
+#~ msgid "Main~Remarks~Not_yet_implemented"
+#~ msgstr "(*) még nincs implementálva"
+
+#~ msgid "Multiplayer~Connection_Terminated"
+#~ msgstr "A kapcsolat lezárult."
+
+#~ msgid "Multiplayer~Deadline"
+#~ msgstr "A körnek %s másoedpercen belül vége."
+
+#~ msgid "Multiplayer~Go"
+#~ msgstr "Indítás"
+
+#~ msgid "Multiplayer~Go_Check"
+#~ msgstr "Pipáld be az indításhoz"
+
+#~ msgid "Multiplayer~Go_Host"
+#~ msgstr "A Host állapota: Készenáll"
+
+#~ msgid "Multiplayer~Go_Host_No"
+#~ msgstr "A Host állapota: Nem áll készen"
+
+#~ msgid "Multiplayer~Go_Ready"
+#~ msgstr "Indulhat a játék"
+
+#~ msgid "Multiplayer~Go_Ready_No"
+#~ msgstr "nem indulhat a játék"
+
+#~ msgid "Multiplayer~Network_Closed"
+#~ msgstr "A kapcsolat bezárult"
+
+#~ msgid "Multiplayer~Network_Connected_Not"
+#~ msgstr "Nincs kapcsolat"
+
+#~ msgid "Multiplayer~Network_New"
+#~ msgstr "Új csatlakozás"
+
+#~ msgid "Multiplayer~Network_Syncing"
+#~ msgstr "Szinkronizálás..."
+
+#~ msgid "Multiplayer~Player_Amount"
+#~ msgstr "Kérlek állítsd be a játékosok számát. HotSeat játék esetén legalább két emberi játékos kell. Maximum 8 játékos lehet."
+
+#~ msgid "Multiplayer~Player_Many"
+#~ msgstr "Túl sok játékos!"
+
+#~ msgid "Multiplayer~Player_MustHost"
+#~ msgstr "Körökre osztott játéknál lennie kell host-nak!"
+
+#~ msgid "Multiplayer~Reconnect_Forbidden"
+#~ msgstr "A szerver nem engedélyezi az újracsatlakozást."
+
+#~ msgid "Multiplayer~Waiting"
+#~ msgstr "Várakozás a többi játékosra..."
+
+#~ msgid "Others~Seed_7"
+#~ msgstr "Seed"
+
+#~ msgid "Title~LoadSave"
+#~ msgstr "Betöltés/Mentés Menü"
+
+#~ msgid "Title~Player_Select"
+#~ msgstr "Játékos beállítások"
+
+#~ msgid "Title~Resource"
+#~ msgstr "Nyersanyagsűrűség"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-28 23:29+0200\n"
+"POT-Creation-Date: 2023-06-29 08:54+0200\n"
 "PO-Revision-Date: 2021-07-29 22:02+0200\n"
 "Last-Translator:\n"
 "Language-Team: Slovenian\n"
@@ -14,8 +14,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n"
-"%100==4 ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);\n"
+
+#, fuzzy
+msgid "Comp~Adjustments_Fuel_Decreased"
+msgstr "Popravek: črpanje goriva je povečano za %s"
 
 msgid "Comp~Adjustments_Fuel_Increased"
 msgstr "Popravek: črpanje goriva je povečano za %s"
@@ -23,7 +26,15 @@ msgstr "Popravek: črpanje goriva je povečano za %s"
 msgid "Comp~Adjustments_Gold_Decreased"
 msgstr "Popravek: izkop zlata je zmanjšan za %s"
 
+#, fuzzy
+msgid "Comp~Adjustments_Gold_Increased"
+msgstr "Popravek: izkop zlata je zmanjšan za %s"
+
 msgid "Comp~Adjustments_Metal_Decreased"
+msgstr "Popravek: izkop surovin je zmanjšan za %s"
+
+#, fuzzy
+msgid "Comp~Adjustments_Metal_Increased"
 msgstr "Popravek: izkop surovin je zmanjšan za %s"
 
 msgid "Comp~Attacked"
@@ -40,9 +51,6 @@ msgstr "Zgradba je izključena"
 
 msgid "Comp~CapturedByEnemy"
 msgstr "%s je sovražnik zajel"
-
-msgid "Comp~Cheat"
-msgstr "%s uporaba goljufije"
 
 msgid "Comp~Clearing"
 msgstr "Čiščenje (%s)"
@@ -98,7 +106,10 @@ msgstr[2] "%d Eko-sfere"
 msgstr[3] "%d Eko-sfere"
 
 msgid "Comp~End_Game"
-msgstr "Res želite zaključiti?\n\nNeshranjeni napredek bo izgubljen."
+msgstr ""
+"Res želite zaključiti?\n"
+"\n"
+"Neshranjeni napredek bo izgubljen."
 
 msgid "Comp~Energy_Insufficient"
 msgstr "Premalo energije za zagon."
@@ -166,6 +177,9 @@ msgstr "premik za napad"
 msgid "Comp~NoLimit"
 msgstr "Boj do konca!"
 
+msgid "Comp~Of_Type"
+msgstr "tipa %s"
+
 msgid "Comp~Path_interrupted"
 msgstr "Ukaza za izgradnjo poti ni možno obnoviti."
 
@@ -183,10 +197,15 @@ msgstr "Točk"
 msgid "Comp~Producing"
 msgstr "Izgradnja poteka"
 
-msgid "Comp~Producing_Err"
-msgstr "Blokirana pozicija ali pomanjkanje surovin za izgradnjo"
-
 msgid "Comp~Producing_Fin"
+msgstr "izgradnja je zaključena"
+
+#, fuzzy
+msgid "Comp~Producing_InsufficientMaterial"
+msgstr "Premalo zlata za zagon."
+
+#, fuzzy
+msgid "Comp~Producing_PositionBlocked"
 msgstr "izgradnja je zaključena"
 
 msgid "Comp~ReactionFireOff"
@@ -198,9 +217,6 @@ msgstr "Ponovno"
 msgid "Comp~Reserve"
 msgstr "Rezerva"
 
-msgid "Comp~ResolutionWarning"
-msgstr "Opozorilo: nepodprt video način v konfiguraciji"
-
 msgid "Comp~RestartRequired"
 msgstr ""
 
@@ -209,9 +225,6 @@ msgstr "Posnetek zaslona je shranjen v %s"
 
 msgid "Comp~Sentry"
 msgstr "na preži"
-
-msgid "Comp~Stolen"
-msgstr "ukraden"
 
 msgid "Comp~SuddenDeath"
 msgstr "Nenadna smrt! Prvi igralec, ki poviša točke zmaga."
@@ -258,9 +271,6 @@ msgstr[1] "Nadgrajen %d enote"
 msgstr[2] "Nadgrajen %d enote"
 msgstr[3] "Nadgrajen %d enote"
 
-msgid "Comp~Of_Type"
-msgstr "tipa %s"
-
 msgid "Comp~Waits"
 msgstr "v mirovanju"
 
@@ -270,17 +280,20 @@ msgstr ""
 msgid "Comp~Working"
 msgstr "v delovanju"
 
-msgid "Error_Messages~ERROR_File_Not_Found"
-msgstr "Ne najdem datoteke: %s"
-
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Napaka pri nalaganju pokrajine"
 
-msgid "Error_Messages~ERROR_Missing_Translation"
-msgstr "manjkajoč prevod: %s"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Incompatible"
+msgstr "Napaka pri nalaganju pokrajine"
 
-msgid "Error_Messages~INFO_Language_initialised"
-msgstr "Jezik je nastavljen"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Loading"
+msgstr "Napaka pri nalaganju pokrajine"
+
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Writing"
+msgstr "Napaka pri nalaganju pokrajine"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Funkcija še ni implementirana"
@@ -303,17 +316,11 @@ msgstr "Nalagam grafiko ..."
 msgid "Init~Keys"
 msgstr "Nalagam tipke ..."
 
-msgid "Init~Lang"
-msgstr "Nalagam jezikovni paket ..."
-
 msgid "Init~Music"
 msgstr "Nalagam glasbo ..."
 
 msgid "Init~Sounds"
 msgstr "Nalagam zvoke ..."
-
-msgid "Init~Terrain"
-msgstr "Nalagam ozemlje ..."
 
 msgid "Init~Vehicles"
 msgstr "Nalagam vozila ..."
@@ -321,23 +328,8 @@ msgstr "Nalagam vozila ..."
 msgid "Init~Voices"
 msgstr "Nalagam glasove ..."
 
-msgid "Main~Credits_Doc"
-msgstr "Michael Mönchs M.A.X. (Priredbo izdelal DoctorDeath)"
-
-msgid "Main~Credits_MM"
-msgstr "Michael Mönchs M.A.X. (Lastnik originala je Interplay)"
-
 msgid "Main~Credits_Reloaded"
 msgstr "M.A.X.R. temelji na Interplayevi igri Mechanized Assault and Exploration"
-
-msgid "Main~Game_Subtitle"
-msgstr "Mechanized Assault and Exploration Reloaded"
-
-msgid "Main~Game_Title"
-msgstr "M.A.X.R."
-
-msgid "Main~Remarks~Not_yet_implemented"
-msgstr "(*) ni še implementirano"
 
 msgid "Main~Version"
 msgstr "verzija v%s"
@@ -345,35 +337,24 @@ msgstr "verzija v%s"
 msgid "Multiplayer~Abort_Waiting"
 msgstr "Strežnik; pritisni F2 za preklic čakanja."
 
-msgid "Multiplayer~Connection_Terminated"
-msgstr "Povezava je bila prekinjena."
-
-msgid "Multiplayer~Deadline"
-msgstr "Ta poteza se bo končala v %s sekundah."
-
 msgid "Multiplayer~Disconnect_Not_In_Save"
 msgstr "Igralec bo izključen, saj ni prisoten v shranjeni igri."
 
-msgid "Multiplayer~Go"
-msgstr "Gremo, akcija"
-
-msgid "Multiplayer~Go_Abort"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Error"
 msgstr "Prekini"
 
-msgid "Multiplayer~Go_Check"
-msgstr "Preveri pripravljenost"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Own"
+msgstr "Ni dovolj igralcev!"
 
-msgid "Multiplayer~Go_Host"
-msgstr "Strežnik želi da: Potrdiš pripravljenost"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Client"
+msgstr "Strežnik ne deluje."
 
-msgid "Multiplayer~Go_Host_No"
-msgstr "Strežnik želi da: Ne potrdiš pripravljenosti"
-
-msgid "Multiplayer~Go_Ready"
-msgstr "Pripravljen"
-
-msgid "Multiplayer~Go_Ready_No"
-msgstr "nisem pripravljen"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Server"
+msgstr "Čakam na mrežni odziv strežnika"
 
 msgid "Multiplayer~Host_command"
 msgstr ""
@@ -414,14 +395,8 @@ msgstr "--brez nastavitev pokrajine--"
 msgid "Multiplayer~Missing_Settings"
 msgstr "Možnosti, pokrajina ali shranjena igra ni nastavljena"
 
-msgid "Multiplayer~Network_Closed"
-msgstr "Povezava zaključena"
-
 msgid "Multiplayer~Network_Connected"
 msgstr "Povezan"
-
-msgid "Multiplayer~Network_Connected_Not"
-msgstr "Brez povezave"
 
 msgid "Multiplayer~Network_Connecting"
 msgstr "Povezovanje na %s"
@@ -432,14 +407,8 @@ msgstr "Ne morem se povezati na strežnika"
 msgid "Multiplayer~Network_Error_Socket"
 msgstr "Napaka pri odpiranju"
 
-msgid "Multiplayer~Network_New"
-msgstr "Nova povezava"
-
 msgid "Multiplayer~Network_Open"
 msgstr "Igra odprta (Vrata: %s)"
-
-msgid "Multiplayer~Network_Syncing"
-msgstr "Sinhronizacija..."
 
 msgid "Multiplayer~No_Map_No_Ready"
 msgstr "Ne morem naložiti pokrajine %s. Nisi pripravljen."
@@ -480,14 +449,8 @@ msgstr "Igralec 7"
 msgid "Multiplayer~Player8"
 msgstr "Igralec 8"
 
-msgid "Multiplayer~Player_Amount"
-msgstr "Izberi število igralcev. Za igro na Vročem stolu sta potrebna vsaj dva človeka. Največ igralcev je lahko 8."
-
 msgid "Multiplayer~Player_Color_Taken"
 msgstr "Barva igralca je že oddana. Izberite drugačno barvo."
-
-msgid "Multiplayer~Player_Few"
-msgstr "Ni dovolj igralcev!"
 
 msgid "Multiplayer~Player_Joined"
 msgstr "pridružil se je %s"
@@ -495,17 +458,13 @@ msgstr "pridružil se je %s"
 msgid "Multiplayer~Player_Left"
 msgstr "%s je zapustil igro"
 
-msgid "Multiplayer~Player_Many"
-msgstr "Preveč igralcev!"
-
-msgid "Multiplayer~Player_MustHost"
-msgstr "mora biti strežnik v potezni igri!"
-
 msgid "Multiplayer~Player_Name_Taken"
 msgstr "Ime igralca je že oddano. Izberite drugačno ime."
 
 msgid "Multiplayer~Player_Turn"
-msgstr "%s:\nZačni potezo."
+msgstr ""
+"%s:\n"
+"Začni potezo."
 
 msgid "Multiplayer~Player_Turn_End"
 msgstr "%s je končal potezo"
@@ -514,10 +473,19 @@ msgid "Multiplayer~Player_Wrong"
 msgstr "Manjka pravilno ime igralca"
 
 msgid "Multiplayer~Reconnect"
-msgstr "Igra je že v teku.\nČe je bila prekinjena povezava, se lahko priključiš znova.\n\nSe želiš priključiti?"
+msgstr ""
+"Igra je že v teku.\n"
+"Če je bila prekinjena povezava, se lahko priključiš znova.\n"
+"\n"
+"Se želiš priključiti?"
 
-msgid "Multiplayer~Reconnect_Forbidden"
-msgstr "Ponovna priključitev je onemogočena s strani strežnika."
+#, fuzzy
+msgid "Multiplayer~Reconnect_Already_Connected"
+msgstr "Povezan"
+
+#, fuzzy
+msgid "Multiplayer~Reconnect_Not_Part_Of_Game"
+msgstr "Igralec bo izključen, saj ni prisoten v shranjeni igri."
 
 msgid "Multiplayer~Save_Only_Host"
 msgstr "Zgolj gostitelj lahko shrani tekoče igre."
@@ -536,9 +504,6 @@ msgstr "Počakaj, da se izvede zaključek poteze."
 
 msgid "Multiplayer~Wait_Until"
 msgstr "Počakaj, da %s zaključi potezo."
-
-msgid "Multiplayer~Waiting"
-msgstr "Čakam na druge igralce..."
 
 msgid "Option~Definite"
 msgstr "Je izgrajena"
@@ -587,9 +552,6 @@ msgstr "Izmenljive poteze"
 
 msgid "Others~Active"
 msgstr "Aktiven"
-
-msgid "Others~ActiveAll_9"
-msgstr "Aktiv.vse"
 
 msgid "Others~Active_7"
 msgstr "Aktiv."
@@ -668,6 +630,10 @@ msgstr "Zapri"
 
 msgid "Others~End"
 msgstr "Končaj"
+
+#, fuzzy
+msgid "Others~Enter_7"
+msgstr "Zapri"
 
 msgid "Others~Exit"
 msgstr "Izhod"
@@ -771,17 +737,11 @@ msgstr "Domet"
 msgid "Others~Reload"
 msgstr "Obnovi"
 
-msgid "Others~ReloadAll_9"
-msgstr "Obnovi vse"
-
 msgid "Others~Reload_7"
 msgstr "Obnovi"
 
 msgid "Others~Repair"
 msgstr "Popravi"
-
-msgid "Others~RepairAll_9"
-msgstr "Pop.vse"
 
 msgid "Others~Repair_7"
 msgstr "Popravi"
@@ -808,9 +768,6 @@ msgid "Others~Sea_Units"
 msgstr "Pomorske enote"
 
 msgid "Others~Seed"
-msgstr "Zasej"
-
-msgid "Others~Seed_7"
 msgstr "Zasej"
 
 msgid "Others~Sentry"
@@ -881,9 +838,6 @@ msgstr "Nadgradi"
 
 msgid "Others~UpgradeAll_7"
 msgstr "Nad.vse"
-
-msgid "Others~UpgradeAll_9"
-msgstr "Nadg.vse"
 
 msgid "Others~Upgrademenu_7"
 msgstr "Nakup"
@@ -981,9 +935,6 @@ msgstr "Izbira planeta"
 msgid "Title~Choose_Units"
 msgstr "Izbira enot"
 
-msgid "Title~Clan"
-msgstr "Pleme"
-
 msgid "Title~Clans"
 msgstr "Plemena"
 
@@ -1026,9 +977,6 @@ msgstr "Meni Raziskave"
 msgid "Title~Load"
 msgstr "Meni Naloži"
 
-msgid "Title~LoadSave"
-msgstr "Meni Naloži/Shrani"
-
 msgid "Title~MainMenu"
 msgstr "Glavni meni"
 
@@ -1053,17 +1001,11 @@ msgstr "Možnosti"
 msgid "Title~Player_Name"
 msgstr "Ime igralca:"
 
-msgid "Title~Player_Select"
-msgstr "Možnosti igralca"
-
 msgid "Title~Players"
 msgstr "Igralci:"
 
 msgid "Title~Port"
 msgstr "Vrata"
-
-msgid "Title~Resource"
-msgstr "Količina rudnin"
 
 msgid "Title~Resource_Density"
 msgstr "Pogostost rudnin"
@@ -1089,3 +1031,122 @@ msgstr "Informacije o enoti"
 msgid "Title~Upgrades_Menu"
 msgstr "Meni Nadgradnje"
 
+#~ msgid "Comp~Cheat"
+#~ msgstr "%s uporaba goljufije"
+
+#~ msgid "Comp~Producing_Err"
+#~ msgstr "Blokirana pozicija ali pomanjkanje surovin za izgradnjo"
+
+#~ msgid "Comp~ResolutionWarning"
+#~ msgstr "Opozorilo: nepodprt video način v konfiguraciji"
+
+#~ msgid "Comp~Stolen"
+#~ msgstr "ukraden"
+
+#~ msgid "Error_Messages~ERROR_File_Not_Found"
+#~ msgstr "Ne najdem datoteke: %s"
+
+#~ msgid "Error_Messages~ERROR_Missing_Translation"
+#~ msgstr "manjkajoč prevod: %s"
+
+#~ msgid "Error_Messages~INFO_Language_initialised"
+#~ msgstr "Jezik je nastavljen"
+
+#~ msgid "Init~Lang"
+#~ msgstr "Nalagam jezikovni paket ..."
+
+#~ msgid "Init~Terrain"
+#~ msgstr "Nalagam ozemlje ..."
+
+#~ msgid "Main~Credits_Doc"
+#~ msgstr "Michael Mönchs M.A.X. (Priredbo izdelal DoctorDeath)"
+
+#~ msgid "Main~Credits_MM"
+#~ msgstr "Michael Mönchs M.A.X. (Lastnik originala je Interplay)"
+
+#~ msgid "Main~Game_Subtitle"
+#~ msgstr "Mechanized Assault and Exploration Reloaded"
+
+#~ msgid "Main~Game_Title"
+#~ msgstr "M.A.X.R."
+
+#~ msgid "Main~Remarks~Not_yet_implemented"
+#~ msgstr "(*) ni še implementirano"
+
+#~ msgid "Multiplayer~Connection_Terminated"
+#~ msgstr "Povezava je bila prekinjena."
+
+#~ msgid "Multiplayer~Deadline"
+#~ msgstr "Ta poteza se bo končala v %s sekundah."
+
+#~ msgid "Multiplayer~Go"
+#~ msgstr "Gremo, akcija"
+
+#~ msgid "Multiplayer~Go_Check"
+#~ msgstr "Preveri pripravljenost"
+
+#~ msgid "Multiplayer~Go_Host"
+#~ msgstr "Strežnik želi da: Potrdiš pripravljenost"
+
+#~ msgid "Multiplayer~Go_Host_No"
+#~ msgstr "Strežnik želi da: Ne potrdiš pripravljenosti"
+
+#~ msgid "Multiplayer~Go_Ready"
+#~ msgstr "Pripravljen"
+
+#~ msgid "Multiplayer~Go_Ready_No"
+#~ msgstr "nisem pripravljen"
+
+#~ msgid "Multiplayer~Network_Closed"
+#~ msgstr "Povezava zaključena"
+
+#~ msgid "Multiplayer~Network_Connected_Not"
+#~ msgstr "Brez povezave"
+
+#~ msgid "Multiplayer~Network_New"
+#~ msgstr "Nova povezava"
+
+#~ msgid "Multiplayer~Network_Syncing"
+#~ msgstr "Sinhronizacija..."
+
+#~ msgid "Multiplayer~Player_Amount"
+#~ msgstr "Izberi število igralcev. Za igro na Vročem stolu sta potrebna vsaj dva človeka. Največ igralcev je lahko 8."
+
+#~ msgid "Multiplayer~Player_Many"
+#~ msgstr "Preveč igralcev!"
+
+#~ msgid "Multiplayer~Player_MustHost"
+#~ msgstr "mora biti strežnik v potezni igri!"
+
+#~ msgid "Multiplayer~Reconnect_Forbidden"
+#~ msgstr "Ponovna priključitev je onemogočena s strani strežnika."
+
+#~ msgid "Multiplayer~Waiting"
+#~ msgstr "Čakam na druge igralce..."
+
+#~ msgid "Others~ActiveAll_9"
+#~ msgstr "Aktiv.vse"
+
+#~ msgid "Others~ReloadAll_9"
+#~ msgstr "Obnovi vse"
+
+#~ msgid "Others~RepairAll_9"
+#~ msgstr "Pop.vse"
+
+#~ msgid "Others~Seed_7"
+#~ msgstr "Zasej"
+
+#~ msgid "Others~UpgradeAll_9"
+#~ msgstr "Nadg.vse"
+
+#~ msgid "Title~Clan"
+#~ msgstr "Pleme"
+
+#~ msgid "Title~LoadSave"
+#~ msgstr "Meni Naloži/Shrani"
+
+#~ msgid "Title~Player_Select"
+#~ msgstr "Možnosti igralca"
+
+#~ msgid "Title~Resource"
+#~ msgstr "Količina rudnin"

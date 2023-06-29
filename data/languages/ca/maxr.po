@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-28 23:29+0200\n"
+"POT-Creation-Date: 2023-06-29 08:54+0200\n"
 "PO-Revision-Date: 2021-07-29 22:37+0200\n"
 "Last-Translator:\n"
 "Language-Team: Catalan\n"
@@ -16,13 +16,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#, fuzzy
+msgid "Comp~Adjustments_Fuel_Decreased"
+msgstr "S'han fet ajusts: Producció de combustible incrementada en %s"
+
 msgid "Comp~Adjustments_Fuel_Increased"
 msgstr "S'han fet ajusts: Producció de combustible incrementada en %s"
 
 msgid "Comp~Adjustments_Gold_Decreased"
 msgstr "S'han fet ajusts: Producció d'or incrementada en %s"
 
+#, fuzzy
+msgid "Comp~Adjustments_Gold_Increased"
+msgstr "S'han fet ajusts: Producció d'or incrementada en %s"
+
 msgid "Comp~Adjustments_Metal_Decreased"
+msgstr "S'han fet ajusts: Producció de metall incrementada en %s"
+
+#, fuzzy
+msgid "Comp~Adjustments_Metal_Increased"
 msgstr "S'han fet ajusts: Producció de metall incrementada en %s"
 
 msgid "Comp~Attacked"
@@ -39,9 +51,6 @@ msgstr "Edifici desactivat"
 
 msgid "Comp~CapturedByEnemy"
 msgstr "%s ha sigut capturat per l'enemic"
-
-msgid "Comp~Cheat"
-msgstr "%s Se ha utilitzat un truc"
 
 msgid "Comp~Clearing"
 msgstr "Netejant (%s)"
@@ -94,7 +103,10 @@ msgstr[0] "%d Hivernacle"
 msgstr[1] "%d Hivernacles"
 
 msgid "Comp~End_Game"
-msgstr "Confirmar sortida \n\nLes dades no guardades es perdràn."
+msgstr ""
+"Confirmar sortida \n"
+"\n"
+"Les dades no guardades es perdràn."
 
 msgid "Comp~Energy_Insufficient"
 msgstr "No es pot engegar, es necessita energía"
@@ -162,6 +174,9 @@ msgstr "movent-se per a atacar"
 msgid "Comp~NoLimit"
 msgstr "Lluita a mort"
 
+msgid "Comp~Of_Type"
+msgstr "de tipus %s"
+
 msgid "Comp~Path_interrupted"
 msgstr "No pot continuarse la trajectoria de construcció"
 
@@ -176,10 +191,15 @@ msgstr "punts"
 msgid "Comp~Producing"
 msgstr "Edifici"
 
-msgid "Comp~Producing_Err"
-msgstr "Posició de construcció incorrecta o recursos insuficients"
-
 msgid "Comp~Producing_Fin"
+msgstr "edifici acabat"
+
+#, fuzzy
+msgid "Comp~Producing_InsufficientMaterial"
+msgstr "No es pot engegar, es necessita or"
+
+#, fuzzy
+msgid "Comp~Producing_PositionBlocked"
 msgstr "edifici acabat"
 
 msgid "Comp~ReactionFireOff"
@@ -191,9 +211,6 @@ msgstr "De nou"
 msgid "Comp~Reserve"
 msgstr "Reserva"
 
-msgid "Comp~ResolutionWarning"
-msgstr "Amb compte: Mode de video no suportat en la configuració"
-
 msgid "Comp~RestartRequired"
 msgstr "Per favor, reinicia 'Mechanized Assault and eXploration Reloaded' per que els canvis surtin efecte"
 
@@ -202,9 +219,6 @@ msgstr "Captura de pantalla guardada a %s"
 
 msgid "Comp~Sentry"
 msgstr "en alerta"
-
-msgid "Comp~Stolen"
-msgstr "robat"
 
 msgid "Comp~SuddenDeath"
 msgstr "El primer jugador en augmentar la seva puntuació guanya!"
@@ -246,9 +260,6 @@ msgid_plural "Comp~Upgrade(s)_Done"
 msgstr[0] "Actualitzat %d unitat"
 msgstr[1] "Actualitzat %d unitats"
 
-msgid "Comp~Of_Type"
-msgstr "de tipus %s"
-
 msgid "Comp~Waits"
 msgstr "esperant"
 
@@ -258,17 +269,20 @@ msgstr ""
 msgid "Comp~Working"
 msgstr "treballant"
 
-msgid "Error_Messages~ERROR_File_Not_Found"
-msgstr "Fitxer no trobat: %s"
-
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Error carregant mapa"
 
-msgid "Error_Messages~ERROR_Missing_Translation"
-msgstr "Traducció perduda: %s"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Incompatible"
+msgstr "Error carregant mapa"
 
-msgid "Error_Messages~INFO_Language_initialised"
-msgstr "El idioma està ara inicialitzant-se"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Loading"
+msgstr "Error carregant mapa"
+
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Writing"
+msgstr "Error carregant mapa"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "No implementat encara"
@@ -291,17 +305,11 @@ msgstr "Carregant gràfics..."
 msgid "Init~Keys"
 msgstr "Carregant claus..."
 
-msgid "Init~Lang"
-msgstr "Carregant paquet d'idioma..."
-
 msgid "Init~Music"
 msgstr "Carregant música..."
 
 msgid "Init~Sounds"
 msgstr "Carregant sons..."
-
-msgid "Init~Terrain"
-msgstr "Carregant terreny..."
 
 msgid "Init~Vehicles"
 msgstr "Carregant vehícles..."
@@ -309,23 +317,8 @@ msgstr "Carregant vehícles..."
 msgid "Init~Voices"
 msgstr "Carregant veus..."
 
-msgid "Main~Credits_Doc"
-msgstr "Michael Mönchs M.A.X. (Reedició per DoctorDeath)"
-
-msgid "Main~Credits_MM"
-msgstr "Michael Mönchs M.A.X. (Original per Interplay)"
-
 msgid "Main~Credits_Reloaded"
 msgstr "M.A.X.R. basat en Mechanized Assault and eXploration de Interplay"
-
-msgid "Main~Game_Subtitle"
-msgstr "Mechanized Assault and eXploration Reloaded"
-
-msgid "Main~Game_Title"
-msgstr "M.A.X.R."
-
-msgid "Main~Remarks~Not_yet_implemented"
-msgstr "(*) encara no implementat"
 
 msgid "Main~Version"
 msgstr "versió v%s"
@@ -333,35 +326,24 @@ msgstr "versió v%s"
 msgid "Multiplayer~Abort_Waiting"
 msgstr "Servidor, prem F2 per a deixar d'esperar."
 
-msgid "Multiplayer~Connection_Terminated"
-msgstr "Conexión terminada"
-
-msgid "Multiplayer~Deadline"
-msgstr " este turno terminará en %s segundos"
-
 msgid "Multiplayer~Disconnect_Not_In_Save"
 msgstr "Serás desconectado porque no estás listado en la partida guardada"
 
-msgid "Multiplayer~Go"
-msgstr "Vamos a ello"
-
-msgid "Multiplayer~Go_Abort"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Error"
 msgstr "Comienzo interrumpido"
 
-msgid "Multiplayer~Go_Check"
-msgstr "Marca cuando estés listo para empezar"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Own"
+msgstr "No hay suficientes jugadores!"
 
-msgid "Multiplayer~Go_Host"
-msgstr "El servidor quiere empezar: listos para empezar"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Client"
+msgstr "Els servidor no está funcionando"
 
-msgid "Multiplayer~Go_Host_No"
-msgstr "El servidor quiere empezar: no empezamos"
-
-msgid "Multiplayer~Go_Ready"
-msgstr "Listos para empezar"
-
-msgid "Multiplayer~Go_Ready_No"
-msgstr "No estamos listos para empezar"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Server"
+msgstr "Esperando la respuesta de la red del servidor"
 
 msgid "Multiplayer~Host_command"
 msgstr ""
@@ -402,14 +384,8 @@ msgstr "--mapa no seleccionado--"
 msgid "Multiplayer~Missing_Settings"
 msgstr "Las opciones, el mapa, o el guardado no estan disponibles"
 
-msgid "Multiplayer~Network_Closed"
-msgstr "Conexión cerrada"
-
 msgid "Multiplayer~Network_Connected"
 msgstr "Conectado"
-
-msgid "Multiplayer~Network_Connected_Not"
-msgstr "No conectado"
 
 msgid "Multiplayer~Network_Connecting"
 msgstr "Conectando a %s"
@@ -420,14 +396,8 @@ msgstr "No puedo conectar a servidor"
 msgid "Multiplayer~Network_Error_Socket"
 msgstr "Error abriendo socket"
 
-msgid "Multiplayer~Network_New"
-msgstr "Nueva conexión"
-
 msgid "Multiplayer~Network_Open"
 msgstr "Partida abierta (Port: %s)"
-
-msgid "Multiplayer~Network_Syncing"
-msgstr "Sincronizando..."
 
 msgid "Multiplayer~No_Map_No_Ready"
 msgstr "No se puede cargar el mapa %s. No estás listo."
@@ -468,26 +438,14 @@ msgstr "Jugador 7"
 msgid "Multiplayer~Player8"
 msgstr "Jugador 8"
 
-msgid "Multiplayer~Player_Amount"
-msgstr "Elige la cantidad de jugadores por favor. Debe haber al menos dos jugadores humanos par empezar una partida. 8 jugadores es el máximo."
-
 msgid "Multiplayer~Player_Color_Taken"
 msgstr "Color de jugador ya usado, por favor elige otro color de forma que sea único"
-
-msgid "Multiplayer~Player_Few"
-msgstr "No hay suficientes jugadores!"
 
 msgid "Multiplayer~Player_Joined"
 msgstr " Se ha unido %s"
 
 msgid "Multiplayer~Player_Left"
 msgstr " %s ha salido de la partida"
-
-msgid "Multiplayer~Player_Many"
-msgstr "Demasiados jugadores!"
-
-msgid "Multiplayer~Player_MustHost"
-msgstr "El server debe estar en partida basada en turnos!"
 
 msgid "Multiplayer~Player_Name_Taken"
 msgstr "Nombre de jugador ya utilizado, por favor, elige otro de forma que sea único"
@@ -504,8 +462,13 @@ msgstr "Se ha perdido un nombre de jugador correcto."
 msgid "Multiplayer~Reconnect"
 msgstr "Esta partida está funcionando. Si has perdido la conexión puedes reconectar. ¿Quieres reconectar?"
 
-msgid "Multiplayer~Reconnect_Forbidden"
-msgstr "Reconexión prohibida por el servidor"
+#, fuzzy
+msgid "Multiplayer~Reconnect_Already_Connected"
+msgstr "Conectado"
+
+#, fuzzy
+msgid "Multiplayer~Reconnect_Not_Part_Of_Game"
+msgstr "Serás desconectado porque no estás listado en la partida guardada"
 
 msgid "Multiplayer~Save_Only_Host"
 msgstr "Solo el servidor puede guardar partidas"
@@ -524,9 +487,6 @@ msgstr "Por favor, espera mientras las ordenes de finalizar turno se ejecutan"
 
 msgid "Multiplayer~Wait_Until"
 msgstr "por favor espera hasta que %s haya terminado su turno"
-
-msgid "Multiplayer~Waiting"
-msgstr "Esperando a otros jugadores..."
 
 msgid "Option~Definite"
 msgstr "Construït (original)"
@@ -575,9 +535,6 @@ msgstr "Torns"
 
 msgid "Others~Active"
 msgstr "Activar"
-
-msgid "Others~ActiveAll_9"
-msgstr "Activar tots"
 
 msgid "Others~Active_7"
 msgstr "Activar"
@@ -656,6 +613,10 @@ msgstr "Fet"
 
 msgid "Others~End"
 msgstr "Finalitzar"
+
+#, fuzzy
+msgid "Others~Enter_7"
+msgstr "Fet"
 
 msgid "Others~Exit"
 msgstr "Sortir"
@@ -759,17 +720,11 @@ msgstr "Alcanç"
 msgid "Others~Reload"
 msgstr "Recarregar"
 
-msgid "Others~ReloadAll_9"
-msgstr "Rec. Tots"
-
 msgid "Others~Reload_7"
 msgstr "Recarregar"
 
 msgid "Others~Repair"
 msgstr "Arreglar"
-
-msgid "Others~RepairAll_9"
-msgstr "Arr. Tots"
 
 msgid "Others~Repair_7"
 msgstr "Arreglar"
@@ -796,9 +751,6 @@ msgid "Others~Sea_Units"
 msgstr "Unitats de mar"
 
 msgid "Others~Seed"
-msgstr "Plantar"
-
-msgid "Others~Seed_7"
 msgstr "Plantar"
 
 msgid "Others~Sentry"
@@ -869,9 +821,6 @@ msgstr "Actualizar"
 
 msgid "Others~UpgradeAll_7"
 msgstr "Mill.Tot"
-
-msgid "Others~UpgradeAll_9"
-msgstr "Mill. Tot"
 
 msgid "Others~Upgrademenu_7"
 msgstr "Millores"
@@ -969,9 +918,6 @@ msgstr "Escull planeta"
 msgid "Title~Choose_Units"
 msgstr "Escull Unitats"
 
-msgid "Title~Clan"
-msgstr "Clan"
-
 msgid "Title~Clans"
 msgstr "Clans"
 
@@ -1014,9 +960,6 @@ msgstr "Menú Investigar"
 msgid "Title~Load"
 msgstr "Menú Carregar"
 
-msgid "Title~LoadSave"
-msgstr "Menú Carregar/Guardar"
-
 msgid "Title~MainMenu"
 msgstr "Menú principal"
 
@@ -1041,17 +984,11 @@ msgstr "Opcions"
 msgid "Title~Player_Name"
 msgstr "Nom del jugador:"
 
-msgid "Title~Player_Select"
-msgstr "Opcions de jugador"
-
 msgid "Title~Players"
 msgstr "Jugadors:"
 
 msgid "Title~Port"
 msgstr "Port"
-
-msgid "Title~Resource"
-msgstr "Densitat de recursos"
 
 msgid "Title~Resource_Density"
 msgstr "Frecuència de recursos"
@@ -1077,3 +1014,122 @@ msgstr "Pantalla de estat d'unitat"
 msgid "Title~Upgrades_Menu"
 msgstr "Menú de millores"
 
+#~ msgid "Comp~Cheat"
+#~ msgstr "%s Se ha utilitzat un truc"
+
+#~ msgid "Comp~Producing_Err"
+#~ msgstr "Posició de construcció incorrecta o recursos insuficients"
+
+#~ msgid "Comp~ResolutionWarning"
+#~ msgstr "Amb compte: Mode de video no suportat en la configuració"
+
+#~ msgid "Comp~Stolen"
+#~ msgstr "robat"
+
+#~ msgid "Error_Messages~ERROR_File_Not_Found"
+#~ msgstr "Fitxer no trobat: %s"
+
+#~ msgid "Error_Messages~ERROR_Missing_Translation"
+#~ msgstr "Traducció perduda: %s"
+
+#~ msgid "Error_Messages~INFO_Language_initialised"
+#~ msgstr "El idioma està ara inicialitzant-se"
+
+#~ msgid "Init~Lang"
+#~ msgstr "Carregant paquet d'idioma..."
+
+#~ msgid "Init~Terrain"
+#~ msgstr "Carregant terreny..."
+
+#~ msgid "Main~Credits_Doc"
+#~ msgstr "Michael Mönchs M.A.X. (Reedició per DoctorDeath)"
+
+#~ msgid "Main~Credits_MM"
+#~ msgstr "Michael Mönchs M.A.X. (Original per Interplay)"
+
+#~ msgid "Main~Game_Subtitle"
+#~ msgstr "Mechanized Assault and eXploration Reloaded"
+
+#~ msgid "Main~Game_Title"
+#~ msgstr "M.A.X.R."
+
+#~ msgid "Main~Remarks~Not_yet_implemented"
+#~ msgstr "(*) encara no implementat"
+
+#~ msgid "Multiplayer~Connection_Terminated"
+#~ msgstr "Conexión terminada"
+
+#~ msgid "Multiplayer~Deadline"
+#~ msgstr " este turno terminará en %s segundos"
+
+#~ msgid "Multiplayer~Go"
+#~ msgstr "Vamos a ello"
+
+#~ msgid "Multiplayer~Go_Check"
+#~ msgstr "Marca cuando estés listo para empezar"
+
+#~ msgid "Multiplayer~Go_Host"
+#~ msgstr "El servidor quiere empezar: listos para empezar"
+
+#~ msgid "Multiplayer~Go_Host_No"
+#~ msgstr "El servidor quiere empezar: no empezamos"
+
+#~ msgid "Multiplayer~Go_Ready"
+#~ msgstr "Listos para empezar"
+
+#~ msgid "Multiplayer~Go_Ready_No"
+#~ msgstr "No estamos listos para empezar"
+
+#~ msgid "Multiplayer~Network_Closed"
+#~ msgstr "Conexión cerrada"
+
+#~ msgid "Multiplayer~Network_Connected_Not"
+#~ msgstr "No conectado"
+
+#~ msgid "Multiplayer~Network_New"
+#~ msgstr "Nueva conexión"
+
+#~ msgid "Multiplayer~Network_Syncing"
+#~ msgstr "Sincronizando..."
+
+#~ msgid "Multiplayer~Player_Amount"
+#~ msgstr "Elige la cantidad de jugadores por favor. Debe haber al menos dos jugadores humanos par empezar una partida. 8 jugadores es el máximo."
+
+#~ msgid "Multiplayer~Player_Many"
+#~ msgstr "Demasiados jugadores!"
+
+#~ msgid "Multiplayer~Player_MustHost"
+#~ msgstr "El server debe estar en partida basada en turnos!"
+
+#~ msgid "Multiplayer~Reconnect_Forbidden"
+#~ msgstr "Reconexión prohibida por el servidor"
+
+#~ msgid "Multiplayer~Waiting"
+#~ msgstr "Esperando a otros jugadores..."
+
+#~ msgid "Others~ActiveAll_9"
+#~ msgstr "Activar tots"
+
+#~ msgid "Others~ReloadAll_9"
+#~ msgstr "Rec. Tots"
+
+#~ msgid "Others~RepairAll_9"
+#~ msgstr "Arr. Tots"
+
+#~ msgid "Others~Seed_7"
+#~ msgstr "Plantar"
+
+#~ msgid "Others~UpgradeAll_9"
+#~ msgstr "Mill. Tot"
+
+#~ msgid "Title~Clan"
+#~ msgstr "Clan"
+
+#~ msgid "Title~LoadSave"
+#~ msgstr "Menú Carregar/Guardar"
+
+#~ msgid "Title~Player_Select"
+#~ msgstr "Opcions de jugador"
+
+#~ msgid "Title~Resource"
+#~ msgstr "Densitat de recursos"

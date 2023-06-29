@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-28 23:29+0200\n"
+"POT-Creation-Date: 2023-06-29 08:54+0200\n"
 "PO-Revision-Date: 2021-07-29 23:04+0200\n"
 "Last-Translator:\n"
 "Language-Team: Dutch\n"
@@ -16,13 +16,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#, fuzzy
+msgid "Comp~Adjustments_Fuel_Decreased"
+msgstr "Aanpassingen gemaakt: Brandstof mijnen verhoogt met %s"
+
 msgid "Comp~Adjustments_Fuel_Increased"
 msgstr "Aanpassingen gemaakt: Brandstof mijnen verhoogt met %s"
 
 msgid "Comp~Adjustments_Gold_Decreased"
 msgstr "Aanpassingen gemaakt: Goud mijnen verlaagt met %s"
 
+#, fuzzy
+msgid "Comp~Adjustments_Gold_Increased"
+msgstr "Aanpassingen gemaakt: Goud mijnen verlaagt met %s"
+
 msgid "Comp~Adjustments_Metal_Decreased"
+msgstr "Aanpassingen gemaakt: Metaal mijnen verlaagt met %s"
+
+#, fuzzy
+msgid "Comp~Adjustments_Metal_Increased"
 msgstr "Aanpassingen gemaakt: Metaal mijnen verlaagt met %s"
 
 msgid "Comp~Attacked"
@@ -39,9 +51,6 @@ msgstr "Gebouw uitgeschakeld"
 
 msgid "Comp~CapturedByEnemy"
 msgstr "%s is buitgemaakt door de vijand"
-
-msgid "Comp~Cheat"
-msgstr "%s valsspelen gebruikt"
 
 msgid "Comp~Clearing"
 msgstr "Opruimen (%s)"
@@ -94,7 +103,10 @@ msgstr[0] "%d Eco-sfeer"
 msgstr[1] "%d Eco-sferen"
 
 msgid "Comp~End_Game"
-msgstr "Echt stoppen?\n\nNiet opgeslagen speldata gaat verloren."
+msgstr ""
+"Echt stoppen?\n"
+"\n"
+"Niet opgeslagen speldata gaat verloren."
 
 msgid "Comp~Energy_Insufficient"
 msgstr "Niet genoeg energie om te starten!"
@@ -162,6 +174,9 @@ msgstr "in beweging om aan te vallen"
 msgid "Comp~NoLimit"
 msgstr "Vecht tot de dood!"
 
+msgid "Comp~Of_Type"
+msgstr "van het type %s"
+
 msgid "Comp~Path_interrupted"
 msgstr "Pad bouwen kan niet verdergezet worden"
 
@@ -176,10 +191,15 @@ msgstr "punten"
 msgid "Comp~Producing"
 msgstr "Produceert"
 
-msgid "Comp~Producing_Err"
-msgstr "Bouwlocatie geblokkeerd of niet genoeg ruw materiaal om te kunnen bouwen"
-
 msgid "Comp~Producing_Fin"
+msgstr "productie afgewerkt"
+
+#, fuzzy
+msgid "Comp~Producing_InsufficientMaterial"
+msgstr "Kan niet starten, goud nodig."
+
+#, fuzzy
+msgid "Comp~Producing_PositionBlocked"
 msgstr "productie afgewerkt"
 
 msgid "Comp~ReactionFireOff"
@@ -191,9 +211,6 @@ msgstr "Opnieuw"
 msgid "Comp~Reserve"
 msgstr "Reserve"
 
-msgid "Comp~ResolutionWarning"
-msgstr "Waarschuwing: Niet ondersteunde videomodus in de instellingen"
-
 msgid "Comp~RestartRequired"
 msgstr "Herstart aub 'Mechanized Assault and eXploration Reloaded' om de aanpassingen toe te passen."
 
@@ -202,9 +219,6 @@ msgstr "Screenshot bewaard als %s"
 
 msgid "Comp~Sentry"
 msgstr "op wachtposten"
-
-msgid "Comp~Stolen"
-msgstr "gestolen"
 
 msgid "Comp~SuddenDeath"
 msgstr "Directe dood! De eerste speler die zijn score kan verhogen wint!"
@@ -246,9 +260,6 @@ msgid_plural "Comp~Upgrade(s)_Done"
 msgstr[0] "Opwaarderen uitgevoerd %d eenheid"
 msgstr[1] "Opwaarderen uitgevoerd %d heden"
 
-msgid "Comp~Of_Type"
-msgstr "van het type %s"
-
 msgid "Comp~Waits"
 msgstr "wacht"
 
@@ -258,17 +269,20 @@ msgstr ""
 msgid "Comp~Working"
 msgstr "werkt"
 
-msgid "Error_Messages~ERROR_File_Not_Found"
-msgstr "Bestand niet gevonden: %s"
-
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Fout bij inlezen kaart"
 
-msgid "Error_Messages~ERROR_Missing_Translation"
-msgstr "ontbrekende vertaling: %s"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Incompatible"
+msgstr "Fout bij inlezen kaart"
 
-msgid "Error_Messages~INFO_Language_initialised"
-msgstr "Taal is nu geinitialiseerd"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Loading"
+msgstr "Fout bij inlezen kaart"
+
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Writing"
+msgstr "Fout bij inlezen kaart"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Nog niet geimplementeerd"
@@ -291,17 +305,11 @@ msgstr "Laden gfx..."
 msgid "Init~Keys"
 msgstr "Laden toetsen..."
 
-msgid "Init~Lang"
-msgstr "Laden taalpakket..."
-
 msgid "Init~Music"
 msgstr "Laden muziek..."
 
 msgid "Init~Sounds"
 msgstr "Laden geluiden..."
-
-msgid "Init~Terrain"
-msgstr "Laden terrein..."
 
 msgid "Init~Vehicles"
 msgstr "Laden voertuigen..."
@@ -309,23 +317,8 @@ msgstr "Laden voertuigen..."
 msgid "Init~Voices"
 msgstr "Laden stemmen..."
 
-msgid "Main~Credits_Doc"
-msgstr "Michael Mönchs M.A.X. (Herbouw door DoctorDeath)"
-
-msgid "Main~Credits_MM"
-msgstr "Michael Mönchs M.A.X. (Origineel van Interplay)"
-
 msgid "Main~Credits_Reloaded"
 msgstr "M.A.X.R gebaseerd op Interplays Mechanized Assault and eXploration"
-
-msgid "Main~Game_Subtitle"
-msgstr "Mechanized Assault and Exploration Reloaded"
-
-msgid "Main~Game_Title"
-msgstr "M.A.X.R."
-
-msgid "Main~Remarks~Not_yet_implemented"
-msgstr "(*) nog niet geïmplementeerd"
 
 msgid "Main~Version"
 msgstr "versie v%s"
@@ -333,35 +326,24 @@ msgstr "versie v%s"
 msgid "Multiplayer~Abort_Waiting"
 msgstr "Server, druk F2 om het wachten af te breken."
 
-msgid "Multiplayer~Connection_Terminated"
-msgstr "Verbinding Afgesloten"
-
-msgid "Multiplayer~Deadline"
-msgstr "Deze ronde eindigt in %s seconden."
-
 msgid "Multiplayer~Disconnect_Not_In_Save"
 msgstr "U verbinding wordt verbroken omdat uw naam niet in de savegame staat."
 
-msgid "Multiplayer~Go"
-msgstr "Daar gaat we"
-
-msgid "Multiplayer~Go_Abort"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Error"
 msgstr "Start afgebroken"
 
-msgid "Multiplayer~Go_Check"
-msgstr "Controle voor startklaar"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Own"
+msgstr "Niet genoeg spelers!"
 
-msgid "Multiplayer~Go_Host"
-msgstr "Host wil starten: Beginnen"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Client"
+msgstr "De server is niet actief"
 
-msgid "Multiplayer~Go_Host_No"
-msgstr "Host wil starten: Niet klaar"
-
-msgid "Multiplayer~Go_Ready"
-msgstr "Klaar om te starten"
-
-msgid "Multiplayer~Go_Ready_No"
-msgstr "Niet klaar om te starten"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Server"
+msgstr "Wachten op een netwerk reactie van server"
 
 msgid "Multiplayer~Host_command"
 msgstr "Host heeft de volgende commando's ingegeven '%s'"
@@ -402,14 +384,8 @@ msgstr "--Geen kaart ingesteld--"
 msgid "Multiplayer~Missing_Settings"
 msgstr "Opties, map of savegame zijn niet ingesteld"
 
-msgid "Multiplayer~Network_Closed"
-msgstr "Verbinding gesloten"
-
 msgid "Multiplayer~Network_Connected"
 msgstr "Verbinding"
-
-msgid "Multiplayer~Network_Connected_Not"
-msgstr "Niet verbonden"
 
 msgid "Multiplayer~Network_Connecting"
 msgstr "Verbinden met %s"
@@ -420,14 +396,8 @@ msgstr "Kon niet verbinden met server"
 msgid "Multiplayer~Network_Error_Socket"
 msgstr "Fout bij openen socket"
 
-msgid "Multiplayer~Network_New"
-msgstr "Nieuwe verbinding"
-
 msgid "Multiplayer~Network_Open"
 msgstr "Spel open (Poort: %s)"
-
-msgid "Multiplayer~Network_Syncing"
-msgstr "Synchronizeren..."
 
 msgid "Multiplayer~No_Map_No_Ready"
 msgstr "Kan map %s niet laden. Je kan niet starten."
@@ -468,26 +438,14 @@ msgstr "Speler 7"
 msgid "Multiplayer~Player8"
 msgstr "Speler 8"
 
-msgid "Multiplayer~Player_Amount"
-msgstr "Kies het aantal spelers, er moeten minimum 2 menselijke spelers zijn om een om-beurten spel te starten. Maximum 8 spelers"
-
 msgid "Multiplayer~Player_Color_Taken"
 msgstr "Kleur is reeds in gebruik, selecteer aub een ander kleur"
-
-msgid "Multiplayer~Player_Few"
-msgstr "Niet genoeg spelers!"
 
 msgid "Multiplayer~Player_Joined"
 msgstr "%s voegt zich aan het spel"
 
 msgid "Multiplayer~Player_Left"
 msgstr "%s heeft spel verlaten"
-
-msgid "Multiplayer~Player_Many"
-msgstr "Te veel spelers!"
-
-msgid "Multiplayer~Player_MustHost"
-msgstr "moet host zijn in om-beurten spel!"
 
 msgid "Multiplayer~Player_Name_Taken"
 msgstr "Spelernaam is reeds in gebruik, geef aub een andere naam in"
@@ -504,8 +462,13 @@ msgstr "Mis een correcte speler naam"
 msgid "Multiplayer~Reconnect"
 msgstr "Dit spel is al gaande. Indien u de verbinding van het spel kwijt bent geraakt, kunt u zich opnieuw verbinden. Wilt u opnieuw verbinden?"
 
-msgid "Multiplayer~Reconnect_Forbidden"
-msgstr "Opnieuw verbinden niet toegestaan door server"
+#, fuzzy
+msgid "Multiplayer~Reconnect_Already_Connected"
+msgstr "Verbinding"
+
+#, fuzzy
+msgid "Multiplayer~Reconnect_Not_Part_Of_Game"
+msgstr "U verbinding wordt verbroken omdat uw naam niet in de savegame staat."
 
 msgid "Multiplayer~Save_Only_Host"
 msgstr "Alleen de host kan het spel opslaan."
@@ -524,9 +487,6 @@ msgstr "Wacht aub tot het einde van de beurt uitgevoerd is"
 
 msgid "Multiplayer~Wait_Until"
 msgstr "Wacht todat %s klaar is met de ronde."
-
-msgid "Multiplayer~Waiting"
-msgstr "Wachten op andere spelers..."
 
 msgid "Option~Definite"
 msgstr "vaste locatie (origineel)"
@@ -575,9 +535,6 @@ msgstr "om de beurt"
 
 msgid "Others~Active"
 msgstr "Actief"
-
-msgid "Others~ActiveAll_9"
-msgstr "Alle Act."
 
 msgid "Others~Active_7"
 msgstr "Actief"
@@ -656,6 +613,10 @@ msgstr "Gedaan"
 
 msgid "Others~End"
 msgstr "Einde"
+
+#, fuzzy
+msgid "Others~Enter_7"
+msgstr "Gedaan"
 
 msgid "Others~Exit"
 msgstr "Einde"
@@ -759,17 +720,11 @@ msgstr "Bereik"
 msgid "Others~Reload"
 msgstr "Herladen"
 
-msgid "Others~ReloadAll_9"
-msgstr "Alle Herl."
-
 msgid "Others~Reload_7"
 msgstr "Herladen"
 
 msgid "Others~Repair"
 msgstr "Repareer"
-
-msgid "Others~RepairAll_9"
-msgstr "Alle Rep."
 
 msgid "Others~Repair_7"
 msgstr "Repareer"
@@ -796,9 +751,6 @@ msgid "Others~Sea_Units"
 msgstr "Zee-eenheden"
 
 msgid "Others~Seed"
-msgstr "Strooi"
-
-msgid "Others~Seed_7"
 msgstr "Strooi"
 
 msgid "Others~Sentry"
@@ -869,9 +821,6 @@ msgstr "Verbeter"
 
 msgid "Others~UpgradeAll_7"
 msgstr "Ver.all"
-
-msgid "Others~UpgradeAll_9"
-msgstr "Vern.Alles"
 
 msgid "Others~Upgrademenu_7"
 msgstr "Upgrades"
@@ -969,9 +918,6 @@ msgstr "Planeetkeuze"
 msgid "Title~Choose_Units"
 msgstr "Kies Eenheden"
 
-msgid "Title~Clan"
-msgstr "Clan"
-
 msgid "Title~Clans"
 msgstr "Clans"
 
@@ -1014,9 +960,6 @@ msgstr "Onderzoeksmenu"
 msgid "Title~Load"
 msgstr "Menu laden"
 
-msgid "Title~LoadSave"
-msgstr "Menu Laden/Opslaan"
-
 msgid "Title~MainMenu"
 msgstr "Hoofdmenu"
 
@@ -1041,17 +984,11 @@ msgstr "Opties"
 msgid "Title~Player_Name"
 msgstr "Spelernaam:"
 
-msgid "Title~Player_Select"
-msgstr "Speleropties"
-
 msgid "Title~Players"
 msgstr "Spelers"
 
 msgid "Title~Port"
 msgstr "Poort"
-
-msgid "Title~Resource"
-msgstr "Bronnen"
 
 msgid "Title~Resource_Density"
 msgstr "Brondichtheid"
@@ -1077,3 +1014,122 @@ msgstr "Eenhedeninformatie"
 msgid "Title~Upgrades_Menu"
 msgstr "Opwaardeer Menu"
 
+#~ msgid "Comp~Cheat"
+#~ msgstr "%s valsspelen gebruikt"
+
+#~ msgid "Comp~Producing_Err"
+#~ msgstr "Bouwlocatie geblokkeerd of niet genoeg ruw materiaal om te kunnen bouwen"
+
+#~ msgid "Comp~ResolutionWarning"
+#~ msgstr "Waarschuwing: Niet ondersteunde videomodus in de instellingen"
+
+#~ msgid "Comp~Stolen"
+#~ msgstr "gestolen"
+
+#~ msgid "Error_Messages~ERROR_File_Not_Found"
+#~ msgstr "Bestand niet gevonden: %s"
+
+#~ msgid "Error_Messages~ERROR_Missing_Translation"
+#~ msgstr "ontbrekende vertaling: %s"
+
+#~ msgid "Error_Messages~INFO_Language_initialised"
+#~ msgstr "Taal is nu geinitialiseerd"
+
+#~ msgid "Init~Lang"
+#~ msgstr "Laden taalpakket..."
+
+#~ msgid "Init~Terrain"
+#~ msgstr "Laden terrein..."
+
+#~ msgid "Main~Credits_Doc"
+#~ msgstr "Michael Mönchs M.A.X. (Herbouw door DoctorDeath)"
+
+#~ msgid "Main~Credits_MM"
+#~ msgstr "Michael Mönchs M.A.X. (Origineel van Interplay)"
+
+#~ msgid "Main~Game_Subtitle"
+#~ msgstr "Mechanized Assault and Exploration Reloaded"
+
+#~ msgid "Main~Game_Title"
+#~ msgstr "M.A.X.R."
+
+#~ msgid "Main~Remarks~Not_yet_implemented"
+#~ msgstr "(*) nog niet geïmplementeerd"
+
+#~ msgid "Multiplayer~Connection_Terminated"
+#~ msgstr "Verbinding Afgesloten"
+
+#~ msgid "Multiplayer~Deadline"
+#~ msgstr "Deze ronde eindigt in %s seconden."
+
+#~ msgid "Multiplayer~Go"
+#~ msgstr "Daar gaat we"
+
+#~ msgid "Multiplayer~Go_Check"
+#~ msgstr "Controle voor startklaar"
+
+#~ msgid "Multiplayer~Go_Host"
+#~ msgstr "Host wil starten: Beginnen"
+
+#~ msgid "Multiplayer~Go_Host_No"
+#~ msgstr "Host wil starten: Niet klaar"
+
+#~ msgid "Multiplayer~Go_Ready"
+#~ msgstr "Klaar om te starten"
+
+#~ msgid "Multiplayer~Go_Ready_No"
+#~ msgstr "Niet klaar om te starten"
+
+#~ msgid "Multiplayer~Network_Closed"
+#~ msgstr "Verbinding gesloten"
+
+#~ msgid "Multiplayer~Network_Connected_Not"
+#~ msgstr "Niet verbonden"
+
+#~ msgid "Multiplayer~Network_New"
+#~ msgstr "Nieuwe verbinding"
+
+#~ msgid "Multiplayer~Network_Syncing"
+#~ msgstr "Synchronizeren..."
+
+#~ msgid "Multiplayer~Player_Amount"
+#~ msgstr "Kies het aantal spelers, er moeten minimum 2 menselijke spelers zijn om een om-beurten spel te starten. Maximum 8 spelers"
+
+#~ msgid "Multiplayer~Player_Many"
+#~ msgstr "Te veel spelers!"
+
+#~ msgid "Multiplayer~Player_MustHost"
+#~ msgstr "moet host zijn in om-beurten spel!"
+
+#~ msgid "Multiplayer~Reconnect_Forbidden"
+#~ msgstr "Opnieuw verbinden niet toegestaan door server"
+
+#~ msgid "Multiplayer~Waiting"
+#~ msgstr "Wachten op andere spelers..."
+
+#~ msgid "Others~ActiveAll_9"
+#~ msgstr "Alle Act."
+
+#~ msgid "Others~ReloadAll_9"
+#~ msgstr "Alle Herl."
+
+#~ msgid "Others~RepairAll_9"
+#~ msgstr "Alle Rep."
+
+#~ msgid "Others~Seed_7"
+#~ msgstr "Strooi"
+
+#~ msgid "Others~UpgradeAll_9"
+#~ msgstr "Vern.Alles"
+
+#~ msgid "Title~Clan"
+#~ msgstr "Clan"
+
+#~ msgid "Title~LoadSave"
+#~ msgstr "Menu Laden/Opslaan"
+
+#~ msgid "Title~Player_Select"
+#~ msgstr "Speleropties"
+
+#~ msgid "Title~Resource"
+#~ msgstr "Bronnen"

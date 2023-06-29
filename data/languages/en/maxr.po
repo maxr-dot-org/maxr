@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-28 23:29+0200\n"
+"POT-Creation-Date: 2023-06-29 08:54+0200\n"
 "PO-Revision-Date: 2021-07-29 21:43+0200\n"
 "Last-Translator:\n"
 "Language-Team: English\n"
@@ -48,9 +48,6 @@ msgstr "Building turned off"
 
 msgid "Comp~CapturedByEnemy"
 msgstr "%s has been captured by the enemy"
-
-msgid "Comp~Cheat"
-msgstr "%s used cheat"
 
 msgid "Comp~Clearing"
 msgstr "clearing (%s)"
@@ -103,7 +100,10 @@ msgstr[0] "%d Eco-sphere"
 msgstr[1] "%d Eco-spheres"
 
 msgid "Comp~End_Game"
-msgstr "Confirm Exit\n\nUnsaved game data will be lost."
+msgstr ""
+"Confirm Exit\n"
+"\n"
+"Unsaved game data will be lost."
 
 msgid "Comp~Energy_Insufficient"
 msgstr "Cannot turn on, power needed"
@@ -171,6 +171,9 @@ msgstr "moving to attack"
 msgid "Comp~NoLimit"
 msgstr "Fight to the death!"
 
+msgid "Comp~Of_Type"
+msgstr "of type %s"
+
 msgid "Comp~Path_interrupted"
 msgstr "Pathbuilding order could not be resumed."
 
@@ -203,9 +206,6 @@ msgstr "Again"
 msgid "Comp~Reserve"
 msgstr "Reserve"
 
-msgid "Comp~ResolutionWarning"
-msgstr "Warning: Unsupported videomode in config"
-
 msgid "Comp~RestartRequired"
 msgstr "Please restart 'Mechanized Assault and eXploration Reloaded' to take effect the change."
 
@@ -214,9 +214,6 @@ msgstr "Screenshot saved to %s"
 
 msgid "Comp~Sentry"
 msgstr "on sentry"
-
-msgid "Comp~Stolen"
-msgstr "stolen"
 
 msgid "Comp~SuddenDeath"
 msgstr "Sudden death! The first player to increase their score wins!"
@@ -258,9 +255,6 @@ msgid_plural "Comp~Upgrade(s)_Done"
 msgstr[0] "Upgraded %d unit"
 msgstr[1] "Upgraded %d units"
 
-msgid "Comp~Of_Type"
-msgstr "of type %s"
-
 msgid "Comp~Waits"
 msgstr "waiting"
 
@@ -270,14 +264,8 @@ msgstr "Player %s wins"
 msgid "Comp~Working"
 msgstr "working"
 
-msgid "Error_Messages~ERROR_File_Not_Found"
-msgstr "File not found: %s"
-
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Error while loading map"
-
-msgid "Error_Messages~ERROR_Missing_Translation"
-msgstr "missing translation: %s"
 
 msgid "Error_Messages~ERROR_Save_Incompatible"
 msgstr "Savegames from Maxr versions before %s are not compatible."
@@ -287,9 +275,6 @@ msgstr "Error while loading saved game"
 
 msgid "Error_Messages~ERROR_Save_Writing"
 msgstr "Error while writing save game file"
-
-msgid "Error_Messages~INFO_Language_initialised"
-msgstr "Language is now initialized"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Not yet implemented"
@@ -312,17 +297,11 @@ msgstr "Loading graphics..."
 msgid "Init~Keys"
 msgstr "Loading keys..."
 
-msgid "Init~Lang"
-msgstr "Loading language pack..."
-
 msgid "Init~Music"
 msgstr "Loading music..."
 
 msgid "Init~Sounds"
 msgstr "Loading sounds..."
-
-msgid "Init~Terrain"
-msgstr "Loading terrain..."
 
 msgid "Init~Vehicles"
 msgstr "Loading vehicles..."
@@ -330,35 +309,14 @@ msgstr "Loading vehicles..."
 msgid "Init~Voices"
 msgstr "Loading voices..."
 
-msgid "Main~Credits_Doc"
-msgstr "Michael Mönch's M.A.X. (Remake by DoctorDeath)"
-
-msgid "Main~Credits_MM"
-msgstr "Michael Mönch's M.A.X. (Original by Interplay)"
-
 msgid "Main~Credits_Reloaded"
 msgstr "M.A.X.R. based on Interplay's Mechanized Assault and eXploration"
-
-msgid "Main~Game_Subtitle"
-msgstr "Mechanized Assault and eXploration Reloaded"
-
-msgid "Main~Game_Title"
-msgstr "M.A.X.R."
-
-msgid "Main~Remarks~Not_yet_implemented"
-msgstr "(*) not yet implemented"
 
 msgid "Main~Version"
 msgstr "version v%s"
 
 msgid "Multiplayer~Abort_Waiting"
 msgstr "Server, press F2 to abort waiting."
-
-msgid "Multiplayer~Connection_Terminated"
-msgstr "Connection terminated."
-
-msgid "Multiplayer~Deadline"
-msgstr "This turn will end in %s seconds."
 
 msgid "Multiplayer~Disconnect_Not_In_Save"
 msgstr "You will be disconnected because you are not listed in the savegame."
@@ -374,27 +332,6 @@ msgstr "Warning: Gameversion of server is: %s."
 
 msgid "Multiplayer~Gameversion_Warning_Server"
 msgstr "Warning: Gameversion of player is: %s."
-
-msgid "Multiplayer~Go"
-msgstr "Let's go"
-
-msgid "Multiplayer~Go_Abort"
-msgstr "Go aborted"
-
-msgid "Multiplayer~Go_Check"
-msgstr "Check for go"
-
-msgid "Multiplayer~Go_Host"
-msgstr "Host wants to go: Ready to go"
-
-msgid "Multiplayer~Go_Host_No"
-msgstr "Host wants to go: No go"
-
-msgid "Multiplayer~Go_Ready"
-msgstr "Ready to go"
-
-msgid "Multiplayer~Go_Ready_No"
-msgstr "not ready to go"
 
 msgid "Multiplayer~Host_command"
 msgstr "Host entered following command '%s'"
@@ -435,14 +372,8 @@ msgstr "--no map selected--"
 msgid "Multiplayer~Missing_Settings"
 msgstr "Options, map or savegame are not set"
 
-msgid "Multiplayer~Network_Closed"
-msgstr "Connection closed"
-
 msgid "Multiplayer~Network_Connected"
 msgstr "Connected"
-
-msgid "Multiplayer~Network_Connected_Not"
-msgstr "Not connected"
 
 msgid "Multiplayer~Network_Connecting"
 msgstr "Connecting to %s"
@@ -453,14 +384,8 @@ msgstr "Could not connect to server"
 msgid "Multiplayer~Network_Error_Socket"
 msgstr "Error opening socket"
 
-msgid "Multiplayer~Network_New"
-msgstr "New connection"
-
 msgid "Multiplayer~Network_Open"
 msgstr "Game open (Port: %s)"
-
-msgid "Multiplayer~Network_Syncing"
-msgstr "Synchronizing..."
 
 msgid "Multiplayer~No_Map_No_Ready"
 msgstr "Can not load map %s. You can not go ready."
@@ -501,14 +426,8 @@ msgstr "Player 7"
 msgid "Multiplayer~Player8"
 msgstr "Player 8"
 
-msgid "Multiplayer~Player_Amount"
-msgstr "Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum."
-
 msgid "Multiplayer~Player_Color_Taken"
 msgstr "Playercolor already in use, please select an other color to be unique"
-
-msgid "Multiplayer~Player_Few"
-msgstr "Not enough players!"
 
 msgid "Multiplayer~Player_Joined"
 msgstr "%s has joined"
@@ -516,17 +435,13 @@ msgstr "%s has joined"
 msgid "Multiplayer~Player_Left"
 msgstr "%s has left the game"
 
-msgid "Multiplayer~Player_Many"
-msgstr "Too many players!"
-
-msgid "Multiplayer~Player_MustHost"
-msgstr "must be host in turn based game!"
-
 msgid "Multiplayer~Player_Name_Taken"
 msgstr "Playername already in use, please select an other name to be unique"
 
 msgid "Multiplayer~Player_Turn"
-msgstr "%s:\nBegin turn."
+msgstr ""
+"%s:\n"
+"Begin turn."
 
 msgid "Multiplayer~Player_Turn_End"
 msgstr "%s ended turn"
@@ -535,7 +450,11 @@ msgid "Multiplayer~Player_Wrong"
 msgstr "Missing a correct player's name"
 
 msgid "Multiplayer~Reconnect"
-msgstr "This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?"
+msgstr ""
+"This game is running already.\n"
+"If you have lost connection to the game, you can reconnect.\n"
+"\n"
+"Do you want to reconnect?"
 
 msgid "Multiplayer~Reconnect_Already_Connected"
 msgstr "Reconnecting forbidden by server. A player with your name is already connected."
@@ -560,9 +479,6 @@ msgstr "Please wait while turn end is executed."
 
 msgid "Multiplayer~Wait_Until"
 msgstr "Please wait until %s has finished his turn."
-
-msgid "Multiplayer~Waiting"
-msgstr "Waiting for other players..."
 
 msgid "Option~Definite"
 msgstr "Built (original)"
@@ -611,9 +527,6 @@ msgstr "Turn based"
 
 msgid "Others~Active"
 msgstr "Active"
-
-msgid "Others~ActiveAll_9"
-msgstr "Activ All"
 
 msgid "Others~Active_7"
 msgstr "Activ."
@@ -798,17 +711,11 @@ msgstr "Range"
 msgid "Others~Reload"
 msgstr "Reload"
 
-msgid "Others~ReloadAll_9"
-msgstr "Reload All"
-
 msgid "Others~Reload_7"
 msgstr "Reload"
 
 msgid "Others~Repair"
 msgstr "Repair"
-
-msgid "Others~RepairAll_9"
-msgstr "Rep. All"
 
 msgid "Others~Repair_7"
 msgstr "Repair"
@@ -835,9 +742,6 @@ msgid "Others~Sea_Units"
 msgstr "Seaunits"
 
 msgid "Others~Seed"
-msgstr "Seed"
-
-msgid "Others~Seed_7"
 msgstr "Seed"
 
 msgid "Others~Sentry"
@@ -908,9 +812,6 @@ msgstr "Upgrade"
 
 msgid "Others~UpgradeAll_7"
 msgstr "Up.all"
-
-msgid "Others~UpgradeAll_9"
-msgstr "Upgrd.All"
 
 msgid "Others~Upgrademenu_7"
 msgstr "Up.Menu"
@@ -1008,9 +909,6 @@ msgstr "Choose planet"
 msgid "Title~Choose_Units"
 msgstr "Choose Units"
 
-msgid "Title~Clan"
-msgstr "Clan"
-
 msgid "Title~Clans"
 msgstr "Clans"
 
@@ -1053,9 +951,6 @@ msgstr "Research menu"
 msgid "Title~Load"
 msgstr "Load Menu"
 
-msgid "Title~LoadSave"
-msgstr "Load/Save Menu"
-
 msgid "Title~MainMenu"
 msgstr "Main Menu"
 
@@ -1080,17 +975,11 @@ msgstr "Options"
 msgid "Title~Player_Name"
 msgstr "Player Name:"
 
-msgid "Title~Player_Select"
-msgstr "Player options"
-
 msgid "Title~Players"
 msgstr "Players:"
 
 msgid "Title~Port"
 msgstr "Port"
-
-msgid "Title~Resource"
-msgstr "Resource density"
 
 msgid "Title~Resource_Density"
 msgstr "Resource frequency"
@@ -1116,3 +1005,122 @@ msgstr "Unit status screen"
 msgid "Title~Upgrades_Menu"
 msgstr "Upgrades menu"
 
+#~ msgid "Comp~Cheat"
+#~ msgstr "%s used cheat"
+
+#~ msgid "Comp~ResolutionWarning"
+#~ msgstr "Warning: Unsupported videomode in config"
+
+#~ msgid "Comp~Stolen"
+#~ msgstr "stolen"
+
+#~ msgid "Error_Messages~ERROR_File_Not_Found"
+#~ msgstr "File not found: %s"
+
+#~ msgid "Error_Messages~ERROR_Missing_Translation"
+#~ msgstr "missing translation: %s"
+
+#~ msgid "Error_Messages~INFO_Language_initialised"
+#~ msgstr "Language is now initialized"
+
+#~ msgid "Init~Lang"
+#~ msgstr "Loading language pack..."
+
+#~ msgid "Init~Terrain"
+#~ msgstr "Loading terrain..."
+
+#~ msgid "Main~Credits_Doc"
+#~ msgstr "Michael Mönch's M.A.X. (Remake by DoctorDeath)"
+
+#~ msgid "Main~Credits_MM"
+#~ msgstr "Michael Mönch's M.A.X. (Original by Interplay)"
+
+#~ msgid "Main~Game_Subtitle"
+#~ msgstr "Mechanized Assault and eXploration Reloaded"
+
+#~ msgid "Main~Game_Title"
+#~ msgstr "M.A.X.R."
+
+#~ msgid "Main~Remarks~Not_yet_implemented"
+#~ msgstr "(*) not yet implemented"
+
+#~ msgid "Multiplayer~Connection_Terminated"
+#~ msgstr "Connection terminated."
+
+#~ msgid "Multiplayer~Deadline"
+#~ msgstr "This turn will end in %s seconds."
+
+#~ msgid "Multiplayer~Go"
+#~ msgstr "Let's go"
+
+#~ msgid "Multiplayer~Go_Abort"
+#~ msgstr "Go aborted"
+
+#~ msgid "Multiplayer~Go_Check"
+#~ msgstr "Check for go"
+
+#~ msgid "Multiplayer~Go_Host"
+#~ msgstr "Host wants to go: Ready to go"
+
+#~ msgid "Multiplayer~Go_Host_No"
+#~ msgstr "Host wants to go: No go"
+
+#~ msgid "Multiplayer~Go_Ready"
+#~ msgstr "Ready to go"
+
+#~ msgid "Multiplayer~Go_Ready_No"
+#~ msgstr "not ready to go"
+
+#~ msgid "Multiplayer~Network_Closed"
+#~ msgstr "Connection closed"
+
+#~ msgid "Multiplayer~Network_Connected_Not"
+#~ msgstr "Not connected"
+
+#~ msgid "Multiplayer~Network_New"
+#~ msgstr "New connection"
+
+#~ msgid "Multiplayer~Network_Syncing"
+#~ msgstr "Synchronizing..."
+
+#~ msgid "Multiplayer~Player_Amount"
+#~ msgstr "Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum."
+
+#~ msgid "Multiplayer~Player_Few"
+#~ msgstr "Not enough players!"
+
+#~ msgid "Multiplayer~Player_Many"
+#~ msgstr "Too many players!"
+
+#~ msgid "Multiplayer~Player_MustHost"
+#~ msgstr "must be host in turn based game!"
+
+#~ msgid "Multiplayer~Waiting"
+#~ msgstr "Waiting for other players..."
+
+#~ msgid "Others~ActiveAll_9"
+#~ msgstr "Activ All"
+
+#~ msgid "Others~ReloadAll_9"
+#~ msgstr "Reload All"
+
+#~ msgid "Others~RepairAll_9"
+#~ msgstr "Rep. All"
+
+#~ msgid "Others~Seed_7"
+#~ msgstr "Seed"
+
+#~ msgid "Others~UpgradeAll_9"
+#~ msgstr "Upgrd.All"
+
+#~ msgid "Title~Clan"
+#~ msgstr "Clan"
+
+#~ msgid "Title~LoadSave"
+#~ msgstr "Load/Save Menu"
+
+#~ msgid "Title~Player_Select"
+#~ msgstr "Player options"
+
+#~ msgid "Title~Resource"
+#~ msgstr "Resource density"

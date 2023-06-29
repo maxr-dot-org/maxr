@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-28 23:29+0200\n"
+"POT-Creation-Date: 2023-06-29 08:54+0200\n"
 "PO-Revision-Date: 2021-07-29 21:44+0200\n"
 "Last-Translator:\n"
 "Language-Team: Russian\n"
@@ -14,8 +14,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#, fuzzy
+msgid "Comp~Adjustments_Fuel_Decreased"
+msgstr "Добыча топлива увеличена на %s"
 
 msgid "Comp~Adjustments_Fuel_Increased"
 msgstr "Добыча топлива увеличена на %s"
@@ -23,7 +26,15 @@ msgstr "Добыча топлива увеличена на %s"
 msgid "Comp~Adjustments_Gold_Decreased"
 msgstr "Добыча золота уменьшена на %s"
 
+#, fuzzy
+msgid "Comp~Adjustments_Gold_Increased"
+msgstr "Добыча золота уменьшена на %s"
+
 msgid "Comp~Adjustments_Metal_Decreased"
+msgstr "Добыча сырья уменьшена на %s"
+
+#, fuzzy
+msgid "Comp~Adjustments_Metal_Increased"
 msgstr "Добыча сырья уменьшена на %s"
 
 msgid "Comp~Attacked"
@@ -40,9 +51,6 @@ msgstr "Производство остановлено."
 
 msgid "Comp~CapturedByEnemy"
 msgstr "Враг захватил %s"
-
-msgid "Comp~Cheat"
-msgstr "%s использован чит"
 
 msgid "Comp~Clearing"
 msgstr "убирает (%s)"
@@ -97,7 +105,10 @@ msgstr[1] "%d эко-сферы"
 msgstr[2] "%d эко-сферы"
 
 msgid "Comp~End_Game"
-msgstr "Действительно выйти? \n\nНесохранённые данные будут утеряны."
+msgstr ""
+"Действительно выйти? \n"
+"\n"
+"Несохранённые данные будут утеряны."
 
 msgid "Comp~Energy_Insufficient"
 msgstr "Невозможно запустить, недостаточно энергии."
@@ -165,6 +176,9 @@ msgstr ""
 msgid "Comp~NoLimit"
 msgstr "Биться насмерть!"
 
+msgid "Comp~Of_Type"
+msgstr "(единиц типа %s)"
+
 msgid "Comp~Path_interrupted"
 msgstr "Возведение построек по заданному маршруту не может быть продолжено."
 
@@ -181,10 +195,15 @@ msgstr "очки"
 msgid "Comp~Producing"
 msgstr "производит"
 
-msgid "Comp~Producing_Err"
-msgstr "Точка возведения заблокирована или недостаточно ресурсов"
-
 msgid "Comp~Producing_Fin"
+msgstr "закончил производство"
+
+#, fuzzy
+msgid "Comp~Producing_InsufficientMaterial"
+msgstr "Невозможно запустить, недостаточно золота."
+
+#, fuzzy
+msgid "Comp~Producing_PositionBlocked"
 msgstr "закончил производство"
 
 msgid "Comp~ReactionFireOff"
@@ -196,9 +215,6 @@ msgstr "Ещё раз"
 msgid "Comp~Reserve"
 msgstr "Резерв"
 
-msgid "Comp~ResolutionWarning"
-msgstr "Внимание: неподдерживаемый видеорежим в конфигурации"
-
 msgid "Comp~RestartRequired"
 msgstr ""
 
@@ -207,9 +223,6 @@ msgstr "Снимок экрана записан в %s"
 
 msgid "Comp~Sentry"
 msgstr "на карауле"
-
-msgid "Comp~Stolen"
-msgstr "захвачено"
 
 msgid "Comp~SuddenDeath"
 msgstr "Мнгновенная гибель: первый игрок, набравший очки, побеждает!"
@@ -254,9 +267,6 @@ msgstr[0] "Улучшенение завершено %d"
 msgstr[1] "Улучшенение завершено %d"
 msgstr[2] "Улучшенение завершено %d"
 
-msgid "Comp~Of_Type"
-msgstr "(единиц типа %s)"
-
 msgid "Comp~Waits"
 msgstr "бездействует"
 
@@ -266,17 +276,20 @@ msgstr ""
 msgid "Comp~Working"
 msgstr "работает"
 
-msgid "Error_Messages~ERROR_File_Not_Found"
-msgstr "Файл не найден: %s"
-
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Ошибка при загрузке карты"
 
-msgid "Error_Messages~ERROR_Missing_Translation"
-msgstr "нехватает перевода: %s"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Incompatible"
+msgstr "Ошибка при загрузке карты"
 
-msgid "Error_Messages~INFO_Language_initialised"
-msgstr "Язык не опознан"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Loading"
+msgstr "Ошибка при загрузке карты"
+
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Writing"
+msgstr "Ошибка при загрузке карты"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Ещё не реализовано"
@@ -299,17 +312,11 @@ msgstr "Загрузка графики..."
 msgid "Init~Keys"
 msgstr "Загрузка клавиш..."
 
-msgid "Init~Lang"
-msgstr "Загрузка локализации.."
-
 msgid "Init~Music"
 msgstr "Загрузка музыки..."
 
 msgid "Init~Sounds"
 msgstr "Загрузка звуков..."
-
-msgid "Init~Terrain"
-msgstr "Загрузка территорий..."
 
 msgid "Init~Vehicles"
 msgstr "Загрузка подразделений..."
@@ -317,23 +324,8 @@ msgstr "Загрузка подразделений..."
 msgid "Init~Voices"
 msgstr "Загрузка голосов..."
 
-msgid "Main~Credits_Doc"
-msgstr ""
-
-msgid "Main~Credits_MM"
-msgstr ""
-
 msgid "Main~Credits_Reloaded"
 msgstr "M.A.X.R. основывается на M.A.X. от Interplay"
-
-msgid "Main~Game_Subtitle"
-msgstr ""
-
-msgid "Main~Game_Title"
-msgstr ""
-
-msgid "Main~Remarks~Not_yet_implemented"
-msgstr "(*) ещё не реализовано"
 
 msgid "Main~Version"
 msgstr "версия %s"
@@ -341,35 +333,24 @@ msgstr "версия %s"
 msgid "Multiplayer~Abort_Waiting"
 msgstr "Сервер, нажмите F2 чтобы прекратить ожидание."
 
-msgid "Multiplayer~Connection_Terminated"
-msgstr "Связь разорвана."
-
-msgid "Multiplayer~Deadline"
-msgstr "Ход закончится через %s секунд"
-
 msgid "Multiplayer~Disconnect_Not_In_Save"
 msgstr "Вас нет в списке сохранённой игры, Вы будете отключены."
 
-msgid "Multiplayer~Go"
-msgstr "Поехали"
-
-msgid "Multiplayer~Go_Abort"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Error"
 msgstr "Отменено"
 
-msgid "Multiplayer~Go_Check"
-msgstr "Приготовьтесь к началу"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Own"
+msgstr "Недостаточно игроков!"
 
-msgid "Multiplayer~Go_Host"
-msgstr "Сервер хочет начать: Приготовьтесь"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Client"
+msgstr "Сервер не запущен"
 
-msgid "Multiplayer~Go_Host_No"
-msgstr "Сервер хочет начать: Не готов"
-
-msgid "Multiplayer~Go_Ready"
-msgstr "Готов"
-
-msgid "Multiplayer~Go_Ready_No"
-msgstr "не готов"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Server"
+msgstr "Сервер не запущен"
 
 msgid "Multiplayer~Host_command"
 msgstr ""
@@ -410,14 +391,8 @@ msgstr "--не выбана карта--"
 msgid "Multiplayer~Missing_Settings"
 msgstr "Опции, карта или сохранённая игра не выбраны"
 
-msgid "Multiplayer~Network_Closed"
-msgstr "Соединение закрыто"
-
 msgid "Multiplayer~Network_Connected"
 msgstr "Соединено"
-
-msgid "Multiplayer~Network_Connected_Not"
-msgstr "Не соединино"
 
 msgid "Multiplayer~Network_Connecting"
 msgstr "Соединяюсь с %s"
@@ -428,14 +403,8 @@ msgstr "Невозможно подключиться к сервером"
 msgid "Multiplayer~Network_Error_Socket"
 msgstr "Ошбика подключения к сокету"
 
-msgid "Multiplayer~Network_New"
-msgstr "Новое соединение"
-
 msgid "Multiplayer~Network_Open"
 msgstr "Игра началась (Порт: %s)"
-
-msgid "Multiplayer~Network_Syncing"
-msgstr "Идёт синхронизация..."
 
 msgid "Multiplayer~No_Map_No_Ready"
 msgstr "Не могу загрузить карту %s. Вы не готовы."
@@ -476,26 +445,14 @@ msgstr "Игрок 7"
 msgid "Multiplayer~Player8"
 msgstr "Игрок 8"
 
-msgid "Multiplayer~Player_Amount"
-msgstr "Выберете количество игроков. Необходимо минимум два игрока-человека. Максимально возможное количество игроков - 8."
-
 msgid "Multiplayer~Player_Color_Taken"
 msgstr ""
-
-msgid "Multiplayer~Player_Few"
-msgstr "Недостаточно игроков!"
 
 msgid "Multiplayer~Player_Joined"
 msgstr "%s вступает в игру"
 
 msgid "Multiplayer~Player_Left"
 msgstr "%s покидает игру"
-
-msgid "Multiplayer~Player_Many"
-msgstr "Слишком много игроков!"
-
-msgid "Multiplayer~Player_MustHost"
-msgstr "должен быть сервером в игре по очереди"
 
 msgid "Multiplayer~Player_Name_Taken"
 msgstr ""
@@ -512,8 +469,13 @@ msgstr "У игрока неправильное имя"
 msgid "Multiplayer~Reconnect"
 msgstr "Игра уже идёт. Если Вы потеряли связь с сервером, Вы можете подключиться заново. Хотите подключиться?"
 
-msgid "Multiplayer~Reconnect_Forbidden"
-msgstr "Переподключение запрещено сервером."
+#, fuzzy
+msgid "Multiplayer~Reconnect_Already_Connected"
+msgstr "Соединено"
+
+#, fuzzy
+msgid "Multiplayer~Reconnect_Not_Part_Of_Game"
+msgstr "Вас нет в списке сохранённой игры, Вы будете отключены."
 
 msgid "Multiplayer~Save_Only_Host"
 msgstr "Только сервер может сохранять игру."
@@ -532,9 +494,6 @@ msgstr ""
 
 msgid "Multiplayer~Wait_Until"
 msgstr "Дождитесь завершения хода игроком %s"
-
-msgid "Multiplayer~Waiting"
-msgstr "Ждём остальных игроков..."
 
 msgid "Option~Definite"
 msgstr "Уже построена"
@@ -583,9 +542,6 @@ msgstr "По очереди"
 
 msgid "Others~Active"
 msgstr "Активац."
-
-msgid "Others~ActiveAll_9"
-msgstr ""
 
 msgid "Others~Active_7"
 msgstr "Актив."
@@ -664,6 +620,10 @@ msgstr "Готово"
 
 msgid "Others~End"
 msgstr "Кон. хода"
+
+#, fuzzy
+msgid "Others~Enter_7"
+msgstr "Готово"
 
 msgid "Others~Exit"
 msgstr "Выход"
@@ -767,17 +727,11 @@ msgstr "Дальн."
 msgid "Others~Reload"
 msgstr "Заряд."
 
-msgid "Others~ReloadAll_9"
-msgstr ""
-
 msgid "Others~Reload_7"
 msgstr "Заряд."
 
 msgid "Others~Repair"
 msgstr "Ремонт"
-
-msgid "Others~RepairAll_9"
-msgstr ""
 
 msgid "Others~Repair_7"
 msgstr "Ремонт"
@@ -804,9 +758,6 @@ msgid "Others~Sea_Units"
 msgstr "Морские"
 
 msgid "Others~Seed"
-msgstr "Мины"
-
-msgid "Others~Seed_7"
 msgstr "Мины"
 
 msgid "Others~Sentry"
@@ -877,9 +828,6 @@ msgstr "Улучшить"
 
 msgid "Others~UpgradeAll_7"
 msgstr "Ул. все"
-
-msgid "Others~UpgradeAll_9"
-msgstr ""
 
 msgid "Others~Upgrademenu_7"
 msgstr "Улучш."
@@ -977,9 +925,6 @@ msgstr "Выбор карты"
 msgid "Title~Choose_Units"
 msgstr ""
 
-msgid "Title~Clan"
-msgstr ""
-
 msgid "Title~Clans"
 msgstr "Кланы"
 
@@ -1022,9 +967,6 @@ msgstr "Исследование"
 msgid "Title~Load"
 msgstr "Загрузка"
 
-msgid "Title~LoadSave"
-msgstr "Загрузка/Сохранение"
-
 msgid "Title~MainMenu"
 msgstr "Главное меню"
 
@@ -1049,17 +991,11 @@ msgstr "Опции"
 msgid "Title~Player_Name"
 msgstr "Имя игрока"
 
-msgid "Title~Player_Select"
-msgstr "Выбор игроков"
-
 msgid "Title~Players"
 msgstr "Игроки:"
 
 msgid "Title~Port"
 msgstr "Порт"
-
-msgid "Title~Resource"
-msgstr "Ресурсы"
 
 msgid "Title~Resource_Density"
 msgstr "Плотность ресурсов"
@@ -1085,3 +1021,95 @@ msgstr "Статус подразделения"
 msgid "Title~Upgrades_Menu"
 msgstr ""
 
+#~ msgid "Comp~Cheat"
+#~ msgstr "%s использован чит"
+
+#~ msgid "Comp~Producing_Err"
+#~ msgstr "Точка возведения заблокирована или недостаточно ресурсов"
+
+#~ msgid "Comp~ResolutionWarning"
+#~ msgstr "Внимание: неподдерживаемый видеорежим в конфигурации"
+
+#~ msgid "Comp~Stolen"
+#~ msgstr "захвачено"
+
+#~ msgid "Error_Messages~ERROR_File_Not_Found"
+#~ msgstr "Файл не найден: %s"
+
+#~ msgid "Error_Messages~ERROR_Missing_Translation"
+#~ msgstr "нехватает перевода: %s"
+
+#~ msgid "Error_Messages~INFO_Language_initialised"
+#~ msgstr "Язык не опознан"
+
+#~ msgid "Init~Lang"
+#~ msgstr "Загрузка локализации.."
+
+#~ msgid "Init~Terrain"
+#~ msgstr "Загрузка территорий..."
+
+#~ msgid "Main~Remarks~Not_yet_implemented"
+#~ msgstr "(*) ещё не реализовано"
+
+#~ msgid "Multiplayer~Connection_Terminated"
+#~ msgstr "Связь разорвана."
+
+#~ msgid "Multiplayer~Deadline"
+#~ msgstr "Ход закончится через %s секунд"
+
+#~ msgid "Multiplayer~Go"
+#~ msgstr "Поехали"
+
+#~ msgid "Multiplayer~Go_Check"
+#~ msgstr "Приготовьтесь к началу"
+
+#~ msgid "Multiplayer~Go_Host"
+#~ msgstr "Сервер хочет начать: Приготовьтесь"
+
+#~ msgid "Multiplayer~Go_Host_No"
+#~ msgstr "Сервер хочет начать: Не готов"
+
+#~ msgid "Multiplayer~Go_Ready"
+#~ msgstr "Готов"
+
+#~ msgid "Multiplayer~Go_Ready_No"
+#~ msgstr "не готов"
+
+#~ msgid "Multiplayer~Network_Closed"
+#~ msgstr "Соединение закрыто"
+
+#~ msgid "Multiplayer~Network_Connected_Not"
+#~ msgstr "Не соединино"
+
+#~ msgid "Multiplayer~Network_New"
+#~ msgstr "Новое соединение"
+
+#~ msgid "Multiplayer~Network_Syncing"
+#~ msgstr "Идёт синхронизация..."
+
+#~ msgid "Multiplayer~Player_Amount"
+#~ msgstr "Выберете количество игроков. Необходимо минимум два игрока-человека. Максимально возможное количество игроков - 8."
+
+#~ msgid "Multiplayer~Player_Many"
+#~ msgstr "Слишком много игроков!"
+
+#~ msgid "Multiplayer~Player_MustHost"
+#~ msgstr "должен быть сервером в игре по очереди"
+
+#~ msgid "Multiplayer~Reconnect_Forbidden"
+#~ msgstr "Переподключение запрещено сервером."
+
+#~ msgid "Multiplayer~Waiting"
+#~ msgstr "Ждём остальных игроков..."
+
+#~ msgid "Others~Seed_7"
+#~ msgstr "Мины"
+
+#~ msgid "Title~LoadSave"
+#~ msgstr "Загрузка/Сохранение"
+
+#~ msgid "Title~Player_Select"
+#~ msgstr "Выбор игроков"
+
+#~ msgid "Title~Resource"
+#~ msgstr "Ресурсы"

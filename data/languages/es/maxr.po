@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-28 23:29+0200\n"
+"POT-Creation-Date: 2023-06-29 08:54+0200\n"
 "PO-Revision-Date: 2021-07-29 22:32+0200\n"
 "Last-Translator:\n"
 "Language-Team: Spanish\n"
@@ -16,13 +16,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#, fuzzy
+msgid "Comp~Adjustments_Fuel_Decreased"
+msgstr "Se han hecho ajustes: Producción de combustible incrementada en %s"
+
 msgid "Comp~Adjustments_Fuel_Increased"
 msgstr "Se han hecho ajustes: Producción de combustible incrementada en %s"
 
 msgid "Comp~Adjustments_Gold_Decreased"
 msgstr "Se han hecho ajustes: Producción de oro incrementada en %s"
 
+#, fuzzy
+msgid "Comp~Adjustments_Gold_Increased"
+msgstr "Se han hecho ajustes: Producción de oro incrementada en %s"
+
 msgid "Comp~Adjustments_Metal_Decreased"
+msgstr "Se han hecho ajustes: Producción de metal incrementada en %s"
+
+#, fuzzy
+msgid "Comp~Adjustments_Metal_Increased"
 msgstr "Se han hecho ajustes: Producción de metal incrementada en %s"
 
 msgid "Comp~Attacked"
@@ -39,9 +51,6 @@ msgstr "Edificio desactivado"
 
 msgid "Comp~CapturedByEnemy"
 msgstr "%s ha sido capturado por el enemigo"
-
-msgid "Comp~Cheat"
-msgstr "%s Se ha usado un truco"
 
 msgid "Comp~Clearing"
 msgstr "limpiando (%s)"
@@ -94,7 +103,10 @@ msgstr[0] "%d Invernadero"
 msgstr[1] "%d Invernaderos"
 
 msgid "Comp~End_Game"
-msgstr "Confirmar salida \n\nLos datos no guardados se perderán."
+msgstr ""
+"Confirmar salida \n"
+"\n"
+"Los datos no guardados se perderán."
 
 msgid "Comp~Energy_Insufficient"
 msgstr "No se puede encender, se necesita energía"
@@ -162,6 +174,9 @@ msgstr "moviendose para atacar"
 msgid "Comp~NoLimit"
 msgstr "Lucha a muerte"
 
+msgid "Comp~Of_Type"
+msgstr "de tipo %s"
+
 msgid "Comp~Path_interrupted"
 msgstr "No puede continuarse la trayectoria de construcción"
 
@@ -176,10 +191,15 @@ msgstr "puntos"
 msgid "Comp~Producing"
 msgstr "Edificio"
 
-msgid "Comp~Producing_Err"
-msgstr "Posición de construcción incorrecta o recursos insuficientes"
-
 msgid "Comp~Producing_Fin"
+msgstr "edificio terminado"
+
+#, fuzzy
+msgid "Comp~Producing_InsufficientMaterial"
+msgstr "No se puede encender, se necesita oro"
+
+#, fuzzy
+msgid "Comp~Producing_PositionBlocked"
 msgstr "edificio terminado"
 
 msgid "Comp~ReactionFireOff"
@@ -191,9 +211,6 @@ msgstr "De nuevo"
 msgid "Comp~Reserve"
 msgstr "Reserva"
 
-msgid "Comp~ResolutionWarning"
-msgstr "Cuidado: Modo de video no soportado en la configuración"
-
 msgid "Comp~RestartRequired"
 msgstr "Por favor, reinicia 'Mechanized Assault and eXploration Reloaded' para que los cambios tengan efecto"
 
@@ -202,9 +219,6 @@ msgstr "Pantallazo guardado a %s"
 
 msgid "Comp~Sentry"
 msgstr "en alerta"
-
-msgid "Comp~Stolen"
-msgstr "robado"
 
 msgid "Comp~SuddenDeath"
 msgstr "El primer jugador en aumentar su puntuación gana!"
@@ -246,9 +260,6 @@ msgid_plural "Comp~Upgrade(s)_Done"
 msgstr[0] "Actualizado %d unidad"
 msgstr[1] "Actualizado %d unidades"
 
-msgid "Comp~Of_Type"
-msgstr "de tipo %s"
-
 msgid "Comp~Waits"
 msgstr "esperando"
 
@@ -258,17 +269,20 @@ msgstr ""
 msgid "Comp~Working"
 msgstr "trabajando"
 
-msgid "Error_Messages~ERROR_File_Not_Found"
-msgstr "Fichero no encontrado: %s"
-
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Error mientras se cargaba el mapa"
 
-msgid "Error_Messages~ERROR_Missing_Translation"
-msgstr "Traducción perdida: %s"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Incompatible"
+msgstr "Error mientras se cargaba el mapa"
 
-msgid "Error_Messages~INFO_Language_initialised"
-msgstr "El idioma está ahora inicializado"
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Loading"
+msgstr "Error mientras se cargaba el mapa"
+
+#, fuzzy
+msgid "Error_Messages~ERROR_Save_Writing"
+msgstr "Error mientras se cargaba el mapa"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "No implementado todavía"
@@ -291,17 +305,11 @@ msgstr "Cargando gráficos..."
 msgid "Init~Keys"
 msgstr "Cargando claves..."
 
-msgid "Init~Lang"
-msgstr "Cargando paquete de idioma..."
-
 msgid "Init~Music"
 msgstr "Cargando música..."
 
 msgid "Init~Sounds"
 msgstr "Cargando sonidos..."
-
-msgid "Init~Terrain"
-msgstr "Cargando terreno..."
 
 msgid "Init~Vehicles"
 msgstr "Cargando vehículos..."
@@ -309,23 +317,8 @@ msgstr "Cargando vehículos..."
 msgid "Init~Voices"
 msgstr "Cargando voces..."
 
-msgid "Main~Credits_Doc"
-msgstr "Michael Mönchs M.A.X. (Reedición por DoctorDeath)"
-
-msgid "Main~Credits_MM"
-msgstr "Michael Mönchs M.A.X. (Original por Interplay)"
-
 msgid "Main~Credits_Reloaded"
 msgstr "M.A.X.R. basado en Mechanized Assault and eXploration de Interplay"
-
-msgid "Main~Game_Subtitle"
-msgstr "Mechanized Assault and eXploration Reloaded"
-
-msgid "Main~Game_Title"
-msgstr "M.A.X.R."
-
-msgid "Main~Remarks~Not_yet_implemented"
-msgstr "(*)no implementando todavía"
 
 msgid "Main~Version"
 msgstr "versión v%s"
@@ -333,35 +326,24 @@ msgstr "versión v%s"
 msgid "Multiplayer~Abort_Waiting"
 msgstr "Servidor, presiona F2 para dejar de esperar."
 
-msgid "Multiplayer~Connection_Terminated"
-msgstr "Conexión terminada"
-
-msgid "Multiplayer~Deadline"
-msgstr " este turno terminará en %s segundos"
-
 msgid "Multiplayer~Disconnect_Not_In_Save"
 msgstr "Serás desconectado porque no estás listado en la partida guardada"
 
-msgid "Multiplayer~Go"
-msgstr "Vamos a ello"
-
-msgid "Multiplayer~Go_Abort"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Error"
 msgstr "Comienzo interrumpido"
 
-msgid "Multiplayer~Go_Check"
-msgstr "Marca cuando estés listo para empezar"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Own"
+msgstr "No hay suficientes jugadores!"
 
-msgid "Multiplayer~Go_Host"
-msgstr "El servidor quiere empezar: listos para empezar"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Client"
+msgstr "Els servidor no está funcionando"
 
-msgid "Multiplayer~Go_Host_No"
-msgstr "El servidor quiere empezar: no empezamos"
-
-msgid "Multiplayer~Go_Ready"
-msgstr "Listos para empezar"
-
-msgid "Multiplayer~Go_Ready_No"
-msgstr "No estamos listos para empezar"
+#, fuzzy
+msgid "Multiplayer~Gameversion_Warning_Server"
+msgstr "Esperando la respuesta de la red del servidor"
 
 msgid "Multiplayer~Host_command"
 msgstr "El servidor ha entrado el siguiente comando '%s'"
@@ -402,14 +384,8 @@ msgstr "--mapa no seleccionado--"
 msgid "Multiplayer~Missing_Settings"
 msgstr "Las opciones, el mapa, o el guardado no estan disponibles"
 
-msgid "Multiplayer~Network_Closed"
-msgstr "Conexión cerrada"
-
 msgid "Multiplayer~Network_Connected"
 msgstr "Conectado"
-
-msgid "Multiplayer~Network_Connected_Not"
-msgstr "No conectado"
 
 msgid "Multiplayer~Network_Connecting"
 msgstr "Conectando a %s"
@@ -420,14 +396,8 @@ msgstr "No puedo conectar a servidor"
 msgid "Multiplayer~Network_Error_Socket"
 msgstr "Error abriendo socket"
 
-msgid "Multiplayer~Network_New"
-msgstr "Nueva conexión"
-
 msgid "Multiplayer~Network_Open"
 msgstr "Partida abierta (Puerto: %s)"
-
-msgid "Multiplayer~Network_Syncing"
-msgstr "Sincronizando..."
 
 msgid "Multiplayer~No_Map_No_Ready"
 msgstr "No se puede cargar el mapa %s. No estás listo."
@@ -468,26 +438,14 @@ msgstr "Jugador 7"
 msgid "Multiplayer~Player8"
 msgstr "Jugador 8"
 
-msgid "Multiplayer~Player_Amount"
-msgstr "Elige la cantidad de jugadores por favor. Debe haber al menos dos jugadores humanos par empezar una partida. 8 jugadores es el máximo."
-
 msgid "Multiplayer~Player_Color_Taken"
 msgstr "Color de jugador ya usado, por favor elige otro color de forma que sea único"
-
-msgid "Multiplayer~Player_Few"
-msgstr "No hay suficientes jugadores!"
 
 msgid "Multiplayer~Player_Joined"
 msgstr " Se ha unido %s"
 
 msgid "Multiplayer~Player_Left"
 msgstr " %s ha salido de la partida"
-
-msgid "Multiplayer~Player_Many"
-msgstr "Demasiados jugadores!"
-
-msgid "Multiplayer~Player_MustHost"
-msgstr "Debe ser invitado en una partida basada en turnos!"
 
 msgid "Multiplayer~Player_Name_Taken"
 msgstr "Nombre de jugador ya utilizado, por favor, elige otro de forma que sea único"
@@ -504,8 +462,13 @@ msgstr "Se ha perdido un nombre de jugador correcto."
 msgid "Multiplayer~Reconnect"
 msgstr "Esta partida está funcionando. Si has perdido la conexión puedes reconectar. ¿Quieres reconectar?"
 
-msgid "Multiplayer~Reconnect_Forbidden"
-msgstr "Reconexión prohibida por el servidor"
+#, fuzzy
+msgid "Multiplayer~Reconnect_Already_Connected"
+msgstr "Conectado"
+
+#, fuzzy
+msgid "Multiplayer~Reconnect_Not_Part_Of_Game"
+msgstr "Serás desconectado porque no estás listado en la partida guardada"
 
 msgid "Multiplayer~Save_Only_Host"
 msgstr "Solo el servidor puede guardar partidas"
@@ -524,9 +487,6 @@ msgstr "Por favor, espera mientras las ordenes de finalizar turno se ejecutan"
 
 msgid "Multiplayer~Wait_Until"
 msgstr "por favor espera hasta que %s haya terminado su turno"
-
-msgid "Multiplayer~Waiting"
-msgstr "Esperando a otros jugadores..."
 
 msgid "Option~Definite"
 msgstr "Construido (original)"
@@ -575,9 +535,6 @@ msgstr "Turnos"
 
 msgid "Others~Active"
 msgstr "Activar"
-
-msgid "Others~ActiveAll_9"
-msgstr "Activar todos"
 
 msgid "Others~Active_7"
 msgstr "Activar"
@@ -656,6 +613,10 @@ msgstr "Hecho"
 
 msgid "Others~End"
 msgstr "Finalizar"
+
+#, fuzzy
+msgid "Others~Enter_7"
+msgstr "Hecho"
 
 msgid "Others~Exit"
 msgstr "Salir"
@@ -759,17 +720,11 @@ msgstr "Alcance"
 msgid "Others~Reload"
 msgstr "Recargar"
 
-msgid "Others~ReloadAll_9"
-msgstr "Rec. Todos"
-
 msgid "Others~Reload_7"
 msgstr "Recargar"
 
 msgid "Others~Repair"
 msgstr "Reparar"
-
-msgid "Others~RepairAll_9"
-msgstr "Rep. Todos"
 
 msgid "Others~Repair_7"
 msgstr "Reparar"
@@ -796,9 +751,6 @@ msgid "Others~Sea_Units"
 msgstr "Unidades de mar"
 
 msgid "Others~Seed"
-msgstr "Plantar"
-
-msgid "Others~Seed_7"
 msgstr "Plantar"
 
 msgid "Others~Sentry"
@@ -869,9 +821,6 @@ msgstr "Actualizar"
 
 msgid "Others~UpgradeAll_7"
 msgstr "Mej.Todo"
-
-msgid "Others~UpgradeAll_9"
-msgstr "Mej. Todo"
 
 msgid "Others~Upgrademenu_7"
 msgstr "Mejoras"
@@ -969,9 +918,6 @@ msgstr "Elige planeta"
 msgid "Title~Choose_Units"
 msgstr "Elige Unidades"
 
-msgid "Title~Clan"
-msgstr "Clan"
-
 msgid "Title~Clans"
 msgstr "Clanes"
 
@@ -1014,9 +960,6 @@ msgstr "Menú Investigar"
 msgid "Title~Load"
 msgstr "Menú Cargar"
 
-msgid "Title~LoadSave"
-msgstr "Menú Cargar/Guardar"
-
 msgid "Title~MainMenu"
 msgstr "Menú principal"
 
@@ -1041,17 +984,11 @@ msgstr "Opciones"
 msgid "Title~Player_Name"
 msgstr "Nombre del Jugador:"
 
-msgid "Title~Player_Select"
-msgstr "Opciones de jugador"
-
 msgid "Title~Players"
 msgstr "Jugadores:"
 
 msgid "Title~Port"
 msgstr "Puerto"
-
-msgid "Title~Resource"
-msgstr "Densidad de recursos"
 
 msgid "Title~Resource_Density"
 msgstr "Frecuencia de recursos"
@@ -1077,3 +1014,122 @@ msgstr "Pantalla de estado de unidad"
 msgid "Title~Upgrades_Menu"
 msgstr "Menú de mejoras"
 
+#~ msgid "Comp~Cheat"
+#~ msgstr "%s Se ha usado un truco"
+
+#~ msgid "Comp~Producing_Err"
+#~ msgstr "Posición de construcción incorrecta o recursos insuficientes"
+
+#~ msgid "Comp~ResolutionWarning"
+#~ msgstr "Cuidado: Modo de video no soportado en la configuración"
+
+#~ msgid "Comp~Stolen"
+#~ msgstr "robado"
+
+#~ msgid "Error_Messages~ERROR_File_Not_Found"
+#~ msgstr "Fichero no encontrado: %s"
+
+#~ msgid "Error_Messages~ERROR_Missing_Translation"
+#~ msgstr "Traducción perdida: %s"
+
+#~ msgid "Error_Messages~INFO_Language_initialised"
+#~ msgstr "El idioma está ahora inicializado"
+
+#~ msgid "Init~Lang"
+#~ msgstr "Cargando paquete de idioma..."
+
+#~ msgid "Init~Terrain"
+#~ msgstr "Cargando terreno..."
+
+#~ msgid "Main~Credits_Doc"
+#~ msgstr "Michael Mönchs M.A.X. (Reedición por DoctorDeath)"
+
+#~ msgid "Main~Credits_MM"
+#~ msgstr "Michael Mönchs M.A.X. (Original por Interplay)"
+
+#~ msgid "Main~Game_Subtitle"
+#~ msgstr "Mechanized Assault and eXploration Reloaded"
+
+#~ msgid "Main~Game_Title"
+#~ msgstr "M.A.X.R."
+
+#~ msgid "Main~Remarks~Not_yet_implemented"
+#~ msgstr "(*)no implementando todavía"
+
+#~ msgid "Multiplayer~Connection_Terminated"
+#~ msgstr "Conexión terminada"
+
+#~ msgid "Multiplayer~Deadline"
+#~ msgstr " este turno terminará en %s segundos"
+
+#~ msgid "Multiplayer~Go"
+#~ msgstr "Vamos a ello"
+
+#~ msgid "Multiplayer~Go_Check"
+#~ msgstr "Marca cuando estés listo para empezar"
+
+#~ msgid "Multiplayer~Go_Host"
+#~ msgstr "El servidor quiere empezar: listos para empezar"
+
+#~ msgid "Multiplayer~Go_Host_No"
+#~ msgstr "El servidor quiere empezar: no empezamos"
+
+#~ msgid "Multiplayer~Go_Ready"
+#~ msgstr "Listos para empezar"
+
+#~ msgid "Multiplayer~Go_Ready_No"
+#~ msgstr "No estamos listos para empezar"
+
+#~ msgid "Multiplayer~Network_Closed"
+#~ msgstr "Conexión cerrada"
+
+#~ msgid "Multiplayer~Network_Connected_Not"
+#~ msgstr "No conectado"
+
+#~ msgid "Multiplayer~Network_New"
+#~ msgstr "Nueva conexión"
+
+#~ msgid "Multiplayer~Network_Syncing"
+#~ msgstr "Sincronizando..."
+
+#~ msgid "Multiplayer~Player_Amount"
+#~ msgstr "Elige la cantidad de jugadores por favor. Debe haber al menos dos jugadores humanos par empezar una partida. 8 jugadores es el máximo."
+
+#~ msgid "Multiplayer~Player_Many"
+#~ msgstr "Demasiados jugadores!"
+
+#~ msgid "Multiplayer~Player_MustHost"
+#~ msgstr "Debe ser invitado en una partida basada en turnos!"
+
+#~ msgid "Multiplayer~Reconnect_Forbidden"
+#~ msgstr "Reconexión prohibida por el servidor"
+
+#~ msgid "Multiplayer~Waiting"
+#~ msgstr "Esperando a otros jugadores..."
+
+#~ msgid "Others~ActiveAll_9"
+#~ msgstr "Activar todos"
+
+#~ msgid "Others~ReloadAll_9"
+#~ msgstr "Rec. Todos"
+
+#~ msgid "Others~RepairAll_9"
+#~ msgstr "Rep. Todos"
+
+#~ msgid "Others~Seed_7"
+#~ msgstr "Plantar"
+
+#~ msgid "Others~UpgradeAll_9"
+#~ msgstr "Mej. Todo"
+
+#~ msgid "Title~Clan"
+#~ msgstr "Clan"
+
+#~ msgid "Title~LoadSave"
+#~ msgstr "Menú Cargar/Guardar"
+
+#~ msgid "Title~Player_Select"
+#~ msgstr "Opciones de jugador"
+
+#~ msgid "Title~Resource"
+#~ msgstr "Densidad de recursos"

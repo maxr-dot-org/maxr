@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-28 23:29+0200\n"
+"POT-Creation-Date: 2023-06-29 08:54+0200\n"
 "PO-Revision-Date: 2021-07-29 21:55+0200\n"
 "Last-Translator:\n"
 "Language-Team: German\n"
@@ -15,13 +15,26 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#, fuzzy
+msgid "Comp~Adjustments_Fuel_Decreased"
+msgstr "Änderungen vorgenommen: Treibstoffproduktion erhöht um %s"
+
 msgid "Comp~Adjustments_Fuel_Increased"
 msgstr "Änderungen vorgenommen: Treibstoffproduktion erhöht um %s"
 
 msgid "Comp~Adjustments_Gold_Decreased"
 msgstr "Änderungen vorgenommen: Goldproduktion verringert um %s"
 
+#, fuzzy
+msgid "Comp~Adjustments_Gold_Increased"
+msgstr "Änderungen vorgenommen: Goldproduktion verringert um %s"
+
 msgid "Comp~Adjustments_Metal_Decreased"
+msgstr "Änderungen vorgenommen: Rohstoffproduktion verringert um %s"
+
+#, fuzzy
+msgid "Comp~Adjustments_Metal_Increased"
 msgstr "Änderungen vorgenommen: Rohstoffproduktion verringert um %s"
 
 msgid "Comp~Attacked"
@@ -38,9 +51,6 @@ msgstr "Gebäude ausgeschaltet"
 
 msgid "Comp~CapturedByEnemy"
 msgstr "Feind hat %s erbeutet"
-
-msgid "Comp~Cheat"
-msgstr "%s hat einen Cheat benutzt:"
 
 msgid "Comp~Clearing"
 msgstr "beim räumen (%s)"
@@ -93,7 +103,10 @@ msgstr[0] "%d Ökosphäre"
 msgstr[1] "%d Ökosphären"
 
 msgid "Comp~End_Game"
-msgstr "Beenden bestätigen\n\nNicht gespeicherter Spielfortschritt geht dabei verloren!"
+msgstr ""
+"Beenden bestätigen\n"
+"\n"
+"Nicht gespeicherter Spielfortschritt geht dabei verloren!"
 
 msgid "Comp~Energy_Insufficient"
 msgstr "Nicht genug Energie zum Einschalten vorhanden!"
@@ -161,6 +174,10 @@ msgstr "in Bewerung für Angriff"
 msgid "Comp~NoLimit"
 msgstr "Auf Leben und Tod!"
 
+#, fuzzy
+msgid "Comp~Of_Type"
+msgstr "Wieder"
+
 msgid "Comp~Path_interrupted"
 msgstr "Pfadbauauftrag konnte nicht fortgesetzt werden."
 
@@ -193,9 +210,6 @@ msgstr "Wieder"
 msgid "Comp~Reserve"
 msgstr "Reserve"
 
-msgid "Comp~ResolutionWarning"
-msgstr "Achtung: Nichtunterstützte Bildschirmauflösung in der Konfiguration gefunden"
-
 msgid "Comp~RestartRequired"
 msgstr "Bitte starte 'Mechanized Assault and eXploration Reloaded' neu, damit die Änderung inkraft tritt."
 
@@ -204,9 +218,6 @@ msgstr "Bildschirmfoto gespeichet unter %s "
 
 msgid "Comp~Sentry"
 msgstr "auf wachposten"
-
-msgid "Comp~Stolen"
-msgstr "gestohlen"
 
 msgid "Comp~SuddenDeath"
 msgstr "Sudden death! Der erste Spieler der einen Punktevorsprung erzielt, gewinnt!"
@@ -243,11 +254,11 @@ msgstr "Bitte warten Sie, bis alle Bewegungen abgeschlossen sind"
 msgid "Comp~Turns"
 msgstr "Runden"
 
-msgid "Comp~Upgrades_Done"
-msgstr "Verbessert"
-
-msgid "Comp~Upgrades_Done2"
-msgstr "Einheite(n) vom Typ %s"
+#, fuzzy
+msgid "Comp~Upgrade(s)_Done"
+msgid_plural "Comp~Upgrade(s)_Done"
+msgstr[0] "Verbessert"
+msgstr[1] "Verbessert"
 
 msgid "Comp~Waits"
 msgstr "wartend"
@@ -258,14 +269,8 @@ msgstr "Spieler %s gewinnt"
 msgid "Comp~Working"
 msgstr "arbeitend"
 
-msgid "Error_Messages~ERROR_File_Not_Found"
-msgstr "Datei nicht gefunden: %s"
-
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Fehler beim Laden der Karte"
-
-msgid "Error_Messages~ERROR_Missing_Translation"
-msgstr "fehlende Übersetzung: %s"
 
 msgid "Error_Messages~ERROR_Save_Incompatible"
 msgstr "Gespeicherte Spielstände von Maxr Versionen vor %s sind nicht kompatibel."
@@ -275,9 +280,6 @@ msgstr "Fehler beim Laden des gespeicherten Spielstands"
 
 msgid "Error_Messages~ERROR_Save_Writing"
 msgstr "Fehler beim Schreiben des Spielstands"
-
-msgid "Error_Messages~INFO_Language_initialised"
-msgstr "Sprach ist nun initialisiert"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Noch nicht umgesetzt"
@@ -300,17 +302,11 @@ msgstr "Lade Grafiken..."
 msgid "Init~Keys"
 msgstr "Lade Tasten..."
 
-msgid "Init~Lang"
-msgstr "Lade Sprachpaket..."
-
 msgid "Init~Music"
 msgstr "Lade Musik..."
 
 msgid "Init~Sounds"
 msgstr "Lade Geräusche..."
-
-msgid "Init~Terrain"
-msgstr "Lade Terrain..."
 
 msgid "Init~Vehicles"
 msgstr "Lade Einheiten..."
@@ -318,35 +314,14 @@ msgstr "Lade Einheiten..."
 msgid "Init~Voices"
 msgstr "Lade Stimmen..."
 
-msgid "Main~Credits_Doc"
-msgstr "Michael Mönchs M.A.X. (Remake von DoctorDeath)"
-
-msgid "Main~Credits_MM"
-msgstr "Michael Mönchs M.A.X. (Original von Interplay)"
-
 msgid "Main~Credits_Reloaded"
 msgstr "M.A.X.R. basierend auf Interplays Mechanized Assault and eXploration"
-
-msgid "Main~Game_Subtitle"
-msgstr "Mechanized Assault and eXploration Reloaded"
-
-msgid "Main~Game_Title"
-msgstr "M.A.X.R."
-
-msgid "Main~Remarks~Not_yet_implemented"
-msgstr "(*) noch nicht eingebaut"
 
 msgid "Main~Version"
 msgstr "Version V%s"
 
 msgid "Multiplayer~Abort_Waiting"
 msgstr "Drücken Sie als Server F2 um das Warten abzubrechen"
-
-msgid "Multiplayer~Connection_Terminated"
-msgstr "Verbindung getrennt."
-
-msgid "Multiplayer~Deadline"
-msgstr "Diese Runde wird in %s Sekunden enden."
 
 msgid "Multiplayer~Disconnect_Not_In_Save"
 msgstr "Sie werden getrennt, da Sie nicht im Spielstand aufgeführt sind."
@@ -362,27 +337,6 @@ msgstr "Warnung: Spielversion des Servers ist: %s."
 
 msgid "Multiplayer~Gameversion_Warning_Server"
 msgstr "Warnung: Spielversion des Spielers ist: %s."
-
-msgid "Multiplayer~Go"
-msgstr "Auf gehts!"
-
-msgid "Multiplayer~Go_Abort"
-msgstr "Abgebrochen"
-
-msgid "Multiplayer~Go_Check"
-msgstr "Prüfe ob zum Starten bereit"
-
-msgid "Multiplayer~Go_Host"
-msgstr "Host will starten: Machen Sie sich startklar"
-
-msgid "Multiplayer~Go_Host_No"
-msgstr "Host will starten: Nicht fertig"
-
-msgid "Multiplayer~Go_Ready"
-msgstr "Fertig zum Starten"
-
-msgid "Multiplayer~Go_Ready_No"
-msgstr "Nicht fertig zum Starten"
 
 msgid "Multiplayer~Host_command"
 msgstr "Host gab folgendes Kommando ein '%s'"
@@ -423,14 +377,8 @@ msgstr "--keine Karte ausgewählt--"
 msgid "Multiplayer~Missing_Settings"
 msgstr "Karte oder Optionen noch einstellen oder Speicherstand laden."
 
-msgid "Multiplayer~Network_Closed"
-msgstr "Verbindung geschlossen"
-
 msgid "Multiplayer~Network_Connected"
 msgstr "Verbunden"
-
-msgid "Multiplayer~Network_Connected_Not"
-msgstr "Nicht verbunden"
 
 msgid "Multiplayer~Network_Connecting"
 msgstr "Verbinde mit %s"
@@ -441,14 +389,8 @@ msgstr "Konnte nicht verbinden zu Servers"
 msgid "Multiplayer~Network_Error_Socket"
 msgstr "Fehler beim Öffnen des Sockets"
 
-msgid "Multiplayer~Network_New"
-msgstr "Neue Verbindung"
-
 msgid "Multiplayer~Network_Open"
 msgstr "Spiel offen (Port: %s)"
-
-msgid "Multiplayer~Network_Syncing"
-msgstr "Synchronisieren..."
 
 msgid "Multiplayer~No_Map_No_Ready"
 msgstr "Die Karte %s konnte nicht geladen werden. Daher können Sie nicht loslegen."
@@ -489,14 +431,8 @@ msgstr "Spieler 7"
 msgid "Multiplayer~Player8"
 msgstr "Spieler 8"
 
-msgid "Multiplayer~Player_Amount"
-msgstr "Bitte wählen Sie die Anzahl der Spieler. Für ein HotSeat Spiel werden mindestens 2 Spieler benötigt. Maximal sind 8 Spieler möglich. "
-
 msgid "Multiplayer~Player_Color_Taken"
 msgstr "Spielerfarbe bereits in Verwendung, bitte wählen Sie eine andere Farbe um unverwechselbar zu sein."
-
-msgid "Multiplayer~Player_Few"
-msgstr "Nicht genug Spieler!"
 
 msgid "Multiplayer~Player_Joined"
 msgstr "%s ist beigetreten"
@@ -504,17 +440,13 @@ msgstr "%s ist beigetreten"
 msgid "Multiplayer~Player_Left"
 msgstr "%s hat das Spiel verlassen"
 
-msgid "Multiplayer~Player_Many"
-msgstr "Zu viele Spieler!"
-
-msgid "Multiplayer~Player_MustHost"
-msgstr "muss der Host im Rundenspiel sein"
-
 msgid "Multiplayer~Player_Name_Taken"
 msgstr "Spielername bereits in Verwendung, bitte wählen Sie einen anderen Namen um unverwechselbar zu sein."
 
 msgid "Multiplayer~Player_Turn"
-msgstr "%s:\nStarte Runde."
+msgstr ""
+"%s:\n"
+"Starte Runde."
 
 msgid "Multiplayer~Player_Turn_End"
 msgstr "%s hat den Zug beendet"
@@ -523,7 +455,11 @@ msgid "Multiplayer~Player_Wrong"
 msgstr "Ein Spieler hat nicht den richtigen Namen!"
 
 msgid "Multiplayer~Reconnect"
-msgstr "Das Spiel läuft bereits.\nFalls Sie die Verbindung zum Spiel verloren haben, können Sie sich neu verbinden.\n\nMöchten Sie sich neu verbinden?"
+msgstr ""
+"Das Spiel läuft bereits.\n"
+"Falls Sie die Verbindung zum Spiel verloren haben, können Sie sich neu verbinden.\n"
+"\n"
+"Möchten Sie sich neu verbinden?"
 
 msgid "Multiplayer~Reconnect_Already_Connected"
 msgstr "Wiederverbinden nicht möglich. Ein Spieler mit gleichem Namen ist bereits verbunden."
@@ -548,9 +484,6 @@ msgstr "Bitte warten Sie, während das Rundenende ausgeführt wird."
 
 msgid "Multiplayer~Wait_Until"
 msgstr "Bitte warten Sie bis %s seine Runde beendet hat."
-
-msgid "Multiplayer~Waiting"
-msgstr "Warte auf andere Spieler..."
 
 msgid "Option~Definite"
 msgstr "Fest (Original)"
@@ -600,9 +533,6 @@ msgstr "Rundenbasierend"
 msgid "Others~Active"
 msgstr "Aktiv"
 
-msgid "Others~ActiveAll_9"
-msgstr "Alle Aktiv"
-
 msgid "Others~Active_7"
 msgstr "Aktiv."
 
@@ -614,6 +544,10 @@ msgstr "Munition"
 
 msgid "Others~Ammo_7"
 msgstr "Munni"
+
+#, fuzzy
+msgid "Others~Armor"
+msgstr "Panzer."
 
 msgid "Others~Armor_7"
 msgstr "Panzer."
@@ -783,17 +717,11 @@ msgstr "Reichw."
 msgid "Others~Reload"
 msgstr "Aufladen"
 
-msgid "Others~ReloadAll_9"
-msgstr "Alle Aufl"
-
 msgid "Others~Reload_7"
 msgstr "Aufladen"
 
 msgid "Others~Repair"
 msgstr "Reparieren"
-
-msgid "Others~RepairAll_9"
-msgstr "Alle Rep."
 
 msgid "Others~Repair_7"
 msgstr "Repar."
@@ -820,9 +748,6 @@ msgid "Others~Sea_Units"
 msgstr "Seeeinheiten"
 
 msgid "Others~Seed"
-msgstr "Platz."
-
-msgid "Others~Seed_7"
 msgstr "Platz."
 
 msgid "Others~Sentry"
@@ -893,9 +818,6 @@ msgstr "Verbessern"
 
 msgid "Others~UpgradeAll_7"
 msgstr "Verb.All."
-
-msgid "Others~UpgradeAll_9"
-msgstr "Alle Verb"
 
 msgid "Others~Upgrademenu_7"
 msgstr "Kaufen"
@@ -993,9 +915,6 @@ msgstr "Planetenauswahl"
 msgid "Title~Choose_Units"
 msgstr "Einheitenauswahl"
 
-msgid "Title~Clan"
-msgstr "Clan"
-
 msgid "Title~Clans"
 msgstr "Clans"
 
@@ -1038,9 +957,6 @@ msgstr "Forschungsmenü"
 msgid "Title~Load"
 msgstr "Laden-Menü"
 
-msgid "Title~LoadSave"
-msgstr "Laden/Speichern-Menü"
-
 msgid "Title~MainMenu"
 msgstr "Hauptmenü"
 
@@ -1065,17 +981,11 @@ msgstr "Optionen"
 msgid "Title~Player_Name"
 msgstr "Spielername:"
 
-msgid "Title~Player_Select"
-msgstr "Spielerauswahl"
-
 msgid "Title~Players"
 msgstr "Spieler:"
 
 msgid "Title~Port"
 msgstr "Port"
-
-msgid "Title~Resource"
-msgstr "Ressourcen"
 
 msgid "Title~Resource_Density"
 msgstr "Ressourcendichte"
@@ -1101,3 +1011,125 @@ msgstr "Einheitendetails"
 msgid "Title~Upgrades_Menu"
 msgstr "Verbesserungsmenü"
 
+#~ msgid "Comp~Cheat"
+#~ msgstr "%s hat einen Cheat benutzt:"
+
+#~ msgid "Comp~ResolutionWarning"
+#~ msgstr "Achtung: Nichtunterstützte Bildschirmauflösung in der Konfiguration gefunden"
+
+#~ msgid "Comp~Stolen"
+#~ msgstr "gestohlen"
+
+#~ msgid "Comp~Upgrades_Done2"
+#~ msgstr "Einheite(n) vom Typ %s"
+
+#~ msgid "Error_Messages~ERROR_File_Not_Found"
+#~ msgstr "Datei nicht gefunden: %s"
+
+#~ msgid "Error_Messages~ERROR_Missing_Translation"
+#~ msgstr "fehlende Übersetzung: %s"
+
+#~ msgid "Error_Messages~INFO_Language_initialised"
+#~ msgstr "Sprach ist nun initialisiert"
+
+#~ msgid "Init~Lang"
+#~ msgstr "Lade Sprachpaket..."
+
+#~ msgid "Init~Terrain"
+#~ msgstr "Lade Terrain..."
+
+#~ msgid "Main~Credits_Doc"
+#~ msgstr "Michael Mönchs M.A.X. (Remake von DoctorDeath)"
+
+#~ msgid "Main~Credits_MM"
+#~ msgstr "Michael Mönchs M.A.X. (Original von Interplay)"
+
+#~ msgid "Main~Game_Subtitle"
+#~ msgstr "Mechanized Assault and eXploration Reloaded"
+
+#~ msgid "Main~Game_Title"
+#~ msgstr "M.A.X.R."
+
+#~ msgid "Main~Remarks~Not_yet_implemented"
+#~ msgstr "(*) noch nicht eingebaut"
+
+#~ msgid "Multiplayer~Connection_Terminated"
+#~ msgstr "Verbindung getrennt."
+
+#~ msgid "Multiplayer~Deadline"
+#~ msgstr "Diese Runde wird in %s Sekunden enden."
+
+#~ msgid "Multiplayer~Go"
+#~ msgstr "Auf gehts!"
+
+#~ msgid "Multiplayer~Go_Abort"
+#~ msgstr "Abgebrochen"
+
+#~ msgid "Multiplayer~Go_Check"
+#~ msgstr "Prüfe ob zum Starten bereit"
+
+#~ msgid "Multiplayer~Go_Host"
+#~ msgstr "Host will starten: Machen Sie sich startklar"
+
+#~ msgid "Multiplayer~Go_Host_No"
+#~ msgstr "Host will starten: Nicht fertig"
+
+#~ msgid "Multiplayer~Go_Ready"
+#~ msgstr "Fertig zum Starten"
+
+#~ msgid "Multiplayer~Go_Ready_No"
+#~ msgstr "Nicht fertig zum Starten"
+
+#~ msgid "Multiplayer~Network_Closed"
+#~ msgstr "Verbindung geschlossen"
+
+#~ msgid "Multiplayer~Network_Connected_Not"
+#~ msgstr "Nicht verbunden"
+
+#~ msgid "Multiplayer~Network_New"
+#~ msgstr "Neue Verbindung"
+
+#~ msgid "Multiplayer~Network_Syncing"
+#~ msgstr "Synchronisieren..."
+
+#~ msgid "Multiplayer~Player_Amount"
+#~ msgstr "Bitte wählen Sie die Anzahl der Spieler. Für ein HotSeat Spiel werden mindestens 2 Spieler benötigt. Maximal sind 8 Spieler möglich. "
+
+#~ msgid "Multiplayer~Player_Few"
+#~ msgstr "Nicht genug Spieler!"
+
+#~ msgid "Multiplayer~Player_Many"
+#~ msgstr "Zu viele Spieler!"
+
+#~ msgid "Multiplayer~Player_MustHost"
+#~ msgstr "muss der Host im Rundenspiel sein"
+
+#~ msgid "Multiplayer~Waiting"
+#~ msgstr "Warte auf andere Spieler..."
+
+#~ msgid "Others~ActiveAll_9"
+#~ msgstr "Alle Aktiv"
+
+#~ msgid "Others~ReloadAll_9"
+#~ msgstr "Alle Aufl"
+
+#~ msgid "Others~RepairAll_9"
+#~ msgstr "Alle Rep."
+
+#~ msgid "Others~Seed_7"
+#~ msgstr "Platz."
+
+#~ msgid "Others~UpgradeAll_9"
+#~ msgstr "Alle Verb"
+
+#~ msgid "Title~Clan"
+#~ msgstr "Clan"
+
+#~ msgid "Title~LoadSave"
+#~ msgstr "Laden/Speichern-Menü"
+
+#~ msgid "Title~Player_Select"
+#~ msgstr "Spielerauswahl"
+
+#~ msgid "Title~Resource"
+#~ msgstr "Ressourcen"
