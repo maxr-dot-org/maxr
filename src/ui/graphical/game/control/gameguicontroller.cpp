@@ -330,7 +330,7 @@ void cGameGuiController::initChatCommands()
 			.setAction ([this]() {
 				int maxPrefixLabelWidth = 0;
 				std::vector<cLobbyChatBoxListViewItem*> chatBoxCommandEntries;
-				gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> ("Available commands:"));
+				auto firstItem = gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> ("Available commands:"));
 				for (const auto& commandExecutor : chatCommands)
 				{
 					const auto& command = commandExecutor->getCommand();
@@ -349,6 +349,7 @@ void cGameGuiController::initChatCommands()
 				{
 					entry->setDesiredPrefixLabelWidth (maxPrefixLabelWidth);
 				}
+				gameGui->getChatBox().scrollToItem (firstItem);
 			}));
 	gameGui->getDebugOutput().initChatCommand (chatCommands);
 	chatCommands.push_back (

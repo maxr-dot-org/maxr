@@ -63,6 +63,8 @@ public:
 
 	ChatListItemType* addChatEntry (std::unique_ptr<ChatListItemType> entry);
 
+	void scrollToItem (ChatListItemType* item) { chatList->scrollToItem (item); }
+
 	void focus();
 
 	cSignal<void (const std::string&)> commandEntered;

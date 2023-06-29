@@ -282,6 +282,11 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item, eAddList
 		{
 			iter->first += offset;
 		}
+		if (scrollBar)
+		{
+			const auto pixelSize = getSize().y() - getBeginMargin().y() - getEndMargin().y();
+			scrollBar->setRange (std::max (items.back().first + items.back().second->getSize().y() - pixelSize, 0));
+		}
 	});
 
 	if (scrollBar)
