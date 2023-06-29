@@ -20,6 +20,7 @@
 #ifndef chatcommand_chatcommandH
 #define chatcommand_chatcommandH
 
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -36,10 +37,10 @@ class cChatCommand
 public:
 	static bool isCommand (const std::string& command);
 
-	cChatCommand (std::string name, std::string description);
+	cChatCommand (std::string name, std::function<std::string()> description);
 
 	const std::string& getName() const { return name; }
-	const std::string& getDescription() const { return description; }
+	std::string getDescription() const { return description(); }
 
 	cChatCommand& setShouldBeReported (bool value);
 	bool getShouldBeReported() const { return shouldBeReported; }
@@ -55,7 +56,7 @@ public:
 
 private:
 	std::string name;
-	std::string description;
+	std::function<std::string()> description;
 	bool shouldBeReported = false;
 	bool isServerOnly = false;
 };

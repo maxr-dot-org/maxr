@@ -29,7 +29,7 @@
 namespace
 {
 	const std::string name = "test";
-	const std::string desc = "dummy desc";
+	const auto desc = []() { return "dummy desc"; };
 
 	TEST_CASE ("ChatCommandFixtureNoArgs")
 	{
@@ -39,7 +39,7 @@ namespace
 		REQUIRE (0 == test_counter);
 
 		CHECK (name == test->getCommand().getName());
-		CHECK (desc == test->getCommand().getDescription());
+		CHECK (desc() == test->getCommand().getDescription());
 
 		CHECK (!test->tryExecute ("/" + name + "2"));
 		CHECK (0 == test_counter);

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 09:19+0200\n"
+"POT-Creation-Date: 2023-06-29 10:37+0200\n"
 "PO-Revision-Date: 2021-07-29 21:42+0200\n"
 "Last-Translator:\n"
 "Language-Team: French\n"
@@ -15,6 +15,51 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "ChatCmd~Desc~AJobs"
+msgstr "Active/désactive les informations de debug pour les tâches d'attaques"
+
+msgid "ChatCmd~Desc~Base"
+msgstr "Active/désactive les informations de debug pour les bases"
+
+msgid "ChatCmd~Desc~CacheDebug"
+msgstr "Active/désactive les informations de debug pour le cache d'affichage"
+
+msgid "ChatCmd~Desc~CacheFlush"
+msgstr "Vide le cache d'affichage"
+
+msgid "ChatCmd~Desc~CacheSize"
+msgstr "Assigne la taille du cache d'affichage"
+
+msgid "ChatCmd~Desc~Crash"
+msgstr "Simule un crash (pour tester l'utilitaire de report de crash)"
+
+msgid "ChatCmd~Desc~Fx"
+msgstr "Active/désactive les informations de debug pour les effets spéciaux"
+
+msgid "ChatCmd~Desc~Help"
+msgstr "Affiche cette aide"
+
+msgid "ChatCmd~Desc~Pause"
+msgstr "Mets le jeu en pause"
+
+msgid "ChatCmd~Desc~Players"
+msgstr "Active/désactive les informations de debug pour les joueurs"
+
+msgid "ChatCmd~Desc~Resume"
+msgstr "Enlève la pause du jeu"
+
+msgid "ChatCmd~Desc~Sentry"
+msgstr "Active/désactive les informations de debug pour le status des unités en faction"
+
+msgid "ChatCmd~Desc~StealthDebug"
+msgstr "Active/désactive les informations de debug pour les unités furtives"
+
+msgid "ChatCmd~Desc~SyncDebug"
+msgstr "Active/désactive les informations de debug pour le status de synchronisation de l'état du jeu"
+
+msgid "ChatCmd~Desc~Trace"
+msgstr "Active/désactive les informations de debug pour l'unité sous le curseur"
 
 msgid "Comp~Adjustments_Fuel_Decreased"
 msgstr "Ajustement effectué : production de carburant diminuée de %s"

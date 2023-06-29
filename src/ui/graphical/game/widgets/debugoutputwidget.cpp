@@ -86,7 +86,7 @@ void cDebugOutputWidget::setGameMap (const cGameMapWidget* gameMap_)
 void cDebugOutputWidget::initChatCommand (std::vector<std::unique_ptr<cChatCommandExecutor>>& chatCommands)
 {
 	chatCommands.push_back (
-		cChatCommand ("base", "Enable/disable debug information about bases")
+		cChatCommand ("base", []() { return lngPack.i18n ("ChatCmd~Desc~Base"); })
 			.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"client", "server", "off"})
 			.setAction ([this] (const std::string& value) {
 				if (value == "server")
@@ -106,19 +106,19 @@ void cDebugOutputWidget::initChatCommand (std::vector<std::unique_ptr<cChatComma
 				}
 			}));
 	chatCommands.push_back (
-		cChatCommand ("sentry", "Enable/disable debug information about the sentry status")
+		cChatCommand ("sentry", []() { return lngPack.i18n ("ChatCmd~Desc~Sentry"); })
 			.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"server", "off"})
 			.setAction ([this] (const std::string& value) {
 				debugSentry = (value == "server");
 			}));
 	chatCommands.push_back (
-		cChatCommand ("fx", "Enable/disable debug information about effects")
+		cChatCommand ("fx", []() { return lngPack.i18n ("ChatCmd~Desc~Fx"); })
 			.addArgument<cChatCommandArgumentBool>()
 			.setAction ([this] (bool flag) {
 				debugFX = flag;
 			}));
 	chatCommands.push_back (
-		cChatCommand ("trace", "Enable/disable debug information about the unit currently under the cursor")
+		cChatCommand ("trace", []() { return lngPack.i18n ("ChatCmd~Desc~Trace"); })
 			.addArgument<cChatCommandArgumentChoice> (std::vector<std::string>{"client", "server", "off"})
 			.setAction ([this] (const std::string& value) {
 				if (value == "server")
@@ -138,31 +138,31 @@ void cDebugOutputWidget::initChatCommand (std::vector<std::unique_ptr<cChatComma
 				}
 			}));
 	chatCommands.push_back (
-		cChatCommand ("ajobs", "Enable/disable debug information about attack jobs")
+		cChatCommand ("ajobs", []() { return lngPack.i18n ("ChatCmd~Desc~AJobs"); })
 			.addArgument<cChatCommandArgumentBool>()
 			.setAction ([this] (bool flag) {
 				debugAjobs = flag;
 			}));
 	chatCommands.push_back (
-		cChatCommand ("players", "Enable/disable debug information about players")
+		cChatCommand ("players", []() { return lngPack.i18n ("ChatCmd~Desc~Players"); })
 			.addArgument<cChatCommandArgumentBool>()
 			.setAction ([this] (bool flag) {
 				debugPlayers = flag;
 			}));
 	chatCommands.push_back (
-		cChatCommand ("cache debug", "Enable/disable debug information about the drawing cache")
+		cChatCommand ("cache debug", []() { return lngPack.i18n ("ChatCmd~Desc~CacheDebug"); })
 			.addArgument<cChatCommandArgumentBool>()
 			.setAction ([this] (bool flag) {
 				debugCache = flag;
 			}));
 	chatCommands.push_back (
-		cChatCommand ("sync debug", "Enable/disable debug information about the sync state of the game data")
+		cChatCommand ("sync debug", []() { return lngPack.i18n ("ChatCmd~Desc~SyncDebug"); })
 			.addArgument<cChatCommandArgumentBool>()
 			.setAction ([this] (bool flag) {
 				debugSync = flag;
 			}));
 	chatCommands.push_back (
-		cChatCommand ("debug stealth", "Enable/disable debug information about the stealth state of units")
+		cChatCommand ("debug stealth", []() { return lngPack.i18n ("ChatCmd~Desc~StealthDebug"); })
 			.addArgument<cChatCommandArgumentBool>()
 			.setAction ([this] (bool flag) {
 				debugStealth = flag;

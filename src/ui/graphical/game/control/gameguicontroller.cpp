@@ -325,9 +325,8 @@ void cGameGuiController::initShortcuts()
 //------------------------------------------------------------------------------
 void cGameGuiController::initChatCommands()
 {
-	// TODO: translate descriptions?
 	chatCommands.push_back (
-		cChatCommand ("help", "Show this help message")
+		cChatCommand ("help", []() { return lngPack.i18n ("ChatCmd~Desc~Help"); })
 			.setAction ([this]() {
 				int maxPrefixLabelWidth = 0;
 				std::vector<cLobbyChatBoxListViewItem*> chatBoxCommandEntries;
@@ -353,19 +352,19 @@ void cGameGuiController::initChatCommands()
 			}));
 	gameGui->getDebugOutput().initChatCommand (chatCommands);
 	chatCommands.push_back (
-		cChatCommand ("cache size", "Set the drawing cache size")
+		cChatCommand ("cache size", []() { return lngPack.i18n ("ChatCmd~Desc~CacheSize"); })
 			.addArgument<cChatCommandArgumentInt<unsigned int>> ("size")
 			.setAction ([this] (unsigned int size) {
 				gameGui->getGameMap().getDrawingCache().setMaxCacheSize (size);
 			}));
 	chatCommands.push_back (
-		cChatCommand ("cache flush", "Flush the drawing cache")
+		cChatCommand ("cache flush", []() { return lngPack.i18n ("ChatCmd~Desc~CacheFlush"); })
 			.setAction ([this]() {
 				gameGui->getGameMap().getDrawingCache().flush();
 			}));
 #if 0 // Not implemented
 	chatCommands.push_back (
-		cChatCommand ("kick", "Remove a player from the game")
+		cChatCommand ("kick", []() { return "Remove a player from the game"; })
 		.addArgument<cChatCommandArgumentClientPlayer> (activeClient)
 		.addArgument<cChatCommandArgumentClient> (activeClient)
 		.setAction ([this](const cPlayer* player, cClient* client)
@@ -375,7 +374,7 @@ void cGameGuiController::initChatCommands()
 		})
 	);
 	chatCommands.push_back (
-		cChatCommand ("credits", "Set a given amount of credits to a player")
+		cChatCommand ("credits", []() { return "Set a given amount of credits to a player"; })
 		.setShouldBeReported (true)
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServerPlayer> (server)
@@ -389,7 +388,7 @@ void cGameGuiController::initChatCommands()
 		})
 	);
 	chatCommands.push_back (
-		cChatCommand ("turnend", "Set a new turn end deadline. Use a value < 0 to disable the deadline entirely")
+		cChatCommand ("turnend", []() { return "Set a new turn end deadline. Use a value < 0 to disable the deadline entirely"; })
 		.setShouldBeReported (true)
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentInt<int>> ("seconds")
@@ -412,7 +411,7 @@ void cGameGuiController::initChatCommands()
 		})
 	);
 	chatCommands.push_back (
-		cChatCommand ("turnlimit", "Set a new turn limit. Use a value <= 0 to disable the limit entirely")
+		cChatCommand ("turnlimit", []() { return "Set a new turn limit. Use a value <= 0 to disable the limit entirely"; })
 		.setShouldBeReported (true)
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentInt<int>> ("seconds")
@@ -435,7 +434,7 @@ void cGameGuiController::initChatCommands()
 		})
 	);
 	chatCommands.push_back (
-		cChatCommand ("mark", "Add a mark to the log file")
+		cChatCommand ("mark", []() { return "Add a mark to the log file"; })
 		.addArgument<cChatCommandArgumentString> ("text", true)
 		.addArgument<cChatCommandArgumentClient> (activeClient)
 		.setAction ([](const std::string& text, cClient* client)
@@ -446,7 +445,7 @@ void cGameGuiController::initChatCommands()
 		})
 	);
 	chatCommands.push_back (
-		cChatCommand ("color", "Change the color of the current player")
+		cChatCommand ("color", []() { return "Change the color of the current player"; })
 		.addArgument<cChatCommandArgumentInt<size_t>> ("colornum")
 		.addArgument<cChatCommandArgumentClient> (activeClient)
 		.setAction ([](size_t colorNum, cClient* client)
@@ -457,7 +456,7 @@ void cGameGuiController::initChatCommands()
 		})
 	);
 	chatCommands.push_back (
-		cChatCommand ("survey", "Reveal all resources on the map")
+		cChatCommand ("survey", []() { return "Reveal all resources on the map"; })
 		.setShouldBeReported (true)
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServer> (server)
@@ -471,7 +470,7 @@ void cGameGuiController::initChatCommands()
 	);
 #endif
 	chatCommands.push_back (
-		cChatCommand ("pause", "Pause the game")
+		cChatCommand ("pause", []() { return lngPack.i18n ("ChatCmd~Desc~Pause"); })
 			.setIsServerOnly (true)
 			.addArgument<cChatCommandArgumentServer> (server)
 			.setAction ([] (cServer* server) {
@@ -479,7 +478,7 @@ void cGameGuiController::initChatCommands()
 				server->enableFreezeMode (eFreezeMode::Pause);
 			}));
 	chatCommands.push_back (
-		cChatCommand ("resume", "Resume a paused game")
+		cChatCommand ("resume", []() { return lngPack.i18n ("ChatCmd~Desc~Resume"); })
 			.setIsServerOnly (true)
 			.addArgument<cChatCommandArgumentServer> (server)
 			.setAction ([] (cServer* server) {
@@ -488,14 +487,14 @@ void cGameGuiController::initChatCommands()
 			}));
 #ifdef USE_CRASH_RPT
 	chatCommands.push_back (
-		cChatCommand ("crash", "Emulates a crash (to test the crash report utility)")
+		cChatCommand ("crash", []() { return lngPack.i18n ("ChatCmd~Desc~Crash"); })
 			.setAction ([]() {
 				CR_EMULATE_CRASH();
 			}));
 #endif
 #if 0
 	chatCommands.push_back (
-		cChatCommand ("disconnect", "Disconnect a player")
+		cChatCommand ("disconnect", []() { return "Disconnect a player"; })
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServerPlayer> (server)
 		.addArgument<cChatCommandArgumentServer> (server)
@@ -515,7 +514,7 @@ void cGameGuiController::initChatCommands()
 		})
 	);
 	chatCommands.push_back (
-		cChatCommand ("resync", "Resync a player")
+		cChatCommand ("resync", []() { return "Resync a player"; })
 		.addArgument<cChatCommandArgumentClientPlayer> (activeClient, true)
 		.addArgument<cChatCommandArgumentClient> (activeClient)
 		.addArgument<cChatCommandArgumentServer> (server, true)
@@ -537,7 +536,7 @@ void cGameGuiController::initChatCommands()
 		})
 	);
 	chatCommands.push_back (
-		cChatCommand ("fog off", "Reveal the whole map for a player")
+		cChatCommand ("fog off", []() { return "Reveal the whole map for a player"; })
 		.setShouldBeReported (true)
 		.setIsServerOnly (true)
 		.addArgument<cChatCommandArgumentServerPlayer> (server, true)

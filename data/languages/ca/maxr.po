@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 09:19+0200\n"
+"POT-Creation-Date: 2023-06-29 10:37+0200\n"
 "PO-Revision-Date: 2021-07-29 22:37+0200\n"
 "Last-Translator:\n"
 "Language-Team: Catalan\n"
@@ -15,6 +15,51 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "ChatCmd~Desc~AJobs"
+msgstr ""
+
+msgid "ChatCmd~Desc~Base"
+msgstr ""
+
+msgid "ChatCmd~Desc~CacheDebug"
+msgstr ""
+
+msgid "ChatCmd~Desc~CacheFlush"
+msgstr ""
+
+msgid "ChatCmd~Desc~CacheSize"
+msgstr ""
+
+msgid "ChatCmd~Desc~Crash"
+msgstr ""
+
+msgid "ChatCmd~Desc~Fx"
+msgstr ""
+
+msgid "ChatCmd~Desc~Help"
+msgstr ""
+
+msgid "ChatCmd~Desc~Pause"
+msgstr ""
+
+msgid "ChatCmd~Desc~Players"
+msgstr ""
+
+msgid "ChatCmd~Desc~Resume"
+msgstr ""
+
+msgid "ChatCmd~Desc~Sentry"
+msgstr ""
+
+msgid "ChatCmd~Desc~StealthDebug"
+msgstr ""
+
+msgid "ChatCmd~Desc~SyncDebug"
+msgstr ""
+
+msgid "ChatCmd~Desc~Trace"
+msgstr ""
 
 #, fuzzy
 msgid "Comp~Adjustments_Fuel_Decreased"

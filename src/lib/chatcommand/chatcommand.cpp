@@ -29,7 +29,7 @@
 }
 
 //------------------------------------------------------------------------------
-cChatCommand::cChatCommand (std::string name, std::string description) :
+cChatCommand::cChatCommand (std::string name, std::function<std::string()> description) :
 	name (std::move (name)),
 	description (std::move (description))
 {}

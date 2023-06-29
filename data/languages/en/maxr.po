@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 09:19+0200\n"
+"POT-Creation-Date: 2023-06-29 10:37+0200\n"
 "PO-Revision-Date: 2021-07-29 21:43+0200\n"
 "Last-Translator:\n"
 "Language-Team: English\n"
@@ -15,6 +15,51 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "ChatCmd~Desc~AJobs"
+msgstr "Enable/disable debug information about attack jobs"
+
+msgid "ChatCmd~Desc~Base"
+msgstr "Enable/disable debug information about bases"
+
+msgid "ChatCmd~Desc~CacheDebug"
+msgstr "Enable/disable debug information about the drawing cache"
+
+msgid "ChatCmd~Desc~CacheFlush"
+msgstr "Flush the drawing cache"
+
+msgid "ChatCmd~Desc~CacheSize"
+msgstr "Set the drawing cache size"
+
+msgid "ChatCmd~Desc~Crash"
+msgstr "Emulates a crash (to test the crash report utility)"
+
+msgid "ChatCmd~Desc~Fx"
+msgstr "Enable/disable debug information about effects"
+
+msgid "ChatCmd~Desc~Help"
+msgstr "Show this help message"
+
+msgid "ChatCmd~Desc~Pause"
+msgstr "Pause the game"
+
+msgid "ChatCmd~Desc~Players"
+msgstr "Enable/disable debug information about players"
+
+msgid "ChatCmd~Desc~Resume"
+msgstr "Resume a paused game"
+
+msgid "ChatCmd~Desc~Sentry"
+msgstr "Enable/disable debug information about the sentry status"
+
+msgid "ChatCmd~Desc~StealthDebug"
+msgstr "Enable/disable debug information about the stealth state of units"
+
+msgid "ChatCmd~Desc~SyncDebug"
+msgstr "Enable/disable debug information about the sync state of the game data"
+
+msgid "ChatCmd~Desc~Trace"
+msgstr "Enable/disable debug information about the unit currently under the cursor"
 
 msgid "Comp~Adjustments_Fuel_Decreased"
 msgstr "Adjustments made: fuel mining decreased by %s"
