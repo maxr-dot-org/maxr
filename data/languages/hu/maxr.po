@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 08:54+0200\n"
+"POT-Creation-Date: 2023-06-29 09:19+0200\n"
 "PO-Revision-Date: 2021-07-29 22:04+0200\n"
 "Last-Translator:\n"
 "Language-Team: Hungarian\n"
@@ -123,9 +123,6 @@ msgstr "Nincs elegendő energia, generátor elindítva."
 msgid "Comp~Finished"
 msgstr "elkészült"
 
-msgid "Comp~Finished2"
-msgstr "elkészült"
-
 msgid "Comp~Fuel_Insufficient"
 msgstr "Nincs elegendő üzemanyag az elindításhoz."
 
@@ -140,6 +137,12 @@ msgstr "Nincs elegendő arany az elindításhoz."
 
 msgid "Comp~Gold_Low"
 msgstr "Nincs elég arany, feldolgozó leállítva!"
+
+#, fuzzy
+msgid "Comp~Is(Are)Finished"
+msgid_plural "Comp~Is(Are)Finished"
+msgstr[0] " elkészült"
+msgstr[1] " elkészült"
 
 msgid "Comp~IsBeeingAttacked"
 msgstr ""

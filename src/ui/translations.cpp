@@ -717,16 +717,7 @@ namespace
 				auto name = getStaticUnitName (model.getUnitsData()->getStaticUnitData (entry.type));
 				message += entry.count > 1 ? std::to_string (entry.count) + " " + name : name;
 			}
-			// TODO: Plural rules are language dependant
-			// - Russian has 3 forms, Chinese 1 form, ...
-			//          | eng  | fre  | ...
-			// singular | == 1 | <= 1 |
-			// plural   | != 1 | 1 <  |
-			// we should have `i18n (key, n)`
-			if (totalUnitsCount == 1)
-				message += " " + lngPack.i18n ("Comp~Finished") + ".";
-			else if (totalUnitsCount > 1)
-				message += " " + lngPack.i18n ("Comp~Finished2") + ".";
+			message += lngPack.plural ("Comp~Is(Are)Finished", totalUnitsCount) + ".";
 		}
 
 		if (!report.researchAreas.empty())

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 08:54+0200\n"
+"POT-Creation-Date: 2023-06-29 09:19+0200\n"
 "PO-Revision-Date: 2021-07-29 21:43+0200\n"
 "Last-Translator:\n"
 "Language-Team: English\n"
@@ -120,9 +120,6 @@ msgstr "More power needed, generator turned on."
 msgid "Comp~Finished"
 msgstr "is finished"
 
-msgid "Comp~Finished2"
-msgstr "are finished"
-
 msgid "Comp~Fuel_Insufficient"
 msgstr "Cannot start, fuel needed."
 
@@ -137,6 +134,12 @@ msgstr "Cannot start, gold needed."
 
 msgid "Comp~Gold_Low"
 msgstr "More gold needed, refinery turned off."
+
+#, fuzzy
+msgid "Comp~Is(Are)Finished"
+msgid_plural "Comp~Is(Are)Finished"
+msgstr[0] " is finished"
+msgstr[1] " are finished"
 
 msgid "Comp~IsBeeingAttacked"
 msgstr "Is beeing attacked"

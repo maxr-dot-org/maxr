@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 08:54+0200\n"
+"POT-Creation-Date: 2023-06-29 09:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,9 +119,6 @@ msgstr ""
 msgid "Comp~Finished"
 msgstr ""
 
-msgid "Comp~Finished2"
-msgstr ""
-
 msgid "Comp~Fuel_Insufficient"
 msgstr ""
 
@@ -136,6 +133,11 @@ msgstr ""
 
 msgid "Comp~Gold_Low"
 msgstr ""
+
+msgid "Comp~Is(Are)Finished"
+msgid_plural "Comp~Is(Are)Finished"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Comp~IsBeeingAttacked"
 msgstr ""

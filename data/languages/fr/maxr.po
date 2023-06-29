@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 08:54+0200\n"
+"POT-Creation-Date: 2023-06-29 09:19+0200\n"
 "PO-Revision-Date: 2021-07-29 21:42+0200\n"
 "Last-Translator:\n"
 "Language-Team: French\n"
@@ -120,9 +120,6 @@ msgstr "Besoin de plus d'énergie. Activation de générateur d'énergie."
 msgid "Comp~Finished"
 msgstr "est terminé"
 
-msgid "Comp~Finished2"
-msgstr "sont terminés"
-
 msgid "Comp~Fuel_Insufficient"
 msgstr "Carburant insuffisant. Impossible de démarrer."
 
@@ -137,6 +134,12 @@ msgstr "Or insuffisant. Impossible de démarrer."
 
 msgid "Comp~Gold_Low"
 msgstr "Or insuffisant, raffinerie désactivée !"
+
+#, fuzzy
+msgid "Comp~Is(Are)Finished"
+msgid_plural "Comp~Is(Are)Finished"
+msgstr[0] " est terminé"
+msgstr[1] " sont terminés"
 
 msgid "Comp~IsBeeingAttacked"
 msgstr "est attaqué(e)"
