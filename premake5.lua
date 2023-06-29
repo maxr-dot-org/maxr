@@ -76,6 +76,8 @@ project "maxr"
 	includedirs { "src", "src/lib" }
 	links { "maxr_lib", "SDL_flic", "mveplayer" }
 
+	debugdir "data"
+
 project "dedicated_server"
 	kind "ConsoleApp"
 	targetdir "data"
@@ -91,6 +93,8 @@ project "dedicated_server"
 	files { "src/dedicatedserver/**.cpp", "src/dedicated_server/**.h", "src/maxr.rc" }
 	includedirs { "src", "src/lib" }
 	links { "maxr_lib", "SDL_flic", "mveplayer" }
+
+	debugdir "data"
 
 project "tests"
 	kind "ConsoleApp"
