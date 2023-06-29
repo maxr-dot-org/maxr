@@ -107,7 +107,7 @@ project "tests"
 project "maxr_lib"
 	kind "StaticLib"
 
-	targetdir("%{cfg.objdir}")
+	targetdir(path.join(locationDir, "obj/%{cfg.buildcfg}"))
 	targetname "maxr_lib"
 
 	warnings "Extra"
@@ -121,7 +121,7 @@ group "3rd"
 project "mveplayer"
 	kind "StaticLib"
 
-	targetdir("%{cfg.objdir}")
+	targetdir(path.join(locationDir, "obj/%{cfg.buildcfg}"))
 	targetname "mveplayer"
 
 	files { "src/3rd/mveplayer/**.cpp", "src/3rd/mveplayer/**.h" }
@@ -130,7 +130,7 @@ project "mveplayer"
 project "SDL_flic"
 	kind "StaticLib"
 
-	targetdir("%{cfg.objdir}")
+	targetdir(path.join(locationDir, "obj/%{cfg.buildcfg}"))
 	targetname "SDL_flic"
 
 	files { "src/3rd/SDL_flic/**.c", "src/3rd/SDL_flic/**.h" }
