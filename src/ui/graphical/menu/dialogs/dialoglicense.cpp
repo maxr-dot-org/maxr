@@ -109,17 +109,7 @@ void cDialogLicense::updatePageButtons()
 //------------------------------------------------------------------------------
 void cDialogLicense::readAuthors()
 {
-	const std::filesystem::path fileName =
-#ifdef WIN32
-	"AUTHORS";
-#elif __amigaos4
-	cSettings::getInstance().getDataDir() / "AUTHORS";
-#elif MAC
-	"AUTHORS";
-#else
-	cSettings::getInstance().getDataDir() / "AUTHORS";
-#endif
-
+	const std::filesystem::path fileName = cSettings::getInstance().getDataDir() / "AUTHORS";
 	std::ifstream authorsFile (fileName);
 
 	if (authorsFile.is_open())
@@ -127,8 +117,7 @@ void cDialogLicense::readAuthors()
 		std::string line;
 		while (std::getline (authorsFile, line))
 		{
-			if (!authors.empty()) authors += "\n";
-			authors += line;
+			authors += line + "\n";
 		}
 	}
 	else
