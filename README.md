@@ -18,7 +18,7 @@ A turn based strategy game based on [M.A.X.](https://en.wikipedia.org/wiki/Mecha
 Other UNIX-like operating systems may work too out of the box. Chances are huge if there's a build of SDL2 and CMake for the system.
 
 You can find more information about how to build maxr in our Wiki:  
-[How to build](https://git.maxr.org/maxr/maxr/wikis/How-to-build)
+[How to build](https://github.com/maxr-dot-org/maxr/wiki/How-to-build)
 
 # Playing with original graphics and sounds
 
@@ -26,7 +26,7 @@ Due the copyright we are not allowed to provide any game content
 from the original Mechanized Assault and Exploration (c) 1996 Interplay
 
 If you do own an original Mechanized Assault & Exploration CD
-(c) 1996 Interplay you can however make use of the tool [resinstaller](https://github.com/MAX-Reloaded/resinstaller)
+(c) 1996 Interplay you can however make use of the tool [resinstaller](https://github.com/maxr-dot-org/resinstaller)
 and install the original gfx automagically from your existing M.A.X. copy.
 
 Resinstaller also takes care of sounds, videos, maps and music.
