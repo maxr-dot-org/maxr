@@ -41,8 +41,6 @@
 # include <Shlobj.h>
 #endif
 
-static bool bDoNotElevate = false;
-static std::string sAppName;
 static std::filesystem::path sMAXPath;
 static std::filesystem::path sVoicePath;
 std::filesystem::path sOutputPath;
@@ -3928,7 +3926,7 @@ void createLogFile (const std::filesystem::path& dataDir)
 	writeLog (std::string ("resinstaller version ") + VERSION + TEXT_FILE_LF);
 }
 
-void checkWritePermissions()
+void checkWritePermissions (const std::string& appName, bool bDoNotElevate)
 {
 #ifdef WIN32
 	// create test file
@@ -3947,7 +3945,7 @@ void checkWritePermissions()
 			HINSTANCE result = ShellExecuteA (
 				nullptr,
 				"runas", // request elevated rights
-				sAppName.c_str(),
+				appName.c_str(),
 				parameter.c_str(),
 				nullptr, // working directory
 				SW_SHOW);
@@ -4048,7 +4046,7 @@ bool validateOutputPath (std::string& outputPath)
 	SDL_RWops* testFile;
 	try
 	{
-		testFile = openFile (std::filesystem::path(outputPath) / testFileName, "r");
+		testFile = openFile (std::filesystem::path (outputPath) / testFileName, "r");
 		SDL_RWclose (testFile);
 		return true;
 	}
@@ -4398,7 +4396,7 @@ int main (int argc, char* argv[])
 	initialize();
 	showIntroduction();
 
-	sAppName = argv[0];
+	const std::string appName = argv[0];
 	// original M.A.X. Path (CD or installation)
 	sMAXPath = getMAXPathFromUser ((argc > 1) ? argv[1] : ""); // if the user canceled, sMAXPath will be empty (at least on MAC)
 
@@ -4421,7 +4419,7 @@ int main (int argc, char* argv[])
 
 	sResChoice = validateResources (sResChoice); // validate the parameter for importing the resources
 
-	bDoNotElevate = (std::string (argv[argc - 1]) == "/donotelevate");
+	const bool bDoNotElevate = (std::string (argv[argc - 1]) == "/donotelevate");
 
 	if (sResChoice.empty())
 	{
@@ -4593,7 +4591,7 @@ int main (int argc, char* argv[])
 	}
 
 	// check if we need admin rights for the selected output directory
-	checkWritePermissions();
+	checkWritePermissions (appName, bDoNotElevate);
 
 	// init res converter
 	SDL_RWseek (res, 0, SEEK_END);
