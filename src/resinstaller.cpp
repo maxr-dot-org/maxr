@@ -3933,7 +3933,7 @@ void checkWritePermissions (const std::string& appName, bool bDoNotElevate)
 	auto testFileName = sOutputPath / "writeTest.txt";
 	SDL_RWops* testFile = SDL_RWFromFile (testFileName.string().c_str(), "w");
 
-	if (testFile == 0)
+	if (testFile == nullptr)
 	{
 		writeLog (std::string ("Couldn't write to output directory") + TEXT_FILE_LF);
 		if (!bDoNotElevate)
@@ -3964,7 +3964,7 @@ void checkWritePermissions (const std::string& appName, bool bDoNotElevate)
 	}
 
 	SDL_RWclose (testFile);
-	remove (testFileName.string().c_str());
+	std::filesystem::remove (testFileName);
 
 #endif
 }
@@ -4015,7 +4015,7 @@ std::filesystem::path getMAXPathFromUser (std::string cmdLineMaxPath)
 			std::cout << "Path is not a valid full path to an existing M.A.X. installation or mounted cd." << std::endl;
 	}
 
-	while (1)
+	while (true)
 	{
 		std::cout << "Please enter full path to existing M.A.X. installation or mounted cd:" << std::endl;
 
@@ -4039,22 +4039,12 @@ std::filesystem::path getMAXPathFromUser (std::string cmdLineMaxPath)
 }
 
 //-------------------------------------------------------------
-bool validateOutputPath (std::string& outputPath)
+bool validateOutputPath (const std::string& outputPath)
 {
-	// test for valid output folder
-	std::string testFileName = "init.pcx";
-	SDL_RWops* testFile;
-	try
-	{
-		testFile = openFile (std::filesystem::path (outputPath) / testFileName, "r");
-		SDL_RWclose (testFile);
-		return true;
-	}
-	catch (InstallException)
-	{}
-	return false;
+	return std::filesystem::exists (std::filesystem::path (outputPath) / "init.pcx");
 }
 
+//-------------------------------------------------------------
 std::string validateResources (std::string zChoices)
 {
 	if (zChoices.find ("all") != std::string::npos)
@@ -4068,6 +4058,7 @@ std::string validateResources (std::string zChoices)
 	return zChoices;
 }
 
+//-------------------------------------------------------------
 void getResChoiceFromUser()
 {
 	std::string sChoiceFromUser = "";
@@ -4124,7 +4115,7 @@ std::filesystem::path getOutputPathFromUser (std::string cmdLineOutputPath)
 			std::cout << "Can't extract the resources to the path, because it doesn't point to a M.A.X.R installation." << std::endl;
 	}
 
-	while (1)
+	while (true)
 	{
 		std::string pathFromUser = "";
 		std::cout << "Please enter full path to M.A.X.R. installation for extracted files:" << std::endl;
@@ -4150,73 +4141,42 @@ std::filesystem::path getOutputPathFromUser (std::string cmdLineOutputPath)
 int checkForAvailableLanguages (std::string testFileName, bool& bGerman, bool& bItalian, bool& bFrench, bool& bUppercase)
 {
 	int iLanguages = 0;
-	SDL_RWops* testFile;
-	try
+	if (std::filesystem::exists (sMAXPath / "german" / (testFileName + waveExtension)))
 	{
-		testFile = openFile (sMAXPath / "german" / (testFileName + waveExtension), "r");
-		bGerman = true;
 		iLanguages++;
+		bGerman = true;
 		bUppercase = false;
-		SDL_RWclose (testFile);
 	}
-	catch (InstallException)
-	{}
-
-	try
+	if (std::filesystem::exists (sMAXPath / "GERMAN" / (testFileName + waveExtension)))
 	{
-		testFile = openFile (sMAXPath / "GERMAN" / (testFileName + waveExtension), "r");
 		if (bGerman == false) iLanguages++;
 		bGerman = true;
 		bUppercase = true;
-		SDL_RWclose (testFile);
 	}
-	catch (InstallException)
-	{}
-
-	try
+	if (std::filesystem::exists (sMAXPath / "italian" / (testFileName + waveExtension)))
 	{
-		testFile = openFile (sMAXPath / "italian" / (testFileName + waveExtension), "r");
-		bItalian = true;
 		iLanguages++;
+		bItalian = true;
 		bUppercase = false;
-		SDL_RWclose (testFile);
 	}
-	catch (InstallException)
-	{}
-
-	try
+	if (std::filesystem::exists (sMAXPath / "ITALIAN" / (testFileName + waveExtension)))
 	{
-		testFile = openFile (sMAXPath / "ITALIAN" / (testFileName + waveExtension), "r");
 		if (bItalian == false) iLanguages++;
 		bItalian = true;
 		bUppercase = true;
-		SDL_RWclose (testFile);
 	}
-	catch (InstallException)
-	{}
-
-	try
+	if (std::filesystem::exists (sMAXPath / "french" / (testFileName + waveExtension)))
 	{
-		testFile = openFile (sMAXPath / "french" / (testFileName + waveExtension), "r");
-		bFrench = true;
 		iLanguages++;
+		bFrench = true;
 		bUppercase = false;
-		SDL_RWclose (testFile);
 	}
-	catch (InstallException)
-	{}
-
-	try
+	if (std::filesystem::exists (sMAXPath / "FRENCH" / (testFileName + waveExtension)))
 	{
-		testFile = openFile (sMAXPath / "FRENCH" / (testFileName + waveExtension), "r");
 		if (bFrench == false) iLanguages++;
 		bFrench = true;
 		bUppercase = true;
-		SDL_RWclose (testFile);
 	}
-	catch (InstallException)
-	{}
-
 	return iLanguages;
 }
 
@@ -4509,8 +4469,7 @@ int main (int argc, char* argv[])
 #else
 
 		// make menu values
-		std::vector<std::string> vectorLanguages; // initialize empty vector of strings
-		vectorLanguages.push_back ("english");
+		std::vector<std::string> vectorLanguages{"english"}; // initialize empty vector of strings
 
 		if (bGerman)
 		{
@@ -4660,7 +4619,7 @@ int main (int argc, char* argv[])
 		SDL_WaitThread (installThread, nullptr);
 	}
 #else
-	installEverything (0);
+	installEverything (nullptr);
 #endif
 
 	if (wasError)
