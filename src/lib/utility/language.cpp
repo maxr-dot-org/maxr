@@ -94,6 +94,28 @@ namespace
 		return translatedEng;
 	}
 
+	//--------------------------------------------------------------------------
+	void checkMissingEntries (const spiritless_po::Catalog& ref, const spiritless_po::Catalog& cat)
+	{
+		for (const auto& [key, refIndex] : ref.GetIndex())
+		{
+			auto it = cat.GetIndex().find (key);
+			if (it == cat.GetIndex().end())
+			{
+				Log.warn ("Missing or fuzzy translation for: " + key);
+				continue;
+			}
+			const auto& catIndex = it->second;
+			for (std::size_t i = 0; i != catIndex.totalPlurals; ++i)
+			{
+				if (cat.GetStringTable()[catIndex.stringTableIndex + i].empty())
+				{
+					Log.warn ("Missing or fuzzy translation for: " + key);
+				}
+			}
+		}
+	}
+
 } // namespace
 
 //------------------------------------------------------------------------------
@@ -119,10 +141,18 @@ void cLanguage::setCurrentLanguage (const std::string& code)
 		Log.error ("Not a supported language: " + code);
 		throw std::runtime_error ("Unsupported language " + code);
 	}
+	Log.info ("Set current language to " + code);
+
 	m_languageCode = code;
 	openCatalog (pimpl->maxrCatalog, rootDir / code / "maxr.po");
 	openCatalog (pimpl->clansCatalog, rootDir / code / "clans.po");
 	openCatalog (pimpl->unitsCatalog, rootDir / code / "units.po");
+	if (cSettings::getInstance().isDebug())
+	{
+		checkMissingEntries (pimpl->maxrCatalogEng, pimpl->maxrCatalog);
+		checkMissingEntries (pimpl->clansCatalogEng, pimpl->clansCatalog);
+		checkMissingEntries (pimpl->unitsCatalogEng, pimpl->unitsCatalog);
+	}
 }
 
 //------------------------------------------------------------------------------
