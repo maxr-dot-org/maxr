@@ -26,16 +26,7 @@
 #include "utility/os.h"
 
 #include <iomanip>
-
-#ifdef _MSC_VER
-# pragma warning(push)
-# pragma warning(disable : 4267) /*'=' conversion from size_t to '_Ty', possible loss of data*/
-# pragma warning(disable : 4101) /*'e': unreferenced local variable*/
-#endif
 #include <spiritless_po.h>
-#ifdef _MSC_VER
-# pragma warning(pop)
-#endif
 
 cLanguage lngPack;
 
@@ -110,7 +101,7 @@ cLanguage::cLanguage() :
 	pimpl (std::make_shared<cLanguage::cPimpl>())
 {
 }
-  
+
 //------------------------------------------------------------------------------
 void cLanguage::setLanguagesFolder (const std::filesystem::path& path)
 {
