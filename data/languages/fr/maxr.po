@@ -177,7 +177,6 @@ msgstr "Or insuffisant. Impossible de démarrer."
 msgid "Comp~Gold_Low"
 msgstr "Or insuffisant, raffinerie désactivée !"
 
-#, fuzzy
 msgid "Comp~Is(Are)Finished"
 msgid_plural "Comp~Is(Are)Finished"
 msgstr[0] " est terminé"
@@ -248,7 +247,6 @@ msgstr "Tir de réaction désactivé"
 msgid "Comp~Repeat"
 msgstr "Répéter"
 
-#, fuzzy
 msgid "Comp~Research(s)_Finished"
 msgid_plural "Comp~Research(s)_Finished"
 msgstr[0] "Recherche terminée : "

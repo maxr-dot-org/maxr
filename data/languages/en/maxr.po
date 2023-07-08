@@ -177,7 +177,6 @@ msgstr "Cannot start, gold needed."
 msgid "Comp~Gold_Low"
 msgstr "More gold needed, refinery turned off."
 
-#, fuzzy
 msgid "Comp~Is(Are)Finished"
 msgid_plural "Comp~Is(Are)Finished"
 msgstr[0] " is finished"
@@ -248,7 +247,6 @@ msgstr "Reaction Fire Off"
 msgid "Comp~Repeat"
 msgstr "Again"
 
-#, fuzzy
 msgid "Comp~Research(s)_Finished"
 msgid_plural "Comp~Research(s)_Finished"
 msgstr[0] "Research is finished: "
