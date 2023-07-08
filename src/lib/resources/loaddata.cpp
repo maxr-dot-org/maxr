@@ -108,7 +108,6 @@ static void WindowMakeLog (const std::string& sTxt, int ok, int pos)
 //------------------------------------------------------------------------------
 void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 {
-#if 1
 	std::regex reg{".*_([0-9]+)"};
 	for (const auto& [key, translatedText] : language.getAllTranslations())
 	{
@@ -125,7 +124,6 @@ void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 			}
 		}
 	}
-#endif
 }
 
 static void LoadLanguage()
