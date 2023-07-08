@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 10:37+0200\n"
+"POT-Creation-Date: 2023-07-08 09:39+0200\n"
 "PO-Revision-Date: 2021-07-29 22:02+0200\n"
 "Last-Translator:\n"
 "Language-Team: Slovenian\n"
@@ -168,9 +168,6 @@ msgstr "Pomanjkanje energije; izključujem porabnika."
 msgid "Comp~Energy_ToLow"
 msgstr "Pomanjkanje energije; zaganjam generator."
 
-msgid "Comp~Finished"
-msgstr "je zaključen-a"
-
 msgid "Comp~Fuel_Insufficient"
 msgstr "Premalo goriva za zagon."
 
@@ -263,6 +260,14 @@ msgstr "Izklop samodejnega ognja"
 
 msgid "Comp~Repeat"
 msgstr "Ponovno"
+
+#, fuzzy
+msgid "Comp~Research(s)_Finished"
+msgid_plural "Comp~Research(s)_Finished"
+msgstr[0] "Razišči je zaključen-a: "
+msgstr[1] "Razišči so zaključeni: "
+msgstr[2] "Razišči so zaključeni: "
+msgstr[3] "Razišči so zaključeni: "
 
 msgid "Comp~Reserve"
 msgstr "Rezerva"

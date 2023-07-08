@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 10:37+0200\n"
+"POT-Creation-Date: 2023-07-08 09:39+0200\n"
 "PO-Revision-Date: 2021-07-29 21:43+0200\n"
 "Last-Translator:\n"
 "Language-Team: English\n"
@@ -162,9 +162,6 @@ msgstr "Lack of power, energy consumer turned off."
 msgid "Comp~Energy_ToLow"
 msgstr "More power needed, generator turned on."
 
-msgid "Comp~Finished"
-msgstr "is finished"
-
 msgid "Comp~Fuel_Insufficient"
 msgstr "Cannot start, fuel needed."
 
@@ -250,6 +247,12 @@ msgstr "Reaction Fire Off"
 
 msgid "Comp~Repeat"
 msgstr "Again"
+
+#, fuzzy
+msgid "Comp~Research(s)_Finished"
+msgid_plural "Comp~Research(s)_Finished"
+msgstr[0] "Research is finished: "
+msgstr[1] "Researchs are finished: "
 
 msgid "Comp~Reserve"
 msgstr "Reserve"

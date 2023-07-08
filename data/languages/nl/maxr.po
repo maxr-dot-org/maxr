@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 10:37+0200\n"
+"POT-Creation-Date: 2023-07-08 09:39+0200\n"
 "PO-Revision-Date: 2021-07-29 23:04+0200\n"
 "Last-Translator:\n"
 "Language-Team: Dutch\n"
@@ -165,9 +165,6 @@ msgstr "Te weinig energie, verbruiker uitgeschakeld!"
 msgid "Comp~Energy_ToLow"
 msgstr "Niet genoeg energie, generator gestart!"
 
-msgid "Comp~Finished"
-msgstr "is klaar"
-
 msgid "Comp~Fuel_Insufficient"
 msgstr "Niet genoeg brandstof om te starten!"
 
@@ -255,6 +252,12 @@ msgstr "Reactie-aanval uitgeschakeld"
 
 msgid "Comp~Repeat"
 msgstr "Opnieuw"
+
+#, fuzzy
+msgid "Comp~Research(s)_Finished"
+msgid_plural "Comp~Research(s)_Finished"
+msgstr[0] "Onderzoek is klaar: "
+msgstr[1] "Onderzoek klaar: "
 
 msgid "Comp~Reserve"
 msgstr "Reserve"

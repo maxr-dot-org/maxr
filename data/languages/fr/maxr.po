@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 10:37+0200\n"
+"POT-Creation-Date: 2023-07-08 09:39+0200\n"
 "PO-Revision-Date: 2021-07-29 21:42+0200\n"
 "Last-Translator:\n"
 "Language-Team: French\n"
@@ -162,9 +162,6 @@ msgstr "Energie insuffisante, usine désactivée !"
 msgid "Comp~Energy_ToLow"
 msgstr "Besoin de plus d'énergie. Activation de générateur d'énergie."
 
-msgid "Comp~Finished"
-msgstr "est terminé"
-
 msgid "Comp~Fuel_Insufficient"
 msgstr "Carburant insuffisant. Impossible de démarrer."
 
@@ -250,6 +247,12 @@ msgstr "Tir de réaction désactivé"
 
 msgid "Comp~Repeat"
 msgstr "Répéter"
+
+#, fuzzy
+msgid "Comp~Research(s)_Finished"
+msgid_plural "Comp~Research(s)_Finished"
+msgstr[0] "Recherche terminée : "
+msgstr[1] "Recherches terminées : "
 
 msgid "Comp~Reserve"
 msgstr "Réserve"

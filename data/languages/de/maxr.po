@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 10:37+0200\n"
+"POT-Creation-Date: 2023-07-08 09:39+0200\n"
 "PO-Revision-Date: 2021-07-29 21:55+0200\n"
 "Last-Translator:\n"
 "Language-Team: German\n"
@@ -165,9 +165,6 @@ msgstr "Energiemangel, Verbraucher abgeschaltet!"
 msgid "Comp~Energy_ToLow"
 msgstr "Mehr Energie benötigt, Generator eingeschaltet!"
 
-msgid "Comp~Finished"
-msgstr "wurde fertig gestellt"
-
 msgid "Comp~Fuel_Insufficient"
 msgstr "Nicht genug Treibstoff zum Einschalten vorhanden!"
 
@@ -254,6 +251,12 @@ msgstr "Manuell schießen"
 
 msgid "Comp~Repeat"
 msgstr "Wieder"
+
+#, fuzzy
+msgid "Comp~Research(s)_Finished"
+msgid_plural "Comp~Research(s)_Finished"
+msgstr[0] "Forschg. wurde fertig gestellt: "
+msgstr[1] "Forschg. wurden fertig gestellt: "
 
 msgid "Comp~Reserve"
 msgstr "Reserve"
@@ -1061,6 +1064,9 @@ msgstr "Verbesserungsmenü"
 
 #~ msgid "Comp~Cheat"
 #~ msgstr "%s hat einen Cheat benutzt:"
+
+#~ msgid "Comp~Finished"
+#~ msgstr "wurde fertig gestellt"
 
 #~ msgid "Comp~ResolutionWarning"
 #~ msgstr "Achtung: Nichtunterstützte Bildschirmauflösung in der Konfiguration gefunden"

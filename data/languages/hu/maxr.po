@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 10:37+0200\n"
+"POT-Creation-Date: 2023-07-08 09:39+0200\n"
 "PO-Revision-Date: 2021-07-29 22:04+0200\n"
 "Last-Translator:\n"
 "Language-Team: Hungarian\n"
@@ -165,9 +165,6 @@ msgstr "Nincs elég áram, fogyasztó leállítva!"
 msgid "Comp~Energy_ToLow"
 msgstr "Nincs elegendő energia, generátor elindítva."
 
-msgid "Comp~Finished"
-msgstr "elkészült"
-
 msgid "Comp~Fuel_Insufficient"
 msgstr "Nincs elegendő üzemanyag az elindításhoz."
 
@@ -255,6 +252,12 @@ msgstr ""
 
 msgid "Comp~Repeat"
 msgstr "Újra"
+
+#, fuzzy
+msgid "Comp~Research(s)_Finished"
+msgid_plural "Comp~Research(s)_Finished"
+msgstr[0] "Kutatás elkészült: "
+msgstr[1] "Kutatás elkészült: "
 
 msgid "Comp~Reserve"
 msgstr "Tartalék"

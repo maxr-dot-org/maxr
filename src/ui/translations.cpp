@@ -723,7 +723,7 @@ namespace
 		if (!report.researchAreas.empty())
 		{
 			message += "\n";
-			message += lngPack.i18n ("Others~Research") + " " + lngPack.i18n ("Comp~Finished") + lngPack.i18n ("Punctuation~Colon");
+			message += lngPack.plural ("Comp~Research(s)_Finished", report.researchAreas.size());
 
 			const std::string themeNames[8] =
 				{

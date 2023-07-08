@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 10:37+0200\n"
+"POT-Creation-Date: 2023-07-08 09:39+0200\n"
 "PO-Revision-Date: 2021-07-29 22:32+0200\n"
 "Last-Translator:\n"
 "Language-Team: Spanish\n"
@@ -165,9 +165,6 @@ msgstr "Se necesita energía, edificio que consumía energía apagado."
 msgid "Comp~Energy_ToLow"
 msgstr "Se necesita más energía, generador encendido"
 
-msgid "Comp~Finished"
-msgstr "se ha terminado"
-
 msgid "Comp~Fuel_Insufficient"
 msgstr "No se puede encender, se necesita combustible"
 
@@ -255,6 +252,12 @@ msgstr "Disparo de auto-defensa apagado"
 
 msgid "Comp~Repeat"
 msgstr "De nuevo"
+
+#, fuzzy
+msgid "Comp~Research(s)_Finished"
+msgid_plural "Comp~Research(s)_Finished"
+msgstr[0] "Investigar se ha terminado: "
+msgstr[1] "Investigar se han terminado: "
 
 msgid "Comp~Reserve"
 msgstr "Reserva"
