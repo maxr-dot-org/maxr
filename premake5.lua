@@ -105,6 +105,8 @@ project "tests"
 	flags { "FatalWarnings"}
 
 	files { "tests/**.cpp", "tests/**.h" }
+	vpaths { ["tests/*"] = "tests" }
+
 	includedirs { "src", "src/lib" }
 	links { "maxr_lib" }
 
@@ -129,6 +131,7 @@ project "mveplayer"
 	targetname "mveplayer"
 
 	files { "src/3rd/mveplayer/**.cpp", "src/3rd/mveplayer/**.h" }
+	vpaths { ["mveplayer/*"] = "src/3rd/mveplayer" }
 	includedirs { "src", "src/lib" }
 
 project "SDL_flic"
@@ -138,27 +141,33 @@ project "SDL_flic"
 	targetname "SDL_flic"
 
 	files { "src/3rd/SDL_flic/**.c", "src/3rd/SDL_flic/**.h" }
+	vpaths { ["SDL_flic/*"] = "src/3rd/SDL_flic" }
 
 if premake.action.supports("None") then
 project "doctest" -- header only
 	kind "None"
 
 	files { "src/3rd/doctest/**.*" }
+	vpaths { ["doctest/*"] = "src/3rd/doctest" }
 
 project "nlohmann" -- header only
 	kind "None"
 
 	files { "src/3rd/nlohmann/**.*" }
+	vpaths { ["nlohmann/*"] = "src/3rd/nlohmann" }
 
 project "spiritless_po" -- header only
 	kind "None"
 
 	files { "src/3rd/spiritless_po/**.*" }
+	vpaths { ["spiritless_po/*"] = "src/3rd/spiritless_po" }
+
 group ""
 project "data" -- data
 	kind "None"
 
 	files { "data/**.*" }
+	vpaths { ["data/*"] = "data" }
 	removefiles { "data/**.dll", "data/**.exe" }
 end
 
