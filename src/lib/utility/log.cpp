@@ -88,7 +88,7 @@ void cLog::setLogPath (const std::filesystem::path& path)
 	logfile.open (path, std::fstream::out | std::fstream::trunc);
 	if (!logfile.is_open())
 	{
-		std::cerr << "(EE): Couldn't open" + path.string() + "!\n Please check file / directory permissions\n ";
+		std::cerr << "(EE): Couldn't open " << path << "!\n Please check file / directory permissions\n";
 	}
 }
 
