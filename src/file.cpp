@@ -81,8 +81,15 @@ void copyFile (const std::filesystem::path& source, const std::filesystem::path&
 		auto lower_path = source.parent_path() / toLower (source.filename().string());
 		auto upper_path = source.parent_path() / toUpper (source.filename().string());
 
-		if ((std::filesystem::exists(lower_path) && !std::filesystem::copy_file (lower_path, dest))
-			|| (std::filesystem::exists(upper_path) && !std::filesystem::copy_file (upper_path, dest)))
+		if (std::filesystem::exists (lower_path))
+		{
+			std::filesystem::copy_file (lower_path, dest, std::filesystem::copy_options::skip_existing);
+		}
+		else if (std::filesystem::exists (upper_path))
+		{
+			std::filesystem::copy_file (upper_path, dest, std::filesystem::copy_options::skip_existing);
+		}
+		else
 		{
 			throw InstallException ("Couldn't copy file '" + source.string() + "' to '" + dest.string() + "'" + TEXT_FILE_LF);
 		}
