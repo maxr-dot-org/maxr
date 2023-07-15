@@ -81,6 +81,7 @@ void copyFile (const std::filesystem::path& source, const std::filesystem::path&
 		auto lower_path = source.parent_path() / toLower (source.filename().string());
 		auto upper_path = source.parent_path() / toUpper (source.filename().string());
 
+		std::filesystem::create_directories(dest.parent_path());
 		if (std::filesystem::exists (lower_path))
 		{
 			std::filesystem::copy_file (lower_path, dest, std::filesystem::copy_options::skip_existing);

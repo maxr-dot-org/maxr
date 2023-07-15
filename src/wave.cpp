@@ -121,7 +121,8 @@ void saveWAV (const std::filesystem::path& dst, const cWaveFile& waveFile)
 	// FMT chunk
 	WaveFMT* format = nullptr;
 
-	//open destiantion file
+	//open destination file
+	std::filesystem::create_directories (dst.parent_path());
 	SDL_RWops* file = SDL_RWFromFile (dst.string().c_str(), "wb");
 	if (file == nullptr)
 	{

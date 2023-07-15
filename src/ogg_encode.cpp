@@ -49,6 +49,7 @@ void encodeWAV (std::filesystem::path fileName, cWaveFile& waveFile)
 		fileName.replace_extension (".ogg");
 	}
 
+	std::filesystem::create_directories (fileName.parent_path());
 	SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
 	if (file == nullptr)
 	{

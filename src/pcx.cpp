@@ -36,6 +36,7 @@ int savePCX_8bpp (SDL_Surface* surface, const std::filesystem::path& fileName)
 	int i, z, s;
 	long Index; // Adresse des Pixels im Bild
 
+	std::filesystem::create_directories (fileName.parent_path());
 	SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
 
 	if (file == nullptr)
@@ -126,6 +127,7 @@ int savePCX_32bpp (SDL_Surface* surface, const std::filesystem::path& fileName)
 	int i, j, z, s;
 	long Index; // Adresse des Pixels im Bild
 
+	std::filesystem::create_directories (fileName.parent_path());
 	SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
 
 	if (file == nullptr)
