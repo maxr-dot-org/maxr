@@ -1170,7 +1170,7 @@ void writeLog (std::string msg)
 {
 	if (logFile != nullptr)
 	{
-		SDL_RWwrite (logFile, msg.c_str(), (int) msg.length(), 1);
+		SDL_RWwrite (logFile, msg.c_str(), msg.length(), 1);
 	}
 	else
 	{
