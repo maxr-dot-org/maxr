@@ -3920,7 +3920,8 @@ void createLogFile (const std::filesystem::path& dataDir)
 	}
 	else
 	{
-		freopen ("resinstaller.log", "a", stderr); // write errors to log instead stdout(.txt)
+		std::cout << "write log in " << fileName << std::endl;
+		freopen (fileName.string().c_str(), "a", stderr); // write errors to log instead stdout(.txt)
 	}
 
 	writeLog (std::string ("resinstaller version ") + VERSION + TEXT_FILE_LF);
@@ -4413,7 +4414,7 @@ int main (int argc, char* argv[])
 	// we got the language parameter from commandline
 	else if (!sLanguage.empty())
 	{
-		writeLog ("Language argument from command line: " + sLanguage);
+		writeLog ("Language argument from command line: " + sLanguage + TEXT_FILE_LF);
 		if (sLanguage == "english" || sLanguage == "ENG")
 		{
 			sVoicePath = sMAXPath;
