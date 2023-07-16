@@ -2477,6 +2477,20 @@ int installGfx()
 		END_INSTALL_FILE (path / ("clanlogo" + szNum + ".pcx"));
 	}
 
+	// End game
+	for (int i = 1; i <= 9; i++)
+	{
+		const auto szNum = std::to_string (i);
+		try
+		{
+			output = getImageFromRes ("ENDGAME" + szNum);
+			setColor (output, 0, 255, 0, 255);
+			savePCX (output, path / "endgame" / ("endgame" + szNum + ".pcx"));
+			SDL_FreeSurface (output);
+		}
+		END_INSTALL_FILE (path / "endgame" / ("endgame" + szNum + ".pcx"));
+	}
+
 	// activate
 	try
 	{
@@ -4187,6 +4201,10 @@ bool gFinishedInstalling = false; // MAC: needed as flag, for closing the proges
 int installEverything (void*)
 {
 	gFinishedInstalling = false;
+
+#if 0
+	saveAllFiles();
+#endif
 
 	if (sResChoice.find ("0") != std::string::npos)
 	{
