@@ -53,18 +53,18 @@ cDialogLicense::cDialogLicense() :
 	textLabel->setWordWrap (true);
 
 	auto okButton = emplaceChild<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Others~OK"), eUnicodeFontType::LatinNormal);
-	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
-	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
+	okButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
+	okButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_ESCAPE)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { close(); });
 
 	upButton = emplaceChild<cPushButton> (getPosition() + cPosition (241, 187), ePushButtonType::ArrowUpSmall);
-	upButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_PAGEUP)));
-	upButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_UP)));
+	upButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_PAGEUP)));
+	upButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_UP)));
 	signalConnectionManager.connect (upButton->clicked, [this]() { pageUp(); });
 
 	downButton = emplaceChild<cPushButton> (getPosition() + cPosition (261, 187), ePushButtonType::ArrowDownSmall);
-	downButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_PAGEDOWN)));
-	downButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_DOWN)));
+	downButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_PAGEDOWN)));
+	downButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_DOWN)));
 	signalConnectionManager.connect (downButton->clicked, [this]() { pageDown(); });
 
 	readAuthors();

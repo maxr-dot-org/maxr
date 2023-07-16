@@ -93,11 +93,11 @@ void cWindowHangar::initialize()
 	signalConnectionManager.connect (selectionListDownButton->clicked, [this]() { selectionUnitList->pageDown(); });
 
 	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
-	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
+	okButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 
 	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Others~Back"), eUnicodeFontType::LatinNormal);
-	backButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
+	backButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_ESCAPE)));
 	signalConnectionManager.connect (backButton->clicked, [this]() { backClicked(); });
 }
 

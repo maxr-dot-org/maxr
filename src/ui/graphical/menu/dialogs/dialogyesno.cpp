@@ -33,14 +33,14 @@ cDialogYesNo::cDialogYesNo (const std::string& text) :
 	textLabel->setWordWrap (true);
 
 	yesButton = emplaceChild<cPushButton> (getPosition() + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Others~Yes"), eUnicodeFontType::LatinNormal);
-	yesButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
+	yesButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
 	signalConnectionManager.connect (yesButton->clicked, [this]() {
 		yesClicked();
 		close();
 	});
 
 	noButton = emplaceChild<cPushButton> (getPosition() + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Others~No"), eUnicodeFontType::LatinNormal);
-	noButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
+	noButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_ESCAPE)));
 	signalConnectionManager.connect (noButton->clicked, [this]() {
 		noClicked();
 		close();

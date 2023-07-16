@@ -42,11 +42,11 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (291, 52), getPosition() + cPosition (291 + 44, 52 + 10)), lngPack.i18n ("Comp~Turns"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 
 	auto doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (193, 294), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
-	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
+	doneButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
 	auto cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (91, 294), ePushButtonType::Angular, lngPack.i18n ("Others~Cancel"), eUnicodeFontType::LatinNormal);
-	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
+	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
 	const std::string themeNames[rows] =

@@ -64,11 +64,11 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 	signalConnectionManager.connect (decreaseButton->clicked, [this]() { resourceBar->decrease (1); });
 
 	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (159, 200), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
-	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
+	doneButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
 	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (71, 200), ePushButtonType::Angular, lngPack.i18n ("Others~Cancel"), eUnicodeFontType::LatinNormal);
-	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
+	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
 	initUnitImage (*sourceUnitImage, sourceUnit);

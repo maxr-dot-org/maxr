@@ -94,11 +94,11 @@ cDialogPreferences::cDialogPreferences() :
 	windowCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294 + 20 * 2), lngPack.i18n ("Settings~Window"));
 
 	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (208, 383), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
-	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
+	doneButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { doneClicked(); });
 
 	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (118, 383), ePushButtonType::Angular, lngPack.i18n ("Others~Cancel"), eUnicodeFontType::LatinNormal);
-	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
+	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { cancelClicked(); });
 
 	languageLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (140, 298 + 20), getPosition() + cPosition (140 + 95, 298 + 20 + 10)), lngPack.i18n ("Settings~Language") + lngPack.i18n ("Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Right);

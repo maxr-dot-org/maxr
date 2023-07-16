@@ -40,7 +40,7 @@ cDialogSelfDestruction::cDialogSelfDestruction (const cUnit& unit, std::shared_p
 	signalConnectionManager.connect (destroyButton->clicked, [this]() { triggeredDestruction(); });
 
 	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (88, 46), ePushButtonType::Angular, lngPack.i18n ("Others~Cancel"), eUnicodeFontType::LatinNormal);
-	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
+	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
 	protectionGlass = emplaceChild<cProtectionGlass> (getPosition() + cPosition (15, 13), std::move (animationTimer));

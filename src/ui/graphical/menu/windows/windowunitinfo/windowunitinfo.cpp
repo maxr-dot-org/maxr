@@ -47,7 +47,7 @@ cWindowUnitInfo::cWindowUnitInfo (const cDynamicUnitData& currentUnitData, const
 	auto unitDetails = emplaceChild<cUnitDetails> (getPosition() + cPosition (16, 297));
 
 	auto okButton = emplaceChild<cPushButton> (getPosition() + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
-	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
+	okButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { close(); });
 
 	if (currentUnitData.getId().isAVehicle())

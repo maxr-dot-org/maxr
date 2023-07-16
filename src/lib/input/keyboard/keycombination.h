@@ -30,6 +30,8 @@ class cKeyCombination
 public:
 	explicit cKeyCombination (const std::string& sequence);
 	cKeyCombination (KeyModifierFlags modifiers, SDL_Keycode key);
+	explicit cKeyCombination (SDL_Keycode key) :
+		cKeyCombination (eKeyModifierType::None, key) {}
 
 	std::string toString() const;
 

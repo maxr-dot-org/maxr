@@ -28,7 +28,7 @@ namespace
 	//--------------------------------------------------------------------------
 	TEST_CASE ("Parsing KeyCombination")
 	{
-		CHECK (cKeyCombination (eKeyModifierType::None, SDLK_a) == cKeyCombination ("a"));
+		CHECK (cKeyCombination (SDLK_a) == cKeyCombination ("a"));
 		CHECK (cKeyCombination (eKeyModifierType::Ctrl, SDLK_a) == cKeyCombination ("Ctrl+a"));
 		CHECK (cKeyCombination (eKeyModifierType::Ctrl, SDLK_PLUS) == cKeyCombination ("Ctrl+PLUS"));
 		CHECK (cKeyCombination (KeyModifierFlags(eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_COMMA) == cKeyCombination ("Alt+Ctrl+Comma"));

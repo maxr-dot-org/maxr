@@ -33,7 +33,7 @@ cDialogOk::cDialogOk (const std::string& text, eWindowBackgrounds backgroundType
 	textLabel->setWordWrap (true);
 
 	auto okButton = emplaceChild<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Others~OK"), eUnicodeFontType::LatinNormal);
-	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
+	okButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { okClicked(); });
 }
 

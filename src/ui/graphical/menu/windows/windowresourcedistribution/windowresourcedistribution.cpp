@@ -142,7 +142,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	signalConnectionManager.connect (goldBars[0]->valueChanged, [this]() { handleGoldChanged(); });
 
 	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (514, 430), ePushButtonType::Huge, lngPack.i18n ("Others~Done"));
-	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
+	doneButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
 	//close window, when the mine, from which this menu was called, gets destroyed.

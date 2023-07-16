@@ -119,7 +119,7 @@ cWindowReports::cWindowReports (const cModel& model,
 	signalConnectionManager.connect (stealthCheckBox->toggled, [this]() { handleFilterChanged(); });
 
 	doneButton = emplaceChild<cPushButton> (getPosition() + cPosition (524, 395), ePushButtonType::Angular, lngPack.i18n ("Others~Done"), eUnicodeFontType::LatinNormal);
-	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
+	doneButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { close(); });
 
 	upButton = emplaceChild<cPushButton> (getPosition() + cPosition (492, 426), ePushButtonType::ArrowUpBig);

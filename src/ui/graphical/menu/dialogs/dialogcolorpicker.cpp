@@ -114,11 +114,11 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 	blueValueLineEdit->disable();
 
 	okButton = emplaceChild<cPushButton> (getPosition() + cPosition (200, 185), ePushButtonType::Angular, lngPack.i18n ("Others~OK"), eUnicodeFontType::LatinNormal);
-	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
+	okButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, [this]() { done(); });
 
 	cancelButton = emplaceChild<cPushButton> (getPosition() + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Others~Cancel"), eUnicodeFontType::LatinNormal);
-	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
+	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { canceled(); });
 }
 
