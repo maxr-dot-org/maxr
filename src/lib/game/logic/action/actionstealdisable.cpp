@@ -62,9 +62,12 @@ void cActionStealDisable::execute (cModel& model) const
 
 		if (steal)
 		{
-			const auto* previousOwner = target->getOwner();
+			auto* previousOwner = target->getOwner();
 			changeUnitOwner (*target, *infiltrator->getOwner(), model);
 			model.unitStolen (*infiltrator, *target, previousOwner);
+			if (previousOwner) {
+				previousOwner->getGameOverStat().lostVehiclesCount++;
+			}
 		}
 		else
 		{

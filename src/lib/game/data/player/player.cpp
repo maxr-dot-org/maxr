@@ -722,6 +722,7 @@ uint32_t cPlayer::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (researchState, crc);
 	crc = calcCheckSum (researchCentersWorkingOnArea, crc);
 	crc = calcCheckSum (researchCentersWorkingTotal, crc);
+	crc = gameOverStat.getChecksum (crc);
 
 	return crc;
 }

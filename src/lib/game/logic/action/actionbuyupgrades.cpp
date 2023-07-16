@@ -54,6 +54,7 @@ void cActionBuyUpgrades::execute (cModel& model) const
 		if (costs > player->getCredits()) continue;
 
 		// everything ok, upgrade the unit
+		player->getGameOverStat().totalUpgradeCost += costs;
 		player->setCredits (player->getCredits() - costs);
 		currentUnitData.makeVersionDirty();
 		upgradesForUnit.updateUnitData (currentUnitData);

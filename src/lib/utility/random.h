@@ -23,6 +23,7 @@
 #include <array>
 #include <cassert>
 #include <random>
+#include <stdexcept>
 
 /**
  * Creates a uniform distributed random number in the interval [min, max).
@@ -93,6 +94,18 @@ typename std::array<T, N>::const_reference getRandom (const std::array<T, N>& da
 {
 	static_assert (N > 0, "Getting random element from empty array is not allowed");
 	return data[random (N)];
+}
+
+/**
+ * Select a random element from a std::vector
+ */
+template <typename T>
+const T& getRandom (const std::vector<T>& v)
+{
+	if (v.empty()) {
+		throw std::runtime_error ("Empty vector");
+	}
+	return v[random (v.size())];
 }
 
 #endif // utility_randomH

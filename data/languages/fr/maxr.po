@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-08 09:39+0200\n"
+"POT-Creation-Date: 2023-07-19 12:46+0200\n"
 "PO-Revision-Date: 2021-07-29 21:42+0200\n"
 "Last-Translator:\n"
 "Language-Team: French\n"
@@ -327,6 +327,24 @@ msgstr "Erreur lors de la sauvegarde"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Pas encore implémenté"
+
+msgid "GameOver~BuiltBuildings"
+msgstr "Installations bâties"
+
+msgid "GameOver~BuiltMineStations"
+msgstr "Mines construites"
+
+msgid "GameOver~BuiltUnits"
+msgstr "Unités construites"
+
+msgid "GameOver~Builtfactories"
+msgstr "Usines construites"
+
+msgid "GameOver~LostBuildings"
+msgstr "perdues"
+
+msgid "GameOver~LostUnits"
+msgstr "perdues"
 
 msgid "Init~Buildings"
 msgstr "Chargement des bâtiments..."
@@ -974,6 +992,9 @@ msgstr "Crédit initial"
 
 msgid "Title~Custom_11"
 msgstr "Personalisé"
+
+msgid "Title~GameOver"
+msgstr "Jeu terminé"
 
 msgid "Title~Game_Type"
 msgstr "Type de jeu"

@@ -40,8 +40,9 @@ void cActionFinishBuild::execute (cModel& model) const
 
 	cUnit* unit = model.getUnitFromID (unitId);
 	if (unit == nullptr) return;
-	if (!unit->getOwner()) return;
-	if (unit->getOwner()->getId() != playerNr) return;
+	auto* player = unit->getOwner();
+	if (player == nullptr) return;
+	if (player->getId() != playerNr) return;
 
 	if (unit->isAVehicle())
 	{
@@ -51,7 +52,6 @@ void cActionFinishBuild::execute (cModel& model) const
 	{
 		finishAVehicle (model, *static_cast<cBuilding*> (unit));
 	}
-	return;
 }
 
 //------------------------------------------------------------------------------
@@ -66,14 +66,25 @@ void cActionFinishBuild::finishABuilding (cModel& model, cVehicle& vehicle) cons
 	model.sideStepStealthUnit (escapePosition, vehicle);
 	if (!map->possiblePlace (vehicle, escapePosition, false)) return;
 
-	if (vehicle.getOwner())
+	auto player = vehicle.getOwner();
+	if (player)
 	{
-		if (auto* unitData = vehicle.getOwner()->getLastUnitData (vehicle.getBuildingType()))
+		if (auto* unitData = player->getLastUnitData (vehicle.getBuildingType()))
 		{
 			unitData->markLastVersionUsed();
 		}
+		player->getGameOverStat().builtBuildingsCount++;
+		const auto& buildingUnitdata = model.getUnitsData()->getStaticUnitData (vehicle.getBuildingType());
+		if (!buildingUnitdata.canBuild.empty())
+		{
+			player->getGameOverStat().builtFactoriesCount++;
+		}
+		if (buildingUnitdata.buildingData.canMineMaxRes != 0)
+		{
+			player->getGameOverStat().builtMineStationCount++;
+		}
 	}
-	model.addBuilding (vehicle.getPosition(), vehicle.getBuildingType(), vehicle.getOwner());
+	model.addBuilding (vehicle.getPosition(), vehicle.getBuildingType(), player);
 
 	// end building
 	vehicle.setBuildingABuilding (false);
@@ -108,17 +119,19 @@ void cActionFinishBuild::finishAVehicle (cModel& model, cBuilding& building) con
 
 	const cStaticUnitData& unitData = model.getUnitsData()->getStaticUnitData (buildingListItem.getType());
 
-	model.sideStepStealthUnit (escapePosition, unitData, building.getOwner());
-	if (!map->possiblePlaceVehicle (unitData, escapePosition, building.getOwner())) return;
+	auto* player = building.getOwner();
+	model.sideStepStealthUnit (escapePosition, unitData, player);
+	if (!map->possiblePlaceVehicle (unitData, escapePosition, player)) return;
 
-	if (building.getOwner())
+	if (player)
 	{
-		if (auto* dynamicUnitData = building.getOwner()->getLastUnitData (buildingListItem.getType()))
+		if (auto* dynamicUnitData = player->getLastUnitData (buildingListItem.getType()))
 		{
 			dynamicUnitData->markLastVersionUsed();
 		}
+		player->getGameOverStat().builtVehiclesCount++;
 	}
-	auto& vehicle = model.addVehicle (escapePosition, buildingListItem.getType(), building.getOwner());
+	auto& vehicle = model.addVehicle (escapePosition, buildingListItem.getType(), player);
 	if (!vehicle.canLand (*map))
 	{
 		// start with flight height > 0, so that ground attack units
@@ -143,7 +156,7 @@ void cActionFinishBuild::finishAVehicle (cModel& model, cBuilding& building) con
 		{
 			std::array<int, 3> turboBuildRounds;
 			std::array<int, 3> turboBuildCosts;
-			building.calcTurboBuild (turboBuildRounds, turboBuildCosts, building.getOwner()->getLastUnitData (buildingListItem.getType())->getBuildCost());
+			building.calcTurboBuild (turboBuildRounds, turboBuildCosts, player->getLastUnitData (buildingListItem.getType())->getBuildCost());
 			buildingListItem.setRemainingMetal (turboBuildCosts[building.getBuildSpeed()]);
 		}
 		building.startWork();

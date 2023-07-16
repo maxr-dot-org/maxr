@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-08 09:39+0200\n"
+"POT-Creation-Date: 2023-07-19 12:46+0200\n"
 "PO-Revision-Date: 2021-07-29 22:04+0200\n"
 "Last-Translator:\n"
 "Language-Team: Hungarian\n"
@@ -337,6 +337,24 @@ msgstr "Hiba a térkép betöltése közben"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Még nincs implementálva"
+
+msgid "GameOver~BuiltBuildings"
+msgstr ""
+
+msgid "GameOver~BuiltMineStations"
+msgstr ""
+
+msgid "GameOver~BuiltUnits"
+msgstr ""
+
+msgid "GameOver~Builtfactories"
+msgstr ""
+
+msgid "GameOver~LostBuildings"
+msgstr ""
+
+msgid "GameOver~LostUnits"
+msgstr ""
 
 msgid "Init~Buildings"
 msgstr "Épületek betöltése..."
@@ -988,6 +1006,9 @@ msgid "Title~Credits_start"
 msgstr ""
 
 msgid "Title~Custom_11"
+msgstr ""
+
+msgid "Title~GameOver"
 msgstr ""
 
 msgid "Title~Game_Type"

@@ -52,6 +52,7 @@ void cActionSelfDestroy::execute (cModel& model) const
 	}
 	else
 	{
+		b->getOwner()->getGameOverStat().lostBuildingsCount++;
 		model.destroyUnit (*b);
 	}
 }

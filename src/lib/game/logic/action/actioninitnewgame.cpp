@@ -369,6 +369,7 @@ void cActionInitNewGame::execute (cModel& model) const
 		}
 		upgradeValues.updateUnitData (*player.getLastUnitData (unitId));
 	}
+	player.getGameOverStat().totalUpgradeCost = model.getGameSettings()->startCredits - credits;
 
 	// land vehicles
 	auto initialLandingUnits = computeInitialLandingUnits (initPlayerData.clan, *model.getGameSettings(), unitsdata);
@@ -465,8 +466,10 @@ void cActionInitNewGame::makeLanding (cPlayer& player, const std::vector<sLandin
 		// place buildings:
 		model.addBuilding (landingPosition + cPosition (-1, 0), model.getUnitsData()->getSmallGeneratorID(), &player);
 		model.addBuilding (landingPosition + cPosition (0, -1), model.getUnitsData()->getMineID(), &player);
+		player.getGameOverStat().builtMineStationCount++;
+		player.getGameOverStat().builtBuildingsCount += 2;
 	}
-
+	player.getGameOverStat().builtVehiclesCount += landingUnits.size();
 	for (const sLandingUnit& landing : landingUnits)
 	{
 		if (!model.getUnitsData()->isValidId (landing.unitID))

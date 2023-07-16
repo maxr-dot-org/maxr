@@ -76,6 +76,45 @@ public:
 	std::vector<sTurnstartReport> unitsBuilt;
 };
 
+struct sGameOverStat
+{
+	template <typename Archive>
+	void serialize (Archive& archive)
+	{
+		// clang-format off
+		// See https://github.com/llvm/llvm-project/issues/44312
+		archive & NVP (builtFactoriesCount);
+		archive & NVP (builtMineStationCount);
+		archive & NVP (builtBuildingsCount);
+		archive & NVP (lostBuildingsCount);
+		archive & NVP (builtVehiclesCount);
+		archive & NVP (lostVehiclesCount);
+		archive & NVP (totalUpgradeCost);
+		// clang-format on
+	}
+
+	uint32_t getChecksum(uint32_t crc) const
+	{
+		crc = calcCheckSum (builtFactoriesCount, crc);
+		crc = calcCheckSum (builtMineStationCount, crc);
+		crc = calcCheckSum (builtBuildingsCount, crc);
+		crc = calcCheckSum (lostBuildingsCount, crc);
+		crc = calcCheckSum (builtVehiclesCount, crc);
+		crc = calcCheckSum (lostVehiclesCount, crc);
+		crc = calcCheckSum (totalUpgradeCost, crc);
+
+		return crc;
+	}
+
+	unsigned int builtFactoriesCount = 0;
+	unsigned int builtMineStationCount = 0;
+	unsigned int builtBuildingsCount = 0;
+	unsigned int lostBuildingsCount = 0;
+	unsigned int builtVehiclesCount = 0;
+	unsigned int lostVehiclesCount = 0;
+	unsigned int totalUpgradeCost = 0;
+};
+
 // the Player class //////////////////////////////
 class cPlayer
 {
@@ -201,6 +240,9 @@ public:
 
 	sNewTurnPlayerReport makeTurnStart (cModel&);
 
+	const sGameOverStat& getGameOverStat() const { return gameOverStat; }
+	sGameOverStat& getGameOverStat() { return gameOverStat; }
+
 	uint32_t getChecksum (uint32_t crc) const;
 
 	mutable cSignal<void()> creditsChanged;
@@ -275,6 +317,7 @@ public:
 		archive & NVP (credits);
 		archive & NVP (hasFinishedTurn);
 		archive & NVP (researchState);
+		archive & NVP (gameOverStat);
 		// clang-format on
 	}
 	template <typename Archive>
@@ -314,6 +357,7 @@ public:
 		archive & NVP (credits);
 		archive & NVP (hasFinishedTurn);
 		archive & NVP (researchState);
+		archive & NVP (gameOverStat);
 		// clang-format on
 	}
 
@@ -367,6 +411,8 @@ private:
 	cResearch researchState; ///< stores the current research level of the player
 	std::array<int, cResearch::kNrResearchAreas> researchCentersWorkingOnArea{}; ///< counts the number of research centers that are currently working on each area
 	int researchCentersWorkingTotal = 0; ///< number of working research centers
+
+	sGameOverStat gameOverStat;
 };
 
 #endif // game_data_player_playerH

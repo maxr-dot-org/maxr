@@ -75,6 +75,7 @@
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/windows/windowbuildbuildings/windowbuildbuildings.h"
 #include "ui/graphical/menu/windows/windowbuildvehicles/windowbuildvehicles.h"
+#include "ui/graphical/menu/windows/windowendgame.h"
 #include "ui/graphical/menu/windows/windowloadsave/windowloadsave.h"
 #include "ui/graphical/menu/windows/windowreports/windowreports.h"
 #include "ui/graphical/menu/windows/windowresourcedistribution/windowresourcedistribution.h"
@@ -1242,9 +1243,21 @@ void cGameGuiController::connectReportSources (cClient& client)
 	});
 	allClientsSignalConnectionManager.connect (model.playerHasLost, [&] (const cPlayer& looser) {
 		addSavedReport (std::make_unique<cSavedReportPlayerDefeated> (looser), player.getId());
+		if (looser.getId() == player.getId())
+		{
+			auto win = application.show (std::make_shared<cWindowEndGame> (getPlayers()));
+			allClientsSignalConnectionManager.connect (win->closed, [=]() {gameGui->exit();});
+			// TODO: stop game
+		}
 	});
 	allClientsSignalConnectionManager.connect (model.playerHasWon, [&] (const cPlayer& winner) {
 		addSavedReport (std::make_unique<cSavedReportPlayerWins> (winner), player.getId());
+		if (winner.getId() == player.getId())
+		{
+			auto win = application.show (std::make_shared<cWindowEndGame> (getPlayers()));
+			allClientsSignalConnectionManager.connect (win->closed, [=]() { gameGui->exit(); });
+			// TODO: stop game
+		}
 	});
 	allClientsSignalConnectionManager.connect (model.suddenDeathMode, [&]() {
 		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::SuddenDeath), player.getId());

@@ -33,7 +33,7 @@ cDestroyJob::cDestroyJob (cUnit& unit, cModel& model) :
 }
 
 //------------------------------------------------------------------------------
-void cDestroyJob::postLoad(const cModel& model)
+void cDestroyJob::postLoad (const cModel& model)
 {
 	auto* unit = model.getUnitFromID (unitId);
 
@@ -142,10 +142,21 @@ void cDestroyJob::deleteUnit (cModel& model)
 	{
 		isVehicle = true;
 		auto& vehicle = *static_cast<cVehicle*> (unit);
+		if (vehicle.getOwner())
+		{
+			vehicle.getOwner()->getGameOverStat().lostVehiclesCount++;
+		}
 		if (vehicle.getStaticUnitData().factorAir > 0 && vehicle.getFlightHeight() > 0)
 		{
 			model.deleteUnit (&vehicle);
 			return;
+		}
+	}
+	else
+	{
+		if (unit->getOwner())
+		{
+			unit->getOwner()->getGameOverStat().lostBuildingsCount++;
 		}
 	}
 
