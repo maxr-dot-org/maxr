@@ -1142,6 +1142,10 @@ void cGameGuiController::connectReportSources (cClient& client)
 	clientSignalConnectionManager.connect (mapView->unitAppeared, [&] (const cUnit& unit) {
 		if (unit.getOwner() == nullptr || unit.getOwner()->getId() != getActivePlayer()->getId())
 		{
+			if (const auto* building = dynamic_cast<const cBuilding*>(&unit); building && building->isRubble())
+			{
+				return;
+			}
 			addSavedReport (std::make_unique<cSavedReportDetected> (unit), player.getId());
 		}
 	});
