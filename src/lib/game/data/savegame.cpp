@@ -94,7 +94,7 @@ namespace
 } // namespace
 
 //------------------------------------------------------------------------------
-void cSavegame::save (const cModel& model, int slot, const std::string& saveName)
+void cSavegame::save (const cModel& model, int slot, const std::string& saveName) const
 {
 	nlohmann::json json;
 	writeHeader (json, slot, saveName, model);
@@ -127,7 +127,7 @@ void cSavegame::save (const cModel& model, int slot, const std::string& saveName
 }
 
 //------------------------------------------------------------------------------
-void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
+void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo) const
 {
 	auto json = loadDocument (guiInfo.slot);
 	if (!json)
@@ -145,7 +145,7 @@ void cSavegame::saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo)
 }
 
 //------------------------------------------------------------------------------
-cSaveGameInfo cSavegame::loadSaveInfo (int slot)
+cSaveGameInfo cSavegame::loadSaveInfo (int slot) const
 {
 	cSaveGameInfo info (slot);
 
@@ -203,7 +203,7 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot)
 }
 
 //------------------------------------------------------------------------------
-std::filesystem::path cSavegame::getFileName (int slot)
+/*static*/ std::filesystem::path cSavegame::getFileName (int slot)
 {
 	char numberstr[4];
 	snprintf (numberstr, sizeof (numberstr), "%.3d", slot);
@@ -211,7 +211,7 @@ std::filesystem::path cSavegame::getFileName (int slot)
 }
 
 //------------------------------------------------------------------------------
-void cSavegame::loadModel (cModel& model, int slot)
+void cSavegame::loadModel (cModel& model, int slot) const
 {
 	const auto& json = loadDocument (slot);
 	if (!json)
@@ -257,7 +257,7 @@ void cSavegame::loadModel (cModel& model, int slot)
 }
 
 //------------------------------------------------------------------------------
-void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr)
+void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr) const
 {
 	const auto& json = loadDocument (slot);
 	if (!json)

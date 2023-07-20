@@ -37,13 +37,13 @@ public:
 
 	static std::filesystem::path getFileName (int slot);
 
-	cSaveGameInfo loadSaveInfo (int slot);
+	cSaveGameInfo loadSaveInfo (int slot) const;
 
-	void save (const cModel& model, int slot, const std::string& saveName);
-	void loadModel (cModel& model, int slot);
+	void save (const cModel& model, int slot, const std::string& saveName) const;
+	void loadModel (cModel& model, int slot) const;
 
-	void loadGuiInfo (const cServer* server, int slot, int playerNr = -1);
-	void saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo);
+	void loadGuiInfo (const cServer* server, int slot, int playerNr = -1) const;
+	void saveGuiInfo (const cNetMessageGUISaveInfo& guiInfo) const;
 };
 
 void fillSaveGames (std::size_t minIndex, std::size_t maxIndex, std::vector<cSaveGameInfo>&);

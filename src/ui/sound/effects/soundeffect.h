@@ -60,7 +60,7 @@ public:
 
 	bool isInConflict (const cSoundEffect& other) const;
 
-	bool hasConflictAtSameGameTimeOnly();
+	bool hasConflictAtSameGameTimeOnly() const;
 
 	unsigned int getMaxConcurrentConflictedCount() const;
 

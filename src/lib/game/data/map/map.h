@@ -174,10 +174,10 @@ public:
 
 	cGraphicStaticMap& getGraphic() const { return graphic; }
 
-	uint32_t getChecksum (uint32_t crc);
+	uint32_t getChecksum (uint32_t crc) const;
 
 	template <typename Archive>
-	void save (Archive& archive)
+	void save (Archive& archive) const
 	{
 		archive << NVP (filename);
 		archive << NVP (crc);
@@ -276,7 +276,7 @@ public:
 	uint32_t getChecksum (uint32_t crc) const;
 
 	template <typename Archive>
-	void save (Archive& archive)
+	void save (Archive& archive) const
 	{
 		archive << serialization::makeNvp ("mapFile", *staticMap);
 		const std::string resources = resourcesToString();

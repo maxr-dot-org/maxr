@@ -43,7 +43,7 @@ protected:
 	void select();
 	void deselect();
 
-	bool isSelected();
+	bool isSelected() const;
 
 private:
 	bool selected;

@@ -44,7 +44,7 @@ void cAbstractListViewItem::deselect()
 }
 
 //------------------------------------------------------------------------------
-bool cAbstractListViewItem::isSelected()
+bool cAbstractListViewItem::isSelected() const
 {
 	return selected;
 }

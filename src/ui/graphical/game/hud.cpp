@@ -540,7 +540,7 @@ void cHud::stopUnitVideo()
 }
 
 //------------------------------------------------------------------------------
-bool cHud::isUnitVideoPlaying()
+bool cHud::isUnitVideoPlaying() const
 {
 	return unitVideo->isPlaying();
 }

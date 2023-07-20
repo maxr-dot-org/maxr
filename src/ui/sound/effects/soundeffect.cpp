@@ -142,7 +142,7 @@ bool cSoundEffect::isInConflict (const cSoundEffect& other) const
 }
 
 //--------------------------------------------------------------------------
-bool cSoundEffect::hasConflictAtSameGameTimeOnly()
+bool cSoundEffect::hasConflictAtSameGameTimeOnly() const
 {
 	switch (type)
 	{

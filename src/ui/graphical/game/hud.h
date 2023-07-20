@@ -114,7 +114,7 @@ public:
 
 	void startUnitVideo();
 	void stopUnitVideo();
-	bool isUnitVideoPlaying();
+	bool isUnitVideoPlaying() const;
 
 	void resizeToResolution();
 

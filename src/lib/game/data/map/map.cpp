@@ -409,7 +409,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	return true;
 }
 
-uint32_t cStaticMap::getChecksum (uint32_t crc)
+uint32_t cStaticMap::getChecksum (uint32_t crc) const
 {
 	return calcCheckSum (this->crc, crc);
 }

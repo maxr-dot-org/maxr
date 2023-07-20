@@ -268,7 +268,7 @@ public:
 	}
 
 	template <typename Archive>
-	void save (Archive& archive)
+	void save (Archive& archive) const
 	{
 		// clang-format off
 		// See https://github.com/llvm/llvm-project/issues/44312
