@@ -26,9 +26,13 @@
 #include <algorithm>
 #include <cassert>
 
+namespace
+{
+	constexpr std::chrono::milliseconds doubleClickTime{500};
+}
+
 //------------------------------------------------------------------------------
-cMouse::cMouse() :
-	doubleClickTime (500)
+cMouse::cMouse()
 {
 	setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand), true);
 
@@ -67,8 +71,15 @@ void cMouse::handleMouseButtonEvent (const cEventMouseButton& event)
 			buttonPressedState[button] = true;
 
 			const auto currentClickTime = std::chrono::steady_clock::now();
-			auto& lastClickTime = getLastClickTime (button);
-			buttonClickCount[button] = (currentClickTime - lastClickTime) <= doubleClickTime ? getButtonClickCount (button) + 1 : 1;
+			auto& lastClickTime = lastClickTimes[button];
+			if (currentClickTime - lastClickTime <= doubleClickTime)
+			{
+				++buttonClickCount[button];
+			}
+			else
+			{
+				buttonClickCount[button] = 1;
+			}
 			lastClickTime = currentClickTime;
 
 			pressed (*this, button);
@@ -140,7 +151,7 @@ bool cMouse::isButtonPressed (eMouseButtonType button) const
 	auto iter = buttonPressedState.find (button);
 	if (iter == buttonPressedState.end())
 	{
-		return buttonPressedState[button] = false; // initialize as unpressed
+		return false;
 	}
 	else
 		return iter->second;
@@ -152,19 +163,7 @@ unsigned int cMouse::getButtonClickCount (eMouseButtonType button) const
 	auto iter = buttonClickCount.find (button);
 	if (iter == buttonClickCount.end())
 	{
-		return buttonClickCount[button] = 0; // initialize with zero
-	}
-	else
-		return iter->second;
-}
-
-//------------------------------------------------------------------------------
-std::chrono::steady_clock::time_point& cMouse::getLastClickTime (eMouseButtonType button)
-{
-	auto iter = lastClickTime.find (button);
-	if (iter == lastClickTime.end())
-	{
-		return lastClickTime[button]; // use default initialization. Is this really correct?!
+		return 0;
 	}
 	else
 		return iter->second;

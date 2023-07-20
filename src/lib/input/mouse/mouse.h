@@ -142,6 +142,11 @@ public:
 	void hide();
 
 private:
+	void handleMouseMotionEvent (const cEventMouseMotion&);
+	void handleMouseButtonEvent (const cEventMouseButton&);
+	void handleMouseWheelEvent (const cEventMouseWheel&);
+
+private:
 	struct SdlCursorDeleter
 	{
 		void operator() (SDL_Cursor* cursor) const { SDL_FreeCursor (cursor); }
@@ -153,19 +158,11 @@ private:
 	cPosition position;
 	std::unique_ptr<cMouseCursor> cursor;
 
-	mutable std::map<eMouseButtonType, bool> buttonPressedState;
-	mutable std::map<eMouseButtonType, unsigned int> buttonClickCount;
-	mutable std::map<eMouseButtonType, std::chrono::steady_clock::time_point> lastClickTime;
+	std::map<eMouseButtonType, bool> buttonPressedState;
+	std::map<eMouseButtonType, unsigned int> buttonClickCount;
+	std::map<eMouseButtonType, std::chrono::steady_clock::time_point> lastClickTimes;
 
 	SdlCursorPtrType sdlCursor;
-
-	std::chrono::milliseconds doubleClickTime;
-
-	void handleMouseMotionEvent (const cEventMouseMotion&);
-	void handleMouseButtonEvent (const cEventMouseButton&);
-	void handleMouseWheelEvent (const cEventMouseWheel&);
-
-	std::chrono::steady_clock::time_point& getLastClickTime (eMouseButtonType);
 };
 
 #endif // input_mouse_mouseH
