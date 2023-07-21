@@ -159,7 +159,7 @@ void cImage::resampleFile()
 		}
 		if (backgroundIndex > 0)
 		{
-			SDL_SetColorKey (surface, SDL_TRUE, SDL_MapRGBA (surface->format, 255, 0, 255, 0));
+			SDL_SetColorKey (surface, SDL_TRUE, SDL_MapRGB (surface->format, 255, 0, 255));
 		}
 
 		for (int iX = 0; iX < sWidth; iX++)
@@ -844,7 +844,7 @@ void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w)
 	if (SDL_GetColorKey (surface, &key) == 0)
 		SDL_SetColorKey (resizedSurface, SDL_TRUE, key);
 
-	SDL_FillRect (resizedSurface, 0, SDL_MapRGBA (resizedSurface->format, 255, 0, 255, 0));
+	SDL_FillRect (resizedSurface, nullptr, SDL_MapRGB (resizedSurface->format, 255, 0, 255));
 
 	SDL_BlitSurface (surface, &src_rect, resizedSurface, &dst_rect);
 

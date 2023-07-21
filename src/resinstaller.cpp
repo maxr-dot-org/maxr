@@ -294,7 +294,7 @@ int installVehicleGraphics()
 		surface = getImageFromRes ("LRGTAPE", 0);
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 512, 128, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 
 		dst_rect.x = 0;
 		dst_rect.y = 0;
@@ -357,7 +357,7 @@ int installVehicleGraphics()
 		surface = getImageFromRes ("SMLTAPE");
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 256, 64, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 
 		dst_rect.x = 0;
 		dst_rect.y = 0;
@@ -474,7 +474,7 @@ int installVehicleGraphics()
 		{
 			output = SDL_CreateRGBSurface (SDL_SWSURFACE, 256, 64, 32, 0, 0, 0, 0);
 			//SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
-			SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+			SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 
 			SDL_Rect dest = {0, 0, 0, 0};
 			for (int frame = 0; frame < 4; frame++)
@@ -741,7 +741,7 @@ int installVehicleGraphics()
 		surface = getImageFromRes ("LRGTAPE", 0);
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 512, 128, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 
 		dst_rect.x = 0;
 		dst_rect.y = 0;
@@ -1039,7 +1039,7 @@ int installVehicleGraphics()
 		surface = getImageFromRes ("SMLTAPE");
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 256, 64, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 
 		dst_rect.x = 0;
 		dst_rect.y = 0;
@@ -1140,7 +1140,7 @@ int installVehicleGraphics()
 		surface = getImageFromRes ("SCANNER", 8);
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 360, 45, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 
 		resizeSurface (surface, 2, 1, 45, 45);
 		dst_rect.x = 0;
@@ -1413,7 +1413,7 @@ int installBuildingGraphics()
 		surface = getImageFromRes ("CNCT_4W", 0);
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 1024, 64, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 		dst_rect.y = 0;
 		for (int i = 0; i < 1024; i += 64)
 		{
@@ -1508,7 +1508,7 @@ int installBuildingGraphics()
 		surface = getImageFromRes ("S_CNCT4W", 0);
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 1024, 64, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 		dst_rect.y = 0;
 		for (int i = 0; i < 1024; i += 64)
 		{
@@ -1695,7 +1695,7 @@ int installBuildingGraphics()
 		removePlayerColor (surface);
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 512, 64, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 		dst_rect.y = 0;
 		dst_rect.x = 0;
 		src_rect.x = 16;
@@ -1734,7 +1734,7 @@ int installBuildingGraphics()
 		removePlayerColor (surface);
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 512, 64, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 		dst_rect.y = 0;
 		dst_rect.x = 0;
 		src_rect.x = 16;
@@ -1773,7 +1773,7 @@ int installBuildingGraphics()
 		removePlayerColor (surface);
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 512, 64, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 		dst_rect.y = 0;
 		dst_rect.x = 0;
 		src_rect.x = 15;
@@ -1811,7 +1811,7 @@ int installBuildingGraphics()
 		removePlayerColor (surface);
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 512, 64, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 		dst_rect.y = 0;
 		dst_rect.x = 0;
 		src_rect.x = 13;
@@ -1865,7 +1865,7 @@ int installBuildingGraphics()
 		surface = getImageFromRes ("LANDMINE");
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 64, 64, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 		dst_rect.x = 22;
 		dst_rect.y = 22;
 		SDL_BlitSurface (surface, 0, output, &dst_rect);
@@ -1880,7 +1880,7 @@ int installBuildingGraphics()
 		surface = getImageFromRes ("S_LANDMI");
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 42, 41, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 		dst_rect.x = 22;
 		dst_rect.y = 22;
 		SDL_BlitSurface (surface, 0, output, &dst_rect);
@@ -1959,7 +1959,7 @@ int installBuildingGraphics()
 		removePlayerColor (surface);
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 1024, 64, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 		dst_rect.x = 0;
 		dst_rect.y = 0;
 		SDL_BlitSurface (surface, 0, output, &dst_rect);
@@ -2003,7 +2003,7 @@ int installBuildingGraphics()
 		surface = getImageFromRes ("SEAMINE");
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 42, 41, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 		dst_rect.x = 23;
 		dst_rect.y = 23;
 		SDL_BlitSurface (surface, 0, output, &dst_rect);
@@ -2020,7 +2020,7 @@ int installBuildingGraphics()
 		surface = getImageFromRes ("SEAMINE");
 		output = SDL_CreateRGBSurface (SDL_SWSURFACE, 42, 41, 8, 0, 0, 0, 0);
 		SDL_SetPaletteColors (output->format->palette, surface->format->palette->colors, 0, 256);
-		SDL_FillRect (output, 0, SDL_MapRGBA (output->format, 255, 0, 255, 0));
+		SDL_FillRect (output, nullptr, SDL_MapRGB (output->format, 255, 0, 255));
 		SDL_FreeSurface (surface);
 		savePCX (output, path / "shw.pcx");
 		SDL_FreeSurface (output);
