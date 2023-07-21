@@ -458,7 +458,7 @@ Function CheckOriPath
     Push $R0
     ${NSD_GetText} $ORI_DIRECTORY_FIELD $R0
 
-    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "$(MAX_PATH_NotFound)"
+    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "$(MAX_PATH_Found)"
     StrCpy $ORI_PATH_FOUND "1"
     IfFileExists "$R0\MAX.RES" FOUND 0
     IfFileExists "$R0\MAX\MAX.RES" FOUND 0
