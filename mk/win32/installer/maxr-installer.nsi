@@ -53,8 +53,8 @@ VIAddVersionKey OriginalFilename "maxr.exe"
 !insertmacro MUI_PAGE_LICENSE "license.txt"
 # Components Page
 !insertmacro MUI_PAGE_COMPONENTS
-# Language Page
-Page custom LanguageDialog LanguageDialogLeave
+# Resinstaller Page
+Page custom ResinstallerPage ResinstallerPageLeave
 # Directoy Page
 Page custom DirectoryDialog DirectoryDialogLeave
 # Install files Page
@@ -85,13 +85,15 @@ LangString TITLE_Section_Res_Graphics    ${LANG_ENGLISH} "Unit graphics"
 LangString DESC_Section_Res_Graphics     ${LANG_ENGLISH} "Import unit graphics from original M.A.X. This will replace the M.A.X. Reloaded unit graphics."
 LangString TITLE_Section_Res_Sound       ${LANG_ENGLISH} "Sounds/Maps"
 LangString DESC_Section_Res_Sound        ${LANG_ENGLISH} "Import sounds and maps from original M.A.X. This does NOT overwrite any of the M.A.X. Reloaded files."
-LangString TITLE_LanguageDialog          ${LANG_ENGLISH} "Choose language"
-LangString DESC_LanguageDialog           ${LANG_ENGLISH} "Choose the language you would prefer to play $(^NameDA) in."
+LangString TITLE_ResinstallerDialog      ${LANG_ENGLISH} "Resinstaller options"
+LangString DESC_ResinstallerDialog       ${LANG_ENGLISH} "Select options for data extraction."
 LangString DESC_LanguageDialogLong       ${LANG_ENGLISH} "Setup will change the default language of $(^NameDA). Please select your prefered language from the following list. If your language is not listed there, the language is not supported yet. Feel free to help us translating the game and write the translation yourself. More information at www.maxr.org."
 LangString TITLE_InstallFolder           ${LANG_ENGLISH} "Choose Install Location"
+LangString DESC_InstallFolder            ${LANG_ENGLISH} "M.A.X. Reloaded options"
 LangString MAX_CD_Or_InstallFolder       ${LANG_ENGLISH} "Original M.A.X.-CD or Installation Folder"
 LangString MAX_PATH_Found                ${LANG_ENGLISH} "Original M.A.X. found."
 LangString MAX_PATH_NotFound             ${LANG_ENGLISH} "No original M.A.X found. Please choose the correct path, or disable the Import option in the installation settings. You can import the original resources anytime later by using the resinstaller tool."
+LangString RESINSTALLER_LangChoice       ${LANG_ENGLISH} "Language to extract:"
 
 #French
 LangString TITLE_Section_Main            ${LANG_FRENCH} "Fichiers principaux (requis)"
@@ -108,17 +110,52 @@ LangString TITLE_Section_Res_Graphics    ${LANG_FRENCH} "Graphiques des unités"
 LangString DESC_Section_Res_Graphics     ${LANG_FRENCH} "Importer les graphiques des unités depuis le jeu original M.A.X. Ceci remplace les graphiques de M.A.X. Reloaded."
 LangString TITLE_Section_Res_Sound       ${LANG_FRENCH} "Sons / Cartes"
 LangString DESC_Section_Res_Sound        ${LANG_FRENCH} "Importer les sons et les cartes depuis le jeu original M.A.X. ceci NE remplace AUCUN fichiers de M.A.X. Reloaded."
-LangString TITLE_LanguageDialog          ${LANG_FRENCH} "Choix du langage"
-LangString DESC_LanguageDialog           ${LANG_FRENCH} "Choisissez le language à utiliser dans $(^NameDA)."
+LangString TITLE_ResinstallerDialog      ${LANG_FRENCH} "Options du Resinstaller"
+LangString DESC_ResinstallerDialog       ${LANG_FRENCH} "Choix des options pour l'extraction de données."
 LangString DESC_LanguageDialogLong       ${LANG_FRENCH} "L'installeur va changer la langue par défaut de $(^NameDA). Choisissez votre langue depuis la liste suivante. Si votre langue n'est pas listée, votre langue n'est pas encore supportée. Vous pouvez nous aider à ajouter votre langue au jeu en fournissant les traductions. Plus d'information sur www.maxr.org."
 LangString TITLE_InstallFolder           ${LANG_FRENCH} "Choix du répertoire d'installation"
+LangString DESC_InstallFolder            ${LANG_FRENCH} "Options pour M.A.X. Reloaded"
 LangString MAX_CD_Or_InstallFolder       ${LANG_FRENCH} "CD du jeu original M.A.X. ou son répertoire d'installation"
 LangString MAX_PATH_Found                ${LANG_FRENCH} "Original M.A.X. trouvé."
 LangString MAX_PATH_NotFound             ${LANG_FRENCH} "Original M.A.X NON trouvé. Vérifier le chemin saisi, ou désactiver l'option d'import dans les choix des composants à installer. Vous pouvez importer ces ressources ultérieurement via l'outils 'resinstaller'."
+LangString RESINSTALLER_LangChoice       ${LANG_FRENCH} "Langage à extraire :"
 
+# --- Utility functions
+
+# Function to remove leading BackSlash (which might be considered as escape sequence in shell command)
+!define RemoveLeadingBackSlash '!insertmacro "RemoveLeadingBackSlash_Macro"'
+
+!macro RemoveLeadingBackSlash_Macro return_var s
+    Push "${s}"
+    Call RemoveLeadingBackSlash_Func
+    Pop ${return_var}
+!macroend
+
+Function RemoveLeadingBackSlash_Func
+    Exch $R0 # input string and result
+    Push $R1 # len of $R0
+    Push $R2 # last char of $R0
+
+    StrLen $R1 $R0
+    ${If} $R1 != 0
+        IntOp $R1 $R1 - 1
+        StrCpy $R2 $R0 1 $R1
+
+        ${If} $R2 == "\"
+            StrCpy $R0 $R0 $R1 0
+        ${EndIf}
+    ${EndIf}
+
+    Pop $R2
+    Pop $R1
+    Exch $R0
+FunctionEnd
+
+# ----
 
 Var ORIGINAL_DIR
 Var SELECTED_LANGUAGE
+Var RESINSTALLER_LANG
 
 # --- Main files ---
 Section "$(TITLE_Section_Main)" Section_Main
@@ -175,26 +212,37 @@ Section "" Section_InitialConfig
 SectionEnd
 
 # hidden section for executing resinstaller
-VAR RES_OPTION
 Section "" Section_Resinstaller
-    Push $R0
-    Push $R1
+    Push $R0 # graphic selected
+    Push $R1 # sound selected
+    Push $R2 # resintaller option for extraction
+    Push $R3 # MAX directory
+    Push $R4 # MAXR directory
+    Push $R5 # Language
 
     SectionGetFlags ${Section_Res_Graphics} $R0
     SectionGetFlags ${Section_Res_Sound} $R1
 
-    #build ressource selection
+    #build resource selection
     ${If} $R0 == ${SF_SELECTED}
-        StrCpy $RES_OPTION "6789a"
+        StrCpy $R2 "6789a"
     ${EndIf}
     ${If} $R1 == ${SF_SELECTED}
-        StrCpy $RES_OPTION "012345b$RES_OPTION"
+        StrCpy $R2 "012345b$R2"
     ${EndIf}
 
-    ${If} $RES_OPTION != ""
-        ExecWait "${RESINSTALLER_EXE} $\"$ORIGINAL_DIR$\" $\"$INSTDIR$\" $LANGUAGE_CODE $RES_OPTION"
+    ${If} $R2 != ""
+        ${RemoveLeadingBackSlash} $R3 $ORIGINAL_DIR
+        ${RemoveLeadingBackSlash} $R4 $INSTDIR
+        StrCpy $R5 $RESINSTALLER_LANG
+
+        ExecWait '"${RESINSTALLER_EXE}" "$R3" "$R4" $R5 $R2'
     ${EndIf}
 
+    Pop $R5
+    Pop $R4
+    Pop $R3
+    Pop $R2
     Pop $R1
     Pop $R0
 SectionEnd
@@ -219,7 +267,122 @@ Function .onInit
     IntOp $0 ${SF_SELECTED} | ${SF_RO}
     SectionSetFlags ${Section_Main} $0
 
+    StrCpy $ORIGINAL_DIR ""
+    StrCpy $SELECTED_LANGUAGE "en"
+    StrCpy $RESINSTALLER_LANG "english"
 FunctionEnd
+
+
+# ResinstallerPage
+Var ORI_DIRECTORY_FIELD
+Var ORI_DIRECTORY_BROWSE
+Var ORI_NOT_FOUND_LABEL
+Var ORI_LANGUAGE_DROPLIST
+Var ORI_PATH_FOUND
+
+Function ResinstallerPage
+    Push $R0 # sound option
+    Push $R1 # graphics option
+
+    SectionGetFlags ${Section_Res_Sound} $R0
+    SectionGetFlags ${Section_Res_Graphics} $R1
+
+    ${If} $R0 != ${SF_SELECTED}
+    ${AndIf} $R1 != ${SF_SELECTED}
+        Pop $R1
+        Pop $R0
+        Abort # No resinstaller options choosen
+    ${EndIF}
+    Push $R2 # drop value
+
+    nsDialogs::Create 1018
+    Pop $R2
+
+    !insertmacro MUI_HEADER_TEXT "$(TITLE_ResinstallerDialog)" "$(DESC_ResinstallerDialog)"
+
+    ${NSD_CreateLabel} 0 30 100% 12 "$(MAX_CD_Or_InstallFolder)"
+    Pop $R2
+
+    ${NSD_CreateDirRequest} 0 54 330 12u ""
+    Pop $ORI_DIRECTORY_FIELD
+
+    ${NSD_SetText} $ORI_DIRECTORY_FIELD $ORIGINAL_DIR
+    ${NSD_OnChange} $ORI_DIRECTORY_FIELD OriDirChange
+    System::Call shlwapi::SHAutoComplete($ORI_DIRECTORY_FIELD,i1)
+
+    ${NSD_CreateBrowseButton} 342 51 90 24 "$(^BrowseBtn)"
+    Pop $ORI_DIRECTORY_BROWSE
+    ${NSD_OnClick} $ORI_DIRECTORY_BROWSE OriDirBrowse
+
+    ${NSD_CreateLabel} 5 79 95% 26u ""
+    Pop $ORI_NOT_FOUND_LABEL
+
+    ${NSD_CreateLabel} 0 140 40% 12u "$(RESINSTALLER_LangChoice)"
+    Pop $R2
+
+    ${NSD_CreateDropList} 50% 140 180 12 ""
+    Pop $ORI_LANGUAGE_DROPLIST
+
+    # Add the resinstaller supported languages (text should match input arguments)
+    ${NSD_CB_AddString} $ORI_LANGUAGE_DROPLIST "english"
+    ${NSD_CB_AddString} $ORI_LANGUAGE_DROPLIST "german"
+    ${NSD_CB_AddString} $ORI_LANGUAGE_DROPLIST "french"
+    ${NSD_CB_AddString} $ORI_LANGUAGE_DROPLIST "italian"
+
+    ${NSD_CB_SelectString} $ORI_LANGUAGE_DROPLIST $RESINSTALLER_LANG
+
+    nsDialogs::Show
+
+    Pop $R2
+    Pop $R1
+    Pop $R0
+FunctionEnd
+
+Function ResinstallerPageLeave
+    Push $R0
+    Push $R1
+    SectionGetFlags ${Section_Res_Sound} $R0
+    SectionGetFlags ${Section_Res_Graphics} $R1
+
+    ${If} $R0 == ${SF_SELECTED}
+    ${OrIF} $R1 == ${SF_SELECTED}
+        Call CheckOriPath
+        ${if} $ORI_PATH_FOUND == "0"
+            Abort
+        ${EndIf}
+    ${EndIf}
+
+    ${NSD_GetText} $ORI_LANGUAGE_DROPLIST $RESINSTALLER_LANG
+
+    Pop $R1
+    Pop $R0
+FunctionEnd
+
+Function CheckOriPath
+    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "$(MAX_PATH_Found)"
+    StrCpy $ORI_PATH_FOUND "1"
+    IfFileExists "$ORIGINAL_DIR\MAX.RES" FOUND 0
+    IfFileExists "$ORIGINAL_DIR\MAX\MAX.RES" FOUND 0
+    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "$(MAX_PATH_NotFound)"
+    StrCpy $ORI_PATH_FOUND "0"
+    FOUND:
+
+FunctionEnd
+
+Function OriDirChange
+    ${NSD_GetText} $ORI_DIRECTORY_FIELD $ORIGINAL_DIR
+    Call CheckOriPath
+FunctionEnd
+
+Function OriDirBrowse
+    ${NSD_GetText} $ORI_DIRECTORY_FIELD $R0
+    nsDialogs::SelectFolderDialog "" $R0
+    Pop $R0
+    ${If} $R0 != error
+        ${NSD_SetText} $ORI_DIRECTORY_FIELD "$R0"
+    ${EndIf}
+FunctionEnd
+
 
 # --- Language Page Variables ---
 Var LANGUAGE_DROPLIST
@@ -279,65 +442,22 @@ Function ChangeLanguage
     Pop $R0
 FunctionEnd
 
-Function LanguageDialog
-    Push $R0
-    Push $R1
-
-    # Create the Dialog
-    GetDlgItem $0 $HWNDPARENT 1
-    EnableWindow $0 1
-
-    nsDialogs::Create 1018
-    !insertmacro MUI_HEADER_TEXT "$(TITLE_LanguageDialog)" "$(DESC_LanguageDialog)"
-
-    # Create Dialog-Items
-    ${NSD_CreateLabel} 0 0 100% 36u "$(DESC_LanguageDialogLong)"
-    ${NSD_CreateDropList} 0 78 180 12 ""
-    Pop $LANGUAGE_DROPLIST
-
-    # Add the maxr supported languages
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Catalan (ca)"
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "German (de)"
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "English (en)"
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Spanish (es)"
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "French (fr)"
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Hungarian (hu)"
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Dutch (nl)"
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Russian (ru)"
-    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Slovenian (sl)"
-
-    # by default english is selected
-    ${NSD_CB_SelectString} $LANGUAGE_DROPLIST "English (en)"
-
-    nsDialogs::Show
-
-    Pop $R1
-    Pop $R0
-FunctionEnd
-
-# --- Function to get the selected language ---
-Function LanguageDialogLeave
-    ${NSD_GetText} $LANGUAGE_DROPLIST $SELECTED_LANGUAGE
-FunctionEnd
-
 # --- Directory Page Variables ---
 Var DIRECTORY_FIELD
 Var DIRECTORY_BROWSE
-Var ORI_DIRECTORY_FIELD
-Var ORI_DIRECTORY_BROWSE
-Var ORI_NOT_FOUND_LABEL
 Var REQ_SPACE
 Var AVA_SPACE
-Var ORI_PATH_FOUND
 
 # --- Directory Page Function ---
 Function DirectoryDialog
     Push $R0
     Push $R1
+    Push $R2
 
     # Create the Dialog
     nsDialogs::Create 1018
-    !insertmacro MUI_HEADER_TEXT "$(TITLE_InstallFolder)" "$(^DirBrowseText)" #"Choose the folder in which to install $(^NameDA)."
+    Pop $R2
+    !insertmacro MUI_HEADER_TEXT "$(TITLE_InstallFolder)" "$(DESC_InstallFolder)"
 
     # Calculate Values
     SectionGetFlags ${Section_Res_Sound} $R0
@@ -359,27 +479,11 @@ Function DirectoryDialog
 
     # Create Dialog-Items
     ${NSD_CreateLabel} 0 0 100% 26u "$(^DirText)" #"Setup will install M.A.X. Reloaded in the following folder. To install in a different folder, click Browse and select another folder. Click Install to start the installation"
-
-    # Original Dir Elements
-    ${If} $R0 == ${SF_SELECTED}
-    ${OrIF} $R1 == ${SF_SELECTED}
-        ${NSD_CreateGroupBox} 0 95 100% 100 "$(MAX_CD_Or_InstallFolder)"
-        ${NSD_CreateDirRequest} 15 119 315 12u ""
-        Pop $ORI_DIRECTORY_FIELD
-        ${NSD_OnChange} $ORI_DIRECTORY_FIELD OriDirChange
-        System::Call shlwapi::SHAutoComplete($ORI_DIRECTORY_FIELD,i1)
-
-        ${NSD_CreateBrowseButton} 342 116 90 24 "$(^BrowseBtn)"
-        Pop $ORI_DIRECTORY_BROWSE
-        ${NSD_OnClick} $ORI_DIRECTORY_BROWSE OriDirBrowse
-
-        ${NSD_CreateLabel} 15 144 95% 26u ""
-        Pop $ORI_NOT_FOUND_LABEL
-    ${EndIF}
-
+    Pop $R2
     # Directoy Filed
-    ${NSD_CreateGroupBox} 0 30 100% 57 "$(^DirSubText)" #"Destination Folder"
-    ${NSD_CreateDirRequest} 15 54 315 12u $INSTDIR
+    ${NSD_CreateLabel} 0 40 100% 12 "$(^DirBrowseText)" #"Choose the folder in which to install $(^NameDA)."
+    Pop $R2
+    ${NSD_CreateDirRequest} 0 64 330 12u $INSTDIR
     Pop $DIRECTORY_FIELD
     ${NSD_OnChange} $DIRECTORY_FIELD DirChange
     System::Call shlwapi::SHAutoComplete($DIRECTORY_FIELD,i1)
@@ -387,42 +491,50 @@ Function DirectoryDialog
     Call DirChange
 
     # Browse Button
-    ${NSD_CreateBrowseButton} 342 51 90 24 "$(^BrowseBtn)"
+    ${NSD_CreateBrowseButton} 342 61 90 24 "$(^BrowseBtn)"
     Pop $DIRECTORY_BROWSE
     ${NSD_OnClick} $DIRECTORY_BROWSE DirBrowse
 
     # Space Labels
-    ${NSD_CreateLabel} 0 200 100% 12u $REQ_SPACE
-    ${NSD_CreateLabel} 0 214 100% 12u ""
+    ${NSD_CreateLabel} 0 90 100% 12u $REQ_SPACE
+    Pop $R2
+    ${NSD_CreateLabel} 0 104 100% 12u ""
     Pop $AVA_SPACE
 
     Call UpdateAvaSpace
 
+#    !insertmacro MUI_HEADER_TEXT "$(TITLE_LanguageDialog)" "$(DESC_LanguageDialog)"
+#
+    # Create Dialog-Items
+    ${NSD_CreateLabel} 0 130 100% 36u "$(DESC_LanguageDialogLong)"
+    Pop $R2
+    ${NSD_CreateDropList} 0 190 180 12 ""
+    Pop $LANGUAGE_DROPLIST
+
+    # Add the maxr supported languages
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Catalan (ca)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "German (de)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "English (en)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Spanish (es)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "French (fr)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Hungarian (hu)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Dutch (nl)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Russian (ru)"
+    ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Slovenian (sl)"
+
+    # by default english is selected
+    ${NSD_CB_SelectString} $LANGUAGE_DROPLIST "English (en)"
+
     nsDialogs::Show
 
+    Pop $R2
     Pop $R1
     Pop $R0
 FunctionEnd
 
 # --- Function to get the directory of the original installation or CD from the textfield ---
 Function DirectoryDialogLeave
-    Push $R0
-    Push $R1
-    SectionGetFlags ${Section_Res_Sound} $R0
-    SectionGetFlags ${Section_Res_Graphics} $R1
-
-    ${If} $R0 == ${SF_SELECTED}
-    ${OrIF} $R1 == ${SF_SELECTED}
-        Call CheckOriPath
-        ${if} $ORI_PATH_FOUND == "0"
-            Abort
-        ${EndIf}
-    ${EndIf}
-
-    ${NSD_GetText} $ORI_DIRECTORY_FIELD $ORIGINAL_DIR
-
-    Pop $R1
-    Pop $R0
+    ${NSD_GetText} $LANGUAGE_DROPLIST $SELECTED_LANGUAGE
 FunctionEnd
 
 # --- Function to update available Space ---
@@ -454,21 +566,6 @@ Function UpdateAvaSpace
     ${NSD_SetText} $AVA_SPACE "$(^SpaceAvailable)$0$1"
 FunctionEnd
 
-Function CheckOriPath
-    Push $R0
-    ${NSD_GetText} $ORI_DIRECTORY_FIELD $R0
-
-    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "$(MAX_PATH_Found)"
-    StrCpy $ORI_PATH_FOUND "1"
-    IfFileExists "$R0\MAX.RES" FOUND 0
-    IfFileExists "$R0\MAX\MAX.RES" FOUND 0
-    ${NSD_SetText} $ORI_NOT_FOUND_LABEL "$(MAX_PATH_NotFound)"
-    StrCpy $ORI_PATH_FOUND "0"
-    FOUND:
-
-    Pop $R0
-FunctionEnd
-
 # --- Callback function when directoy has chanded ---
 Function DirChange
     Pop $0 # dir hwnd
@@ -476,10 +573,6 @@ Function DirChange
     System::Call user32::GetWindowText(i$DIRECTORY_FIELD,t.d,i${NSIS_MAX_STRLEN})
 
     Call UpdateAvaSpace
-FunctionEnd
-
-Function OriDirChange
-    Call CheckOriPath
 FunctionEnd
 
 # --- Browse button functions ---
@@ -492,11 +585,3 @@ Function DirBrowse
     ${EndIf}
 FunctionEnd
 
-Function OriDirBrowse
-    ${NSD_GetText} $ORI_DIRECTORY_FIELD $R0
-    nsDialogs::SelectFolderDialog "" $R0
-    Pop $R0
-    ${If} $R0 != error
-        ${NSD_SetText} $ORI_DIRECTORY_FIELD "$R0"
-    ${EndIf}
-FunctionEnd
