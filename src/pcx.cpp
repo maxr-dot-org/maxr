@@ -23,243 +23,211 @@
 
 #include "converter.h"
 
+#include <array>
 #include <SDL.h>
 #include <string>
 
-int savePCX_8bpp (SDL_Surface* surface, const std::filesystem::path& fileName)
+namespace
 {
-	int Z_Index, S_Index; // PCX-Größenangaben
-
-	unsigned char* bild; // Adresse des Bildspeichers (Array)
-	unsigned char Pixel;
-	unsigned char Anzahl;
-	int i, z, s;
-	long Index; // Adresse des Pixels im Bild
-
-	std::filesystem::create_directories (fileName.parent_path());
-	SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
-
-	if (file == nullptr)
+	//--------------------------------------------------------------------------
+	std::array<unsigned char, 128> createPcxHeader (unsigned int weight, unsigned int height)
 	{
-		throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
+		std::array<unsigned char, 128> header{};
+
+		const unsigned int xMax = weight - 1;
+		const unsigned int yMax = height - 1;
+
+		header[0] = 10; // Zsoft
+		header[1] = 5; // Version 5
+		header[2] = 1; // RLC
+		header[3] = 8; // Bits pro Pixel und Ebene
+		header[8] = xMax & 0xFF; // Xmax Low-Byte
+		header[9] = (xMax >> 8) & 0xFF; // Xmax High-Byte
+		header[10] = yMax & 0xFF; // Ymax Low-Byte
+		header[11] = (yMax >> 8) & 0xFF; // Ymax High-Byte
+
+		header[65] = 1; // Anzahl der Ebenen
+		header[66] = weight & 0xFF; // Bytes/Zeile
+		header[67] = (weight >> 8) & 0xFF;
+		header[68] = 1; // Farbe
+
+		return header;
 	}
 
-	//PCX-Header erzeugen
-	unsigned char PCXHeader[128];
-	for (i = 0; i < 128; i++)
+	//--------------------------------------------------------------------------
+	void savePCX_8bpp (const SDL_Surface& surface, const std::filesystem::path& fileName)
 	{
-		PCXHeader[i] = 0;
-	}
+		std::filesystem::create_directories (fileName.parent_path());
+		SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
 
-	S_Index = surface->w - 1;
-	Z_Index = surface->h - 1;
-
-	PCXHeader[0] = 10; // Zsoft
-	PCXHeader[1] = 5; // Version 5
-	PCXHeader[2] = 1; // RLC
-	PCXHeader[3] = 8; // Bits pro Pixel und Ebene
-	PCXHeader[8] = S_Index - 256 * (S_Index / 256); // Xmax Low-Byte
-	PCXHeader[9] = S_Index / 256; // Xmax High-Byte
-	PCXHeader[10] = Z_Index - 256 * (Z_Index / 256); // Ymax Low-Byte
-	PCXHeader[11] = Z_Index / 256; // Ymax High-Byte
-
-	PCXHeader[65] = 1; // Anzahl der Ebenen
-	PCXHeader[66] = S_Index + 1 - 256 * ((S_Index + 1) / 256); // Bytes/Zeile
-	PCXHeader[67] = (S_Index + 1) / 256;
-	PCXHeader[68] = 1; // Farbe
-
-	SDL_RWwrite (file, PCXHeader, 128, 1);
-
-	bild = (unsigned char*) surface->pixels;
-
-	// RLC berechnen
-	for (z = 0; z <= Z_Index; z++)
-	{
-		Index = (long) z * (long) surface->pitch;
-		s = 0;
-		while (s <= S_Index)
+		if (file == nullptr)
 		{
-			Pixel = bild[Index + s]; // erstes Vorkommen der Farbe
-			s++;
-			Anzahl = 1;
-			while ((s <= S_Index) && (Pixel == bild[Index + s]) && (Anzahl < 63))
+			throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
+		}
+
+		// PCX-Größenangaben
+		const int S_Index = surface.w - 1;
+		const int Z_Index = surface.h - 1;
+
+		//PCX-Header erzeugen
+		const auto PCXHeader = createPcxHeader (surface.w, surface.h);
+		SDL_RWwrite (file, PCXHeader.data(), 128, 1);
+
+		// Adresse des Bildspeichers (Array)
+		const unsigned char* bild = static_cast<const unsigned char*> (surface.pixels);
+
+		// RLC berechnen
+		for (int z = 0; z <= Z_Index; z++)
+		{
+			long Index = (long) z * (long) surface.pitch; // Adresse des Pixels im Bild
+			int s = 0;
+			while (s <= S_Index)
 			{
-				Anzahl++;
+				unsigned char Pixel = bild[Index + s]; // erstes Vorkommen der Farbe
 				s++;
-			}
-			// Anzahl>1 oder Farbe>=192, dann RLC durchführen
-			if ((Anzahl > 1) || (Pixel >= 192))
-			{
-				Anzahl = 0xC0 + Anzahl; // RLC-Kennung
-				SDL_RWwrite (file, &Anzahl, 1, 1);
-				SDL_RWwrite (file, &Pixel, 1, 1);
-			}
-			else
-			{
-				SDL_RWwrite (file, &Pixel, 1, 1); // einmaliges Pixel mit Grauwert<192
-			}
-		}
-	}
-
-	//write color table
-	Pixel = 12; //Kennzeichen f. Bild-Ende
-	SDL_RWwrite (file, &Pixel, 1, 1);
-
-	for (i = 0; i < 256; i++)
-	{
-		SDL_Color* colors = surface->format->palette->colors;
-		SDL_RWwrite (file, &colors[i].r, 1, 1);
-		SDL_RWwrite (file, &colors[i].g, 1, 1);
-		SDL_RWwrite (file, &colors[i].b, 1, 1);
-	}
-
-	SDL_RWclose (file);
-	return 1;
-}
-
-int savePCX_32bpp (SDL_Surface* surface, const std::filesystem::path& fileName)
-{
-	int Z_Index, S_Index; // PCX-Größenangaben
-
-	unsigned char* bild; // Adresse des Bildspeichers (Array)
-	unsigned char Pixel;
-	unsigned char Anzahl;
-	int i, j, z, s;
-	long Index; // Adresse des Pixels im Bild
-
-	std::filesystem::create_directories (fileName.parent_path());
-	SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
-
-	if (file == nullptr)
-	{
-		throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
-	}
-
-	//PCX-Header erzeugen
-	unsigned char PCXHeader[128];
-	for (i = 0; i < 128; i++)
-	{
-		PCXHeader[i] = 0;
-	}
-
-	S_Index = surface->w - 1;
-	Z_Index = surface->h - 1;
-
-	PCXHeader[0] = 10; // Zsoft
-	PCXHeader[1] = 5; // Version 5
-	PCXHeader[2] = 1; // RLC
-	PCXHeader[3] = 8; // Bits pro Pixel und Ebene
-	PCXHeader[8] = S_Index - 256 * (S_Index / 256); // Xmax Low-Byte
-	PCXHeader[9] = S_Index / 256; // Xmax High-Byte
-	PCXHeader[10] = Z_Index - 256 * (Z_Index / 256); // Ymax Low-Byte
-	PCXHeader[11] = Z_Index / 256; // Ymax High-Byte
-
-	PCXHeader[65] = 1; // Anzahl der Ebenen
-	PCXHeader[66] = S_Index + 1 - 256 * ((S_Index + 1) / 256); // Bytes/Zeile
-	PCXHeader[67] = (S_Index + 1) / 256;
-	PCXHeader[68] = 1; // Farbe
-
-	SDL_RWwrite (file, PCXHeader, 128, 1);
-
-	//build color table
-	bild = (unsigned char*) malloc (surface->w * surface->h - 1);
-	Uint32* surface_data = (Uint32*) surface->pixels;
-	Uint32 colors[256];
-	for (i = 0; i < 256; i++)
-	{
-		colors[i] = 0;
-	}
-	int NrColors = 0;
-
-	for (Index = 0; Index < surface->h * surface->w - 1; Index++)
-	{
-		Uint32 sourceIndex = (Index / surface->w) * (surface->pitch / 4) + (Index % surface->w);
-		//search color in table
-		for (j = 0; j < NrColors; j++)
-		{
-			if (colors[j] == surface_data[sourceIndex])
-			{
-				bild[Index] = j;
-				break;
+				unsigned char Anzahl = 1;
+				while ((s <= S_Index) && (Pixel == bild[Index + s]) && (Anzahl < 63))
+				{
+					Anzahl++;
+					s++;
+				}
+				// Anzahl>1 oder Farbe>=192, dann RLC durchführen
+				if ((Anzahl > 1) || (Pixel >= 192))
+				{
+					Anzahl = 0xC0 + Anzahl; // RLC-Kennung
+					SDL_RWwrite (file, &Anzahl, 1, 1);
+					SDL_RWwrite (file, &Pixel, 1, 1);
+				}
+				else
+				{
+					SDL_RWwrite (file, &Pixel, 1, 1); // einmaliges Pixel mit Grauwert<192
+				}
 			}
 		}
 
-		//add color, if its not in the table
-		if (j == NrColors)
+		//write color table
+		unsigned char Pixel = 12; //Kennzeichen f. Bild-Ende
+		SDL_RWwrite (file, &Pixel, 1, 1);
+
+		for (int i = 0; i < 256; i++)
 		{
-			if (NrColors > 255)
-			{
-				//to many colors, table full
-				throw InstallException (std::string ("Couldn't convert image to 8 bpp, color table full") + TEXT_FILE_LF);
-			}
-			colors[NrColors] = surface_data[sourceIndex];
-			bild[Index] = NrColors;
-			NrColors++;
+			const SDL_Color* colors = surface.format->palette->colors;
+			SDL_RWwrite (file, &colors[i].r, 1, 1);
+			SDL_RWwrite (file, &colors[i].g, 1, 1);
+			SDL_RWwrite (file, &colors[i].b, 1, 1);
 		}
+
+		SDL_RWclose (file);
 	}
 
-	// RLC berechnen
-	for (z = 0; z <= Z_Index; z++)
+	//--------------------------------------------------------------------------
+	void savePCX_32bpp (const SDL_Surface& surface, const std::filesystem::path& fileName)
 	{
-		Index = (long) z * (long) surface->w;
-		s = 0;
-		while (s <= S_Index)
+		std::filesystem::create_directories (fileName.parent_path());
+		SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
+
+		if (file == nullptr)
 		{
-			Pixel = bild[Index + s]; // erstes Vorkommen der Farbe
-			s++;
-			Anzahl = 1;
-			while ((s <= S_Index) && (Pixel == bild[Index + s]) && (Anzahl < 63))
+			throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
+		}
+
+		//PCX-Header erzeugen
+		const auto PCXHeader = createPcxHeader(surface.w, surface.h);
+
+		// PCX-Größenangaben
+		const int S_Index = surface.w - 1;
+		const int Z_Index = surface.h - 1;
+
+		SDL_RWwrite (file, PCXHeader.data(), 128, 1);
+
+		//build color table
+		std::vector<unsigned char> bild (surface.w * surface.h - 1); // Adresse des Bildspeichers
+		const Uint32* surface_data = static_cast<const Uint32*> (surface.pixels);
+		Uint32 colors[256]{};
+		int NrColors = 0;
+
+		long Index; // Adresse des Pixels im Bild
+		for (Index = 0; Index < surface.h * surface.w - 1; Index++)
+		{
+			Uint32 sourceIndex = (Index / surface.w) * (surface.pitch / 4) + (Index % surface.w);
+			//search color in table
+			const auto j = std::distance (std::begin (colors), std::find (std::begin (colors), std::begin (colors) + NrColors, surface_data[sourceIndex]));
+
+			//add color, if its not in the table
+			if (j == NrColors)
 			{
-				Anzahl++;
+				if (NrColors > 255)
+				{
+					// too many colors, table full
+					throw InstallException (std::string ("Couldn't convert image to 8 bpp, color table full") + TEXT_FILE_LF);
+				}
+				colors[NrColors] = surface_data[sourceIndex];
+				NrColors++;
+			}
+			bild[Index] = j;
+		}
+
+		// RLC berechnen
+		for (int z = 0; z <= Z_Index; z++)
+		{
+			Index = (long) z * (long) surface.w;
+			int s = 0;
+			while (s <= S_Index)
+			{
+				unsigned char Pixel = bild[Index + s]; // erstes Vorkommen der Farbe
 				s++;
-			}
-			// Anzahl>1 oder Farbe>=192, dann RLC durchführen
-			if ((Anzahl > 1) || (Pixel >= 192))
-			{
-				Anzahl = 0xC0 + Anzahl; // RLC-Kennung
-				SDL_RWwrite (file, &Anzahl, 1, 1);
-				SDL_RWwrite (file, &Pixel, 1, 1);
-			}
-			else
-			{
-				SDL_RWwrite (file, &Pixel, 1, 1); // einmaliges Pixel mit Grauwert<192
+				unsigned char Anzahl = 1;
+				while ((s <= S_Index) && (Pixel == bild[Index + s]) && (Anzahl < 63))
+				{
+					Anzahl++;
+					s++;
+				}
+				// Anzahl>1 oder Farbe>=192, dann RLC durchführen
+				if ((Anzahl > 1) || (Pixel >= 192))
+				{
+					Anzahl = 0xC0 + Anzahl; // RLC-Kennung
+					SDL_RWwrite (file, &Anzahl, 1, 1);
+					SDL_RWwrite (file, &Pixel, 1, 1);
+				}
+				else
+				{
+					SDL_RWwrite (file, &Pixel, 1, 1); // einmaliges Pixel mit Grauwert<192
+				}
 			}
 		}
+
+		//write color table
+		unsigned char Pixel = 12; //Kennzeichen f. Bild-Ende
+		SDL_RWwrite (file, &Pixel, 1, 1);
+
+		for (auto color : colors)
+		{
+			const unsigned char r = (color >> 16) & 0xFF;
+			const unsigned char g = (color >> 8) & 0xFF;
+			const unsigned char b = (color >> 0) & 0xFF;
+			SDL_RWwrite (file, &r, 1, 1);
+			SDL_RWwrite (file, &g, 1, 1);
+			SDL_RWwrite (file, &b, 1, 1);
+		}
+
+		SDL_RWclose (file);
 	}
+} // namespace
 
-	//write color table
-	Pixel = 12; //Kennzeichen f. Bild-Ende
-	SDL_RWwrite (file, &Pixel, 1, 1);
-
-	unsigned char temp;
-	for (i = 0; i < 256; i++)
-	{
-		temp = (unsigned char) (colors[i] / 65536);
-		SDL_RWwrite (file, &temp, 1, 1);
-		temp = (unsigned char) (colors[i] / 256);
-		SDL_RWwrite (file, &temp, 1, 1);
-		temp = (unsigned char) colors[i];
-		SDL_RWwrite (file, &temp, 1, 1);
-	}
-
-	SDL_RWclose (file);
-
-	free (bild);
-	return 1;
-}
-
-int savePCX (SDL_Surface* surface, const std::filesystem::path& fileName)
+int savePCX (const SDL_Surface* surface, const std::filesystem::path& fileName)
 {
 	if (!surface)
 		return 0;
 
-	if (surface->format->BitsPerPixel == 8)
+	if (surface->format->BitsPerPixel == 8) // palette color
 	{
-		return savePCX_8bpp (surface, fileName);
+		savePCX_8bpp (*surface, fileName);
+		return 1;
 	}
-	else if (surface->format->BitsPerPixel == 32)
+	else if (surface->format->BitsPerPixel == 32) // rgb
 	{
-		return savePCX_32bpp (surface, fileName);
+		savePCX_32bpp (*surface, fileName);
+		return 1;
 	}
 
 	return 0;
@@ -267,15 +235,8 @@ int savePCX (SDL_Surface* surface, const std::filesystem::path& fileName)
 
 SDL_Surface* loadPCX (const std::filesystem::path& name)
 {
-	Uint8* _ptr;
-	Uint8 byte;
-	Sint32 k = 0, i = 0, z, j;
-	SDL_Surface* sf;
-	Sint16 x, y;
-	SDL_RWops* file;
-
 	//open file
-	file = SDL_RWFromFile (name.string().c_str(), "rb");
+	SDL_RWops* file = SDL_RWFromFile (name.string().c_str(), "rb");
 
 	if (file == nullptr)
 	{
@@ -284,53 +245,52 @@ SDL_Surface* loadPCX (const std::filesystem::path& name)
 
 	//load data
 	SDL_RWseek (file, 8, SEEK_SET);
-	x = SDL_ReadLE16 (file);
-	y = SDL_ReadLE16 (file);
-	x++;
-	y++;
-	sf = SDL_CreateRGBSurface (SDL_SWSURFACE, x, y, 8, 0, 0, 0, 0);
+	const Sint16 width = SDL_ReadLE16 (file) + 1;
+	const Sint16 height = SDL_ReadLE16 (file) + 1;
+
+	SDL_Surface* sf = SDL_CreateRGBSurface (SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0);
 	SDL_SetColorKey (sf, SDL_TRUE, 0xFF00FF);
 
-	_ptr = (Uint8*) sf->pixels;
+	Uint8* _ptr = static_cast<Uint8*> (sf->pixels);
 	SDL_RWseek (file, 128, SEEK_SET);
+
+	Sint32 x = 0, y = 0;
 	do
 	{
+		Uint8 byte;
 		SDL_RWread (file, &byte, 1, 1);
 		if (byte > 191)
 		{
-			z = byte - 192;
-			if (z + k > x)
-				z = x - k;
+			const Sint32 z = std::min<Sint32>(byte - 192, width - x);
 			SDL_RWread (file, &byte, 1, 1);
-			for (j = 0; j < z; j++)
+			for (Sint32 j = 0; j < z; j++)
 			{
-				_ptr[k + i * sf->pitch] = byte;
-				k++;
-				if (k == x) break;
+				_ptr[x + y * sf->pitch] = byte;
+				x++;
+				if (x == width) break;
 			}
 		}
 		else
 		{
-			_ptr[k + i * sf->pitch] = byte;
-			k++;
+			_ptr[x + y * sf->pitch] = byte;
+			x++;
 		}
-		if (k == x)
+		if (x == width)
 		{
-			k = 0;
-			i++;
+			x = 0;
+			y++;
 		}
-	} while (i != y);
+	} while (y != height);
 
 	//load color table
 	SDL_RWseek (file, -768, SEEK_END);
 
 	SDL_Color colors[256];
-	for (i = 0; i < 256; i++)
+	for (auto& color : colors)
 	{
-		SDL_RWread (file, &colors[i].r, 1, 1);
-		;
-		SDL_RWread (file, &colors[i].g, 1, 1);
-		SDL_RWread (file, &colors[i].b, 1, 1);
+		SDL_RWread (file, &color.r, 1, 1);
+		SDL_RWread (file, &color.g, 1, 1);
+		SDL_RWread (file, &color.b, 1, 1);
 	}
 	SDL_SetPaletteColors (sf->format->palette, colors, 0, 256);
 
