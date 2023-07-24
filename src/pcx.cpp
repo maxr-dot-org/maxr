@@ -23,8 +23,9 @@
 
 #include "converter.h"
 
-#include <array>
 #include <SDL.h>
+#include <array>
+#include <fstream>
 #include <string>
 
 namespace
@@ -58,9 +59,9 @@ namespace
 	void savePCX_8bpp (const SDL_Surface& surface, const std::filesystem::path& fileName)
 	{
 		std::filesystem::create_directories (fileName.parent_path());
-		SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
+		std::basic_ofstream<unsigned char> file (fileName, std::ios_base::binary);
 
-		if (file == nullptr)
+		if (!file)
 		{
 			throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
 		}
@@ -71,7 +72,7 @@ namespace
 
 		//PCX-Header erzeugen
 		const auto PCXHeader = createPcxHeader (surface.w, surface.h);
-		SDL_RWwrite (file, PCXHeader.data(), 128, 1);
+		file.write (PCXHeader.data(), 128);
 
 		// Adresse des Bildspeichers (Array)
 		const unsigned char* bild = static_cast<const unsigned char*> (surface.pixels);
@@ -95,50 +96,48 @@ namespace
 				if ((Anzahl > 1) || (Pixel >= 192))
 				{
 					Anzahl = 0xC0 + Anzahl; // RLC-Kennung
-					SDL_RWwrite (file, &Anzahl, 1, 1);
-					SDL_RWwrite (file, &Pixel, 1, 1);
+					file.write (&Anzahl, 1);
+					file.write (&Pixel, 1);
 				}
 				else
 				{
-					SDL_RWwrite (file, &Pixel, 1, 1); // einmaliges Pixel mit Grauwert<192
+					file.write (&Pixel, 1); // einmaliges Pixel mit Grauwert<192
 				}
 			}
 		}
 
 		//write color table
 		unsigned char Pixel = 12; //Kennzeichen f. Bild-Ende
-		SDL_RWwrite (file, &Pixel, 1, 1);
+		file.write (&Pixel, 1);
 
 		for (int i = 0; i < 256; i++)
 		{
 			const SDL_Color* colors = surface.format->palette->colors;
-			SDL_RWwrite (file, &colors[i].r, 1, 1);
-			SDL_RWwrite (file, &colors[i].g, 1, 1);
-			SDL_RWwrite (file, &colors[i].b, 1, 1);
+			file.write (&colors[i].r, 1);
+			file.write (&colors[i].g, 1);
+			file.write (&colors[i].b, 1);
 		}
-
-		SDL_RWclose (file);
 	}
 
 	//--------------------------------------------------------------------------
 	void savePCX_32bpp (const SDL_Surface& surface, const std::filesystem::path& fileName)
 	{
 		std::filesystem::create_directories (fileName.parent_path());
-		SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
+		std::basic_ofstream<unsigned char> file (fileName, std::ios_base::binary);
 
-		if (file == nullptr)
+		if (!file)
 		{
 			throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);
 		}
 
 		//PCX-Header erzeugen
-		const auto PCXHeader = createPcxHeader(surface.w, surface.h);
+		const auto PCXHeader = createPcxHeader (surface.w, surface.h);
 
 		// PCX-Größenangaben
 		const int S_Index = surface.w - 1;
 		const int Z_Index = surface.h - 1;
 
-		SDL_RWwrite (file, PCXHeader.data(), 128, 1);
+		file.write (PCXHeader.data(), 128);
 
 		//build color table
 		std::vector<unsigned char> bild (surface.w * surface.h - 1); // Adresse des Bildspeichers
@@ -186,31 +185,29 @@ namespace
 				if ((Anzahl > 1) || (Pixel >= 192))
 				{
 					Anzahl = 0xC0 + Anzahl; // RLC-Kennung
-					SDL_RWwrite (file, &Anzahl, 1, 1);
-					SDL_RWwrite (file, &Pixel, 1, 1);
+					file.write (&Anzahl, 1);
+					file.write (&Pixel, 1);
 				}
 				else
 				{
-					SDL_RWwrite (file, &Pixel, 1, 1); // einmaliges Pixel mit Grauwert<192
+					file.write (&Pixel, 1); // einmaliges Pixel mit Grauwert<192
 				}
 			}
 		}
 
 		//write color table
 		unsigned char Pixel = 12; //Kennzeichen f. Bild-Ende
-		SDL_RWwrite (file, &Pixel, 1, 1);
+		file.write (&Pixel, 1);
 
 		for (auto color : colors)
 		{
 			const unsigned char r = (color >> 16) & 0xFF;
 			const unsigned char g = (color >> 8) & 0xFF;
 			const unsigned char b = (color >> 0) & 0xFF;
-			SDL_RWwrite (file, &r, 1, 1);
-			SDL_RWwrite (file, &g, 1, 1);
-			SDL_RWwrite (file, &b, 1, 1);
+			file.write (&r, 1);
+			file.write (&g, 1);
+			file.write (&b, 1);
 		}
-
-		SDL_RWclose (file);
 	}
 } // namespace
 
@@ -261,7 +258,7 @@ SDL_Surface* loadPCX (const std::filesystem::path& name)
 		SDL_RWread (file, &byte, 1, 1);
 		if (byte > 191)
 		{
-			const Sint32 z = std::min<Sint32>(byte - 192, width - x);
+			const Sint32 z = std::min<Sint32> (byte - 192, width - x);
 			SDL_RWread (file, &byte, 1, 1);
 			for (Sint32 j = 0; j < z; j++)
 			{
