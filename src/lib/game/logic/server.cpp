@@ -302,17 +302,17 @@ void cServer::run()
 					if (player == nullptr)
 					{
 						NetLog.warn (" Server: Connecting player " + connectMessage.player.name + " is not part of the game");
-						connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::NotPartOfTheGame);
+						connectionManager->declineConnection (*connectMessage.socket, eDeclineConnectionReason::NotPartOfTheGame);
 						break;
 					}
 					if (connectionManager->isPlayerConnected (player->getId()))
 					{
 						NetLog.warn (" Server: Connecting player " + connectMessage.player.name + " is already connected");
-						connectionManager->declineConnection (connectMessage.socket, eDeclineConnectionReason::AlreadyConnected);
+						connectionManager->declineConnection (*connectMessage.socket, eDeclineConnectionReason::AlreadyConnected);
 						break;
 					}
 
-					connectionManager->acceptConnection (connectMessage.socket, player->getId());
+					connectionManager->acceptConnection (*connectMessage.socket, player->getId());
 
 					sendMessageToClients (cNetMessageGameAlreadyRunning (model), player->getId());
 					break;

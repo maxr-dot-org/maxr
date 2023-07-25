@@ -29,9 +29,10 @@
 #include <mutex>
 #include <string>
 
-#define HANDSHAKE_TIMEOUT_MS 3000
-#define DISABLE_TIMEOUTS 0 // this can be used, when debugging the connection handshake
-                           // and timeouts are not wanted
+// this can be used, when debugging the connection handshake and timeouts are not wanted
+#define DISABLE_TIMEOUTS 0
+
+constexpr auto HANDSHAKE_TIMEOUT_MS = 3000;
 
 class cHandshakeTimeout
 {
@@ -40,7 +41,7 @@ public:
 		connectionManager (connectionManager),
 		socket (socket)
 	{
-		timer = SDL_AddTimer (HANDSHAKE_TIMEOUT_MS, callback, (void*) this);
+		timer = SDL_AddTimer (HANDSHAKE_TIMEOUT_MS, callback, this);
 	}
 
 	~cHandshakeTimeout()
@@ -107,7 +108,7 @@ bool cConnectionManager::isServerOpen() const
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::acceptConnection (const cSocket* socket, int playerNr)
+void cConnectionManager::acceptConnection (const cSocket& socket, int playerNr)
 {
 	assert (localServer != nullptr);
 
@@ -115,8 +116,8 @@ void cConnectionManager::acceptConnection (const cSocket* socket, int playerNr)
 
 	stopTimeout (socket);
 
-	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.first == socket; });
-	if (x == clientSockets.end())
+	auto it = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& p) { return p.first == &socket; });
+	if (it == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
 		NetLog.warn ("ConnectionManager: accept called for unknown socket");
@@ -128,7 +129,7 @@ void cConnectionManager::acceptConnection (const cSocket* socket, int playerNr)
 	NetLog.debug ("ConnectionManager: Accepted connection and assigned playerNr: " + std::to_string (playerNr));
 
 	//assign playerNr to the socket
-	x->second = playerNr;
+	it->second = playerNr;
 
 	cNetMessageTcpConnected message (playerNr);
 
@@ -141,7 +142,7 @@ void cConnectionManager::acceptConnection (const cSocket* socket, int playerNr)
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConnectionReason reason)
+void cConnectionManager::declineConnection (const cSocket& socket, eDeclineConnectionReason reason)
 {
 	assert (localServer != nullptr);
 
@@ -149,8 +150,8 @@ void cConnectionManager::declineConnection (const cSocket* socket, eDeclineConne
 
 	stopTimeout (socket);
 
-	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.first == socket; });
-	if (x == clientSockets.end())
+	auto it = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& p) { return p.first == &socket; });
+	if (it == clientSockets.end())
 	{
 		//looks like the connection was disconnected during the handshake
 		NetLog.warn ("ConnectionManager: decline called for unknown socket");
@@ -208,8 +209,8 @@ void cConnectionManager::changePlayerNumber (int currentNr, int newNr)
 		return;
 	}
 
-	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.second == currentNr; });
-	if (x == clientSockets.end())
+	auto it = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& p) { return p.second == currentNr; });
+	if (it == clientSockets.end())
 	{
 		NetLog.error ("Connection Manager: Can't change playerNr. Unknown player " + std::to_string (currentNr));
 		NetLog.debug ("Connection Manager: Known players are:");
@@ -219,7 +220,7 @@ void cConnectionManager::changePlayerNumber (int currentNr, int newNr)
 		}
 		return;
 	}
-	x->second = newNr;
+	it->second = newNr;
 }
 
 //------------------------------------------------------------------------------
@@ -274,7 +275,7 @@ void cConnectionManager::sendToServer (const cNetMessage& message)
 	}
 	else if (serverSocket)
 	{
-		sendMessage (serverSocket, message);
+		sendMessage (*serverSocket, message);
 	}
 	else
 	{
@@ -290,7 +291,6 @@ void cConnectionManager::sendToPlayer (const cNetMessage& message, int playerNr)
 	if (playerNr == localPlayer)
 	{
 		localClient->pushMessage (message.clone());
-		return;
 	}
 	else if (static_cast<std::size_t> (playerNr) < localClients.size())
 	{
@@ -298,14 +298,14 @@ void cConnectionManager::sendToPlayer (const cNetMessage& message, int playerNr)
 	}
 	else
 	{
-		auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.second == playerNr; });
-		if (x == clientSockets.end())
+		auto it = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& p) { return p.second == playerNr; });
+		if (it == clientSockets.end())
 		{
 			NetLog.error ("Connection Manager: Can't send message. No connection to player " + std::to_string (playerNr));
 			return;
 		}
 
-		sendMessage (x->first, message);
+		sendMessage (*it->first, message);
 	}
 }
 
@@ -330,7 +330,7 @@ void cConnectionManager::sendToPlayers (const cNetMessage& message)
 
 	for (const auto& client : clientSockets)
 	{
-		network->sendMessage (client.first, buffer.size(), buffer.data());
+		network->sendMessage (*client.first, buffer.size(), buffer.data());
 	}
 }
 
@@ -339,14 +339,14 @@ void cConnectionManager::disconnect (int player)
 {
 	std::unique_lock<std::recursive_mutex> tl (mutex);
 
-	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.second == player; });
-	if (x == clientSockets.end())
+	auto it = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& p) { return p.second == player; });
+	if (it == clientSockets.end())
 	{
 		NetLog.error ("ConnectionManager: Can't disconnect player. No connection to player " + std::to_string (player));
 		return;
 	}
 
-	network->close (x->first);
+	network->close (*it->first);
 }
 
 //------------------------------------------------------------------------------
@@ -356,22 +356,22 @@ void cConnectionManager::disconnectAll()
 
 	if (serverSocket)
 	{
-		network->close (serverSocket);
+		network->close (*serverSocket);
 	}
 
 	while (clientSockets.size() > 0)
 	{
 		//erease in loop
-		network->close (clientSockets[0].first);
+		network->close (*clientSockets[0].first);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::connectionClosed (const cSocket* socket)
+void cConnectionManager::connectionClosed (const cSocket& socket)
 {
 	stopTimeout (socket);
 
-	if (socket == serverSocket)
+	if (&socket == serverSocket)
 	{
 		if (localClient)
 		{
@@ -381,29 +381,29 @@ void cConnectionManager::connectionClosed (const cSocket* socket)
 	}
 	else
 	{
-		auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.first == socket; });
-		if (x == clientSockets.end())
+		auto it = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& p) { return p.first == &socket; });
+		if (it == clientSockets.end())
 		{
 			NetLog.error ("ConnectionManager: An unknown connection was closed");
 			return;
 		}
 
-		int playerNr = x->second;
+		int playerNr = it->second;
 		if (playerNr != -1 && localServer) //is a player associated with the socket?
 		{
 			localServer->pushMessage (std::make_unique<cNetMessageTcpClose> (playerNr));
 		}
 
-		clientSockets.erase (x);
+		clientSockets.erase (it);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::incomingConnection (const cSocket* socket)
+void cConnectionManager::incomingConnection (const cSocket& socket)
 {
 	startTimeout (socket);
 
-	clientSockets.emplace_back (socket, -1);
+	clientSockets.emplace_back (&socket, -1);
 
 	cNetMessageTcpHello message;
 
@@ -416,7 +416,7 @@ void cConnectionManager::incomingConnection (const cSocket* socket)
 }
 
 //------------------------------------------------------------------------------
-int cConnectionManager::sendMessage (const cSocket* socket, const cNetMessage& message)
+int cConnectionManager::sendMessage (const cSocket& socket, const cNetMessage& message)
 {
 	// serialize...
 	std::vector<unsigned char> buffer;
@@ -427,7 +427,7 @@ int cConnectionManager::sendMessage (const cSocket* socket, const cNetMessage& m
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::messageReceived (const cSocket* socket, unsigned char* data, int length)
+void cConnectionManager::messageReceived (const cSocket& socket, unsigned char* data, int length)
 {
 	std::unique_ptr<cNetMessage> message;
 	try
@@ -442,10 +442,10 @@ void cConnectionManager::messageReceived (const cSocket* socket, unsigned char* 
 
 	//compare the sender playerNr of the message with the playerNr that is expected behind the socket
 	int playerOnSocket = -1;
-	auto x = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& x) { return x.first == socket; });
-	if (x != clientSockets.end())
+	auto it = ranges::find_if (clientSockets, [&] (const std::pair<const cSocket*, int>& p) { return p.first == &socket; });
+	if (it != clientSockets.end())
 	{
-		playerOnSocket = x->second;
+		playerOnSocket = it->second;
 		if (message->playerNr != playerOnSocket)
 		{
 			NetLog.warn ("ConnectionManager: Discarding message with wrong sender id");
@@ -473,7 +473,7 @@ void cConnectionManager::messageReceived (const cSocket* socket, unsigned char* 
 	}
 }
 
-bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMessage>& message, const cSocket* socket, int playerOnSocket)
+bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMessage>& message, const cSocket& socket, int playerOnSocket)
 {
 	switch (message->getType())
 	{
@@ -518,7 +518,7 @@ bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMes
 			}
 
 			auto& msgTcpWantConnect = static_cast<cNetMessageTcpWantConnect&> (*message);
-			msgTcpWantConnect.socket = socket;
+			msgTcpWantConnect.socket = &socket;
 
 			//check compatible game version
 			if (msgTcpWantConnect.packageVersion != PACKAGE_VERSION)
@@ -569,7 +569,7 @@ void cConnectionManager::connectionResult (const cSocket* socket)
 	assert (localClient);
 	if (socket != nullptr)
 	{
-		startTimeout (socket);
+		startTimeout (*socket);
 	}
 
 	connecting = false;
@@ -584,20 +584,20 @@ void cConnectionManager::connectionResult (const cSocket* socket)
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::startTimeout (const cSocket* socket)
+void cConnectionManager::startTimeout ([[maybe_unused]] const cSocket& socket)
 {
 #if DISABLE_TIMEOUTS == 0
-	timeouts.push_back (std::make_unique<cHandshakeTimeout> (socket, this));
+	timeouts.push_back (std::make_unique<cHandshakeTimeout> (&socket, this));
 #endif
 }
 
 //------------------------------------------------------------------------------
-void cConnectionManager::stopTimeout (const cSocket* socket)
+void cConnectionManager::stopTimeout (const cSocket& socket)
 {
-	auto t = ranges::find_if (timeouts, [&] (const auto& timer) { return timer->getSocket() == socket; });
-	if (t != timeouts.end())
+	auto it = ranges::find_if (timeouts, [&] (const auto& timer) { return timer->getSocket() == &socket; });
+	if (it != timeouts.end())
 	{
-		timeouts.erase (t);
+		timeouts.erase (it);
 	}
 }
 
@@ -611,7 +611,7 @@ void cConnectionManager::handshakeTimeoutCallback (cHandshakeTimeout& timer)
 	auto it = ranges::find_if (timeouts, [&] (const auto& timeout) { return timeout.get() == &timer; });
 	if (it != timeouts.end())
 	{
-		network->close (timer.getSocket());
+		network->close (*timer.getSocket());
 		timeouts.erase (it);
 	}
 }

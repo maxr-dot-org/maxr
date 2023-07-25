@@ -59,8 +59,8 @@ public:
 	void closeServer();
 	bool isServerOpen() const;
 
-	void acceptConnection (const cSocket*, int playerNr);
-	void declineConnection (const cSocket*, eDeclineConnectionReason);
+	void acceptConnection (const cSocket&, int playerNr);
+	void declineConnection (const cSocket&, eDeclineConnectionReason);
 	void connectToServer (const sNetworkAddress&);
 	bool isConnectedToServer() const;
 	void changePlayerNumber (int currentNr, int newNr);
@@ -78,19 +78,19 @@ public:
 	void disconnectAll();
 
 	//callbacks from network thread
-	void connectionClosed (const cSocket*);
-	void incomingConnection (const cSocket*);
-	void messageReceived (const cSocket*, unsigned char* data, int length);
+	void connectionClosed (const cSocket&);
+	void incomingConnection (const cSocket&);
+	void messageReceived (const cSocket&, unsigned char* data, int length);
 	void connectionResult (const cSocket*);
 
 	//callback from timeout timer
 	void handshakeTimeoutCallback (cHandshakeTimeout&);
 
 private:
-	void startTimeout (const cSocket*);
-	void stopTimeout (const cSocket*);
-	int sendMessage (const cSocket*, const cNetMessage&);
-	bool handeConnectionHandshake (const std::unique_ptr<cNetMessage>&, const cSocket*, int playerOnSocket);
+	void startTimeout (const cSocket&);
+	void stopTimeout (const cSocket&);
+	int sendMessage (const cSocket&, const cNetMessage&);
+	bool handeConnectionHandshake (const std::unique_ptr<cNetMessage>&, const cSocket&, int playerOnSocket);
 
 private:
 	std::unique_ptr<cNetwork> network;

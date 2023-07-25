@@ -24,8 +24,11 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 
-#define START_WORD 0x4D415852
-#define HEADER_LENGTH 8
+namespace
+{
+	constexpr auto START_WORD = 0x4D415852;
+	constexpr auto HEADER_LENGTH = 8;
+}
 
 //------------------------------------------------------------------------
 // cSocket implementation
@@ -102,10 +105,9 @@ cNetwork::~cNetwork()
 		SDLNet_TCP_Close (serverSocket);
 	}
 	cleanupClosedSockets();
-	for (auto socket : sockets)
+	for (auto& socket : sockets)
 	{
 		SDLNet_TCP_Close (socket->sdlSocket);
-		delete socket;
 	}
 }
 
@@ -160,11 +162,11 @@ void cNetwork::connectToServer (const sNetworkAddress& address)
 }
 
 //------------------------------------------------------------------------
-void cNetwork::close (const cSocket* socket)
+void cNetwork::close (const cSocket& socket)
 {
 	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
-	if (!Contains (sockets, socket))
+	if (ranges::none_of (sockets, ByGetTo (&socket)))
 	{
 		NetLog.error ("Network: Unable to close socket. Invalid socket");
 		return;
@@ -173,17 +175,16 @@ void cNetwork::close (const cSocket* socket)
 
 	// sdl socket will be cleaned up later by the networkthread. This cannot be done
 	// immediately, because the network thread may be still using the socket in SDLNet_CheckSockets
-	closingSockets.push_back (socket->sdlSocket);
-	Remove (sockets, socket);
-	delete socket;
+	closingSockets.push_back (socket.sdlSocket);
+	EraseIf (sockets, ByGetTo (&socket));
 }
 
 //------------------------------------------------------------------------
-int cNetwork::sendMessage (const cSocket* socket, unsigned int length, const unsigned char* buffer)
+int cNetwork::sendMessage (const cSocket& socket, unsigned int length, const unsigned char* buffer)
 {
 	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
-	if (!Contains (sockets, socket))
+	if (ranges::none_of (sockets, ByGetTo (&socket)))
 	{
 		NetLog.error ("Network: Unable to send message. Invalid socket");
 		return -1;
@@ -201,9 +202,9 @@ int cNetwork::sendMessage (const cSocket* socket, unsigned int length, const uns
 }
 
 //------------------------------------------------------------------------
-int cNetwork::send (const cSocket* socket, const unsigned char* buffer, unsigned int length)
+int cNetwork::send (const cSocket& socket, const unsigned char* buffer, unsigned int length)
 {
-	const unsigned int bytesSent = SDLNet_TCP_Send (socket->sdlSocket, buffer, length);
+	const unsigned int bytesSent = SDLNet_TCP_Send (socket.sdlSocket, buffer, length);
 
 	// delete socket when sending fails
 	if (bytesSent != length)
@@ -239,19 +240,19 @@ void cNetwork::handleNetworkThread()
 			//handle incoming data
 			for (size_t i = 0; i < sockets.size();) // erase in loop
 			{
-				auto socket = sockets[i];
-				if (SDLNet_SocketReady (socket->sdlSocket))
+				auto& socket = *sockets[i];
+				if (SDLNet_SocketReady (socket.sdlSocket))
 				{
-					socket->buffer.reserve (1024);
+					socket.buffer.reserve (1024);
 					int recvlength;
-					recvlength = SDLNet_TCP_Recv (socket->sdlSocket, socket->buffer.getWritePointer(), socket->buffer.getFreeSpace());
+					recvlength = SDLNet_TCP_Recv (socket.sdlSocket, socket.buffer.getWritePointer(), socket.buffer.getFreeSpace());
 					if (recvlength <= 0)
 					{
 						close (socket);
 						continue;
 					}
 
-					socket->buffer.length += recvlength;
+					socket.buffer.length += recvlength;
 
 					pushReadyMessages (socket);
 				}
@@ -283,10 +284,9 @@ void cNetwork::handleNetworkThread()
 					}
 					else
 					{
-						cSocket* socket = new cSocket (sdlSocket);
-						sockets.push_back (socket);
+						sockets.push_back (std::make_unique<cSocket> (sdlSocket));
 						SDLNet_TCP_AddSocket (socketSet, sdlSocket);
-						connectionManager.incomingConnection (socket);
+						connectionManager.incomingConnection (*sockets.back());
 					}
 				}
 			}
@@ -310,10 +310,9 @@ void cNetwork::handleNetworkThread()
 					}
 					else
 					{
-						cSocket* socket = new cSocket (sdlSocket);
-						sockets.push_back (socket);
+						sockets.push_back (std::make_unique<cSocket> (sdlSocket));
 						SDLNet_TCP_AddSocket (socketSet, sdlSocket);
-						connectionManager.connectionResult (socket);
+						connectionManager.connectionResult (sockets.back().get());
 					}
 				}
 				connectTo = std::nullopt;
@@ -324,16 +323,16 @@ void cNetwork::handleNetworkThread()
 }
 
 //------------------------------------------------------------------------
-void cNetwork::pushReadyMessages (cSocket* socket)
+void cNetwork::pushReadyMessages (cSocket& socket)
 {
 	//push all received messages
 	int readPos = 0;
 	for (;;)
 	{
-		if (socket->buffer.length - readPos < HEADER_LENGTH) break;
+		if (socket.buffer.length - readPos < HEADER_LENGTH) break;
 
 		//check message delimiter
-		uint32_t startWord = SDL_SwapLE32 (*reinterpret_cast<uint32_t*> (socket->buffer.data + readPos));
+		uint32_t startWord = SDL_SwapLE32 (*reinterpret_cast<uint32_t*> (socket.buffer.data + readPos));
 		if (startWord != START_WORD)
 		{
 			//something went terribly wrong. We are unable to continue the communication.
@@ -343,7 +342,7 @@ void cNetwork::pushReadyMessages (cSocket* socket)
 		}
 
 		// read message length
-		uint32_t messageLength = SDL_SwapLE32 (*reinterpret_cast<uint32_t*> (socket->buffer.data + readPos + 4));
+		uint32_t messageLength = SDL_SwapLE32 (*reinterpret_cast<uint32_t*> (socket.buffer.data + readPos + 4));
 		if (messageLength > PACKAGE_LENGTH)
 		{
 			NetLog.error ("Network: Length of received message exceeds PACKAGE_LENGTH. Socket closed!");
@@ -352,19 +351,19 @@ void cNetwork::pushReadyMessages (cSocket* socket)
 		}
 
 		//check if there is a complete message in buffer
-		if (socket->buffer.length - readPos - HEADER_LENGTH < messageLength) break;
+		if (socket.buffer.length - readPos - HEADER_LENGTH < messageLength) break;
 
 		//push message
-		connectionManager.messageReceived (socket, socket->buffer.data + readPos + HEADER_LENGTH, messageLength);
+		connectionManager.messageReceived (socket, socket.buffer.data + readPos + HEADER_LENGTH, messageLength);
 
 		//socket died during handling in connectionManager
-		if (ranges::find (sockets, socket) == sockets.end()) return;
+		if (ranges::find_if (sockets, ByGetTo (&socket)) == sockets.end()) return;
 
 		//save position of next message
 		readPos += messageLength + HEADER_LENGTH;
 	}
 
-	socket->buffer.deleteFront (readPos);
+	socket.buffer.deleteFront (readPos);
 }
 
 //------------------------------------------------------------------------

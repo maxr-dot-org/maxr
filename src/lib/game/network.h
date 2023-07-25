@@ -54,7 +54,7 @@ public:
 class cSocket
 {
 public:
-	cSocket (TCPsocket socket);
+	explicit cSocket (TCPsocket socket);
 
 	const TCPsocket sdlSocket;
 	cDataBuffer buffer;
@@ -71,14 +71,14 @@ public:
 	void closeServer();
 	void connectToServer (const sNetworkAddress&);
 
-	void close (const cSocket*);
-	int sendMessage (const cSocket*, unsigned int length, const unsigned char* buffer);
+	void close (const cSocket&);
+	int sendMessage (const cSocket&, unsigned int length, const unsigned char* buffer);
 
 private:
 	void handleNetworkThread();
 
-	void pushReadyMessages (cSocket*);
-	int send (const cSocket*, const unsigned char* buffer, unsigned int length);
+	void pushReadyMessages (cSocket&);
+	int send (const cSocket&, const unsigned char* buffer, unsigned int length);
 
 	void cleanupClosedSockets();
 
@@ -86,7 +86,7 @@ private:
 	std::recursive_mutex& tcpMutex;
 
 	TCPsocket serverSocket;
-	std::vector<cSocket*> sockets;
+	std::vector<std::unique_ptr<cSocket>> sockets;
 	SDLNet_SocketSet socketSet;
 	std::vector<TCPsocket> closingSockets; //list of sockets to be closed. This needs to be done inside the network thread.
 
