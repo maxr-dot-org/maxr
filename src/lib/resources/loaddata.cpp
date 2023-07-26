@@ -173,6 +173,20 @@ static void createShadowGfx()
 }
 
 /**
+* Copy part of surface to create a new one
+*/
+static AutoSurface extractSurface (SDL_Surface& source, const SDL_Rect& rect)
+{
+	auto res = AutoSurface (SDL_CreateRGBSurface (0, rect.w, rect.h, Video.getColDepth(), 0, 0, 0, 0));
+
+	SDL_SetColorKey (res.get(), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (res.get(), nullptr, 0xFF00FF);
+
+	SDL_BlitSurface (&source, &rect, res.get(), nullptr);
+	return res;
+}
+
+/**
  * Loads all Graphics
  * @param path Directory of the graphics
  * @return 1 on success
@@ -208,6 +222,18 @@ static int LoadGraphics (const std::filesystem::path& directory)
 		return 0;
 	}
 	// clang-format on
+
+	GraphicsData.gfx_horizontal_bar_blocked = extractSurface (*GraphicsData.gfx_hud_stuff, {156, 307, 240, 30});
+	GraphicsData.gfx_horizontal_bar_gold = extractSurface (*GraphicsData.gfx_hud_stuff, {156, 400, 240, 30});
+	GraphicsData.gfx_horizontal_bar_metal = extractSurface (*GraphicsData.gfx_hud_stuff, {156, 339, 240, 30});
+	GraphicsData.gfx_horizontal_bar_oil = extractSurface (*GraphicsData.gfx_hud_stuff, {156, 369, 240, 30});
+	GraphicsData.gfx_horizontal_bar_slim_metal = extractSurface (*GraphicsData.gfx_hud_stuff, {156, 256, 223, 16});
+	GraphicsData.gfx_horizontal_bar_slim_oil = extractSurface (*GraphicsData.gfx_hud_stuff, {156, 273, 223, 16});
+	GraphicsData.gfx_horizontal_bar_slim_gold = extractSurface (*GraphicsData.gfx_hud_stuff, {156, 290, 223, 16});
+	GraphicsData.gfx_vertical_bar_slim_metal = extractSurface (*GraphicsData.gfx_hud_stuff, {135, 336, 20, 115});
+	GraphicsData.gfx_vertical_bar_slim_oil = extractSurface (*GraphicsData.gfx_hud_stuff, {400, 348, 20, 115});
+	GraphicsData.gfx_vertical_bar_slim_gold = extractSurface (*GraphicsData.gfx_hud_stuff, {114, 336, 20, 115});
+
 	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil1, directory / "pf_1.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil2, directory / "pf_2.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil3, directory / "pf_3.pcx");

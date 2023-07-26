@@ -28,9 +28,62 @@
 
 #include <cassert>
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	SDL_Surface* getResourceHorizontalBarSurface(eResourceBarType type)
+	{
+		switch (type)
+		{
+			default:
+			case eResourceBarType::Metal:
+				return GraphicsData.gfx_horizontal_bar_metal.get();
+			case eResourceBarType::Oil:
+				return GraphicsData.gfx_horizontal_bar_oil.get();
+			case eResourceBarType::Gold:
+				return GraphicsData.gfx_horizontal_bar_gold.get();
+			case eResourceBarType::Blocked:
+				return GraphicsData.gfx_horizontal_bar_blocked.get();
+			case eResourceBarType::MetalSlim:
+				return GraphicsData.gfx_horizontal_bar_slim_metal.get();
+			case eResourceBarType::OilSlim:
+				return GraphicsData.gfx_horizontal_bar_slim_oil.get();
+			case eResourceBarType::GoldSlim:
+				return GraphicsData.gfx_horizontal_bar_slim_gold.get();
+		}
+	}
+
+	//--------------------------------------------------------------------------
+	SDL_Surface* getResourceVerticalBarSurface (eResourceBarType type)
+	{
+		switch (type)
+		{
+			default:
+			case eResourceBarType::Metal:
+				return GraphicsData.gfx_vertical_bar_slim_metal.get();
+			case eResourceBarType::Oil:
+				return GraphicsData.gfx_vertical_bar_slim_oil.get();
+			case eResourceBarType::Gold:
+				return GraphicsData.gfx_vertical_bar_slim_gold.get();
+		}
+	}
+	//------------------------------------------------------------------------------
+	SDL_Surface* getResourceBarSurface (eOrientationType orientation, eResourceBarType type)
+	{
+		switch (orientation)
+		{
+			default:
+			case eOrientationType::Horizontal: return getResourceHorizontalBarSurface (type);
+			case eOrientationType::Vertical: return getResourceVerticalBarSurface (type);
+		}
+	}
+
+} // namespace
+
 //------------------------------------------------------------------------------
 cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxValue_, eResourceBarType type, eOrientationType orientation_, cSoundChunk* clickSound_) :
 	cClickableWidget (area),
+	surface (getResourceBarSurface(orientation_, type)),
 	clickSound (clickSound_),
 	orientation (orientation_),
 	additionalArea (orientation == eOrientationType::Horizontal ? 8 : 0, orientation == eOrientationType::Vertical ? 8 : 0),
@@ -46,8 +99,6 @@ cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxV
 {
 	assert (minValue <= maxValue);
 	assert (minValue >= 0 && maxValue >= 0);
-
-	createSurface (type);
 
 	resize (getSize() + additionalArea * 2);
 	move (additionalArea * -1);
@@ -77,7 +128,7 @@ void cResourceBar::draw (SDL_Surface& destination, const cBox<cPosition>& clipRe
 			src.x = 0;
 		}
 
-		SDL_BlitSurface (surface.get(), &src, &destination, &dest);
+		SDL_BlitSurface (surface, &src, &destination, &dest);
 	}
 
 	cClickableWidget::draw (destination, clipRect);
@@ -86,7 +137,7 @@ void cResourceBar::draw (SDL_Surface& destination, const cBox<cPosition>& clipRe
 //------------------------------------------------------------------------------
 void cResourceBar::setType (eResourceBarType type)
 {
-	createSurface (type);
+	surface = getResourceBarSurface (orientation, type);
 }
 
 //------------------------------------------------------------------------------
@@ -223,103 +274,4 @@ bool cResourceBar::handleClicked (cApplication& application, cMouse& mouse, eMou
 		return true;
 	}
 	return false;
-}
-
-//------------------------------------------------------------------------------
-void cResourceBar::createSurface (eResourceBarType type)
-{
-	cPosition srcPosition;
-	switch (orientation)
-	{
-		default:
-		case eOrientationType::Horizontal:
-			switch (type)
-			{
-				default:
-				case eResourceBarType::Metal:
-					srcPosition.x() = 156;
-					srcPosition.y() = 339;
-					break;
-				case eResourceBarType::Oil:
-					srcPosition.x() = 156;
-					srcPosition.y() = 369;
-					break;
-				case eResourceBarType::Gold:
-					srcPosition.x() = 156;
-					srcPosition.y() = 400;
-					break;
-				case eResourceBarType::Blocked:
-					srcPosition.x() = 156;
-					srcPosition.y() = 307;
-					break;
-				case eResourceBarType::MetalSlim:
-					srcPosition.x() = 156;
-					srcPosition.y() = 256;
-					break;
-				case eResourceBarType::OilSlim:
-					srcPosition.x() = 156;
-					srcPosition.y() = 273;
-					break;
-				case eResourceBarType::GoldSlim:
-					srcPosition.x() = 156;
-					srcPosition.y() = 290;
-					break;
-			}
-			break;
-		case eOrientationType::Vertical:
-			switch (type)
-			{
-				default:
-				case eResourceBarType::Metal:
-					srcPosition.x() = 135;
-					srcPosition.y() = 336;
-					break;
-				case eResourceBarType::Oil:
-					srcPosition.x() = 400;
-					srcPosition.y() = 348;
-					break;
-				case eResourceBarType::Gold:
-					srcPosition.x() = 114;
-					srcPosition.y() = 336;
-					break;
-			}
-			break;
-	}
-
-	cPosition size;
-	switch (orientation)
-	{
-		default:
-		case eOrientationType::Horizontal:
-			switch (type)
-			{
-				default:
-				case eResourceBarType::Metal:
-				case eResourceBarType::Oil:
-				case eResourceBarType::Gold:
-				case eResourceBarType::Blocked:
-					size.x() = 240;
-					size.y() = 30;
-					break;
-				case eResourceBarType::MetalSlim:
-				case eResourceBarType::OilSlim:
-				case eResourceBarType::GoldSlim:
-					size.x() = 223;
-					size.y() = 16;
-					break;
-			}
-			break;
-		case eOrientationType::Vertical:
-			size.x() = 20;
-			size.y() = 115;
-			break;
-	}
-
-	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
-
-	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
-
-	SDL_Rect src = {srcPosition.x(), srcPosition.y(), size.x(), size.y()};
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, surface.get(), nullptr);
 }

@@ -74,8 +74,8 @@ protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
-	AutoSurface surface;
-	cSoundChunk* clickSound;
+	SDL_Surface* surface = nullptr;
+	cSoundChunk* clickSound = nullptr;
 
 	eOrientationType orientation;
 
@@ -94,8 +94,6 @@ private:
 	bool inverted;
 
 	int stepSize;
-
-	void createSurface (eResourceBarType);
 };
 
 #endif // ui_graphical_menu_widgets_special_resourcebarH

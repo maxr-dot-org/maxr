@@ -84,6 +84,16 @@ public:
 	AutoSurface gfx_Csteal;
 	AutoSurface gfx_Cdisable;
 	AutoSurface gfx_menu_stuff;
+	AutoSurface gfx_horizontal_bar_blocked;
+	AutoSurface gfx_horizontal_bar_gold;
+	AutoSurface gfx_horizontal_bar_metal;
+	AutoSurface gfx_horizontal_bar_oil;
+	AutoSurface gfx_horizontal_bar_slim_gold;
+	AutoSurface gfx_horizontal_bar_slim_metal;
+	AutoSurface gfx_horizontal_bar_slim_oil;
+	AutoSurface gfx_vertical_bar_slim_gold;
+	AutoSurface gfx_vertical_bar_slim_metal;
+	AutoSurface gfx_vertical_bar_slim_oil;
 	AutoSurface gfx_hud_extra_players;
 	AutoSurface gfx_player_pc;
 	AutoSurface gfx_player_human;
