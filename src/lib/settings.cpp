@@ -170,10 +170,10 @@ void cSettings::setPaths()
 	// Logs on linux go somewhere to $HOME/.maxr/
 	// - as long as we can't access that we have to output everything to
 	// the terminal because game's root dir is usually write protected! -- beko
-	std::cout << "\n(II): Read home directory " << homeDir.string();
+	std::cout << "\n(II): Read home directory " << homeDir;
 	// set new place for logs
 	logPath = homeDir / "maxr.log";
-	std::cout << "\n(II): Starting logging to: " << logPath.string() << std::endl;
+	std::cout << "\n(II): Starting logging to: " << logPath << std::endl;
 	std::filesystem::create_directories (netLogDir);
 	netLogPath = netLogDir / os::formattedNow ("%Y-%m-%d-%H%M%S_net.log");
 
