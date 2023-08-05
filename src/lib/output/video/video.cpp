@@ -186,7 +186,7 @@ void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 	}
 }
 
-void cVideo::setColDepth (unsigned iDepth)
+void cVideo::setColDepth (unsigned int iDepth)
 {
 	// TODO: Implement other colourdepths beside 32 & add sanity checks.
 	//       validate new color depth
