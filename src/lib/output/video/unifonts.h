@@ -162,16 +162,6 @@ public:
 private:
 	using FontTypeSurfaces = AutoSurface[0xFFFF];
 
-	/**
-	 * encodes a UTF-8 character to its unicode position
-	 * @author alzi alias DoctorDeath
-	 * @param pch pointer to the character string
-	 * @param increase number which will be changed to the value
-	 *        how much bytes the character has taken in UTF-8
-	 * @return unicode position
-	 */
-	static Uint16 encodeUTF8Char (const char* pch, int& increase);
-
 	int getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) const;
 	/**
 	 * loads all characters of a ISO table and fonttype.

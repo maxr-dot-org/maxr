@@ -28,6 +28,7 @@
 #include "ui/widgets/validators/validator.h"
 #include "ui/widgets/window.h"
 #include "utility/log.h"
+#include "utility/string/utf-8.h"
 
 #include <algorithm>
 #include <cassert>
@@ -272,43 +273,17 @@ void cLineEdit::resetTextPosition()
 //------------------------------------------------------------------------------
 void cLineEdit::doPosIncrease (int& value, int pos)
 {
-	if (pos < (int) text.length())
-	{
-		unsigned char c = text[pos];
-		if ((c & 0xE0) == 0xE0)
-			value += 3;
-		else if ((c & 0xC0) == 0xC0)
-			value += 2;
-		else
-			value += 1;
-	}
-
-	if (value > (int) text.length())
-	{
-		value = (int) text.length();
-		Log.warn ("Invalid UTF-8 string in line edit: '" + text + "'");
-	}
+	std::size_t index = pos;
+	utf8::increasePos (text, index);
+	value += index - pos;
 }
 
 //------------------------------------------------------------------------------
 void cLineEdit::doPosDecrease (int& pos)
 {
-	if (pos > 0)
-	{
-		unsigned char c = text[pos - 1];
-		while ((c & 0xC0) == 0x80)
-		{
-			if (pos <= 1)
-			{
-				Log.warn ("Invalid UTF-8 string in line edit: '" + text + "'");
-				break;
-			}
-
-			pos--;
-			c = text[pos - 1];
-		}
-		pos--;
-	}
+	std::size_t index = pos;
+	utf8::decreasePos (text, index);
+	pos = index;
 }
 
 //------------------------------------------------------------------------------
@@ -354,22 +329,12 @@ void cLineEdit::deleteLeft()
 	// deletes the first character left from the cursor
 	if (cursorPos > 0)
 	{
-		unsigned char c = text[cursorPos - 1];
-		while (((c & 0xE0) != 0xE0) && ((c & 0xC0) != 0xC0) && ((c & 0x80) == 0x80))
-		{
-			if (cursorPos <= 1)
-			{
-				Log.warn ("Invalid UTF-8 string in line edit: '" + text + "'");
-				break;
-			}
-
-			text.erase (cursorPos - 1, 1);
-			cursorPos--;
-			c = text[cursorPos - 1];
-		}
-		text.erase (cursorPos - 1, 1);
-		cursorPos--;
-		endOffset = std::min<int> (text.length(), endOffset);
+		std::size_t index = cursorPos;
+		utf8::decreasePos (text, index);
+		text.erase (index, cursorPos - index);
+		endOffset -= cursorPos - index;
+		doPosIncrease (endOffset, endOffset);
+		cursorPos = index;
 		scrollLeft (false);
 	}
 }
@@ -380,14 +345,11 @@ void cLineEdit::deleteRight()
 	// deletes the first character right from the cursor
 	if (cursorPos < (int) text.length())
 	{
-		unsigned char c = text[cursorPos];
-		if ((c & 0xE0) == 0xE0)
-			text.erase (cursorPos, 3);
-		else if ((c & 0xC0) == 0xC0)
-			text.erase (cursorPos, 2);
-		else
-			text.erase (cursorPos, 1);
-		endOffset = std::min<int> (text.length(), endOffset);
+		std::size_t index = cursorPos;
+		utf8::increasePos (text, index);
+		text.erase (cursorPos, index - cursorPos);
+		endOffset -= index - cursorPos;
+		doPosIncrease(endOffset, endOffset);
 	}
 }
 
@@ -469,7 +431,7 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 
 				cursorPos += insertText.size();
 
-				endOffset = cursorPos;
+				endOffset += insertText.size();
 
 				while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
 					doPosIncrease (startOffset, startOffset);
@@ -499,10 +461,13 @@ void cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboar
 			resetTextPosition();
 		}
 	}
-	if (cursorPos < (int) text.length()) doPosIncrease (cursorPos, cursorPos);
+	if (cursorPos < (int) text.length())
+	{
+		doPosIncrease (endOffset, cursorPos);
+		doPosIncrease (cursorPos, cursorPos);
+	}
 	if (cursorPos >= endOffset)
 	{
-		doPosIncrease (endOffset, endOffset);
 		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
 			doPosIncrease (startOffset, startOffset);
 	}
@@ -510,7 +475,5 @@ void cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboar
 	{
 		if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
 			doPosDecrease (endOffset);
-		else
-			doPosIncrease (endOffset, cursorPos);
 	}
 }

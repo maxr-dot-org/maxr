@@ -27,6 +27,7 @@
 #include "utility/log.h"
 #include "utility/position.h"
 #include "utility/string/trim.h"
+#include "utility/string/utf-8.h"
 
 #include <filesystem>
 
@@ -602,42 +603,41 @@ void cUnicodeFont::showText (int x, int y, const std::string& text, eUnicodeFont
 	}
 
 	// decode the UTF-8 String:
-	const char* p = sText.c_str();
-	const char* now = &p[sText.length()];
-	while (p < now)
-	{
-		// is space?
-		if (*p == ' ')
+	utf8::for_each (sText, [&] (std::uint32_t c) {
+		switch (c)
 		{
-			if (chars['a'].get()) offX += chars['a']->w;
-			p++;
-		} //is new line?
-		else if (*p == '\n')
-		{
-			offY += getFontHeight (fonttype);
-			offX = x;
-			p++;
-		}
-		else if ('\r' == *p)
-		{
-			p++;
-			// ignore - is breakline in file
-		}
-		else
-		{
-			int increase;
-			Uint16 uni = encodeUTF8Char (p, increase);
-			p += increase;
-			if (chars[uni] != nullptr)
+			case ' ': // is space?
 			{
-				SDL_Rect rTmp = {Sint16 (offX), Sint16 (offY), 16, 16};
-				SDL_BlitSurface (chars[uni].get(), nullptr, surface, &rTmp);
+				if (chars['a'].get()) offX += chars['a']->w;
+				break;
+			}
+			case '\n': // is new line?
+			{
+				offY += getFontHeight (fonttype);
+				offX = x;
+				break;
+			}
+			case '\r': // ignore - is breakline in file
+			{
+				break;
+			}
+			default:
+			{
+				if (std::size (chars) <= c)
+				{
+					Log.warn ("No display character to display : '" + utf8::to_utf8 (c) + "'");
+				}
+				else if (chars[c] != nullptr)
+				{
+					SDL_Rect rTmp = {Sint16 (offX), Sint16 (offY), 16, 16};
+					SDL_BlitSurface (chars[c].get(), nullptr, surface, &rTmp);
 
-				// move one px forward for space between signs
-				offX += chars[uni]->w + iSpace;
+					// move one px forward for space between signs
+					offX += chars[c]->w + iSpace;
+				}
 			}
 		}
-	}
+	});
 	if (cSettings::getInstance().isDebug() && surface->w < offX)
 	{
 		Log.warn ("Cannot display entirely: '" + text + "'");
@@ -810,39 +810,35 @@ SDL_Rect cUnicodeFont::getTextSize (const std::string& text, eUnicodeFontType fo
 	}
 
 	// decode the UTF-8 String:
-	const char* p = sText.c_str();
-	const char* now = &p[sText.length()];
-	while (p < now)
-	{
-		// is space?
-		if (*p == ' ')
+	utf8::for_each (sText, [&] (std::uint32_t c) {
+		switch (c)
 		{
-			// we will use the wight of the 'a' for spaces
-			if (chars['a'].get()) rTmp.w += chars['a']->w;
-			p++;
-		} // is new line?
-		else if (*p == '\n')
-		{
-			rTmp.h += getFontHeight (fonttype);
-			p++;
-		}
-		else if ('\r' == *p)
-		{
-			p++;
-			//ignore - is breakline in file
-		}
-		else
-		{
-			int increase;
-			Uint16 uni = encodeUTF8Char (p, increase);
-			p += increase;
-			if (chars[uni] != nullptr)
+			case ' ': // is space?
 			{
-				rTmp.w += chars[uni]->w + iSpace;
-				rTmp.h = chars[uni]->h;
+				// we will use the wight of the 'a' for spaces
+				if (chars['a'].get()) rTmp.w += chars['a']->w;
+				break;
+			}
+			case '\n': // is new line?
+			{
+				rTmp.h += getFontHeight (fonttype);
+				break;
+			}
+			case '\r': //ignore - is breakline in file
+			{
+				break;
+			}
+			default:
+			{
+				if (chars[c] != nullptr)
+				{
+					rTmp.w += chars[c]->w + iSpace;
+					rTmp.h = chars[c]->h;
+				}
+				break;
 			}
 		}
-	}
+	});
 	return rTmp;
 }
 
@@ -889,7 +885,7 @@ std::string cUnicodeFont::shortenStringToSize (const std::string& str, int size,
 		res += ".";
 		if (cSettings::getInstance().isDebug())
 		{
-			Log.warn ("shorten string : '" + str + "' to '"  + res + "'");
+			Log.warn ("shorten string : '" + str + "' to '" + res + "'");
 		}
 #if 1 // Use no-shortened string (especially "Build XN" becoming "Build." in French :-/ )
 		return str;
@@ -898,34 +894,7 @@ std::string cUnicodeFont::shortenStringToSize (const std::string& str, int size,
 	return res;
 }
 
-/*static*/ Uint16 cUnicodeFont::encodeUTF8Char (const char* pch, int& increase)
-{
-	// encode the UTF-8 character to its unicode position
-	Uint16 uni = 0;
-	unsigned char ch = *reinterpret_cast<const unsigned char*> (pch);
-	// we do not need encoding 4 byte long characters
-	// because SDL only returns the BMP of the unicode table
-	if ((ch & 0xE0) == 0xE0)
-	{
-		uni |= (ch & 0x0F) << 12;
-		uni |= (pch[1] & 0x3F) << 6;
-		uni |= pch[2] & 0x3F;
-		increase = 3;
-	}
-	else if ((ch & 0xC0) == 0xC0)
-	{
-		uni |= (ch & 0x1F) << 6;
-		uni |= pch[1] & 0x3F;
-		increase = 2;
-	}
-	else
-	{
-		uni |= (ch & 0x7F);
-		increase = 1;
-	}
-	return uni;
-}
-
+//------------------------------------------------------------------------------
 int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) const
 {
 	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
