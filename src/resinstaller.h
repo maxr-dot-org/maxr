@@ -60,18 +60,18 @@ void trimSpaces (std::string& str, const std::locale& loc = std::locale());
 
 void trimQuotes (std::string& str);
 
-// makes all necessary actions after a successfull
-// or unsuccessfull attempt to install a file
+// makes all necessary actions after a successful
+// or unsuccessful attempt to install a file
 #define END_INSTALL_FILE(file) \
  catch (const InstallException& e) \
  { \
-  writeLog ("Error while installing file '" + std::filesystem::path(file).string() + "'" + TEXT_FILE_LF + e.message); \
+  writeLog ("Error while installing file '" + std::filesystem::path (file).u8string() + "'" + TEXT_FILE_LF + e.message); \
   iErrors++; \
   wasError = true; \
  } \
  catch (const std::exception& e) \
  { \
-  writeLog ("Error while installing file '" + std::filesystem::path (file).string() + "'" + TEXT_FILE_LF + e.what() + TEXT_FILE_LF); \
+  writeLog ("Error while installing file '" + std::filesystem::path (file).u8string() + "'" + TEXT_FILE_LF + e.what() + TEXT_FILE_LF); \
   iErrors++; \
   wasError = true; \
  } \

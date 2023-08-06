@@ -98,7 +98,7 @@ int loadWAV (const std::filesystem::path& src, cWaveFile& waveFile)
 	if (SDL_LoadWAV_RW (file, 0, &waveFile.spec, &waveFile.buffer, &waveFile.length) == nullptr)
 	{
 		SDL_RWclose (file);
-		throw InstallException ("File '" + src.string() + "' may be corrupted" + TEXT_FILE_LF);
+		throw InstallException ("File '" + src.u8string() + "' may be corrupted" + TEXT_FILE_LF);
 	}
 	//load smpl chunk
 	readSmplChunk (file, waveFile);

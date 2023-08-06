@@ -777,20 +777,20 @@ void copyImageFromFLC (const std::filesystem::path& fileName, const std::filesys
 
 		if (file == nullptr)
 		{
-			throw InstallException ("FLC-File '" + fileName.string() + "' not found" + TEXT_FILE_LF);
+			throw InstallException ("FLC-File '" + fileName.u8string() + "' not found" + TEXT_FILE_LF);
 		}
 
 		animation = FLI_Open (file, &error);
 		if (error != 0)
 		{
-			throw InstallException ("FLC-File '" + fileName.string() + "' may be corrupted" + TEXT_FILE_LF);
+			throw InstallException ("FLC-File '" + fileName.u8string() + "' may be corrupted" + TEXT_FILE_LF);
 		}
 
 		error = FLI_NextFrame (animation);
 		if (error != 0)
 		{
 			FLI_Close (animation);
-			throw InstallException ("FLC-File '" + fileName.string() + "' may be corrupted" + TEXT_FILE_LF);
+			throw InstallException ("FLC-File '" + fileName.u8string() + "' may be corrupted" + TEXT_FILE_LF);
 		}
 
 		savePCX (animation->surface, dst);

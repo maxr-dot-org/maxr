@@ -237,7 +237,7 @@ SDL_Surface* loadPCX (const std::filesystem::path& name)
 
 	if (file == nullptr)
 	{
-		throw InstallException (std::string ("Couldn't open file ") + name.string() + TEXT_FILE_LF);
+		throw InstallException (std::string ("Couldn't open file ") + name.u8string() + TEXT_FILE_LF);
 	}
 
 	//load data

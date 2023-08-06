@@ -70,7 +70,7 @@ SDL_RWops* openFile (const std::filesystem::path& path, const char* mode)
 		return file;
 	}
 
-	throw InstallException ("Couldn't open file '" + (dir / fileName).string() + "' or '" + lowerCaseFileName + "'" + TEXT_FILE_LF);
+	throw InstallException ("Couldn't open file '" + (dir / fileName).u8string() + "' or '" + lowerCaseFileName + "'" + TEXT_FILE_LF);
 	return nullptr;
 }
 
@@ -92,7 +92,7 @@ void copyFile (const std::filesystem::path& source, const std::filesystem::path&
 		}
 		else
 		{
-			throw InstallException ("Couldn't copy file '" + source.string() + "' to '" + dest.string() + "'" + TEXT_FILE_LF);
+			throw InstallException ("Couldn't copy file '" + source.u8string() + "' to '" + dest.u8string() + "'" + TEXT_FILE_LF);
 		}
 	}
 	END_INSTALL_FILE (dest);

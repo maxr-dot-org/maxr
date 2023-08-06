@@ -4463,6 +4463,7 @@ int main (int argc, char* argv[])
 			sVoicePath = sMAXPath;
 			writeLog ("Language is not available");
 		}
+		writeLog ("Voice path: " + sVoicePath.u8string() + TEXT_FILE_LF);
 	}
 	// ask the user, which language to install
 	else
