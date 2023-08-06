@@ -50,7 +50,7 @@ namespace
 		nlohmann::json json;
 		if (!(file >> json))
 		{
-			Log.error ("Error loading savegame file: " + fileName.string());
+			Log.error ("Error loading savegame file: " + fileName.u8string());
 			return std::nullopt;
 		}
 		return json;

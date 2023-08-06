@@ -168,7 +168,7 @@ void cWindowLoad::handleSlotDoubleClicked (size_t index)
 	if (cVersion (saveInfo->saveVersion) < cVersion (MINIMUM_REQUIRED_SAVE_VERSION))
 	{
 		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Incompatible", MINIMUM_REQUIRED_MAXR_VERSION)));
-		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName (saveNumber).string() + " is not compatible");
+		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName (saveNumber).u8string() + " is not compatible");
 		return;
 	}
 
@@ -282,7 +282,7 @@ void cWindowLoad::handleLoadClicked()
 	if (cVersion (saveInfo->saveVersion) < cVersion (MINIMUM_REQUIRED_SAVE_VERSION))
 	{
 		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Incompatible", MINIMUM_REQUIRED_MAXR_VERSION)));
-		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName (selectedSaveNumber).string() + " is not compatible");
+		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName (selectedSaveNumber).u8string() + " is not compatible");
 		return;
 	}
 

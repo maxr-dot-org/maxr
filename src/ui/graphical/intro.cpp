@@ -31,14 +31,14 @@ static void showScene (const std::filesystem::path& filename)
 {
 	if (!std::filesystem::exists (filename))
 	{
-		Log.warn ("Couldn't find movie " + filename.string());
+		Log.warn ("Couldn't find movie " + filename.u8string());
 	}
 	// Close maxr sound for movie
 	cSoundDevice::getInstance().close();
 	const int oldCursorStatus = SDL_ShowCursor (SDL_QUERY);
 	SDL_ShowCursor (SDL_DISABLE);
 
-	Log.debug ("Starting movie " + filename.string());
+	Log.debug ("Starting movie " + filename.u8string());
 	const int mvereturn = MVEPlayer (filename.string().c_str(),
 	                                 Video.getResolutionX(),
 	                                 Video.getResolutionY(),

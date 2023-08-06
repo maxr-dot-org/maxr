@@ -50,7 +50,7 @@ namespace
 
 		if (!catalog.Add (file))
 		{
-			Log.error ("Cannot open translation file: " + path.string());
+			Log.error ("Cannot open translation file: " + path.u8string());
 			for (const auto& s : catalog.GetError())
 			{
 				Log.error (s);

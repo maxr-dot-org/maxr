@@ -247,7 +247,7 @@ bool cMapSender::getMapFileContent()
 	}
 	if (!file.is_open())
 	{
-		Log.warn (std::string ("MapSender: could not read the map \"") + filename.string() + "\" into memory.");
+		Log.warn (std::string ("MapSender: could not read the map \"") + filename.u8string() + "\" into memory.");
 		return false;
 	}
 	const std::size_t mapSize = file.tellg();
@@ -255,7 +255,7 @@ bool cMapSender::getMapFileContent()
 	file.seekg (0, std::ios::beg);
 	file.read (sendBuffer.data(), mapSize);
 	file.close();
-	Log.debug (std::string ("MapSender: read the map \"") + filename.string() + "\" into memory.");
+	Log.debug (std::string ("MapSender: read the map \"") + filename.u8string() + "\" into memory.");
 	return true;
 }
 

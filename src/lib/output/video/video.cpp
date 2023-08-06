@@ -362,7 +362,7 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 				screenshotfile = screenshotDir / (timestr + std::to_string (counter) + ".bmp");
 			} while (std::filesystem::exists (screenshotfile));
 			std::filesystem::create_directories (screenshotDir);
-			Log.info ("Screenshot saved to " + screenshotfile.string());
+			Log.info ("Screenshot saved to " + screenshotfile.u8string());
 			takeScreenShot (screenshotfile);
 
 			screenShotTaken (screenshotfile);
