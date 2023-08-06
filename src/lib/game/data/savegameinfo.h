@@ -56,7 +56,7 @@ public:
 
 	// infos from model
 	std::vector<cPlayerBasicData> players;
-	std::string mapName;
+	std::filesystem::path mapFilename;
 	uint32_t mapCrc = 0;
 	uint32_t turn = 0;
 
@@ -74,7 +74,7 @@ public:
 		archive & NVP (type);
 		archive & NVP (date);
 		archive & NVP (players);
-		archive & NVP (mapName);
+		archive & NVP (mapFilename);
 		archive & NVP (mapCrc);
 		archive & NVP (turn);
 		archive & NVP (number);

@@ -68,7 +68,7 @@ std::string cServer::getGameState() const
 	std::stringstream result;
 	result << "GameState: Game is active" << std::endl;
 
-	result << "Map: " << model.getMap()->getName() << std::endl;
+	result << "Map: " << model.getMap()->getFilename().u8string() << std::endl;
 	result << "Turn: " << model.getTurnCounter()->getTurn() << std::endl;
 	const auto turnTimeClockPtr = model.getTurnTimeClock();
 	const auto& turnTimeClock = *turnTimeClockPtr;

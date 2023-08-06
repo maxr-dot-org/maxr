@@ -40,18 +40,18 @@ namespace os
 {
 
 	//--------------------------------------------------------------------------
-	std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& directory)
+	std::vector<std::filesystem::path> getFilesOfDirectory (const std::filesystem::path& directory)
 	{
-		std::vector<std::string> files;
+		std::vector<std::filesystem::path> filenames;
 
 		for (auto it = std::filesystem::directory_iterator{directory}; it != std::filesystem::directory_iterator{}; ++it)
 		{
 			if (!std::filesystem::is_directory (it->path()))
 			{
-				files.push_back (it->path().filename().string());
+				filenames.push_back (it->path().filename());
 			}
 		}
-		return files;
+		return filenames;
 	}
 
 	//--------------------------------------------------------------------------

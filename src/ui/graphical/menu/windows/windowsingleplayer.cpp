@@ -91,8 +91,8 @@ void cWindowSinglePlayer::newGameClicked()
 
 		auto windowMapSelection = application->show (std::make_shared<cWindowMapSelection>());
 
-		windowMapSelection->done.connect ([=] (const std::string& mapName) {
-			game->selectMapName (mapName);
+		windowMapSelection->done.connect ([=] (const std::filesystem::path& mapFilename) {
+			game->selectMapFilename (mapFilename);
 			game->runGamePreparation (*application);
 			windowMapSelection->close();
 			windowGameSettings->close();

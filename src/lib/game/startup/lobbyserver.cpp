@@ -92,7 +92,7 @@ std::string cLobbyServer::getGameState() const
 	else
 		result << "Game has started, players are setting up" << std::endl;
 
-	result << "Map: " << (staticMap != nullptr ? staticMap->getName() : "none") << std::endl;
+	result << "Map: " << (staticMap != nullptr ? staticMap->getFilename() : "none") << std::endl;
 
 	result << "Players:" << std::endl;
 	for (const auto& player : players)
@@ -197,8 +197,8 @@ void cLobbyServer::sendGameData (int playerNr /* = -1 */)
 	message.saveInfo = saveGameInfo;
 	if (staticMap)
 	{
-		message.mapName = staticMap->getName();
-		message.mapCrc = MapDownload::calculateCheckSum (staticMap->getName());
+		message.mapFilename = staticMap->getFilename();
+		message.mapCrc = MapDownload::calculateCheckSum (staticMap->getFilename());
 	}
 	if (gameSettings)
 	{
@@ -214,16 +214,16 @@ void cLobbyServer::selectSaveGameInfo (cSaveGameInfo gameInfo)
 	if (saveGameInfo.number >= 0)
 	{
 		staticMap = std::make_shared<cStaticMap>();
-		if (!staticMap->loadMap (saveGameInfo.mapName))
+		if (!staticMap->loadMap (saveGameInfo.mapFilename))
 		{
 			staticMap = nullptr;
-			//"Map \"" + saveGameInfo_.mapName + "\" not found";
+			//"Map \"" + saveGameInfo_.mapFilename + "\" not found";
 			return;
 		}
-		else if (MapDownload::calculateCheckSum (saveGameInfo.mapName) != saveGameInfo.mapCrc)
+		else if (MapDownload::calculateCheckSum (saveGameInfo.mapFilename) != saveGameInfo.mapCrc)
 		{
 			staticMap = nullptr;
-			//"The map \"" + saveGameInfo_.mapName + "\" does not match the map the game was started with"
+			//"The map \"" + saveGameInfo_.mapFilename + "\" does not match the map the game was started with"
 			return;
 		}
 	}
@@ -408,14 +408,14 @@ void cLobbyServer::changePlayerAttributes (const cMuMsgIdentification& message)
 //------------------------------------------------------------------------------
 void cLobbyServer::changeOptions (const cMuMsgOptions& message)
 {
-	if (message.mapName.empty())
+	if (message.mapFilename.empty())
 	{
 		staticMap.reset();
 	}
 	else
 	{
 		if (!staticMap) { staticMap = std::make_shared<cStaticMap>(); }
-		staticMap->loadMap (message.mapName);
+		staticMap->loadMap (message.mapFilename);
 	}
 	gameSettings = message.settings ? std::make_shared<cGameSettings> (*message.settings) : nullptr;
 	selectSaveGameInfo (message.saveInfo);

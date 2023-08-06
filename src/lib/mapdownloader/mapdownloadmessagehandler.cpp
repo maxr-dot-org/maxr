@@ -72,7 +72,7 @@ bool IMapDownloadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& 
 
 void cMapDownloadMessageHandler::init (const cMuMsgStartMapDownload& message)
 {
-	mapReceiver = std::make_unique<cMapReceiver> (message.mapName, message.mapSize);
+	mapReceiver = std::make_unique<cMapReceiver> (message.mapFilename, message.mapSize);
 	lastPercent = 0;
 	onPercentChanged (lastPercent);
 }
@@ -107,7 +107,7 @@ void cMapDownloadMessageHandler::finished (const cMuMsgFinishedMapDownload&)
 
 	auto staticMap = std::make_shared<cStaticMap>();
 
-	if (!staticMap->loadMap (mapReceiver->getMapName())) staticMap = nullptr;
+	if (!staticMap->loadMap (mapReceiver->getMapFilename())) staticMap = nullptr;
 
 	onDownloaded (staticMap);
 

@@ -22,15 +22,15 @@
 #include "output/video/video.h"
 #include "settings.h"
 
-sMapPreview loadMapPreview (const std::string& mapName)
+sMapPreview loadMapPreview (const std::filesystem::path& mapFilename)
 {
-	auto mapPath = cSettings::getInstance().getMapsPath() / mapName;
+	auto mapPath = cSettings::getInstance().getMapsPath() / mapFilename;
 	// if no factory map of that name exists, try the custom user maps
 
 	SDL_RWops* mapFile = SDL_RWFromFile (mapPath.string().c_str(), "rb");
 	if (mapFile == nullptr && !cSettings::getInstance().getUserMapsDir().empty())
 	{
-		mapPath = cSettings::getInstance().getUserMapsDir() / mapName;
+		mapPath = cSettings::getInstance().getUserMapsDir() / mapFilename;
 		mapFile = SDL_RWFromFile (mapPath.string().c_str(), "rb");
 	}
 

@@ -90,11 +90,11 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 		});
 	});
 
-	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameNoMap, [this] (const std::string& mapName) {
-		application.show (std::make_shared<cDialogOk> ("Map \"" + mapName + "\" not found")); //TODO: translate
+	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameNoMap, [this] (const std::filesystem::path& mapFilename) {
+		application.show (std::make_shared<cDialogOk> ("Map \"" + mapFilename.u8string() + "\" not found")); //TODO: translate
 	});
-	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameInvalidMap, [this] (const std::string& mapName) {
-		application.show (std::make_shared<cDialogOk> ("The map \"" + mapName + "\" does not match the map of the server")); // TODO: translate
+	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameInvalidMap, [this] (const std::filesystem::path& mapFilename) {
+		application.show (std::make_shared<cDialogOk> ("The map \"" + mapFilename.u8string() + "\" does not match the map of the server")); // TODO: translate
 	});
 }
 
@@ -163,8 +163,8 @@ void cMenuControllerMultiplayerClient::handleSelectMap()
 	if (!windowNetworkLobby) return;
 
 	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
-	windowMapSelection->done.connect ([=] (const std::string& mapName) {
-		lobbyClient.selectMapName (mapName);
+	windowMapSelection->done.connect ([=] (const std::filesystem::path& mapFilename) {
+		lobbyClient.selectMapFilename (mapFilename);
 		windowMapSelection->close();
 	});
 }

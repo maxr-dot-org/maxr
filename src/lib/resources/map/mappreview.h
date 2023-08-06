@@ -23,7 +23,7 @@
 #include "SDLutility/autosurface.h"
 #include "utility/position.h"
 
-#include <string>
+#include <filesystem>
 
 struct sMapPreview
 {
@@ -31,6 +31,6 @@ struct sMapPreview
 	cPosition size;
 };
 
-sMapPreview loadMapPreview (const std::string& mapName);
+sMapPreview loadMapPreview (const std::filesystem::path& mapFilename);
 
 #endif

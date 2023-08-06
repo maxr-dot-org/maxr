@@ -32,7 +32,7 @@ namespace os
 	* @param directory Directory in which to search
 	* @return A new list with all filenames
 	*/
-	std::vector<std::string> getFilesOfDirectory (const std::filesystem::path& directory);
+	std::vector<std::filesystem::path> getFilesOfDirectory (const std::filesystem::path& directory);
 	std::vector<std::string> getDirectories (const std::filesystem::path& directory);
 
 	std::filesystem::path getHomeDir();

@@ -317,10 +317,10 @@ void cDedicatedServer::printMaps() const
 std::string cDedicatedServer::getAvailableMapsString() const
 {
 	std::stringstream oss;
-	std::vector<std::string> maps = os::getFilesOfDirectory (cSettings::getInstance().getMapsPath());
+	auto maps = os::getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (cSettings::getInstance().getUserMapsDir().empty() == false)
 	{
-		std::vector<std::string> userMaps = os::getFilesOfDirectory (cSettings::getInstance().getUserMapsDir());
+		const auto userMaps = os::getFilesOfDirectory (cSettings::getInstance().getUserMapsDir());
 		for (const auto& userMap : userMaps)
 		{
 			if (Contains (maps, userMap) == false)
@@ -330,10 +330,9 @@ std::string cDedicatedServer::getAvailableMapsString() const
 	oss << "----- Available maps: ------" << std::endl;
 	for (const auto& mapFilename : maps)
 	{
-		if (mapFilename.compare (mapFilename.length() - 3, 3, "WRL") == 0
-		    || mapFilename.compare (mapFilename.length() - 3, 3, "wrl") == 0)
+		if (mapFilename.extension() == ".WRL" || mapFilename.extension() == ".wrl")
 		{
-			oss << mapFilename << std::endl;
+			oss << mapFilename.u8string() << std::endl;
 		}
 	}
 	return oss.str();

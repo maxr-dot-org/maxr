@@ -34,14 +34,14 @@ namespace MapDownload
 {
 
 	/** @return is this a map that originates from the original M.A.X. ? */
-	bool isMapOriginal (const std::string& mapName, int32_t checksum = 0);
+	bool isMapOriginal (const std::filesystem::path& mapFilename, int32_t checksum = 0);
 
 	/** @return the path to the map (in user or factory maps directory),
  *          or empty string if not found */
-	std::filesystem::path getExistingMapFilePath (const std::string& mapName);
+	std::filesystem::path getExistingMapFilePath (const std::filesystem::path& mapFilename);
 
 	/** @return a 32 bit checksum of the given map */
-	uint32_t calculateCheckSum (const std::string& mapName);
+	uint32_t calculateCheckSum (const std::filesystem::path& mapFilename);
 
 } // namespace MapDownload
 
@@ -49,16 +49,16 @@ namespace MapDownload
 class cMapReceiver
 {
 public:
-	cMapReceiver (const std::string& mapName, int mapSize);
+	cMapReceiver (const std::filesystem::path& mapFilename, int mapSize);
 
 	bool receiveData (const cMuMsgMapDownloadData&);
 	bool finished();
 
-	const std::string& getMapName() const { return mapName; }
+	const std::filesystem::path& getMapFilename() const { return mapFilename; }
 	std::size_t getBytesReceivedPercent() const { return (100 * bytesReceived) / readBuffer.size(); }
 
 private:
-	std::string mapName;
+	std::filesystem::path mapFilename;
 	std::size_t bytesReceived;
 	std::vector<char> readBuffer;
 };
@@ -67,7 +67,7 @@ private:
 class cMapSender
 {
 public:
-	cMapSender (cConnectionManager&, int toPlayerNr, const std::string& mapName);
+	cMapSender (cConnectionManager&, int toPlayerNr, const std::filesystem::path& mapFilename);
 	~cMapSender();
 
 	int getToPlayerNr() const { return toPlayerNr; }
@@ -84,7 +84,7 @@ private:
 private:
 	cConnectionManager& connectionManager;
 	int toPlayerNr;
-	std::string mapName;
+	std::filesystem::path mapFilename;
 	std::size_t bytesSent = 0;
 	std::vector<char> sendBuffer;
 

@@ -365,8 +365,8 @@ void cMuMsgLandingPosition::serialize (cBinaryArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-cMuMsgRequestMap::cMuMsgRequestMap (const std::string& mapName) :
-	mapName (mapName)
+cMuMsgRequestMap::cMuMsgRequestMap (const std::filesystem::path& mapFilename) :
+	mapFilename (mapFilename)
 {}
 
 cMuMsgRequestMap::cMuMsgRequestMap (cBinaryArchiveOut& archive)
@@ -386,8 +386,8 @@ cMuMsgStartMapDownload::cMuMsgStartMapDownload (cBinaryArchiveOut& archive)
 	serializeThis (archive);
 }
 
-cMuMsgStartMapDownload::cMuMsgStartMapDownload (const std::string mapName, int mapSize) :
-	mapName (mapName),
+cMuMsgStartMapDownload::cMuMsgStartMapDownload (const std::filesystem::path& mapFilename, int mapSize) :
+	mapFilename (mapFilename),
 	mapSize (mapSize)
 {}
 

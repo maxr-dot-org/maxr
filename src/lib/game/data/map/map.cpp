@@ -279,12 +279,12 @@ bool cStaticMap::isValid() const
 }
 
 /** Loads a map file */
-bool cStaticMap::loadMap (const std::string& filename_)
+bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 {
 	clear();
 	// Open File
 	filename = filename_;
-	Log.debug ("Loading map \"" + filename_ + "\"");
+	Log.debug ("Loading map \"" + filename_.u8string() + "\"");
 
 	// first try in the factory maps directory
 	auto fullFilename = cSettings::getInstance().getMapsPath() / filename;
@@ -301,7 +301,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	}
 	if (fpMapFile == nullptr)
 	{
-		Log.warn ("Cannot load map file: \"" + filename + "\"");
+		Log.warn ("Cannot load map file: \"" + filename.u8string() + "\"");
 		clear();
 		return false;
 	}
@@ -315,7 +315,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	// DMO - for some reason some original maps have this filetype
 	if (strcmp (szFileTyp, "WRL") != 0 && strcmp (szFileTyp, "WRX") != 0 && strcmp (szFileTyp, "DMO") != 0)
 	{
-		Log.warn ("Wrong file format: \"" + filename + "\"");
+		Log.warn ("Wrong file format: \"" + filename.u8string() + "\"");
 		SDL_RWclose (fpMapFile);
 		clear();
 		return false;
@@ -338,7 +338,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 
 	if (sWidth != sHeight)
 	{
-		Log.warn ("Map must be quadratic!: \"" + filename + "\"");
+		Log.warn ("Map must be quadratic!: \"" + filename.u8string() + "\"");
 		SDL_RWclose (fpMapFile);
 		clear();
 		return false;

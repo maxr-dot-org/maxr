@@ -135,9 +135,9 @@ void cLocalSingleplayerGameNew::setGameSettings (const cGameSettings& gameSettin
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::selectMapName (const std::string& mapName)
+void cLocalSingleplayerGameNew::selectMapFilename (const std::filesystem::path& mapFilename)
 {
-	lobbyClient.selectMapName (mapName);
+	lobbyClient.selectMapFilename (mapFilename);
 	run();
 }
 

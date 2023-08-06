@@ -49,7 +49,7 @@ public:
 	void sendChatMessage (const std::string&);
 
 	void selectGameSettings (const cGameSettings&);
-	void selectMapName (const std::string&);
+	void selectMapFilename (const std::filesystem::path&);
 	const std::vector<cSaveGameInfo>& getSaveGames() const { return saveGames; }
 	void selectLoadGame (const cSaveGameInfo&);
 
@@ -68,7 +68,7 @@ public:
 	void disconnect();
 
 	const cPlayerBasicData& getLocalPlayer() const { return localPlayer; }
-	const std::string& getDownloadingMapName() const { return triedLoadMapName; }
+	const std::filesystem::path& getDownloadingMapFilename() const { return triedLoadMapFilename; }
 	const sLobbyPreparationData& getLobbyPreparationData() const { return lobbyPreparationData; }
 
 	cSignal<void()> onLocalPlayerConnected;
@@ -76,10 +76,10 @@ public:
 	cSignal<void (eDeclineConnectionReason)> onConnectionFailed;
 	cSignal<void()> onConnectionClosed;
 
-	cSignal<void (const std::string&)> onNoMapNoReady;
-	cSignal<void (const std::string& mapName, const std::filesystem::path& localPath)> onIncompatibleMap;
-	cSignal<void (const std::string&)> onMapDownloadRequest;
-	cSignal<void (const std::string&)> onMissingOriginalMap;
+	cSignal<void (const std::filesystem::path&)> onNoMapNoReady;
+	cSignal<void (const std::filesystem::path& mapFilename, const std::filesystem::path& localPath)> onIncompatibleMap;
+	cSignal<void (const std::filesystem::path&)> onMapDownloadRequest;
+	cSignal<void (const std::filesystem::path&)> onMissingOriginalMap;
 	cSignal<void (int)> onDownloadMapPercentChanged;
 	cSignal<void()> onDownloadMapCancelled;
 	cSignal<void (std::shared_ptr<cStaticMap> staticMap)> onDownloadMapFinished;
@@ -104,8 +104,8 @@ public:
 	cSignal<void (std::shared_ptr<cClient>)> onStartSavedGame;
 	cSignal<void (std::shared_ptr<cClient>)> onReconnectGame;
 
-	cSignal<void (const std::string& mapName)> onFailToReconnectGameNoMap;
-	cSignal<void (const std::string& mapName)> onFailToReconnectGameInvalidMap;
+	cSignal<void (const std::filesystem::path& mapFilename)> onFailToReconnectGameNoMap;
+	cSignal<void (const std::filesystem::path& mapFilename)> onFailToReconnectGameInvalidMap;
 
 private:
 	cPlayerBasicData* getPlayer (int playerNr);
@@ -152,8 +152,8 @@ private:
 	cSaveGameInfo saveGameInfo{-1};
 	std::vector<cSaveGameInfo> saveGames;
 
-	std::string triedLoadMapName;
-	std::string lastRequestedMapName;
+	std::filesystem::path triedLoadMapFilename;
+	std::filesystem::path lastRequestedMapFilename;
 
 	std::shared_ptr<cClient> client;
 };

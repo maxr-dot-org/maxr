@@ -82,11 +82,19 @@ namespace utf8
 	}
 
 	//--------------------------------------------------------------------------
-	void append_unicode(::std::string& s, ::std::uint32_t unicode)
+	void pop_back (::std::string& s)
+	{
+		::std::size_t size = s.size();
+		decreasePos (s, size);
+		s.resize (size);
+	}
+
+	//--------------------------------------------------------------------------
+	void append_unicode (::std::string& s, ::std::uint32_t unicode)
 	{
 		if (unicode < 0x80)
 		{
-			s.push_back(unicode & 0x7F);
+			s.push_back (unicode & 0x7F);
 		}
 		else if (unicode < 0x08'00)
 		{
@@ -128,7 +136,7 @@ namespace utf8
 		{
 			if (text.size() <= pos + 3)
 			{
-				Log.warn ("Invalid UTF-8 string in text: '" + text + "' at pos " + ::std::to_string(pos));
+				Log.warn ("Invalid UTF-8 string in text: '" + text + "' at pos " + ::std::to_string (pos));
 				throw ::std::out_of_range ("invalid position for decodeUnicode");
 			}
 			const unsigned char c1 = text[pos + 1] & 0x3F;

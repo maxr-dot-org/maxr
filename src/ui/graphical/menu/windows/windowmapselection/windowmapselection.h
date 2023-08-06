@@ -25,7 +25,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <array>
-#include <string>
+#include <filesystem>
 #include <vector>
 
 class cImage;
@@ -40,7 +40,7 @@ public:
 
 	void retranslate() override;
 
-	cSignal<void (const std::string& mapName)> done;
+	cSignal<void (const std::filesystem::path& mapFilename)> done;
 
 private:
 	void mapClicked (int imageIndex);
@@ -72,7 +72,7 @@ private:
 	cPushButton* okButton = nullptr;
 	cPushButton* backButton = nullptr;
 
-	std::vector<std::string> maps;
+	std::vector<std::filesystem::path> maps;
 	int selectedMapIndex = -1;
 	unsigned int page = 0;
 };

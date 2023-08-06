@@ -82,11 +82,11 @@ void cMapUploadMessageHandler::requested (const cMuMsgRequestMap& message)
 {
 	const auto* map = mapProvider();
 
-	if (map == nullptr || MapDownload::isMapOriginal (map->getName())) return;
+	if (map == nullptr || MapDownload::isMapOriginal (map->getFilename())) return;
 
 	auto& mapSender = mapSenders[message.playerNr];
 
-	mapSender = std::make_unique<cMapSender> (*connectionManager, message.playerNr, map->getName());
+	mapSender = std::make_unique<cMapSender> (*connectionManager, message.playerNr, map->getFilename());
 	mapSender->runInThread();
 
 	onRequested (message.playerNr);

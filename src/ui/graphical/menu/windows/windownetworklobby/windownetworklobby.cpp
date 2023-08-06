@@ -44,7 +44,7 @@
 #include "ui/widgets/lineedit.h"
 #include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
-
+#include "utility/string/utf-8.h"
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),
@@ -200,23 +200,23 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 		enableIpEdit();
 	});
 
-	signalConnectionManager.connect (lobbyClient.onNoMapNoReady, [this] (const std::string& mapName) {
-		addInfoEntry (lngPack.i18n ("Multiplayer~No_Map_No_Ready", mapName));
+	signalConnectionManager.connect (lobbyClient.onNoMapNoReady, [this] (const std::filesystem::path& mapFilename) {
+		addInfoEntry (lngPack.i18n ("Multiplayer~No_Map_No_Ready", mapFilename.u8string()));
 	});
-	signalConnectionManager.connect (lobbyClient.onIncompatibleMap, [this] (const std::string& mapName, const std::filesystem::path& localPath) {
+	signalConnectionManager.connect (lobbyClient.onIncompatibleMap, [this] (const std::filesystem::path& mapFilename, const std::filesystem::path& localPath) {
 		addInfoEntry ("You have an incompatible version of the"); //TODO: translate
-		addInfoEntry (std::string ("map \"") + mapName + "\" at");
+		addInfoEntry (std::string ("map \"") + mapFilename.u8string() + "\" at");
 		addInfoEntry (std::string ("\"") + localPath.u8string() + "\" !");
 		addInfoEntry ("Move it away or delete it, then reconnect.");
 	});
-	signalConnectionManager.connect (lobbyClient.onMapDownloadRequest, [this] (const std::string& mapName) {
+	signalConnectionManager.connect (lobbyClient.onMapDownloadRequest, [this] (const std::filesystem::path& mapFilename) {
 		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_DownloadRequest"));
-		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_Download", mapName));
+		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_Download", mapFilename.u8string()));
 	});
 
-	signalConnectionManager.connect (lobbyClient.onMissingOriginalMap, [this] (const std::string& mapName) {
+	signalConnectionManager.connect (lobbyClient.onMissingOriginalMap, [this] (const std::filesystem::path& mapFilename) {
 		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_DownloadRequestInvalid"));
-		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_DownloadInvalid", mapName));
+		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_DownloadInvalid", mapFilename.u8string()));
 	});
 
 	signalConnectionManager.connect (lobbyClient.onDownloadMapPercentChanged, [this] (std::size_t percent) {
@@ -324,7 +324,7 @@ void cWindowNetworkLobby::updateSettingsText()
 	}
 	if (staticMap != nullptr)
 	{
-		text += lngPack.i18n ("Title~Map", staticMap->getName());
+		text += lngPack.i18n ("Title~Map", staticMap->getFilename().u8string());
 		text += " (" + std::to_string (staticMap->getSize().x()) + "x" + std::to_string (staticMap->getSize().y()) + ")\n";
 	}
 	else if (saveGameInfo.number < 0)
@@ -373,25 +373,27 @@ void cWindowNetworkLobby::updateMap()
 		return;
 	}
 
-	auto preview = loadMapPreview (staticMap->getName());
+	auto preview = loadMapPreview (staticMap->getFilename());
 	if (preview.surface != nullptr)
 	{
 		mapImage->setImage (preview.surface.get());
 	}
 
-	auto mapName = staticMap->getName();
+	auto mapFilename = staticMap->getFilename();
+	mapFilename.replace_extension();
+	auto mapName = mapFilename.u8string();
 	const auto size = staticMap->getSize();
 
-	if (cUnicodeFont::font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
+	if (cUnicodeFont::font->getTextWide (">" + mapName + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 	{
 		while (cUnicodeFont::font->getTextWide (">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 		{
-			mapName.pop_back();
+			utf8::pop_back(mapName);
 		}
-		mapName = mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
+		mapName += "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
 	}
 	else
-		mapName = mapName.substr (0, mapName.length() - 4) + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
+		mapName += " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
 
 	mapNameLabel->setText (mapName);
 }

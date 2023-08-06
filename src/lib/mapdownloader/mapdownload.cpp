@@ -35,9 +35,9 @@
 #include <sstream>
 
 //------------------------------------------------------------------------------
-bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
+bool MapDownload::isMapOriginal (const std::filesystem::path& mapFilename, int32_t checksum)
 {
-	std::string lowerMapName (to_lower_copy (mapName));
+	std::string lowerMapName (to_lower_copy (mapFilename.string()));
 
 	const struct
 	{
@@ -70,7 +70,7 @@ bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 			{"ultima thule.wrl", 1397392934},
 			{"valentine's planet.wrl", 280492815}};
 
-	if (ranges::any_of (maps, [&] (const auto& map) { return lowerMapName.compare (map.filename) == 0; }))
+	if (ranges::any_of (maps, [&] (const auto& map) { return lowerMapName == map.filename; }))
 	{
 		return true;
 	}
@@ -84,14 +84,14 @@ bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 }
 
 //------------------------------------------------------------------------------
-std::filesystem::path MapDownload::getExistingMapFilePath (const std::string& mapName)
+std::filesystem::path MapDownload::getExistingMapFilePath (const std::filesystem::path& mapFilename)
 {
-	auto filenameFactory = cSettings::getInstance().getMapsPath() / mapName;
+	auto filenameFactory = cSettings::getInstance().getMapsPath() / mapFilename;
 	if (std::filesystem::exists (filenameFactory))
 		return filenameFactory;
 	if (!cSettings::getInstance().getUserMapsDir().empty())
 	{
-		auto filenameUser = cSettings::getInstance().getUserMapsDir() / mapName;
+		auto filenameUser = cSettings::getInstance().getUserMapsDir() / mapFilename;
 		if (std::filesystem::exists (filenameUser))
 			return filenameUser;
 	}
@@ -99,15 +99,15 @@ std::filesystem::path MapDownload::getExistingMapFilePath (const std::string& ma
 }
 
 //------------------------------------------------------------------------------
-uint32_t MapDownload::calculateCheckSum (const std::string& mapName)
+uint32_t MapDownload::calculateCheckSum (const std::filesystem::path& mapFilename)
 {
 	uint32_t result = 0;
-	auto filename = cSettings::getInstance().getMapsPath() / mapName;
+	auto filename = cSettings::getInstance().getMapsPath() / mapFilename;
 	std::ifstream file (filename, std::ios::in | std::ios::binary | std::ios::ate);
 	if (!file.is_open() && !cSettings::getInstance().getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
-		filename = cSettings::getInstance().getUserMapsDir() / mapName;
+		filename = cSettings::getInstance().getUserMapsDir() / mapFilename;
 		file.open (filename, std::ios::in | std::ios::binary | std::ios::ate);
 	}
 	if (file.is_open())
@@ -138,8 +138,8 @@ uint32_t MapDownload::calculateCheckSum (const std::string& mapName)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cMapReceiver::cMapReceiver (const std::string& mapName, int mapSize) :
-	mapName (mapName),
+cMapReceiver::cMapReceiver (const std::filesystem::path& mapFilename, int mapSize) :
+	mapFilename (mapFilename),
 	bytesReceived (0),
 	readBuffer (mapSize)
 {
@@ -157,7 +157,7 @@ bool cMapReceiver::receiveData (const cMuMsgMapDownloadData& message)
 
 	bytesReceived += bytesInMsg;
 	std::ostringstream os;
-	os << "MapReceiver: Received Data for map " << mapName << ": "
+	os << "MapReceiver: Received Data for map " << mapFilename << ": "
 	   << bytesReceived << "/" << readBuffer.size();
 	Log.debug (os.str());
 	return true;
@@ -173,7 +173,7 @@ bool cMapReceiver::finished()
 	std::filesystem::path mapsFolder = cSettings::getInstance().getUserMapsDir();
 	if (mapsFolder.empty())
 		mapsFolder = cSettings::getInstance().getMapsPath();
-	const auto filename = mapsFolder / mapName;
+	const auto filename = mapsFolder / mapFilename;
 	std::ofstream newMapFile (filename, std::ios::out | std::ios::binary);
 	if (newMapFile.bad())
 		return false;
@@ -192,10 +192,10 @@ bool cMapReceiver::finished()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cMapSender::cMapSender (cConnectionManager& connectionManager, int toPlayerNr, const std::string& mapName) :
+cMapSender::cMapSender (cConnectionManager& connectionManager, int toPlayerNr, const std::filesystem::path& mapFilename) :
 	connectionManager (connectionManager),
 	toPlayerNr (toPlayerNr),
-	mapName (mapName)
+	mapFilename (mapFilename)
 {
 }
 
@@ -237,12 +237,12 @@ void cMapSender::runInThread()
 bool cMapSender::getMapFileContent()
 {
 	// read map file in memory
-	auto filename = cSettings::getInstance().getMapsPath() / mapName;
+	auto filename = cSettings::getInstance().getMapsPath() / mapFilename;
 	std::ifstream file (filename, std::ios::in | std::ios::binary | std::ios::ate);
 	if (!file.is_open() && !cSettings::getInstance().getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
-		filename = cSettings::getInstance().getUserMapsDir() / mapName;
+		filename = cSettings::getInstance().getUserMapsDir() / mapFilename;
 		file.open (filename, std::ios::in | std::ios::binary | std::ios::ate);
 	}
 	if (!file.is_open())
@@ -267,7 +267,7 @@ void cMapSender::run()
 	if (canceled) return;
 
 	{
-		sendMsg (cMuMsgStartMapDownload (mapName, sendBuffer.size()));
+		sendMsg (cMuMsgStartMapDownload (mapFilename, sendBuffer.size()));
 	}
 	int msgCount = 0;
 	const std::size_t MAX_MESSAGE_SIZE = 10 * 1024;

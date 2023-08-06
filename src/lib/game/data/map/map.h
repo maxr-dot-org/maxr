@@ -30,6 +30,7 @@
 #include "utility/t_2.h"
 
 #include <cassert>
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <utility>
@@ -149,10 +150,10 @@ public:
 	~cStaticMap();
 
 	void clear();
-	bool loadMap (const std::string& filename);
+	bool loadMap (const std::filesystem::path& filename);
 	bool isValid() const;
 
-	const std::string& getName() const { return filename; }
+	const std::filesystem::path& getFilename() const { return filename; }
 	cPosition getSize() const { return cPosition (size, size); }
 	int getOffset (const cPosition& pos) const
 	{
@@ -185,7 +186,7 @@ public:
 	template <typename Archive>
 	void load (Archive& archive)
 	{
-		std::string fileToLoad;
+		std::filesystem::path fileToLoad;
 		archive >> serialization::makeNvp ("filename", fileToLoad);
 		uint32_t crcFromSave;
 		archive >> serialization::makeNvp ("crc", crcFromSave);
@@ -204,7 +205,7 @@ public:
 
 	SERIALIZATION_SPLIT_MEMBER()
 private:
-	std::string filename; // Name of the current map
+	std::filesystem::path filename; // Name of the current map
 	uint32_t crc;
 	int size;
 	std::vector<int> Kacheln; // Terrain numbers of the map fields
@@ -219,7 +220,7 @@ public:
 
 	~cMap();
 
-	const std::string& getName() const { return staticMap->getName(); }
+	const std::filesystem::path& getFilename() const { return staticMap->getFilename(); }
 	cPosition getSize() const { return staticMap->getSize(); }
 	int getOffset (const cPosition& pos) const { return staticMap->getOffset (pos); }
 	bool isValidPosition (const cPosition& pos) const { return staticMap->isValidPosition (pos); }

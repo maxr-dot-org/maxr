@@ -203,8 +203,8 @@ void cDedicatedServerGame::loadGame (int saveGameNumber)
 void cDedicatedServerGame::prepareGameData()
 {
 	auto map = std::make_shared<cStaticMap>();
-	const std::string mapName = "Mushroom.wrl";
-	map->loadMap (mapName);
+	const std::filesystem::path mapFilename = "Mushroom.wrl";
+	map->loadMap (mapFilename);
 
 	lobbyServer.selectGameSettings (std::make_shared<cGameSettings>());
 	lobbyServer.selectMap (map);
@@ -244,7 +244,7 @@ void cDedicatedServerGame::handleChatCommand (int fromPlayer, const std::vector<
 			}
 			auto map = std::make_shared<cStaticMap>();
 			const auto* senderPlayer = lobbyServer.getConstPlayer (fromPlayer);
-			if (map->loadMap (mapName))
+			if (map->loadMap (std::filesystem::u8path (mapName)))
 			{
 				lobbyServer.selectMap (map);
 				std::string reply = senderPlayer->getName();

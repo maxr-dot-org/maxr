@@ -29,6 +29,7 @@ namespace utf8
 
 	::std::uint32_t decodeUnicode (const ::std::string&, ::std::size_t& pos);
 
+	void pop_back (::std::string&);
 	void append_unicode (::std::string&, ::std::uint32_t);
 	::std::string to_utf8 (::std::uint32_t);
 

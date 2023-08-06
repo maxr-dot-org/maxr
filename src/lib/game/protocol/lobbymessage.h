@@ -190,7 +190,7 @@ public:
 	}
 
 	cSaveGameInfo saveInfo;
-	std::string mapName;
+	std::filesystem::path mapFilename;
 	Uint32 mapCrc;
 	std::optional<cGameSettings> settings;
 
@@ -201,7 +201,7 @@ private:
 		// clang-format off
 		// See https://github.com/llvm/llvm-project/issues/44312
 		archive & NVP (saveInfo);
-		archive & NVP (mapName);
+		archive & NVP (mapFilename);
 		archive & NVP (mapCrc);
 		archive & NVP (settings);
 		// clang-format on
@@ -487,7 +487,7 @@ private:
 class cMuMsgRequestMap : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_REQUEST_MAP>
 {
 public:
-	cMuMsgRequestMap (const std::string& mapName);
+	cMuMsgRequestMap (const std::filesystem::path& mapFilename);
 	cMuMsgRequestMap (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
@@ -497,7 +497,7 @@ public:
 		serializeThis (archive);
 	}
 
-	std::string mapName;
+	std::filesystem::path mapFilename;
 
 private:
 	template <typename Archive>
@@ -505,7 +505,7 @@ private:
 	{
 		// clang-format off
 		// See https://github.com/llvm/llvm-project/issues/44312
-		archive & NVP (mapName);
+		archive & NVP (mapFilename);
 		// clang-format on
 	}
 };
@@ -514,7 +514,7 @@ private:
 class cMuMsgStartMapDownload : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_START_MAP_DOWNLOAD>
 {
 public:
-	cMuMsgStartMapDownload (const std::string mapName, int mapSize);
+	cMuMsgStartMapDownload (const std::filesystem::path& mapFilename, int mapSize);
 	cMuMsgStartMapDownload (cBinaryArchiveOut& archive);
 
 	void serialize (cBinaryArchiveIn& archive) override;
@@ -524,7 +524,7 @@ public:
 		serializeThis (archive);
 	}
 
-	std::string mapName;
+	std::filesystem::path mapFilename;
 	int mapSize;
 
 private:
@@ -533,7 +533,7 @@ private:
 	{
 		// clang-format off
 		// See https://github.com/llvm/llvm-project/issues/44312
-		archive & NVP (mapName);
+		archive & NVP (mapFilename);
 		archive & NVP (mapSize);
 		// clang-format on
 	}

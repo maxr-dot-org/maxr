@@ -669,7 +669,7 @@ public:
 		serializeThis (archive);
 	}
 
-	std::string mapName;
+	std::filesystem::path mapFilename;
 	uint32_t mapCrc;
 	std::vector<cPlayerBasicData> playerList;
 
@@ -679,7 +679,7 @@ private:
 	{
 		// clang-format off
 		// See https://github.com/llvm/llvm-project/issues/44312
-		archive & NVP (mapName);
+		archive & NVP (mapFilename);
 		archive & NVP (mapCrc);
 		archive & NVP (playerList);
 		// clang-format on

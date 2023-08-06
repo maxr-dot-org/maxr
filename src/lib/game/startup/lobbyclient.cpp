@@ -145,18 +145,18 @@ void cLobbyClient::selectGameSettings (const cGameSettings& gameSettings)
 {
 	cMuMsgOptions message;
 
-	message.mapName = lobbyPreparationData.staticMap ? lobbyPreparationData.staticMap->getName() : "";
+	message.mapFilename = lobbyPreparationData.staticMap ? lobbyPreparationData.staticMap->getFilename() : "";
 	message.settings = gameSettings;
 
 	sendNetMessage (message);
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::selectMapName (const std::string& mapName)
+void cLobbyClient::selectMapFilename (const std::filesystem::path& mapFilename)
 {
 	cMuMsgOptions message;
 
-	message.mapName = mapName;
+	message.mapFilename = mapFilename;
 	if (lobbyPreparationData.gameSettings)
 	{
 		message.settings = *lobbyPreparationData.gameSettings;
@@ -169,7 +169,7 @@ void cLobbyClient::selectLoadGame (const cSaveGameInfo& saveGameInfo)
 {
 	cMuMsgOptions message;
 
-	message.mapName = saveGameInfo.mapName;
+	message.mapFilename = saveGameInfo.mapFilename;
 	message.saveInfo = saveGameInfo;
 	sendNetMessage (message);
 }
@@ -180,8 +180,8 @@ void cLobbyClient::tryToSwitchReadyState()
 	bool ready;
 	if (!lobbyPreparationData.staticMap)
 	{
-		const auto& downloadingMapName = getDownloadingMapName();
-		if (!downloadingMapName.empty() && !localPlayer.isReady()) onNoMapNoReady (downloadingMapName);
+		const auto& downloadingMapFilename = getDownloadingMapFilename();
+		if (!downloadingMapFilename.empty() && !localPlayer.isReady()) onNoMapNoReady (downloadingMapFilename);
 		ready = false;
 	}
 	else
@@ -440,50 +440,50 @@ void cLobbyClient::handleNetMessage_MU_MSG_OPTIONS (const cMuMsgOptions& message
 		lobbyPreparationData.gameSettings = nullptr;
 	}
 
-	if (message.mapName.empty())
+	if (message.mapFilename.empty())
 	{
 		lobbyPreparationData.staticMap = nullptr;
 	}
 	else
 	{
-		if (!lobbyPreparationData.staticMap || lobbyPreparationData.staticMap->getName() != message.mapName)
+		if (!lobbyPreparationData.staticMap || lobbyPreparationData.staticMap->getFilename() != message.mapFilename)
 		{
-			bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (message.mapName) == message.mapCrc);
+			bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (message.mapFilename) == message.mapCrc);
 			auto newStaticMap = std::make_shared<cStaticMap>();
-			if (mapCheckSumsEqual && newStaticMap->loadMap (message.mapName))
+			if (mapCheckSumsEqual && newStaticMap->loadMap (message.mapFilename))
 			{
-				triedLoadMapName = "";
+				triedLoadMapFilename.clear();
 			}
 			else
 			{
 				if (localPlayer.isReady())
 				{
-					onNoMapNoReady (message.mapName);
+					onNoMapNoReady (message.mapFilename);
 					localPlayer.setReady (false);
 					sendNetMessage (cMuMsgIdentification (localPlayer));
 				}
-				triedLoadMapName = message.mapName;
+				triedLoadMapFilename = message.mapFilename;
 
-				auto existingMapFilePath = MapDownload::getExistingMapFilePath (message.mapName);
+				auto existingMapFilePath = MapDownload::getExistingMapFilePath (message.mapFilename);
 				bool existsMap = !existingMapFilePath.empty();
 				if (!mapCheckSumsEqual && existsMap)
 				{
-					onIncompatibleMap (message.mapName, existingMapFilePath);
+					onIncompatibleMap (message.mapFilename, existingMapFilePath);
 				}
 				else
 				{
-					if (MapDownload::isMapOriginal (message.mapName, message.mapCrc) == false)
+					if (MapDownload::isMapOriginal (message.mapFilename, message.mapCrc) == false)
 					{
-						if (message.mapName != lastRequestedMapName)
+						if (message.mapFilename != lastRequestedMapFilename)
 						{
-							lastRequestedMapName = message.mapName;
-							sendNetMessage (cMuMsgRequestMap (message.mapName));
-							onMapDownloadRequest (message.mapName);
+							lastRequestedMapFilename = message.mapFilename;
+							sendNetMessage (cMuMsgRequestMap (message.mapFilename));
+							onMapDownloadRequest (message.mapFilename);
 						}
 					}
 					else
 					{
-						onMissingOriginalMap (message.mapName);
+						onMissingOriginalMap (message.mapFilename);
 					}
 				}
 			}
@@ -554,15 +554,15 @@ void cLobbyClient::handleNetMessage_GAME_ALREADY_RUNNING (const cNetMessageGameA
 	lobbyPreparationData.staticMap = std::make_shared<cStaticMap>();
 	players = message.playerList;
 
-	if (!lobbyPreparationData.staticMap->loadMap (message.mapName))
+	if (!lobbyPreparationData.staticMap->loadMap (message.mapFilename))
 	{
-		onFailToReconnectGameNoMap (message.mapName);
+		onFailToReconnectGameNoMap (message.mapFilename);
 		disconnect();
 		return;
 	}
-	else if (MapDownload::calculateCheckSum (message.mapName) != message.mapCrc)
+	else if (MapDownload::calculateCheckSum (message.mapFilename) != message.mapCrc)
 	{
-		onFailToReconnectGameInvalidMap (message.mapName);
+		onFailToReconnectGameInvalidMap (message.mapFilename);
 		disconnect();
 		return;
 	}

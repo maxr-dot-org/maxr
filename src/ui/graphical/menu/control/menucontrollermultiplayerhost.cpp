@@ -155,8 +155,8 @@ void cMenuControllerMultiplayerHost::run()
 void cMenuControllerMultiplayerHost::handleSelectMap()
 {
 	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
-	windowMapSelection->done.connect ([=] (const std::string& mapName) {
-		lobbyClient.selectMapName (mapName);
+	windowMapSelection->done.connect ([=] (const std::filesystem::path& mapFilename) {
+		lobbyClient.selectMapFilename (mapFilename);
 		windowMapSelection->close();
 	});
 }
@@ -180,14 +180,14 @@ void cMenuControllerMultiplayerHost::handleSelectSaveGame()
 		if (saveGame.number >= 0)
 		{
 			cStaticMap staticMap;
-			if (!staticMap.loadMap (saveGame.mapName))
+			if (!staticMap.loadMap (saveGame.mapFilename))
 			{
 				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Map_Loading")));
 				return;
 			}
-			else if (MapDownload::calculateCheckSum (saveGame.mapName) != saveGame.mapCrc)
+			else if (MapDownload::calculateCheckSum (saveGame.mapFilename) != saveGame.mapCrc)
 			{
-				application.show (std::make_shared<cDialogOk> ("The map \"" + saveGame.mapName + "\" does not match the map the game was started with")); // TODO: translate
+				application.show (std::make_shared<cDialogOk> ("The map \"" + saveGame.mapFilename.u8string() + "\" does not match the map the game was started with")); // TODO: translate
 				return;
 			}
 		}

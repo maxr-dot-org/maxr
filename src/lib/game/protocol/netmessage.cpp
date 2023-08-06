@@ -183,8 +183,8 @@ void cNetMessageResyncModel::apply (cModel& model) const
 
 //------------------------------------------------------------------------------
 cNetMessageGameAlreadyRunning::cNetMessageGameAlreadyRunning (const cModel& model):
-	mapName (model.getMap()->getName()),
-	mapCrc (MapDownload::calculateCheckSum (mapName)),
+	mapFilename (model.getMap()->getFilename()),
+	mapCrc (MapDownload::calculateCheckSum (mapFilename)),
 	playerList (ranges::Transform (model.getPlayerList(), [] (const auto& p) { return cPlayerBasicData ({p->getName(), p->getColor()}, p->getId(), p->isDefeated); }))
 {
 }

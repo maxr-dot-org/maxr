@@ -28,6 +28,7 @@
 #include "ui/graphical/menu/control/local/singleplayer/localsingleplayergame.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <filesystem>
 #include <memory>
 
 class cApplication;
@@ -46,7 +47,7 @@ public:
 	void start (cApplication&, cServer&);
 
 	void setGameSettings (const cGameSettings&);
-	void selectMapName (const std::string&);
+	void selectMapFilename (const std::filesystem::path&);
 
 	static cPlayerBasicData createPlayer();
 

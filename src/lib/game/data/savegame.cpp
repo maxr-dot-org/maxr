@@ -187,7 +187,7 @@ cSaveGameInfo cSavegame::loadSaveInfo (int slot) const
 			info.players.emplace_back (cPlayerBasicData (player, id, isDefeated));
 		}
 		cJsonArchiveIn mapArchive (json->at ("model").at ("map").at ("mapFile"));
-		mapArchive >> serialization::makeNvp ("filename", info.mapName);
+		mapArchive >> serialization::makeNvp ("filename", info.mapFilename);
 		mapArchive >> serialization::makeNvp ("crc", info.mapCrc);
 
 		cJsonArchiveIn turnArchive (json->at ("model").at ("turnCounter"));
@@ -287,8 +287,9 @@ void fillSaveGames (std::size_t minIndex, std::size_t maxIndex, std::vector<cSav
 	const auto saveFileNames = os::getFilesOfDirectory (cSettings::getInstance().getSavesPath());
 	const std::regex savename_regex{R"(Save(\d{3})\.json)"};
 
-	for (const auto& filename : saveFileNames)
+	for (const auto& filepath : saveFileNames)
 	{
+		std::string filename = filepath.string();
 		std::smatch match;
 		if (!std::regex_match (filename, match, savename_regex)) continue;
 		const std::size_t number = atoi (match[1].str().c_str());

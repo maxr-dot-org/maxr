@@ -29,6 +29,7 @@
 #include "ui/uidefines.h"
 #include "ui/widgets/image.h"
 #include "ui/widgets/label.h"
+#include "utility/string/utf-8.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
 #include "utility/os.h"
@@ -152,8 +153,8 @@ void cWindowMapSelection::updateMaps()
 		const auto mapIndex = page * mapCount + i;
 		if (mapIndex < maps.size())
 		{
-			auto mapName = maps[mapIndex];
-			auto preview = loadMapPreview (mapName);
+			auto mapFilename = maps[mapIndex];
+			auto preview = loadMapPreview (mapFilename.string());
 
 			if (preview.surface == nullptr) continue;
 
@@ -163,15 +164,15 @@ void cWindowMapSelection::updateMaps()
 			const int unselectedColor = 0x00'00'00;
 			AutoSurface imageSurface (SDL_CreateRGBSurface (0, mapWinSize + 8, mapWinSize + 8, Video.getColDepth(), 0, 0, 0, 0));
 
-			// remove extension
-			mapName = mapName.substr (0, mapName.length() - 4);
+			std::string mapName = mapFilename.replace_extension().u8string();
+
 			// shorter too long name and add map size suffix
 			auto mapSizeTxt = " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
 			if (font->getTextWide (">" + mapName + mapSizeTxt + "<") > 140)
 			{
 				while (font->getTextWide (">" + mapName + "..." + mapSizeTxt + "<") > 140)
 				{
-					mapName.pop_back();
+					utf8::pop_back(mapName);
 				}
 				mapName += "...";
 			}
@@ -207,7 +208,7 @@ void cWindowMapSelection::loadMaps()
 	maps = os::getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (!cSettings::getInstance().getUserMapsDir().empty())
 	{
-		std::vector<std::string> userMaps (os::getFilesOfDirectory (cSettings::getInstance().getUserMapsDir()));
+		const auto userMaps (os::getFilesOfDirectory (cSettings::getInstance().getUserMapsDir()));
 		for (const auto& userMap : userMaps)
 		{
 			if (!Contains (maps, userMap))
@@ -216,5 +217,5 @@ void cWindowMapSelection::loadMaps()
 			}
 		}
 	}
-	EraseIf (maps, [] (const std::string& mapName) { return mapName.compare (mapName.length() - 3, 3, "WRL") != 0 && mapName.compare (mapName.length() - 3, 3, "wrl") != 0; });
+	EraseIf (maps, [] (const auto& mapName) { return mapName.extension() != ".WRL" && mapName.extension() != ".wrl"; });
 }
