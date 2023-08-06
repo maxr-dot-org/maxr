@@ -303,14 +303,14 @@ namespace serialization
 	template <typename Archive>
 	void save (Archive& archive, const std::filesystem::path& value)
 	{
-		archive << value.string();
+		archive << value.u8string();
 	}
 	template <typename Archive>
 	void load (Archive& archive, std::filesystem::path& value)
 	{
 		std::string s;
 		archive >> s;
-		value = s;
+		value = std::filesystem::u8path(s);
 	}
 	template <typename Archive>
 	void serialize (Archive& archive, std::filesystem::path& value)
