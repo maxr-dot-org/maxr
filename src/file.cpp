@@ -57,14 +57,14 @@ SDL_RWops* openFile (const std::filesystem::path& path, const char* mode)
 	const auto dir = path.parent_path();
 
 	//try to open with lower case file name
-	SDL_RWops* file = SDL_RWFromFile ((dir / fileName).string().c_str(), mode);
+	SDL_RWops* file = SDL_RWFromFile ((dir / fileName).u8string().c_str(), mode);
 	if (file != nullptr)
 	{
 		return file;
 	}
 
 	//try to open with upper case file name
-	file = SDL_RWFromFile ((path / fileName).string().c_str(), mode);
+	file = SDL_RWFromFile ((path / fileName).u8string().c_str(), mode);
 	if (file != nullptr)
 	{
 		return file;

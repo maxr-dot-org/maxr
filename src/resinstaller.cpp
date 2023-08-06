@@ -3927,7 +3927,7 @@ void createLogFile (const std::filesystem::path& dataDir)
 #endif
 	}
 	auto fileName = path / "resinstaller.log";
-	logFile = SDL_RWFromFile (fileName.string().c_str(), "a");
+	logFile = SDL_RWFromFile (fileName.u8string().c_str(), "a");
 	if (logFile == nullptr)
 	{
 		std::cout << "Warning: Couldn't create log file. Writing to stdout instead.\n";
@@ -3946,7 +3946,7 @@ void checkWritePermissions (const std::string& appName, bool bDoNotElevate)
 #ifdef WIN32
 	// create test file
 	auto testFileName = sOutputPath / "writeTest.txt";
-	SDL_RWops* testFile = SDL_RWFromFile (testFileName.string().c_str(), "w");
+	SDL_RWops* testFile = SDL_RWFromFile (testFileName.u8string().c_str(), "w");
 
 	if (testFile == nullptr)
 	{
@@ -3998,7 +3998,7 @@ bool validateMAXPath (std::filesystem::path& maxPath)
 	{
 		try
 		{
-			res = openFile ((dir / "MAX.RES").string().c_str(), "rb");
+			res = openFile (dir / "MAX.RES", "rb");
 			maxPath = dir;
 			return true;
 		}

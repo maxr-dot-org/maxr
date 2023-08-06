@@ -50,7 +50,7 @@ void encodeWAV (std::filesystem::path fileName, cWaveFile& waveFile)
 	}
 
 	std::filesystem::create_directories (fileName.parent_path());
-	SDL_RWops* file = SDL_RWFromFile (fileName.string().c_str(), "wb");
+	SDL_RWops* file = SDL_RWFromFile (fileName.u8string().c_str(), "wb");
 	if (file == nullptr)
 	{
 		throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);

@@ -233,7 +233,7 @@ int savePCX (const SDL_Surface* surface, const std::filesystem::path& fileName)
 SDL_Surface* loadPCX (const std::filesystem::path& name)
 {
 	//open file
-	SDL_RWops* file = SDL_RWFromFile (name.string().c_str(), "rb");
+	SDL_RWops* file = SDL_RWFromFile (name.u8string().c_str(), "rb");
 
 	if (file == nullptr)
 	{
