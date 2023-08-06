@@ -154,7 +154,7 @@ void cWindowMapSelection::updateMaps()
 		if (mapIndex < maps.size())
 		{
 			auto mapFilename = maps[mapIndex];
-			auto preview = loadMapPreview (mapFilename.string());
+			auto preview = loadMapPreview (mapFilename);
 
 			if (preview.surface == nullptr) continue;
 

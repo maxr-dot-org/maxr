@@ -39,11 +39,11 @@ static void showScene (const std::filesystem::path& filename)
 	SDL_ShowCursor (SDL_DISABLE);
 
 	Log.debug ("Starting movie " + filename.u8string());
-	const int mvereturn = MVEPlayer (filename.string().c_str(),
+	const int mvereturn = MVEPlayer (filename.u8string().c_str(),
 	                                 Video.getResolutionX(),
 	                                 Video.getResolutionY(),
 	                                 !Video.getWindowMode(),
-	                                 MAXR_ICON.string().c_str(),
+	                                 MAXR_ICON.u8string().c_str(),
 	                                 !cSettings::getInstance().isSoundMute());
 	Log.debug ("MVEPlayer returned " + std::to_string (mvereturn));
 	SDL_ShowCursor (oldCursorStatus);

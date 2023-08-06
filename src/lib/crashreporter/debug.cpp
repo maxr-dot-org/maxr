@@ -54,7 +54,7 @@ int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO* pInfo)
 		if (!home.empty())
 		{
 			auto path = home / "Crashshot.bmp";
-			SDL_SaveBMP (cVideo::buffer, path.string().c_str());
+			SDL_SaveBMP (cVideo::buffer, path.u8string().c_str());
 			crAddFile2 (path.native().c_str(), nullptr, L ("Screenshot at the moment of the crash"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 		}
 	}

@@ -87,7 +87,7 @@ void cVideo::init (const std::string& title, const std::filesystem::path& iconPa
 	                              SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
 
 	{
-		auto icon = AutoSurface (SDL_LoadBMP (iconPath.string().c_str()));
+		auto icon = AutoSurface (SDL_LoadBMP (iconPath.u8string().c_str()));
 		SDL_SetColorKey (icon.get(), 1, 0xFF00FF);
 		SDL_SetWindowIcon (sdlWindow, icon.get());
 	}
@@ -339,7 +339,7 @@ int cVideo::getMinH() const
 
 void cVideo::takeScreenShot (const std::filesystem::path& filename) const
 {
-	SDL_SaveBMP (buffer, filename.string().c_str());
+	SDL_SaveBMP (buffer, filename.u8string().c_str());
 }
 
 void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)

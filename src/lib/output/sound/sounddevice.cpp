@@ -128,7 +128,7 @@ void cSoundDevice::startMusic (const std::filesystem::path& fileName)
 {
 	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isMusicMute()) return;
 
-	musicStream = SaveSdlMixMusicPointer (Mix_LoadMUS (fileName.string().c_str()));
+	musicStream = SaveSdlMixMusicPointer (Mix_LoadMUS (fileName.u8string().c_str()));
 	if (!musicStream)
 	{
 		Log.warn ("Failed opening music stream:");

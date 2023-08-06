@@ -288,7 +288,7 @@ bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 
 	// first try in the factory maps directory
 	auto fullFilename = cSettings::getInstance().getMapsPath() / filename;
-	SDL_RWops* fpMapFile = SDL_RWFromFile (fullFilename.string().c_str(), "rb");
+	SDL_RWops* fpMapFile = SDL_RWFromFile (fullFilename.u8string().c_str(), "rb");
 	if (fpMapFile == nullptr)
 	{
 		// now try in the user's map directory
@@ -296,7 +296,7 @@ bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 		if (!userMapsDir.empty())
 		{
 			fullFilename = userMapsDir / filename;
-			fpMapFile = SDL_RWFromFile (fullFilename.string().c_str(), "rb");
+			fpMapFile = SDL_RWFromFile (fullFilename.u8string().c_str(), "rb");
 		}
 	}
 	if (fpMapFile == nullptr)

@@ -37,7 +37,7 @@ public:
 
 	bool open (const std::filesystem::path& filename, const char* mode)
 	{
-		this->file = SDL_RWFromFile (filename.string().c_str(), mode);
+		this->file = SDL_RWFromFile (filename.u8string().c_str(), mode);
 		return this->file != nullptr;
 	}
 
