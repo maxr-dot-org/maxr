@@ -53,7 +53,8 @@ public:
 	 * @param function The callable object to connect to the signal.
 	 */
 	template <typename SignalType, typename FunctionType>
-	cSignalConnection connect (SignalType& signal, FunctionType&& function);
+	auto connect (SignalType& signal, FunctionType&& function)
+		-> decltype (signal.connect (std::forward<FunctionType> (function)));
 
 	/**
 	 * Disconnects a single connection and removes it from this manager.
@@ -78,7 +79,8 @@ private:
 
 //------------------------------------------------------------------------------
 template <typename SignalType, typename FunctionType>
-cSignalConnection cSignalConnectionManager::connect (SignalType& signal, FunctionType&& function)
+auto cSignalConnectionManager::connect (SignalType& signal, FunctionType&& function)
+	-> decltype (signal.connect (std::forward<FunctionType> (function)))
 {
 	connections.push_back (signal.connect (std::forward<FunctionType> (function)));
 	return connections.back();

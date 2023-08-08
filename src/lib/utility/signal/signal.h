@@ -124,7 +124,7 @@ public:
 	 *         The user has to make sure the signal object outlives all the connection objects
 	 *         that are created by the signal.
 	 */
-	template <typename F>
+	template <typename F, std::enable_if_t<std::is_assignable_v<std::function<void (Args...)>, F>, int> = 0>
 	cSignalConnection connect (F&& f);
 
 	/**
@@ -155,7 +155,7 @@ public:
 	 *
 	 * @param ...args The arguments to call the functions with.
 	 */
-	template <typename... Args2>
+	template <typename... Args2, std::enable_if_t<std::is_invocable_v<std::function<void (Args...)>, Args2&&...>, int> = 0>
 	void operator() (Args2&&... args);
 
 private:
@@ -179,7 +179,7 @@ private:
 
 //------------------------------------------------------------------------------
 template <typename... Args, typename MutexType>
-template <typename F>
+template <typename F, std::enable_if_t<std::is_assignable_v<std::function<void (Args...)>, F>, int>>
 cSignalConnection cSignal<void (Args...), MutexType>::connect (F&& f)
 {
 	std::unique_lock<MutexType> lock (mutex);
@@ -250,7 +250,7 @@ void cSignal<void (Args...), MutexType>::disconnect (const cSignalConnection& co
 
 //------------------------------------------------------------------------------
 template <typename... Args, typename MutexType>
-template <typename... Args2>
+template <typename... Args2, std::enable_if_t<std::is_invocable_v<std::function<void (Args...)>, Args2&&...>, int>>
 void cSignal<void (Args...), MutexType>::operator() (Args2&&... args)
 {
 	std::unique_lock<MutexType> lock (mutex);
