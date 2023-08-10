@@ -369,7 +369,7 @@ namespace serialization
 	{
 		std::uint32_t type;
 		archive >> makeNvp ("type", type);
-		using LoaderType = void (Archive &, std::variant<Ts...> &);
+		using LoaderType = void (Archive&, std::variant<Ts...>&);
 		LoaderType* loaders[] = {+[] (Archive& archive, std::variant<Ts...>& var) { Ts value; archive >> makeNvp ("value", value); var = value; }...};
 		loaders[type](archive, var);
 	}
@@ -499,56 +499,30 @@ namespace serialization
 	//-------------------------------------------------------------------------
 	namespace detail
 	{
-		struct sSplitMemberWriter
-		{
-			template <typename Archive, typename T>
-			static void apply (Archive& archive, T& value)
-			{
-				value.save (archive);
-			}
-		};
-
-		struct sSplitMemberReader
-		{
-			template <typename Archive, typename T>
-			static void apply (Archive& archive, T& value)
-			{
-				value.load (archive);
-			}
-		};
-
 		template <typename Archive, typename T>
 		void splitMember (Archive& archive, T& value)
 		{
-			using operation = std::conditional_t<Archive::isWriter, sSplitMemberWriter, sSplitMemberReader>;
-
-			operation::apply (archive, value);
+			if constexpr (Archive::isWriter)
+			{
+				value.save (archive);
+			}
+			else
+			{
+				value.load (archive);
+			}
 		}
-
-		struct sSplitFreeWriter
-		{
-			template <typename Archive, typename T>
-			static void apply (Archive& archive, T& value)
-			{
-				::serialization::save (archive, value);
-			}
-		};
-
-		struct sSplitFreeReader
-		{
-			template <typename Archive, typename T>
-			static void apply (Archive& archive, T& value)
-			{
-				::serialization::load (archive, value);
-			}
-		};
 
 		template <typename Archive, typename T>
 		void splitFree (Archive& archive, T& value)
 		{
-			using operation = std::conditional_t<Archive::isWriter, sSplitFreeWriter, sSplitFreeReader>;
-
-			operation::apply (archive, value);
+			if constexpr (Archive::isWriter)
+			{
+				::serialization::save (archive, value);
+			}
+			else
+			{
+				::serialization::load (archive, value);
+			}
 		}
 
 	} //namespace detail
