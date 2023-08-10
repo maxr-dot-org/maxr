@@ -100,6 +100,15 @@ std::ostream& operator<< (std::ostream& os, const std::forward_list<T>& list)
 	return os << '}';
 }
 
+//------------------------------------------------------------------------------
+template <typename... Ts>
+std::ostream& operator<< (std::ostream& os, const std::variant<Ts...>& var)
+{
+	os << R"({ "type": )" << var.index << R"(, "value": )";
+	std::visit ([&] (const auto& value) { os << value; });
+	return os << '}';
+}
+
 namespace
 {
 
@@ -177,6 +186,8 @@ namespace
 	const std::optional<int> o = 42;
 	const std::forward_list<int> list{1, 2, 3};
 	const std::map<int, std::string> m{{1, "I"}, {2, "II"}, {5, "V"}};
+	const std::variant<int, std::string> var1 = 42;
+	const std::variant<int, std::string> var2 = "s";
 
 	//--------------------------------------------------------------------------
 	TEST_CASE ("BinarySerializationNvp")
@@ -193,6 +204,8 @@ namespace
 		checkBinarySaveLoadNvp (o);
 		checkBinarySaveLoadNvp (m);
 		checkBinarySaveLoadNvp (list);
+		checkBinarySaveLoadNvp (var1);
+		checkBinarySaveLoadNvp (var2);
 	}
 
 	//--------------------------------------------------------------------------
@@ -210,6 +223,8 @@ namespace
 		checkBinarySaveLoad (o);
 		checkBinarySaveLoad (m);
 		checkBinarySaveLoad (list);
+		checkBinarySaveLoadNvp (var1);
+		checkBinarySaveLoadNvp (var2);
 	}
 
 	//--------------------------------------------------------------------------
@@ -227,6 +242,8 @@ namespace
 		checkJsonSaveLoadNvp (o);
 		checkJsonSaveLoadNvp (m);
 		checkJsonSaveLoadNvp (list);
+		checkBinarySaveLoadNvp (var1);
+		checkBinarySaveLoadNvp (var2);
 	}
 
 	//--------------------------------------------------------------------------
@@ -244,6 +261,8 @@ namespace
 		checkJsonSaveLoad (o);
 		checkJsonSaveLoad (m);
 		checkJsonSaveLoad (list);
+		checkBinarySaveLoadNvp (var1);
+		checkBinarySaveLoadNvp (var2);
 	}
 
 } // namespace

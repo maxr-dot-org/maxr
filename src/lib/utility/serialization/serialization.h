@@ -38,6 +38,7 @@
 #include <sstream>
 #include <string>
 #include <typeinfo>
+#include <variant>
 #include <vector>
 
 class cModel;
@@ -352,6 +353,28 @@ namespace serialization
 	}
 	template <typename Archive>
 	void serialize (Archive& archive, std::chrono::seconds& value)
+	{
+		serialization::detail::splitFree (archive, value);
+	}
+
+	//-------------------------------------------------------------------------
+	template <typename Archive, typename... Ts>
+	void save (Archive& archive, const std::variant<Ts...>& var)
+	{
+		archive << makeNvp ("type", std::uint32_t(var.index()));
+		std::visit ([&] (const auto& value) { archive << makeNvp ("value", value); }, var);
+	}
+	template <typename Archive, typename... Ts>
+	void load (Archive& archive, std::variant<Ts...>& var)
+	{
+		std::uint32_t type;
+		archive >> makeNvp ("type", type);
+		using LoaderType = void (Archive &, std::variant<Ts...> &);
+		LoaderType* loaders[] = {+[] (Archive& archive, std::variant<Ts...>& var) { Ts value; archive >> makeNvp ("value", value); var = value; }...};
+		loaders[type](archive, var);
+	}
+	template <typename Archive, typename... Ts>
+	void serialize (Archive& archive, std::variant<Ts...>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
