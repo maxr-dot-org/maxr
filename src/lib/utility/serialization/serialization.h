@@ -311,7 +311,7 @@ namespace serialization
 	{
 		std::string s;
 		archive >> s;
-		value = std::filesystem::u8path(s);
+		value = std::filesystem::u8path (s);
 	}
 	template <typename Archive>
 	void serialize (Archive& archive, std::filesystem::path& value)
@@ -361,16 +361,30 @@ namespace serialization
 	template <typename Archive, typename... Ts>
 	void save (Archive& archive, const std::variant<Ts...>& var)
 	{
-		archive << makeNvp ("type", std::uint32_t(var.index()));
+		archive << makeNvp ("type", std::uint32_t (var.index()));
 		std::visit ([&] (const auto& value) { archive << makeNvp ("value", value); }, var);
 	}
+	namespace detail
+	{
+		// Some version of compilers (gcc)
+		// Doesn't like expanding lambda
+		// So create regular template function
+		template <typename T, typename Archive, typename Variant>
+		void loadT (Archive& archive, Variant& var)
+		{
+			T value;
+			archive >> makeNvp ("value", value);
+			var = value;
+		}
+
+	} // namespace detail
 	template <typename Archive, typename... Ts>
 	void load (Archive& archive, std::variant<Ts...>& var)
 	{
 		std::uint32_t type;
 		archive >> makeNvp ("type", type);
 		using LoaderType = void (Archive&, std::variant<Ts...>&);
-		LoaderType* loaders[] = {+[] (Archive& archive, std::variant<Ts...>& var) { Ts value; archive >> makeNvp ("value", value); var = value; }...};
+		LoaderType* loaders[] = {&detail::loadT<Ts>...};
 		loaders[type](archive, var);
 	}
 	template <typename Archive, typename... Ts>
