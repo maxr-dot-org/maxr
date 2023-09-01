@@ -1,3 +1,14 @@
+Mechanized Assault & eXploration Reloaded 0.2.12 (September, 2023)
+=======================================================================
+- update spiritless_po
+- update nuget package from sdl2.nuget:2.26.5 to sdl2.nuget:2.28.0
+- Fix crash when rubble appears (so when destroying building).
+- Fix creation of big rubble.
+- Add screen for end of game.
+- rework installer pages
+- Better support of utf-8 path
+- fix resinstaller (transparent color and fix copy of some files)
+
 Mechanized Assault & eXploration Reloaded 0.2.11 (June, 2023)
 =======================================================================
 -requires C++17 compilers

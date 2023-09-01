@@ -11,7 +11,7 @@
 ${StrStr}
 
 # --- Main defines ---
-!define VERSION                    "0.2.11"
+!define VERSION                    "0.2.12"
 !define NAME                       "M.A.X. Reloaded"
 !define FILESFOLDER                "..\..\..\data\" ;the folder to the files that should be installed with this installer
 !define DEDICATEDSERVER_EXE        "dedicatedserver.exe"
