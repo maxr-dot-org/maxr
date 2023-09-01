@@ -120,7 +120,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 
 	// draw the mark, when a build order is finished
-	if (building.getOwner() == player && ((!building.isBuildListEmpty() && !building.isUnitWorking() && building.getBuildListItem (0).getRemainingMetal() <= 0) || (building.getStaticData().canResearch && Contains (currentTurnResearchAreasFinished, building.getResearchArea()))))
+	if (building.getOwner() == player && ((!building.isBuildListEmpty() && !building.isUnitWorking() && building.getBuildListItem (0).getRemainingMetal() <= 0) || (building.getStaticData().canResearch && ranges::contains (currentTurnResearchAreasFinished, building.getResearchArea()))))
 	{
 		const cRgbColor finishedMarkColor = cRgbColor::green();
 		const cBox<cPosition> d (cPosition (dest.x + 2, dest.y + 2), cPosition (dest.x + 2 + (building.getIsBig() ? 2 * destination.w - 3 : destination.w - 3), dest.y + 2 + (building.getIsBig() ? 2 * destination.h - 3 : destination.h - 3)));

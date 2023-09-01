@@ -582,7 +582,7 @@ void cDebugOutputWidget::drawDetectedByPlayerList()
 
 		for (const auto& playerId : building->detectedByPlayerList)
 		{
-			if (Contains (building->detectedInThisTurnByPlayerList, playerId))
+			if (ranges::contains (building->detectedInThisTurnByPlayerList, playerId))
 			{
 				font->showText (drawDestination.x, drawDestination.y, std::to_string (playerId) + "#", eUnicodeFontType::LatinSmallRed);
 			}
@@ -606,7 +606,7 @@ void cDebugOutputWidget::drawDetectedByPlayerList()
 
 		for (const auto& playerId : vehicle->detectedByPlayerList)
 		{
-			if (Contains (vehicle->detectedInThisTurnByPlayerList, playerId))
+			if (ranges::contains (vehicle->detectedInThisTurnByPlayerList, playerId))
 			{
 				font->showText (drawDestination.x, drawDestination.y, std::to_string (playerId) + "#", eUnicodeFontType::LatinSmallRed);
 			}

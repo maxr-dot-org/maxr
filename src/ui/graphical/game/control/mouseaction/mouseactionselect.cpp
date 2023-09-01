@@ -44,7 +44,7 @@ bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const 
 	{
 		/*do nothing here*/
 	}
-	else if (KeysList.getMouseStyle() == eMouseStyle::Modern && (!changeAllowed || ((!selectedVehicle || (!Contains (field.getPlanes(), selectedVehicle) && selectedVehicle != overVehicle)) && (!selectedBuilding || (overBaseBuilding != selectedBuilding && overBuilding != selectedBuilding)))) && unitSelection.selectUnitAt (field, true))
+	else if (KeysList.getMouseStyle() == eMouseStyle::Modern && (!changeAllowed || ((!selectedVehicle || (!ranges::contains (field.getPlanes(), selectedVehicle) && selectedVehicle != overVehicle)) && (!selectedBuilding || (overBaseBuilding != selectedBuilding && overBuilding != selectedBuilding)))) && unitSelection.selectUnitAt (field, true))
 	{
 		/*do nothing here*/
 	}

@@ -297,7 +297,7 @@ cVehicle* cUnitSelection::getNextVehicle (const cPlayer& player, const std::vect
 	for (; it != vehicles.end(); ++it)
 	{
 		const cVehicle& v = **it;
-		if (!Contains (doneList, v.getId()) && (!v.isUnitBuildingABuilding() || v.getBuildTurns() == 0) && !v.isUnitClearing() && !v.isSentryActive() && !v.isUnitLoaded() && (v.data.getSpeed() || v.data.getShots()))
+		if (!ranges::contains (doneList, v.getId()) && (!v.isUnitBuildingABuilding() || v.getBuildTurns() == 0) && !v.isUnitClearing() && !v.isSentryActive() && !v.isUnitLoaded() && (v.data.getSpeed() || v.data.getShots()))
 		{
 			return it->get();
 		}
@@ -318,7 +318,7 @@ cBuilding* cUnitSelection::getNextBuilding (const cPlayer& player, const std::ve
 		const cBuilding& b = **it;
 		const auto& unitData = b.getStaticUnitData();
 		const auto& buildingData = unitData.buildingData;
-		if (!Contains (doneList, b.getId()) && !b.isUnitWorking() && !b.isSentryActive() && (!unitData.canBuild.empty() || b.data.getShots() || buildingData.canMineMaxRes > 0 || buildingData.convertsGold > 0 || buildingData.canResearch))
+		if (!ranges::contains (doneList, b.getId()) && !b.isUnitWorking() && !b.isSentryActive() && (!unitData.canBuild.empty() || b.data.getShots() || buildingData.canMineMaxRes > 0 || buildingData.convertsGold > 0 || buildingData.canResearch))
 		{
 			return it->get();
 		}
@@ -391,7 +391,7 @@ cVehicle* cUnitSelection::getPrevVehicle (const cPlayer& player, const std::vect
 	for (; it != vehicles.end(); --it)
 	{
 		const cVehicle& v = **it;
-		if (!Contains (doneList, v.getId()) && (!v.isUnitBuildingABuilding() || v.getBuildTurns() == 0) && !v.isUnitClearing() && !v.isSentryActive() && !v.isUnitLoaded() && (v.data.getSpeed() || v.data.getShots()))
+		if (!ranges::contains (doneList, v.getId()) && (!v.isUnitBuildingABuilding() || v.getBuildTurns() == 0) && !v.isUnitClearing() && !v.isSentryActive() && !v.isUnitLoaded() && (v.data.getSpeed() || v.data.getShots()))
 		{
 			return it->get();
 		}
@@ -414,7 +414,7 @@ cBuilding* cUnitSelection::getPrevBuilding (const cPlayer& player, const std::ve
 		const cBuilding& b = **it;
 		const auto& unitData = b.getStaticUnitData();
 		const auto& buildingData = unitData.buildingData;
-		if (!Contains (doneList, b.getId()) && !b.isUnitWorking() && !b.isSentryActive() && (!unitData.canBuild.empty() || b.data.getShots() || buildingData.canMineMaxRes > 0 || buildingData.convertsGold > 0 || buildingData.canResearch))
+		if (!ranges::contains (doneList, b.getId()) && !b.isUnitWorking() && !b.isSentryActive() && (!unitData.canBuild.empty() || b.data.getShots() || buildingData.canMineMaxRes > 0 || buildingData.convertsGold > 0 || buildingData.canResearch))
 		{
 			return it->get();
 		}

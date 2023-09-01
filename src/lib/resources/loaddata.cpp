@@ -129,7 +129,7 @@ void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 static void LoadLanguage()
 {
 	lngPack.setLanguagesFolder (cSettings::getInstance().getLangPath());
-	if (!Contains (lngPack.getAvailableLanguages(), cSettings::getInstance().getLanguage()))
+	if (!ranges::contains (lngPack.getAvailableLanguages(), cSettings::getInstance().getLanguage()))
 	{
 		Log.warn ("Not a supported language: " + cSettings::getInstance().getLanguage() + ", defaulting to en.");
 		cSettings::getInstance().setLanguage ("en");

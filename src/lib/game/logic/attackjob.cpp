@@ -417,7 +417,7 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 	//Used to prevent, that cluster attacks hit the same unit multiple times
 	if (avoidTargets)
 	{
-		if (Contains (*avoidTargets, target))
+		if (ranges::contains (*avoidTargets, target))
 		{
 			return;
 		}

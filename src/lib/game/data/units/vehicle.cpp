@@ -615,7 +615,7 @@ bool cVehicle::canLoad (const cVehicle* vehicle, bool checkPosition) const
 
 	if (checkPosition && staticData->factorAir > 0 && (vehicle->getPosition() != getPosition())) return false;
 
-	if (!Contains (staticData->storeUnitsTypes, vehicle->getStaticData().isStorageType)) return false;
+	if (!ranges::contains (staticData->storeUnitsTypes, vehicle->getStaticData().isStorageType)) return false;
 
 	if (vehicle->moving || vehicle->isAttacking()) return false;
 
@@ -727,7 +727,7 @@ void cVehicle::tryResetOfDetectionStateBeforeMove (const cMap& map, const std::v
 {
 	for (const auto& player : playerList)
 	{
-		if (!Contains (detectedInThisTurnByPlayerList, player->getId()) && !checkDetectedByPlayer (*player, map))
+		if (!ranges::contains (detectedInThisTurnByPlayerList, player->getId()) && !checkDetectedByPlayer (*player, map))
 		{
 			resetDetectedByPlayer (player.get());
 		}

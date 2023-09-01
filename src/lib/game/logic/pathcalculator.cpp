@@ -191,7 +191,7 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 					else
 						blockingUnit = Map->getField (currentPosition).getVehicle();
 					// check whether the blocking unit is the group
-					bool isInGroup = Contains (*group, blockingUnit);
+					bool isInGroup = ranges::contains (*group, blockingUnit);
 					if (!isInGroup) continue;
 				}
 				else

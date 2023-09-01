@@ -51,7 +51,7 @@ void cActionActivate::execute (cModel& model) const
 
 	if (!map.isValidPosition (position)) return;
 	if (!containingUnit->isNextTo (position)) return;
-	if (!Contains (containingUnit->storedUnits, activatedVehicle)) return;
+	if (!ranges::contains (containingUnit->storedUnits, activatedVehicle)) return;
 
 	model.sideStepStealthUnit (position, *activatedVehicle);
 	if (containingUnit->canExitTo (position, map, activatedVehicle->getStaticUnitData()))

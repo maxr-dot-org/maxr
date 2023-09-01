@@ -73,6 +73,13 @@ namespace ranges
 	}
 
 	//------------------------------------------------------------------------------
+	template <typename T, typename U>
+	bool contains (const std::vector<T>& container, const U& elem)
+	{
+		return ranges::find (container, elem) != container.end();
+	}
+
+	//------------------------------------------------------------------------------
 	template <typename Range, typename Projection>
 	auto Transform (Range&& range, Projection&& proj)
 		-> std::vector<std::decay_t<decltype (proj (*std::begin (range)))>>

@@ -443,7 +443,7 @@ bool cActionInitNewGame::isValidLandingPosition (cPosition position, const cStat
 				for (int offX = -landingRadius; (offX < landingRadius) && !placed; ++offX)
 				{
 					const cPosition place = position + cPosition (offX, offY);
-					if (map.possiblePlace (unitData, place) && !Contains (blockedPositions, place))
+					if (map.possiblePlace (unitData, place) && !ranges::contains (blockedPositions, place))
 					{
 						blockedPositions.push_back (place);
 						placed = true;

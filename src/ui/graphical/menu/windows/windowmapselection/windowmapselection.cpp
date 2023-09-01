@@ -211,7 +211,7 @@ void cWindowMapSelection::loadMaps()
 		const auto userMaps (os::getFilesOfDirectory (cSettings::getInstance().getUserMapsDir()));
 		for (const auto& userMap : userMaps)
 		{
-			if (!Contains (maps, userMap))
+			if (!ranges::contains (maps, userMap))
 			{
 				maps.push_back (userMap);
 			}

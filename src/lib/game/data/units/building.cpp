@@ -398,7 +398,7 @@ bool cBuilding::canLoad (const cVehicle* vehicle, bool checkPosition) const
 
 	if (checkPosition && !isNextTo (vehicle->getPosition())) return false;
 
-	if (!Contains (staticData->storeUnitsTypes, vehicle->getStaticData().isStorageType)) return false;
+	if (!ranges::contains (staticData->storeUnitsTypes, vehicle->getStaticData().isStorageType)) return false;
 
 	if (vehicle->isUnitMoving() || vehicle->isAttacking()) return false;
 
@@ -418,7 +418,7 @@ bool cBuilding::canSupply (const cUnit* unit, eSupplyType supplyType) const
 	if (subBase && subBase->getResourcesStored().metal <= 0)
 		return false;
 
-	if (!Contains (storedUnits, static_cast<const cVehicle*> (unit)))
+	if (!ranges::contains (storedUnits, static_cast<const cVehicle*> (unit)))
 		return false;
 
 	switch (supplyType)

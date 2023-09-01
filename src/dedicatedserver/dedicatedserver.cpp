@@ -323,7 +323,7 @@ std::string cDedicatedServer::getAvailableMapsString() const
 		const auto userMaps = os::getFilesOfDirectory (cSettings::getInstance().getUserMapsDir());
 		for (const auto& userMap : userMaps)
 		{
-			if (Contains (maps, userMap) == false)
+			if (ranges::contains (maps, userMap) == false)
 				maps.push_back (userMap);
 		}
 	}

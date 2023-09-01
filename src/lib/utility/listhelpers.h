@@ -38,12 +38,6 @@ struct trait_add_const<T*>
 	using type = const T*;
 };
 
-template <typename T>
-bool Contains (const std::vector<T>& container, const typename trait_add_const<T>::type& elem)
-{
-	return ranges::find (container, elem) != container.end();
-}
-
 //--------------------------------------------------------------------------
 template <typename T>
 std::vector<T*> ExtractPtrs (const std::vector<std::unique_ptr<T>>& v)

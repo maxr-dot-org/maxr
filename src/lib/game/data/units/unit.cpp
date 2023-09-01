@@ -150,20 +150,20 @@ void cUnit::setDetectedByPlayer (const cPlayer* player)
 {
 	int playerId = player->getId();
 
-	if (!Contains (detectedByPlayerList, playerId))
+	if (!ranges::contains (detectedByPlayerList, playerId))
 	{
 		detectedByPlayerList.push_back (playerId);
 		player->detectedStealthUnit (*this);
 	}
 
-	if (!Contains (detectedInThisTurnByPlayerList, playerId))
+	if (!ranges::contains (detectedInThisTurnByPlayerList, playerId))
 		detectedInThisTurnByPlayerList.push_back (playerId);
 }
 
 //------------------------------------------------------------------------------
 void cUnit::resetDetectedByPlayer (const cPlayer* player)
 {
-	if (Contains (detectedByPlayerList, player->getId()))
+	if (ranges::contains (detectedByPlayerList, player->getId()))
 	{
 		Remove (detectedByPlayerList, player->getId());
 		if (!isAVehicle() || !static_cast<const cVehicle*> (this)->isUnitLoaded())
@@ -177,7 +177,7 @@ void cUnit::resetDetectedByPlayer (const cPlayer* player)
 //------------------------------------------------------------------------------
 bool cUnit::isDetectedByPlayer (const cPlayer* player) const
 {
-	return Contains (detectedByPlayerList, player->getId());
+	return ranges::contains (detectedByPlayerList, player->getId());
 }
 
 //------------------------------------------------------------------------------

@@ -178,7 +178,7 @@ sMiningResource cWindowResourceDistribution::getProduction() const
 
 void cWindowResourceDistribution::updateOnSubbaseChanged (const std::vector<cBuilding*>& buildings)
 {
-	if (building.subBase == nullptr || !Contains (buildings, &building)) return;
+	if (building.subBase == nullptr || !ranges::contains (buildings, &building)) return;
 
 	// reset to zero first as 'FixedMax' depends on other bars
 	metalBars[0]->setValue (0);

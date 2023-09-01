@@ -136,7 +136,7 @@ void cLanguage::setLanguagesFolder (const std::filesystem::path& path)
 //------------------------------------------------------------------------------
 void cLanguage::setCurrentLanguage (const std::string& code)
 {
-	if (!Contains (getAvailableLanguages(), code))
+	if (!ranges::contains (getAvailableLanguages(), code))
 	{
 		Log.error ("Not a supported language: " + code);
 		throw std::runtime_error ("Unsupported language " + code);

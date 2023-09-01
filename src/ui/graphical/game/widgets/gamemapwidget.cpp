@@ -1908,7 +1908,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		// toggle unit context menu if no other click action has been performed
 		if (!consumed)
 		{
-			if (changeAllowed && selectedVehicle && (Contains (field.getPlanes(), selectedVehicle) || selectedVehicle == overVehicle))
+			if (changeAllowed && selectedVehicle && (ranges::contains (field.getPlanes(), selectedVehicle) || selectedVehicle == overVehicle))
 			{
 				if (!selectedVehicle->isUnitMoving())
 				{

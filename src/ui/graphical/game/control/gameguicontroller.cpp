@@ -1143,7 +1143,7 @@ void cGameGuiController::connectReportSources (cClient& client)
 	clientSignalConnectionManager.connect (mapView->unitAppeared, [&] (const cUnit& unit) {
 		if (unit.getOwner() == nullptr || unit.getOwner()->getId() != getActivePlayer()->getId())
 		{
-			if (const auto* building = dynamic_cast<const cBuilding*>(&unit); building && building->isRubble())
+			if (const auto* building = dynamic_cast<const cBuilding*> (&unit); building && building->isRubble())
 			{
 				return;
 			}
@@ -1246,7 +1246,7 @@ void cGameGuiController::connectReportSources (cClient& client)
 		if (looser.getId() == player.getId())
 		{
 			auto win = application.show (std::make_shared<cWindowEndGame> (getPlayers()));
-			allClientsSignalConnectionManager.connect (win->closed, [=]() {gameGui->exit();});
+			allClientsSignalConnectionManager.connect (win->closed, [=]() { gameGui->exit(); });
 			// TODO: stop game
 		}
 	});
@@ -1824,7 +1824,7 @@ void cGameGuiController::sendStartGroupMoveAction (std::vector<cVehicle*> group,
 		{
 			auto& vehicle = group[i];
 			auto& path = paths[i];
-			if (mapView->possiblePlace (*vehicle, path.front(), true) || Contains (startedMoves, mapView->getField (path.front()).getVehicle()))
+			if (mapView->possiblePlace (*vehicle, path.front(), true) || ranges::contains (startedMoves, mapView->getField (path.front()).getVehicle()))
 			{
 				activeClient->startMove (*vehicle, path, start, eStopOn::Never, cEndMoveAction::None());
 				moveStarted = true;
