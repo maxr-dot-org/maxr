@@ -27,6 +27,9 @@
 #include "utility/crc.h"
 #include "utility/position.h"
 
+#include <cstdint>
+
+
 //-----------------------------------------------------------------------------
 /** Checks if the target is on a neighbor field and if it can be stolen or disabled */
 //------------------------------------------------------------------------------

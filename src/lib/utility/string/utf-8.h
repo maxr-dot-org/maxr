@@ -21,6 +21,7 @@
 #define utility_string_utf8H
 
 #include <string>
+#include <cstdint>
 
 namespace utf8
 {
