@@ -22,6 +22,8 @@
 
 #include "utility/serialization/nvp.h"
 
+#include <cstdint>
+
 class cMapView;
 class cPosition;
 class cUnit;
