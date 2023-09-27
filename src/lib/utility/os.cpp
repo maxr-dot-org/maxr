@@ -104,6 +104,8 @@ namespace os
 		return exe.parent_path();
 #elif __amigaos4__
 		return "";
+#elif defined(__FreeBS__)
+		return "";
 #else
 		// determine full path to application
 		// this needs /proc support that should be available
