@@ -30,9 +30,10 @@ public:
 	explicit cSavedReportDetected (const cUnit&);
 
 	template <typename Archive, ENABLE_ARCHIVE_OUT>
-	cSavedReportDetected (Archive& archive) :
+	explicit cSavedReportDetected (Archive& archive) :
 		cSavedReportUnit (archive)
 	{
+		serializeThis (archive);
 	}
 
 	eSavedReportType getType() const override;
