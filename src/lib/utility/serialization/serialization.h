@@ -41,10 +41,6 @@
 #include <variant>
 #include <vector>
 
-class cModel;
-class cUnit;
-class cVehicle;
-
 //used to constrain a template definition to use with out-archive types only
 #define ENABLE_ARCHIVE_OUT std::enable_if_t<Archive::isWriter == false, int> = 0
 

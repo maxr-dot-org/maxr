@@ -22,6 +22,8 @@
 
 #include "action.h"
 
+class cUnit;
+
 class cActionChangeSentry : public cActionT<cAction::eActiontype::ChangeSentry>
 {
 public:

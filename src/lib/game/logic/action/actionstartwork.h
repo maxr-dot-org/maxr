@@ -22,6 +22,8 @@
 
 #include "action.h"
 
+class cUnit;
+
 class cActionStartWork : public cActionT<cAction::eActiontype::StartWork>
 {
 public:

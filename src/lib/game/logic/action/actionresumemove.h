@@ -22,6 +22,8 @@
 
 #include "action.h"
 
+class cVehicle;
+
 class cActionResumeMove : public cActionT<cAction::eActiontype::ResumeMove>
 {
 public:

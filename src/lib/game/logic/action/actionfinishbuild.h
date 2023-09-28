@@ -24,6 +24,7 @@
 #include "utility/position.h"
 
 class cBuilding;
+class cUnit;
 class cVehicle;
 
 class cActionFinishBuild : public cActionT<cAction::eActiontype::FinishBuild>

@@ -24,6 +24,7 @@
 #include "game/data/units/unitdata.h"
 
 class cUnit;
+class cVehicle;
 
 class cActionStartBuild : public cActionT<cAction::eActiontype::StartBuild>
 {

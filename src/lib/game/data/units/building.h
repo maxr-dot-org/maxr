@@ -34,6 +34,7 @@ class cBase;
 class cCrossPlattformRandom;
 class cMap;
 class cMapField;
+class cModel;
 class cPlayer;
 class cSubBase;
 class cVehicle;

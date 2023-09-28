@@ -25,6 +25,8 @@
 
 #include <vector>
 
+class cUnit;
+
 //-------------------------------------------------------------------------------
 class cCasualtiesTracker
 {

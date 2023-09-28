@@ -22,6 +22,8 @@
 
 #include "action.h"
 
+class cUnit;
+
 class cActionChangeManualFire : public cActionT<cAction::eActiontype::ChangeManualFire>
 {
 public:

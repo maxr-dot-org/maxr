@@ -31,6 +31,7 @@ class cJob;
 class cMap;
 class cMapField;
 class cMapView;
+class cModel;
 class cPlayer;
 class cVehicle;
 

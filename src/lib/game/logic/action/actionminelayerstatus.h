@@ -22,6 +22,8 @@
 
 #include "action.h"
 
+class cVehicle;
+
 class cActionMinelayerStatus : public cActionT<cAction::eActiontype::MinelayerStatus>
 {
 public:

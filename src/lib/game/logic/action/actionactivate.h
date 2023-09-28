@@ -23,6 +23,7 @@
 #include "action.h"
 
 class cUnit;
+class cVehicle;
 
 class cActionActivate : public cActionT<cAction::eActiontype::Activate>
 {

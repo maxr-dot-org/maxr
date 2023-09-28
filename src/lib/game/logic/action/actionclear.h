@@ -22,6 +22,8 @@
 
 #include "action.h"
 
+class cVehicle;
+
 class cActionClear : public cActionT<cAction::eActiontype::Clear>
 {
 public:

@@ -23,6 +23,7 @@
 #include "action.h"
 
 class cUnit;
+class cVehicle;
 
 enum class eInfiltratorAction
 {

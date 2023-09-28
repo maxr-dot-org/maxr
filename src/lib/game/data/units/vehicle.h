@@ -31,6 +31,7 @@ class cBuilding;
 class cMap;
 class cMapField;
 class cMoveJob;
+class cModel;
 class cPlayer;
 class cStaticMap;
 

@@ -22,6 +22,8 @@
 
 #include "action.h"
 
+class cUnit;
+
 class cActionStop : public cActionT<cAction::eActiontype::Stop>
 {
 public:
