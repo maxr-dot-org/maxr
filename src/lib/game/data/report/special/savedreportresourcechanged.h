@@ -30,7 +30,7 @@ class cSavedReportResourceChanged : public cSavedReport
 public:
 	cSavedReportResourceChanged (eResourceType, int amount, bool increase);
 
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	explicit cSavedReportResourceChanged (Archive& archive)
 	{
 		serializeThis (archive);

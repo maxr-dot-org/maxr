@@ -29,7 +29,7 @@ class cSavedReportPlayerEndedTurn : public cSavedReport
 public:
 	cSavedReportPlayerEndedTurn (const cPlayer&);
 
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	explicit cSavedReportPlayerEndedTurn (Archive& archive)
 	{
 		serializeThis (archive);

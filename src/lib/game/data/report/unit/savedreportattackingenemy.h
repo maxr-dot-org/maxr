@@ -26,7 +26,7 @@ class cSavedReportAttackingEnemy : public cSavedReportUnit
 {
 public:
 	cSavedReportAttackingEnemy (const cUnit& unit);
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	cSavedReportAttackingEnemy (Archive& archive) :
 		cSavedReportUnit (archive)
 	{

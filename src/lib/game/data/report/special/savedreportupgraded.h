@@ -27,7 +27,7 @@ class cSavedReportUpgraded : public cSavedReport
 {
 public:
 	cSavedReportUpgraded (const sID& unitId, int unitsCount, int costs);
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	explicit cSavedReportUpgraded (Archive& archive)
 	{
 		serializeThis (archive);

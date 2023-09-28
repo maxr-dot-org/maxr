@@ -26,7 +26,7 @@ class cSavedReportSurveyorAiConfused : public cSavedReportUnit
 {
 public:
 	cSavedReportSurveyorAiConfused (const cUnit& unit);
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	cSavedReportSurveyorAiConfused (Archive& archive) :
 		cSavedReportUnit (archive)
 	{}

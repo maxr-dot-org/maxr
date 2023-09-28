@@ -26,7 +26,7 @@ class cSavedReportAttacked : public cSavedReportUnit
 {
 public:
 	cSavedReportAttacked (const cUnit& unit);
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	explicit cSavedReportAttacked (Archive& archive) :
 		cSavedReportUnit (archive)
 	{

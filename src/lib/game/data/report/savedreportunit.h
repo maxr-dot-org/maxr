@@ -32,7 +32,7 @@ class cSavedReportUnit : public cSavedReport
 public:
 	explicit cSavedReportUnit (const cUnit&);
 
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	explicit cSavedReportUnit (Archive& archive)
 	{
 		serializeThis (archive);

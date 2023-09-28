@@ -29,7 +29,7 @@ class cSavedReportTurnStart : public cSavedReport
 public:
 	cSavedReportTurnStart (int turn, const std::vector<sTurnstartReport>&, const std::vector<cResearch::eResearchArea>&);
 
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	explicit cSavedReportTurnStart (Archive& archive)
 	{
 		serializeThis (archive);

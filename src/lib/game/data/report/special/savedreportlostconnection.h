@@ -28,7 +28,7 @@ class cSavedReportLostConnection : public cSavedReport
 public:
 	cSavedReportLostConnection (const cPlayer&);
 
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	cSavedReportLostConnection (Archive& archive)
 	{
 		serializeThis (archive);

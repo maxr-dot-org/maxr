@@ -29,7 +29,7 @@ class cSavedReportChat : public cSavedReport
 public:
 	cSavedReportChat (const cPlayer& player, std::string text);
 	cSavedReportChat (std::string playerName, std::string text);
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	explicit cSavedReportChat (Archive& archive)
 	{
 		serializeThis (archive);

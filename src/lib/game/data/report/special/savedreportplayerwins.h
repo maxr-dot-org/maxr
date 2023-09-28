@@ -29,7 +29,7 @@ class cSavedReportPlayerWins : public cSavedReport
 public:
 	cSavedReportPlayerWins (const cPlayer&);
 
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	explicit cSavedReportPlayerWins (Archive& archive)
 	{
 		serializeThis (archive);

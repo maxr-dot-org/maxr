@@ -26,7 +26,7 @@ class cSavedReportHostCommand : public cSavedReport
 {
 public:
 	cSavedReportHostCommand (std::string command);
-	template <typename Archive, ENABLE_ARCHIVE_OUT>
+	template <typename Archive, ENABLE_ARCHIVE_IN>
 	explicit cSavedReportHostCommand (Archive& archive)
 	{
 		serializeThis (archive);

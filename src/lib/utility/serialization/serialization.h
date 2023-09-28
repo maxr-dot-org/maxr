@@ -41,11 +41,11 @@
 #include <variant>
 #include <vector>
 
-//used to constrain a template definition to use with out-archive types only
-#define ENABLE_ARCHIVE_OUT std::enable_if_t<Archive::isWriter == false, int> = 0
-
 //used to constrain a template definition to use with in-archive types only
-#define ENABLE_ARCHIVE_IN std::enable_if_t<Archive::isWriter == true, int> = 0
+#define ENABLE_ARCHIVE_IN std::enable_if_t<Archive::isWriter == false, int> = 0
+
+//used to constrain a template definition to use with out-archive types only
+#define ENABLE_ARCHIVE_OUT std::enable_if_t<Archive::isWriter == true, int> = 0
 
 //used to constrain a template definition to use with archive types only
 #define ENABLE_ARCHIVES std::enable_if_t<std::is_same<decltype (Archive::isWriter), bool>::value, int> = 0
