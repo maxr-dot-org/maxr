@@ -29,7 +29,7 @@ cActionResumeMove::cActionResumeMove (const cVehicle& vehicle) :
 {}
 
 //------------------------------------------------------------------------------
-cActionResumeMove::cActionResumeMove (cBinaryArchiveOut& archive)
+cActionResumeMove::cActionResumeMove (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

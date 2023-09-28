@@ -26,7 +26,7 @@ cActionStartTurn::cActionStartTurn()
 {}
 
 //------------------------------------------------------------------------------
-cActionStartTurn::cActionStartTurn (cBinaryArchiveOut&)
+cActionStartTurn::cActionStartTurn (cBinaryArchiveIn&)
 {}
 
 //------------------------------------------------------------------------------

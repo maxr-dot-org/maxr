@@ -35,9 +35,9 @@ class cActionStealDisable : public cActionT<cAction::eActiontype::StealDisable>
 {
 public:
 	cActionStealDisable (const cVehicle& infiltrator, const cUnit& target, bool steal);
-	cActionStealDisable (cBinaryArchiveOut& archive);
+	cActionStealDisable (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

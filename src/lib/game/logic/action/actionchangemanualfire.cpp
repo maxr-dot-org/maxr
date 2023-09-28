@@ -27,7 +27,7 @@ cActionChangeManualFire::cActionChangeManualFire (const cUnit& unit) :
 {}
 
 //------------------------------------------------------------------------------
-cActionChangeManualFire::cActionChangeManualFire (cBinaryArchiveOut& archive)
+cActionChangeManualFire::cActionChangeManualFire (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

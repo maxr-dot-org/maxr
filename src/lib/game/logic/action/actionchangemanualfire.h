@@ -28,9 +28,9 @@ class cActionChangeManualFire : public cActionT<cAction::eActiontype::ChangeManu
 {
 public:
 	cActionChangeManualFire (const cUnit& unit);
-	cActionChangeManualFire (cBinaryArchiveOut& archive);
+	cActionChangeManualFire (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

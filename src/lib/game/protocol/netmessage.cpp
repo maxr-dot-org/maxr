@@ -59,7 +59,7 @@ namespace serialization
 //------------------------------------------------------------------------------
 std::unique_ptr<cNetMessage> cNetMessage::createFromBuffer (const unsigned char* data, int length)
 {
-	cBinaryArchiveOut archive (data, length);
+	cBinaryArchiveIn archive (data, length);
 
 	eNetMessageType type;
 	archive >> NVP (type);
@@ -141,8 +141,8 @@ std::unique_ptr<cNetMessage> cNetMessage::createFromBuffer (const unsigned char*
 std::unique_ptr<cNetMessage> cNetMessage::clone() const
 {
 	std::vector<unsigned char> serialMessage;
-	cBinaryArchiveIn archiveIn (serialMessage);
-	archiveIn << *this;
+	cBinaryArchiveOut archive (serialMessage);
+	archive << *this;
 
 	return cNetMessage::createFromBuffer (serialMessage.data(), serialMessage.size());
 }
@@ -171,13 +171,13 @@ cNetMessageTcpConnected::cNetMessageTcpConnected (int playerNr) :
 //------------------------------------------------------------------------------
 cNetMessageResyncModel::cNetMessageResyncModel (const cModel& model)
 {
-	cBinaryArchiveIn archive (data);
+	cBinaryArchiveOut archive (data);
 	archive << model;
 }
 
 void cNetMessageResyncModel::apply (cModel& model) const
 {
-	cBinaryArchiveOut archive (data.data(), data.size());
+	cBinaryArchiveIn archive (data.data(), data.size());
 	archive >> model;
 }
 

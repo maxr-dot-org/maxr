@@ -28,7 +28,7 @@ cActionChangeUnitName::cActionChangeUnitName (const cUnit& unit, const std::stri
 {}
 
 //------------------------------------------------------------------------------
-cActionChangeUnitName::cActionChangeUnitName (cBinaryArchiveOut& archive)
+cActionChangeUnitName::cActionChangeUnitName (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

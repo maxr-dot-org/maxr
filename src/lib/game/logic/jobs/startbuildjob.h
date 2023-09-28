@@ -39,7 +39,7 @@ public:
 	void run (cModel& model) override;
 	eJobType getType() const override;
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		archive << serialization::makeNvp ("type", getType());
 		serializeThis (archive);

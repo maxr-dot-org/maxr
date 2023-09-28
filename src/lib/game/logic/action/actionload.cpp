@@ -31,7 +31,7 @@ cActionLoad::cActionLoad (const cUnit& loadingUnit, const cVehicle& loadedVehicl
 {}
 
 //------------------------------------------------------------------------------
-cActionLoad::cActionLoad (cBinaryArchiveOut& archive)
+cActionLoad::cActionLoad (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

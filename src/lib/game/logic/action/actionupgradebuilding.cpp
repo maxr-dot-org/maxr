@@ -29,7 +29,7 @@ cActionUpgradeBuilding::cActionUpgradeBuilding (const cBuilding& building, bool 
 {}
 
 //------------------------------------------------------------------------------
-cActionUpgradeBuilding::cActionUpgradeBuilding (cBinaryArchiveOut& archive)
+cActionUpgradeBuilding::cActionUpgradeBuilding (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

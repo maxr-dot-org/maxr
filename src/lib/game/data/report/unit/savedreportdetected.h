@@ -39,7 +39,7 @@ public:
 	eSavedReportType getType() const override;
 	bool isSubmarine (const cModel&) const;
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cSavedReportUnit::serialize (archive);
 		serializeThis (archive);

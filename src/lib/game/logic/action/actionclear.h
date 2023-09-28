@@ -28,9 +28,9 @@ class cActionClear : public cActionT<cAction::eActiontype::Clear>
 {
 public:
 	cActionClear (const cVehicle& vehicle);
-	cActionClear (cBinaryArchiveOut& archive);
+	cActionClear (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

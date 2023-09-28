@@ -20,17 +20,17 @@
 #include "binaryarchive.h"
 
 //------------------------------------------------------------------------------
-cBinaryArchiveIn::cBinaryArchiveIn (std::vector<unsigned char>& buffer) :
+cBinaryArchiveOut::cBinaryArchiveOut (std::vector<unsigned char>& buffer) :
 	buffer (buffer)
 {}
 
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (bool value)
+void cBinaryArchiveOut::pushValue (bool value)
 {
 	writeToBuffer (static_cast<Sint8> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (char value)
+void cBinaryArchiveOut::pushValue (char value)
 {
 	if (std::numeric_limits<char>::is_signed)
 		writeToBuffer (static_cast<Sint8> (value));
@@ -38,147 +38,147 @@ void cBinaryArchiveIn::pushValue (char value)
 		writeToBuffer (static_cast<Uint8> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (signed char value)
+void cBinaryArchiveOut::pushValue (signed char value)
 {
 	writeToBuffer (static_cast<Sint8> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (unsigned char value)
+void cBinaryArchiveOut::pushValue (unsigned char value)
 {
 	writeToBuffer (static_cast<Uint8> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (signed short value)
+void cBinaryArchiveOut::pushValue (signed short value)
 {
 	writeToBuffer (static_cast<Sint16> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (unsigned short value)
+void cBinaryArchiveOut::pushValue (unsigned short value)
 {
 	writeToBuffer (static_cast<Uint16> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (signed int value)
+void cBinaryArchiveOut::pushValue (signed int value)
 {
 	writeToBuffer (static_cast<Sint32> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (unsigned int value)
+void cBinaryArchiveOut::pushValue (unsigned int value)
 {
 	writeToBuffer (static_cast<Uint32> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (signed long value)
+void cBinaryArchiveOut::pushValue (signed long value)
 {
 	writeToBuffer (static_cast<Sint64> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (unsigned long value)
+void cBinaryArchiveOut::pushValue (unsigned long value)
 {
 	writeToBuffer (static_cast<Uint64> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (signed long long value)
+void cBinaryArchiveOut::pushValue (signed long long value)
 {
 	writeToBuffer (static_cast<Sint64> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (unsigned long long value)
+void cBinaryArchiveOut::pushValue (unsigned long long value)
 {
 	writeToBuffer (static_cast<Uint64> (value));
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (float value)
+void cBinaryArchiveOut::pushValue (float value)
 {
 	pushGenericIEEE754As<Sint32> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveIn::pushValue (double value)
+void cBinaryArchiveOut::pushValue (double value)
 {
 	pushGenericIEEE754As<Sint64> (value);
 }
 
 //------------------------------------------------------------------------------
-cBinaryArchiveOut::cBinaryArchiveOut (const unsigned char* data, size_t length) :
+cBinaryArchiveIn::cBinaryArchiveIn (const unsigned char* data, size_t length) :
 	data (data),
 	length (length),
 	readPosition (0)
 {}
 //------------------------------------------------------------------------------
-size_t cBinaryArchiveOut::dataLeft() const
+size_t cBinaryArchiveIn::dataLeft() const
 {
 	return length - readPosition;
 }
 
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (bool& value)
+void cBinaryArchiveIn::popValue (bool& value)
 {
 	Sint8 temp;
 	readFromBuffer<1> (temp);
 	value = temp != 0;
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (char& value)
+void cBinaryArchiveIn::popValue (char& value)
 {
 	readFromBuffer<1> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (signed char& value)
+void cBinaryArchiveIn::popValue (signed char& value)
 {
 	readFromBuffer<1> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (unsigned char& value)
+void cBinaryArchiveIn::popValue (unsigned char& value)
 {
 	readFromBuffer<1> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (signed short& value)
+void cBinaryArchiveIn::popValue (signed short& value)
 {
 	readFromBuffer<2> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (unsigned short& value)
+void cBinaryArchiveIn::popValue (unsigned short& value)
 {
 	readFromBuffer<2> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (signed int& value)
+void cBinaryArchiveIn::popValue (signed int& value)
 {
 	readFromBuffer<4> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (unsigned int& value)
+void cBinaryArchiveIn::popValue (unsigned int& value)
 {
 	readFromBuffer<4> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (signed long& value)
+void cBinaryArchiveIn::popValue (signed long& value)
 {
 	readFromBuffer<8> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (unsigned long& value)
+void cBinaryArchiveIn::popValue (unsigned long& value)
 {
 	readFromBuffer<8> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (signed long long& value)
+void cBinaryArchiveIn::popValue (signed long long& value)
 {
 	readFromBuffer<8> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (unsigned long long& value)
+void cBinaryArchiveIn::popValue (unsigned long long& value)
 {
 	readFromBuffer<8> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (float& value)
+void cBinaryArchiveIn::popValue (float& value)
 {
 	popGenericIEEE754As<Sint32> (value);
 }
 //------------------------------------------------------------------------------
-void cBinaryArchiveOut::popValue (double& value)
+void cBinaryArchiveIn::popValue (double& value)
 {
 	popGenericIEEE754As<Sint64> (value);
 }

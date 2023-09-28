@@ -31,7 +31,7 @@ cActionAttack::cActionAttack (const cUnit& aggressor, cPosition targetPosition, 
 {}
 
 //------------------------------------------------------------------------------
-cActionAttack::cActionAttack (cBinaryArchiveOut& archive)
+cActionAttack::cActionAttack (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

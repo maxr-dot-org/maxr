@@ -32,7 +32,7 @@ cActionTransfer::cActionTransfer (const cUnit& sourceUnit, const cUnit& destinat
 {}
 
 //------------------------------------------------------------------------------
-cActionTransfer::cActionTransfer (cBinaryArchiveOut& archive)
+cActionTransfer::cActionTransfer (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

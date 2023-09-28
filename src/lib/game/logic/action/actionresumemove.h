@@ -29,9 +29,9 @@ class cActionResumeMove : public cActionT<cAction::eActiontype::ResumeMove>
 public:
 	cActionResumeMove() = default;
 	cActionResumeMove (const cVehicle& vehicle);
-	cActionResumeMove (cBinaryArchiveOut& archive);
+	cActionResumeMove (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

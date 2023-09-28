@@ -30,9 +30,9 @@ class cActionResourceDistribution : public cActionT<cAction::eActiontype::Resour
 {
 public:
 	cActionResourceDistribution (const cBuilding& building, const sMiningResource&);
-	cActionResourceDistribution (cBinaryArchiveOut& archive);
+	cActionResourceDistribution (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

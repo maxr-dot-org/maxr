@@ -57,11 +57,11 @@ public:
 		UpgradeBuilding,
 		SetAutoMove
 	};
-	static std::unique_ptr<cAction> createFromBuffer (cBinaryArchiveOut& archive);
+	static std::unique_ptr<cAction> createFromBuffer (cBinaryArchiveIn& archive);
 
 	eActiontype getType() const;
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cNetMessage::serialize (archive);
 		serializeThis (archive);

@@ -28,7 +28,7 @@ cActionClear::cActionClear (const cVehicle& vehicle) :
 {}
 
 //------------------------------------------------------------------------------
-cActionClear::cActionClear (cBinaryArchiveOut& archive)
+cActionClear::cActionClear (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

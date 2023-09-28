@@ -325,7 +325,7 @@ void cConnectionManager::sendToPlayers (const cNetMessage& message)
 
 	// serialize...
 	std::vector<unsigned char> buffer;
-	cBinaryArchiveIn archive (buffer);
+	cBinaryArchiveOut archive (buffer);
 	archive << message;
 
 	for (const auto& client : clientSockets)
@@ -420,7 +420,7 @@ int cConnectionManager::sendMessage (const cSocket& socket, const cNetMessage& m
 {
 	// serialize...
 	std::vector<unsigned char> buffer;
-	cBinaryArchiveIn archive (buffer);
+	cBinaryArchiveOut archive (buffer);
 	archive << message;
 
 	return network->sendMessage (socket, buffer.size(), buffer.data());

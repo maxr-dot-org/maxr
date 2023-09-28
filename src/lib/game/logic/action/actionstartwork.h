@@ -28,9 +28,9 @@ class cActionStartWork : public cActionT<cAction::eActiontype::StartWork>
 {
 public:
 	cActionStartWork (const cUnit& unit);
-	cActionStartWork (cBinaryArchiveOut& archive);
+	cActionStartWork (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

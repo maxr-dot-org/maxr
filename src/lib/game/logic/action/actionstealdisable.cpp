@@ -31,7 +31,7 @@ cActionStealDisable::cActionStealDisable (const cVehicle& infiltrator, const cUn
 {}
 
 //------------------------------------------------------------------------------
-cActionStealDisable::cActionStealDisable (cBinaryArchiveOut& archive)
+cActionStealDisable::cActionStealDisable (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

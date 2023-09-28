@@ -98,10 +98,10 @@ public:
 
 	virtual std::optional<cPosition> getPosition() const { return std::nullopt; }
 
-	static std::unique_ptr<cSavedReport> createFrom (cBinaryArchiveOut&);
+	static std::unique_ptr<cSavedReport> createFrom (cBinaryArchiveIn&);
 	static std::unique_ptr<cSavedReport> createFrom (cJsonArchiveIn&);
 
-	virtual void serialize (cBinaryArchiveIn& archive) { serializeThis (archive); }
+	virtual void serialize (cBinaryArchiveOut& archive) { serializeThis (archive); }
 	virtual void serialize (cJsonArchiveOut& archive) { serializeThis (archive); }
 
 private:

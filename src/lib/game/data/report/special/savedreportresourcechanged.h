@@ -40,7 +40,7 @@ public:
 
 	bool isAlert() const override;
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cSavedReport::serialize (archive);
 		serializeThis (archive);

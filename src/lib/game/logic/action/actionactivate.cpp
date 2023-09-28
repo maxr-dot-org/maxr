@@ -31,7 +31,7 @@ cActionActivate::cActionActivate (const cUnit& containingUnit, const cVehicle& a
 {}
 
 //------------------------------------------------------------------------------
-cActionActivate::cActionActivate (cBinaryArchiveOut& archive)
+cActionActivate::cActionActivate (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

@@ -28,9 +28,9 @@ class cActionAttack : public cActionT<cAction::eActiontype::Attack>
 {
 public:
 	cActionAttack (const cUnit& aggressor, cPosition targetPosition, const cUnit* targetUnit);
-	cActionAttack (cBinaryArchiveOut& archive);
+	cActionAttack (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

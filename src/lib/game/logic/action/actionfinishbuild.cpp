@@ -28,7 +28,7 @@ cActionFinishBuild::cActionFinishBuild (const cUnit& unit, const cPosition& esca
 {}
 
 //------------------------------------------------------------------------------
-cActionFinishBuild::cActionFinishBuild (cBinaryArchiveOut& archive)
+cActionFinishBuild::cActionFinishBuild (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

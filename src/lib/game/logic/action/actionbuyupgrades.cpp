@@ -27,7 +27,7 @@ cActionBuyUpgrades::cActionBuyUpgrades (const std::vector<std::pair<sID, cUnitUp
 {}
 
 //------------------------------------------------------------------------------
-cActionBuyUpgrades::cActionBuyUpgrades (cBinaryArchiveOut& archive)
+cActionBuyUpgrades::cActionBuyUpgrades (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

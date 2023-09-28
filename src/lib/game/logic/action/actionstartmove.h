@@ -37,9 +37,9 @@ class cActionStartMove : public cActionT<cAction::eActiontype::StartMove>
 {
 public:
 	cActionStartMove (const cVehicle&, const std::forward_list<cPosition>& path, eStart, eStopOn, cEndMoveAction);
-	cActionStartMove (cBinaryArchiveOut& archive);
+	cActionStartMove (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

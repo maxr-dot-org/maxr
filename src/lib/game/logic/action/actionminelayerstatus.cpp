@@ -29,7 +29,7 @@ cActionMinelayerStatus::cActionMinelayerStatus (const cVehicle& vehicle, bool la
 {}
 
 //------------------------------------------------------------------------------
-cActionMinelayerStatus::cActionMinelayerStatus (cBinaryArchiveOut& archive)
+cActionMinelayerStatus::cActionMinelayerStatus (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

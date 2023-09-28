@@ -29,9 +29,9 @@ class cActionRepairReload : public cActionT<cAction::eActiontype::RepairReload>
 {
 public:
 	cActionRepairReload (const cUnit& sourceUnit, const cUnit& destUnit, eSupplyType supplyType);
-	cActionRepairReload (cBinaryArchiveOut& archive);
+	cActionRepairReload (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

@@ -31,9 +31,9 @@ class cActionStartBuild : public cActionT<cAction::eActiontype::StartBuild>
 public:
 	cActionStartBuild (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition);
 	cActionStartBuild (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition, const cPosition& pathEndPosition);
-	cActionStartBuild (cBinaryArchiveOut& archive);
+	cActionStartBuild (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

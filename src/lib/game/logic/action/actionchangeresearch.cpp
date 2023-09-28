@@ -27,7 +27,7 @@ cActionChangeResearch::cActionChangeResearch (const std::array<int, cResearch::k
 {}
 
 //------------------------------------------------------------------------------
-cActionChangeResearch::cActionChangeResearch (cBinaryArchiveOut& archive)
+cActionChangeResearch::cActionChangeResearch (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

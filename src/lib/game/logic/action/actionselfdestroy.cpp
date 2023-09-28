@@ -28,7 +28,7 @@ cActionSelfDestroy::cActionSelfDestroy (const cBuilding& unit) :
 {}
 
 //------------------------------------------------------------------------------
-cActionSelfDestroy::cActionSelfDestroy (cBinaryArchiveOut& archive)
+cActionSelfDestroy::cActionSelfDestroy (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

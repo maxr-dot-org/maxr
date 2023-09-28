@@ -29,9 +29,9 @@ class cActionSetAutoMove : public cActionT<cAction::eActiontype::SetAutoMove>
 {
 public:
 	cActionSetAutoMove (const cVehicle& vehicle, bool autoMoveActive);
-	cActionSetAutoMove (cBinaryArchiveOut& archive);
+	cActionSetAutoMove (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

@@ -28,9 +28,9 @@ class cActionChangeSentry : public cActionT<cAction::eActiontype::ChangeSentry>
 {
 public:
 	cActionChangeSentry (const cUnit& unit);
-	cActionChangeSentry (cBinaryArchiveOut& archive);
+	cActionChangeSentry (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

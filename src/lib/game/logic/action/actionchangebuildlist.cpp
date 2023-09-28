@@ -29,7 +29,7 @@ cActionChangeBuildList::cActionChangeBuildList (const cBuilding& building, const
 {}
 
 //------------------------------------------------------------------------------
-cActionChangeBuildList::cActionChangeBuildList (cBinaryArchiveOut& archive)
+cActionChangeBuildList::cActionChangeBuildList (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

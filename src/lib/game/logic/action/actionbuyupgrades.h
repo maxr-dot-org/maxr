@@ -28,9 +28,9 @@ class cActionBuyUpgrades : public cActionT<cAction::eActiontype::BuyUpgrades>
 {
 public:
 	cActionBuyUpgrades (const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
-	cActionBuyUpgrades (cBinaryArchiveOut& archive);
+	cActionBuyUpgrades (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

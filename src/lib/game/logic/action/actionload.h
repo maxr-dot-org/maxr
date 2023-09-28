@@ -29,9 +29,9 @@ class cActionLoad : public cActionT<cAction::eActiontype::Load>
 {
 public:
 	cActionLoad (const cUnit& loadingUnit, const cVehicle& loadedVehicle);
-	cActionLoad (cBinaryArchiveOut& archive);
+	cActionLoad (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

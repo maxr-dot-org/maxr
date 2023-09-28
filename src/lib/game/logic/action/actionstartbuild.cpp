@@ -41,7 +41,7 @@ cActionStartBuild::cActionStartBuild (const cVehicle& vehicle, sID buildingTypeI
 {}
 
 //------------------------------------------------------------------------------
-cActionStartBuild::cActionStartBuild (cBinaryArchiveOut& archive)
+cActionStartBuild::cActionStartBuild (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

@@ -29,9 +29,9 @@ class cActionTransfer : public cActionT<cAction::eActiontype::Transfer>
 {
 public:
 	cActionTransfer (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, eResourceType resourceType);
-	cActionTransfer (cBinaryArchiveOut& archive);
+	cActionTransfer (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

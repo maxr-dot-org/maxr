@@ -26,22 +26,22 @@
 #include <limits.h>
 #include <stdint.h>
 
-class cBinaryArchiveIn
+class cBinaryArchiveOut
 {
 public:
-	cBinaryArchiveIn (std::vector<unsigned char>& buffer);
+	cBinaryArchiveOut (std::vector<unsigned char>& buffer);
 
 	static const bool isWriter = true;
 
 	template <typename T>
-	cBinaryArchiveIn& operator<< (const T& value)
+	cBinaryArchiveOut& operator<< (const T& value)
 	{
 		pushValue (value);
 		return *this;
 	}
 
 	template <typename T>
-	cBinaryArchiveIn& operator& (const T& value)
+	cBinaryArchiveOut& operator& (const T& value)
 	{
 		pushValue (value);
 		return *this;
@@ -101,23 +101,23 @@ private:
 /**
 *
 */
-class cBinaryArchiveOut
+class cBinaryArchiveIn
 {
 public:
 	static const bool isWriter = false;
 
-	cBinaryArchiveOut (const unsigned char* data, size_t length);
+	cBinaryArchiveIn (const unsigned char* data, size_t length);
 
 	//--------------------------------------------------------------------------
 	template <typename T>
-	cBinaryArchiveOut& operator>> (T& value)
+	cBinaryArchiveIn& operator>> (T& value)
 	{
 		popValue (value);
 		return *this;
 	}
 	//--------------------------------------------------------------------------
 	template <typename T>
-	cBinaryArchiveOut& operator>> (const serialization::sNameValuePair<T>& nvp)
+	cBinaryArchiveIn& operator>> (const serialization::sNameValuePair<T>& nvp)
 	{
 		popValue (nvp.value);
 		return *this;
@@ -125,14 +125,14 @@ public:
 
 	//--------------------------------------------------------------------------
 	template <typename T>
-	cBinaryArchiveOut& operator& (T& value)
+	cBinaryArchiveIn& operator& (T& value)
 	{
 		popValue (value);
 		return *this;
 	}
 	//--------------------------------------------------------------------------
 	template <typename T>
-	cBinaryArchiveOut& operator& (const serialization::sNameValuePair<T>& nvp)
+	cBinaryArchiveIn& operator& (const serialization::sNameValuePair<T>& nvp)
 	{
 		popValue (nvp.value);
 		return *this;
@@ -190,7 +190,7 @@ private:
 
 //------------------------------------------------------------------------------
 template <typename T>
-void cBinaryArchiveIn::writeToBuffer (const T& value)
+void cBinaryArchiveOut::writeToBuffer (const T& value)
 {
 	static_assert (CHAR_BIT == 8, "!");
 
@@ -229,7 +229,7 @@ void cBinaryArchiveIn::writeToBuffer (const T& value)
 
 //------------------------------------------------------------------------------
 template <typename T2, typename T1>
-void cBinaryArchiveIn::pushGenericIEEE754As (T1 value)
+void cBinaryArchiveOut::pushGenericIEEE754As (T1 value)
 {
 	static_assert (sizeof (T1) == 4 || sizeof (T1) == 8, "!");
 	static_assert (sizeof (T1) == sizeof (T2), "!");
@@ -283,13 +283,13 @@ void cBinaryArchiveIn::pushGenericIEEE754As (T1 value)
 
 //------------------------------------------------------------------------------
 template <size_t SIZE, typename T1>
-void cBinaryArchiveOut::readFromBuffer (T1& value)
+void cBinaryArchiveIn::readFromBuffer (T1& value)
 {
 	static_assert (CHAR_BIT == 8, "!");
 
 	if (length - readPosition < SIZE)
 	{
-		throw std::runtime_error ("cBinaryArchiveOut: Buffer underrun");
+		throw std::runtime_error ("cBinaryArchiveIn: Buffer underrun");
 	}
 
 	switch (SIZE)
@@ -327,7 +327,7 @@ void cBinaryArchiveOut::readFromBuffer (T1& value)
 
 //------------------------------------------------------------------------------
 template <typename T2, typename T1>
-void cBinaryArchiveOut::popGenericIEEE754As (T1& value)
+void cBinaryArchiveIn::popGenericIEEE754As (T1& value)
 {
 	static_assert (sizeof (T1) == 4 || sizeof (T1) == 8, "!");
 	static_assert (sizeof (T1) == sizeof (T2), "!");

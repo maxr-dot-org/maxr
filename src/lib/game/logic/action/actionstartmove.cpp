@@ -33,7 +33,7 @@ cActionStartMove::cActionStartMove (const cVehicle& vehicle, const std::forward_
 {}
 
 //------------------------------------------------------------------------------
-cActionStartMove::cActionStartMove (cBinaryArchiveOut& archive) :
+cActionStartMove::cActionStartMove (cBinaryArchiveIn& archive) :
 	endMoveAction (cEndMoveAction::None())
 {
 	serializeThis (archive);

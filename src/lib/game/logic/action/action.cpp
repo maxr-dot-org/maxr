@@ -87,7 +87,7 @@ namespace serialization
 	};
 } // namespace serialization
 
-std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveOut& archive)
+std::unique_ptr<cAction> cAction::createFromBuffer (cBinaryArchiveIn& archive)
 {
 	eActiontype action;
 	archive >> NVP (action);

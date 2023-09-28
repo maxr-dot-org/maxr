@@ -31,9 +31,9 @@ class cActionInitNewGame : public cActionT<cAction::eActiontype::InitNewGame>
 {
 public:
 	explicit cActionInitNewGame (sInitPlayerData);
-	explicit cActionInitNewGame (cBinaryArchiveOut&);
+	explicit cActionInitNewGame (cBinaryArchiveIn&);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

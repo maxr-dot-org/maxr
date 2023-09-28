@@ -110,7 +110,7 @@ std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (Archive& archive)
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cSavedReport> cSavedReport::createFrom (cBinaryArchiveOut& archive)
+std::unique_ptr<cSavedReport> cSavedReport::createFrom (cBinaryArchiveIn& archive)
 {
 	return createFromImpl (archive);
 }

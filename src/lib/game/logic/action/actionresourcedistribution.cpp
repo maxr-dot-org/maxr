@@ -28,7 +28,7 @@ cActionResourceDistribution::cActionResourceDistribution (const cBuilding& build
 {}
 
 //------------------------------------------------------------------------------
-cActionResourceDistribution::cActionResourceDistribution (cBinaryArchiveOut& archive)
+cActionResourceDistribution::cActionResourceDistribution (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

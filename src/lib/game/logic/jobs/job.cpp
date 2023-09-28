@@ -34,7 +34,7 @@ cJob::cJob (const cUnit& unit) :
 {}
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cJob> cJob::createFrom (cBinaryArchiveOut& archive)
+std::unique_ptr<cJob> cJob::createFrom (cBinaryArchiveIn& archive)
 {
 	return createFromImpl (archive);
 }

@@ -118,12 +118,12 @@ namespace
 	{
 		std::vector<unsigned char> buffer;
 
-		cBinaryArchiveIn in (buffer);
-		in << serialization::makeNvp ("value", expected);
+		cBinaryArchiveOut out (buffer);
+		out << serialization::makeNvp ("value", expected);
 
-		cBinaryArchiveOut out (buffer.data(), buffer.size());
+		cBinaryArchiveIn in (buffer.data(), buffer.size());
 		T value;
-		out >> serialization::makeNvp ("value", value);
+		in >> serialization::makeNvp ("value", value);
 		CHECK (expected == value);
 	}
 
@@ -133,12 +133,12 @@ namespace
 	{
 		std::vector<unsigned char> buffer;
 
-		cBinaryArchiveIn in (buffer);
-		in << expected;
+		cBinaryArchiveOut out (buffer);
+		out << expected;
 
-		cBinaryArchiveOut out (buffer.data(), buffer.size());
+		cBinaryArchiveIn in (buffer.data(), buffer.size());
 		T value;
-		out >> value;
+		in >> value;
 		CHECK (expected == value);
 	}
 

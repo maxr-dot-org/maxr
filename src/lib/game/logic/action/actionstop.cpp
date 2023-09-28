@@ -27,7 +27,7 @@ cActionStop::cActionStop (const cUnit& unit) :
 {}
 
 //------------------------------------------------------------------------------
-cActionStop::cActionStop (cBinaryArchiveOut& archive)
+cActionStop::cActionStop (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

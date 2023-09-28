@@ -29,9 +29,9 @@ class cActionUpgradeBuilding : public cActionT<cAction::eActiontype::UpgradeBuil
 {
 public:
 	cActionUpgradeBuilding (const cBuilding& building, bool allBuildings);
-	cActionUpgradeBuilding (cBinaryArchiveOut& archive);
+	cActionUpgradeBuilding (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

@@ -31,9 +31,9 @@ class cActionFinishBuild : public cActionT<cAction::eActiontype::FinishBuild>
 {
 public:
 	cActionFinishBuild (const cUnit& unit, const cPosition& escapePosition);
-	cActionFinishBuild (cBinaryArchiveOut& archive);
+	cActionFinishBuild (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

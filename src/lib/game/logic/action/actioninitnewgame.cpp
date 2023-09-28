@@ -286,7 +286,7 @@ cActionInitNewGame::cActionInitNewGame (sInitPlayerData initPlayerData) :
 {}
 
 //------------------------------------------------------------------------------
-cActionInitNewGame::cActionInitNewGame (cBinaryArchiveOut& archive)
+cActionInitNewGame::cActionInitNewGame (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

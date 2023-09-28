@@ -28,7 +28,7 @@ cActionSetAutoMove::cActionSetAutoMove (const cVehicle& vehicle, bool autoMoveAc
 {}
 
 //------------------------------------------------------------------------------
-cActionSetAutoMove::cActionSetAutoMove (cBinaryArchiveOut& archive)
+cActionSetAutoMove::cActionSetAutoMove (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

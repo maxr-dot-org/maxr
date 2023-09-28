@@ -28,7 +28,7 @@ cActionStartWork::cActionStartWork (const cUnit& unit) :
 {}
 
 //------------------------------------------------------------------------------
-cActionStartWork::cActionStartWork (cBinaryArchiveOut& archive)
+cActionStartWork::cActionStartWork (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

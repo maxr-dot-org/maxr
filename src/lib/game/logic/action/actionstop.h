@@ -28,9 +28,9 @@ class cActionStop : public cActionT<cAction::eActiontype::Stop>
 {
 public:
 	cActionStop (const cUnit& unit);
-	cActionStop (cBinaryArchiveOut& archive);
+	cActionStop (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

@@ -30,9 +30,9 @@ class cActionUpgradeVehicle : public cActionT<cAction::eActiontype::UpgradeVehic
 {
 public:
 	cActionUpgradeVehicle (const cBuilding& containingBuilding, const cVehicle* vehicle = nullptr);
-	cActionUpgradeVehicle (cBinaryArchiveOut& archive);
+	cActionUpgradeVehicle (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

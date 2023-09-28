@@ -29,9 +29,9 @@ class cActionChangeBuildList : public cActionT<cAction::eActiontype::ChangeBuild
 {
 public:
 	cActionChangeBuildList (const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat);
-	cActionChangeBuildList (cBinaryArchiveOut& archive);
+	cActionChangeBuildList (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

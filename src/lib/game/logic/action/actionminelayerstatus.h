@@ -28,9 +28,9 @@ class cActionMinelayerStatus : public cActionT<cAction::eActiontype::MinelayerSt
 {
 public:
 	cActionMinelayerStatus (const cVehicle& vehicle, bool layMines, bool clearMines);
-	cActionMinelayerStatus (cBinaryArchiveOut& archive);
+	cActionMinelayerStatus (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

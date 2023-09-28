@@ -28,7 +28,7 @@ cActionUpgradeVehicle::cActionUpgradeVehicle (const cBuilding& containingBuildin
 {}
 
 //------------------------------------------------------------------------------
-cActionUpgradeVehicle::cActionUpgradeVehicle (cBinaryArchiveOut& archive)
+cActionUpgradeVehicle::cActionUpgradeVehicle (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

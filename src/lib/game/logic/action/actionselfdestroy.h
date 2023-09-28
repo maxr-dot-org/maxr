@@ -28,9 +28,9 @@ class cActionSelfDestroy : public cActionT<cAction::eActiontype::SelfDestroy>
 {
 public:
 	cActionSelfDestroy (const cBuilding& unit);
-	cActionSelfDestroy (cBinaryArchiveOut& archive);
+	cActionSelfDestroy (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

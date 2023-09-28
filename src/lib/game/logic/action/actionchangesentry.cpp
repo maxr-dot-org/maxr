@@ -27,7 +27,7 @@ cActionChangeSentry::cActionChangeSentry (const cUnit& unit) :
 {}
 
 //------------------------------------------------------------------------------
-cActionChangeSentry::cActionChangeSentry (cBinaryArchiveOut& archive)
+cActionChangeSentry::cActionChangeSentry (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }

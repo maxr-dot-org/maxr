@@ -29,9 +29,9 @@ class cActionChangeResearch : public cActionT<cAction::eActiontype::ChangeResear
 {
 public:
 	cActionChangeResearch (const std::array<int, cResearch::kNrResearchAreas>& researchAreas);
-	cActionChangeResearch (cBinaryArchiveOut& archive);
+	cActionChangeResearch (cBinaryArchiveIn& archive);
 
-	void serialize (cBinaryArchiveIn& archive) override
+	void serialize (cBinaryArchiveOut& archive) override
 	{
 		cAction::serialize (archive);
 		serializeThis (archive);

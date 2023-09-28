@@ -27,8 +27,8 @@
 class cJobContainer;
 class cUnit;
 class cModel;
-class cBinaryArchiveOut;
 class cBinaryArchiveIn;
+class cBinaryArchiveOut;
 class cJsonArchiveIn;
 class cJsonArchiveOut;
 
@@ -58,10 +58,10 @@ public:
 	virtual void run (cModel&) = 0;
 	virtual eJobType getType() const = 0;
 
-	static std::unique_ptr<cJob> createFrom (cBinaryArchiveOut&);
+	static std::unique_ptr<cJob> createFrom (cBinaryArchiveIn&);
 	static std::unique_ptr<cJob> createFrom (cJsonArchiveIn&);
 
-	virtual void serialize (cBinaryArchiveIn&) = 0;
+	virtual void serialize (cBinaryArchiveOut&) = 0;
 	virtual void serialize (cJsonArchiveOut&) = 0;
 
 	virtual void postLoad (const cModel&) {}

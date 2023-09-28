@@ -31,7 +31,7 @@ cActionRepairReload::cActionRepairReload (const cUnit& sourceUnit, const cUnit& 
 {}
 
 //------------------------------------------------------------------------------
-cActionRepairReload::cActionRepairReload (cBinaryArchiveOut& archive)
+cActionRepairReload::cActionRepairReload (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
