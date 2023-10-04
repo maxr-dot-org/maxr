@@ -23,7 +23,7 @@
 #define DefinesH
 
 #ifndef VERSION
-# define VERSION "0.2.12"
+# define VERSION "0.2.13"
 #endif
 
 #ifdef WIN32
