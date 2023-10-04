@@ -1,3 +1,8 @@
+Mechanized Assault & eXploration Reloaded 0.2.13 (October, 2023)
+=======================================================================
+- Fix position of alien in multiplayer
+- Fix serialization of `cSavedReportDetected` leading to crash
+
 Mechanized Assault & eXploration Reloaded 0.2.12 (September, 2023)
 =======================================================================
 - update spiritless_po
