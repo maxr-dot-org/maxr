@@ -1,18 +1,18 @@
-name: premake5-windows
+name: resinstaller-premake5-windows
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'src/**'
-      - '.github/workflows/premake5-windows.yml'
-      - 'premake5.lua'
+      - 'resinstaller/src/**'
+      - '.github/workflows/resinstaller-premake5-windows.yml'
+      - 'resinstaller/premake5.lua'
 
   pull_request:
     paths:
-      - 'src/**'
-      - '.github/workflows/premake5-windows.yml'
-      - 'premake5.lua'
+      - 'resinstaller/src/**'
+      - '.github/workflows/resinstaller-premake5-windows.yml'
+      - 'resinstaller/premake5.lua'
 
 jobs:
   windows:
@@ -38,7 +38,7 @@ jobs:
         cp premake-build/bin/release/premake5.exe ./
 
     - name: run premake5
-      run: ./premake5.exe vs2022 to=solution/vs2022/resinstaller
+      run: ./premake5.exe --file=resinstaller/premake5.lua vs2022 --to=../solution/vs2022/resinstaller
 
     - name: build
       run: |

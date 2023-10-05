@@ -26,7 +26,7 @@ Due the copyright we are not allowed to provide any game content
 from the original Mechanized Assault and Exploration (c) 1996 Interplay
 
 If you do own an original Mechanized Assault & Exploration CD
-(c) 1996 Interplay you can however make use of the tool [resinstaller](https://github.com/maxr-dot-org/resinstaller)
+(c) 1996 Interplay you can however make use of the tool [resinstaller](resinstaller)
 and install the original gfx automagically from your existing M.A.X. copy.
 
 Resinstaller also takes care of sounds, videos, maps and music.

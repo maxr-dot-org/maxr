@@ -1,18 +1,18 @@
-name: premake5-macos
+name: resinstaller-premake5-macos
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'src/**'
-      - '.github/workflows/premake5-macos.yml'
-      - 'premake5.lua'
+      - 'resinstaller/src/**'
+      - '.github/workflows/resinstaller-premake5-macos.yml'
+      - 'resinstaller/premake5.lua'
 
   pull_request:
     paths:
-      - 'src/**'
-      - '.github/workflows/premake5-macos.yml'
-      - 'premake5.lua'
+      - 'resinstaller/src/**'
+      - '.github/workflows/resinstaller-premake5-macos.yml'
+      - 'resinstaller/premake5.lua'
 
 jobs:
   macos:
@@ -40,7 +40,7 @@ jobs:
         rm -Rf premake-build
 
     - name: run premake5
-      run: ./premake5 xcode4 --to=solution/xcode4/resinstaller
+      run: ./premake5 --file=resinstaller/premake5.lua xcode4 --to=../solution/xcode4/resinstaller
 
     - name: build
       run: |

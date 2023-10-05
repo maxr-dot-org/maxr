@@ -14,12 +14,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        repository: MAX-Reloaded/resinstaller
-        path: resinstaller
-
     - name: checkout premake5
       uses: actions/checkout@v3
       with:

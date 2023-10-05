@@ -1,18 +1,18 @@
-name: ubuntu
+name: resinstaller-ubuntu
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'src/**'
-      - '.github/workflows/ubuntu.yml'
-      - 'CMakeLists.txt'
+      - 'resinstaller/src/**'
+      - '.github/workflows/resinstaller-ubuntu.yml'
+      - 'resinstaller/CMakeLists.txt'
 
   pull_request:
     paths:
-      - 'src/**'
-      - '.github/workflows/ubuntu.yml'
-      - 'CMakeLists.txt'
+      - 'resinstaller/src/**'
+      - '.github/workflows/resinstaller-ubuntu.yml'
+      - 'resinstaller/CMakeLists.txt'
 
 jobs:
   linux:
@@ -35,4 +35,4 @@ jobs:
     - name: build project
       run: |
         mkdir build && cd build
-        cmake .. && cmake --build .
+        cmake ../resinstaller && cmake --build .

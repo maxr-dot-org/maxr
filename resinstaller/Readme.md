@@ -1,10 +1,10 @@
 # Resinstaller
 
-![CMake-ubuntu-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/ubuntu/badge.svg)
-![CMake-macos-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/macos/badge.svg)
-![premake5-ubuntu-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/premake5-ubuntu/badge.svg)
-![premake5-macos-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/premake5-macos/badge.svg)
-![premake5-windows-badge](https://github.com/MAX-Reloaded/resinstaller/workflows/premake5-windows/badge.svg)
+![CMake-ubuntu-badge](https://github.com/MAX-Reloaded/maxr/workflows/resinstaller-ubuntu/badge.svg)
+![CMake-macos-badge](https://github.com/MAX-Reloaded/maxr/workflows/resinstaller-macos/badge.svg)
+![premake5-ubuntu-badge](https://github.com/MAX-Reloaded/maxr/workflows/resinstaller-premake5-ubuntu/badge.svg)
+![premake5-macos-badge](https://github.com/MAX-Reloaded/maxr/workflows/resinstaller-premake5-macos/badge.svg)
+![premake5-windows-badge](https://github.com/MAX-Reloaded/maxr/workflows/resinstaller-premake5-windows/badge.svg)
 
 ## Introduction
 
@@ -25,4 +25,3 @@ The tool can be found on our website and easily installs and converts
 the needed data for you. Please check the bbs at maxr.org for more
 informations. When using the windows installer for maxr, the resinstaller
 is also installed, and a Start Menu shortcut is available.
-

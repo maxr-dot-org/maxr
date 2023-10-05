@@ -1,18 +1,18 @@
-name: premake5-ubuntu
+name: resinstaller-premake5-ubuntu
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'src/**'
-      - '.github/workflows/premake5-ubuntu.yml'
-      - 'premake5.lua'
+      - 'resinstaller/src/**'
+      - '.github/workflows/resinstaller-premake5-ubuntu.yml'
+      - 'resinstaller/premake5.lua'
 
   pull_request:
     paths:
-      - 'src/**'
-      - '.github/workflows/premake5-ubuntu.yml'
-      - 'premake5.lua'
+      - 'resinstaller/src/**'
+      - '.github/workflows/resinstaller-premake5-ubuntu.yml'
+      - 'resinstaller/premake5.lua'
 
 jobs:
   linux:
@@ -44,7 +44,7 @@ jobs:
         rm -Rf premake-build
 
     - name: run premake5
-      run: ./premake5 gmake2 --to=solution/gmake2/resinstaller
+      run: ./premake5 --file=resinstaller/premake5.lua gmake2 --to=../solution/gmake2/resinstaller
 
     - name: build
       run: |

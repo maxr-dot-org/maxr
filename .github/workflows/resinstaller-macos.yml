@@ -1,18 +1,18 @@
-name: macos
+name: resinstaller-macos
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'src/**'
-      - '.github/workflows/macos.yml'
-      - 'CMakeLists.txt'
+      - 'resinstaller/src/**'
+      - '.github/workflows/resinstaller-macos.yml'
+      - 'resinstaller/CMakeLists.txt'
 
   pull_request:
     paths:
-      - 'src/**'
-      - '.github/workflows/macos.yml'
-      - 'CMakeLists.txt'
+      - 'resinstaller/src/**'
+      - '.github/workflows/resinstaller-macos.yml'
+      - 'resinstaller/CMakeLists.txt'
 
 jobs:
   macos:
@@ -31,5 +31,5 @@ jobs:
     - name: build project
       run: |
         mkdir build && cd build
-        cmake .. && cmake --build .
+        cmake ../resinstaller && cmake --build .
 
