@@ -1,0 +1,377 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9F7F4ECE0F13FEB3006FE47C /* Ogg.framework in Copy frameworks into app bundle */ = {isa = PBXBuildFile; fileRef = 9FA756FC0EE72A890059A7F6 /* Ogg.framework */; };
+		9F7F4ED30F13FEB8006FE47C /* Vorbis.framework in Copy frameworks into app bundle */ = {isa = PBXBuildFile; fileRef = 9FA756FD0EE72A890059A7F6 /* Vorbis.framework */; };
+		9FA38C740EE71FC000340716 /* converter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA38C640EE71FC000340716 /* converter.cpp */; };
+		9FA38C750EE71FC000340716 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA38C670EE71FC000340716 /* file.cpp */; };
+		9FA38C760EE71FC000340716 /* ogg_encode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA38C690EE71FC000340716 /* ogg_encode.cpp */; };
+		9FA38C770EE71FC000340716 /* pcx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA38C6C0EE71FC000340716 /* pcx.cpp */; };
+		9FA38C780EE71FC000340716 /* resinstaller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA38C6E0EE71FC000340716 /* resinstaller.cpp */; };
+		9FA38C790EE71FC000340716 /* SDL_flic.c in Sources */ = {isa = PBXBuildFile; fileRef = 9FA38C700EE71FC000340716 /* SDL_flic.c */; };
+		9FA38C7A0EE71FC000340716 /* wave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA38C720EE71FC000340716 /* wave.cpp */; };
+		9FA756FE0EE72A890059A7F6 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA756FC0EE72A890059A7F6 /* Ogg.framework */; };
+		9FA756FF0EE72A890059A7F6 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA756FD0EE72A890059A7F6 /* Vorbis.framework */; };
+		9FC0DBF10EE2B1A700F23D2C /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBF00EE2B1A700F23D2C /* SDLMain.m */; };
+		9FC0DBF80EE2B29A00F23D2C /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC0DBF50EE2B29A00F23D2C /* SDL.framework */; };
+		9FC0DBF90EE2B29A00F23D2C /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC0DBF60EE2B29A00F23D2C /* SDL_mixer.framework */; };
+		9FC0DBFA0EE2B29A00F23D2C /* SDL_net.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC0DBF70EE2B29A00F23D2C /* SDL_net.framework */; };
+		9FC0DC2C0EE2B2CB00F23D2C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC0DC2B0EE2B2CB00F23D2C /* Cocoa.framework */; };
+		9FC0DD660EE2D6DF00F23D2C /* SDL.framework in Copy frameworks into app bundle */ = {isa = PBXBuildFile; fileRef = 9FC0DBF50EE2B29A00F23D2C /* SDL.framework */; };
+		9FC0DD670EE2D6DF00F23D2C /* SDL_mixer.framework in Copy frameworks into app bundle */ = {isa = PBXBuildFile; fileRef = 9FC0DBF60EE2B29A00F23D2C /* SDL_mixer.framework */; };
+		9FC0DD680EE2D6DF00F23D2C /* SDL_net.framework in Copy frameworks into app bundle */ = {isa = PBXBuildFile; fileRef = 9FC0DBF70EE2B29A00F23D2C /* SDL_net.framework */; };
+		9FD874450EF14B3100630D3D /* resinstallerGUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD874440EF14B3100630D3D /* resinstallerGUI.m */; };
+		9FE0E66E0EE2F56C0038B4AF /* maxr.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FE0E66D0EE2F56C0038B4AF /* maxr.icns */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9FC0DD510EE2D5B400F23D2C /* Copy frameworks into app bundle */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9F7F4ED30F13FEB8006FE47C /* Vorbis.framework in Copy frameworks into app bundle */,
+				9F7F4ECE0F13FEB3006FE47C /* Ogg.framework in Copy frameworks into app bundle */,
+				9FC0DD660EE2D6DF00F23D2C /* SDL.framework in Copy frameworks into app bundle */,
+				9FC0DD670EE2D6DF00F23D2C /* SDL_mixer.framework in Copy frameworks into app bundle */,
+				9FC0DD680EE2D6DF00F23D2C /* SDL_net.framework in Copy frameworks into app bundle */,
+			);
+			name = "Copy frameworks into app bundle";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		9FA38C640EE71FC000340716 /* converter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = converter.cpp; path = ../converter.cpp; sourceTree = SOURCE_ROOT; };
+		9FA38C650EE71FC000340716 /* converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = converter.h; path = ../converter.h; sourceTree = SOURCE_ROOT; };
+		9FA38C660EE71FC000340716 /* defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = defines.h; path = ../defines.h; sourceTree = SOURCE_ROOT; };
+		9FA38C670EE71FC000340716 /* file.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file.cpp; path = ../file.cpp; sourceTree = SOURCE_ROOT; };
+		9FA38C680EE71FC000340716 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file.h; path = ../file.h; sourceTree = SOURCE_ROOT; };
+		9FA38C690EE71FC000340716 /* ogg_encode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ogg_encode.cpp; path = ../ogg_encode.cpp; sourceTree = SOURCE_ROOT; };
+		9FA38C6A0EE71FC000340716 /* ogg_encode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ogg_encode.h; path = ../ogg_encode.h; sourceTree = SOURCE_ROOT; };
+		9FA38C6B0EE71FC000340716 /* palette.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palette.h; path = ../palette.h; sourceTree = SOURCE_ROOT; };
+		9FA38C6C0EE71FC000340716 /* pcx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcx.cpp; path = ../pcx.cpp; sourceTree = SOURCE_ROOT; };
+		9FA38C6D0EE71FC000340716 /* pcx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcx.h; path = ../pcx.h; sourceTree = SOURCE_ROOT; };
+		9FA38C6E0EE71FC000340716 /* resinstaller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resinstaller.cpp; path = ../resinstaller.cpp; sourceTree = SOURCE_ROOT; };
+		9FA38C6F0EE71FC000340716 /* resinstaller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = resinstaller.h; path = ../resinstaller.h; sourceTree = SOURCE_ROOT; };
+		9FA38C700EE71FC000340716 /* SDL_flic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SDL_flic.c; path = ../SDL_flic.c; sourceTree = SOURCE_ROOT; };
+		9FA38C710EE71FC000340716 /* SDL_flic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDL_flic.h; path = ../SDL_flic.h; sourceTree = SOURCE_ROOT; };
+		9FA38C720EE71FC000340716 /* wave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wave.cpp; path = ../wave.cpp; sourceTree = SOURCE_ROOT; };
+		9FA38C730EE71FC000340716 /* wave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wave.h; path = ../wave.h; sourceTree = SOURCE_ROOT; };
+		9FA756FC0EE72A890059A7F6 /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = /Library/Frameworks/Ogg.framework; sourceTree = "<absolute>"; };
+		9FA756FD0EE72A890059A7F6 /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = /Library/Frameworks/Vorbis.framework; sourceTree = "<absolute>"; };
+		9FC0DB5B0EE2B06700F23D2C /* ResInstaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ResInstaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FC0DBEF0EE2B1A700F23D2C /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDLMain.h; path = sources/SDLMain.h; sourceTree = "<group>"; };
+		9FC0DBF00EE2B1A700F23D2C /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDLMain.m; path = sources/SDLMain.m; sourceTree = "<group>"; };
+		9FC0DBF50EE2B29A00F23D2C /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
+		9FC0DBF60EE2B29A00F23D2C /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_mixer.framework; path = /Library/Frameworks/SDL_mixer.framework; sourceTree = "<absolute>"; };
+		9FC0DBF70EE2B29A00F23D2C /* SDL_net.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_net.framework; path = /Library/Frameworks/SDL_net.framework; sourceTree = "<absolute>"; };
+		9FC0DC2B0EE2B2CB00F23D2C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		9FC0DC310EE2B4A700F23D2C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		9FC0DC320EE2B4A700F23D2C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		9FD874430EF14B3100630D3D /* resinstallerGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = resinstallerGUI.h; path = sources/resinstallerGUI.h; sourceTree = "<group>"; };
+		9FD874440EF14B3100630D3D /* resinstallerGUI.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = resinstallerGUI.m; path = sources/resinstallerGUI.m; sourceTree = "<group>"; };
+		9FE0E66D0EE2F56C0038B4AF /* maxr.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = maxr.icns; path = Resources/maxr.icns; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9FC0DB590EE2B06700F23D2C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9FC0DBF80EE2B29A00F23D2C /* SDL.framework in Frameworks */,
+				9FC0DBF90EE2B29A00F23D2C /* SDL_mixer.framework in Frameworks */,
+				9FC0DBFA0EE2B29A00F23D2C /* SDL_net.framework in Frameworks */,
+				9FC0DC2C0EE2B2CB00F23D2C /* Cocoa.framework in Frameworks */,
+				9FA756FE0EE72A890059A7F6 /* Ogg.framework in Frameworks */,
+				9FA756FF0EE72A890059A7F6 /* Vorbis.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9FC0DB4A0EE2B02A00F23D2C = {
+			isa = PBXGroup;
+			children = (
+				9FC0DB560EE2B03C00F23D2C /* src */,
+				9FC0DBEE0EE2B19000F23D2C /* OtherSources */,
+				9FC0DD410EE2D34400F23D2C /* Resources */,
+				9FC0DBFF0EE2B2A300F23D2C /* Frameworks */,
+				9FC0DB5C0EE2B06700F23D2C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9FC0DB560EE2B03C00F23D2C /* src */ = {
+			isa = PBXGroup;
+			children = (
+				9FA38C640EE71FC000340716 /* converter.cpp */,
+				9FA38C650EE71FC000340716 /* converter.h */,
+				9FA38C660EE71FC000340716 /* defines.h */,
+				9FA38C670EE71FC000340716 /* file.cpp */,
+				9FA38C680EE71FC000340716 /* file.h */,
+				9FA38C690EE71FC000340716 /* ogg_encode.cpp */,
+				9FA38C6A0EE71FC000340716 /* ogg_encode.h */,
+				9FA38C6B0EE71FC000340716 /* palette.h */,
+				9FA38C6C0EE71FC000340716 /* pcx.cpp */,
+				9FA38C6D0EE71FC000340716 /* pcx.h */,
+				9FA38C6E0EE71FC000340716 /* resinstaller.cpp */,
+				9FA38C6F0EE71FC000340716 /* resinstaller.h */,
+				9FA38C700EE71FC000340716 /* SDL_flic.c */,
+				9FA38C710EE71FC000340716 /* SDL_flic.h */,
+				9FA38C720EE71FC000340716 /* wave.cpp */,
+				9FA38C730EE71FC000340716 /* wave.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		9FC0DB5C0EE2B06700F23D2C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9FC0DB5B0EE2B06700F23D2C /* ResInstaller.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9FC0DBEE0EE2B19000F23D2C /* OtherSources */ = {
+			isa = PBXGroup;
+			children = (
+				9FC0DBEF0EE2B1A700F23D2C /* SDLMain.h */,
+				9FC0DBF00EE2B1A700F23D2C /* SDLMain.m */,
+				9FD874430EF14B3100630D3D /* resinstallerGUI.h */,
+				9FD874440EF14B3100630D3D /* resinstallerGUI.m */,
+			);
+			name = OtherSources;
+			sourceTree = "<group>";
+		};
+		9FC0DBFF0EE2B2A300F23D2C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9FA756FC0EE72A890059A7F6 /* Ogg.framework */,
+				9FA756FD0EE72A890059A7F6 /* Vorbis.framework */,
+				9FC0DC310EE2B4A700F23D2C /* AppKit.framework */,
+				9FC0DC320EE2B4A700F23D2C /* Foundation.framework */,
+				9FC0DC2B0EE2B2CB00F23D2C /* Cocoa.framework */,
+				9FC0DBF50EE2B29A00F23D2C /* SDL.framework */,
+				9FC0DBF60EE2B29A00F23D2C /* SDL_mixer.framework */,
+				9FC0DBF70EE2B29A00F23D2C /* SDL_net.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9FC0DD410EE2D34400F23D2C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9FE0E66D0EE2F56C0038B4AF /* maxr.icns */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9FC0DB5A0EE2B06700F23D2C /* ResInstaller */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9FC0DB610EE2B06700F23D2C /* Build configuration list for PBXNativeTarget "ResInstaller" */;
+			buildPhases = (
+				9FC0DB570EE2B06700F23D2C /* Resources */,
+				9FC0DB580EE2B06700F23D2C /* Sources */,
+				9FC0DD510EE2D5B400F23D2C /* Copy frameworks into app bundle */,
+				9FC0DB590EE2B06700F23D2C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ResInstaller;
+			productName = MAXReloaded;
+			productReference = 9FC0DB5B0EE2B06700F23D2C /* ResInstaller.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9FC0DB4C0EE2B02A00F23D2C /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 9FC0DB4F0EE2B02A00F23D2C /* Build configuration list for PBXProject "resinstaller" */;
+			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 9FC0DB4A0EE2B02A00F23D2C;
+			productRefGroup = 9FC0DB5C0EE2B06700F23D2C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9FC0DB5A0EE2B06700F23D2C /* ResInstaller */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9FC0DB570EE2B06700F23D2C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9FE0E66E0EE2F56C0038B4AF /* maxr.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9FC0DB580EE2B06700F23D2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9FC0DBF10EE2B1A700F23D2C /* SDLMain.m in Sources */,
+				9FA38C740EE71FC000340716 /* converter.cpp in Sources */,
+				9FA38C750EE71FC000340716 /* file.cpp in Sources */,
+				9FA38C760EE71FC000340716 /* ogg_encode.cpp in Sources */,
+				9FA38C770EE71FC000340716 /* pcx.cpp in Sources */,
+				9FA38C780EE71FC000340716 /* resinstaller.cpp in Sources */,
+				9FA38C790EE71FC000340716 /* SDL_flic.c in Sources */,
+				9FA38C7A0EE71FC000340716 /* wave.cpp in Sources */,
+				9FD874450EF14B3100630D3D /* resinstallerGUI.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		9FC0DB4D0EE2B02A00F23D2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		9FC0DB4E0EE2B02A00F23D2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Release;
+		};
+		9FC0DB5F0EE2B06700F23D2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = ResInstaller.app/Contents/Frameworks;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"__MACOSX__=1",
+					"MAC=1",
+				);
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					/Library/Frameworks/Vorbis.framework/Headers,
+					/Library/Frameworks/Ogg.framework/Headers,
+					/Library/Frameworks/SDL.framework/Headers,
+					/Library/Frameworks/SDL_mixer.framework/Headers,
+					/Library/Frameworks/SDL_net.framework/Headers,
+				);
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = ResInstaller;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		9FC0DB600EE2B06700F23D2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = (
+					ppc,
+					"$(ARCHS_STANDARD_32_BIT)",
+				);
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = ../Frameworks;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G3;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"__MACOSX__=1",
+					"MAC=1",
+				);
+				GCC_VERSION = 4.0;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					/Library/Frameworks/Ogg.framework/Headers,
+					/Library/Frameworks/Vorbis.framework/Headers,
+					/Library/Frameworks/SDL.framework/Headers,
+					/Library/Frameworks/SDL_net.framework/Headers,
+					/Library/Frameworks/SDL_mixer.framework/Headers,
+				);
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = ResInstaller;
+				SDKROOT = macosx;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9FC0DB4F0EE2B02A00F23D2C /* Build configuration list for PBXProject "resinstaller" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9FC0DB4D0EE2B02A00F23D2C /* Debug */,
+				9FC0DB4E0EE2B02A00F23D2C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9FC0DB610EE2B06700F23D2C /* Build configuration list for PBXNativeTarget "ResInstaller" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9FC0DB5F0EE2B06700F23D2C /* Debug */,
+				9FC0DB600EE2B06700F23D2C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9FC0DB4C0EE2B02A00F23D2C /* Project object */;
+}

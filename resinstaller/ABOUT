@@ -1,0 +1,26 @@
+Resinstaller - installs graphics and sounds from Interplay's M.A.X. to
+M.A.X.R. for original game look and feel. For this you need an existing
+M.A.X. installation or an original M.A.X. CD avaible.
+
+If you don't own an original maxcd you've another chance in downloading
+Mechanized Assault and Exploration from cdosabandonware.com since you
+won't find any gamecds from this any more on stores - too old.
+http://www.cdosabandonware.com/std_games_details.php?gameid=1979
+
+
+Linux:
+
+To run resinstaller simply execute ./src/resinstaller or use the
+following syntax: ./src/resinstaller $SOURCE $DEST $LANG $RESSOURCES
+
+Example: ./src/resinstaller /media/cdrom/ /home/foo/games/maxr/ german all
+
+Windows:
+
+To run the resinstaller use the Win32 dialog application
+VisualResinstaller.exe were you can browse the path the original game
+data from CD or M.A.X. installation and the path to your maxr
+installation. Then just click on Run for starting the copying of data.
+
+You can also start resinstaller.exe directly or with the following
+syntax: resinstaller.exe $SOURCE $DEST $LANG $RESSOURCES

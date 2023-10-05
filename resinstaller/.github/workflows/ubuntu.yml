@@ -1,0 +1,38 @@
+name: ubuntu
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/**'
+      - '.github/workflows/ubuntu.yml'
+      - 'CMakeLists.txt'
+
+  pull_request:
+    paths:
+      - 'src/**'
+      - '.github/workflows/ubuntu.yml'
+      - 'CMakeLists.txt'
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: apt-get update
+      run: sudo apt-get update
+
+    - name: install dependencies SDL2 ogg vorbis
+      run: |
+        sudo apt-get install libsdl2-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisidec-dev
+
+    - name: cmake --version
+      run: cmake --version
+
+    - name: build project
+      run: |
+        mkdir build && cd build
+        cmake .. && cmake --build .
