@@ -24,9 +24,12 @@
 #include "converter.h"
 
 #include <SDL.h>
+#include <algorithm>
 #include <array>
+#include <iterator>
 #include <fstream>
 #include <string>
+#include <vector>
 
 namespace
 {
@@ -59,7 +62,7 @@ namespace
 	void savePCX_8bpp (const SDL_Surface& surface, const std::filesystem::path& fileName)
 	{
 		std::filesystem::create_directories (fileName.parent_path());
-		std::basic_ofstream<unsigned char> file (fileName, std::ios_base::binary);
+		std::ofstream file (fileName, std::ios_base::binary);
 
 		if (!file)
 		{
@@ -72,7 +75,7 @@ namespace
 
 		//PCX-Header erzeugen
 		const auto PCXHeader = createPcxHeader (surface.w, surface.h);
-		file.write (PCXHeader.data(), 128);
+		file.write (reinterpret_cast<const char*> (PCXHeader.data()), 128);
 
 		// Adresse des Bildspeichers (Array)
 		const unsigned char* bild = static_cast<const unsigned char*> (surface.pixels);
@@ -96,26 +99,26 @@ namespace
 				if ((Anzahl > 1) || (Pixel >= 192))
 				{
 					Anzahl = 0xC0 + Anzahl; // RLC-Kennung
-					file.write (&Anzahl, 1);
-					file.write (&Pixel, 1);
+					file.write (reinterpret_cast<const char*> (&Anzahl), 1);
+					file.write (reinterpret_cast<const char*> (&Pixel), 1);
 				}
 				else
 				{
-					file.write (&Pixel, 1); // einmaliges Pixel mit Grauwert<192
+					file.write (reinterpret_cast<const char*> (&Pixel), 1); // einmaliges Pixel mit Grauwert<192
 				}
 			}
 		}
 
 		//write color table
-		unsigned char Pixel = 12; //Kennzeichen f. Bild-Ende
+		const char Pixel = 12; //Kennzeichen f. Bild-Ende
 		file.write (&Pixel, 1);
 
 		for (int i = 0; i < 256; i++)
 		{
 			const SDL_Color* colors = surface.format->palette->colors;
-			file.write (&colors[i].r, 1);
-			file.write (&colors[i].g, 1);
-			file.write (&colors[i].b, 1);
+			file.write (reinterpret_cast<const char*> (&colors[i].r), 1);
+			file.write (reinterpret_cast<const char*> (&colors[i].g), 1);
+			file.write (reinterpret_cast<const char*> (&colors[i].b), 1);
 		}
 	}
 
@@ -123,7 +126,7 @@ namespace
 	void savePCX_32bpp (const SDL_Surface& surface, const std::filesystem::path& fileName)
 	{
 		std::filesystem::create_directories (fileName.parent_path());
-		std::basic_ofstream<unsigned char> file (fileName, std::ios_base::binary);
+		std::ofstream file (fileName, std::ios_base::binary);
 
 		if (!file)
 		{
@@ -137,7 +140,7 @@ namespace
 		const int S_Index = surface.w - 1;
 		const int Z_Index = surface.h - 1;
 
-		file.write (PCXHeader.data(), 128);
+		file.write (reinterpret_cast<const char*> (PCXHeader.data()), 128);
 
 		//build color table
 		std::vector<unsigned char> bild (surface.w * surface.h - 1); // Adresse des Bildspeichers
@@ -185,18 +188,18 @@ namespace
 				if ((Anzahl > 1) || (Pixel >= 192))
 				{
 					Anzahl = 0xC0 + Anzahl; // RLC-Kennung
-					file.write (&Anzahl, 1);
-					file.write (&Pixel, 1);
+					file.write (reinterpret_cast<const char*> (&Anzahl), 1);
+					file.write (reinterpret_cast<const char*> (&Pixel), 1);
 				}
 				else
 				{
-					file.write (&Pixel, 1); // einmaliges Pixel mit Grauwert<192
+					file.write (reinterpret_cast<const char*> (&Pixel), 1); // einmaliges Pixel mit Grauwert<192
 				}
 			}
 		}
 
 		//write color table
-		unsigned char Pixel = 12; //Kennzeichen f. Bild-Ende
+		const char Pixel = 12; //Kennzeichen f. Bild-Ende
 		file.write (&Pixel, 1);
 
 		for (auto color : colors)
@@ -204,9 +207,9 @@ namespace
 			const unsigned char r = (color >> 16) & 0xFF;
 			const unsigned char g = (color >> 8) & 0xFF;
 			const unsigned char b = (color >> 0) & 0xFF;
-			file.write (&r, 1);
-			file.write (&g, 1);
-			file.write (&b, 1);
+			file.write (reinterpret_cast<const char*> (&r), 1);
+			file.write (reinterpret_cast<const char*> (&g), 1);
+			file.write (reinterpret_cast<const char*> (&b), 1);
 		}
 	}
 } // namespace
