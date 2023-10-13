@@ -1641,21 +1641,39 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 	int mx = 0;
 	int my = 0;
 	cPosition wp = vehicle.getPosition();
+	// Draw remaining shots at bottom, centered horizontally of the tile
+	const auto drawShots = [&]() {
+		const int shotCount = vehicle.getPossibleShotCountForSpeed (sp);
+		if (shotCount)
+		{
+			SDL_Rect src = GraphicsData.getRect_SmallSymbol_Shots();
+			SDL_Rect shotDest = dest;
+			shotDest.x += (zoomedTileSize.x() - shotCount * (src.w + 2)) / 2;
+			shotDest.y += zoomedTileSize.y() - (src.h + 4) * getZoomFactor();
+			for (int i = 0; i != shotCount; ++i) {
+				SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, cVideo::buffer, &shotDest);
+				shotDest.x += (src.w + 2) * getZoomFactor();
+			}
+		}
+	};
 	const auto& path = moveJob->getPath();
 	for (const auto& nextWp : path)
 	{
 		ndest.x += mx = nextWp.x() * zoomedTileSize.x() - wp.x() * zoomedTileSize.x();
 		ndest.y += my = nextWp.y() * zoomedTileSize.y() - wp.y() * zoomedTileSize.y();
 
-		int costs = cPathCalculator::calcNextCost (wp, nextWp, &vehicle, mapView.get());
+		const int costs = cPathCalculator::calcNextCost (wp, nextWp, &vehicle, mapView.get());
+
 		if (sp < costs)
 		{
 			drawPathArrow (dest, ndest, true);
 			sp = vehicle.data.getSpeedMax();
+			drawShots();
 		}
 		else
 		{
 			drawPathArrow (dest, ndest, false);
+			drawShots();
 		}
 		sp -= costs;
 
@@ -1666,6 +1684,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 	ndest.x += mx;
 	ndest.y += my;
 	drawPathArrow (dest, ndest, sp == 0);
+	drawShots();
 }
 
 //------------------------------------------------------------------------------

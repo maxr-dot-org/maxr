@@ -238,17 +238,26 @@ void cVehicle::refreshData()
 	data.setShots (std::min (data.getAmmo(), data.getShotsMax()));
 }
 
+//------------------------------------------------------------------------------
+int cVehicle::getPossibleShotCountForSpeed (int speed) const
+{
+	if (staticData->canAttack == false) {
+		return 0;
+	}
+	if (getStaticData().canDriveAndFire) {
+		return data.getShotsMax();
+	}
+	const int s = speed * data.getShotsMax() / data.getSpeedMax();
+	return s;
+}
+
 //-----------------------------------------------------------------------------
 /** Reduces the remaining speedCur and shotsCur during movement */
 //-----------------------------------------------------------------------------
 void cVehicle::DecSpeed (int value)
 {
 	data.setSpeed (data.getSpeed() - value);
-
-	if (staticData->canAttack == false || getStaticData().canDriveAndFire) return;
-
-	const int s = data.getSpeed() * data.getShotsMax() / data.getSpeedMax();
-	data.setShots (std::min (data.getShots(), s));
+	data.setShots (std::min (data.getShots(), getPossibleShotCountForSpeed(data.getSpeed())));
 }
 
 //-----------------------------------------------------------------------------

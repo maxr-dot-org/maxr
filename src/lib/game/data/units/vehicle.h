@@ -70,6 +70,7 @@ public:
 	void continuePathBuilding (cModel&);
 	void proceedClearing (cModel&);
 
+	int getPossibleShotCountForSpeed (int speed) const;
 	void DecSpeed (int value);
 	bool doSurvey (const cMap& map);
 	bool canTransferTo (const cPosition& position, const cMapView& map) const override;
