@@ -307,66 +307,22 @@ void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight,
 //------------------------------------------------------------------------------
 cBox<cPosition> cUnitDetailsHud::getSmallSymbolPosition (eUnitDataSymbolType symbolType)
 {
-	cPosition position (0, 98);
-	cPosition size (0, 0);
+	SDL_Rect rect{};
 
 	switch (symbolType)
 	{
-		case eUnitDataSymbolType::Speed:
-			position.x() = 0;
-			size.x() = 7;
-			size.y() = 7;
-			break;
-		case eUnitDataSymbolType::Hits:
-			position.x() = 14;
-			size.x() = 6;
-			size.y() = 9;
-			break;
-		case eUnitDataSymbolType::Ammo:
-			position.x() = 50;
-			size.x() = 5;
-			size.y() = 7;
-			break;
-		case eUnitDataSymbolType::Shots:
-			position.x() = 88;
-			size.x() = 8;
-			size.y() = 4;
-			break;
-		case eUnitDataSymbolType::Metal:
-			position.x() = 60;
-			size.x() = 7;
-			size.y() = 10;
-			break;
-		case eUnitDataSymbolType::Oil:
-			position.x() = 104;
-			size.x() = 8;
-			size.y() = 9;
-			break;
-		case eUnitDataSymbolType::Gold:
-			position.x() = 120;
-			size.x() = 9;
-			size.y() = 8;
-			break;
-		case eUnitDataSymbolType::Energy:
-			position.x() = 74;
-			size.x() = 7;
-			size.y() = 7;
-			break;
-		case eUnitDataSymbolType::Human:
-			position.x() = 170;
-			size.x() = 8;
-			size.y() = 9;
-			break;
-		case eUnitDataSymbolType::TransportTank:
-			position.x() = 138;
-			size.x() = 16;
-			size.y() = 8;
-			break;
-		case eUnitDataSymbolType::TransportAir:
-			position.x() = 186;
-			size.x() = 21;
-			size.y() = 8;
-			break;
+		case eUnitDataSymbolType::Speed: rect = GraphicsData.getRect_SmallSymbol_Speed(); break;
+		case eUnitDataSymbolType::Hits: rect = GraphicsData.getRect_SmallSymbol_Hits(); break;
+		case eUnitDataSymbolType::Ammo: rect = GraphicsData.getRect_SmallSymbol_Ammo(); break;
+		case eUnitDataSymbolType::Shots: rect = GraphicsData.getRect_SmallSymbol_Shots(); break;
+		case eUnitDataSymbolType::Metal: rect = GraphicsData.getRect_SmallSymbol_Metal(); break;
+		case eUnitDataSymbolType::Oil: rect = GraphicsData.getRect_SmallSymbol_Oil(); break;
+		case eUnitDataSymbolType::Gold: rect = GraphicsData.getRect_SmallSymbol_Gold(); break;
+		case eUnitDataSymbolType::Energy: rect = GraphicsData.getRect_SmallSymbol_Energy(); break;
+		case eUnitDataSymbolType::Human: rect = GraphicsData.getRect_SmallSymbol_Human(); break;
+		case eUnitDataSymbolType::TransportTank: rect = GraphicsData.getRect_SmallSymbol_TransportTank(); break;
+		case eUnitDataSymbolType::TransportAir: rect = GraphicsData.getRect_SmallSymbol_TransportAir(); break;
+
 		case eUnitDataSymbolType::Attack:
 		case eUnitDataSymbolType::Range:
 		case eUnitDataSymbolType::Armor:
@@ -374,6 +330,7 @@ cBox<cPosition> cUnitDetailsHud::getSmallSymbolPosition (eUnitDataSymbolType sym
 		case eUnitDataSymbolType::MetalEmpty:
 			break;
 	}
-
+	const cPosition position{rect.x, rect.y};
+	const cPosition size{rect.w, rect.h};
 	return cBox<cPosition> (position, position + size - 1);
 }

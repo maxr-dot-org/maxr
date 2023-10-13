@@ -104,6 +104,19 @@ public:
 	AutoSurface gfx_menu_buttons;
 	AutoSurface gfx_player_ready;
 	AutoSurface gfx_hud_chatbox;
+
+	// Position in gfx_hud_stuff
+	SDL_Rect getRect_SmallSymbol_Speed() const { return {0, 98, 7, 7}; }
+	SDL_Rect getRect_SmallSymbol_Hits() const { return {14, 98, 6, 9}; }
+	SDL_Rect getRect_SmallSymbol_Ammo() const { return {50, 98, 5, 7}; }
+	SDL_Rect getRect_SmallSymbol_Shots() const { return {88, 98, 8, 4}; }
+	SDL_Rect getRect_SmallSymbol_Metal() const { return {60, 98, 7, 10}; }
+	SDL_Rect getRect_SmallSymbol_Oil() const { return {104, 98, 8, 9}; }
+	SDL_Rect getRect_SmallSymbol_Gold() const { return {120, 98, 9, 8}; }
+	SDL_Rect getRect_SmallSymbol_Energy() const { return {74, 98, 7, 7}; }
+	SDL_Rect getRect_SmallSymbol_Human() const { return {170, 98, 8, 9}; }
+	SDL_Rect getRect_SmallSymbol_TransportTank() const { return {138, 98, 16, 8}; }
+	SDL_Rect getRect_SmallSymbol_TransportAir() const { return {186, 98, 21, 8}; }
 };
 
 // Effects - Class containing all effect surfaces /////////////////////////////
