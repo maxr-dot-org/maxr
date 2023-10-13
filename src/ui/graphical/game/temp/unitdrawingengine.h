@@ -51,8 +51,6 @@ public:
 	void setDrawAmmo (bool drawAmmo);
 	void setDrawColor (bool drawColor);
 
-	void drawPath (const cVehicle&);
-
 public:
 	std::shared_ptr<cAnimationTimer> animationTimer;
 	cDrawingCache drawingCache;
