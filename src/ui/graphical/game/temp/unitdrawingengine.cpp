@@ -368,9 +368,6 @@ void cUnitDrawingEngine::drawMunBar (const cUnit& unit, SDL_Rect destination)
 //--------------------------------------------------------------------------
 void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 {
-	SDL_Rect speedSymbol = {244, 97, 8, 10};
-	SDL_Rect shotsSymbol = {254, 97, 5, 10};
-	SDL_Rect disabledSymbol = {150, 109, 25, 25};
 	SDL_Rect dest;
 
 	if (unit.isDisabled())
@@ -384,6 +381,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 			dest.y += (destination.h / 2);
 			dest.x += (destination.w / 2);
 		}
+		SDL_Rect disabledSymbol = cGraphicsData::getRect_Symbol_Disabled();
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &disabledSymbol, cVideo::buffer, &dest);
 	}
 	else
@@ -400,6 +398,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 			if (unit.data.getShots())
 				dest.x -= destination.w / 4;
 
+			SDL_Rect speedSymbol = cGraphicsData::getRect_Symbol_Speed();
 			SDL_Rect destCopy = dest;
 			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &speedSymbol, cVideo::buffer, &destCopy);
 		}
@@ -409,6 +408,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 		{
 			if (unit.data.getSpeed())
 				dest.x += destination.w / 4;
+			SDL_Rect shotsSymbol = cGraphicsData::getRect_Symbol_Shots();
 			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &shotsSymbol, cVideo::buffer, &dest);
 		}
 	}

@@ -49,27 +49,25 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, [this]() { close(); });
 
-	const std::string themeNames[rows] =
-		{
-			lngPack.i18n ("Others~Attack"),
-			lngPack.i18n ("Others~Shots_7"),
-			lngPack.i18n ("Others~Range"),
-			lngPack.i18n ("Others~Armor_7"),
-			lngPack.i18n ("Others~Hitpoints_7"),
-			lngPack.i18n ("Others~Speed"),
-			lngPack.i18n ("Others~Scan"),
-			lngPack.i18n ("Others~Costs")};
+	const std::string themeNames[rows] = {
+		lngPack.i18n ("Others~Attack"),
+		lngPack.i18n ("Others~Shots_7"),
+		lngPack.i18n ("Others~Range"),
+		lngPack.i18n ("Others~Armor_7"),
+		lngPack.i18n ("Others~Hitpoints_7"),
+		lngPack.i18n ("Others~Speed"),
+		lngPack.i18n ("Others~Scan"),
+		lngPack.i18n ("Others~Costs")};
 
-	const SDL_Rect themeImageSrcs[rows] =
-		{
-			{27, 109, 10, 14},
-			{37, 109, 15, 7},
-			{52, 109, 13, 13},
-			{65, 109, 11, 14},
-			{11, 109, 7, 11},
-			{0, 109, 11, 12},
-			{76, 109, 13, 13},
-			{112, 109, 13, 10}};
+	const SDL_Rect themeImageSrcs[rows] = {
+		cGraphicsData::getRect_BigSymbol_Attack(),
+		cGraphicsData::getRect_BigSymbol_Shots(),
+		cGraphicsData::getRect_BigSymbol_Range(),
+		cGraphicsData::getRect_BigSymbol_Armor(),
+		cGraphicsData::getRect_BigSymbol_Hitpoints(),
+		cGraphicsData::getRect_BigSymbol_Speed(),
+		cGraphicsData::getRect_BigSymbol_Scan(),
+		cGraphicsData::getRect_BigSymbol_Costs()};
 
 	for (size_t i = 0; i < rows; ++i)
 	{

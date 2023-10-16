@@ -236,15 +236,21 @@ void cCheckBox::renewSurface()
 	}
 	switch (type)
 	{
+		case eCheckBoxType::TextOnly:
+			surface = nullptr;
+			size = cPosition (font->getTextWide (text, fontType), font->getFontHeight (fontType));
+			break;
 		default:
 		case eCheckBoxType::Round:
 			size = cPosition (18, 17);
 			src.x = (checked || isPressed) ? 151 + size.x() : 151;
 			src.y = 93;
 			break;
-		case eCheckBoxType::TextOnly:
-			surface = nullptr;
-			size = cPosition (font->getTextWide (text, fontType), font->getFontHeight (fontType));
+		case eCheckBoxType::Angular:
+			size = cPosition (78, 23);
+			src.x = (checked || isPressed) ? size.x() : 0;
+			src.y = 196;
+			textLimitWidth = size.x() - 16;
 			break;
 		case eCheckBoxType::Standard:
 			size = cPosition (18, 17);
@@ -276,62 +282,61 @@ void cCheckBox::renewSurface()
 			src.x = (checked || isPressed) ? 32 * 8 + size.x() : 32 * 8;
 			src.y = 219;
 			break;
-		case eCheckBoxType::Angular:
-			size = cPosition (78, 23);
-			src.x = (checked || isPressed) ? size.x() : 0;
-			src.y = 196;
-			textLimitWidth = size.x() - 16;
+		case eCheckBoxType::HudIndex_00:
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex00Pressed() : cGraphicsData::getRect_CheckBox_HudIndex00();
+			size = cPosition (src.w, src.h);
 			break;
-		case eCheckBoxType::HudIndex_22:
-			src.x += size.x();
-		case eCheckBoxType::HudIndex_21:
-			src.x += size.x();
-		case eCheckBoxType::HudIndex_20:
-			size.y() = 18;
-			src.y += 18 + 16;
-			if (!checked && !isPressed) src.x += 167;
-			break;
-		case eCheckBoxType::HudIndex_12:
-			src.x += size.x();
-		case eCheckBoxType::HudIndex_11:
-			src.x += size.x();
-		case eCheckBoxType::HudIndex_10:
-			size.y() = 16;
-			src.y += 18;
-			if (!(checked || isPressed)) src.x += 167;
+		case eCheckBoxType::HudIndex_01:
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex01Pressed() : cGraphicsData::getRect_CheckBox_HudIndex01();
+			size = cPosition (src.w, src.h);
 			break;
 		case eCheckBoxType::HudIndex_02:
-			src.x += size.x();
-		case eCheckBoxType::HudIndex_01:
-			src.x += size.x();
-		case eCheckBoxType::HudIndex_00:
-			size.y() = 18;
-			if (!checked && !isPressed) src.x += 167;
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex02Pressed() : cGraphicsData::getRect_CheckBox_HudIndex02();
+			size = cPosition (src.w, src.h);
 			break;
-		case eCheckBoxType::HudLock:
-			size = cPosition (21, 22);
-			src.x = 397;
-			src.y = (checked || isPressed) ? 298 : 321;
+		case eCheckBoxType::HudIndex_10:
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex10Pressed() : cGraphicsData::getRect_CheckBox_HudIndex10();
+			size = cPosition (src.w, src.h);
 			break;
-		case eCheckBoxType::HudTnt:
-			size = cPosition (27, 28);
-			src.x = (checked || isPressed) ? 362 : 334;
-			src.y = 24;
+		case eCheckBoxType::HudIndex_11:
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex11Pressed() : cGraphicsData::getRect_CheckBox_HudIndex11();
+			size = cPosition (src.w, src.h);
 			break;
-		case eCheckBoxType::Hud2x:
-			size = cPosition (27, 28);
-			src.x = (checked || isPressed) ? 362 : 334;
-			src.y = 53;
+		case eCheckBoxType::HudIndex_12:
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex12Pressed() : cGraphicsData::getRect_CheckBox_HudIndex12();
+			size = cPosition (src.w, src.h);
+			break;
+		case eCheckBoxType::HudIndex_20:
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex20Pressed() : cGraphicsData::getRect_CheckBox_HudIndex20();
+			size = cPosition (src.w, src.h);
+			break;
+		case eCheckBoxType::HudIndex_21:
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex21Pressed() : cGraphicsData::getRect_CheckBox_HudIndex21();
+			size = cPosition (src.w, src.h);
+			break;
+		case eCheckBoxType::HudIndex_22:
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex22Pressed() : cGraphicsData::getRect_CheckBox_HudIndex22();
+			size = cPosition (src.w, src.h);
 			break;
 		case eCheckBoxType::HudChat:
-			size = cPosition (49, 20);
-			src.x = (checked || isPressed) ? 160 : 196;
-			src.y = (checked || isPressed) ? 21 : 129;
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudChatPressed() : cGraphicsData::getRect_CheckBox_HudChat();
+			size = cPosition (src.w, src.h);
+			break;
+		case eCheckBoxType::HudLock:
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudLock() : cGraphicsData::getRect_CheckBox_HudUnlock();
+			size = cPosition (src.w, src.h);
+			break;
+		case eCheckBoxType::HudTnt:
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudTntPressed() : cGraphicsData::getRect_CheckBox_HudTnt();
+			size = cPosition (src.w, src.h);
+			break;
+		case eCheckBoxType::Hud2x:
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_Hud2xPressed() : cGraphicsData::getRect_CheckBox_Hud2x();
+			size = cPosition (src.w, src.h);
 			break;
 		case eCheckBoxType::HudPlayers:
-			size = cPosition (27, 28);
-			src.x = (checked || isPressed) ? (317 + 27) : 317;
-			src.y = 479;
+			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudPlayerPressed() : cGraphicsData::getRect_CheckBox_HudPlayer();
+			size = cPosition (src.w, src.h);
 			break;
 		case eCheckBoxType::UnitContextMenu:
 			size = cPosition (42, 21);

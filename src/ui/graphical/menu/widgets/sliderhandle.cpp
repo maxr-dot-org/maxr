@@ -73,9 +73,12 @@ void cSliderHandle::createSurface (eSliderHandleType sliderHandleType)
 			size = cPosition (17, 14);
 			break;
 		case eSliderHandleType::HudZoom:
-			srcPoint = cPosition (132, 0);
-			size = cPosition (25, 15);
+		{
+			auto rect = cGraphicsData::getRect_Slider_HudZoom();
+			srcPoint = cPosition (rect.x, rect.y);
+			size = cPosition (rect.w - 1, rect.h - 1);
 			break;
+		}
 		case eSliderHandleType::ModernHorizontal:
 			srcPoint = cPosition (241, 59);
 			size = cPosition (8, 16);

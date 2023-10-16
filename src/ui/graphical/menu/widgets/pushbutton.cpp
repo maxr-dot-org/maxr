@@ -295,52 +295,40 @@ void cPushButton::renewSurface()
 			src.y = 196;
 			break;
 		case ePushButtonType::HudHelp:
-			src.x = (isPressed || isLocked) ? 366 : 268;
-			src.y = (isPressed || isLocked) ? 0 : 151;
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudHelpPressed() : cGraphicsData::getRect_PushButton_HudHelp();
 			break;
 		case ePushButtonType::HudCenter:
-			src.x = (isPressed || isLocked) ? 0 : 139;
-			src.y = (isPressed || isLocked) ? 21 : 149;
-			break;
-		case ePushButtonType::HudReport:
-			src.x = (isPressed || isLocked) ? 210 : 245;
-			src.y = (isPressed || isLocked) ? 21 : 130;
-			break;
-		case ePushButtonType::HudChat:
-			src.x = (isPressed || isLocked) ? 160 : 196;
-			src.y = (isPressed || isLocked) ? 21 : 129;
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudCenterPressed() : cGraphicsData::getRect_PushButton_HudCenter();
 			break;
 		case ePushButtonType::HudNext:
-			src.x = (isPressed || isLocked) ? 288 : 158;
-			src.y = (isPressed || isLocked) ? 0 : 172;
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudNextPressed() : cGraphicsData::getRect_PushButton_HudNext();
 			break;
 		case ePushButtonType::HudPrev:
-			src.x = (isPressed || isLocked) ? 327 : 198;
-			src.y = (isPressed || isLocked) ? 0 : 172;
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudPrevPressed() : cGraphicsData::getRect_PushButton_HudPrev();
 			break;
 		case ePushButtonType::HudDone:
-			src.x = (isPressed || isLocked) ? 262 : 132;
-			src.y = (isPressed || isLocked) ? 0 : 172;
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudDonePressed() : cGraphicsData::getRect_PushButton_HudDone();
 			break;
-		case ePushButtonType::HudEnd:
-			src.x = (isPressed || isLocked) ? 22 : 0;
-			src.y = (isPressed || isLocked) ? 21 : 151;
+		case ePushButtonType::HudReport:
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudReportPressed() : cGraphicsData::getRect_PushButton_HudReport();
+			break;
+		case ePushButtonType::HudChat:
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudChatPressed() : cGraphicsData::getRect_PushButton_HudChat();
 			break;
 		case ePushButtonType::HudPreferences:
-			src.x = (isPressed || isLocked) ? 195 : 0;
-			src.y = (isPressed || isLocked) ? 0 : 169;
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudPreferencesPressed() : cGraphicsData::getRect_PushButton_HudPreferences();
 			break;
 		case ePushButtonType::HudFiles:
-			src.x = (isPressed || isLocked) ? 93 : 71;
-			src.y = (isPressed || isLocked) ? 21 : 151;
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudFilesPressed() : cGraphicsData::getRect_PushButton_HudFiles();
+			break;
+		case ePushButtonType::HudEnd:
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudEndPressed() : cGraphicsData::getRect_PushButton_HudEnd();
 			break;
 		case ePushButtonType::HudPlay:
-			src.x = (isPressed || isLocked) ? 157 : 0;
-			src.y = (isPressed || isLocked) ? 0 : 132;
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudPlayPressed() : cGraphicsData::getRect_PushButton_HudPlay();
 			break;
 		case ePushButtonType::HudStop:
-			src.x = (isPressed || isLocked) ? 176 : 19;
-			src.y = (isPressed || isLocked) ? 0 : 132;
+			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudStopPressed() : cGraphicsData::getRect_PushButton_HudStop();
 			break;
 		case ePushButtonType::UnitContextMenu:
 			src.x = 0;

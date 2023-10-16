@@ -303,85 +303,31 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 //------------------------------------------------------------------------------
 cBox<cPosition> cUnitDetails::getBigSymbolPosition (eUnitDataSymbolType symbolType)
 {
-	cPosition position (0, 109);
-	cPosition size (1, 1);
+	SDL_Rect rect;
 
 	switch (symbolType)
 	{
-		case eUnitDataSymbolType::Speed:
-			position.x() = 0;
-			size.x() = 11;
-			size.y() = 12;
-			break;
-		case eUnitDataSymbolType::Hits:
-			position.x() = 11;
-			size.x() = 7;
-			size.y() = 11;
-			break;
-		case eUnitDataSymbolType::Ammo:
-			position.x() = 18;
-			size.x() = 9;
-			size.y() = 14;
-			break;
-		case eUnitDataSymbolType::Attack:
-			position.x() = 27;
-			size.x() = 10;
-			size.y() = 14;
-			break;
-		case eUnitDataSymbolType::Shots:
-			position.x() = 37;
-			size.x() = 15;
-			size.y() = 7;
-			break;
-		case eUnitDataSymbolType::Range:
-			position.x() = 52;
-			size.x() = 13;
-			size.y() = 13;
-			break;
-		case eUnitDataSymbolType::Armor:
-			position.x() = 65;
-			size.x() = 11;
-			size.y() = 14;
-			break;
-		case eUnitDataSymbolType::Scan:
-			position.x() = 76;
-			size.x() = 13;
-			size.y() = 13;
-			break;
-		case eUnitDataSymbolType::Metal:
-			position.x() = 89;
-			size.x() = 12;
-			size.y() = 15;
-			break;
-		case eUnitDataSymbolType::MetalEmpty:
-			position.x() = 175;
-			size.x() = 12;
-			size.y() = 15;
-			break;
-		case eUnitDataSymbolType::Oil:
-			position.x() = 101;
-			size.x() = 11;
-			size.y() = 12;
-			break;
-		case eUnitDataSymbolType::Gold:
-			position.x() = 112;
-			size.x() = 13;
-			size.y() = 10;
-			break;
-		case eUnitDataSymbolType::Energy:
-			position.x() = 125;
-			size.x() = 13;
-			size.y() = 17;
-			break;
-		case eUnitDataSymbolType::Human:
-			position.x() = 138;
-			size.x() = 12;
-			size.y() = 16;
-			break;
+		case eUnitDataSymbolType::Speed: rect = cGraphicsData ::getRect_BigSymbol_Speed(); break;
+		case eUnitDataSymbolType::Hits: rect = cGraphicsData ::getRect_BigSymbol_Hitpoints(); break;
+		case eUnitDataSymbolType::Ammo: rect = cGraphicsData ::getRect_BigSymbol_Ammo(); break;
+		case eUnitDataSymbolType::Attack: rect = cGraphicsData ::getRect_BigSymbol_Attack(); break;
+		case eUnitDataSymbolType::Shots: rect = cGraphicsData ::getRect_BigSymbol_Shots(); break;
+		case eUnitDataSymbolType::Range: rect = cGraphicsData ::getRect_BigSymbol_Range(); break;
+		case eUnitDataSymbolType::Armor: rect = cGraphicsData ::getRect_BigSymbol_Armor(); break;
+		case eUnitDataSymbolType::Scan: rect = cGraphicsData ::getRect_BigSymbol_Scan(); break;
+		case eUnitDataSymbolType::Metal: rect = cGraphicsData ::getRect_BigSymbol_Metal(); break;
+		case eUnitDataSymbolType::MetalEmpty: rect = cGraphicsData ::getRect_BigSymbol_MetalEmpty(); break;
+		case eUnitDataSymbolType::Oil: rect = cGraphicsData ::getRect_BigSymbol_Oil(); break;
+		case eUnitDataSymbolType::Gold: rect = cGraphicsData ::getRect_BigSymbol_Gold(); break;
+		case eUnitDataSymbolType::Energy: rect = cGraphicsData ::getRect_BigSymbol_Energy(); break;
+		case eUnitDataSymbolType::Human: rect = cGraphicsData ::getRect_BigSymbol_Human(); break;
+		default:
 		case eUnitDataSymbolType::TransportTank:
 		case eUnitDataSymbolType::TransportAir:
+			rect = {0, 109, 1, 1};
 			break;
 	}
-
+	cPosition position (rect.x, rect.y);
+	cPosition size (rect.w, rect.h);
 	return cBox<cPosition> (position, position + size - 1);
 }

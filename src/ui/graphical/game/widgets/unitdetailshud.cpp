@@ -311,17 +311,17 @@ cBox<cPosition> cUnitDetailsHud::getSmallSymbolPosition (eUnitDataSymbolType sym
 
 	switch (symbolType)
 	{
-		case eUnitDataSymbolType::Speed: rect = GraphicsData.getRect_SmallSymbol_Speed(); break;
-		case eUnitDataSymbolType::Hits: rect = GraphicsData.getRect_SmallSymbol_Hits(); break;
-		case eUnitDataSymbolType::Ammo: rect = GraphicsData.getRect_SmallSymbol_Ammo(); break;
-		case eUnitDataSymbolType::Shots: rect = GraphicsData.getRect_SmallSymbol_Shots(); break;
-		case eUnitDataSymbolType::Metal: rect = GraphicsData.getRect_SmallSymbol_Metal(); break;
-		case eUnitDataSymbolType::Oil: rect = GraphicsData.getRect_SmallSymbol_Oil(); break;
-		case eUnitDataSymbolType::Gold: rect = GraphicsData.getRect_SmallSymbol_Gold(); break;
-		case eUnitDataSymbolType::Energy: rect = GraphicsData.getRect_SmallSymbol_Energy(); break;
-		case eUnitDataSymbolType::Human: rect = GraphicsData.getRect_SmallSymbol_Human(); break;
-		case eUnitDataSymbolType::TransportTank: rect = GraphicsData.getRect_SmallSymbol_TransportTank(); break;
-		case eUnitDataSymbolType::TransportAir: rect = GraphicsData.getRect_SmallSymbol_TransportAir(); break;
+		case eUnitDataSymbolType::Speed: rect = cGraphicsData::getRect_SmallSymbol_Speed(); break;
+		case eUnitDataSymbolType::Hits: rect = cGraphicsData::getRect_SmallSymbol_Hits(); break;
+		case eUnitDataSymbolType::Ammo: rect = cGraphicsData::getRect_SmallSymbol_Ammo(); break;
+		case eUnitDataSymbolType::Shots: rect = cGraphicsData::getRect_SmallSymbol_Shots(); break;
+		case eUnitDataSymbolType::Metal: rect = cGraphicsData::getRect_SmallSymbol_Metal(); break;
+		case eUnitDataSymbolType::Oil: rect = cGraphicsData::getRect_SmallSymbol_Oil(); break;
+		case eUnitDataSymbolType::Gold: rect = cGraphicsData::getRect_SmallSymbol_Gold(); break;
+		case eUnitDataSymbolType::Energy: rect = cGraphicsData::getRect_SmallSymbol_Energy(); break;
+		case eUnitDataSymbolType::Human: rect = cGraphicsData::getRect_SmallSymbol_Human(); break;
+		case eUnitDataSymbolType::TransportTank: rect = cGraphicsData::getRect_SmallSymbol_TransportTank(); break;
+		case eUnitDataSymbolType::TransportAir: rect = cGraphicsData::getRect_SmallSymbol_TransportAir(); break;
 
 		case eUnitDataSymbolType::Attack:
 		case eUnitDataSymbolType::Range:
