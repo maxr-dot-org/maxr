@@ -391,6 +391,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 	int currentChar = 0;
 	int pX = 0;
 	int pY = 0;
+	const auto limitColor = SDL_MapRGB (surface->format, 0xFF, 0, 0xFF);
 
 	for (int rows = 0; rows < highcount; rows++)
 	{
@@ -412,7 +413,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 					pX = (cellW * cols) + pCol;
 					pY = (cellH * rows) + pRow;
 
-					if (getPixel (*surface, cPosition (pX, pY)) != SDL_MapRGB (surface->format, 0xFF, 0, 0xFF))
+					if (getPixel (*surface, cPosition (pX, pY)) != limitColor)
 					{
 						// offset
 						Rect.x = pX;
@@ -429,7 +430,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 					pX = (cellW * cols) + pCol_w;
 					pY = (cellH * rows) + pRow_w;
 
-					if (getPixel (*surface, cPosition (pX, pY)) != SDL_MapRGB (surface->format, 0xFF, 0, 0xFF))
+					if (getPixel (*surface, cPosition (pX, pY)) != limitColor)
 					{
 						Rect.w = (pX - Rect.x) + 1;
 						pCol_w = -1; // break loop

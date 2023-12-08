@@ -323,7 +323,7 @@ void cMiniMapWidget::drawUnits()
 				if (!attackUnitsOnly || building->getStaticUnitData().canAttack)
 				{
 					const auto color = building->getOwner() ? building->getOwner()->getColor() : neutralColor;
-					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (color, surface->format));
+					SDL_FillRect (surface.get(), &rect, toSdlAlphaColor (color, *surface));
 				}
 			}
 
@@ -333,7 +333,7 @@ void cMiniMapWidget::drawUnits()
 				if (!attackUnitsOnly || vehicle->getStaticUnitData().canAttack)
 				{
 					const auto color = vehicle->getOwner() ? vehicle->getOwner()->getColor() : neutralColor;
-					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (color, surface->format));
+					SDL_FillRect (surface.get(), &rect, toSdlAlphaColor (color, *surface));
 				}
 			}
 
@@ -343,7 +343,7 @@ void cMiniMapWidget::drawUnits()
 				if (!attackUnitsOnly || vehicle->getStaticUnitData().canAttack)
 				{
 					const auto color = vehicle->getOwner() ? vehicle->getOwner()->getColor() : neutralColor;
-					SDL_FillRect (surface.get(), &rect, toMappedSdlRGBAColor (color, surface->format));
+					SDL_FillRect (surface.get(), &rect, toSdlAlphaColor (color, *surface));
 				}
 			}
 		}

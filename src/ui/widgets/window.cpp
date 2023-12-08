@@ -49,7 +49,7 @@ void cWindow::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 		switch (backgroundType)
 		{
 			case eWindowBackgrounds::Black:
-				SDL_FillRect (cVideo::buffer, nullptr, 0xFF000000);
+				SDL_FillRect (cVideo::buffer, nullptr, toSdlColor (cRgbColor::black(), *cVideo::buffer));
 				break;
 			case eWindowBackgrounds::Alpha:
 				// NOTE: this is not fully robust yet! It will not work if an

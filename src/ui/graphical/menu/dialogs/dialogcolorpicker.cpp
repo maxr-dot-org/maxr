@@ -144,7 +144,7 @@ AutoSurface cDialogColorPicker::createSelectedColorSurface()
 {
 	AutoSurface surface (SDL_CreateRGBSurface (0, 50, 50, 32, 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get(), nullptr, toMappedSdlRGBAColor (colorPicker->getSelectedColor(), surface->format));
+	SDL_FillRect (surface.get(), nullptr, toSdlAlphaColor (colorPicker->getSelectedColor(), *surface));
 
 	return surface;
 }

@@ -26,6 +26,7 @@
 #include "utility/log.h"
 #include "utility/mathtools.h"
 #include "utility/os.h"
+#include "SDLutility/tosdl.h"
 #include "utility/thread/ismainthread.h"
 
 #include <SDL.h>
@@ -260,7 +261,7 @@ void cVideo::applyWindowMode()
 
 void cVideo::clearBuffer()
 {
-	SDL_FillRect (buffer, nullptr, SDL_MapRGB (buffer->format, 0, 0, 0));
+	SDL_FillRect (buffer, nullptr, toSdlColor (cRgbColor::black(), *buffer));
 }
 
 void cVideo::detectResolutions()

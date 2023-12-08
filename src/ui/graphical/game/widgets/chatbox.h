@@ -228,17 +228,20 @@ void cChatBox<ChatListItemType, PlayerListItemType>::createBackground()
 	nonFocusBackground = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 	focusBackground = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
+	const auto black_50 = toSdlAlphaColor (cRgbColor::black (50), *nonFocusBackground);
+	const auto black_100 = toSdlAlphaColor (cRgbColor::black (100), *focusBackground);
+
 	SDL_Rect chatListBackgroundRect = {chatList->getPosition().x() - getPosition().x(), chatList->getPosition().y() - getPosition().y(), chatList->getSize().x(), chatList->getSize().y()};
-	SDL_FillRect (nonFocusBackground.get(), &chatListBackgroundRect, SDL_MapRGBA (nonFocusBackground->format, 0, 0, 0, 50));
-	SDL_FillRect (focusBackground.get(), &chatListBackgroundRect, SDL_MapRGBA (focusBackground->format, 0, 0, 0, 100));
+	SDL_FillRect (nonFocusBackground.get(), &chatListBackgroundRect, black_50);
+	SDL_FillRect (focusBackground.get(), &chatListBackgroundRect, black_100);
 
 	SDL_Rect chatLineEditBackgroundRect = {chatLineEdit->getPosition().x() - getPosition().x() - 2, chatLineEdit->getPosition().y() - getPosition().y() - 2, chatLineEdit->getSize().x() + 4, chatLineEdit->getSize().y() + 4};
-	SDL_FillRect (nonFocusBackground.get(), &chatLineEditBackgroundRect, SDL_MapRGBA (nonFocusBackground->format, 0, 0, 0, 50));
-	SDL_FillRect (focusBackground.get(), &chatLineEditBackgroundRect, SDL_MapRGBA (focusBackground->format, 0, 0, 0, 100));
+	SDL_FillRect (nonFocusBackground.get(), &chatLineEditBackgroundRect, black_50);
+	SDL_FillRect (focusBackground.get(), &chatLineEditBackgroundRect, black_100);
 
 	SDL_Rect playerListBackgroundRect = {playersList->getPosition().x() - getPosition().x(), playersList->getPosition().y() - getPosition().y(), playersList->getSize().x(), playersList->getSize().y()};
-	SDL_FillRect (nonFocusBackground.get(), &playerListBackgroundRect, SDL_MapRGBA (nonFocusBackground->format, 0, 0, 0, 50));
-	SDL_FillRect (focusBackground.get(), &playerListBackgroundRect, SDL_MapRGBA (focusBackground->format, 0, 0, 0, 100));
+	SDL_FillRect (nonFocusBackground.get(), &playerListBackgroundRect, black_50);
+	SDL_FillRect (focusBackground.get(), &playerListBackgroundRect, black_100);
 }
 
 #endif // ui_graphical_game_widgets_chatboxH

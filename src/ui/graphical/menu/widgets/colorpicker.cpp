@@ -97,7 +97,7 @@ AutoSurface cRgbColorPicker::createColorsSurface()
 			color.s = x * 100 / (size.x() - 1);
 			color.v = 100 - (y * 100 / (size.y() - 1));
 
-			putPixel (*surface, cPosition (x, y), toMappedSdlRGBAColor (color.toRgb(), surface->format));
+			putPixel (*surface, cPosition (x, y), toSdlAlphaColor (color.toRgb(), surface->format));
 		}
 	}
 
@@ -118,7 +118,7 @@ AutoSurface cRgbColorPicker::createColorBarSurface()
 		{
 			const cPosition position (x, y);
 
-			putPixel (*surface, position, toMappedSdlRGBAColor (color.toRgb(), surface->format));
+			putPixel (*surface, position, toSdlAlphaColor (color.toRgb(), surface->format));
 		}
 	}
 
@@ -130,7 +130,7 @@ AutoSurface cRgbColorPicker::createColorMarkerSurface()
 {
 	AutoSurface surface (SDL_CreateRGBSurface (0, 3, 3, 32, 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get(), nullptr, toMappedSdlRGBColor (cRgbColor::white(), surface->format));
+	SDL_FillRect (surface.get(), nullptr, toSdlColor (cRgbColor::white(), *surface));
 	drawPoint (*surface, cPosition (1, 1), cRgbColor (0xFF, 0, 0xFF));
 
 	return surface;
@@ -141,7 +141,7 @@ AutoSurface cRgbColorPicker::createColorHueMarkerSurface()
 {
 	AutoSurface surface (SDL_CreateRGBSurface (0, 15 + 2, 3, 32, 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get(), nullptr, toMappedSdlRGBColor (cRgbColor::white(), surface->format));
+	SDL_FillRect (surface.get(), nullptr, toSdlColor (cRgbColor::white(), *surface));
 
 	drawLine (*surface, cPosition (1, 1), cPosition (16, 1), cRgbColor (0xFF, 0, 0xFF));
 

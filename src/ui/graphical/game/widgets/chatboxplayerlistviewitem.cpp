@@ -82,7 +82,7 @@ void cChatBoxPlayerListViewItem::updatePlayerFinishedTurn()
 	SDL_Rect src = {player->getHasFinishedTurn() ? 10 : 0, 0, 10, 10};
 
 	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_SetColorKey (readySurface.get(), SDL_TRUE, toMappedSdlRGBAColor (cRgbColor (0, 1, 0), readySurface->format));
+	SDL_SetColorKey (readySurface.get(), SDL_TRUE, toSdlAlphaColor (cRgbColor (0, 1, 0), *readySurface));
 	SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &src, readySurface.get(), nullptr);
 
 	readyImage->setImage (readySurface.get());

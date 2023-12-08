@@ -29,7 +29,9 @@ class cBox;
 
 SDL_Rect toSdlRect (const cBox<cPosition>&);
 
-Uint32 toMappedSdlRGBColor (const cRgbColor&, const SDL_PixelFormat*);
-Uint32 toMappedSdlRGBAColor (const cRgbColor&, const SDL_PixelFormat*);
+Uint32 toSdlColor (const cRgbColor&, const SDL_PixelFormat*);
+Uint32 toSdlColor (const cRgbColor&, const SDL_Surface&);
+Uint32 toSdlAlphaColor (const cRgbColor&, const SDL_PixelFormat*);
+Uint32 toSdlAlphaColor (const cRgbColor&, const SDL_Surface&);
 
 #endif

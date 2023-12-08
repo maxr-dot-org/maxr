@@ -90,13 +90,13 @@ void cGameMessageListViewItem::createBackground()
 	{
 		default:
 		case eGameMessageListViewItemBackgroundColor::DarkGray:
-			SDL_FillRect (background.get(), nullptr, SDL_MapRGBA (background->format, 0, 0, 0, alpha));
+			SDL_FillRect (background.get(), nullptr, toSdlAlphaColor(cRgbColor::black(alpha), *background));
 			break;
 		case eGameMessageListViewItemBackgroundColor::LightGray:
-			SDL_FillRect (background.get(), nullptr, SDL_MapRGBA (background->format, 0xFF, 0xFF, 0xFF, alpha));
+			SDL_FillRect (background.get(), nullptr, toSdlAlphaColor (cRgbColor::white(alpha), *background));
 			break;
 		case eGameMessageListViewItemBackgroundColor::Red:
-			SDL_FillRect (background.get(), nullptr, SDL_MapRGBA (background->format, 0xFF, 0, 0, alpha));
+			SDL_FillRect (background.get(), nullptr, toSdlAlphaColor (cRgbColor::red(alpha), *background));
 			break;
 	}
 }

@@ -29,6 +29,7 @@
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "settings.h"
+#include "SDLutility/tosdl.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/widgets/framecounter.h"
 #include "utility/mathtools.h"
@@ -91,7 +92,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 	}
 	surface = AutoSurface (SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
-	SDL_FillRect (surface.get(), nullptr, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
+	SDL_FillRect (surface.get(), nullptr, toSdlAlphaColor (cRgbColor::transparent(), *surface));
 }
 
 void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned long long frameNr)
@@ -120,7 +121,7 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned
 
 	surface = AutoSurface (SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
-	SDL_FillRect (surface.get(), nullptr, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
+	SDL_FillRect (surface.get(), nullptr, toSdlAlphaColor(cRgbColor::transparent(), *surface));
 }
 
 cDrawingCache::cDrawingCache (std::shared_ptr<const cFrameCounter> frameCounter_) :

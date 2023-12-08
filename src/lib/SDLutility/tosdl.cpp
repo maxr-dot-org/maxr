@@ -32,13 +32,24 @@ SDL_Rect toSdlRect (const cBox<cPosition>& box)
 }
 
 //------------------------------------------------------------------------------
-Uint32 toMappedSdlRGBColor (const cRgbColor& color, const SDL_PixelFormat* format)
+Uint32 toSdlColor (const cRgbColor& color, const SDL_PixelFormat* format)
 {
 	return SDL_MapRGB (format, color.r, color.g, color.b);
 }
 
 //------------------------------------------------------------------------------
-Uint32 toMappedSdlRGBAColor (const cRgbColor& color, const SDL_PixelFormat* format)
+Uint32 toSdlColor (const cRgbColor& color, const SDL_Surface& surface)
+{
+	return toSdlColor (color, surface.format);
+}
+
+//------------------------------------------------------------------------------
+Uint32 toSdlAlphaColor (const cRgbColor& color, const SDL_PixelFormat* format)
 {
 	return SDL_MapRGBA (format, color.r, color.g, color.b, color.a);
+}
+//------------------------------------------------------------------------------
+Uint32 toSdlAlphaColor (const cRgbColor& color, const SDL_Surface& surface)
+{
+	return toSdlAlphaColor (color, surface.format);
 }

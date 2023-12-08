@@ -29,7 +29,7 @@
 void drawPoint (SDL_Surface& surface, const cPosition& position, const cRgbColor& color)
 {
 	SDL_Rect rect = {Sint16 (position.x()), Sint16 (position.y()), 1, 1};
-	SDL_FillRect (&surface, &rect, toMappedSdlRGBAColor (color, surface.format));
+	SDL_FillRect (&surface, &rect, toSdlAlphaColor (color, surface));
 }
 
 //------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, cons
 
 	SDL_Rect line_h = {rectangle.getMinCorner().x(), rectangle.getMinCorner().y(), size.x(), thickness};
 
-	const auto sdlColor = toMappedSdlRGBAColor (color, surface.format);
+	const auto sdlColor = toSdlAlphaColor (color, surface);
 
 	SDL_FillRect (&surface, &line_h, sdlColor);
 	line_h.y += size.y() - thickness;
@@ -96,7 +96,7 @@ void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle
 {
 	constexpr int selectionCornerLineThickness = 3;
 	const cPosition size = rectangle.getMaxCorner() - rectangle.getMinCorner();
-	const auto sdlColor = toMappedSdlRGBAColor (color, surface.format);
+	const auto sdlColor = toSdlAlphaColor (color, surface);
 
 	// cornersize is CellW or CellW*2(largeUnit)/4, or 16 for 32p (largest) cells.
 	const int t = selectionCornerLineThickness;
@@ -210,8 +210,8 @@ void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel)
 //------------------------------------------------------------------------------
 void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRgbColor& destinationColor)
 {
-	const auto srcMapped = toMappedSdlRGBAColor (sourceColor, surface.format);
-	const auto destMapped = toMappedSdlRGBAColor (destinationColor, surface.format);
+	const auto srcMapped = toSdlAlphaColor (sourceColor, surface);
+	const auto destMapped = toSdlAlphaColor (destinationColor, surface);
 
 	Uint32 key;
 	const auto hadKey = SDL_GetColorKey (&surface, &key) == 0;

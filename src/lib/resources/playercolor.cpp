@@ -63,7 +63,7 @@ namespace
 	{
 		auto texture = AutoSurface (SDL_CreateRGBSurface (0, 128, 128, 32, 0, 0, 0, 0));
 
-		SDL_FillRect (texture.get(), nullptr, toMappedSdlRGBAColor (color, texture->format));
+		SDL_FillRect (texture.get(), nullptr, toSdlAlphaColor (color, *texture));
 
 		auto hsvColor = color.toHsv();
 
@@ -122,7 +122,7 @@ namespace
 			}
 			SDL_Rect dest = {xPos, yPos, width, height};
 
-			SDL_FillRect (texture.get(), &dest, toMappedSdlRGBAColor (getRandom (randomColors), texture->format));
+			SDL_FillRect (texture.get(), &dest, toSdlAlphaColor (getRandom (randomColors), *texture));
 		}
 		return texture;
 	}
