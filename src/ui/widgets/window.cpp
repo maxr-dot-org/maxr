@@ -85,11 +85,9 @@ void cWindow::handleActivated (cApplication& application, bool firstTime)
 	hasBeenDrawnOnce = false;
 	activeApplication = &application;
 
-	auto mouse = activeApplication->getActiveMouse();
-	if (mouse)
+	if (auto mouse = activeApplication->getActiveMouse())
 	{
-		auto defaultCursor = getDefaultCursor();
-		if (defaultCursor)
+		if (auto defaultCursor = makeDefaultCursor())
 		{
 			mouse->setCursor (std::move (defaultCursor));
 		}
@@ -113,7 +111,7 @@ void cWindow::handleDeactivated (cApplication& application, bool removed)
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseCursor> cWindow::getDefaultCursor() const
+std::unique_ptr<cMouseCursor> cWindow::makeDefaultCursor() const
 {
 	return std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand);
 }

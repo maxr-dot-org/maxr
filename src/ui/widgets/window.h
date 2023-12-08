@@ -165,10 +165,10 @@ protected:
 	 * Returns the default cursor for this window.
 	 * This cursor will be set to the mouse when the window is activated.
 	 *
-	 * @return The default or cursor for the window or null if there is no default cursor
+	 * @return The default cursor for the window or null if there is no default cursor
 	 *         for the window and the current cursor should stay visible on the activation of the window.
 	 */
-	virtual std::unique_ptr<cMouseCursor> getDefaultCursor() const;
+	virtual std::unique_ptr<cMouseCursor> makeDefaultCursor() const;
 
 	/**
 	 * Sets a new background surface image.

@@ -104,7 +104,7 @@ public:
 	bool wantsCentered() const override;
 
 protected:
-	std::unique_ptr<cMouseCursor> getDefaultCursor() const override;
+	std::unique_ptr<cMouseCursor> makeDefaultCursor() const override;
 
 private:
 	void startOpenPanel();

@@ -712,7 +712,7 @@ bool cGameGui::wantsCentered() const
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseCursor> cGameGui::getDefaultCursor() const
+std::unique_ptr<cMouseCursor> cGameGui::makeDefaultCursor() const
 {
 	return nullptr;
 }
