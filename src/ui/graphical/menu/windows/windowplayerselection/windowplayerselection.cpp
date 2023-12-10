@@ -49,10 +49,10 @@ cWindowPlayerSelection::cWindowPlayerSelection() :
 	backButton = emplaceChild<cPushButton> (getPosition() + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Others~Back"));
 	signalConnectionManager.connect (backButton->clicked, [this]() { close(); });
 
-	humanPlayerSurface = AutoSurface (LoadPCX (GFXOD_PLAYER_HUMAN));
-	aiPlayerSurface = AutoSurface (LoadPCX (GFXOD_PLAYER_PC));
-	noPlayerSurface = AutoSurface (LoadPCX (GFXOD_PLAYER_NONE));
-	dummySurface = AutoSurface (SDL_CreateRGBSurface (0, 55, 71, Video.getColDepth(), 0, 0, 0, 0));
+	humanPlayerSurface = UniqueSurface (LoadPCX (GFXOD_PLAYER_HUMAN));
+	aiPlayerSurface = UniqueSurface (LoadPCX (GFXOD_PLAYER_PC));
+	noPlayerSurface = UniqueSurface (LoadPCX (GFXOD_PLAYER_NONE));
+	dummySurface = UniqueSurface (SDL_CreateRGBSurface (0, 55, 71, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_FillRect (dummySurface.get(), nullptr, 0xFF00FF);
 	SDL_SetColorKey (dummySurface.get(), SDL_TRUE, 0xFF00FF);
 

@@ -47,7 +47,7 @@ private:
 
 	bool inRange;
 
-	mutable AutoSurface surface;
+	mutable UniqueSurface surface;
 
 	void generateSurface() const;
 };

@@ -59,7 +59,7 @@ public:
 	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock>);
 	void setGameSettings (std::shared_ptr<const cGameSettings>);
 
-	static AutoSurface generateSurface();
+	static UniqueSurface generateSurface();
 
 	void setMinimalZoomFactor (float zoomFactor);
 	void setZoomFactor (float zoomFactor);
@@ -166,7 +166,7 @@ private:
 	void handlePreferencesClicked();
 
 private:
-	AutoSurface surface;
+	UniqueSurface surface;
 
 	std::shared_ptr<const cPlayer> player;
 	std::shared_ptr<const cTurnCounter> turnClock;

@@ -135,7 +135,7 @@ void cComboBox::updateListViewSize()
 //------------------------------------------------------------------------------
 void cComboBox::updateLineEditBackground()
 {
-	lineEditBackground = AutoSurface (SDL_CreateRGBSurface (0, getSize().x() - downButton->getSize().x(), downButton->getSize().y(), Video.getColDepth(), 0, 0, 0, 0));
+	lineEditBackground = UniqueSurface (SDL_CreateRGBSurface (0, getSize().x() - downButton->getSize().x(), downButton->getSize().y(), Video.getColDepth(), 0, 0, 0, 0));
 
 	SDL_FillRect (lineEditBackground.get(), nullptr, 0x181818);
 
@@ -147,7 +147,7 @@ void cComboBox::updateListViewBackground()
 {
 	const auto size = listView->getSize();
 
-	listViewBackground = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
+	listViewBackground = UniqueSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 
 	SDL_FillRect (listViewBackground.get(), nullptr, 0x181818);
 

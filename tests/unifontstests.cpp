@@ -34,7 +34,7 @@ cUnicodeFont::cUnicodeFont (cUnitTestTag, Args...)
 
 	for (auto& surface : charsNormal)
 	{
-		surface = AutoSurface (SDL_CreateRGBSurface (0, w, h, 32, 0, 0, 0, 0));
+		surface = UniqueSurface (SDL_CreateRGBSurface (0, w, h, 32, 0, 0, 0, 0));
 	}
 }
 

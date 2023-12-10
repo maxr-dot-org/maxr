@@ -48,7 +48,7 @@ public:
 	cSignal<void()> moved;
 
 private:
-	AutoSurface surface;
+	UniqueSurface surface;
 
 	eOrientationType orientation;
 

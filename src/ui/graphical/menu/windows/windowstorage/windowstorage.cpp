@@ -52,10 +52,10 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	columns (canStorePlanes ? 2 : 3),
 	page (0)
 {
-	AutoSurface background (LoadPCX (GFXOD_STORAGE));
+	UniqueSurface background (LoadPCX (GFXOD_STORAGE));
 	if (!canStorePlanes)
 	{
-		AutoSurface surface (LoadPCX (GFXOD_STORAGE_GROUND));
+		UniqueSurface surface (LoadPCX (GFXOD_STORAGE_GROUND));
 		SDL_BlitSurface (surface.get(), nullptr, background.get(), nullptr);
 	}
 	setSurface (std::move (background));
@@ -228,7 +228,7 @@ void cWindowStorage::updateUnitsWidgets()
 				const auto& storedUnit = *unit.storedUnits[unitIndex];
 				auto* uiData = UnitsUiData.getVehicleUI (storedUnit.getStaticUnitData().ID);
 
-				AutoSurface surface (SDL_CreateRGBSurface (0, uiData->storage->w, uiData->storage->h, Video.getColDepth(), 0, 0, 0, 0));
+				UniqueSurface surface (SDL_CreateRGBSurface (0, uiData->storage->w, uiData->storage->h, Video.getColDepth(), 0, 0, 0, 0));
 				SDL_BlitSurface (uiData->storage.get(), nullptr, surface.get(), nullptr);
 				unitImages[positionIndex]->setImage (surface.get());
 
@@ -261,7 +261,7 @@ void cWindowStorage::updateUnitsWidgets()
 				else
 					srcSurface = GraphicsData.gfx_edepot.get();
 
-				AutoSurface surface (SDL_CreateRGBSurface (0, srcSurface->w, srcSurface->h, Video.getColDepth(), 0, 0, 0, 0));
+				UniqueSurface surface (SDL_CreateRGBSurface (0, srcSurface->w, srcSurface->h, Video.getColDepth(), 0, 0, 0, 0));
 				SDL_BlitSurface (srcSurface, nullptr, surface.get(), nullptr);
 				unitImages[positionIndex]->setImage (surface.get());
 

@@ -60,9 +60,9 @@ protected:
 private:
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 
-	AutoSurface surface;
+	UniqueSurface surface;
 	bool surfaceOutdated;
-	AutoSurface viewWindowSurface;
+	UniqueSurface viewWindowSurface;
 	bool viewWindowSurfaeOutdated;
 
 	bool startedMoving;

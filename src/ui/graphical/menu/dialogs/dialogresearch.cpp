@@ -75,7 +75,7 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 
 		auto src = themeImageSrcs[i];
 
-		AutoSurface image (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+		UniqueSurface image (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect (image.get(), nullptr, 0x00FF00FF);
 		SDL_SetColorKey (image.get(), SDL_TRUE, 0x00FF00FF);
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, image.get(), nullptr);

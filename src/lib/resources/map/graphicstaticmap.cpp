@@ -39,20 +39,20 @@ void sGraphicTile::copySrfToTerData (SDL_Surface& surface, const SDL_Color (&pal
 	//This is needed to make sure, that the pixeldata is copied 1:1
 
 	//copy the normal terrain
-	sf_org = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
+	sf_org = UniqueSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetPaletteColors (sf_org->format->palette, surface.format->palette->colors, 0, 256);
 	SDL_BlitSurface (&surface, nullptr, sf_org.get(), nullptr);
 
-	sf = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
+	sf = UniqueSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetPaletteColors (sf->format->palette, surface.format->palette->colors, 0, 256);
 	SDL_BlitSurface (&surface, nullptr, sf.get(), nullptr);
 
 	//copy the terrains with fog
-	shw_org = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
+	shw_org = UniqueSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetColors (shw_org.get(), surface.format->palette->colors, 0, 256);
 	SDL_BlitSurface (&surface, nullptr, shw_org.get(), nullptr);
 
-	shw = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
+	shw = UniqueSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetColors (shw.get(), surface.format->palette->colors, 0, 256);
 	SDL_BlitSurface (&surface, nullptr, shw.get(), nullptr);
 
@@ -83,10 +83,10 @@ void cGraphicStaticMap::loadPalette (SDL_RWops* fpMapFile, std::size_t paletteOf
 }
 
 //------------------------------------------------------------------------------
-/*static*/ AutoSurface cGraphicStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
+/*static*/ UniqueSurface cGraphicStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
 {
 	// Create new surface and copy palette
-	AutoSurface surface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
+	UniqueSurface surface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	surface->pitch = surface->w;
 
 	SDL_SetPaletteColors (surface->format->palette, colors, 0, 256);
@@ -102,7 +102,7 @@ void cGraphicStaticMap::loadPalette (SDL_RWops* fpMapFile, std::size_t paletteOf
 //------------------------------------------------------------------------------
 bool cGraphicStaticMap::loadTile (SDL_RWops* fpMapFile, std::size_t graphicOffset, std::size_t index)
 {
-	AutoSurface surface (loadTerrGraph (fpMapFile, graphicOffset, palette, index));
+	UniqueSurface surface (loadTerrGraph (fpMapFile, graphicOffset, palette, index));
 	if (surface == nullptr)
 	{
 		Log.warn ("EOF while loading terrain number " + std::to_string (index));
@@ -145,9 +145,9 @@ void cGraphicStaticMap::generateNextAnimationFrame()
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cGraphicStaticMap::createBigSurface (int sizex, int sizey) const
+UniqueSurface cGraphicStaticMap::createBigSurface (int sizex, int sizey) const
 {
-	AutoSurface mapSurface (SDL_CreateRGBSurface (0, sizex, sizey, Video.getColDepth(), 0, 0, 0, 0));
+	UniqueSurface mapSurface (SDL_CreateRGBSurface (0, sizex, sizey, Video.getColDepth(), 0, 0, 0, 0));
 
 	const auto size = map->getSize().x();
 	if (SDL_MUSTLOCK (mapSurface.get())) SDL_LockSurface (mapSurface.get());

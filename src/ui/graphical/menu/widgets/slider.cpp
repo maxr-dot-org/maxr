@@ -173,7 +173,7 @@ void cSlider::createSurface (eSliderType sliderType)
 		//	size.x() = 6;
 		//}
 
-		surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
+		surface = UniqueSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 		SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 		SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 
@@ -201,7 +201,7 @@ void cSlider::createSurface (eSliderType sliderType)
 	{
 		auto size = getSize();
 
-		surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
+		surface = UniqueSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect (surface.get(), nullptr, toSdlAlphaColor (cRgbColor::black(), *surface));
 
 		drawLine (*surface, cPosition (0, 0), cPosition (0, size.y()), cRgbColor (140, 102, 61));

@@ -60,7 +60,7 @@ private:
 
 	std::vector<std::string> drawLines;
 
-	AutoSurface surface;
+	UniqueSurface surface;
 };
 
 #endif

@@ -100,26 +100,26 @@ private:
 	unsigned int end = 0;
 };
 
-AutoSurface LoadPCX (const std::filesystem::path& name)
+UniqueSurface LoadPCX (const std::filesystem::path& name)
 {
 	// Open the file.
 	if (!std::filesystem::exists (name))
 	{
 		// File not found, create empty surface.
-		return AutoSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));
+		return UniqueSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));
 	}
 
 	cBufferedFile bufferedFile;
 	if (!bufferedFile.open (name, "rb"))
 	{
 		Log.warn (SDL_GetError()); // Image corrupted, create empty surface.
-		return AutoSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));
+		return UniqueSurface (SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0));
 	}
 	// Load the image.
 	bufferedFile.seek (8, SEEK_SET);
 	Uint16 const width = bufferedFile.readLE16() + 1;
 	Uint16 const height = bufferedFile.readLE16() + 1;
-	AutoSurface s (SDL_CreateRGBSurface (0, width, height, 32, 0, 0, 0, 0));
+	UniqueSurface s (SDL_CreateRGBSurface (0, width, height, 32, 0, 0, 0, 0));
 	if (!s)
 	{
 		Log.error (SDL_GetError());

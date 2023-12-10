@@ -59,8 +59,8 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	AutoSurface listViewBackground;
-	AutoSurface lineEditBackground;
+	UniqueSurface listViewBackground;
+	UniqueSurface lineEditBackground;
 
 	cListView<cTextListViewItem>* listView;
 	cCheckBox* downButton;

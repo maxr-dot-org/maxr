@@ -77,7 +77,7 @@ struct sDrawingCacheEntry
 	double zoom;
 	unsigned long long lastUsed;
 
-	AutoSurface surface;
+	UniqueSurface surface;
 };
 
 class cDrawingCache

@@ -43,7 +43,7 @@ cUnitDetailsStored::cUnitDetailsStored (const cBox<cPosition>& area) :
 		nameLabels[i] = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (35, 2 + rowHeight * i), getPosition() + cPosition (35 + 30, 2 + rowHeight * i + rowHeight)), "", eUnicodeFontType::LatinSmallWhite, toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom);
 	}
 
-	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
+	surface = UniqueSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);

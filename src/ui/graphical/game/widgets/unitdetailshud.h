@@ -46,7 +46,7 @@ public:
 	static cBox<cPosition> getSmallSymbolPosition (eUnitDataSymbolType);
 
 private:
-	AutoSurface surface;
+	UniqueSurface surface;
 
 	void reset();
 

@@ -47,7 +47,7 @@ sMapPreview loadMapPreview (const std::filesystem::path& mapFilename)
 	SDL_RWseek (mapFile, 64 * 64 * sGraphCount, SEEK_CUR);
 	SDL_RWread (mapFile, &Palette, 3, 256);
 
-	AutoSurface mapSurface (SDL_CreateRGBSurface (0, size, size, 8, 0, 0, 0, 0));
+	UniqueSurface mapSurface (SDL_CreateRGBSurface (0, size, size, 8, 0, 0, 0, 0));
 	mapSurface->pitch = mapSurface->w;
 
 	mapSurface->format->palette->ncolors = 256;
@@ -69,7 +69,7 @@ sMapPreview loadMapPreview (const std::filesystem::path& mapFilename)
 	const int MAPWINSIZE = 112;
 	if (mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE) // resize map
 	{
-		mapSurface = AutoSurface (scaleSurface (mapSurface.get(), nullptr, MAPWINSIZE, MAPWINSIZE));
+		mapSurface = UniqueSurface (scaleSurface (mapSurface.get(), nullptr, MAPWINSIZE, MAPWINSIZE));
 	}
 
 	return {std::move (mapSurface), {size, size}};

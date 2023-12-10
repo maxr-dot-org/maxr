@@ -145,7 +145,7 @@ static void LoadLanguage()
  * @param filepath Name of the file
  * @return 1 on success
  */
-static int LoadGraphicToSurface (AutoSurface& dest, const std::filesystem::path& filepath)
+static int LoadGraphicToSurface (UniqueSurface& dest, const std::filesystem::path& filepath)
 {
 	if (!std::filesystem::exists (filepath))
 	{
@@ -160,24 +160,24 @@ static int LoadGraphicToSurface (AutoSurface& dest, const std::filesystem::path&
 }
 
 //------------------------------------------------------------------------------
-static AutoSurface CloneSDLSurface (SDL_Surface& src)
+static UniqueSurface CloneSDLSurface (SDL_Surface& src)
 {
-	return AutoSurface (SDL_ConvertSurface (&src, src.format, src.flags));
+	return UniqueSurface (SDL_ConvertSurface (&src, src.format, src.flags));
 }
 
 //------------------------------------------------------------------------------
 static void createShadowGfx()
 {
-	GraphicsData.gfx_shadow = AutoSurface (SDL_CreateRGBSurface (0, 1, 1, Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
+	GraphicsData.gfx_shadow = UniqueSurface (SDL_CreateRGBSurface (0, 1, 1, Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 	SDL_FillRect (GraphicsData.gfx_shadow.get(), nullptr, toSdlAlphaColor (cRgbColor::black(50), *GraphicsData.gfx_shadow));
 }
 
 /**
 * Copy part of surface to create a new one
 */
-static AutoSurface extractSurface (SDL_Surface& source, const SDL_Rect& rect)
+static UniqueSurface extractSurface (SDL_Surface& source, const SDL_Rect& rect)
 {
-	auto res = AutoSurface (SDL_CreateRGBSurface (0, rect.w, rect.h, Video.getColDepth(), 0, 0, 0, 0));
+	auto res = UniqueSurface (SDL_CreateRGBSurface (0, rect.w, rect.h, Video.getColDepth(), 0, 0, 0, 0));
 
 	SDL_SetColorKey (res.get(), SDL_TRUE, 0xFF00FF);
 	SDL_FillRect (res.get(), nullptr, 0xFF00FF);
@@ -275,7 +275,7 @@ static int LoadGraphics (const std::filesystem::path& directory)
 	// Shadow:
 	createShadowGfx();
 
-	GraphicsData.gfx_tmp = AutoSurface (SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0));
+	GraphicsData.gfx_tmp = UniqueSurface (SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetSurfaceBlendMode (GraphicsData.gfx_tmp.get(), SDL_BLENDMODE_BLEND);
 	SDL_SetColorKey (GraphicsData.gfx_tmp.get(), SDL_TRUE, 0xFF00FF);
 
@@ -628,7 +628,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		SDL_Rect rcDest;
 		for (int n = 0; n < 8; n++)
 		{
-			ui.img[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
+			ui.img[n] = UniqueSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
 			SDL_SetColorKey (ui.img[n].get(), SDL_TRUE, 0x00FFFFFF);
 			SDL_FillRect (ui.img[n].get(), nullptr, 0x00FF00FF);
 
@@ -641,7 +641,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 				if (std::filesystem::exists (sTmpString))
 				{
 					Log.debug (sTmpString.u8string());
-					AutoSurface sfTempSurface (LoadPCX (sTmpString));
+					UniqueSurface sfTempSurface (LoadPCX (sTmpString));
 					if (!sfTempSurface)
 					{
 						Log.warn (SDL_GetError());
@@ -654,15 +654,15 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 					}
 				}
 			}
-			ui.img_org[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
+			ui.img_org[n] = UniqueSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
 			SDL_SetColorKey (ui.img[n].get(), SDL_TRUE, 0x00FFFFFF);
 			SDL_FillRect (ui.img_org[n].get(), nullptr, 0x00FFFFFF);
 			SDL_BlitSurface (ui.img[n].get(), nullptr, ui.img_org[n].get(), nullptr);
 
-			ui.shw[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
+			ui.shw[n] = UniqueSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
 			SDL_SetColorKey (ui.shw[n].get(), SDL_TRUE, 0x00FF00FF);
 			SDL_FillRect (ui.shw[n].get(), nullptr, 0x00FF00FF);
-			ui.shw_org[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
+			ui.shw_org[n] = UniqueSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
 			SDL_SetColorKey (ui.shw_org[n].get(), SDL_TRUE, 0x00FF00FF);
 			SDL_FillRect (ui.shw_org[n].get(), nullptr, 0x00FF00FF);
 
@@ -1407,7 +1407,7 @@ eLoadingState LoadData (bool includingUiData)
  * @param filepath Name of the file
  * @return 1 on success
  */
-static int LoadEffectGraphicToSurface (AutoSurface (&dest)[2], const std::filesystem::path& filepath)
+static int LoadEffectGraphicToSurface (UniqueSurface (&dest)[2], const std::filesystem::path& filepath)
 {
 	if (!std::filesystem::exists (filepath))
 	{
@@ -1424,7 +1424,7 @@ static int LoadEffectGraphicToSurface (AutoSurface (&dest)[2], const std::filesy
 
 // LoadEffectAlphacToSurface /////////////////////////////////////////////////
 // Loads a effectgraphic as alpha to the surface:
-static int LoadEffectAlphaToSurface (AutoSurface (&dest)[2], const std::filesystem::path& filepath, int alpha)
+static int LoadEffectAlphaToSurface (UniqueSurface (&dest)[2], const std::filesystem::path& filepath, int alpha)
 {
 	if (!std::filesystem::exists (filepath))
 		return 0;

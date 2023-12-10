@@ -66,7 +66,7 @@ public:
 	 *                size of this image. If it is null, the window will have an size of (0,0).
 	 * @param backgroundType Background type to apply when drawing the window.
 	 */
-	explicit cWindow (AutoSurface surface, eWindowBackgrounds backgroundType = eWindowBackgrounds::Black);
+	explicit cWindow (UniqueSurface surface, eWindowBackgrounds backgroundType = eWindowBackgrounds::Black);
 
 	/**
 	 * Returns whether the window wants to be closed.
@@ -176,7 +176,7 @@ protected:
 	 *
 	 * @param surface The surface to set as background.
 	 */
-	void setSurface (AutoSurface surface);
+	void setSurface (UniqueSurface surface);
 
 	/**
 	 * The current background image.
@@ -189,7 +189,7 @@ private:
 	/**
 	 * Background surface of the window.
 	 */
-	AutoSurface surface;
+	UniqueSurface surface;
 
 	/**
 	 * The type of the background behind the background.

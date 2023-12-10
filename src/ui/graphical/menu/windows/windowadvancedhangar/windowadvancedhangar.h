@@ -29,8 +29,8 @@ template <typename SelectedUnitItemType>
 class cWindowAdvancedHangar : public cWindowHangar
 {
 public:
-	cWindowAdvancedHangar (AutoSurface, std::shared_ptr<const cUnitsData>, cRgbColor playerColor, int playerClan);
-	cWindowAdvancedHangar (AutoSurface, std::shared_ptr<const cUnitsData>, const cPlayer&);
+	cWindowAdvancedHangar (UniqueSurface, std::shared_ptr<const cUnitsData>, cRgbColor playerColor, int playerClan);
+	cWindowAdvancedHangar (UniqueSurface, std::shared_ptr<const cUnitsData>, const cPlayer&);
 	~cWindowAdvancedHangar();
 
 protected:
@@ -65,7 +65,7 @@ private:
 
 //------------------------------------------------------------------------------
 template <typename SelectedUnitItemType>
-cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cRgbColor playerColor, int playerClan) :
+cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (UniqueSurface surface, std::shared_ptr<const cUnitsData> unitsData, cRgbColor playerColor, int playerClan) :
 	cWindowHangar (std::move (surface), unitsData, playerColor, playerClan)
 {
 	initialize();
@@ -73,7 +73,7 @@ cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface 
 
 //------------------------------------------------------------------------------
 template <typename SelectedUnitItemType>
-cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player) :
+cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (UniqueSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player) :
 	cWindowHangar (std::move (surface), unitsData, player)
 {
 	initialize();

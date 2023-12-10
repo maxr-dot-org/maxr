@@ -42,7 +42,7 @@ public:
 private:
 	cSignalConnectionManager unitSignalConnectionManager;
 
-	AutoSurface surface;
+	UniqueSurface surface;
 
 	void reset();
 

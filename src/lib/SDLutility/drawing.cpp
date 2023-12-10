@@ -131,7 +131,7 @@ void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle
 	if (!rectangle.intersects (clipRect)) return;
 
 	const cPosition size = rectangle.getSize();
-	AutoSurface tempSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), 32, 0, 0, 0, 0));
+	UniqueSurface tempSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), 32, 0, 0, 0, 0));
 	SDL_FillRect (tempSurface.get(), nullptr, 0xFF00FF);
 	SDL_SetColorKey (tempSurface.get(), SDL_TRUE, 0xFF00FF);
 
@@ -216,7 +216,7 @@ void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRg
 	Uint32 key;
 	const auto hadKey = SDL_GetColorKey (&surface, &key) == 0;
 
-	AutoSurface temp (SDL_ConvertSurface (&surface, surface.format, surface.flags));
+	UniqueSurface temp (SDL_ConvertSurface (&surface, surface.format, surface.flags));
 
 	SDL_SetColorKey (temp.get(), SDL_TRUE, srcMapped);
 	SDL_FillRect (&surface, nullptr, destMapped);

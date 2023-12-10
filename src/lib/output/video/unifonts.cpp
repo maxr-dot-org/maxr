@@ -365,19 +365,19 @@ cUnicodeFont::cUnicodeFont()
 
 void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType fonttype)
 {
-	AutoSurface surface (loadCharsetSurface (charset, fonttype));
+	UniqueSurface surface (loadCharsetSurface (charset, fonttype));
 	if (!surface)
 	{
 		// LOG: error while loading font
 		return;
 	}
-	AutoSurface (*pchars)[0xFFFF] = getFontTypeSurfaces (fonttype);
+	UniqueSurface (*pchars)[0xFFFF] = getFontTypeSurfaces (fonttype);
 	if (!pchars)
 	{
 		// LOG: error while loading font
 		return;
 	}
-	AutoSurface (&chars)[0xFFFF] = *pchars;
+	UniqueSurface (&chars)[0xFFFF] = *pchars;
 	const unsigned short* iso8859_to_uni = getIsoPage (charset);
 
 	int highcount;
@@ -450,7 +450,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 			}
 			else
 				unicodeplace = iso8859_to_uni[currentChar];
-			chars[unicodeplace] = AutoSurface (SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0));
+			chars[unicodeplace] = UniqueSurface (SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0));
 
 			SDL_FillRect (chars[unicodeplace].get(), nullptr, 0xFF00FF);
 			SDL_BlitSurface (surface.get(), &Rect, chars[unicodeplace].get(), nullptr);
@@ -508,7 +508,7 @@ cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType fonttype)
 	return const_cast<FontTypeSurfaces*> (const_cast<const cUnicodeFont*> (this)->getFontTypeSurfaces (fonttype));
 }
 
-AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
+UniqueSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
                                               eUnicodeFontType fonttype)
 {
 	// build the filename from the information
@@ -582,7 +582,7 @@ void cUnicodeFont::showText (int x, int y, const std::string& text, eUnicodeFont
 	int offX = x;
 	int offY = y;
 	int iSpace = 0;
-	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
+	const UniqueSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
 
 	// make sure only upper characters are read for the small fonts
 	// since we don't support lower chars on the small fonts
@@ -788,7 +788,7 @@ SDL_Rect cUnicodeFont::getTextSize (const std::string& text, eUnicodeFontType fo
 {
 	std::string sText (text);
 	int iSpace = 0;
-	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
+	const UniqueSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
 	SDL_Rect rTmp = {0, 0, 0, 0};
 
 	// make sure only upper characters are read for the small fonts
@@ -845,7 +845,7 @@ SDL_Rect cUnicodeFont::getTextSize (const std::string& text, eUnicodeFontType fo
 
 int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype) const
 {
-	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
+	const UniqueSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
 	// we will return the height of the first character in the list
 	for (const auto& surface : chars)
 	{
@@ -898,7 +898,7 @@ std::string cUnicodeFont::shortenStringToSize (const std::string& str, int size,
 //------------------------------------------------------------------------------
 int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) const
 {
-	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
+	const UniqueSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
 
 	// make sure only upper characters are read for the small fonts
 	// since we don't support lower chars on the small fonts

@@ -42,7 +42,7 @@ protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
-	AutoSurface mapSurface;
+	UniqueSurface mapSurface;
 
 	std::shared_ptr<cStaticMap> map;
 	bool fixedBridgeHead;

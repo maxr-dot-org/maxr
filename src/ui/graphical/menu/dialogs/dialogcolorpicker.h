@@ -56,7 +56,7 @@ private:
 	cLineEdit* greenValueLineEdit = nullptr;
 	cLineEdit* blueValueLineEdit = nullptr;
 
-	AutoSurface createSelectedColorSurface();
+	UniqueSurface createSelectedColorSurface();
 };
 
 #endif // ui_graphical_menu_dialogs_dialogcolorpickerH

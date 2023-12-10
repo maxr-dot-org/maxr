@@ -91,7 +91,7 @@ void cSliderHandle::createSurface (eSliderHandleType sliderHandleType)
 	const cBox<cPosition> src (srcPoint, srcPoint + size);
 	auto srcRect = toSdlRect (src);
 
-	surface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
+	surface = UniqueSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 
 	if (sliderHandleType == eSliderHandleType::HudZoom)

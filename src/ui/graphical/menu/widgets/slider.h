@@ -77,7 +77,7 @@ private:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	AutoSurface surface;
+	UniqueSurface surface;
 
 	eSliderType type;
 

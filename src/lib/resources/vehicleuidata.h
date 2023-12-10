@@ -87,16 +87,16 @@ public:
 
 	sVehicleUIStaticData staticData;
 
-	std::array<AutoSurface, 8> img, img_org; // 8 Surfaces of the vehicle
-	std::array<AutoSurface, 8> shw, shw_org; // 8 Surfaces of shadows
-	AutoSurface build, build_org; // Surfaces when building
-	AutoSurface build_shw, build_shw_org; // Surfaces of shadows when building
-	AutoSurface clear_small, clear_small_org; // Surfaces when clearing
-	AutoSurface clear_small_shw, clear_small_shw_org; // Surfaces when clearing
-	AutoSurface overlay, overlay_org; // Overlays
-	AutoSurface storage; // image of the vehicle in storage
+	std::array<UniqueSurface, 8> img, img_org; // 8 Surfaces of the vehicle
+	std::array<UniqueSurface, 8> shw, shw_org; // 8 Surfaces of shadows
+	UniqueSurface build, build_org; // Surfaces when building
+	UniqueSurface build_shw, build_shw_org; // Surfaces of shadows when building
+	UniqueSurface clear_small, clear_small_org; // Surfaces when clearing
+	UniqueSurface clear_small_shw, clear_small_shw_org; // Surfaces when clearing
+	UniqueSurface overlay, overlay_org; // Overlays
+	UniqueSurface storage; // image of the vehicle in storage
 	std::filesystem::path FLCFile; // FLC-Video
-	AutoSurface info; // info image
+	UniqueSurface info; // info image
 
 	// Sounds:
 	cSoundChunk Wait;

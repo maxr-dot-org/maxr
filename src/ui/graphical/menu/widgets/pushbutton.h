@@ -98,7 +98,7 @@ protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
-	AutoSurface surface;
+	UniqueSurface surface;
 	ePushButtonType buttonType;
 
 	eUnicodeFontType fontType;

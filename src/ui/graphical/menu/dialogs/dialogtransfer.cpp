@@ -145,7 +145,7 @@ void cNewDialogTransfer::initUnitImage (cImage& image, const cUnit& unit)
 
 	const auto zoom = (float) unitImageWidth / (unit.getIsBig() ? sGraphicTile::tilePixelWidth * 2 : sGraphicTile::tilePixelWidth);
 
-	AutoSurface unitImageSurface (SDL_CreateRGBSurface (0, unitImageWidth, unitImageHeight, Video.getColDepth(), 0, 0, 0, 0));
+	UniqueSurface unitImageSurface (SDL_CreateRGBSurface (0, unitImageWidth, unitImageHeight, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_FillRect (unitImageSurface.get(), nullptr, 0xFF00FF);
 	SDL_SetColorKey (unitImageSurface.get(), SDL_TRUE, 0xFF00FF);
 
@@ -257,7 +257,7 @@ void cNewDialogTransfer::transferValueChanged()
 		// little hack: flip part of the image that represent the arrow
 		const unsigned int w = 40;
 		const unsigned int h = 20;
-		AutoSurface arrowSurface (SDL_CreateRGBSurface (0, w, h, Video.getColDepth(), 0, 0, 0, 0));
+		UniqueSurface arrowSurface (SDL_CreateRGBSurface (0, w, h, Video.getColDepth(), 0, 0, 0, 0));
 		const Sint16 x = arrowImage->getPosition().x() - getPosition().x(); // 140
 		const Sint16 y = arrowImage->getPosition().y() - getPosition().y(); //  77
 		SDL_Rect src = {x, y, w, h};

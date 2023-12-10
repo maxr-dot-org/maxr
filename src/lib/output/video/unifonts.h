@@ -160,7 +160,7 @@ public:
 	std::vector<std::string> breakText (const std::string& text, int maximalWidth, eUnicodeFontType) const;
 
 private:
-	using FontTypeSurfaces = AutoSurface[0xFFFF];
+	using FontTypeSurfaces = UniqueSurface[0xFFFF];
 
 	int getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) const;
 	/**
@@ -186,7 +186,7 @@ private:
 	 * @param fonttype the fonttype which bitmap should be loaded.
 	 * @return the bitmap surface
 	 */
-	AutoSurface loadCharsetSurface (eUnicodeFontCharset charset, eUnicodeFontType fonttype);
+	UniqueSurface loadCharsetSurface (eUnicodeFontCharset charset, eUnicodeFontType fonttype);
 	/**
 	 * returns the iso page with the unicode positions of the characters
 	 * in a ISO-8859 font
@@ -201,14 +201,14 @@ private:
 	// character surfaces.
 	// Since SDL maximal gives us the unicodes
 	// from BMP we need 0xFFFF surfaces at maximum
-	AutoSurface charsNormal[0xFFFF];
-	AutoSurface charsNormalRed[0xFFFF];
-	AutoSurface charsSmallWhite[0xFFFF];
-	AutoSurface charsSmallGreen[0xFFFF];
-	AutoSurface charsSmallRed[0xFFFF];
-	AutoSurface charsSmallYellow[0xFFFF];
-	AutoSurface charsBig[0xFFFF];
-	AutoSurface charsBigGold[0xFFFF];
+	UniqueSurface charsNormal[0xFFFF];
+	UniqueSurface charsNormalRed[0xFFFF];
+	UniqueSurface charsSmallWhite[0xFFFF];
+	UniqueSurface charsSmallGreen[0xFFFF];
+	UniqueSurface charsSmallRed[0xFFFF];
+	UniqueSurface charsSmallYellow[0xFFFF];
+	UniqueSurface charsBig[0xFFFF];
+	UniqueSurface charsBigGold[0xFFFF];
 
 	// target surface where to draw.
 	SDL_Surface* surface = nullptr;

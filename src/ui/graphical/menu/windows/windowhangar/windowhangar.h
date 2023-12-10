@@ -43,8 +43,8 @@ class cListView;
 class cWindowHangar : public cWindow
 {
 public:
-	cWindowHangar (AutoSurface, std::shared_ptr<const cUnitsData>, cRgbColor playerColor, int playerClan);
-	cWindowHangar (AutoSurface, std::shared_ptr<const cUnitsData>, const cPlayer&);
+	cWindowHangar (UniqueSurface, std::shared_ptr<const cUnitsData>, cRgbColor playerColor, int playerClan);
+	cWindowHangar (UniqueSurface, std::shared_ptr<const cUnitsData>, const cPlayer&);
 	~cWindowHangar();
 
 	void retranslate() override;

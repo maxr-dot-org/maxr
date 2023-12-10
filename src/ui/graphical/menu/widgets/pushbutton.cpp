@@ -360,7 +360,7 @@ void cPushButton::renewSurface()
 	src.w = size.x();
 	src.h = size.y();
 
-	surface = AutoSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	surface = UniqueSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 

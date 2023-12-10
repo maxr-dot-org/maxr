@@ -29,7 +29,7 @@
 #include <cassert>
 
 //------------------------------------------------------------------------------
-cWindow::cWindow (AutoSurface surface_, eWindowBackgrounds backgroundType_) :
+cWindow::cWindow (UniqueSurface surface_, eWindowBackgrounds backgroundType_) :
 	backgroundType (backgroundType_)
 {
 	setSurface (std::move (surface_));
@@ -135,7 +135,7 @@ SDL_Surface* cWindow::getSurface()
 }
 
 //------------------------------------------------------------------------------
-void cWindow::setSurface (AutoSurface surface_)
+void cWindow::setSurface (UniqueSurface surface_)
 {
 	surface = std::move (surface_);
 	if (surface != nullptr)

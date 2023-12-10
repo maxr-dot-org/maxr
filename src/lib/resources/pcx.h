@@ -28,6 +28,6 @@
  * @param name path to img
  * @return surface with img<br>or empty surface on error<br>or <b>nullptr</b> if SDL couldn't create a surface
  */
-AutoSurface LoadPCX (const std::filesystem::path& name);
+UniqueSurface LoadPCX (const std::filesystem::path& name);
 
 #endif

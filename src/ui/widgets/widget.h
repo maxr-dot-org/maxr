@@ -439,7 +439,7 @@ private:
 	bool enabled = true;
 	bool hidden = false;
 	cBox<cPosition> area;
-	AutoSurface frameSurface;
+	UniqueSurface frameSurface;
 	std::vector<std::unique_ptr<cWidget>> children;
 	std::vector<std::unique_ptr<cShortcut>> shortcuts;
 };

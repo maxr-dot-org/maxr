@@ -72,8 +72,8 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	AutoSurface nonFocusBackground;
-	AutoSurface focusBackground;
+	UniqueSurface nonFocusBackground;
+	UniqueSurface focusBackground;
 
 	cLineEdit* chatLineEdit;
 
@@ -225,8 +225,8 @@ template <typename ChatListItemType, typename PlayerListItemType>
 void cChatBox<ChatListItemType, PlayerListItemType>::createBackground()
 {
 	const auto& size = getSize();
-	nonFocusBackground = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
-	focusBackground = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
+	nonFocusBackground = UniqueSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
+	focusBackground = UniqueSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
 	const auto black_50 = toSdlAlphaColor (cRgbColor::black (50), *nonFocusBackground);
 	const auto black_100 = toSdlAlphaColor (cRgbColor::black (100), *focusBackground);

@@ -27,7 +27,7 @@
 namespace
 {
 	//--------------------------------------------------------------------------
-	void drawFxMuzzle (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxMuzzle& fx)
+	void drawFxMuzzle (UniqueSurface (&images)[2], float zoom, const cPosition& destination, const cFxMuzzle& fx)
 	{
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
@@ -42,7 +42,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void drawFxExplo (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxExplo& fx)
+	void drawFxExplo (UniqueSurface (&images)[2], float zoom, const cPosition& destination, const cFxExplo& fx)
 	{
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
@@ -60,7 +60,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void drawFxFade (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxFade& fx)
+	void drawFxFade (UniqueSurface (&images)[2], float zoom, const cPosition& destination, const cFxFade& fx)
 	{
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
@@ -72,7 +72,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void drawFxRocket (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxRocket& fx)
+	void drawFxRocket (UniqueSurface (&images)[2], float zoom, const cPosition& destination, const cFxRocket& fx)
 	{
 		//draw smoke effect
 		for (auto& subEffect : fx.getSubEffects())
@@ -96,7 +96,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void drawFxDarkSmoke (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxDarkSmoke& fx)
+	void drawFxDarkSmoke (UniqueSurface (&images)[2], float zoom, const cPosition& destination, const cFxDarkSmoke& fx)
 	{
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
@@ -117,7 +117,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void drawFxTracks (AutoSurface (&images)[2], float zoom, const cPosition& destination, const cFxTracks& fx)
+	void drawFxTracks (UniqueSurface (&images)[2], float zoom, const cPosition& destination, const cFxTracks& fx)
 	{
 		CHECK_SCALING (*images[1], *images[0], zoom);
 

@@ -83,11 +83,11 @@ cRgbColor cRgbColorPicker::getSelectedColor() const
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cRgbColorPicker::createColorsSurface()
+UniqueSurface cRgbColorPicker::createColorsSurface()
 {
 	const cPosition size (getSize().x() - 15 - 10, getSize().y());
 
-	AutoSurface surface (SDL_CreateRGBSurface (0, size.x(), size.y(), 32, 0, 0, 0, 0));
+	UniqueSurface surface (SDL_CreateRGBSurface (0, size.x(), size.y(), 32, 0, 0, 0, 0));
 
 	auto color = currentColor;
 	for (int y = 0; y < size.y(); ++y)
@@ -105,11 +105,11 @@ AutoSurface cRgbColorPicker::createColorsSurface()
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cRgbColorPicker::createColorBarSurface()
+UniqueSurface cRgbColorPicker::createColorBarSurface()
 {
 	const cPosition size (15, getSize().y());
 
-	AutoSurface surface (SDL_CreateRGBSurface (0, size.x(), size.y(), 32, 0, 0, 0, 0));
+	UniqueSurface surface (SDL_CreateRGBSurface (0, size.x(), size.y(), 32, 0, 0, 0, 0));
 
 	for (int y = 0; y < size.y(); ++y)
 	{
@@ -126,9 +126,9 @@ AutoSurface cRgbColorPicker::createColorBarSurface()
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cRgbColorPicker::createColorMarkerSurface()
+UniqueSurface cRgbColorPicker::createColorMarkerSurface()
 {
-	AutoSurface surface (SDL_CreateRGBSurface (0, 3, 3, 32, 0, 0, 0, 0));
+	UniqueSurface surface (SDL_CreateRGBSurface (0, 3, 3, 32, 0, 0, 0, 0));
 
 	SDL_FillRect (surface.get(), nullptr, toSdlColor (cRgbColor::white(), *surface));
 	drawPoint (*surface, cPosition (1, 1), cRgbColor (0xFF, 0, 0xFF));
@@ -137,9 +137,9 @@ AutoSurface cRgbColorPicker::createColorMarkerSurface()
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cRgbColorPicker::createColorHueMarkerSurface()
+UniqueSurface cRgbColorPicker::createColorHueMarkerSurface()
 {
-	AutoSurface surface (SDL_CreateRGBSurface (0, 15 + 2, 3, 32, 0, 0, 0, 0));
+	UniqueSurface surface (SDL_CreateRGBSurface (0, 15 + 2, 3, 32, 0, 0, 0, 0));
 
 	SDL_FillRect (surface.get(), nullptr, toSdlColor (cRgbColor::white(), *surface));
 

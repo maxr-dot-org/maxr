@@ -164,7 +164,7 @@ cWindowReports::cWindowReports (const cModel& model,
 
 		std::string playerText = player->getName() + lngPack.i18n ("Punctuation~Colon") + lngPack.plural ("Comp~Point(s)", player->getScore (turnClock->getTurn())) + ", " + lngPack.plural ("Comp~EcoSphere(s)", player->getNumEcoSpheres());
 
-		AutoSurface colorSurface (SDL_CreateRGBSurface (0, 8, 8, Video.getColDepth(), 0, 0, 0, 0));
+		UniqueSurface colorSurface (SDL_CreateRGBSurface (0, 8, 8, Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect (colorSurface.get(), nullptr, toSdlAlphaColor (player->getColor(), *colorSurface));
 		scoreFrame->emplaceChild<cImage> (scoreFrame->getPosition() + cPosition (5, 20 + font->getFontHeight() * i), colorSurface.get());
 

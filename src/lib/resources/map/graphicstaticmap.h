@@ -31,10 +31,10 @@ struct sGraphicTile
 
 	void copySrfToTerData (SDL_Surface&, const SDL_Color (&palette_shw)[256]);
 
-	AutoSurface sf; /** the scaled surface of the terrain */
-	AutoSurface sf_org; /** the original surface of the terrain */
-	AutoSurface shw; /** the scaled surface of the terrain in the fog */
-	AutoSurface shw_org; /** the original surface of the terrain in the fog */
+	UniqueSurface sf; /** the scaled surface of the terrain */
+	UniqueSurface sf_org; /** the original surface of the terrain */
+	UniqueSurface shw; /** the scaled surface of the terrain in the fog */
+	UniqueSurface shw_org; /** the original surface of the terrain in the fog */
 };
 
 class cStaticMap;
@@ -52,11 +52,11 @@ public:
 
 	const sGraphicTile& getTile (std::size_t index) const { return tiles[index]; }
 
-	AutoSurface createBigSurface (int sizex, int sizey) const;
+	UniqueSurface createBigSurface (int sizex, int sizey) const;
 	void generateNextAnimationFrame();
 
 private:
-	static AutoSurface loadTerrGraph (SDL_RWops*, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
+	static UniqueSurface loadTerrGraph (SDL_RWops*, Sint64 iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
 
 private:
 	const cStaticMap* map = nullptr;

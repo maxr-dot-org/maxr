@@ -44,7 +44,7 @@ protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
-	AutoSurface image;
+	UniqueSurface image;
 	cSoundChunk* clickSound;
 	bool disabledAtTransparent = false;
 };

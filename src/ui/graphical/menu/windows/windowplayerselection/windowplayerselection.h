@@ -69,10 +69,10 @@ private:
 	std::array<cImage*, maxPlayers> aiPlayerImages;
 	std::array<cImage*, maxPlayers> noPlayerImages;
 
-	AutoSurface humanPlayerSurface;
-	AutoSurface aiPlayerSurface;
-	AutoSurface noPlayerSurface;
-	AutoSurface dummySurface;
+	UniqueSurface humanPlayerSurface;
+	UniqueSurface aiPlayerSurface;
+	UniqueSurface noPlayerSurface;
+	UniqueSurface dummySurface;
 
 	void setPlayerType (size_t playerIndex, ePlayerType playerType);
 };

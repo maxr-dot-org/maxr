@@ -80,7 +80,7 @@ public:
 	cSignal<void()> closed;
 
 private:
-	AutoSurface createHudSurface();
+	UniqueSurface createHudSurface();
 
 	void backClicked();
 	void mapClicked (const cPosition& tilePosition);

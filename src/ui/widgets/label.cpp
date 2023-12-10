@@ -34,7 +34,7 @@ cLabel::cLabel (const cBox<cPosition>& area, const std::string& text_, eUnicodeF
 	}
 	else
 	{
-		surface = AutoSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
+		surface = UniqueSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
 		SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 		SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 	}
@@ -183,7 +183,7 @@ void cLabel::handleResized (const cPosition& oldSize)
 		return;
 	}
 
-	surface = AutoSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
+	surface = UniqueSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 

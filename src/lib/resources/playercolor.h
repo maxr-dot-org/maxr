@@ -36,7 +36,7 @@ public:
 	static SDL_Surface* getTexture (const cRgbColor&);
 
 private:
-	static std::map<cRgbColor, AutoSurface, sLessRgbColor> textures;
+	static std::map<cRgbColor, UniqueSurface, sLessRgbColor> textures;
 };
 
 #endif

@@ -39,71 +39,71 @@ struct sVehicleUIData;
 class cGraphicsData
 {
 public:
-	AutoSurface gfx_Chand;
-	AutoSurface gfx_Cno;
-	AutoSurface gfx_Cselect;
-	AutoSurface gfx_Cmove;
-	AutoSurface gfx_Cmove_draft; // for shift + lmb to set a path but no move
-	AutoSurface gfx_Chelp;
-	AutoSurface gfx_Cattack;
-	AutoSurface gfx_Cattackoor; // attack a unit out of range
-	AutoSurface gfx_Cpfeil1;
-	AutoSurface gfx_Cpfeil2;
-	AutoSurface gfx_Cpfeil3;
-	AutoSurface gfx_Cpfeil4;
-	AutoSurface gfx_Cpfeil6;
-	AutoSurface gfx_Cpfeil7;
-	AutoSurface gfx_Cpfeil8;
-	AutoSurface gfx_Cpfeil9;
-	AutoSurface gfx_hud_stuff;
-	AutoSurface gfx_shadow;
-	AutoSurface gfx_tmp;
-	AutoSurface gfx_context_menu;
-	AutoSurface gfx_destruction;
-	AutoSurface gfx_destruction_glas;
-	AutoSurface gfx_Cband;
-	AutoSurface gfx_band_small;
-	AutoSurface gfx_band_big;
-	AutoSurface gfx_band_small_org;
-	AutoSurface gfx_band_big_org;
-	AutoSurface gfx_big_beton_org;
-	AutoSurface gfx_big_beton;
-	AutoSurface gfx_Ctransf;
-	AutoSurface gfx_Cload;
-	AutoSurface gfx_Cactivate;
-	AutoSurface gfx_storage;
-	AutoSurface gfx_storage_ground;
-	AutoSurface gfx_dialog;
-	AutoSurface gfx_edock;
-	AutoSurface gfx_ehangar;
-	AutoSurface gfx_edepot;
-	AutoSurface gfx_Cmuni;
-	AutoSurface gfx_Crepair;
-	AutoSurface gfx_panel_top;
-	AutoSurface gfx_panel_bottom;
-	AutoSurface gfx_Csteal;
-	AutoSurface gfx_Cdisable;
-	AutoSurface gfx_menu_stuff;
-	AutoSurface gfx_horizontal_bar_blocked;
-	AutoSurface gfx_horizontal_bar_gold;
-	AutoSurface gfx_horizontal_bar_metal;
-	AutoSurface gfx_horizontal_bar_oil;
-	AutoSurface gfx_horizontal_bar_slim_gold;
-	AutoSurface gfx_horizontal_bar_slim_metal;
-	AutoSurface gfx_horizontal_bar_slim_oil;
-	AutoSurface gfx_vertical_bar_slim_gold;
-	AutoSurface gfx_vertical_bar_slim_metal;
-	AutoSurface gfx_vertical_bar_slim_oil;
-	AutoSurface gfx_hud_extra_players;
-	AutoSurface gfx_player_pc;
-	AutoSurface gfx_player_human;
-	AutoSurface gfx_player_none;
-	AutoSurface gfx_player_select;
-	AutoSurface gfx_exitpoints_org;
-	AutoSurface gfx_exitpoints;
-	AutoSurface gfx_menu_buttons;
-	AutoSurface gfx_player_ready;
-	AutoSurface gfx_hud_chatbox;
+	UniqueSurface gfx_Chand;
+	UniqueSurface gfx_Cno;
+	UniqueSurface gfx_Cselect;
+	UniqueSurface gfx_Cmove;
+	UniqueSurface gfx_Cmove_draft; // for shift + lmb to set a path but no move
+	UniqueSurface gfx_Chelp;
+	UniqueSurface gfx_Cattack;
+	UniqueSurface gfx_Cattackoor; // attack a unit out of range
+	UniqueSurface gfx_Cpfeil1;
+	UniqueSurface gfx_Cpfeil2;
+	UniqueSurface gfx_Cpfeil3;
+	UniqueSurface gfx_Cpfeil4;
+	UniqueSurface gfx_Cpfeil6;
+	UniqueSurface gfx_Cpfeil7;
+	UniqueSurface gfx_Cpfeil8;
+	UniqueSurface gfx_Cpfeil9;
+	UniqueSurface gfx_hud_stuff;
+	UniqueSurface gfx_shadow;
+	UniqueSurface gfx_tmp;
+	UniqueSurface gfx_context_menu;
+	UniqueSurface gfx_destruction;
+	UniqueSurface gfx_destruction_glas;
+	UniqueSurface gfx_Cband;
+	UniqueSurface gfx_band_small;
+	UniqueSurface gfx_band_big;
+	UniqueSurface gfx_band_small_org;
+	UniqueSurface gfx_band_big_org;
+	UniqueSurface gfx_big_beton_org;
+	UniqueSurface gfx_big_beton;
+	UniqueSurface gfx_Ctransf;
+	UniqueSurface gfx_Cload;
+	UniqueSurface gfx_Cactivate;
+	UniqueSurface gfx_storage;
+	UniqueSurface gfx_storage_ground;
+	UniqueSurface gfx_dialog;
+	UniqueSurface gfx_edock;
+	UniqueSurface gfx_ehangar;
+	UniqueSurface gfx_edepot;
+	UniqueSurface gfx_Cmuni;
+	UniqueSurface gfx_Crepair;
+	UniqueSurface gfx_panel_top;
+	UniqueSurface gfx_panel_bottom;
+	UniqueSurface gfx_Csteal;
+	UniqueSurface gfx_Cdisable;
+	UniqueSurface gfx_menu_stuff;
+	UniqueSurface gfx_horizontal_bar_blocked;
+	UniqueSurface gfx_horizontal_bar_gold;
+	UniqueSurface gfx_horizontal_bar_metal;
+	UniqueSurface gfx_horizontal_bar_oil;
+	UniqueSurface gfx_horizontal_bar_slim_gold;
+	UniqueSurface gfx_horizontal_bar_slim_metal;
+	UniqueSurface gfx_horizontal_bar_slim_oil;
+	UniqueSurface gfx_vertical_bar_slim_gold;
+	UniqueSurface gfx_vertical_bar_slim_metal;
+	UniqueSurface gfx_vertical_bar_slim_oil;
+	UniqueSurface gfx_hud_extra_players;
+	UniqueSurface gfx_player_pc;
+	UniqueSurface gfx_player_human;
+	UniqueSurface gfx_player_none;
+	UniqueSurface gfx_player_select;
+	UniqueSurface gfx_exitpoints_org;
+	UniqueSurface gfx_exitpoints;
+	UniqueSurface gfx_menu_buttons;
+	UniqueSurface gfx_player_ready;
+	UniqueSurface gfx_hud_chatbox;
 
 	// Position in gfx_hud_stuff
 	static SDL_Rect getRect_SmallSymbol_Speed() { return {0, 98, 7, 7}; }
@@ -203,20 +203,20 @@ public:
 	void load (const std::filesystem::path& directory);
 
 public:
-	AutoSurface fx_explo_big[2];
-	AutoSurface fx_explo_small[2];
-	AutoSurface fx_explo_water[2];
-	AutoSurface fx_explo_air[2];
-	AutoSurface fx_muzzle_big[2];
-	AutoSurface fx_muzzle_small[2];
-	AutoSurface fx_muzzle_med[2];
-	AutoSurface fx_hit[2];
-	AutoSurface fx_smoke[2];
-	AutoSurface fx_rocket[2];
-	AutoSurface fx_dark_smoke[2];
-	AutoSurface fx_tracks[2];
-	AutoSurface fx_corpse[2];
-	AutoSurface fx_absorb[2];
+	UniqueSurface fx_explo_big[2];
+	UniqueSurface fx_explo_small[2];
+	UniqueSurface fx_explo_water[2];
+	UniqueSurface fx_explo_air[2];
+	UniqueSurface fx_muzzle_big[2];
+	UniqueSurface fx_muzzle_small[2];
+	UniqueSurface fx_muzzle_med[2];
+	UniqueSurface fx_hit[2];
+	UniqueSurface fx_smoke[2];
+	UniqueSurface fx_rocket[2];
+	UniqueSurface fx_dark_smoke[2];
+	UniqueSurface fx_tracks[2];
+	UniqueSurface fx_corpse[2];
+	UniqueSurface fx_absorb[2];
 };
 
 // ResourceData - Class containing all resource surfaces //////////////////////
@@ -226,12 +226,12 @@ public:
 	void load (const std::filesystem::path& directory);
 
 public:
-	AutoSurface res_metal_org;
-	AutoSurface res_metal;
-	AutoSurface res_oil_org;
-	AutoSurface res_oil;
-	AutoSurface res_gold_org;
-	AutoSurface res_gold;
+	UniqueSurface res_metal_org;
+	UniqueSurface res_metal;
+	UniqueSurface res_oil_org;
+	UniqueSurface res_oil;
+	UniqueSurface res_gold_org;
+	UniqueSurface res_gold;
 };
 
 // UnitsData - Class containing all building/vehicle surfaces & data ///////////////
@@ -267,8 +267,8 @@ public:
 	void loadWayPoints();
 
 public:
-	AutoSurface WayPointPfeile[8][60];
-	AutoSurface WayPointPfeileSpecial[8][60];
+	UniqueSurface WayPointPfeile[8][60];
+	UniqueSurface WayPointPfeileSpecial[8][60];
 };
 
 extern cGraphicsData GraphicsData;

@@ -238,16 +238,16 @@ void cHud::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cHud::generateSurface()
+UniqueSurface cHud::generateSurface()
 {
-	AutoSurface surface (SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0));
+	UniqueSurface surface (SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0));
 
 	SDL_FillRect (surface.get(), nullptr, 0x00FF00FF);
 	SDL_SetColorKey (surface.get(), SDL_TRUE, 0x00FF00FF);
 
 	const auto gfxPath = cSettings::getInstance().getGfxPath();
 	{
-		AutoSurface tmpSurface (LoadPCX (gfxPath / "hud_left.pcx"));
+		UniqueSurface tmpSurface (LoadPCX (gfxPath / "hud_left.pcx"));
 		if (tmpSurface != nullptr)
 		{
 			SDL_BlitSurface (tmpSurface.get(), nullptr, surface.get(), nullptr);
@@ -256,7 +256,7 @@ AutoSurface cHud::generateSurface()
 
 	SDL_Rect dest;
 	{
-		AutoSurface tmpSurface (LoadPCX (gfxPath / "hud_top.pcx"));
+		UniqueSurface tmpSurface (LoadPCX (gfxPath / "hud_top.pcx"));
 		if (tmpSurface != nullptr)
 		{
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h)};
@@ -272,7 +272,7 @@ AutoSurface cHud::generateSurface()
 	}
 
 	{
-		AutoSurface tmpSurface (LoadPCX (gfxPath / "hud_right.pcx"));
+		UniqueSurface tmpSurface (LoadPCX (gfxPath / "hud_right.pcx"));
 		if (tmpSurface != nullptr)
 		{
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h)};
@@ -283,7 +283,7 @@ AutoSurface cHud::generateSurface()
 	}
 
 	{
-		AutoSurface tmpSurface (LoadPCX (gfxPath / "hud_bottom.pcx"));
+		UniqueSurface tmpSurface (LoadPCX (gfxPath / "hud_bottom.pcx"));
 		if (tmpSurface != nullptr)
 		{
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h)};
@@ -306,7 +306,7 @@ AutoSurface cHud::generateSurface()
 
 	if (Video.getResolutionY() > 480)
 	{
-		AutoSurface tmpSurface (LoadPCX (gfxPath / "logo.pcx"));
+		UniqueSurface tmpSurface (LoadPCX (gfxPath / "logo.pcx"));
 		if (tmpSurface != nullptr)
 		{
 			dest.x = 9;

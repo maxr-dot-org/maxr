@@ -217,7 +217,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, co
 	/* main loop */
 	/*************/
 	QUITTING = 0;
-	AutoSurface frame_buf;
+	UniqueSurface frame_buf;
 	while (!QUITTING)
 	{
 		/* poll for input from user */
@@ -359,7 +359,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, co
 				}
 
 				/* initialize video mvebuffer to the actual movie dimensions */
-				frame_buf = AutoSurface(SDL_CreateRGBSurface (0, width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0));
+				frame_buf = UniqueSurface(SDL_CreateRGBSurface (0, width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0));
 
 				/* init movie screen rect for fullscreen purposes */
 				//movie_screen.x = (screen->w - frame_buf->w) >> 1;
@@ -506,7 +506,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, co
 												 dwidth, dheight,
 												 SDL_WINDOW_OPENGL);
 					{
-						auto icon = AutoSurface(SDL_LoadBMP(iconPath));
+						auto icon = UniqueSurface(SDL_LoadBMP(iconPath));
 						SDL_SetColorKey(icon.get(), 1, 0xFF00FF);
 						SDL_SetWindowIcon(sdlWindow, icon.get());
 					}

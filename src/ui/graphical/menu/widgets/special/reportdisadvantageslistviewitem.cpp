@@ -43,7 +43,7 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const cStati
 
 	const auto totalHeight = std::max (unitImageHeight, (int) (disadvantages.size() / maxItemsInRow + 1) * font->getFontHeight());
 
-	AutoSurface unitSurface (SDL_CreateRGBSurface (0, unitImageWidth, unitImageHeight, Video.getColDepth(), 0, 0, 0, 0));
+	UniqueSurface unitSurface (SDL_CreateRGBSurface (0, unitImageWidth, unitImageHeight, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetColorKey (unitSurface.get(), SDL_TRUE, 0x00FF00FF);
 	SDL_FillRect (unitSurface.get(), nullptr, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};

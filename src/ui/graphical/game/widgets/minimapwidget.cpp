@@ -46,8 +46,8 @@ cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	attackUnitsOnly (false),
 	mapViewWindow (cPosition (0, 0), cPosition (0, 0))
 {
-	surface = AutoSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
-	viewWindowSurface = AutoSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
+	surface = UniqueSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
+	viewWindowSurface = UniqueSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
 }
 
 //------------------------------------------------------------------------------

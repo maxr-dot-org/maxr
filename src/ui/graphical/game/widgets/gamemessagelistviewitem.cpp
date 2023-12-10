@@ -85,7 +85,7 @@ void cGameMessageListViewItem::createBackground()
 {
 	const Uint8 alpha = 50;
 	const auto size = getSize();
-	background = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
+	background = UniqueSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 	switch (backgroundColor)
 	{
 		default:

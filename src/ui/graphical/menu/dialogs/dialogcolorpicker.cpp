@@ -140,9 +140,9 @@ cRgbColor cDialogColorPicker::getSelectedColor() const
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cDialogColorPicker::createSelectedColorSurface()
+UniqueSurface cDialogColorPicker::createSelectedColorSurface()
 {
-	AutoSurface surface (SDL_CreateRGBSurface (0, 50, 50, 32, 0, 0, 0, 0));
+	UniqueSurface surface (SDL_CreateRGBSurface (0, 50, 50, 32, 0, 0, 0, 0));
 
 	SDL_FillRect (surface.get(), nullptr, toSdlAlphaColor (colorPicker->getSelectedColor(), *surface));
 

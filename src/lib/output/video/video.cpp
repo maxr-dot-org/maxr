@@ -89,7 +89,7 @@ void cVideo::init (const std::string& title, const std::filesystem::path& iconPa
 	                              SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
 
 	{
-		auto icon = AutoSurface (SDL_LoadBMP (iconPath.u8string().c_str()));
+		auto icon = UniqueSurface (SDL_LoadBMP (iconPath.u8string().c_str()));
 		SDL_SetColorKey (icon.get(), 1, 0xFF00FF);
 		SDL_SetWindowIcon (sdlWindow, icon.get());
 	}
@@ -104,7 +104,7 @@ void cVideo::init (const std::string& title, const std::filesystem::path& iconPa
 
 void cVideo::showSplashScreen (const std::filesystem::path& splashScreenPath)
 {
-	AutoSurface splash (LoadPCX (splashScreenPath));
+	UniqueSurface splash (LoadPCX (splashScreenPath));
 
 	SDL_SetWindowBordered (sdlWindow, SDL_FALSE);
 	SDL_SetWindowSize (sdlWindow, splash->w, splash->h);
@@ -705,9 +705,9 @@ static void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surfac
 
 // CreatePfeil ////////////////////////////////////////////////////////////////
 // Erzeigt ein Pfeil-Surface:
-AutoSurface CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size)
+UniqueSurface CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size)
 {
-	AutoSurface sf (SDL_CreateRGBSurface (0, size, size, Video.getColDepth(), 0, 0, 0, 0));
+	UniqueSurface sf (SDL_CreateRGBSurface (0, size, size, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetColorKey (sf.get(), SDL_TRUE, 0x00FF00FF);
 	SDL_FillRect (sf.get(), nullptr, 0x00FF00FF);
 	SDL_LockSurface (sf.get());

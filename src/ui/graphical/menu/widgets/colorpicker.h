@@ -55,11 +55,11 @@ private:
 	cImage* selectedColorMarker;
 	cImage* selectedColorHueMarker;
 
-	AutoSurface createColorsSurface();
-	AutoSurface createColorBarSurface();
+	UniqueSurface createColorsSurface();
+	UniqueSurface createColorBarSurface();
 
-	AutoSurface createColorMarkerSurface();
-	AutoSurface createColorHueMarkerSurface();
+	UniqueSurface createColorMarkerSurface();
+	UniqueSurface createColorHueMarkerSurface();
 
 	void updateMarkers();
 

@@ -358,7 +358,7 @@ void cWidget::createFrameSurface()
 
 		if (size.x() == 0 || size.y() == 0) return;
 
-		frameSurface = AutoSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
+		frameSurface = UniqueSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
 		if (!frameSurface) return; // can happen when for some reason the size is invalid (e.g. negative)
 		SDL_SetColorKey (frameSurface.get(), SDL_TRUE, 0xFF00FF);
 		SDL_FillRect (frameSurface.get(), nullptr, 0xFF00FF);

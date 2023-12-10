@@ -87,11 +87,11 @@ public:
 	bool isConnectorGraphic = false;
 	int hasFrames = 0;
 
-	AutoSurface img, img_org; // Surface of the building
-	AutoSurface shw, shw_org; // Surfaces of the shadow
-	AutoSurface eff, eff_org; // Surfaces of the effects
-	AutoSurface video; // video
-	AutoSurface info; // info image
+	UniqueSurface img, img_org; // Surface of the building
+	UniqueSurface shw, shw_org; // Surfaces of the shadow
+	UniqueSurface eff, eff_org; // Surfaces of the effects
+	UniqueSurface video; // video
+	UniqueSurface info; // info image
 
 	// Die Sounds:
 	cSoundChunk Start;

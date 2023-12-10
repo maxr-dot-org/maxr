@@ -61,7 +61,7 @@ cColorSelector::cColorSelector (const cPosition& pos, const cRgbColor& color) :
 void cColorSelector::setColor (const cRgbColor& color)
 {
 	SDL_Rect src = {0, 0, 83, 10};
-	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	UniqueSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_BlitSurface (cPlayerColor::getTexture (color), &src, colorSurface.get(), nullptr);
 	colorImage->setImage (colorSurface.get());
 

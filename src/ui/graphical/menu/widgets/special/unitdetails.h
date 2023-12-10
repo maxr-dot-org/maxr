@@ -53,7 +53,7 @@ private:
 	static const size_t maxRows = 9;
 	static const int rowHeight = 19;
 
-	AutoSurface surface;
+	UniqueSurface surface;
 	std::array<cLabel*, maxRows> amountLabels;
 	std::array<cLabel*, maxRows> nameLabels;
 

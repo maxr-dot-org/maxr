@@ -247,9 +247,9 @@ bool cWindowLandingPositionSelection::handleMouseMoved (cApplication& applicatio
 }
 
 //------------------------------------------------------------------------------
-AutoSurface cWindowLandingPositionSelection::createHudSurface()
+UniqueSurface cWindowLandingPositionSelection::createHudSurface()
 {
-	AutoSurface hudSurface (cHud::generateSurface());
+	UniqueSurface hudSurface (cHud::generateSurface());
 
 	SDL_Rect top, bottom;
 	top.x = 0;
@@ -316,7 +316,7 @@ void cWindowLandingPositionSelection::runCircleAnimation (const cPosition& tileP
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::updateLandingPositionCircles (const cPosition& tilePosition, float radiusFactor)
 {
-	AutoSurface circleSurface (SDL_CreateRGBSurface (0, mapWidget->getSize().x(), mapWidget->getSize().y(), Video.getColDepth(), 0, 0, 0, 0));
+	UniqueSurface circleSurface (SDL_CreateRGBSurface (0, mapWidget->getSize().x(), mapWidget->getSize().y(), Video.getColDepth(), 0, 0, 0, 0));
 	SDL_FillRect (circleSurface.get(), nullptr, 0xFF00FF);
 	SDL_SetColorKey (circleSurface.get(), SDL_TRUE, 0xFF00FF);
 

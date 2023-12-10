@@ -71,7 +71,7 @@ private:
 	const std::chrono::milliseconds cursorVisibleTime;
 	const std::chrono::milliseconds cursorInvisibleTime;
 
-	AutoSurface surface;
+	UniqueSurface surface;
 
 	std::string text;
 	eUnicodeFontType fontType;

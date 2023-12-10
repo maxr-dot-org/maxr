@@ -41,7 +41,7 @@ cRightMouseButtonScrollerWidget::cRightMouseButtonScrollerWidget (std::shared_pt
 	});
 
 	// TODO: read nice image from file
-	AutoSurface image (SDL_CreateRGBSurface (0, 18, 18, Video.getColDepth(), 0, 0, 0, 0));
+	UniqueSurface image (SDL_CreateRGBSurface (0, 18, 18, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_FillRect (image.get(), nullptr, 0xFF00FF);
 	SDL_SetColorKey (image.get(), SDL_TRUE, 0xFF00FF);
 	const cPosition middle (image->w / 2, image->h / 2);

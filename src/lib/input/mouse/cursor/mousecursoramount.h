@@ -45,7 +45,7 @@ private:
 	eMouseCursorAmountType type;
 	int percent;
 
-	mutable AutoSurface surface;
+	mutable UniqueSurface surface;
 
 	void generateSurface() const;
 

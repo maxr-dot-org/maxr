@@ -27,7 +27,7 @@
 
 struct sMapPreview
 {
-	AutoSurface surface;
+	UniqueSurface surface;
 	cPosition size;
 };
 

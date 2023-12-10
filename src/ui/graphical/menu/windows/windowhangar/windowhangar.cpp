@@ -37,7 +37,7 @@
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
-cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, cRgbColor playerColor, int playerClan) :
+cWindowHangar::cWindowHangar (UniqueSurface surface, std::shared_ptr<const cUnitsData> unitsData, cRgbColor playerColor, int playerClan) :
 	cWindow (std::move (surface)),
 	unitsData (unitsData),
 	temporaryPlayer (std::make_unique<cPlayer> (cPlayerBasicData ({"unnamed", playerColor}, 0, false), *unitsData)),
@@ -49,7 +49,7 @@ cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsD
 }
 
 //------------------------------------------------------------------------------
-cWindowHangar::cWindowHangar (AutoSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player_) :
+cWindowHangar::cWindowHangar (UniqueSurface surface, std::shared_ptr<const cUnitsData> unitsData, const cPlayer& player_) :
 	cWindow (std::move (surface)),
 	unitsData (unitsData),
 	player (player_)

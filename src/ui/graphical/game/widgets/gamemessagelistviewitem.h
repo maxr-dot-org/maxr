@@ -48,7 +48,7 @@ private:
 	cLabel* messageLabel = nullptr;
 
 	eGameMessageListViewItemBackgroundColor backgroundColor;
-	AutoSurface background;
+	UniqueSurface background;
 
 	const cPosition beginMargin;
 	const cPosition endMargin;

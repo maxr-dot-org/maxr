@@ -50,16 +50,15 @@ namespace detail
 		}
 	};
 
-
 } // namespace detail
 
 using UniqueRenderer = std::unique_ptr<SDL_Renderer, detail::SdlRendererDeleter>;
-using AutoSurface = std::unique_ptr<SDL_Surface, detail::SdlSurfaceDeleter>;
+using UniqueSurface = std::unique_ptr<SDL_Surface, detail::SdlSurfaceDeleter>;
 using UniqueTexture = std::unique_ptr<SDL_Texture, detail::SdlTextureDeleter>;
 
-/* Prevent accidentally freeing the SDL_Surface owned by an AutoSurface */
+/* Prevent accidentally freeing the SDL_Surface owned by an UniqueSurface */
 void SDL_DestroyRenderer (const UniqueRenderer&) = delete;
 void SDL_DestroyTexture (const UniqueTexture&) = delete;
-void SDL_FreeSurface (const AutoSurface&) = delete;
+void SDL_FreeSurface (const UniqueSurface&) = delete;
 
 #endif

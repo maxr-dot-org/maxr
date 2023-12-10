@@ -23,7 +23,7 @@
 #include "utility/comparison.h"
 #include "utility/random.h"
 
-/* static */ std::map<cRgbColor, AutoSurface, sLessRgbColor> cPlayerColor::textures{};
+/* static */ std::map<cRgbColor, UniqueSurface, sLessRgbColor> cPlayerColor::textures{};
 
 //------------------------------------------------------------------------------
 const cRgbColor cPlayerColor::predefinedColors[predefinedColorsCount] =
@@ -59,9 +59,9 @@ const cRgbColor cPlayerColor::predefinedColors[predefinedColorsCount] =
 namespace
 {
 	//------------------------------------------------------------------------------
-	AutoSurface createTexture (const cRgbColor& color)
+	UniqueSurface createTexture (const cRgbColor& color)
 	{
-		auto texture = AutoSurface (SDL_CreateRGBSurface (0, 128, 128, 32, 0, 0, 0, 0));
+		auto texture = UniqueSurface (SDL_CreateRGBSurface (0, 128, 128, 32, 0, 0, 0, 0));
 
 		SDL_FillRect (texture.get(), nullptr, toSdlAlphaColor (color, *texture));
 

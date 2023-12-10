@@ -242,7 +242,7 @@ inline void CHECK_SCALING (SDL_Surface& surface, SDL_Surface& surface_org, float
 		scaleSurface (&surface_org, &surface, (int) (surface_org.w * factor), (int) (surface_org.h * factor));
 }
 
-AutoSurface CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size);
+UniqueSurface CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size);
 
 /** Draws a circle on the surface */
 void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface& surface);
