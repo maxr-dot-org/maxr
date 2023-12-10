@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_widgets_checkboxH
 #define ui_graphical_menu_widgets_checkboxH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "output/video/unifonts.h"
 #include "resources/sound.h"
 #include "ui/widgets/clickablewidget.h"

@@ -20,7 +20,7 @@
 #ifndef ui_widgets_windowH
 #define ui_widgets_windowH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"
 

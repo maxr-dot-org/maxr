@@ -20,7 +20,7 @@
 #ifndef ui_widgets_lineeditH
 #define ui_widgets_lineeditH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "output/video/unifonts.h"
 #include "ui/widgets/clickablewidget.h"
 #include "ui/widgets/validators/validatorstate.h"

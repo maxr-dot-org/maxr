@@ -20,7 +20,7 @@
 #ifndef resources_map_graphicstaticmapH
 #define resources_map_graphicstaticmapH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 
 #include <vector>
 

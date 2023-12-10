@@ -20,7 +20,7 @@
 #ifndef input_mouse_cursor_mousecursoramountH
 #define input_mouse_cursor_mousecursoramountH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "input/mouse/cursor/mousecursor.h"
 
 enum class eMouseCursorAmountType

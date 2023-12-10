@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_widgets_sliderhandleH
 #define ui_graphical_menu_widgets_sliderhandleH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "ui/widgets/orientation.h"
 #include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"

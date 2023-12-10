@@ -26,8 +26,8 @@
 #include "utility/log.h"
 #include "utility/mathtools.h"
 #include "utility/os.h"
-#include "SDLutility/autosurface.h"
 #include "SDLutility/tosdl.h"
+#include "SDLutility/uniquesurface.h"
 #include "utility/thread/ismainthread.h"
 
 #include <SDL.h>

@@ -20,7 +20,7 @@
 #ifndef input_mouse_cursor_mousecursorattackH
 #define input_mouse_cursor_mousecursorattackH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "input/mouse/cursor/mousecursor.h"
 
 class cUnit;

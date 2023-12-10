@@ -20,7 +20,7 @@
 #ifndef output_video_videoH
 #define output_video_videoH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "settings.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"

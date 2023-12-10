@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_widgets_hudpanelsH
 #define ui_graphical_game_widgets_hudpanelsH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"

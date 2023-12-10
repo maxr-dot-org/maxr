@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_widgets_special_resourcebarH
 #define ui_graphical_menu_widgets_special_resourcebarH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "resources/sound.h"
 #include "ui/widgets/clickablewidget.h"
 #include "ui/widgets/orientation.h"

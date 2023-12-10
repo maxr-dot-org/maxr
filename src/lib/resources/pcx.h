@@ -20,7 +20,7 @@
 #ifndef resources_pcxH
 #define resources_pcxH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 
 #include <filesystem>
 

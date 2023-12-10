@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_widgets_pushbuttonH
 #define ui_graphical_menu_widgets_pushbuttonH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "output/video/unifonts.h"
 #include "resources/sound.h"
 #include "ui/widgets/clickablewidget.h"

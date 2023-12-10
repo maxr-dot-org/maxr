@@ -25,7 +25,7 @@
 
 #include "loaddata.h"
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "crashreporter/debug.h"
 #include "game/data/player/clans.h"
 #include "game/data/units/building.h"

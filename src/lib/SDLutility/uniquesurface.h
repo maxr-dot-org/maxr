@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef SDLutility_autosurfaceH
-#define SDLutility_autosurfaceH
+#ifndef SDLutility_uniquesurfaceH
+#define SDLutility_uniquesurfaceH
 
 #include <SDL.h>
 #include <memory>

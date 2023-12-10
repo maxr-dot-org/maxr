@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_widgets_gamemessagelistviewitemH
 #define ui_graphical_game_widgets_gamemessagelistviewitemH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 
 #include <chrono>

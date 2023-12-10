@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_temp_drawingcacheH
 #define ui_graphical_game_temp_drawingcacheH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "game/data/units/unitdata.h"
 
 #include <memory>

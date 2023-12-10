@@ -19,7 +19,7 @@
 
 #include "windowmapselection.h"
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "game/data/map/map.h"
 #include "output/video/video.h"
 #include "resources/map/mappreview.h"

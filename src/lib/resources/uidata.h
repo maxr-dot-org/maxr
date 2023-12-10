@@ -20,7 +20,7 @@
 #ifndef resources_uidataH
 #define resources_uidataH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "game/data/player/clans.h"
 #include "game/data/units/unitdata.h"
 

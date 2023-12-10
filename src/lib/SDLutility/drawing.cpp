@@ -19,8 +19,8 @@
 
 #include "drawing.h"
 
-#include "SDLutility/autosurface.h"
 #include "SDLutility/tosdl.h"
+#include "SDLutility/uniquesurface.h"
 #include "utility/box.h"
 #include "utility/color.h"
 #include "utility/position.h"

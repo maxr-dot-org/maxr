@@ -20,7 +20,7 @@
 #ifndef resources_buildinguidataH
 #define resources_buildinguidataH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "game/data/units/id.h"
 #include "resources/sound.h"
 #include "utility/serialization/serialization.h"

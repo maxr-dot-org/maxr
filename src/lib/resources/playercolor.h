@@ -20,7 +20,7 @@
 #ifndef resources_playercolorH
 #define resources_playercolorH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "utility/color.h"
 
 #include <SDL.h>

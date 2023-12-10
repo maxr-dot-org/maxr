@@ -20,7 +20,7 @@
 #ifndef ui_widgets_widgetH
 #define ui_widgets_widgetH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "input/mouse/mousebuttontype.h"
 #include "ui/widgets/shortcut.h"
 #include "utility/box.h"

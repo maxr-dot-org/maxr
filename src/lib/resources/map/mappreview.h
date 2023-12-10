@@ -20,7 +20,7 @@
 #ifndef resources_map_mappreviewH
 #define resources_map_mappreviewH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "utility/position.h"
 
 #include <filesystem>

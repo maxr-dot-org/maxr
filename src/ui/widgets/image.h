@@ -20,7 +20,7 @@
 #ifndef ui_widgets_imageH
 #define ui_widgets_imageH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "resources/sound.h"
 #include "ui/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"

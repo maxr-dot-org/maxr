@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_widgets_special_landingpositionselectionmapH
 #define ui_graphical_menu_widgets_special_landingpositionselectionmapH
 
-#include "SDLutility/autosurface.h"
+#include "SDLutility/uniquesurface.h"
 #include "ui/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"
 
