@@ -168,8 +168,7 @@ static AutoSurface CloneSDLSurface (SDL_Surface& src)
 //------------------------------------------------------------------------------
 static void createShadowGfx()
 {
-	// TODO: reduce size once we use texture.
-	GraphicsData.gfx_shadow = AutoSurface (SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(), Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
+	GraphicsData.gfx_shadow = AutoSurface (SDL_CreateRGBSurface (0, 1, 1, Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 	SDL_FillRect (GraphicsData.gfx_shadow.get(), nullptr, toSdlAlphaColor (cRgbColor::black(50), *GraphicsData.gfx_shadow));
 }
 
@@ -275,7 +274,6 @@ static int LoadGraphics (const std::filesystem::path& directory)
 	Log.debug ("Shadowgraphics...");
 	// Shadow:
 	createShadowGfx();
-	Video.resolutionChanged.connect (&createShadowGfx);
 
 	GraphicsData.gfx_tmp = AutoSurface (SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetSurfaceBlendMode (GraphicsData.gfx_tmp.get(), SDL_BLENDMODE_BLEND);

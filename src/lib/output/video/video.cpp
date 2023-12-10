@@ -26,6 +26,7 @@
 #include "utility/log.h"
 #include "utility/mathtools.h"
 #include "utility/os.h"
+#include "SDLutility/autosurface.h"
 #include "SDLutility/tosdl.h"
 #include "utility/thread/ismainthread.h"
 
@@ -375,9 +376,10 @@ void cVideo::applyShadow (const SDL_Rect* rect, SDL_Surface& destination)
 {
 	const SDL_Rect fullscreen = {0, 0, getResolutionX(), getResolutionY()};
 	if (rect == nullptr) rect = &fullscreen;
-	SDL_Rect src = {rect->x, rect->y, rect->w, rect->h};
-	SDL_Rect dest = {rect->x, rect->y, 0, 0};
-	SDL_BlitSurface (GraphicsData.gfx_shadow.get(), &src, &destination, &dest);
+	SDL_Rect dest = {rect->x, rect->y, rect->w, rect->h};
+	const UniqueRenderer renderer{SDL_CreateSoftwareRenderer (&destination)};
+	const UniqueTexture texture{SDL_CreateTextureFromSurface (renderer.get(), GraphicsData.gfx_shadow.get())};
+	SDL_RenderCopy (renderer.get(), texture.get(), nullptr, &dest);
 }
 
 void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)
