@@ -11,9 +11,9 @@ A turn based strategy game based on [M.A.X.](https://en.wikipedia.org/wiki/Mecha
 
 ## Supported Platforms
 
-* Mac OS X ![Mac-OS-badge](https://github.com/MAX-Reloaded/maxr/workflows/macos/badge.svg)
-* MS Windows ![Premake5-windows-badge](https://github.com/MAX-Reloaded/maxr/workflows/premake5-windows/badge.svg)
-* Linux ![Ubuntu-badge](https://github.com/MAX-Reloaded/maxr/workflows/ubuntu/badge.svg)
+* Mac OS X ![Mac-OS-badge](https://github.com/MAX-Reloaded/maxr/actions/workflows/macos.yml/badge.svg)
+* MS Windows ![Premake5-windows-badge](https://github.com/MAX-Reloaded/maxr/actions/workflows/premake5-windows.yml/badge.svg)
+* Linux ![Ubuntu-badge](https://github.com/MAX-Reloaded/maxr/actions/workflows/ubuntu.yml/badge.svg)
 
 Other UNIX-like operating systems may work too out of the box. Chances are huge if there's a build of SDL2 and CMake for the system.
 
