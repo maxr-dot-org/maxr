@@ -29,11 +29,6 @@
 #include <locale>
 #include <string>
 
-#ifdef WIN32
-# include <conio.h>
-# include <windows.h>
-#endif
-
 extern std::filesystem::path sOutputPath;
 extern SDL_RWops* res;
 extern SDL_RWops* logFile;

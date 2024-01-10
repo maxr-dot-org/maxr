@@ -39,6 +39,7 @@
 # include "mac/sources/resinstallerGUI.h"
 #elif WIN32
 # include <Shlobj.h>
+# include <conio.h> // for getch
 #endif
 
 static std::filesystem::path sMAXPath;
