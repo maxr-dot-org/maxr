@@ -57,6 +57,7 @@ private:
 		initPlayerData.serialize (archive);
 	}
 	void makeLanding (cPlayer&, const std::vector<sLandingUnit>&, cModel&) const;
+	void placeMiningStations (cModel&) const;
 	cVehicle* landVehicle (const cPosition&, int radius, const sID&, cPlayer&, cModel&) const;
 	static bool findPositionForStartMine (cPosition&, const cUnitsData&, const cStaticMap&);
 };

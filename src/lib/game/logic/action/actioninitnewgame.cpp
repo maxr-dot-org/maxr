@@ -176,109 +176,129 @@ namespace
 			landAlien (model, position);
 		}
 	}
-} // namespace
 
-//------------------------------------------------------------------------------
-void placeInitialResources (cModel& model)
-{
-	auto& map = *model.getMap()->staticMap;
-	const auto& playerList = model.getPlayerList();
-	const std::shared_ptr<const cGameSettings>& gameSettingsPtr = model.getGameSettings();
-	const auto& gameSettings = *gameSettingsPtr;
-
-	std::vector<eResourceType> resSpotTypes (playerList.size(), eResourceType::Metal);
-	std::vector<cPosition> resSpots;
-	for (const auto& player : playerList)
+	//--------------------------------------------------------------------------
+	std::vector<cPosition> getInitialBuildingPositions (const cPosition& landingPos, bool fixedHeadBridge)
 	{
-		const auto& position = player->getLandingPos();
-		resSpots.emplace_back ((position.x() & ~1) + 1, position.y() & ~1);
-	}
-
-	const eGameSettingsResourceDensity density = gameSettings.resourceDensity;
-	std::map<eResourceType, eGameSettingsResourceAmount> frequencies;
-
-	frequencies[eResourceType::Metal] = gameSettings.metalAmount;
-	frequencies[eResourceType::Oil] = gameSettings.oilAmount;
-	frequencies[eResourceType::Gold] = gameSettings.goldAmount;
-
-	const std::size_t resSpotCount = (std::size_t) (map.getSize().x() * map.getSize().y() * 0.003f * (1.5f + getResourceDensityFactor (density)));
-	const std::size_t playerCount = playerList.size();
-	// create remaining resource positions
-	std::size_t maxTryCount = 3 * resSpotCount; // ensure the loop is finite
-	const std::size_t threshold = 3 * 3; // square distance between center resources (care position might be offset to (1,1) with type)
-	while (resSpots.size() != resSpotCount && --maxTryCount)
-	{
-		cPosition candidate = getRandomResourcePosition (model);
-
-		if (map.isBlocked (candidate)) continue;
-		if (minSquaredDistance (resSpots, candidate) < threshold) continue;
-
-		resSpots.push_back (candidate);
-	}
-	resSpotTypes.resize (resSpots.size());
-	for (std::size_t i = playerCount; i < resSpots.size(); i++)
-	{
-		std::map<eResourceType, double> amount;
-		for (std::size_t j = 0; j < i; j++)
+		if (fixedHeadBridge)
 		{
-			const float maxDist = 40.f;
-			float dist = (resSpots[i] - resSpots[j]).l2Norm();
-			if (dist < maxDist) amount[resSpotTypes[j]] += 1 - sqrtf (dist / maxDist);
+			return {
+				// small generator
+				landingPos + cPosition (-1, 0),
+				// mining station
+				landingPos + cPosition (0, -1),
+				landingPos + cPosition (1, -1),
+				landingPos + cPosition (1, 0),
+				landingPos + cPosition (0, 0)};
+		}
+		else
+		{
+			return {};
+		}
+	}
+
+	//--------------------------------------------------------------------------
+	void placeInitialResources (cModel& model)
+	{
+		auto& map = *model.getMap()->staticMap;
+		const auto& playerList = model.getPlayerList();
+		const std::shared_ptr<const cGameSettings>& gameSettingsPtr = model.getGameSettings();
+		const auto& gameSettings = *gameSettingsPtr;
+
+		std::vector<eResourceType> resSpotTypes (playerList.size(), eResourceType::Metal);
+		std::vector<cPosition> resSpots;
+		for (const auto& player : playerList)
+		{
+			const auto& position = player->getLandingPos();
+			resSpots.emplace_back ((position.x() & ~1) + 1, position.y() & ~1);
 		}
 
-		amount[eResourceType::Metal] /= 1.0f;
-		amount[eResourceType::Oil] /= 0.8f;
-		amount[eResourceType::Gold] /= 0.4f;
+		const eGameSettingsResourceDensity density = gameSettings.resourceDensity;
+		std::map<eResourceType, eGameSettingsResourceAmount> frequencies;
 
-		eResourceType type = eResourceType::Metal;
-		if (amount[eResourceType::Oil] < amount[type]) type = eResourceType::Oil;
-		if (amount[eResourceType::Gold] < amount[type]) type = eResourceType::Gold;
+		frequencies[eResourceType::Metal] = gameSettings.metalAmount;
+		frequencies[eResourceType::Oil] = gameSettings.oilAmount;
+		frequencies[eResourceType::Gold] = gameSettings.goldAmount;
 
-		resSpots[i].x() &= ~1;
-		resSpots[i].y() &= ~1;
-		resSpots[i].x() += static_cast<int> (type) % 2;
-		resSpots[i].y() += (static_cast<int> (type) / 2) % 2;
-
-		resSpotTypes[i] = static_cast<eResourceType> (((resSpots[i].y() % 2) * 2) + (resSpots[i].x() % 2));
-	}
-	// reverse order to ensure that player res spot are not overwritten
-	for (std::size_t i = resSpots.size(); i-- != 0;)
-	{
-		const auto& pos = resSpots[i];
-		bool hasGold = model.randomGenerator.get (100) < 40;
-		const int minx = std::max (pos.x() - 1, 0);
-		const int maxx = std::min (pos.x() + 1, map.getSize().x() - 1);
-		const int miny = std::max (pos.y() - 1, 0);
-		const int maxy = std::min (pos.y() + 1, map.getSize().y() - 1);
-		cPosition p;
-		for (p.y() = miny; p.y() <= maxy; ++p.y())
+		const std::size_t resSpotCount = (std::size_t) (map.getSize().x() * map.getSize().y() * 0.003f * (1.5f + getResourceDensityFactor (density)));
+		const std::size_t playerCount = playerList.size();
+		// create remaining resource positions
+		std::size_t maxTryCount = 3 * resSpotCount; // ensure the loop is finite
+		const std::size_t threshold = 3 * 3; // square distance between center resources (care position might be offset to (1,1) with type)
+		while (resSpots.size() != resSpotCount && --maxTryCount)
 		{
-			for (p.x() = minx; p.x() <= maxx; ++p.x())
-			{
-				const eResourceType type = static_cast<eResourceType> ((p.y() % 2) * 2 + (p.x() % 2));
+			cPosition candidate = getRandomResourcePosition (model);
 
-				if (type != eResourceType::None && !map.isBlocked (p)
-				    && ((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold))
+			if (map.isBlocked (candidate)) continue;
+			if (minSquaredDistance (resSpots, candidate) < threshold) continue;
+
+			resSpots.push_back (candidate);
+		}
+		resSpotTypes.resize (resSpots.size());
+		for (std::size_t i = playerCount; i < resSpots.size(); i++)
+		{
+			std::map<eResourceType, double> amount;
+			for (std::size_t j = 0; j < i; j++)
+			{
+				const float maxDist = 40.f;
+				float dist = (resSpots[i] - resSpots[j]).l2Norm();
+				if (dist < maxDist) amount[resSpotTypes[j]] += 1 - sqrtf (dist / maxDist);
+			}
+
+			amount[eResourceType::Metal] /= 1.0f;
+			amount[eResourceType::Oil] /= 0.8f;
+			amount[eResourceType::Gold] /= 0.4f;
+
+			eResourceType type = eResourceType::Metal;
+			if (amount[eResourceType::Oil] < amount[type]) type = eResourceType::Oil;
+			if (amount[eResourceType::Gold] < amount[type]) type = eResourceType::Gold;
+
+			resSpots[i].x() &= ~1;
+			resSpots[i].y() &= ~1;
+			resSpots[i].x() += static_cast<int> (type) % 2;
+			resSpots[i].y() += (static_cast<int> (type) / 2) % 2;
+
+			resSpotTypes[i] = static_cast<eResourceType> (((resSpots[i].y() % 2) * 2) + (resSpots[i].x() % 2));
+		}
+		// reverse order to ensure that player res spot are not overwritten
+		for (std::size_t i = resSpots.size(); i-- != 0;)
+		{
+			const auto& pos = resSpots[i];
+			bool hasGold = model.randomGenerator.get (100) < 40;
+			const int minx = std::max (pos.x() - 1, 0);
+			const int maxx = std::min (pos.x() + 1, map.getSize().x() - 1);
+			const int miny = std::max (pos.y() - 1, 0);
+			const int maxy = std::min (pos.y() + 1, map.getSize().y() - 1);
+			cPosition p;
+			for (p.y() = miny; p.y() <= maxy; ++p.y())
+			{
+				for (p.x() = minx; p.x() <= maxx; ++p.x())
 				{
-					sResources res;
-					res.typ = type;
-					if (i >= playerCount)
+					const eResourceType type = static_cast<eResourceType> ((p.y() % 2) * 2 + (p.x() % 2));
+
+					if (type != eResourceType::None && !map.isBlocked (p)
+					    && ((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold))
 					{
-						res.value = 1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2);
-						if (p == pos) res.value += 3 + model.randomGenerator.get (4 + getResourceAmountFactor (frequencies[type]) * 2);
+						sResources res;
+						res.typ = type;
+						if (i >= playerCount)
+						{
+							res.value = 1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2);
+							if (p == pos) res.value += 3 + model.randomGenerator.get (4 + getResourceAmountFactor (frequencies[type]) * 2);
+						}
+						else
+						{
+							res.value = 1 + 4 + getResourceAmountFactor (frequencies[type]);
+							if (p == pos) res.value += 3 + 2 + getResourceAmountFactor (frequencies[type]);
+						}
+						res.value = std::min<unsigned char> (16, res.value);
+						model.getMap()->setResource (p, res);
 					}
-					else
-					{
-						res.value = 1 + 4 + getResourceAmountFactor (frequencies[type]);
-						if (p == pos) res.value += 3 + 2 + getResourceAmountFactor (frequencies[type]);
-					}
-					res.value = std::min<unsigned char> (16, res.value);
-					model.getMap()->setResource (p, res);
 				}
 			}
 		}
 	}
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 cActionInitNewGame::cActionInitNewGame (sInitPlayerData initPlayerData) :
@@ -340,12 +360,10 @@ void cActionInitNewGame::execute (cModel& model) const
 
 	const auto playerReadyCount = ranges::count_if (model.getPlayerList(), [] (const auto& player) { return player->getLandingPos() != cPosition{-1, -1}; });
 
-	if (playerReadyCount == 1)
-	{
-		placeInitialResources (model);
-	}
 	if (playerReadyCount == model.getPlayerList().size())
 	{
+		placeInitialResources (model);
+		if (model.getGameSettings()->bridgeheadType == eGameSettingsBridgeheadType::Definite) placeMiningStations (model);
 		if (model.getGameSettings()->alienEnabled) addAliens (model);
 	}
 
@@ -418,14 +436,7 @@ bool cActionInitNewGame::isValidLandingPosition (cPosition position, const cStat
 		bool found = findPositionForStartMine (position, unitsData, map);
 		if (!found)
 			return false;
-
-		//small generator
-		blockedPositions.push_back (position + cPosition (-1, 0));
-		//mine
-		blockedPositions.push_back (position + cPosition (0, -1));
-		blockedPositions.push_back (position + cPosition (1, -1));
-		blockedPositions.push_back (position + cPosition (1, 0));
-		blockedPositions.push_back (position + cPosition (0, 0));
+		blockedPositions = getInitialBuildingPositions (position, fixedBridgeHead);
 	}
 
 	for (const auto& unit : units)
@@ -460,18 +471,27 @@ bool cActionInitNewGame::isValidLandingPosition (cPosition position, const cStat
 }
 
 //------------------------------------------------------------------------------
+void cActionInitNewGame::placeMiningStations (cModel& model) const
+{
+	const auto& playerList = model.getPlayerList();
+
+	for (auto& player : playerList)
+	{
+		const auto& landingPosition = player->getLandingPos();
+
+		// place buildings:
+		model.addBuilding (landingPosition + cPosition (-1, 0), model.getUnitsData()->getSmallGeneratorID(), player.get());
+		model.addBuilding (landingPosition + cPosition (0, -1), model.getUnitsData()->getMineID(), player.get());
+		player->getGameOverStat().builtMineStationCount++;
+		player->getGameOverStat().builtBuildingsCount += 2;
+	}
+}
+
+//------------------------------------------------------------------------------
 void cActionInitNewGame::makeLanding (cPlayer& player, const std::vector<sLandingUnit>& landingUnits, cModel& model) const
 {
 	cPosition landingPosition = player.getLandingPos();
 
-	if (model.getGameSettings()->bridgeheadType == eGameSettingsBridgeheadType::Definite)
-	{
-		// place buildings:
-		model.addBuilding (landingPosition + cPosition (-1, 0), model.getUnitsData()->getSmallGeneratorID(), &player);
-		model.addBuilding (landingPosition + cPosition (0, -1), model.getUnitsData()->getMineID(), &player);
-		player.getGameOverStat().builtMineStationCount++;
-		player.getGameOverStat().builtBuildingsCount += 2;
-	}
 	player.getGameOverStat().builtVehiclesCount += landingUnits.size();
 	for (const sLandingUnit& landing : landingUnits)
 	{
@@ -495,16 +515,21 @@ void cActionInitNewGame::makeLanding (cPlayer& player, const std::vector<sLandin
 		}
 	}
 }
+
 //------------------------------------------------------------------------------
 cVehicle* cActionInitNewGame::landVehicle (const cPosition& landingPosition, int radius, const sID& id, cPlayer& player, cModel& model) const
 {
+	const auto blockedPositions = getInitialBuildingPositions (landingPosition, model.getGameSettings()->bridgeheadType == eGameSettingsBridgeheadType::Definite);
+
 	for (int offY = -radius; offY < radius; ++offY)
 	{
 		for (int offX = -radius; offX < radius; ++offX)
 		{
-			if (!model.getMap()->possiblePlaceVehicle (model.getUnitsData()->getStaticUnitData (id), landingPosition + cPosition (offX, offY), &player)) continue;
+			const cPosition candidatePos = landingPosition + cPosition (offX, offY);
+			if (!model.getMap()->possiblePlaceVehicle (model.getUnitsData()->getStaticUnitData (id), candidatePos, &player)) continue;
+			if (ranges::contains (blockedPositions, candidatePos)) continue;
 
-			return &model.addVehicle (landingPosition + cPosition (offX, offY), id, &player);
+			return &model.addVehicle (candidatePos, id, &player);
 		}
 	}
 	return nullptr;
