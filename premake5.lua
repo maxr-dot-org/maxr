@@ -1,14 +1,15 @@
 newoption {
 	trigger = "to",
 	value   = "path",
-	description = "Set the output location for the generated files"
+	description = "Set the output location for the generated files",
+	default = "solution/%{_ACTION}/maxr"
 }
 
 if (_ACTION == nil) then
 	return
 end
 
-local locationDir = _OPTIONS["to"] or path.join("solution", _ACTION, "maxr")
+local locationDir = _OPTIONS["to"]
 
 local nugetPackages = {
 	"sdl2.nuget:2.28.0", "sdl2.nuget.redist:2.28.0",
