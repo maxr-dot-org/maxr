@@ -5,6 +5,12 @@ newoption {
 	default = "solution/%{_ACTION}/maxr"
 }
 
+newoption {
+	trigger = "crashRpt_root",
+	value   = "path",
+	description = "Set the location of crashRpt_root",
+}
+
 if (_ACTION == nil) then
 	return
 end
@@ -18,6 +24,21 @@ local nugetPackages = {
 	-- "CrashRpt2.CPP:1.5.3", "CrashRpt2.CPP.redist:1.5.3",
 }
 
+local function linksToCrashRpt()
+	if _OPTIONS["crashRpt_root"] ~= nil then
+		files {
+			path.join(_OPTIONS["crashRpt_root"], "bin/CrashRpt1403.dll"),
+			path.join(_OPTIONS["crashRpt_root"], "bin/CrashSender1403.exe"),
+			path.join(_OPTIONS["crashRpt_root"], "bin/crashrpt_lang.ini"),
+		}
+		libdirs { path.join(_OPTIONS["crashRpt_root"], "lib") }
+		links { "CrashRpt1403" }
+		filter { "files:" .. path.join(_OPTIONS["crashRpt_root"], "bin/*.*") }
+			buildaction "Copy"
+		filter {}
+	end
+end
+
 workspace "Maxr"
 	location(locationDir)
 	configurations {"Debug", "Release"}
@@ -29,6 +50,10 @@ workspace "Maxr"
 	startproject "maxr"
 
 	externalwarnings "Off"
+
+if _OPTIONS["crashRpt_root"] ~= nil then
+	defines { "USE_CRASH_RPT" }
+end
 
 	filter { "action:vs*" }
 		nuget(nugetPackages)
@@ -77,6 +102,7 @@ project "maxr"
 	files { "src/ui/**.cpp", "src/ui/**.h", "src/maxr.rc" }
 	includedirs { "src", "src/lib" }
 	links { "maxr_lib", "SDL_flic", "mveplayer" }
+	linksToCrashRpt()
 
 	debugdir "data"
 
@@ -95,6 +121,7 @@ project "dedicated_server"
 	files { "src/dedicatedserver/**.cpp", "src/dedicated_server/**.h", "src/maxr.rc" }
 	includedirs { "src", "src/lib" }
 	links { "maxr_lib", "SDL_flic", "mveplayer" }
+	linksToCrashRpt()
 
 	debugdir "data"
 
@@ -111,6 +138,7 @@ project "tests"
 
 	includedirs { "src", "src/lib" }
 	links { "maxr_lib" }
+	linksToCrashRpt()
 
 project "maxr_lib"
 	kind "StaticLib"
@@ -124,6 +152,10 @@ project "maxr_lib"
 	files { "src/lib/**.cpp", "src/lib/**.h", "src/**.in", "src/.clang-format", "CMakeList.txt" }
 	includedirs { "src", "src/lib" }
 	externalincludedirs { "src/3rd/spiritless_po/include" }
+
+if _OPTIONS["crashRpt_root"] ~= nil then
+	externalincludedirs { path.join(_OPTIONS["crashRpt_root"], "include") }
+end
 
 group "3rd"
 project "mveplayer"
