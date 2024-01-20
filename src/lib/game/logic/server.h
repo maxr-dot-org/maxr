@@ -51,7 +51,7 @@ public:
 	*/
 	void sendMessageToClients (const cNetMessage&, int playerNr = -1) const;
 
-	void start();
+	void start (bool resync = false);
 	void stop();
 
 	std::string getGameState() const;

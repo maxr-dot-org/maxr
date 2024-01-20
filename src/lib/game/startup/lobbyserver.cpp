@@ -507,10 +507,9 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 		}
 
 		connectionManager->setLocalServer (server.get());
-		server->start();
-		server->resyncClientModel();
-
 		onStartSavedGame (*server, saveGameInfo);
+		server->start (true);
+
 		return;
 	}
 
