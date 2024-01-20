@@ -201,17 +201,17 @@ public:
 	{
 		// clang-format off
 		// See https://github.com/llvm/llvm-project/issues/44312
-		archive & NVP (data);
-		if (Archive::isWriter)
+		if constexpr (Archive::isWriter)
 		{
 			int id = iID;
-			archive & NVP (id); //const member. needs to be deserialized before calling constructor
+			archive & NVP (id); // const member. needs to be deserialized before calling constructor
 			storedUnitIds = ranges::Transform (storedUnits, [] (auto* unit) { return unit->getId(); });
 		}
 		else
 		{
 			storedUnitIds.clear();
 		}
+		archive & NVP (data);
 		archive & NVP (dir);
 		archive & NVP (storedUnitIds);
 		archive & NVP (detectedByPlayerList);
