@@ -683,7 +683,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const std::string& text, e
 
 			// delete as many chars as it is needed to fit into the line
 			while (getTextWide (stringPart, fonttype) + getTextWide ("-", fonttype) > rDest.w)
-				stringPart.erase (stringPart.length() - 1, 1);
+				utf8::pop_back (stringPart);
 			stringPart += "-";
 
 			// show the part of the word
@@ -881,7 +881,7 @@ std::string cUnicodeFont::shortenStringToSize (const std::string& str, int size,
 	{
 		while (getTextWide (res + ".", fonttype) > size)
 		{
-			res.erase (res.length() - 1, res.length());
+			utf8::pop_back (res);
 		}
 		res += ".";
 		if (cSettings::getInstance().isDebug())
