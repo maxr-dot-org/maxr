@@ -78,9 +78,7 @@ cPushButton::cPushButton (const cBox<cPosition>& area) :
 	buttonType (ePushButtonType::Invisible),
 	fontType (eUnicodeFontType::LatinBig),
 	text (""),
-	clickSound (&SoundData.SNDHudButton),
-	isLocked (false)
-
+	clickSound (&SoundData.SNDHudButton)
 {
 	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
 		fontType = eUnicodeFontType::LatinSmallWhite;
@@ -89,44 +87,20 @@ cPushButton::cPushButton (const cBox<cPosition>& area) :
 
 //------------------------------------------------------------------------------
 cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_) :
-	cClickableWidget (position),
-	buttonType (buttonType_),
-	fontType (eUnicodeFontType::LatinBig),
-	text (""),
-	clickSound (&SoundData.SNDHudButton),
-	isLocked (false)
+	cPushButton (position, buttonType_, &SoundData.SNDHudButton)
 {
-	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
-		fontType = eUnicodeFontType::LatinSmallWhite;
-	renewSurface();
 }
 
 //------------------------------------------------------------------------------
 cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_, cSoundChunk* clickSound_) :
-	cClickableWidget (position),
-	buttonType (buttonType_),
-	fontType (eUnicodeFontType::LatinBig),
-	text (""),
-	clickSound (clickSound_),
-	isLocked (false)
+	cPushButton (position, buttonType_, clickSound_, "", eUnicodeFontType::LatinBig)
 {
-	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
-		fontType = eUnicodeFontType::LatinSmallWhite;
-	renewSurface();
 }
 
 //------------------------------------------------------------------------------
 cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_, const std::string& text_, eUnicodeFontType fontType_) :
-	cClickableWidget (position),
-	buttonType (buttonType_),
-	fontType (fontType_),
-	text (text_),
-	clickSound (&SoundData.SNDHudButton),
-	isLocked (false)
+	cPushButton (position, buttonType_, &SoundData.SNDHudButton, text_, fontType_)
 {
-	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
-		fontType = eUnicodeFontType::LatinSmallWhite;
-	renewSurface();
 }
 
 //------------------------------------------------------------------------------
@@ -135,8 +109,7 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 	buttonType (buttonType_),
 	fontType (fontType_),
 	text (text_),
-	clickSound (clickSound_),
-	isLocked (false)
+	clickSound (clickSound_)
 {
 	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
 		fontType = eUnicodeFontType::LatinSmallWhite;
@@ -379,7 +352,9 @@ void cPushButton::renewSurface()
 
 	SDL_BlitSurface (srcSurface, &src, surface.get(), nullptr);
 
-	text = cUnicodeFont::font->shortenStringToSize (text, size.x() - getBordersSize(), fontType);
+	if (shorten) {
+		text = cUnicodeFont::font->shortenStringToSize (text, size.x() - getBordersSize(), fontType);
+	}
 }
 
 //------------------------------------------------------------------------------

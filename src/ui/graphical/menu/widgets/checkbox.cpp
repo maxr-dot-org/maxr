@@ -31,17 +31,8 @@
 
 //------------------------------------------------------------------------------
 cCheckBox::cCheckBox (const cPosition& position, eCheckBoxType type_, bool centered, cSoundChunk* clickSound_) :
-	cClickableWidget (position),
-	type (type_),
-	fontType (eUnicodeFontType::LatinNormal),
-	textAnchor (eCheckBoxTextAnchor::Right),
-	textLimitWidth (-1),
-	clickSound (clickSound_),
-	checked (false),
-	isLocked (false)
+	cCheckBox (position, "", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Right, type_, centered, clickSound_)
 {
-	renewSurface();
-	if (centered) move (cPosition (-getSize().x() / 2, 0));
 }
 
 cCheckBox::cCheckBox (const cPosition& position, const std::string& text_, eUnicodeFontType fontType_, eCheckBoxTextAnchor textAnchor_, eCheckBoxType type_, bool centered, cSoundChunk* clickSound_) :
@@ -50,10 +41,7 @@ cCheckBox::cCheckBox (const cPosition& position, const std::string& text_, eUnic
 	text (text_),
 	fontType (fontType_),
 	textAnchor (textAnchor_),
-	textLimitWidth (-1),
-	clickSound (clickSound_),
-	checked (false),
-	isLocked (false)
+	clickSound (clickSound_)
 {
 	renewSurface();
 	if (centered) move (cPosition (-getSize().x() / 2, 0));
@@ -228,6 +216,7 @@ void cCheckBox::renewSurface()
 	cPosition size;
 	SDL_Rect src = {0, 0, 0, 0};
 	auto font = cUnicodeFont::font.get();
+	int textLimitWidth = -1;
 
 	if (type >= eCheckBoxType::HudIndex_00 && type <= eCheckBoxType::HudIndex_22)
 	{
@@ -373,5 +362,5 @@ void cCheckBox::renewSurface()
 		SDL_BlitSurface (srcSurface, &src, surface.get(), nullptr);
 	}
 
-	if (textLimitWidth != -1) text = font->shortenStringToSize (text, textLimitWidth, fontType);
+	if (shorten && textLimitWidth != -1) text = font->shortenStringToSize (text, textLimitWidth, fontType);
 }

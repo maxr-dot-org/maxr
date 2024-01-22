@@ -38,6 +38,7 @@ public:
 	void setFont (eUnicodeFontType);
 	void setAlignment (AlignmentFlags);
 	void setWordWrap (bool wordWrap);
+	void setShorten (bool);
 
 	void resizeToTextHeight();
 
@@ -57,6 +58,7 @@ private:
 	eUnicodeFontType fontType;
 	AlignmentFlags alignment;
 	bool wordWrap = false;
+	bool shorten = false;
 	bool dirty = true;
 
 	std::vector<std::string> drawLines;

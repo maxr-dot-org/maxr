@@ -72,22 +72,29 @@ const std::string& cLabel::getText() const
 //------------------------------------------------------------------------------
 void cLabel::setFont (eUnicodeFontType fontType_)
 {
-	std::swap (fontType, fontType_);
 	if (fontType != fontType_) { dirty = true; }
+	fontType = fontType_;
 }
 
 //------------------------------------------------------------------------------
 void cLabel::setAlignment (AlignmentFlags alignment_)
 {
-	std::swap (alignment, alignment_);
 	if (alignment != alignment_) { dirty = true; }
+	alignment = alignment_;
 }
 
 //------------------------------------------------------------------------------
 void cLabel::setWordWrap (bool wordWrap_)
 {
-	std::swap (wordWrap, wordWrap_);
 	if (wordWrap != wordWrap_) { dirty = true; }
+	wordWrap = wordWrap_;
+}
+
+//------------------------------------------------------------------------------
+void cLabel::setShorten (bool value)
+{
+	if (shorten != value) { dirty = true; }
+	shorten = value;
 }
 
 //------------------------------------------------------------------------------
@@ -109,6 +116,9 @@ void cLabel::updateDisplayInformation()
 
 	auto font = cUnicodeFont::font.get();
 	drawLines = wordWrap ? font->breakText (text, getSize().x(), fontType): std::vector{text};
+	if (shorten) {
+		drawLines = ranges::Transform (drawLines, [&] (const auto& s) { return font->shortenStringToSize (s, surface->w, fontType); });
+	}
 
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 

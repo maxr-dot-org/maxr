@@ -122,6 +122,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 
 	coordsLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (265, getEndPosition().y() - 18), cPosition (265 + 64, getEndPosition().y() - 18 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 	unitNameLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (343, getEndPosition().y() - 18), cPosition (343 + 212, getEndPosition().y() - 18 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
+	unitNameLabel->setShorten (true);
 	turnLabel = emplaceChild<cLabel> (cBox<cPosition> (cPosition (471, 7), cPosition (471 + 55, 7 + 10)), "", eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);
 	turnTimeClockWidget = emplaceChild<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (537, 7), cPosition (537 + 55, 7 + 10)));
 

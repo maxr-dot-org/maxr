@@ -104,9 +104,10 @@ private:
 	eUnicodeFontType fontType;
 	std::string text;
 
-	cSoundChunk* clickSound;
+	cSoundChunk* clickSound = nullptr;
 
-	bool isLocked;
+	bool isLocked = false;
+	bool shorten = false;
 
 	void renewSurface();
 

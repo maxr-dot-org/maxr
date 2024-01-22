@@ -95,6 +95,9 @@ protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
+	void renewSurface();
+
+private:
 	UniqueSurface surface;
 
 	eCheckBoxType type;
@@ -102,15 +105,12 @@ private:
 	std::string text;
 	eUnicodeFontType fontType;
 	eCheckBoxTextAnchor textAnchor;
-	int textLimitWidth;
 
-	cSoundChunk* clickSound;
+	cSoundChunk* clickSound = nullptr;
 
-	bool checked;
-
-	bool isLocked;
-
-	void renewSurface();
+	bool checked = false;
+	bool isLocked = false;
+	bool shorten = false;
 };
 
 #endif // ui_graphical_menu_widgets_checkboxH

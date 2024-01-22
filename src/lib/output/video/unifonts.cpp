@@ -888,9 +888,6 @@ std::string cUnicodeFont::shortenStringToSize (const std::string& str, int size,
 		{
 			Log.warn ("shorten string : '" + str + "' to '" + res + "'");
 		}
-#if 1 // Use no-shortened string (especially "Build XN" becoming "Build." in French :-/ )
-		return str;
-#endif
 	}
 	return res;
 }
