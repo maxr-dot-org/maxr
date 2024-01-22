@@ -109,11 +109,13 @@ void cCheckBox::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 		case eCheckBoxType::HudIndex_01:
 		case eCheckBoxType::HudIndex_02:
 			textDesty = 7;
+			[[fallthrough]];
 		case eCheckBoxType::HudIndex_10:
 		case eCheckBoxType::HudIndex_11:
 		case eCheckBoxType::HudIndex_12:
 		case eCheckBoxType::HudChat:
 			if (textDesty != 7) textDesty = 6;
+			[[fallthrough]];
 		case eCheckBoxType::HudIndex_20:
 		case eCheckBoxType::HudIndex_21:
 		case eCheckBoxType::HudIndex_22:
