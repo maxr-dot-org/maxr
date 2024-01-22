@@ -148,7 +148,7 @@ void cDialogPreferences::retranslate()
 
 	disableMusicCheckBox->setText (lngPack.i18n ("Settings~Disable"));
 	disableEffectsCheckBox->setText (lngPack.i18n ("Settings~Disable"));
-	effects3DCheckBox->setText ("3D"); // TODO: Missing translation
+	effects3DCheckBox->setText (lngPack.i18n ("Settings~3D"));
 	disableVoicesCheckBox->setText (lngPack.i18n ("Settings~Disable"));
 	animationCheckBox->setText (lngPack.i18n ("Settings~Animation"));
 	shadowsCheckBox->setText (lngPack.i18n ("Settings~Shadows"));

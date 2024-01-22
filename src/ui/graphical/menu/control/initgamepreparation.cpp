@@ -188,7 +188,7 @@ void cInitGamePreparation::back()
 //------------------------------------------------------------------------------
 void cInitGamePreparation::checkReallyWantsToQuit()
 {
-	auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> ("Are you sure you want to abort the game preparation?")); // TODO: translate
+	auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("GamePreparation~Aborting?")));
 
 	signalConnectionManager.connect (yesNoDialog->yesClicked, [this]() {
 		lobbyClient.abortGamePreparation();

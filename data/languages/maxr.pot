@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-19 12:46+0200\n"
+"POT-Creation-Date: 2024-01-22 15:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,6 +61,9 @@ msgid "ChatCmd~Desc~SyncDebug"
 msgstr ""
 
 msgid "ChatCmd~Desc~Trace"
+msgstr ""
+
+msgid "ChatCmd~Unknown_Command"
 msgstr ""
 
 msgid "Comp~Adjustments_Fuel_Decreased"
@@ -312,6 +315,9 @@ msgstr ""
 msgid "Comp~Working"
 msgstr ""
 
+msgid "Error_Messages~ERROR_Map_Checksum"
+msgstr ""
+
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr ""
 
@@ -325,6 +331,12 @@ msgid "Error_Messages~ERROR_Save_Writing"
 msgstr ""
 
 msgid "Error_Messages~INFO_Not_Implemented"
+msgstr ""
+
+msgid "Error_Messages~Invalid_Map"
+msgstr ""
+
+msgid "Error_Messages~Map_Not_Found"
 msgstr ""
 
 msgid "GameOver~BuiltBuildings"
@@ -343,6 +355,9 @@ msgid "GameOver~LostBuildings"
 msgstr ""
 
 msgid "GameOver~LostUnits"
+msgstr ""
+
+msgid "GamePreparation~Aborting?"
 msgstr ""
 
 msgid "Init~Buildings"
@@ -435,6 +450,12 @@ msgstr ""
 msgid "Multiplayer~Map_NoSet"
 msgstr ""
 
+msgid "Multiplayer~Missing_Host"
+msgstr ""
+
+msgid "Multiplayer~Missing_Player"
+msgstr ""
+
 msgid "Multiplayer~Missing_Settings"
 msgstr ""
 
@@ -458,6 +479,11 @@ msgstr ""
 
 msgid "Multiplayer~No_Response"
 msgstr ""
+
+msgid "Multiplayer~Not_All_Player(s)_Ready"
+msgid_plural "Multiplayer~Not_All_Player(s)_Ready"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Multiplayer~Not_Ready"
 msgstr ""
@@ -499,6 +525,9 @@ msgid "Multiplayer~Player_Joined"
 msgstr ""
 
 msgid "Multiplayer~Player_Left"
+msgstr ""
+
+msgid "Multiplayer~Player_Left_Game_Preparation"
 msgstr ""
 
 msgid "Multiplayer~Player_Name_Taken"
@@ -577,6 +606,9 @@ msgid "Option~Sparse"
 msgstr ""
 
 msgid "Option~TooMuch"
+msgstr ""
+
+msgid "Option~Type_HotSeat"
 msgstr ""
 
 msgid "Option~Type_Simu"
@@ -886,6 +918,9 @@ msgid "Others~Yes"
 msgstr ""
 
 msgid "Punctuation~Colon"
+msgstr ""
+
+msgid "Settings~3D"
 msgstr ""
 
 msgid "Settings~Alphaeffects"

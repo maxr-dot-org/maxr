@@ -189,7 +189,7 @@ std::string toTranslatedString (eGameSettingsGameType type)
 		case eGameSettingsGameType::Turns:
 			return lngPack.i18n ("Option~Type_Turns");
 		case eGameSettingsGameType::HotSeat:
-			return "Hot Seat"; // TODO: translation?!
+			return lngPack.i18n ("Option~Type_HotSeat");
 	}
 	assert (false);
 	return "";

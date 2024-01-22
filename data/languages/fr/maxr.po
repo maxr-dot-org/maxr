@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-19 12:46+0200\n"
+"POT-Creation-Date: 2024-01-22 15:15+0100\n"
 "PO-Revision-Date: 2021-07-29 21:42+0200\n"
 "Last-Translator:\n"
 "Language-Team: French\n"
@@ -60,6 +60,9 @@ msgstr "Active/désactive les informations de debug pour le status de synchronis
 
 msgid "ChatCmd~Desc~Trace"
 msgstr "Active/désactive les informations de debug pour l'unité sous le curseur"
+
+msgid "ChatCmd~Unknown_Command"
+msgstr "Commande inconnue : %s"
 
 msgid "Comp~Adjustments_Fuel_Decreased"
 msgstr "Ajustement effectué : production de carburant diminuée de %s"
@@ -313,6 +316,9 @@ msgstr "Joueur %s a gagné"
 msgid "Comp~Working"
 msgstr "en fonctionnement"
 
+msgid "Error_Messages~ERROR_Map_Checksum"
+msgstr "La carte '%s' a changé depuis le début de la partie"
+
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Erreur de chargement de la carte"
 
@@ -327,6 +333,12 @@ msgstr "Erreur lors de la sauvegarde"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Pas encore implémenté"
+
+msgid "Error_Messages~Invalid_Map"
+msgstr "La carte '%s' n'est pas identique à celle du serveur"
+
+msgid "Error_Messages~Map_Not_Found"
+msgstr "Carte non trouvée : %s"
 
 msgid "GameOver~BuiltBuildings"
 msgstr "Installations bâties"
@@ -345,6 +357,9 @@ msgstr "perdues"
 
 msgid "GameOver~LostUnits"
 msgstr "perdues"
+
+msgid "GamePreparation~Aborting?"
+msgstr "Êtes-vous sûr(e) d'annuler la préparation de la partie ?"
 
 msgid "Init~Buildings"
 msgstr "Chargement des bâtiments..."
@@ -436,6 +451,12 @@ msgstr "Envoi de la carte à %s terminé."
 msgid "Multiplayer~Map_NoSet"
 msgstr "--pas de carte sélectionnée--"
 
+msgid "Multiplayer~Missing_Host"
+msgstr "Impossible de démarrer sans l'hôte"
+
+msgid "Multiplayer~Missing_Player"
+msgstr "Joueur(se) manquant(e): %s"
+
 msgid "Multiplayer~Missing_Settings"
 msgstr "Sauvegarde du jeu, options ou carte non paramétrées"
 
@@ -459,6 +480,11 @@ msgstr "Impossible de charger la carte %s. Lancement jeu impossible."
 
 msgid "Multiplayer~No_Response"
 msgstr "En attente de réponse réseau du joueur %s"
+
+msgid "Multiplayer~Not_All_Player(s)_Ready"
+msgid_plural "Multiplayer~Not_All_Player(s)_Ready"
+msgstr[0] "Un(e) joueur(se) n'est pas prêt(e)..."
+msgstr[1] "Des joueur(se)s ne sont pas prêt(e)s..."
 
 msgid "Multiplayer~Not_Ready"
 msgstr "%s n'est pas prêt"
@@ -501,6 +527,9 @@ msgstr "%s a rejoint la partie"
 
 msgid "Multiplayer~Player_Left"
 msgstr "%s a quitté la partie"
+
+msgid "Multiplayer~Player_Left_Game_Preparation"
+msgstr "%s a quitté la préparation du jeu"
 
 msgid "Multiplayer~Player_Name_Taken"
 msgstr "Les noms des joueurs doivent être uniques, merci d'en sélectionner un autre"
@@ -581,6 +610,9 @@ msgstr "rare"
 
 msgid "Option~TooMuch"
 msgstr "maximum"
+
+msgid "Option~Type_HotSeat"
+msgstr ""
 
 msgid "Option~Type_Simu"
 msgstr "tours simultanés"
@@ -890,6 +922,9 @@ msgstr "Oui"
 
 msgid "Punctuation~Colon"
 msgstr " : "
+
+msgid "Settings~3D"
+msgstr "3D"
 
 msgid "Settings~Alphaeffects"
 msgstr "Transparence"

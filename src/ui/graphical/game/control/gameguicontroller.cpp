@@ -1600,8 +1600,7 @@ void cGameGuiController::handleChatCommand (const std::string& chatString)
 					return;
 				}
 			}
-			// TODO: translate
-			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> ("Could not recognize chat command '" + chatString + "'"));
+			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (lngPack.i18n ("ChatCmd~Unknown_Command", chatString)));
 		}
 		catch (const std::runtime_error& e)
 		{

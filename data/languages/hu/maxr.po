@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-19 12:46+0200\n"
+"POT-Creation-Date: 2024-01-22 15:15+0100\n"
 "PO-Revision-Date: 2021-07-29 22:04+0200\n"
 "Last-Translator:\n"
 "Language-Team: Hungarian\n"
@@ -59,6 +59,9 @@ msgid "ChatCmd~Desc~SyncDebug"
 msgstr ""
 
 msgid "ChatCmd~Desc~Trace"
+msgstr ""
+
+msgid "ChatCmd~Unknown_Command"
 msgstr ""
 
 #, fuzzy
@@ -320,6 +323,9 @@ msgstr ""
 msgid "Comp~Working"
 msgstr "működik"
 
+msgid "Error_Messages~ERROR_Map_Checksum"
+msgstr ""
+
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Hiba a térkép betöltése közben"
 
@@ -338,6 +344,12 @@ msgstr "Hiba a térkép betöltése közben"
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Még nincs implementálva"
 
+msgid "Error_Messages~Invalid_Map"
+msgstr ""
+
+msgid "Error_Messages~Map_Not_Found"
+msgstr ""
+
 msgid "GameOver~BuiltBuildings"
 msgstr ""
 
@@ -354,6 +366,9 @@ msgid "GameOver~LostBuildings"
 msgstr ""
 
 msgid "GameOver~LostUnits"
+msgstr ""
+
+msgid "GamePreparation~Aborting?"
 msgstr ""
 
 msgid "Init~Buildings"
@@ -450,6 +465,12 @@ msgstr ""
 msgid "Multiplayer~Map_NoSet"
 msgstr "--nincs Térkép kiválasztva--"
 
+msgid "Multiplayer~Missing_Host"
+msgstr ""
+
+msgid "Multiplayer~Missing_Player"
+msgstr ""
+
 msgid "Multiplayer~Missing_Settings"
 msgstr "Nincsenek beállítva a paraméterek, a térkép vagy a játékmentés"
 
@@ -473,6 +494,11 @@ msgstr "A %s térkép nem tölthető be. Így nem indíthatod a játékot."
 
 msgid "Multiplayer~No_Response"
 msgstr ""
+
+msgid "Multiplayer~Not_All_Player(s)_Ready"
+msgid_plural "Multiplayer~Not_All_Player(s)_Ready"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Multiplayer~Not_Ready"
 msgstr "%s nem készült el"
@@ -515,6 +541,9 @@ msgstr "%s csatlakozott a játékhoz"
 
 msgid "Multiplayer~Player_Left"
 msgstr "%s elhagyta a játékot"
+
+msgid "Multiplayer~Player_Left_Game_Preparation"
+msgstr ""
 
 msgid "Multiplayer~Player_Name_Taken"
 msgstr ""
@@ -595,6 +624,9 @@ msgstr "Ritka"
 
 msgid "Option~TooMuch"
 msgstr "Legtöbb"
+
+msgid "Option~Type_HotSeat"
+msgstr ""
 
 msgid "Option~Type_Simu"
 msgstr "Egyidejű"
@@ -905,6 +937,9 @@ msgstr "Igen"
 
 msgid "Punctuation~Colon"
 msgstr ": "
+
+msgid "Settings~3D"
+msgstr "3D"
 
 msgid "Settings~Alphaeffects"
 msgstr "Alfaeffektusok"

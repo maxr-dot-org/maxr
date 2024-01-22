@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-19 12:46+0200\n"
+"POT-Creation-Date: 2024-01-22 15:15+0100\n"
 "PO-Revision-Date: 2021-07-29 22:32+0200\n"
 "Last-Translator:\n"
 "Language-Team: Spanish\n"
@@ -59,6 +59,9 @@ msgid "ChatCmd~Desc~SyncDebug"
 msgstr ""
 
 msgid "ChatCmd~Desc~Trace"
+msgstr ""
+
+msgid "ChatCmd~Unknown_Command"
 msgstr ""
 
 #, fuzzy
@@ -320,6 +323,9 @@ msgstr ""
 msgid "Comp~Working"
 msgstr "trabajando"
 
+msgid "Error_Messages~ERROR_Map_Checksum"
+msgstr ""
+
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Error mientras se cargaba el mapa"
 
@@ -338,6 +344,12 @@ msgstr "Error mientras se cargaba el mapa"
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "No implementado todavía"
 
+msgid "Error_Messages~Invalid_Map"
+msgstr ""
+
+msgid "Error_Messages~Map_Not_Found"
+msgstr ""
+
 msgid "GameOver~BuiltBuildings"
 msgstr ""
 
@@ -354,6 +366,9 @@ msgid "GameOver~LostBuildings"
 msgstr ""
 
 msgid "GameOver~LostUnits"
+msgstr ""
+
+msgid "GamePreparation~Aborting?"
 msgstr ""
 
 msgid "Init~Buildings"
@@ -450,6 +465,12 @@ msgstr "Carga de mapa a %s terminada"
 msgid "Multiplayer~Map_NoSet"
 msgstr "--mapa no seleccionado--"
 
+msgid "Multiplayer~Missing_Host"
+msgstr ""
+
+msgid "Multiplayer~Missing_Player"
+msgstr ""
+
 msgid "Multiplayer~Missing_Settings"
 msgstr "Las opciones, el mapa, o el guardado no estan disponibles"
 
@@ -473,6 +494,11 @@ msgstr "No se puede cargar el mapa %s. No estás listo."
 
 msgid "Multiplayer~No_Response"
 msgstr "Esperando respuesta de la red del jugador %s"
+
+msgid "Multiplayer~Not_All_Player(s)_Ready"
+msgid_plural "Multiplayer~Not_All_Player(s)_Ready"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Multiplayer~Not_Ready"
 msgstr "%s no esta listo"
@@ -515,6 +541,9 @@ msgstr " Se ha unido %s"
 
 msgid "Multiplayer~Player_Left"
 msgstr " %s ha salido de la partida"
+
+msgid "Multiplayer~Player_Left_Game_Preparation"
+msgstr ""
 
 msgid "Multiplayer~Player_Name_Taken"
 msgstr "Nombre de jugador ya utilizado, por favor, elige otro de forma que sea único"
@@ -595,6 +624,9 @@ msgstr "Disperso"
 
 msgid "Option~TooMuch"
 msgstr "El máximo"
+
+msgid "Option~Type_HotSeat"
+msgstr ""
 
 msgid "Option~Type_Simu"
 msgstr "Simultáneo"
@@ -905,6 +937,9 @@ msgstr "Si"
 
 msgid "Punctuation~Colon"
 msgstr ": "
+
+msgid "Settings~3D"
+msgstr "3D"
 
 msgid "Settings~Alphaeffects"
 msgstr "Efectos alpha"

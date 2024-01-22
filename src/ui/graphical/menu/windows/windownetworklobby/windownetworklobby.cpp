@@ -252,12 +252,11 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 		{
 			addInfoEntry (lngPack.i18n ("Multiplayer~Not_Ready", player.getName()));
 		}
-		// TODO: missing translations
-		if (!notReadyPlayers.empty()) addInfoEntry ("Not all players are ready...");
-		if (hostNotInSavegame) addInfoEntry ("Unable to start: Host must be part of the saved game");
+		if (!notReadyPlayers.empty()) addInfoEntry (lngPack.plural ("Multiplayer~Not_All_Player(s)_Ready", notReadyPlayers.size()));
+		if (hostNotInSavegame) addInfoEntry(lngPack.i18n ("Multiplayer~Missing_Host"));
 		for (const auto& player : missingPlayers)
 		{
-			addInfoEntry ("Missing player: " + player.getName());
+			addInfoEntry (lngPack.i18n ("Multiplayer~Missing_Player", player.getName()));
 		}
 		if (!missingPlayers.empty()) addInfoEntry (lngPack.i18n ("Multiplayer~Player_Wrong"));
 	});

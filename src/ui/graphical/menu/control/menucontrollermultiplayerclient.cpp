@@ -62,7 +62,7 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 	signalConnectionManager.connect (lobbyClient.onPlayerAbortGamePreparation, [this] (const std::string& playerName) {
 		if (windowNetworkLobby != nullptr)
 		{
-			auto okDialog = application.show (std::make_shared<cDialogOk> ("Player " + playerName + " has quit from game preparation")); // TODO: translate
+			auto okDialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Multiplayer~Player_Left_Game_Preparation", playerName)));
 
 			signalConnectionManager.connect (okDialog->done, [this]() {
 				application.closeTill (*windowNetworkLobby);
@@ -91,10 +91,10 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 	});
 
 	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameNoMap, [this] (const std::filesystem::path& mapFilename) {
-		application.show (std::make_shared<cDialogOk> ("Map \"" + mapFilename.u8string() + "\" not found")); //TODO: translate
+		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~Map_Not_Found", mapFilename.u8string())));
 	});
 	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameInvalidMap, [this] (const std::filesystem::path& mapFilename) {
-		application.show (std::make_shared<cDialogOk> ("The map \"" + mapFilename.u8string() + "\" does not match the map of the server")); // TODO: translate
+		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~Invalid_Map", mapFilename.u8string())));
 	});
 }
 

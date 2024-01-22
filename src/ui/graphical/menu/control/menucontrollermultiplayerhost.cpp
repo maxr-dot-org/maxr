@@ -77,7 +77,7 @@ cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& ap
 	signalConnectionManager.connect (lobbyClient.onPlayerAbortGamePreparation, [this] (const std::string& playerName) {
 		if (windowNetworkLobby != nullptr)
 		{
-			auto okDialog = application.show (std::make_shared<cDialogOk> ("Player " + playerName + " has quit from game preparation")); // TODO: translate
+			auto okDialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Multiplayer~Player_Left_Game_Preparation", playerName)));
 
 			signalConnectionManager.connect (okDialog->done, [this]() {
 				application.closeTill (*windowNetworkLobby);
@@ -187,7 +187,7 @@ void cMenuControllerMultiplayerHost::handleSelectSaveGame()
 			}
 			else if (MapDownload::calculateCheckSum (saveGame.mapFilename) != saveGame.mapCrc)
 			{
-				application.show (std::make_shared<cDialogOk> ("The map \"" + saveGame.mapFilename.u8string() + "\" does not match the map the game was started with")); // TODO: translate
+				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Map_Checksum", saveGame.mapFilename.u8string())));
 				return;
 			}
 		}

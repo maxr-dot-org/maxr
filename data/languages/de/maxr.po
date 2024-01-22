@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Maxr 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-19 12:46+0200\n"
+"POT-Creation-Date: 2024-01-22 15:15+0100\n"
 "PO-Revision-Date: 2021-07-29 21:55+0200\n"
 "Last-Translator:\n"
 "Language-Team: German\n"
@@ -59,6 +59,9 @@ msgid "ChatCmd~Desc~SyncDebug"
 msgstr ""
 
 msgid "ChatCmd~Desc~Trace"
+msgstr ""
+
+msgid "ChatCmd~Unknown_Command"
 msgstr ""
 
 #, fuzzy
@@ -320,6 +323,9 @@ msgstr "Spieler %s gewinnt"
 msgid "Comp~Working"
 msgstr "arbeitend"
 
+msgid "Error_Messages~ERROR_Map_Checksum"
+msgstr ""
+
 msgid "Error_Messages~ERROR_Map_Loading"
 msgstr "Fehler beim Laden der Karte"
 
@@ -334,6 +340,12 @@ msgstr "Fehler beim Schreiben des Spielstands"
 
 msgid "Error_Messages~INFO_Not_Implemented"
 msgstr "Noch nicht umgesetzt"
+
+msgid "Error_Messages~Invalid_Map"
+msgstr ""
+
+msgid "Error_Messages~Map_Not_Found"
+msgstr ""
 
 msgid "GameOver~BuiltBuildings"
 msgstr ""
@@ -351,6 +363,9 @@ msgid "GameOver~LostBuildings"
 msgstr ""
 
 msgid "GameOver~LostUnits"
+msgstr ""
+
+msgid "GamePreparation~Aborting?"
 msgstr ""
 
 msgid "Init~Buildings"
@@ -443,6 +458,12 @@ msgstr "Karte wurde zu %s übertragen."
 msgid "Multiplayer~Map_NoSet"
 msgstr "--keine Karte ausgewählt--"
 
+msgid "Multiplayer~Missing_Host"
+msgstr ""
+
+msgid "Multiplayer~Missing_Player"
+msgstr ""
+
 msgid "Multiplayer~Missing_Settings"
 msgstr "Karte oder Optionen noch einstellen oder Speicherstand laden."
 
@@ -466,6 +487,11 @@ msgstr "Die Karte %s konnte nicht geladen werden. Daher können Sie nicht losleg
 
 msgid "Multiplayer~No_Response"
 msgstr "Warte auf Netzwerkantwort von Spieler %s"
+
+msgid "Multiplayer~Not_All_Player(s)_Ready"
+msgid_plural "Multiplayer~Not_All_Player(s)_Ready"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Multiplayer~Not_Ready"
 msgstr "%s ist nicht bereit"
@@ -508,6 +534,9 @@ msgstr "%s ist beigetreten"
 
 msgid "Multiplayer~Player_Left"
 msgstr "%s hat das Spiel verlassen"
+
+msgid "Multiplayer~Player_Left_Game_Preparation"
+msgstr ""
 
 msgid "Multiplayer~Player_Name_Taken"
 msgstr "Spielername bereits in Verwendung, bitte wählen Sie einen anderen Namen um unverwechselbar zu sein."
@@ -592,6 +621,9 @@ msgstr "Dünn"
 
 msgid "Option~TooMuch"
 msgstr "Zuviel"
+
+msgid "Option~Type_HotSeat"
+msgstr ""
 
 msgid "Option~Type_Simu"
 msgstr "Simultane Bewegung"
@@ -902,6 +934,9 @@ msgstr "Ja"
 
 msgid "Punctuation~Colon"
 msgstr ": "
+
+msgid "Settings~3D"
+msgstr "3D"
 
 msgid "Settings~Alphaeffects"
 msgstr "Alphaeffekte"
