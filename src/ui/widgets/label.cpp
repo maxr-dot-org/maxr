@@ -25,8 +25,7 @@
 cLabel::cLabel (const cBox<cPosition>& area, const std::string& text_, eUnicodeFontType fontType_, AlignmentFlags alignment_) :
 	cClickableWidget (area),
 	fontType (fontType_),
-	alignment (alignment_),
-	wordWrap (false)
+	alignment (alignment_)
 {
 	if (getSize().x() < 0 || getSize().y() < 0)
 	{
@@ -61,7 +60,7 @@ void cLabel::setText (const std::string& text_)
 		pos += 1;
 	}
 
-	updateDisplayInformation();
+	dirty = true;
 }
 
 //------------------------------------------------------------------------------
@@ -74,26 +73,31 @@ const std::string& cLabel::getText() const
 void cLabel::setFont (eUnicodeFontType fontType_)
 {
 	std::swap (fontType, fontType_);
-	if (fontType != fontType_) updateDisplayInformation();
+	if (fontType != fontType_) { dirty = true; }
 }
 
 //------------------------------------------------------------------------------
 void cLabel::setAlignment (AlignmentFlags alignment_)
 {
 	std::swap (alignment, alignment_);
-	if (alignment != alignment_) updateDisplayInformation();
+	if (alignment != alignment_) { dirty = true; }
 }
 
 //------------------------------------------------------------------------------
 void cLabel::setWordWrap (bool wordWrap_)
 {
 	std::swap (wordWrap, wordWrap_);
-	if (wordWrap != wordWrap_) updateDisplayInformation();
+	if (wordWrap != wordWrap_) { dirty = true; }
 }
 
 //------------------------------------------------------------------------------
 void cLabel::resizeToTextHeight()
 {
+	if (dirty == true)
+	{
+		auto font = cUnicodeFont::font.get();
+		drawLines = wordWrap ? font->breakText (text, getSize().x(), fontType) : std::vector{text};
+	}
 	const auto textHeight = drawLines.size() * cUnicodeFont::font->getFontHeight (fontType);
 	resize (cPosition (getSize().x(), textHeight));
 }
@@ -104,17 +108,7 @@ void cLabel::updateDisplayInformation()
 	if (surface == nullptr) return;
 
 	auto font = cUnicodeFont::font.get();
-
-	drawLines.clear();
-
-	if (wordWrap)
-	{
-		drawLines = font->breakText (text, getSize().x(), fontType);
-	}
-	else
-	{
-		drawLines.push_back (text);
-	}
+	drawLines = wordWrap ? font->breakText (text, getSize().x(), fontType): std::vector{text};
 
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 
@@ -159,6 +153,7 @@ void cLabel::updateDisplayInformation()
 
 		drawPositionY += font->getFontHeight (fontType);
 	}
+	dirty = false;
 }
 
 //------------------------------------------------------------------------------
@@ -166,6 +161,7 @@ void cLabel::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface && getArea().intersects (clipRect))
 	{
+		if (dirty == true) { updateDisplayInformation(); }
 		blitClipped (*surface, getArea(), destination, clipRect);
 	}
 
@@ -175,6 +171,7 @@ void cLabel::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 //------------------------------------------------------------------------------
 void cLabel::handleResized (const cPosition& oldSize)
 {
+	dirty = true;
 	cWidget::handleResized (oldSize);
 
 	if (getSize().x() < 0 || getSize().y() < 0)
@@ -186,8 +183,6 @@ void cLabel::handleResized (const cPosition& oldSize)
 	surface = UniqueSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
-
-	updateDisplayInformation();
 }
 
 //------------------------------------------------------------------------------

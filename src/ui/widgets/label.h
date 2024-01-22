@@ -56,7 +56,8 @@ private:
 	std::string text;
 	eUnicodeFontType fontType;
 	AlignmentFlags alignment;
-	bool wordWrap;
+	bool wordWrap = false;
+	bool dirty = true;
 
 	std::vector<std::string> drawLines;
 
