@@ -36,14 +36,9 @@ static constexpr cRgbColor neutralColor = cRgbColor::black();
 //------------------------------------------------------------------------------
 cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap) :
 	cClickableWidget (area),
-	surfaceOutdated (true),
-	viewWindowSurfaeOutdated (true),
-	startedMoving (false),
 	staticMap (std::move (staticMap)),
 	mapView (nullptr),
-	zoomFactor (1),
 	offset (0, 0),
-	attackUnitsOnly (false),
 	mapViewWindow (cPosition (0, 0), cPosition (0, 0))
 {
 	surface = UniqueSurface (SDL_CreateRGBSurface (0, getSize().x(), getSize().y(), 32, 0, 0, 0, 0));
@@ -73,7 +68,7 @@ void cMiniMapWidget::setViewWindow (const cBox<cPosition>& mapViewWindow_)
 {
 	mapViewWindow = mapViewWindow_;
 
-	viewWindowSurfaeOutdated = true;
+	viewWindowSurfaceOutdated = true;
 
 	updateOffset();
 }
@@ -95,7 +90,7 @@ void cMiniMapWidget::setZoomFactor (int zoomFactor_)
 	{
 		surfaceOutdated = true;
 	}
-	viewWindowSurfaeOutdated = true;
+	viewWindowSurfaceOutdated = true;
 }
 
 //------------------------------------------------------------------------------
@@ -147,7 +142,7 @@ cPosition cMiniMapWidget::computeMapPosition (const cPosition& screenPosition)
 void cMiniMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surfaceOutdated) renewSurface();
-	if (viewWindowSurfaeOutdated) renewViewWindowSurface();
+	if (viewWindowSurfaceOutdated) renewViewWindowSurface();
 
 	if (surface != nullptr)
 	{
@@ -384,5 +379,5 @@ void cMiniMapWidget::renewViewWindowSurface()
 			minimap[end.y() * getSize().x() + x] = MINIMAP_COLOR;
 		}
 	}
-	viewWindowSurfaeOutdated = false;
+	viewWindowSurfaceOutdated = false;
 }

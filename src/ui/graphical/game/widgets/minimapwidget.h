@@ -61,20 +61,20 @@ private:
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 
 	UniqueSurface surface;
-	bool surfaceOutdated;
+	bool surfaceOutdated = true;
 	UniqueSurface viewWindowSurface;
-	bool viewWindowSurfaeOutdated;
+	bool viewWindowSurfaceOutdated = true;
 
-	bool startedMoving;
+	bool startedMoving = false;
 
 	std::shared_ptr<const cStaticMap> staticMap;
 	std::shared_ptr<const cMapView> mapView; // may be null
 	//	std::shared_ptr<const cMap> dynamicMap; // may be null
 	//	std::shared_ptr<const cPlayer> player; // may be null
 
-	int zoomFactor; // TODO: may use floating value here
+	int zoomFactor = 1; // TODO: may use floating value here
 	cPosition offset;
-	bool attackUnitsOnly;
+	bool attackUnitsOnly = false;
 	cBox<cPosition> mapViewWindow;
 
 	bool updateOffset();
