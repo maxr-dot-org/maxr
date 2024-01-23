@@ -35,17 +35,13 @@ class cTurnTimeClock;
 class cWindowUpgradesFilterState
 {
 public:
-	cWindowUpgradesFilterState() :
-		TankChecked (true),
-		PlaneChecked (true),
-		ShipChecked (true),
-		BuildingChecked (true),
-		TNTChecked (false) {}
-	bool TankChecked;
-	bool PlaneChecked;
-	bool ShipChecked;
-	bool BuildingChecked;
-	bool TNTChecked;
+	cWindowUpgradesFilterState() = default;
+
+	bool TankChecked = true;
+	bool PlaneChecked = true;
+	bool ShipChecked = true;
+	bool BuildingChecked = true;
+	bool TNTChecked = false;
 };
 
 class cWindowUpgrades : public cWindowHangar
@@ -60,6 +56,16 @@ public:
 
 protected:
 	void setActiveUnit (const sID& unitId) override;
+
+private:
+	void generateSelectionList (bool select);
+
+	void goldChanged();
+
+	void upgradeIncreaseClicked (size_t index);
+	void upgradeDecreaseClicked (size_t index);
+
+	void updateUpgradeButtons();
 
 private:
 	cSignalConnectionManager signalConnectionManager;
@@ -84,15 +90,6 @@ private:
 	std::array<cLabel*, maxUpgradeButtons> upgradeCostLabel;
 
 	std::map<sID, cUnitUpgrade> unitUpgrades;
-
-	void generateSelectionList (bool select);
-
-	void goldChanged();
-
-	void upgradeIncreaseClicked (size_t index);
-	void upgradeDecreaseClicked (size_t index);
-
-	void updateUpgradeButtons();
 };
 
 #endif // ui_graphical_menu_windows_windowupgrades_windowupgradesH
