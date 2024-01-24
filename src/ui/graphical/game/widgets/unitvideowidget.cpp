@@ -25,38 +25,70 @@
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"
+#include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/widgets/image.h"
 
 #include <filesystem>
 
 //------------------------------------------------------------------------------
-cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer> animationTimer) :
-	cWidget (area),
-	playing (true)
+cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area) :
+	cWidget (area)
 {
 	currentFrameImage = emplaceChild<cImage> (getPosition());
 
-	currentFrameImage->clicked.connect ([this]() { clicked(); });
+	currentFrameImage->clicked.connect ([this]() {
+		if (hasAnimation())
+		{
+			playing = !playing;
+			stateChanged();
+		}
+	});
 
-	signalConnectionManager.connect (animationTimer->triggered100ms, [this]() { nextFrame(); });
+	auto playButton = emplaceChild<cPushButton> (cPosition (area.getMaxCorner().x() - 19, area.getMaxCorner().y() - 31), ePushButtonType::HudPlay);
+	auto stopButton = emplaceChild<cPushButton> (cPosition (area.getMaxCorner().x() - 19, area.getMaxCorner().y() - 11), ePushButtonType::HudStop);
+
+	signalConnectionManager.connect (stateChanged, [=]() {
+		if (hasAnimation())
+		{
+			if (isPlaying())
+			{
+				playButton->lock();
+				stopButton->unlock();
+			}
+			else
+			{
+				playButton->unlock();
+				stopButton->lock();
+			}
+		}
+		else
+		{
+			playButton->lock();
+			stopButton->lock();
+		}
+	});
+	signalConnectionManager.connect (playButton->clicked, [this]() { start(); });
+	signalConnectionManager.connect (stopButton->clicked, [this]() { stop(); });
+}
+
+//------------------------------------------------------------------------------
+void cUnitVideoWidget::bindConnections (cAnimationTimer& animationTimer)
+{
+	signalConnectionManager.connect (animationTimer.triggered100ms, [this]() { nextFrame(); });
 }
 
 //------------------------------------------------------------------------------
 void cUnitVideoWidget::start()
 {
 	playing = true;
+	stateChanged();
 }
 
 //------------------------------------------------------------------------------
 void cUnitVideoWidget::stop()
 {
 	playing = false;
-}
-
-//------------------------------------------------------------------------------
-void cUnitVideoWidget::toggle()
-{
-	playing = !playing;
+	stateChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -108,6 +140,7 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 			currentFrameImage->setImage (uiData.video.get());
 		}
 	}
+	stateChanged();
 }
 
 //------------------------------------------------------------------------------

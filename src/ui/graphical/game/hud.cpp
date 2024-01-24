@@ -133,17 +133,8 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	auto zoomMinusButton = emplaceChild<cPushButton> (cBox<cPosition> (cPosition (152, 275), cPosition (152 + 15, 275 + 15)));
 	signalConnectionManager.connect (zoomMinusButton->clicked, [this]() { handleZoomMinusClicked(); });
 
-	unitVideo = emplaceChild<cUnitVideoWidget> (cBox<cPosition> (cPosition (10, 29), cPosition (10 + 125, 29 + 125)), animationTimer);
-	signalConnectionManager.connect (unitVideo->clicked, [this]() {
-		if (unitVideo->hasAnimation())
-		{
-			unitVideo->toggle();
-		}
-	});
-	auto playButton = emplaceChild<cPushButton> (cPosition (146, 123), ePushButtonType::HudPlay);
-	signalConnectionManager.connect (playButton->clicked, [this]() { unitVideo->start(); });
-	auto stopButton = emplaceChild<cPushButton> (cPosition (146, 143), ePushButtonType::HudStop);
-	signalConnectionManager.connect (stopButton->clicked, [this]() { unitVideo->stop(); });
+	unitVideo = emplaceChild<cUnitVideoWidget> (cBox<cPosition> (cPosition (10, 29), cPosition (165, 154)));
+	unitVideo->bindConnections (*animationTimer);
 
 	unitDetails = emplaceChild<cUnitDetailsHud> (cBox<cPosition> (cPosition (8, 171), cPosition (8 + 155, 171 + 48)));
 

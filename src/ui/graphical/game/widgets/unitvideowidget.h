@@ -24,49 +24,49 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <3rd/SDL_flic/SDL_flic.h>
-#include <memory>
-
-class cPosition;
 
 template <typename T>
 class cBox;
 
-class cUnit;
-class cImage;
 class cAnimationTimer;
+class cImage;
+class cPosition;
+class cUnit;
 
 class cUnitVideoWidget : public cWidget
 {
+public:
+	explicit cUnitVideoWidget (const cBox<cPosition>& area);
+
+	void bindConnections (cAnimationTimer&);
+
+	void setUnit (const cUnit*);
+
+	void start();
+	void stop();
+
+	bool isPlaying() const;
+	bool hasAnimation() const;
+
+private:
+	void nextFrame();
+
+private:
 	struct FliAnimationCloser
 	{
 		void operator() (FLI_Animation* anim) const { FLI_Close (anim); }
 	};
 	using FliAnimationPointerType = std::unique_ptr<FLI_Animation, FliAnimationCloser>;
 
-public:
-	cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer>);
-
-	void start();
-	void stop();
-	void toggle();
-
-	bool isPlaying() const;
-
-	bool hasAnimation() const;
-
-	void setUnit (const cUnit*);
-
-	cSignal<void()> clicked;
-
 private:
+	cSignal<void()> stateChanged;
+
 	cImage* currentFrameImage = nullptr;
 	FliAnimationPointerType fliAnimation;
 
 	cSignalConnectionManager signalConnectionManager;
 
 	bool playing = true;
-
-	void nextFrame();
 };
 
 #endif // ui_graphical_game_widgets_unitvideowidgetH
