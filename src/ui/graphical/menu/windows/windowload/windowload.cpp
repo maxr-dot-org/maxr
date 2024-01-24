@@ -58,9 +58,10 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, s
 	loadButton->lock();
 
 	auto upButton = emplaceChild<cPushButton> (getPosition() + cPosition (33, 438), ePushButtonType::ArrowUpBig);
-	signalConnectionManager.connect (upButton->clicked, [this]() { handleUpClicked(); });
 	auto downButton = emplaceChild<cPushButton> (getPosition() + cPosition (63, 438), ePushButtonType::ArrowDownBig);
-	signalConnectionManager.connect (downButton->clicked, [this]() { handleDownClicked(); });
+	signalConnectionManager.connect (upButton->clicked, [=]() { handleUpClicked(); if (page == 0) { upButton->lock(); } downButton->unlock(); });
+	signalConnectionManager.connect (downButton->clicked, [=]() { handleDownClicked(); if (page == lastPage) {downButton->lock();} upButton->unlock(); });
+	upButton->lock();
 
 	for (size_t x = 0; x < columns; x++)
 	{
