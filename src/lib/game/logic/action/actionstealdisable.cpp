@@ -101,6 +101,7 @@ void cActionStealDisable::execute (cModel& model) const
 	}
 }
 
+//------------------------------------------------------------------------------
 void cActionStealDisable::changeUnitOwner (cUnit& unit, cPlayer& newOwner, cModel& model) const
 {
 	model.getCasualtiesTracker()->logCasualty (unit);

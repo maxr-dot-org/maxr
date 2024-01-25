@@ -19,7 +19,7 @@
 
 #include "toString.h"
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string getHexValue (unsigned char byte)
 {
 	std::string str = "";
@@ -31,7 +31,8 @@ std::string getHexValue (unsigned char byte)
 	str += hexChars[low];
 	return str;
 }
-//--------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 unsigned char getByteValue (const std::string& str, int index)
 {
 	unsigned char first = str[index + 0] - '0';

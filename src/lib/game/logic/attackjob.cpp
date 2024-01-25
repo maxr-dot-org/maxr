@@ -36,7 +36,7 @@
 
 //TODO: test alien attack (ground & air)
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const cModel& model) :
 	aggressorId (aggressor.getId()),
 	targetPosition (targetPosition),
@@ -184,6 +184,7 @@ int cAttackJob::calcFireDir (const cUnit& aggressor)
 	return fireDir;
 }
 
+//------------------------------------------------------------------------------
 void cAttackJob::lockTarget (const cMap& map, const cUnit& aggressor)
 {
 	const int range = aggressor.getStaticUnitData().muzzleType == eMuzzleType::RocketCluster ? 2 : 0;
@@ -206,6 +207,7 @@ void cAttackJob::lockTarget (const cMap& map, const cUnit& aggressor)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cAttackJob::releaseTargets (const cModel& model)
 {
 	// unlock targets in case they were locked at the beginning of the attack, but are not hit by the impact
@@ -223,6 +225,7 @@ void cAttackJob::releaseTargets (const cModel& model)
 	lockedTargets.clear();
 }
 
+//------------------------------------------------------------------------------
 void cAttackJob::fire (cModel& model)
 {
 	auto* aggressor = model.getUnitFromID (aggressorId);
@@ -259,6 +262,7 @@ void cAttackJob::fire (cModel& model)
 	}
 }
 
+//------------------------------------------------------------------------------
 std::unique_ptr<cFx> cAttackJob::createMuzzleFx (const cUnit& aggressor)
 {
 	//TODO: this shouldn't be in the attackjob class.
@@ -357,6 +361,7 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx (const cUnit& aggressor)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cAttackJob::impact (cModel& model)
 {
 	auto* aggressor = model.getUnitFromID (aggressorId);
@@ -368,6 +373,7 @@ void cAttackJob::impact (cModel& model)
 		impactSingle (targetPosition, aggressor->data.getDamage(), model);
 }
 
+//------------------------------------------------------------------------------
 void cAttackJob::impactCluster (cModel& model)
 {
 	std::vector<cUnit*> targets;
@@ -400,6 +406,7 @@ void cAttackJob::impactCluster (cModel& model)
 	impactSingle (targetPosition + cPosition (0, +2), clusterDamage, model, &targets);
 }
 
+//------------------------------------------------------------------------------
 void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cModel& model, std::vector<cUnit*>* avoidTargets)
 {
 	const cMap& map = *model.getMap();

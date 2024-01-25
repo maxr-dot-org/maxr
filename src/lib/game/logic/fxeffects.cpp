@@ -28,37 +28,45 @@
 #include "utility/listhelpers.h"
 #include "utility/random.h"
 
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFx::cFx (bool bottom_, const cPosition& position_) :
 	position (position_),
 	bottom (bottom_)
 {}
 
+//------------------------------------------------------------------------------
 bool cFx::isFinished() const
 {
 	return tick >= length;
 }
 
+//------------------------------------------------------------------------------
 void cFx::run()
 {
 	tick++;
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cFxContainer::push_back (std::shared_ptr<cFx> fx)
 {
 	fxs.push_back (std::move (fx));
 }
 
+//------------------------------------------------------------------------------
 void cFxContainer::push_front (std::shared_ptr<cFx> fx)
 {
 	fxs.insert (fxs.begin(), std::move (fx));
 }
 
+//------------------------------------------------------------------------------
 size_t cFxContainer::size() const
 {
 	return fxs.size();
 }
 
+//------------------------------------------------------------------------------
 void cFxContainer::run()
 {
 	for (auto& fx : fxs)
@@ -69,12 +77,14 @@ void cFxContainer::run()
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxMuzzle::cFxMuzzle (const cPosition& position_, int dir_, sID id_) :
 	cFx (false, position_),
 	dir (dir_),
 	id (id_)
 {}
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cFxMuzzleBig::cFxMuzzleBig (const cPosition& position_, int dir_, sID id_) :
 	cFxMuzzle (position_, dir_, id_)
@@ -83,12 +93,14 @@ cFxMuzzleBig::cFxMuzzleBig (const cPosition& position_, int dir_, sID id_) :
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxMuzzleMed::cFxMuzzleMed (const cPosition& position_, int dir_, sID id_) :
 	cFxMuzzle (position_, dir_, id_)
 {
 	length = 6;
 }
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cFxMuzzleMedLong::cFxMuzzleMedLong (const cPosition& position_, int dir_, sID id_) :
 	cFxMuzzle (position_, dir_, id_)
@@ -97,6 +109,7 @@ cFxMuzzleMedLong::cFxMuzzleMedLong (const cPosition& position_, int dir_, sID id
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxMuzzleSmall::cFxMuzzleSmall (const cPosition& position_, int dir_, sID id_) :
 	cFxMuzzle (position_, dir_, id_)
 {
@@ -104,11 +117,13 @@ cFxMuzzleSmall::cFxMuzzleSmall (const cPosition& position_, int dir_, sID id_) :
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxExplo::cFxExplo (const cPosition& position_, int frames_) :
 	cFx (false, position_),
 	frames (frames_)
 {}
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cFxExploSmall::cFxExploSmall (const cPosition& position_) :
 	cFxExplo (position_, 14)
@@ -116,6 +131,7 @@ cFxExploSmall::cFxExploSmall (const cPosition& position_) :
 	length = 140;
 }
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cFxExploBig::cFxExploBig (const cPosition& position_, bool onWater_) :
 	cFxExplo (position_, 28),
@@ -125,6 +141,7 @@ cFxExploBig::cFxExploBig (const cPosition& position_, bool onWater_) :
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxExploAir::cFxExploAir (const cPosition& position_) :
 	cFxExplo (position_, 14)
 {
@@ -132,12 +149,14 @@ cFxExploAir::cFxExploAir (const cPosition& position_) :
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxExploWater::cFxExploWater (const cPosition& position_) :
 	cFxExplo (position_, 14)
 {
 	length = 140;
 }
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cFxHit::cFxHit (const cPosition& position_, bool targetHit_, bool big_) :
 	cFxExplo (position_, 5),
@@ -148,12 +167,14 @@ cFxHit::cFxHit (const cPosition& position_, bool targetHit_, bool big_) :
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxAbsorb::cFxAbsorb (const cPosition& position_) :
 	cFxExplo (position_, 10)
 {
 	length = 100;
 }
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cFxFade::cFxFade (const cPosition& position_, bool bottom, int start, int end) :
 	cFx (bottom, position_),
@@ -162,12 +183,14 @@ cFxFade::cFxFade (const cPosition& position_, bool bottom, int start, int end) :
 {}
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxSmoke::cFxSmoke (const cPosition& position_, bool bottom) :
 	cFxFade (position_, bottom, 100, 0)
 {
 	length = 50;
 }
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cFxCorpse::cFxCorpse (const cPosition& position_) :
 	cFxFade (position_, true, 255, 0)
@@ -176,6 +199,7 @@ cFxCorpse::cFxCorpse (const cPosition& position_) :
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxTracks::cFxTracks (const cPosition& position_, int dir_) :
 	cFx (true, position_),
 	dir (dir_)
@@ -183,6 +207,7 @@ cFxTracks::cFxTracks (const cPosition& position_, int dir_) :
 	length = 1024;
 }
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cFxRocket::cFxRocket (const cPosition& startPosition_, const cPosition& endPosition_, int dir_, bool bottom, sID id_) :
 	cFx (bottom, startPosition_),
@@ -195,6 +220,7 @@ cFxRocket::cFxRocket (const cPosition& startPosition_, const cPosition& endPosit
 	length = distance / speed;
 }
 
+//------------------------------------------------------------------------------
 void cFxRocket::run()
 {
 	//run smoke effect
@@ -215,11 +241,14 @@ void cFxRocket::run()
 	position = startPosition + (endPosition - startPosition) * speed * tick / distance;
 }
 
+//------------------------------------------------------------------------------
 bool cFxRocket::isFinished() const
 {
 	return tick >= length && subEffects.empty();
 }
 
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxDarkSmoke::cFxDarkSmoke (const cPosition& position_, int alpha, float windDir) :
 	cFx (false, position_),
 	alphaStart (alpha)

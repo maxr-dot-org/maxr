@@ -35,6 +35,7 @@ cCheckBox::cCheckBox (const cPosition& position, eCheckBoxType type_, bool cente
 {
 }
 
+//------------------------------------------------------------------------------
 cCheckBox::cCheckBox (const cPosition& position, const std::string& text_, eUnicodeFontType fontType_, eCheckBoxTextAnchor textAnchor_, eCheckBoxType type_, bool centered, cSoundChunk* clickSound_) :
 	cClickableWidget (position),
 	type (type_),

@@ -25,6 +25,7 @@
 #include <cassert>
 #include <memory>
 
+//------------------------------------------------------------------------------
 bool IMapUploadMessageHandler::handleMessage (const cMultiplayerLobbyMessage& message)
 {
 	if (message.playerNr == -1) { return false; } // each player should do individual request

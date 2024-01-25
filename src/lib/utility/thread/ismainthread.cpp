@@ -21,6 +21,7 @@
 
 #include <SDL_thread.h>
 
+//------------------------------------------------------------------------------
 /**
  * Return if it is the main thread.
  * @note: should be called by main once by the main thread to initialize.

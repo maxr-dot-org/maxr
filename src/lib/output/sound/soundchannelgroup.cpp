@@ -25,16 +25,16 @@
 #include <SDL_mixer.h>
 #include <cassert>
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundChannelGroup::cSoundChannelGroup (int sdlGroupTag_) :
 	sdlGroupTag (sdlGroupTag_)
 {}
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundChannelGroup::~cSoundChannelGroup()
 {}
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannelGroup::addChannel (int channelIndex)
 {
 	Mix_GroupChannel (channelIndex, sdlGroupTag);
@@ -42,7 +42,7 @@ void cSoundChannelGroup::addChannel (int channelIndex)
 	soundChannels.insert (std::make_unique<cSoundChannel> (channelIndex));
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannelGroup::addChannelRange (int first, int last)
 {
 	Mix_GroupChannels (first, last, sdlGroupTag);
@@ -53,7 +53,7 @@ void cSoundChannelGroup::addChannelRange (int first, int last)
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundChannel& cSoundChannelGroup::getFreeChannel (bool haltIfNotAvailable)
 {
 	int channel = Mix_GroupAvailable (sdlGroupTag);
@@ -80,7 +80,7 @@ cSoundChannel& cSoundChannelGroup::getFreeChannel (bool haltIfNotAvailable)
 	return **iter;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannelGroup::setVolume (int volume)
 {
 	for (const auto& soundChannel : soundChannels)
@@ -89,19 +89,19 @@ void cSoundChannelGroup::setVolume (int volume)
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundChannelGroup::sChannelLess::operator() (const std::unique_ptr<cSoundChannel>& left, const std::unique_ptr<cSoundChannel>& right) const
 {
 	return left->getSdlChannelId() < right->getSdlChannelId();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundChannelGroup::sChannelLess::operator() (const std::unique_ptr<cSoundChannel>& left, int right) const
 {
 	return left->getSdlChannelId() < right;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundChannelGroup::sChannelLess::operator() (int left, const std::unique_ptr<cSoundChannel>& right) const
 {
 	return left < right->getSdlChannelId();

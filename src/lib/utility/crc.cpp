@@ -22,6 +22,7 @@
 #include <SDL_endian.h>
 #include <climits>
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (const char* data, size_t dataSize, uint32_t checksum)
 {
 	for (const char* i = data; i != data + dataSize; ++i)
@@ -32,78 +33,91 @@ uint32_t calcCheckSum (const char* data, size_t dataSize, uint32_t checksum)
 	return checksum;
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (bool data, uint32_t checksum)
 {
 	uint8_t x = static_cast<uint8_t> (data);
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (char data, uint32_t checksum)
 {
 	uint8_t x = static_cast<uint8_t> (data);
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (signed char data, uint32_t checksum)
 {
 	uint8_t x = static_cast<uint8_t> (data);
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (unsigned char data, uint32_t checksum)
 {
 	uint8_t x = static_cast<uint8_t> (data);
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (signed short data, uint32_t checksum)
 {
 	uint16_t x = SDL_SwapLE16 (static_cast<uint16_t> (data));
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (unsigned short data, uint32_t checksum)
 {
 	uint16_t x = SDL_SwapLE16 (static_cast<uint16_t> (data));
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (signed int data, uint32_t checksum)
 {
 	uint32_t x = SDL_SwapLE32 (static_cast<uint32_t> (data));
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (unsigned int data, uint32_t checksum)
 {
 	uint32_t x = SDL_SwapLE32 (static_cast<uint32_t> (data));
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (signed long data, uint32_t checksum)
 {
 	uint64_t x = SDL_SwapLE64 (static_cast<uint64_t> (data));
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (unsigned long data, uint32_t checksum)
 {
 	uint64_t x = SDL_SwapLE64 (static_cast<uint64_t> (data));
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (signed long long data, uint32_t checksum)
 {
 	uint64_t x = SDL_SwapLE64 (static_cast<uint64_t> (data));
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (unsigned long long data, uint32_t checksum)
 {
 	uint64_t x = SDL_SwapLE64 (static_cast<uint64_t> (data));
 	return calcCheckSum (reinterpret_cast<char*> (&x), sizeof (x), checksum);
 }
 
+//------------------------------------------------------------------------------
 template <typename T2, typename T1>
 uint32_t calcCheckSumGenericIEEE754 (T1 value, uint32_t checksum)
 {
@@ -156,16 +170,19 @@ uint32_t calcCheckSumGenericIEEE754 (T1 value, uint32_t checksum)
 	return calcCheckSum (T2 ((sign << (BITS - 1)) | (exp << (BITS - EXPBITS - 1)) | significand), checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (float data, uint32_t checksum)
 {
 	return calcCheckSumGenericIEEE754<int32_t> (data, checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (double data, uint32_t checksum)
 {
 	return calcCheckSumGenericIEEE754<int64_t> (data, checksum);
 }
 
+//------------------------------------------------------------------------------
 uint32_t calcCheckSum (const std::string& data, uint32_t checksum)
 {
 	return calcCheckSum (data.c_str(), data.length(), checksum);

@@ -22,7 +22,7 @@
 namespace
 {
 
-	//----------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	Uint32 timerCallback (Uint32 interval, void* arg)
 	{
 		static_cast<cAnimationTimer*> (arg)->increaseTimer();
@@ -31,7 +31,7 @@ namespace
 
 } // namespace
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cAnimationTimer::cAnimationTimer()
 {
 	timerId = SDL_AddTimer (sdlTimerInterval, timerCallback, this);
@@ -42,25 +42,25 @@ cAnimationTimer::cAnimationTimer()
 	nextTrigger400msTime = 400 / sdlTimerInterval;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cAnimationTimer::~cAnimationTimer()
 {
 	SDL_RemoveTimer (timerId);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cAnimationTimer::increaseTimer()
 {
 	++timerTime;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 unsigned long long cAnimationTimer::getAnimationTime() const
 {
 	return timerTime / (100 / sdlTimerInterval); // in 100ms steps
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cAnimationTimer::run()
 {
 	static const size_t maxCatchUp = 10;

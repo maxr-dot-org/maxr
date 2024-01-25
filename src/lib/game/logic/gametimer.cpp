@@ -30,12 +30,14 @@
 
 #include <SDL.h>
 
+//------------------------------------------------------------------------------
 Uint32 cGameTimer::gameTimerCallback (Uint32 interval, void* arg)
 {
 	reinterpret_cast<cGameTimer*> (arg)->timerCallback();
 	return interval;
 }
 
+//------------------------------------------------------------------------------
 cGameTimer::cGameTimer() :
 	mutex()
 {
@@ -44,17 +46,20 @@ cGameTimer::cGameTimer() :
 	timerID = 0;
 }
 
+//------------------------------------------------------------------------------
 cGameTimer::~cGameTimer()
 {
 	stop();
 }
 
+//------------------------------------------------------------------------------
 void cGameTimer::start()
 {
 	if (timerID == 0)
 		timerID = SDL_AddTimer (GAME_TICK_TIME, gameTimerCallback, this);
 }
 
+//------------------------------------------------------------------------------
 void cGameTimer::stop()
 {
 	if (timerID != 0)
@@ -64,6 +69,7 @@ void cGameTimer::stop()
 	eventCounter = 0;
 }
 
+//------------------------------------------------------------------------------
 void cGameTimer::timerCallback()
 {
 	// Obviously this is the only way, to increase the timer thread priority in SDL.
@@ -73,6 +79,7 @@ void cGameTimer::timerCallback()
 	pushEvent();
 }
 
+//------------------------------------------------------------------------------
 void cGameTimer::pushEvent()
 {
 	std::unique_lock<std::mutex> lock (mutex);
@@ -84,6 +91,7 @@ void cGameTimer::pushEvent()
 	}
 }
 
+//------------------------------------------------------------------------------
 bool cGameTimer::popEvent()
 {
 	std::unique_lock<std::mutex> lock (mutex);
@@ -99,6 +107,7 @@ bool cGameTimer::popEvent()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cGameTimerServer::setPlayerNumbers (const std::vector<std::shared_ptr<cPlayer>>& playerList)
 {
 	for (const auto& p : playerList)
@@ -108,6 +117,7 @@ void cGameTimerServer::setPlayerNumbers (const std::vector<std::shared_ptr<cPlay
 	}
 }
 
+//------------------------------------------------------------------------------
 void cGameTimerServer::handleSyncMessage (const cNetMessageSyncClient& message, unsigned int gameTime)
 {
 	//Note: this function handles incoming data from network. Make every possible sanity check!
@@ -139,6 +149,7 @@ void cGameTimerServer::handleSyncMessage (const cNetMessageSyncClient& message, 
 	debugData.ping = (1 - filter) * debugData.ping + filter * 10 * (gameTime - message.gameTime);
 }
 
+//------------------------------------------------------------------------------
 void cGameTimerServer::checkPlayersResponding (const std::vector<std::shared_ptr<cPlayer>>& playerList, cServer& server)
 {
 	for (auto player : playerList)
@@ -157,6 +168,7 @@ void cGameTimerServer::checkPlayersResponding (const std::vector<std::shared_ptr
 	}
 }
 
+//------------------------------------------------------------------------------
 void cGameTimerServer::run (cModel& model, cServer& server)
 {
 	checkPlayersResponding (model.getPlayerList(), server);
@@ -180,12 +192,14 @@ void cGameTimerServer::run (cModel& model, cServer& server)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cGameTimerClient::setReceivedTime (unsigned int time)
 {
 	std::unique_lock<std::mutex> lock (mutex);
 	receivedTime = time;
 }
 
+//------------------------------------------------------------------------------
 unsigned int cGameTimerClient::getReceivedTime()
 {
 	std::unique_lock<std::mutex> lock (mutex);
@@ -193,6 +207,7 @@ unsigned int cGameTimerClient::getReceivedTime()
 	return receivedTime;
 }
 
+//------------------------------------------------------------------------------
 void cGameTimerClient::handleSyncMessage (const cNetMessageSyncServer& message, unsigned int gameTime)
 {
 	remoteChecksum = message.checksum;
@@ -204,6 +219,7 @@ void cGameTimerClient::handleSyncMessage (const cNetMessageSyncServer& message, 
 	syncMessageReceived = true;
 }
 
+//------------------------------------------------------------------------------
 void cGameTimerClient::checkServerResponding (cClient& client)
 {
 	const auto& freezeModes = client.getFreezeModes();
@@ -225,6 +241,7 @@ void cGameTimerClient::checkServerResponding (cClient& client)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cGameTimerClient::run (cClient& client, cModel& model)
 {
 	// maximum time before GUI update
@@ -275,6 +292,7 @@ void cGameTimerClient::run (cClient& client, cModel& model)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cGameTimerClient::sendSyncMessage (const cClient& client, unsigned int gameTime, unsigned int ticksPerFrame, unsigned int timeBuffer)
 {
 	client.sendSyncMessage (gameTime, localChecksum == remoteChecksum, timeBuffer, ticksPerFrame, eventCounter);

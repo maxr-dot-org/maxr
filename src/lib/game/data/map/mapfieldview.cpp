@@ -25,6 +25,7 @@
 
 namespace
 {
+	//--------------------------------------------------------------------------
 	auto makeFilterUnitSeenByPlayer (const cPlayer& player, const cMapField& mapField, const sTerrain& terrain)
 	{
 		return [&] (const cUnit* unit) { return player.canSeeUnit (*unit, mapField, terrain); };

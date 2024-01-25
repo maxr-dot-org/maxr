@@ -25,6 +25,7 @@
 
 #include <cassert>
 
+//------------------------------------------------------------------------------
 cGetInJob::cGetInJob (cVehicle& loadedVehicle, cUnit& loadingUnit) :
 	cJob (loadedVehicle),
 	loadingUnitId (loadingUnit.getId()),

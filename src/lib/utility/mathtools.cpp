@@ -21,7 +21,7 @@
 
 #include <cmath>
 
-// Round //////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 // Rounds a Number to 'iDecimalPlace' digits after the comma:
 float Round (float dValueToRound, unsigned int iDecimalPlace)
 {
@@ -34,6 +34,7 @@ float Round (float dValueToRound, unsigned int iDecimalPlace)
 	return dValueToRound;
 }
 
+//------------------------------------------------------------------------------
 int Round (float dValueToRound)
 {
 	return (int) Round (dValueToRound, 0);

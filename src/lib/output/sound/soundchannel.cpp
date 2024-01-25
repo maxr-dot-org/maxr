@@ -26,13 +26,13 @@
 
 cSignal<void (int), std::recursive_mutex> cSoundChannel::channelFinished;
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannel::channelFinishedCallback (int channel)
 {
 	channelFinished (channel);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundChannel::cSoundChannel (int sdlChannelId_) :
 	sdlChannelId (sdlChannelId_)
 {
@@ -47,7 +47,7 @@ cSoundChannel::cSoundChannel (int sdlChannelId_) :
 	volume = Mix_Volume (sdlChannelId, -1);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannel::play (const cSoundChunk& chunk, bool loop)
 {
 	if (chunk.getSdlSound() == nullptr) return;
@@ -66,7 +66,7 @@ void cSoundChannel::play (const cSoundChunk& chunk, bool loop)
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannel::pause()
 {
 	Mix_Pause (sdlChannelId);
@@ -74,7 +74,7 @@ void cSoundChannel::pause()
 	paused();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannel::resume()
 {
 	Mix_Resume (sdlChannelId);
@@ -82,45 +82,45 @@ void cSoundChannel::resume()
 	resumed();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannel::stop()
 {
 	Mix_HaltChannel (sdlChannelId);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannel::mute()
 {
 	Mix_Volume (sdlChannelId, 0);
 	muted = true;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannel::unmute()
 {
 	Mix_Volume (sdlChannelId, volume);
 	muted = false;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundChannel::isPlaying() const
 {
 	return Mix_Playing (sdlChannelId) != 0;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundChannel::isPlaying (const cSoundChunk& chunk) const
 {
 	return isPlaying() && Mix_GetChunk (sdlChannelId) == chunk.getSdlSound();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundChannel::isPaused() const
 {
 	return Mix_Paused (sdlChannelId) != 0;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannel::setVolume (int volume_)
 {
 	volume = volume_;
@@ -130,19 +130,19 @@ void cSoundChannel::setVolume (int volume_)
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannel::setPanning (unsigned char left, unsigned char right)
 {
 	Mix_SetPanning (sdlChannelId, left, right);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannel::setDistance (unsigned char distance)
 {
 	Mix_SetDistance (sdlChannelId, distance);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChannel::setPosition (short angle, unsigned char distance)
 {
 	Mix_SetPosition (sdlChannelId, angle, distance);

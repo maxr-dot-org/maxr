@@ -35,12 +35,14 @@ public:
 	cBufferedFile() = default;
 	~cBufferedFile() { close(); }
 
+	//--------------------------------------------------------------------------
 	bool open (const std::filesystem::path& filename, const char* mode)
 	{
 		this->file = SDL_RWFromFile (filename.u8string().c_str(), mode);
 		return this->file != nullptr;
 	}
 
+	//--------------------------------------------------------------------------
 	void close()
 	{
 		if (this->file != nullptr)
@@ -50,12 +52,14 @@ public:
 		}
 	}
 
+	//--------------------------------------------------------------------------
 	void seek (int pos, int from)
 	{
 		SDL_RWseek (file, pos, from);
 		start = end = 0;
 	}
 
+	//--------------------------------------------------------------------------
 	void read (void* vbuffer, unsigned int size, unsigned int count)
 	{
 		char* buffer = reinterpret_cast<char*> (vbuffer);
@@ -73,6 +77,7 @@ public:
 		}
 	}
 
+	//--------------------------------------------------------------------------
 	Uint16 readLE16()
 	{
 		Uint16 res;
@@ -83,6 +88,7 @@ public:
 	}
 
 private:
+	//--------------------------------------------------------------------------
 	void fillBufferIfNeeded()
 	{
 		if (start == end)
@@ -100,6 +106,7 @@ private:
 	unsigned int end = 0;
 };
 
+//------------------------------------------------------------------------------
 UniqueSurface LoadPCX (const std::filesystem::path& name)
 {
 	// Open the file.

@@ -90,7 +90,7 @@ void cUnit::setOwner (cPlayer* owner_)
 	if (owner != owner_) ownerChanged();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::storeVehicle (cVehicle& vehicle, cMap& map)
 {
 	map.deleteVehicle (vehicle);

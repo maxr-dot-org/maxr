@@ -67,7 +67,8 @@ namespace
 				return GraphicsData.gfx_vertical_bar_slim_gold.get();
 		}
 	}
-	//------------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------------
 	SDL_Surface* getResourceBarSurface (eOrientationType orientation, eResourceBarType type)
 	{
 		switch (orientation)

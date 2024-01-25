@@ -22,6 +22,7 @@
 #include "game/data/model.h"
 #include "game/logic/jobs/startbuildjob.h"
 
+//------------------------------------------------------------------------------
 cActionStartBuild::cActionStartBuild (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition) :
 	vehicleID (vehicle.getId()),
 	buildingTypeID (buildingTypeID),

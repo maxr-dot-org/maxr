@@ -244,6 +244,7 @@ void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRg
 	//SDL_UnlockSurface (&surface);
 }
 
+//------------------------------------------------------------------------------
 void blitClipped (SDL_Surface& source, const cBox<cPosition>& area, SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	auto clipedArea = area.intersection (clipRect);

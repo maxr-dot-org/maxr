@@ -22,6 +22,7 @@
 #include "output/video/video.h"
 #include "settings.h"
 
+//------------------------------------------------------------------------------
 sMapPreview loadMapPreview (const std::filesystem::path& mapFilename)
 {
 	auto mapPath = cSettings::getInstance().getMapsPath() / mapFilename;

@@ -21,6 +21,7 @@
 
 #include "game/data/model.h"
 
+//------------------------------------------------------------------------------
 cActionChangeBuildList::cActionChangeBuildList (const cBuilding& building, const std::vector<sID>& buildList, int buildSpeed, bool repeat) :
 	buildingId (building.getId()),
 	buildList (buildList),

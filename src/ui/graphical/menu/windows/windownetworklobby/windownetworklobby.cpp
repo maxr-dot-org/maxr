@@ -45,6 +45,7 @@
 #include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
 #include "utility/string/utf-8.h"
+
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),

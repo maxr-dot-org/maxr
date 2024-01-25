@@ -585,6 +585,7 @@ void cHud::handleZoomMinusClicked()
 	zoomSlider->increase ((zoomSlider->getMaxValue() - zoomSlider->getMinValue()) / 6);
 }
 
+//------------------------------------------------------------------------------
 void cHud::setUnitsData (std::shared_ptr<const cUnitsData> unitsData_)
 {
 	unitsData = unitsData_;

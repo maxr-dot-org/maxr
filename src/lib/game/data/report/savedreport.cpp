@@ -41,6 +41,7 @@
 
 #include <cassert>
 
+//------------------------------------------------------------------------------
 template <typename Archive>
 std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (Archive& archive)
 {

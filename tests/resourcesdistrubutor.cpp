@@ -157,23 +157,22 @@ namespace
 			CHECK (orderedExpected == computeProduction (buildings));
 		} while (std::next_permutation (std::begin (indexes), std::end (indexes)));
 	}
-
-	//--------------------------------------------------------------------------
-	TEST_CASE ("TwoResConflict")
-	{
-		const sMiningResource expected{16, 16, 0};
-		std::vector<sMine> mines{sMine{16, 8, 0}, sMine{10, 10, 0}};
-
-		CheckAnyResOrder (expected, mines);
-	}
-
-	//--------------------------------------------------------------------------
-	TEST_CASE ("ThreeResConflict")
-	{
-		const sMiningResource expected{16, 12, 4};
-		std::vector<sMine> mines{sMine{16, 8, 0}, sMine{8, 8, 0}, sMine{{0, 4, 4}, 4}};
-
-		CheckAnyResOrder (expected, mines);
-	}
-
 } // namespace
+
+//------------------------------------------------------------------------------
+TEST_CASE ("TwoResConflict")
+{
+	const sMiningResource expected{16, 16, 0};
+	std::vector<sMine> mines{sMine{16, 8, 0}, sMine{10, 10, 0}};
+
+	CheckAnyResOrder (expected, mines);
+}
+
+//------------------------------------------------------------------------------
+TEST_CASE ("ThreeResConflict")
+{
+	const sMiningResource expected{16, 12, 4};
+	std::vector<sMine> mines{sMine{16, 8, 0}, sMine{8, 8, 0}, sMine{{0, 4, 4}, 4}};
+
+	CheckAnyResOrder (expected, mines);
+}

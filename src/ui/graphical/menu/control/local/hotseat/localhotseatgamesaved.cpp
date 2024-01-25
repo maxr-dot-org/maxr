@@ -62,6 +62,7 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	signalConnectionManager.connect (gameGuiController->terminated, [this]() { exit(); });
 }
 
+//------------------------------------------------------------------------------
 void cLocalHotSeatGameSaved::setSaveGameNumber (int saveGameNumber_)
 {
 	saveGameNumber = saveGameNumber_;

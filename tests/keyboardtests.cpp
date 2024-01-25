@@ -22,25 +22,20 @@
 
 #include <3rd/doctest/doctest.h>
 
-namespace
+//------------------------------------------------------------------------------
+TEST_CASE ("Parsing KeyCombination")
 {
+	CHECK (cKeyCombination (SDLK_a) == cKeyCombination ("a"));
+	CHECK (cKeyCombination (eKeyModifierType::Ctrl, SDLK_a) == cKeyCombination ("Ctrl+a"));
+	CHECK (cKeyCombination (eKeyModifierType::Ctrl, SDLK_PLUS) == cKeyCombination ("Ctrl+PLUS"));
+	CHECK (cKeyCombination (KeyModifierFlags (eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_COMMA) == cKeyCombination ("Alt+Ctrl+Comma"));
+}
 
-	//--------------------------------------------------------------------------
-	TEST_CASE ("Parsing KeyCombination")
-	{
-		CHECK (cKeyCombination (SDLK_a) == cKeyCombination ("a"));
-		CHECK (cKeyCombination (eKeyModifierType::Ctrl, SDLK_a) == cKeyCombination ("Ctrl+a"));
-		CHECK (cKeyCombination (eKeyModifierType::Ctrl, SDLK_PLUS) == cKeyCombination ("Ctrl+PLUS"));
-		CHECK (cKeyCombination (KeyModifierFlags(eKeyModifierType::Ctrl) | eKeyModifierType::Alt, SDLK_COMMA) == cKeyCombination ("Alt+Ctrl+Comma"));
-	}
-
-	//--------------------------------------------------------------------------
-	TEST_CASE ("Parsing KeySequence")
-	{
-		CHECK (cKeySequence (cKeyCombination ("a"), cKeyCombination ("b")) == cKeySequence ("a,b"));
-		CHECK (cKeySequence (cKeyCombination ("a"), cKeyCombination ("b"), cKeyCombination ("c")) == cKeySequence ("a,b,c"));
-		CHECK (cKeySequence (cKeyCombination ("PLUS"), cKeyCombination ("COMMA")) == cKeySequence ("PLUS,COMMA"));
-		CHECK (cKeySequence (cKeyCombination ("Ctrl+a"), cKeyCombination ("Shift+b")) == cKeySequence ("Ctrl+a,Shift+b"));
-	}
-
-} // namespace
+//------------------------------------------------------------------------------
+TEST_CASE ("Parsing KeySequence")
+{
+	CHECK (cKeySequence (cKeyCombination ("a"), cKeyCombination ("b")) == cKeySequence ("a,b"));
+	CHECK (cKeySequence (cKeyCombination ("a"), cKeyCombination ("b"), cKeyCombination ("c")) == cKeySequence ("a,b,c"));
+	CHECK (cKeySequence (cKeyCombination ("PLUS"), cKeyCombination ("COMMA")) == cKeySequence ("PLUS,COMMA"));
+	CHECK (cKeySequence (cKeyCombination ("Ctrl+a"), cKeyCombination ("Shift+b")) == cKeySequence ("Ctrl+a,Shift+b"));
+}

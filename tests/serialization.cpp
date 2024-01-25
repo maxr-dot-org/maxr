@@ -188,81 +188,80 @@ namespace
 	const std::map<int, std::string> m{{1, "I"}, {2, "II"}, {5, "V"}};
 	const std::variant<int, std::string> var1 = 42;
 	const std::variant<int, std::string> var2 = "s";
-
-	//--------------------------------------------------------------------------
-	TEST_CASE ("BinarySerializationNvp")
-	{
-		checkBinarySaveLoadNvp (n);
-		checkBinarySaveLoadNvp (f);
-		checkBinarySaveLoadNvp (d);
-		checkBinarySaveLoadNvp (s);
-		checkBinarySaveLoadNvp (path);
-		checkBinarySaveLoadNvp (v);
-		checkBinarySaveLoadNvp (a);
-		checkBinarySaveLoadNvp (p);
-		checkBinarySaveLoadNvp (empty);
-		checkBinarySaveLoadNvp (o);
-		checkBinarySaveLoadNvp (m);
-		checkBinarySaveLoadNvp (list);
-		checkBinarySaveLoadNvp (var1);
-		checkBinarySaveLoadNvp (var2);
-	}
-
-	//--------------------------------------------------------------------------
-	TEST_CASE ("BinarySerialization")
-	{
-		checkBinarySaveLoad (n);
-		checkBinarySaveLoad (f);
-		checkBinarySaveLoad (d);
-		checkBinarySaveLoad (s);
-		checkBinarySaveLoad (path);
-		checkBinarySaveLoad (v);
-		checkBinarySaveLoad (a);
-		checkBinarySaveLoad (p);
-		checkBinarySaveLoad (empty);
-		checkBinarySaveLoad (o);
-		checkBinarySaveLoad (m);
-		checkBinarySaveLoad (list);
-		checkBinarySaveLoadNvp (var1);
-		checkBinarySaveLoadNvp (var2);
-	}
-
-	//--------------------------------------------------------------------------
-	TEST_CASE ("JsonSerializationNvp")
-	{
-		checkJsonSaveLoadNvp (n);
-		checkJsonSaveLoadNvp (f);
-		checkJsonSaveLoadNvp (d);
-		checkJsonSaveLoadNvp (s);
-		checkJsonSaveLoadNvp (path);
-		checkJsonSaveLoadNvp (v);
-		checkJsonSaveLoadNvp (a);
-		checkJsonSaveLoadNvp (p);
-		checkJsonSaveLoadNvp (empty);
-		checkJsonSaveLoadNvp (o);
-		checkJsonSaveLoadNvp (m);
-		checkJsonSaveLoadNvp (list);
-		checkBinarySaveLoadNvp (var1);
-		checkBinarySaveLoadNvp (var2);
-	}
-
-	//--------------------------------------------------------------------------
-	TEST_CASE ("JsonSerialization")
-	{
-		checkJsonSaveLoad (n);
-		checkJsonSaveLoad (f);
-		checkJsonSaveLoad (d);
-		checkJsonSaveLoad (s);
-		checkJsonSaveLoad (path);
-		checkJsonSaveLoad (v);
-		checkJsonSaveLoad (a);
-		checkJsonSaveLoad (p);
-		checkJsonSaveLoad (empty);
-		checkJsonSaveLoad (o);
-		checkJsonSaveLoad (m);
-		checkJsonSaveLoad (list);
-		checkBinarySaveLoadNvp (var1);
-		checkBinarySaveLoadNvp (var2);
-	}
-
 } // namespace
+
+//------------------------------------------------------------------------------
+TEST_CASE ("BinarySerializationNvp")
+{
+	checkBinarySaveLoadNvp (n);
+	checkBinarySaveLoadNvp (f);
+	checkBinarySaveLoadNvp (d);
+	checkBinarySaveLoadNvp (s);
+	checkBinarySaveLoadNvp (path);
+	checkBinarySaveLoadNvp (v);
+	checkBinarySaveLoadNvp (a);
+	checkBinarySaveLoadNvp (p);
+	checkBinarySaveLoadNvp (empty);
+	checkBinarySaveLoadNvp (o);
+	checkBinarySaveLoadNvp (m);
+	checkBinarySaveLoadNvp (list);
+	checkBinarySaveLoadNvp (var1);
+	checkBinarySaveLoadNvp (var2);
+}
+
+//------------------------------------------------------------------------------
+TEST_CASE ("BinarySerialization")
+{
+	checkBinarySaveLoad (n);
+	checkBinarySaveLoad (f);
+	checkBinarySaveLoad (d);
+	checkBinarySaveLoad (s);
+	checkBinarySaveLoad (path);
+	checkBinarySaveLoad (v);
+	checkBinarySaveLoad (a);
+	checkBinarySaveLoad (p);
+	checkBinarySaveLoad (empty);
+	checkBinarySaveLoad (o);
+	checkBinarySaveLoad (m);
+	checkBinarySaveLoad (list);
+	checkBinarySaveLoadNvp (var1);
+	checkBinarySaveLoadNvp (var2);
+}
+
+//------------------------------------------------------------------------------
+TEST_CASE ("JsonSerializationNvp")
+{
+	checkJsonSaveLoadNvp (n);
+	checkJsonSaveLoadNvp (f);
+	checkJsonSaveLoadNvp (d);
+	checkJsonSaveLoadNvp (s);
+	checkJsonSaveLoadNvp (path);
+	checkJsonSaveLoadNvp (v);
+	checkJsonSaveLoadNvp (a);
+	checkJsonSaveLoadNvp (p);
+	checkJsonSaveLoadNvp (empty);
+	checkJsonSaveLoadNvp (o);
+	checkJsonSaveLoadNvp (m);
+	checkJsonSaveLoadNvp (list);
+	checkBinarySaveLoadNvp (var1);
+	checkBinarySaveLoadNvp (var2);
+}
+
+//------------------------------------------------------------------------------
+TEST_CASE ("JsonSerialization")
+{
+	checkJsonSaveLoad (n);
+	checkJsonSaveLoad (f);
+	checkJsonSaveLoad (d);
+	checkJsonSaveLoad (s);
+	checkJsonSaveLoad (path);
+	checkJsonSaveLoad (v);
+	checkJsonSaveLoad (a);
+	checkJsonSaveLoad (p);
+	checkJsonSaveLoad (empty);
+	checkJsonSaveLoad (o);
+	checkJsonSaveLoad (m);
+	checkJsonSaveLoad (list);
+	checkBinarySaveLoadNvp (var1);
+	checkBinarySaveLoadNvp (var2);
+}

@@ -26,6 +26,7 @@
 static constexpr const std::size_t charWidth = 2;
 static constexpr const std::size_t charHeight = 2;
 
+//------------------------------------------------------------------------------
 template <typename... Args>
 cUnicodeFont::cUnicodeFont (cUnitTestTag, Args...)
 {
@@ -40,6 +41,7 @@ cUnicodeFont::cUnicodeFont (cUnitTestTag, Args...)
 
 namespace
 {
+	//--------------------------------------------------------------------------
 	std::string concatenateLines (const std::vector<std::string>& lines, const char* newLine = "\n")
 	{
 		const char* sep = "";
@@ -54,6 +56,7 @@ namespace
 		return res;
 	}
 
+	//--------------------------------------------------------------------------
 	void TestBreakLine (const std::vector<std::string> expected)
 	{
 		const auto font = std::make_unique<cUnicodeFont> (cUnitTestTag{});
@@ -70,20 +73,29 @@ namespace
 		}
 #endif
 	}
+} // namespace
 
-	TEST_CASE ("BreakText_newline_simple")
-	{
-		TestBreakLine ({"a", "b", "c", "d"});
-	}
-	TEST_CASE ("BreakText_newline_prefix")
-	{
-		TestBreakLine ({" a", " b", " c", " d"});
-	}
-	TEST_CASE ("BreakText_newline_emptyline")
-	{
-		TestBreakLine ({"a", "", "c", ""});
-	}
+//------------------------------------------------------------------------------
+TEST_CASE ("BreakText_newline_simple")
+{
+	TestBreakLine ({"a", "b", "c", "d"});
+}
 
+//------------------------------------------------------------------------------
+TEST_CASE ("BreakText_newline_prefix")
+{
+	TestBreakLine ({" a", " b", " c", " d"});
+}
+
+//------------------------------------------------------------------------------
+TEST_CASE ("BreakText_newline_emptyline")
+{
+	TestBreakLine ({"a", "", "c", ""});
+}
+
+namespace
+{
+	//--------------------------------------------------------------------------
 	void TestBreakSpace (const std::string& expected, const std::string& text, std::size_t nbPixels)
 	{
 		const auto font = std::make_unique<cUnicodeFont> (cUnitTestTag{});
@@ -92,22 +104,28 @@ namespace
 
 		CHECK (expected == concatenateLines (res, "|"));
 	}
-
-	TEST_CASE ("BreakText_space_smallword")
-	{
-		TestBreakSpace ("a|bb|c d|e", "a bb c d e", 3 * charWidth + 1);
-	}
-	TEST_CASE ("BreakText_space_longword")
-	{
-		TestBreakSpace ("aa|bbbb|ccc", "aa bbbb ccc", 2 * charWidth + 1);
-	}
-	TEST_CASE ("BreakText_space_manyspaces")
-	{
-		TestBreakSpace ("a|bb|cc|dd", "a     bb     cc   dd  ", 2 * charWidth + 1);
-	}
-
-	TEST_CASE ("BreakText_space_eolandspace")
-	{
-		TestBreakSpace ("a|bb|cc|dd", "a  \nbb\n     cc  dd", 2 * charWidth + 1);
-	}
 } // namespace
+
+//------------------------------------------------------------------------------
+TEST_CASE ("BreakText_space_smallword")
+{
+	TestBreakSpace ("a|bb|c d|e", "a bb c d e", 3 * charWidth + 1);
+}
+
+//------------------------------------------------------------------------------
+TEST_CASE ("BreakText_space_longword")
+{
+	TestBreakSpace ("aa|bbbb|ccc", "aa bbbb ccc", 2 * charWidth + 1);
+}
+
+//------------------------------------------------------------------------------
+TEST_CASE ("BreakText_space_manyspaces")
+{
+	TestBreakSpace ("a|bb|cc|dd", "a     bb     cc   dd  ", 2 * charWidth + 1);
+}
+
+//------------------------------------------------------------------------------
+TEST_CASE ("BreakText_space_eolandspace")
+{
+	TestBreakSpace ("a|bb|cc|dd", "a  \nbb\n     cc  dd", 2 * charWidth + 1);
+}

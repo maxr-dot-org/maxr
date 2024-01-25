@@ -34,9 +34,11 @@
 
 constexpr auto HANDSHAKE_TIMEOUT_MS = 3000;
 
+//------------------------------------------------------------------------------
 class cHandshakeTimeout
 {
 public:
+	//--------------------------------------------------------------------------
 	cHandshakeTimeout (const cSocket* socket, cConnectionManager* connectionManager) :
 		connectionManager (connectionManager),
 		socket (socket)
@@ -44,14 +46,17 @@ public:
 		timer = SDL_AddTimer (HANDSHAKE_TIMEOUT_MS, callback, this);
 	}
 
+	//--------------------------------------------------------------------------
 	~cHandshakeTimeout()
 	{
 		SDL_RemoveTimer (timer);
 	}
 
+	//--------------------------------------------------------------------------
 	const cSocket* getSocket() const { return socket; }
 
 private:
+	//--------------------------------------------------------------------------
 	static uint32_t callback (uint32_t intervall, void* arg)
 	{
 		cHandshakeTimeout* thisPtr = reinterpret_cast<cHandshakeTimeout*> (arg);

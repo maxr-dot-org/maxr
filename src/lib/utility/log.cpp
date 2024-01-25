@@ -28,6 +28,7 @@ cLog NetLog;
 
 namespace
 {
+	//--------------------------------------------------------------------------
 	std::string toString (const std::thread::id& id)
 	{
 		std::stringstream ss;

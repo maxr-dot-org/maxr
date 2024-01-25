@@ -21,6 +21,7 @@
 
 #include "crc.h"
 
+//------------------------------------------------------------------------------
 uint32_t cPosition::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum ((*this)[0], crc);

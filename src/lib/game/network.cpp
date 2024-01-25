@@ -34,7 +34,7 @@ namespace
 // cSocket implementation
 //------------------------------------------------------------------------
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSocket::cSocket (TCPsocket socket) :
 	sdlSocket (socket)
 {}
@@ -53,19 +53,19 @@ void cDataBuffer::reserve (std::uint32_t i)
 	}
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 unsigned char* cDataBuffer::getWritePointer()
 {
 	return data + length;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 uint32_t cDataBuffer::getFreeSpace() const
 {
 	return capacity - length;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cDataBuffer::deleteFront (uint32_t n)
 {
 	memmove (data, data + n, length - n);
@@ -76,6 +76,7 @@ void cDataBuffer::deleteFront (uint32_t n)
 // cNetwork implementation
 //------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
 cNetwork::cNetwork (cConnectionManager& connectionManager, std::recursive_mutex& mutex) :
 	tcpMutex (mutex),
 	socketSet (SDLNet_AllocSocketSet (MAX_TCP_CONNECTIONS)),
@@ -93,7 +94,7 @@ cNetwork::cNetwork (cConnectionManager& connectionManager, std::recursive_mutex&
 {
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cNetwork::~cNetwork()
 {
 	exit = true;
@@ -110,7 +111,7 @@ cNetwork::~cNetwork()
 	}
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cNetwork::openServer (int port)
 {
 	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
@@ -135,7 +136,7 @@ int cNetwork::openServer (int port)
 	return 0;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetwork::closeServer()
 {
 	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
@@ -146,7 +147,7 @@ void cNetwork::closeServer()
 	serverSocket = nullptr;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetwork::connectToServer (const sNetworkAddress& address)
 {
 	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
@@ -160,7 +161,7 @@ void cNetwork::connectToServer (const sNetworkAddress& address)
 	connectTo = address;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetwork::close (const cSocket& socket)
 {
 	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
@@ -178,7 +179,7 @@ void cNetwork::close (const cSocket& socket)
 	EraseIf (sockets, ByGetTo (&socket));
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cNetwork::sendMessage (const cSocket& socket, unsigned int length, const unsigned char* buffer)
 {
 	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
@@ -200,7 +201,7 @@ int cNetwork::sendMessage (const cSocket& socket, unsigned int length, const uns
 	return send (socket, buffer, length);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cNetwork::send (const cSocket& socket, const unsigned char* buffer, unsigned int length)
 {
 	const unsigned int bytesSent = SDLNet_TCP_Send (socket.sdlSocket, buffer, length);
@@ -216,7 +217,7 @@ int cNetwork::send (const cSocket& socket, const unsigned char* buffer, unsigned
 	return 0;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetwork::handleNetworkThread()
 {
 	while (!exit)
@@ -321,7 +322,7 @@ void cNetwork::handleNetworkThread()
 	}
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetwork::pushReadyMessages (cSocket& socket)
 {
 	//push all received messages
@@ -365,7 +366,7 @@ void cNetwork::pushReadyMessages (cSocket& socket)
 	socket.buffer.deleteFront (readPos);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetwork::cleanupClosedSockets()
 {
 	for (TCPsocket socket : closingSockets)

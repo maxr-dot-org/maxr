@@ -67,6 +67,7 @@ std::string getBuildVersion()
 	return sVersion;
 }
 
+//------------------------------------------------------------------------------
 /**
  * Writes a Logmessage on the SplashScreen
  * @param sTxt Text to write
@@ -76,6 +77,7 @@ static void ConsoleMakeLog (const std::string& sTxt, int, int)
 	std::cout << sTxt << std::endl;
 }
 
+//------------------------------------------------------------------------------
 /**
  * Writes a Logmessage on the SplashScreen
  * @param sTxt Text to write
@@ -127,6 +129,7 @@ void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 	}
 }
 
+//------------------------------------------------------------------------------
 static void LoadLanguage()
 {
 	lngPack.setLanguagesFolder (cSettings::getInstance().getLangPath());
@@ -139,6 +142,7 @@ static void LoadLanguage()
 	lngPack.setCurrentLanguage (cSettings::getInstance().getLanguage());
 }
 
+//------------------------------------------------------------------------------
 /**
  * Loads a graphic to the surface
  * @param dest Destination surface
@@ -172,6 +176,7 @@ static void createShadowGfx()
 	SDL_FillRect (GraphicsData.gfx_shadow.get(), nullptr, toSdlAlphaColor (cRgbColor::black(50), *GraphicsData.gfx_shadow));
 }
 
+//------------------------------------------------------------------------------
 /**
 * Copy part of surface to create a new one
 */
@@ -186,6 +191,7 @@ static UniqueSurface extractSurface (SDL_Surface& source, const SDL_Rect& rect)
 	return res;
 }
 
+//------------------------------------------------------------------------------
 /**
  * Loads all Graphics
  * @param path Directory of the graphics
@@ -296,7 +302,7 @@ static int LoadGraphics (const std::filesystem::path& directory)
 
 namespace
 {
-	//------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	struct sInitialDynamicUnitData
 	{
 		int ammoMax = 0;
@@ -309,6 +315,7 @@ namespace
 		int hitpointsMax = 0;
 		int scan = 0;
 
+		//----------------------------------------------------------------------
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
@@ -327,7 +334,7 @@ namespace
 		}
 	};
 
-	//------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	struct sInitialBuildingData
 	{
 		sID id;
@@ -338,6 +345,7 @@ namespace
 		sStaticBuildingData staticBuildingData;
 		sBuildingUIStaticData graphic;
 
+		//----------------------------------------------------------------------
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
@@ -355,7 +363,7 @@ namespace
 		}
 	};
 
-	//------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	struct sInitialVehicleData
 	{
 		sID id;
@@ -366,6 +374,7 @@ namespace
 		sStaticVehicleData staticVehicleData;
 		sVehicleUIStaticData graphic;
 
+		//----------------------------------------------------------------------
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
@@ -383,6 +392,8 @@ namespace
 		}
 	};
 } // namespace
+
+//------------------------------------------------------------------------------
 /**
  * Loads the unitdata from the data.json in the unitfolder
  * @param directory Unitdirectory, relative to the main game directory
@@ -404,6 +415,7 @@ static void LoadUnitData (sInitialBuildingData& buildingData, const std::filesys
 	in >> buildingData;
 }
 
+//------------------------------------------------------------------------------
 /**
  * Loads the unitdata from the data.json in the unitfolder
  * @param directory Unitdirectory, relative to the main game directory
@@ -471,6 +483,7 @@ static cStaticUnitData createStaticUnitData (const sID& id, const sStaticCommonU
 	return res;
 }
 
+//------------------------------------------------------------------------------
 /**
  * Loads a soundfile to the Mix_Chunk
  * @param dest Destination Mix_Chunk
@@ -499,6 +512,7 @@ static int LoadSoundfile (cSoundChunk& dest, const std::filesystem::path& filepa
 	return 1;
 }
 
+//------------------------------------------------------------------------------
 /**
  * Loads a unitsoundfile to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
  * @param dest Destination Mix_Chunk
@@ -915,9 +929,12 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	LoadUnitSoundfile (ui.Attack, sVehiclePath / "attack.ogg");
 	return true;
 }
+
+//------------------------------------------------------------------------------
 namespace
 {
 
+	//--------------------------------------------------------------------------
 	struct sUnitDirectory
 	{
 		int id;
@@ -925,6 +942,7 @@ namespace
 		int insertionIndex = ++currentIndex;
 		static int currentIndex;
 
+		//----------------------------------------------------------------------
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
@@ -953,11 +971,13 @@ namespace
 		std::sort (v.begin(), v.end(), [] (const auto& lhs, const auto& rhs) { return lhs.insertionIndex < rhs.insertionIndex; });
 	}
 
+	//--------------------------------------------------------------------------
 	struct sBuildingsList
 	{
 		sSpecialBuildingsId special;
 		std::vector<sUnitDirectory> buildings;
 
+		//----------------------------------------------------------------------
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
@@ -969,10 +989,12 @@ namespace
 		}
 	};
 
+	//--------------------------------------------------------------------------
 	struct sVehiclesList
 	{
 		std::vector<sUnitDirectory> vehicles;
 
+		//----------------------------------------------------------------------
 		template <typename Archive>
 		void serialize (Archive& archive)
 		{
@@ -984,6 +1006,8 @@ namespace
 	};
 
 } // namespace
+
+//------------------------------------------------------------------------------
 /**
  * Loads all Buildings
  * @return 1 on success
@@ -1077,6 +1101,7 @@ static int LoadBuildings (bool includingUiData)
 	return 1;
 }
 
+//------------------------------------------------------------------------------
 /**
  * Loads all Vehicles
  * @return 1 on success
@@ -1158,6 +1183,7 @@ static int LoadVehicles (bool includingUiData)
 	return 1;
 }
 
+//------------------------------------------------------------------------------
 /**
  * Loads the clan values and stores them in the cUnitData class
  * @return 1 on success
@@ -1186,6 +1212,7 @@ static int LoadClans()
 	return 1;
 }
 
+//------------------------------------------------------------------------------
 /**
  * Loads all Musicfiles
  * @param path Directory of the Vehicles
@@ -1250,7 +1277,7 @@ bool loadFonts()
 	return true;
 }
 
-// LoadData ///////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 // Loads all relevant files and data:
 eLoadingState LoadData (bool includingUiData)
 {
@@ -1401,6 +1428,7 @@ eLoadingState LoadData (bool includingUiData)
 	return eLoadingState::Finished;
 }
 
+//------------------------------------------------------------------------------
 /**
  * Loads a effectgraphic to the surface
  * @param dest Destination surface
@@ -1422,7 +1450,7 @@ static int LoadEffectGraphicToSurface (UniqueSurface (&dest)[2], const std::file
 	return 1;
 }
 
-// LoadEffectAlphacToSurface /////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 // Loads a effectgraphic as alpha to the surface:
 static int LoadEffectAlphaToSurface (UniqueSurface (&dest)[2], const std::filesystem::path& filepath, int alpha)
 {

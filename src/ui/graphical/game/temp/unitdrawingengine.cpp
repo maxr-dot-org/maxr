@@ -35,7 +35,7 @@
 #include "utility/listhelpers.h"
 #include "utility/random.h"
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<const cFrameCounter> frameCounter) :
 	animationTimer (std::move (animationTimer_)),
 	drawingCache (frameCounter),
@@ -44,31 +44,31 @@ cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animati
 	signalConnectionManager.connect (animationTimer->triggered100ms, [this]() { rotateBlinkColor(); });
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitDrawingEngine::setDrawHits (bool drawHits)
 {
 	shouldDrawHits = drawHits;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitDrawingEngine::setDrawStatus (bool drawStatus)
 {
 	shouldDrawStatus = drawStatus;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitDrawingEngine::setDrawAmmo (bool drawAmmo)
 {
 	shouldDrawAmmo = drawAmmo;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitDrawingEngine::setDrawColor (bool drawColor)
 {
 	shouldDrawColor = drawColor;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player, const std::vector<cResearch::eResearchArea>& currentTurnResearchAreasFinished)
 {
 	unsigned long long animationTime = animationTimer->getAnimationTime(); //call getAnimationTime only once in this method and save the result,
@@ -175,7 +175,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination, float zoomFactor, const cMapView& map, const cUnitSelection* unitSelection, const cPlayer* player)
 {
 	unsigned long long animationTime = animationTimer->getAnimationTime(); //call getAnimationTime only once in this method and save the result,
@@ -298,7 +298,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitDrawingEngine::drawHealthBar (const cUnit& unit, SDL_Rect destination)
 {
 	SDL_Rect r1;
@@ -334,7 +334,7 @@ void cUnitDrawingEngine::drawHealthBar (const cUnit& unit, SDL_Rect destination)
 	SDL_FillRect (cVideo::buffer, &r2, color);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitDrawingEngine::drawMunBar (const cUnit& unit, SDL_Rect destination)
 {
 	SDL_Rect r1;
@@ -365,7 +365,7 @@ void cUnitDrawingEngine::drawMunBar (const cUnit& unit, SDL_Rect destination)
 		SDL_FillRect (cVideo::buffer, &r2, 0xFFE60000);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 {
 	SDL_Rect dest;
@@ -414,7 +414,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitDrawingEngine::rotateBlinkColor()
 {
 	static bool dec = true;

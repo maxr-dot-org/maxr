@@ -34,6 +34,7 @@
 /* Size of a memory block while pathfinding */
 #define MEM_BLOCK_SIZE 10
 
+//------------------------------------------------------------------------------
 cPathDestHandler::cPathDestHandler (ePathDestinationType type_, const cPosition& destination_, const cVehicle* srcVehicle_, const cUnit* destUnit_) :
 	type (type_),
 	srcVehicle (srcVehicle_),
@@ -41,6 +42,7 @@ cPathDestHandler::cPathDestHandler (ePathDestinationType type_, const cPosition&
 	destination (destination_)
 {}
 
+//------------------------------------------------------------------------------
 bool cPathDestHandler::hasReachedDestination (const cPosition& position) const
 {
 	switch (type)
@@ -56,6 +58,7 @@ bool cPathDestHandler::hasReachedDestination (const cPosition& position) const
 	}
 }
 
+//------------------------------------------------------------------------------
 int cPathDestHandler::heuristicCost (const cPosition& source) const
 {
 	switch (type)
@@ -71,24 +74,28 @@ int cPathDestHandler::heuristicCost (const cPosition& source) const
 	}
 }
 
+//------------------------------------------------------------------------------
 cPathCalculator::cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, const std::vector<cVehicle*>* group)
 {
 	destHandler = std::make_unique<cPathDestHandler> (ePathDestinationType::Pos, destPosition, nullptr, nullptr);
 	init (Vehicle.getPosition(), Map, Vehicle, group);
 }
 
+//------------------------------------------------------------------------------
 cPathCalculator::cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cUnit& destUnit, bool load)
 {
 	destHandler = std::make_unique<cPathDestHandler> (load ? ePathDestinationType::Load : ePathDestinationType::Attack, cPosition (0, 0), &Vehicle, &destUnit);
 	init (Vehicle.getPosition(), Map, Vehicle, nullptr);
 }
 
+//------------------------------------------------------------------------------
 cPathCalculator::cPathCalculator (const cVehicle& Vehicle, const cMapView& Map, const cPosition& destPosition, bool attack)
 {
 	destHandler = std::make_unique<cPathDestHandler> (attack ? ePathDestinationType::Attack : ePathDestinationType::Pos, destPosition, &Vehicle, nullptr);
 	init (Vehicle.getPosition(), Map, Vehicle, nullptr);
 }
 
+//------------------------------------------------------------------------------
 void cPathCalculator::init (const cPosition& source, const cMapView& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group)
 {
 	this->source = source;
@@ -105,10 +112,12 @@ void cPathCalculator::init (const cPosition& source, const cMapView& Map, const 
 	heapCount = 0;
 }
 
+//------------------------------------------------------------------------------
 cPathCalculator::~cPathCalculator()
 {
 }
 
+//------------------------------------------------------------------------------
 std::forward_list<cPosition> cPathCalculator::calcPath()
 {
 	std::forward_list<cPosition> path;
@@ -164,6 +173,7 @@ std::forward_list<cPosition> cPathCalculator::calcPath()
 	return path;
 }
 
+//------------------------------------------------------------------------------
 void cPathCalculator::expandNodes (sPathNode* ParentNode)
 {
 	// add all nearby nodes
@@ -228,6 +238,7 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 	}
 }
 
+//------------------------------------------------------------------------------
 sPathNode* cPathCalculator::allocNode()
 {
 	// allocate new memory block if necessary
@@ -241,6 +252,7 @@ sPathNode* cPathCalculator::allocNode()
 	return &MemBlocks[blocknum - 1][blocksize];
 }
 
+//------------------------------------------------------------------------------
 void cPathCalculator::insertToHeap (sPathNode* Node, bool exists)
 {
 	int i = 0;
@@ -277,6 +289,7 @@ void cPathCalculator::insertToHeap (sPathNode* Node, bool exists)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cPathCalculator::deleteFirstFromHeap()
 {
 	// overwrite the first node by the last one

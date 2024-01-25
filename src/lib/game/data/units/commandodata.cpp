@@ -30,7 +30,7 @@
 #include <cstdint>
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Checks if the target is on a neighbor field and if it can be stolen or disabled */
 //------------------------------------------------------------------------------
 /*static*/ bool cCommandoData::canDoAction (const cVehicle& commando, const cPosition& position, const cMapView& map, bool steal)
@@ -49,6 +49,7 @@
 	return false;
 }
 
+//------------------------------------------------------------------------------
 /*static*/ bool cCommandoData::canDoAction (const cVehicle& commando, const cUnit* unit, bool steal)
 {
 	if (unit == nullptr) return false;

@@ -30,7 +30,7 @@
 
 namespace
 {
-	//------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	void render_beton (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, const cBuilding& building)
 	{
 		SDL_Rect tmp = dest;
@@ -58,7 +58,7 @@ namespace
 		}
 	}
 
-	//------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	void render_rubble (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, const cBuilding& building)
 	{
 		assert (building.isRubble());
@@ -384,12 +384,14 @@ void sBuildingUIData::drawConnectors (SDL_Surface& surface, SDL_Rect dest, float
 	}
 }
 
+//------------------------------------------------------------------------------
 void render (const cBuilding& building, unsigned long long animationTime, SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete)
 {
 	auto& uiData = UnitsUiData.getBuildingUI (building);
 	uiData.render (animationTime, surface, dest, zoomFactor, building, drawShadow, drawConcrete);
 }
 
+//------------------------------------------------------------------------------
 void render_simple (const cBuilding& building, SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, unsigned long long animationTime, int alpha)
 {
 	auto& uiData = UnitsUiData.getBuildingUI (building);

@@ -34,29 +34,29 @@
 
 #include <cmath>
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuildListItem::cBuildListItem()
 {}
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuildListItem::cBuildListItem (sID type_, int remainingMetal_) :
 	type (type_),
 	remainingMetal (remainingMetal_)
 {}
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuildListItem::cBuildListItem (const cBuildListItem& other) :
 	type (other.type),
 	remainingMetal (other.remainingMetal)
 {}
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuildListItem::cBuildListItem (cBuildListItem&& other) :
 	type (std::move (other.type)),
 	remainingMetal (std::move (other.remainingMetal))
 {}
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuildListItem& cBuildListItem::operator= (const cBuildListItem& other)
 {
 	type = other.type;
@@ -64,7 +64,7 @@ cBuildListItem& cBuildListItem::operator= (const cBuildListItem& other)
 	return *this;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuildListItem& cBuildListItem::operator= (cBuildListItem&& other)
 {
 	type = std::move (other.type);
@@ -72,13 +72,13 @@ cBuildListItem& cBuildListItem::operator= (cBuildListItem&& other)
 	return *this;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const sID& cBuildListItem::getType() const
 {
 	return type;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuildListItem::setType (const sID& type_)
 {
 	auto oldType = type;
@@ -86,20 +86,20 @@ void cBuildListItem::setType (const sID& type_)
 	if (type != oldType) typeChanged();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cBuildListItem::getRemainingMetal() const
 {
 	return remainingMetal;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuildListItem::setRemainingMetal (int value)
 {
 	std::swap (remainingMetal, value);
 	if (value != remainingMetal) remainingMetalChanged();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 uint32_t cBuildListItem::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (type, crc);
@@ -108,17 +108,17 @@ uint32_t cBuildListItem::getChecksum (uint32_t crc) const
 	return crc;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // cBuilding Implementation
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuilding::cBuilding (unsigned int ID) :
 	cBuilding (nullptr, nullptr, nullptr, ID)
 {
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData* data, cPlayer* owner, unsigned int ID) :
 	cUnit (data, staticData, owner, ID)
 {
@@ -146,14 +146,14 @@ cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData*
 	registerOwnerEvents();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuilding::~cBuilding()
 {
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Refreshs all data to the maximum values */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::refreshData()
 {
 	if (staticData && staticData->doesSelfRepair)
@@ -190,7 +190,7 @@ void cBuilding::connectFirstBuildListItem()
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::updateNeighbours (const cMap& map)
 {
 	if (!getOwner()) return;
@@ -215,9 +215,9 @@ void cBuilding::updateNeighbours (const cMap& map)
 	CheckNeighbours (map);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Checks, if there are neighbours */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::CheckNeighbours (const cMap& map)
 {
 	if (!getOwner()) return;
@@ -249,9 +249,9 @@ void cBuilding::CheckNeighbours (const cMap& map)
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** starts the building for the server thread */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::startWork()
 {
 	if (isUnitWorking())
@@ -281,9 +281,9 @@ void cBuilding::startWork()
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Stops the building's working */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::stopWork (bool forced)
 {
 	if (!isUnitWorking()) return;
@@ -302,6 +302,7 @@ void cBuilding::stopWork (bool forced)
 	}
 }
 
+//------------------------------------------------------------------------------
 bool cBuilding::canTransferTo (const cPosition& position, const cMapView& map) const
 {
 	const auto& field = map.getField (position);
@@ -321,7 +322,7 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapView& map) c
 	return false;
 }
 
-//------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cBuilding::canTransferTo (const cUnit& unit) const
 {
 	if (unit.getOwner() != getOwner())
@@ -356,7 +357,7 @@ bool cBuilding::canTransferTo (const cUnit& unit) const
 	return false;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& vehicleData) const
 {
 	if (!map.possiblePlaceVehicle (vehicleData, position, getOwner())) return false;
@@ -365,7 +366,7 @@ bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const cSt
 	return true;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cBuilding::canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& vehicleData) const
 {
 	if (!map.possiblePlaceVehicle (vehicleData, position)) return false;
@@ -374,7 +375,7 @@ bool cBuilding::canExitTo (const cPosition& position, const cMapView& map, const
 	return true;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cBuilding::canLoad (const cPosition& position, const cMapView& map, bool checkPosition) const
 {
 	if (map.isValidPosition (position) == false) return false;
@@ -385,9 +386,9 @@ bool cBuilding::canLoad (const cPosition& position, const cMapView& map, bool ch
 		return canLoad (map.getField (position).getVehicle(), checkPosition);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** returns, if the vehicle can be loaded from its position: */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cBuilding::canLoad (const cVehicle* vehicle, bool checkPosition) const
 {
 	if (!vehicle) return false;
@@ -442,10 +443,9 @@ bool cBuilding::canSupply (const cUnit* unit, eSupplyType supplyType) const
 	return true;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** checks the resources that are available under the mining station */
-//--------------------------------------------------------------------------
-
+//------------------------------------------------------------------------------
 void cBuilding::initMineResourceProd (const cMap& map)
 {
 	if (!getStaticData().canMineMaxRes) return;
@@ -485,12 +485,12 @@ void cBuilding::initMineResourceProd (const cMap& map)
 	prod.oil = std::min (maxProd.oil, freeProductionCapacity);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** calculates the costs and the duration of the 3 buildspeeds
  * for the vehicle with the given base costs
  * iRemainingMetal is only needed for recalculating costs of vehicles
  * in the Buildqueue and is set per default to -1 */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal) const
 {
 	// first calc costs for a new Vehical
@@ -565,26 +565,26 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 	}
 }
 
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //-- methods, that already have been extracted as part of cUnit refactoring
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cBuilding::factoryHasJustFinishedBuilding() const
 {
 	return (!buildList.empty() && isUnitWorking() == false && buildList[0].getRemainingMetal() <= 0);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cBuilding::buildingCanBeStarted() const
 {
 	return (getStaticData().canWork && isUnitWorking() == false
 	        && (!buildList.empty() || staticData->canBuild.empty()));
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cBuilding::buildingCanBeUpgraded() const
 {
 	if (!getOwner()) return false;
@@ -592,31 +592,31 @@ bool cBuilding::buildingCanBeUpgraded() const
 	return data.canBeUpgradedTo (upgraded) && subBase && subBase->getResourcesStored().metal >= 2;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cBuilding::isBuildListEmpty() const
 {
 	return buildList.empty();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 size_t cBuilding::getBuildListSize() const
 {
 	return buildList.size();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const cBuildListItem& cBuilding::getBuildListItem (size_t index) const
 {
 	return buildList[index];
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuildListItem& cBuilding::getBuildListItem (size_t index)
 {
 	return buildList[index];
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::setBuildList (std::vector<cBuildListItem> buildList_)
 {
 	buildList = std::move (buildList_);
@@ -626,7 +626,7 @@ void cBuilding::setBuildList (std::vector<cBuildListItem> buildList_)
 	buildListChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::addBuildListItem (cBuildListItem item)
 {
 	buildList.push_back (std::move (item));
@@ -636,7 +636,7 @@ void cBuilding::addBuildListItem (cBuildListItem item)
 	buildListChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::removeBuildListItem (size_t index)
 {
 	buildList.erase (buildList.begin() + index);
@@ -646,13 +646,13 @@ void cBuilding::removeBuildListItem (size_t index)
 	buildListChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cBuilding::getBuildSpeed() const
 {
 	return buildSpeed;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cBuilding::getMetalPerRound() const
 {
 	if (buildList.size() > 0)
@@ -661,54 +661,54 @@ int cBuilding::getMetalPerRound() const
 		return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cBuilding::getRepeatBuild() const
 {
 	return repeatBuild;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::setWorking (bool value)
 {
 	std::swap (isWorking, value);
 	if (value != isWorking) workingChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::setBuildSpeed (int value)
 {
 	std::swap (buildSpeed, value);
 	if (value != buildSpeed) buildSpeedChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::setMetalPerRound (int value)
 {
 	std::swap (metalPerRound, value);
 	if (value != metalPerRound) metalPerRoundChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::setRepeatBuild (bool value)
 {
 	std::swap (repeatBuild, value);
 	if (value != repeatBuild) repeatBuildChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const sMiningResource& cBuilding::getMaxProd() const
 {
 	return maxProd;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::setResearchArea (cResearch::eResearchArea area)
 {
 	std::swap (researchArea, area);
 	if (researchArea != area) researchAreaChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cResearch::eResearchArea cBuilding::getResearchArea() const
 {
 	return researchArea;
@@ -763,7 +763,7 @@ uint32_t cBuilding::getChecksum (uint32_t crc) const
 	return crc;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cBuilding::registerOwnerEvents()
 {
 	ownerSignalConnectionManager.disconnectAll();

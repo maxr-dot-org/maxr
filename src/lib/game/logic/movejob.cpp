@@ -36,6 +36,8 @@ constexpr double MOVE_ACCELERATION = 0.08; // change of vehicle speed per tick
 
 namespace
 {
+
+	//--------------------------------------------------------------------------
 	/**
 	* calculates the needed rotation before the next movement
 	*/
@@ -53,6 +55,7 @@ namespace
 		return std::nullopt;
 	}
 
+	//--------------------------------------------------------------------------
 	/**
 	* moves the vehicle by 'offset' pixel in direction of 'nextDir'
 	*/
@@ -65,6 +68,7 @@ namespace
 		vehicle.setMovementOffset (newOffset);
 	}
 
+	//--------------------------------------------------------------------------
 	/**
 	* check, if the unit finished the current movement step
 	*/

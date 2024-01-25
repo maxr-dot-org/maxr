@@ -58,7 +58,7 @@ const cRgbColor cPlayerColor::predefinedColors[predefinedColorsCount] =
 
 namespace
 {
-	//------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	UniqueSurface createTexture (const cRgbColor& color)
 	{
 		auto texture = UniqueSurface (SDL_CreateRGBSurface (0, 128, 128, 32, 0, 0, 0, 0));

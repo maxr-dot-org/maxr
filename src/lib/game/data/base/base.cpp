@@ -105,6 +105,7 @@ cSubBase::cSubBase (const cSubBase& other) :
 	base (other.base)
 {}
 
+//------------------------------------------------------------------------------
 cSubBase::~cSubBase()
 {
 	// remove the current subbase
@@ -114,74 +115,88 @@ cSubBase::~cSubBase()
 	}
 }
 
+//------------------------------------------------------------------------------
 sMiningResource cSubBase::getMaxProd() const
 {
 	return calcMaxProd (buildings);
 }
 
+//------------------------------------------------------------------------------
 const sMiningResource& cSubBase::getProd() const
 {
 	return prod;
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::setProduction (const sMiningResource& newProd)
 {
 	prod = setBuildingsProduction (buildings, newProd);
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::setMetal (int value)
 {
 	std::swap (stored.metal, value);
 	if (stored.metal != value) metalChanged();
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::setOil (int value)
 {
 	std::swap (stored.oil, value);
 	if (stored.oil != value) oilChanged();
 }
 
+//------------------------------------------------------------------------------
 int cSubBase::getMaxEnergyProd() const
 {
 	return maxEnergyProd;
 }
 
+//------------------------------------------------------------------------------
 int cSubBase::getEnergyProd() const
 {
 	return energyProd;
 }
 
+//------------------------------------------------------------------------------
 int cSubBase::getMaxEnergyNeed() const
 {
 	return maxEnergyNeed;
 }
 
+//------------------------------------------------------------------------------
 int cSubBase::getEnergyNeed() const
 {
 	return energyNeed;
 }
 
+//------------------------------------------------------------------------------
 int cSubBase::getHumanProd() const
 {
 	return humanProd;
 }
 
+//------------------------------------------------------------------------------
 int cSubBase::getHumanNeed() const
 {
 	return humanNeed;
 }
 
+//------------------------------------------------------------------------------
 int cSubBase::getMaxHumanNeed() const
 {
 	return maxHumanNeed;
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::setGold (int value)
 {
 	std::swap (stored.gold, value);
 	if (stored.gold != value) goldChanged();
 }
 
+//------------------------------------------------------------------------------
 bool cSubBase::increaseEnergyProd (int value)
 {
 	// TODO: the energy production and fuel consumption
@@ -245,21 +260,25 @@ bool cSubBase::increaseEnergyProd (int value)
 	return true;
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::addMetal (int value)
 {
 	addResource (eResourceType::Metal, value);
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::addOil (int value)
 {
 	addResource (eResourceType::Oil, value);
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::addGold (int value)
 {
 	addResource (eResourceType::Gold, value);
 }
 
+//------------------------------------------------------------------------------
 int cSubBase::getResource (eResourceType storeResType) const
 {
 	switch (storeResType)
@@ -276,6 +295,7 @@ int cSubBase::getResource (eResourceType storeResType) const
 	return 0;
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::setResource (eResourceType storeResType, int value)
 {
 	switch (storeResType)
@@ -294,6 +314,7 @@ void cSubBase::setResource (eResourceType storeResType, int value)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::addResource (eResourceType storeResType, int value)
 {
 	int storedResources = getResource (storeResType);
@@ -323,6 +344,7 @@ void cSubBase::addResource (eResourceType storeResType, int value)
 	}
 }
 
+//------------------------------------------------------------------------------
 bool cSubBase::checkHumanConsumer()
 {
 	if (humanNeed <= humanProd) return false;
@@ -339,6 +361,7 @@ bool cSubBase::checkHumanConsumer()
 	return true;
 }
 
+//------------------------------------------------------------------------------
 bool cSubBase::checkGoldConsumer()
 {
 	if (needed.gold <= prod.gold + stored.gold) return false;
@@ -354,6 +377,7 @@ bool cSubBase::checkGoldConsumer()
 	return true;
 }
 
+//------------------------------------------------------------------------------
 bool cSubBase::checkMetalConsumer()
 {
 	if (needed.metal <= prod.metal + stored.metal) return false;
@@ -369,6 +393,7 @@ bool cSubBase::checkMetalConsumer()
 	return true;
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::increaseOilProd (int missingOil)
 {
 	const auto oldProd = prod;
@@ -383,6 +408,7 @@ void cSubBase::increaseOilProd (int missingOil)
 		base.forcedResourceProductionChance (eResourceType::Gold, goldDecrease, false);
 }
 
+//------------------------------------------------------------------------------
 bool cSubBase::checkOil()
 {
 	// TODO: the energy production and fuel consumption of generators and
@@ -459,6 +485,7 @@ bool cSubBase::checkOil()
 	return oilMissing;
 }
 
+//------------------------------------------------------------------------------
 bool cSubBase::checkEnergy()
 {
 	if (energyNeed <= energyProd) return false;
@@ -502,6 +529,7 @@ bool cSubBase::checkEnergy()
 	return true;
 }
 
+//------------------------------------------------------------------------------
 bool cSubBase::checkTurnEnd()
 {
 	bool changedSomething = false;
@@ -577,6 +605,7 @@ bool cSubBase::checkTurnEnd()
 	return changedSomething;
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::makeTurnStartRepairs (cBuilding& building)
 {
 	// repair (do not repair buildings that have been attacked in this turn):
@@ -591,6 +620,7 @@ void cSubBase::makeTurnStartRepairs (cBuilding& building)
 	addMetal (-1);
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::makeTurnStartReload (cBuilding& building)
 {
 	// reload:
@@ -601,6 +631,7 @@ void cSubBase::makeTurnStartReload (cBuilding& building)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::makeTurnStartBuild (cBuilding& building, sNewTurnPlayerReport& report)
 {
 	// build:
@@ -631,6 +662,7 @@ void cSubBase::makeTurnStartBuild (cBuilding& building, sNewTurnPlayerReport& re
 	}
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::makeTurnStart (sNewTurnPlayerReport& report)
 {
 	// produce resources
@@ -670,6 +702,7 @@ void cSubBase::makeTurnStart (sNewTurnPlayerReport& report)
 	setGold (newGold);
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::merge (cSubBase& sb)
 {
 	for (cBuilding* building : sb.buildings)
@@ -681,6 +714,7 @@ void cSubBase::merge (cSubBase& sb)
 	EraseIf (base.SubBases, ByGetTo (&sb));
 }
 
+//------------------------------------------------------------------------------
 void cSubBase::addBuilding (cBuilding& b)
 {
 	buildings.push_back (&b);
@@ -763,6 +797,7 @@ void cSubBase::addBuilding (cBuilding& b)
 	}
 }
 
+//------------------------------------------------------------------------------
 bool cSubBase::startBuilding (cBuilding& b)
 {
 	const cStaticUnitData& staticData = b.getStaticUnitData();
@@ -871,6 +906,7 @@ bool cSubBase::startBuilding (cBuilding& b)
 	return true;
 }
 
+//------------------------------------------------------------------------------
 bool cSubBase::stopBuilding (cBuilding& b, bool forced /*= false*/)
 {
 	const cStaticUnitData& staticData = b.getStaticUnitData();
@@ -912,6 +948,7 @@ bool cSubBase::stopBuilding (cBuilding& b, bool forced /*= false*/)
 	return true;
 }
 
+//------------------------------------------------------------------------------
 uint32_t cSubBase::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (maxStored, crc);
@@ -932,14 +969,18 @@ uint32_t cSubBase::getChecksum (uint32_t crc) const
 	return crc;
 }
 
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBase::cBase (cPlayer& owner) :
 	owner (owner)
 {}
 
+//------------------------------------------------------------------------------
 cBase::~cBase()
 {
 }
 
+//------------------------------------------------------------------------------
 cSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& building, const cMap& map)
 {
 	if (map.isValidPosition (position) == false) return nullptr;
@@ -953,16 +994,19 @@ cSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& bui
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 uint32_t cBase::getChecksum (uint32_t crc) const
 {
 	return calcCheckSum (SubBases, crc);
 }
 
+//------------------------------------------------------------------------------
 void cBase::addBuilding (cBuilding& building, const cMap& map)
 {
 	addBuilding (building, map, true);
 }
 
+//------------------------------------------------------------------------------
 void cBase::addBuilding (cBuilding& building, const cMap& map, bool signalChange)
 {
 	if (!building.getStaticData().connectsToBase) return;
@@ -1000,6 +1044,7 @@ void cBase::addBuilding (cBuilding& building, const cMap& map, bool signalChange
 	if (signalChange) onSubbaseConfigurationChanged (firstNeighbour->getBuildings());
 }
 
+//------------------------------------------------------------------------------
 void cBase::deleteBuilding (cBuilding& building, const cMap& map)
 {
 	if (!building.getStaticData().connectsToBase) return;
@@ -1019,6 +1064,7 @@ void cBase::deleteBuilding (cBuilding& building, const cMap& map)
 	onSubbaseConfigurationChanged (buildings);
 }
 
+//------------------------------------------------------------------------------
 bool cBase::checkTurnEnd()
 {
 	bool changed = false;
@@ -1032,6 +1078,7 @@ bool cBase::checkTurnEnd()
 	return changed;
 }
 
+//------------------------------------------------------------------------------
 void cBase::makeTurnStart (sNewTurnPlayerReport& report)
 {
 	for (auto& subBase : SubBases)
@@ -1040,6 +1087,7 @@ void cBase::makeTurnStart (sNewTurnPlayerReport& report)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cBase::clear()
 {
 	SubBases.clear();

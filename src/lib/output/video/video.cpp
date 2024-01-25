@@ -46,6 +46,7 @@ cVideo Video;
 #define MINWIDTH 640
 #define MINHEIGHT 480
 
+//------------------------------------------------------------------------------
 cVideo::cVideo() :
 	resolutionX (MINWIDTH),
 	resolutionY (MINHEIGHT),
@@ -55,6 +56,7 @@ cVideo::cVideo() :
 	signalConnectionManager.connect (cKeyboard::getInstance().keyPressed, [this] (cKeyboard& keyboard, SDL_Keycode key) { keyPressed (keyboard, key); });
 }
 
+//------------------------------------------------------------------------------
 cVideo::~cVideo()
 {
 	SDL_FreeSurface (cVideo::buffer);
@@ -63,6 +65,7 @@ cVideo::~cVideo()
 	SDL_DestroyWindow (sdlWindow);
 }
 
+//------------------------------------------------------------------------------
 void cVideo::clearMemory()
 {
 	SDL_FreeSurface (cVideo::buffer);
@@ -75,6 +78,7 @@ void cVideo::clearMemory()
 	sdlWindow = nullptr;
 }
 
+//------------------------------------------------------------------------------
 void cVideo::init (const std::string& title, const std::filesystem::path& iconPath)
 {
 	sdlWindow = SDL_CreateWindow (title.c_str(),
@@ -98,6 +102,7 @@ void cVideo::init (const std::string& title, const std::filesystem::path& iconPa
 	detectResolutions();
 }
 
+//------------------------------------------------------------------------------
 void cVideo::showSplashScreen (const std::filesystem::path& splashScreenPath)
 {
 	UniqueSurface splash (LoadPCX (splashScreenPath));
@@ -114,6 +119,7 @@ void cVideo::showSplashScreen (const std::filesystem::path& splashScreenPath)
 	draw();
 }
 
+//------------------------------------------------------------------------------
 void cVideo::prepareGameScreen()
 {
 	SDL_SetWindowBordered (sdlWindow, SDL_TRUE);
@@ -126,6 +132,7 @@ void cVideo::prepareGameScreen()
 	draw();
 }
 
+//------------------------------------------------------------------------------
 void cVideo::initializeBuffer (int width, int height)
 {
 	if (buffer) SDL_FreeSurface (buffer);
@@ -144,6 +151,7 @@ void cVideo::initializeBuffer (int width, int height)
 	SDL_RenderSetLogicalSize (sdlRenderer, width, height);
 }
 
+//------------------------------------------------------------------------------
 void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 {
 	resolutionX = iWidth;
@@ -184,6 +192,7 @@ void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cVideo::setColDepth (unsigned int iDepth)
 {
 	// TODO: Implement other colourdepths beside 32 & add sanity checks.
@@ -199,12 +208,14 @@ void cVideo::setColDepth (unsigned int iDepth)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cVideo::setDisplayIndex (int index)
 {
 	displayIndex = index;
 	// TODO: apply the display index (reassign window to new display)
 }
 
+//------------------------------------------------------------------------------
 void cVideo::setWindowMode (bool bWindowMode, bool bApply)
 {
 	windowMode = bWindowMode;
@@ -216,6 +227,7 @@ void cVideo::setWindowMode (bool bWindowMode, bool bApply)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cVideo::draw()
 {
 	// SDL2: Some SDL2 functions must be called from the main thread only
@@ -231,6 +243,7 @@ void cVideo::draw()
 	SDL_RenderPresent (sdlRenderer);
 }
 
+//------------------------------------------------------------------------------
 void cVideo::applyResolution()
 {
 	const auto windowFlags = SDL_GetWindowFlags (sdlWindow);
@@ -247,6 +260,7 @@ void cVideo::applyResolution()
 	draw();
 }
 
+//------------------------------------------------------------------------------
 void cVideo::applyWindowMode()
 {
 	const auto result = SDL_SetWindowFullscreen (sdlWindow, getWindowMode() ? 0 : SDL_WINDOW_FULLSCREEN);
@@ -256,11 +270,13 @@ void cVideo::applyWindowMode()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cVideo::clearBuffer()
 {
 	SDL_FillRect (buffer, nullptr, toSdlColor (cRgbColor::black(), *buffer));
 }
 
+//------------------------------------------------------------------------------
 void cVideo::detectResolutions()
 {
 	const auto numVideoDislplays = SDL_GetNumVideoDisplays();
@@ -294,6 +310,7 @@ void cVideo::detectResolutions()
 	}
 }
 
+//------------------------------------------------------------------------------
 const std::vector<std::pair<int, int>>& cVideo::getDetectedResolutions() const
 {
 	const int displayIndex = sdlWindow ? SDL_GetWindowDisplayIndex (sdlWindow) : 0;
@@ -301,6 +318,7 @@ const std::vector<std::pair<int, int>>& cVideo::getDetectedResolutions() const
 	return detectedResolutions[displayIndex];
 }
 
+//------------------------------------------------------------------------------
 bool cVideo::haveMinMode() const
 {
 	if (ranges::any_of (getDetectedResolutions(), [] (const auto& resolution) { return resolution == std::pair<int, int>{MINWIDTH, MINHEIGHT}; }))
@@ -311,6 +329,7 @@ bool cVideo::haveMinMode() const
 	return false;
 }
 
+//------------------------------------------------------------------------------
 int cVideo::validateResolution (int width, int height) const
 {
 	const auto& resolutions = getDetectedResolutions();
@@ -325,21 +344,25 @@ int cVideo::validateResolution (int width, int height) const
 	return -1;
 }
 
+//------------------------------------------------------------------------------
 int cVideo::getMinW() const
 {
 	return MINWIDTH;
 }
 
+//------------------------------------------------------------------------------
 int cVideo::getMinH() const
 {
 	return MINHEIGHT;
 }
 
+//------------------------------------------------------------------------------
 void cVideo::takeScreenShot (const std::filesystem::path& filename) const
 {
 	SDL_SaveBMP (buffer, filename.u8string().c_str());
 }
 
+//------------------------------------------------------------------------------
 void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 {
 	if (keyboard.isAnyModifierActive (toEnumFlag (eKeyModifierType::AltLeft) | toEnumFlag (eKeyModifierType::AltRight)))
@@ -368,6 +391,7 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cVideo::applyShadow (const SDL_Rect* rect, SDL_Surface& destination)
 {
 	const SDL_Rect fullscreen = {0, 0, getResolutionX(), getResolutionY()};
@@ -378,6 +402,7 @@ void cVideo::applyShadow (const SDL_Rect* rect, SDL_Surface& destination)
 	SDL_RenderCopy (renderer.get(), texture.get(), nullptr, &dest);
 }
 
+//------------------------------------------------------------------------------
 void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)
 {
 	SDL_Rect temp1, temp2;
@@ -517,6 +542,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 	if (SDL_MUSTLOCK (dst)) SDL_UnlockSurface (dst);
 }
 
+//------------------------------------------------------------------------------
 void blittAlphaSurface (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)
 {
 	// TODO: [SDL2] special blitSurface seems useless.
@@ -565,6 +591,7 @@ drawpixel:
 	}
 }
 
+//------------------------------------------------------------------------------
 SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int height)
 {
 	if (width <= 0 || height <= 0 || !scr) return nullptr;
@@ -656,6 +683,7 @@ drawline:
 	return surface;
 }
 
+//------------------------------------------------------------------------------
 static void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface& sf)
 {
 	if (x2 < x1)
@@ -699,6 +727,7 @@ static void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surfac
 	}
 }
 
+//------------------------------------------------------------------------------
 // CreatePfeil ////////////////////////////////////////////////////////////////
 // Erzeigt ein Pfeil-Surface:
 UniqueSurface CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size)
@@ -723,6 +752,7 @@ UniqueSurface CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y,
 	return sf;
 }
 
+//------------------------------------------------------------------------------
 static void setPixel (SDL_Surface& surface, int x, int y, int iColor)
 {
 	// check the surface size
@@ -733,6 +763,7 @@ static void setPixel (SDL_Surface& surface, int x, int y, int iColor)
 	static_cast<Uint32*> (surface.pixels)[x + y * surface.w] = iColor;
 }
 
+//------------------------------------------------------------------------------
 void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface& surface)
 {
 	if (iX + iRadius < 0 || iX - iRadius > Video.getResolutionX() || iY + iRadius < 0 || iY - iRadius > Video.getResolutionY()) return;

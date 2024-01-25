@@ -319,6 +319,7 @@ static const unsigned short iso8859_16_2uni[96] =
 
 #endif
 
+//------------------------------------------------------------------------------
 cUnicodeFont::cUnicodeFont()
 {
 	// load all existing fonts.
@@ -363,6 +364,7 @@ cUnicodeFont::cUnicodeFont()
 	loadChars (eUnicodeFontCharset::Iso8559_5, eUnicodeFontType::LatinSmallYellow);
 }
 
+//------------------------------------------------------------------------------
 void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType fonttype)
 {
 	UniqueSurface surface (loadCharsetSurface (charset, fonttype));
@@ -485,6 +487,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 	}
 }
 
+//------------------------------------------------------------------------------
 const cUnicodeFont::FontTypeSurfaces*
 cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype) const
 {
@@ -502,12 +505,14 @@ cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype) const
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 cUnicodeFont::FontTypeSurfaces*
 cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType fonttype)
 {
 	return const_cast<FontTypeSurfaces*> (const_cast<const cUnicodeFont*> (this)->getFontTypeSurfaces (fonttype));
 }
 
+//------------------------------------------------------------------------------
 UniqueSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
                                               eUnicodeFontType fonttype)
 {
@@ -549,6 +554,7 @@ UniqueSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 		return nullptr;
 }
 
+//------------------------------------------------------------------------------
 const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset) const
 {
 	switch (charset)
@@ -576,6 +582,7 @@ const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset) con
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 void cUnicodeFont::showText (int x, int y, const std::string& text, eUnicodeFontType fonttype)
 {
 	std::string sText (text);
@@ -646,11 +653,13 @@ void cUnicodeFont::showText (int x, int y, const std::string& text, eUnicodeFont
 	}
 }
 
+//------------------------------------------------------------------------------
 void cUnicodeFont::showText (const cPosition& position, const std::string& text, eUnicodeFontType fonttype)
 {
 	showText (position.x(), position.y(), text, fonttype);
 }
 
+//------------------------------------------------------------------------------
 int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const std::string& text, eUnicodeFontType fonttype)
 {
 	std::string sText (text);
@@ -710,6 +719,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const std::string& text, e
 	return rDest.y;
 }
 
+//------------------------------------------------------------------------------
 int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const std::string& text, eUnicodeFontType fonttype)
 {
 	std::string sText (text);
@@ -767,23 +777,27 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const std::string& text, eUni
 	return drawWithBreakLines (rDest, sText, fonttype);
 }
 
+//------------------------------------------------------------------------------
 void cUnicodeFont::showTextCentered (int x, int y, const std::string& sText, eUnicodeFontType fonttype)
 {
 	SDL_Rect rTmp = getTextSize (sText, fonttype);
 	showText (x - rTmp.w / 2, y, sText, fonttype);
 }
 
+//------------------------------------------------------------------------------
 void cUnicodeFont::showTextCentered (const cPosition& position, const std::string& sText, eUnicodeFontType fonttype)
 {
 	showTextCentered (position.x(), position.y(), sText, fonttype);
 }
 
+//------------------------------------------------------------------------------
 int cUnicodeFont::getTextWide (const std::string& sText, eUnicodeFontType fonttype) const
 {
 	SDL_Rect rTmp = getTextSize (sText, fonttype);
 	return rTmp.w;
 }
 
+//------------------------------------------------------------------------------
 SDL_Rect cUnicodeFont::getTextSize (const std::string& text, eUnicodeFontType fonttype) const
 {
 	std::string sText (text);
@@ -843,6 +857,7 @@ SDL_Rect cUnicodeFont::getTextSize (const std::string& text, eUnicodeFontType fo
 	return rTmp;
 }
 
+//------------------------------------------------------------------------------
 int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype) const
 {
 	const UniqueSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
@@ -854,6 +869,7 @@ int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype) const
 	return 0;
 }
 
+//------------------------------------------------------------------------------
 /* static */ eUnicodeFontSize cUnicodeFont::getFontSize (eUnicodeFontType fonttype)
 {
 	switch (fonttype)
@@ -873,6 +889,7 @@ int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype) const
 	}
 }
 
+//------------------------------------------------------------------------------
 std::string cUnicodeFont::shortenStringToSize (const std::string& str, int size, eUnicodeFontType fonttype) const
 {
 	std::string res (str);

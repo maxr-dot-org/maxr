@@ -33,7 +33,7 @@
 
 namespace
 {
-	//------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	void makeReport (cSoundManager& soundManager, const cGameGuiState& gameGuiState, const cBuilding& building)
 	{
 		if (building.getStaticData().canResearch && building.isUnitWorking() && building.getOwner() && ranges::contains (gameGuiState.currentTurnResearchAreasFinished, building.getResearchArea()))
@@ -42,7 +42,7 @@ namespace
 		}
 	}
 
-	//------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	void makeReport (cSoundManager& soundManager, const cGameGuiState&, const cVehicle& vehicle)
 	{
 		if (vehicle.isDisabled())

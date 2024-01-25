@@ -28,11 +28,13 @@
 namespace
 {
 
+	//--------------------------------------------------------------------------
 	[[nodiscard]] std::vector<cBuilding*> ExtractOnLineMiningStations (std::vector<cBuilding*> buildings)
 	{
 		return Filter (buildings, [] (const cBuilding* building) { return building->getStaticData().canMineMaxRes > 0 && building->isUnitWorking(); });
 	}
 
+	//--------------------------------------------------------------------------
 	struct sResourcesLimit
 	{
 		sMiningResource min; //<! minimal, assuming maximum for others

@@ -32,32 +32,32 @@ const int cSoundDevice::voiceGroupTag = 1;
 const int cSoundDevice::soundEffectGroupSize = 5;
 const int cSoundDevice::voiceGroupSize = 5;
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundDevice::cSoundDevice() :
 	soundEffectChannelGroup (soundEffectGroupTag),
 	voiceChannelGroup (voiceGroupTag)
 {}
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundDevice::SdlMixMusikDeleter::operator() (Mix_Music* music) const
 {
 	Mix_FreeMusic (music);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundDevice& cSoundDevice::getInstance()
 {
 	static cSoundDevice instance;
 	return instance;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void musicFinishedHookCallback()
 {
 	cSoundDevice::getInstance().startRandomMusic();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundDevice::initialize (int frequency, int chunkSize)
 {
 	if (Mix_OpenAudio (frequency, AUDIO_S16, 2, chunkSize) != 0)
@@ -77,13 +77,13 @@ void cSoundDevice::initialize (int frequency, int chunkSize)
 	setMusicVolume (cSettings::getInstance().getMusicVol());
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundDevice::close()
 {
 	Mix_CloseAudio();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundChannel* cSoundDevice::getFreeSoundEffectChannel()
 {
 	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isSoundMute()) return nullptr;
@@ -91,7 +91,7 @@ cSoundChannel* cSoundDevice::getFreeSoundEffectChannel()
 	return &soundEffectChannelGroup.getFreeChannel();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundChannel* cSoundDevice::getFreeVoiceChannel()
 {
 	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isVoiceMute()) return nullptr;
@@ -99,7 +99,7 @@ cSoundChannel* cSoundDevice::getFreeVoiceChannel()
 	return &voiceChannelGroup.getFreeChannel();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundDevice::playSoundEffect (const cSoundChunk& chunk)
 {
 	auto channel = getFreeSoundEffectChannel();
@@ -111,7 +111,7 @@ bool cSoundDevice::playSoundEffect (const cSoundChunk& chunk)
 	return true;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundDevice::playVoice (const cSoundChunk& chunk)
 {
 	auto channel = getFreeVoiceChannel();
@@ -123,7 +123,7 @@ bool cSoundDevice::playVoice (const cSoundChunk& chunk)
 	return true;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundDevice::startMusic (const std::filesystem::path& fileName)
 {
 	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isMusicMute()) return;
@@ -138,38 +138,38 @@ void cSoundDevice::startMusic (const std::filesystem::path& fileName)
 	Mix_PlayMusic (musicStream.get(), 0);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundDevice::startRandomMusic()
 {
 	if (MusicFiles.backgrounds.empty()) return;
 	startMusic (MusicFiles.backgrounds[random (MusicFiles.backgrounds.size())]);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundDevice::stopMusic()
 {
 	musicStream = nullptr;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundDevice::setSoundEffectVolume (int volume)
 {
 	soundEffectChannelGroup.setVolume (volume);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundDevice::setVoiceVolume (int volume)
 {
 	voiceChannelGroup.setVolume (volume);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundDevice::setMusicVolume (int volume)
 {
 	Mix_VolumeMusic (volume);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //int cSoundDevice::playInGroup (const cSoundChunk& sound, int groupTag)
 //{
 //	if (!cSettings::getInstance().isSoundEnabled()) return -1;

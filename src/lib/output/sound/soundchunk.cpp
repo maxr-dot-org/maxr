@@ -27,7 +27,7 @@ bool cSoundChunk::operator== (const cSoundChunk& other) const
 	return sdlSound == other.sdlSound;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChunk::load (const std::filesystem::path& fileName)
 {
 	sdlSound = SaveSdlMixChunkPointer (Mix_LoadWAV (fileName.u8string().c_str()));
@@ -37,13 +37,13 @@ void cSoundChunk::load (const std::filesystem::path& fileName)
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundChunk::empty() const
 {
 	return sdlSound == nullptr;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::chrono::milliseconds cSoundChunk::getLength() const
 {
 	if (!sdlSound) return std::chrono::milliseconds (0);
@@ -61,13 +61,13 @@ std::chrono::milliseconds cSoundChunk::getLength() const
 	return std::chrono::milliseconds ((frames * 1000) / freq);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 Mix_Chunk* cSoundChunk::getSdlSound() const
 {
 	return sdlSound.get();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundChunk::SdlMixChunkDeleter::operator() (Mix_Chunk* chunk) const
 {
 	Mix_FreeChunk (chunk);

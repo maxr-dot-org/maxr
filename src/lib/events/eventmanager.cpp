@@ -37,6 +37,7 @@ cEventManager& cEventManager::getInstance()
 	return instance;
 }
 
+//------------------------------------------------------------------------------
 bool cEventManager::shouldExit() const
 {
 	return isDone;

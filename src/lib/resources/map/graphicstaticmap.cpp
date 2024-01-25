@@ -26,6 +26,7 @@
 #include <string>
 
 #if 1 // TODO: [SDL2]: SDL_SetColors
+//------------------------------------------------------------------------------
 inline void SDL_SetColors (SDL_Surface* surface, const SDL_Color* colors, int index, int size)
 {
 	SDL_SetPaletteColors (surface->format->palette, colors, index, size);

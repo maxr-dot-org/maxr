@@ -30,7 +30,6 @@ static const struct
 	const char* name = nullptr;
 } keyNames[] =
 	{
-
 		{SDLK_RETURN, "Return"},
 		{SDLK_ESCAPE, "Esc"},
 		{SDLK_BACKSPACE, "Backspace"},

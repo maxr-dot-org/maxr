@@ -19,19 +19,19 @@
 
 #include "ui/sound/effects/soundeffectposition.h"
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundEffectPosition::cSoundEffectPosition (eSoundEffectType type, const cSoundChunk& sound, const cPosition& position_) :
 	cSoundEffect (type, sound),
 	position (position_)
 {}
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundEffectPosition::hasPosition() const
 {
 	return true;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const cPosition& cSoundEffectPosition::getPosition() const
 {
 	return position;

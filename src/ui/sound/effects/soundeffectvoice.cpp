@@ -19,12 +19,12 @@
 
 #include "ui/sound/effects/soundeffectvoice.h"
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundEffectVoice::cSoundEffectVoice (eSoundEffectType type, const cSoundChunk& sound) :
 	cSoundEffect (type, sound)
 {}
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 eSoundChannelType cSoundEffectVoice::getChannelType() const
 {
 	return eSoundChannelType::Voice;

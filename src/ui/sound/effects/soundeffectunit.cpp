@@ -21,19 +21,19 @@
 
 #include "game/data/units/unit.h"
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundEffectUnit::cSoundEffectUnit (eSoundEffectType type, const cSoundChunk& sound, const cUnit& unit_) :
 	cSoundEffect (type, sound),
 	unit (unit_)
 {}
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundEffectUnit::hasPosition() const
 {
 	return true;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const cPosition& cSoundEffectUnit::getPosition() const
 {
 	return unit.getPosition();

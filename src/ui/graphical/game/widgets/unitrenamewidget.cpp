@@ -60,6 +60,7 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 	resize (area.getSize());
 }
 
+//------------------------------------------------------------------------------
 void cUnitRenameWidget::setUnit (const cUnit* unit, const cUnitsData& unitsData)
 {
 	activeUnit = unit;

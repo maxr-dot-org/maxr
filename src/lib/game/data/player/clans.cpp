@@ -26,7 +26,7 @@ cClanData ClanDataGlobal;
 
 namespace serialization
 {
-	//------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	const std::vector<std::pair<eClanModification, const char*>>
 	sEnumStringMapping<eClanModification>::m =
 	{
@@ -39,13 +39,13 @@ namespace serialization
 		{ eClanModification::Built_Costs, "BuildCosts"}
 	};
 }
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 void cClanUnitStat::addModification (eClanModification area, int value)
 {
 	modifications[area] = value;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 std::optional<int> cClanUnitStat::getModificationValue (eClanModification key) const
 {
 	auto it = modifications.find (key);
@@ -54,7 +54,7 @@ std::optional<int> cClanUnitStat::getModificationValue (eClanModification key) c
 	return std::nullopt;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 const cClanUnitStat* cClan::getUnitStat (sID id) const
 {
 	for (const auto& stat : stats)
@@ -63,7 +63,7 @@ const cClanUnitStat* cClan::getUnitStat (sID id) const
 	return nullptr;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 const cClanUnitStat* cClan::getUnitStat (unsigned int index) const
 {
 	if (index < stats.size())
@@ -71,20 +71,20 @@ const cClanUnitStat* cClan::getUnitStat (unsigned int index) const
 	return nullptr;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 cClanUnitStat* cClan::addUnitStat (sID id)
 {
 	stats.emplace_back (id);
 	return &stats.back();
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 void cClan::setDefaultDescription (const std::string& newDescription)
 {
 	description = newDescription;
 }
 
-//--------------------------------------------------
+//------------------------------------------------------------------------------
 void cClan::setDefaultName (const std::string& newName)
 {
 	name = newName;

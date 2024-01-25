@@ -52,6 +52,8 @@ namespace serialization
 		{cMultiplayerLobbyMessage::eMessageType::MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION, "MU_MSG_PLAYER_HAS_ABORTED_GAME_PREPARATION"}
 	};
 } // namespace serialization
+
+//------------------------------------------------------------------------------
 std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBuffer (cBinaryArchiveIn& archive)
 {
 	eMessageType type;
@@ -131,17 +133,20 @@ std::unique_ptr<cMultiplayerLobbyMessage> cMultiplayerLobbyMessage::createFromBu
 	return message;
 }
 
+//------------------------------------------------------------------------------
 cMultiplayerLobbyMessage::eMessageType cMultiplayerLobbyMessage::getType() const
 {
 	return type;
 }
 
+//------------------------------------------------------------------------------
 void cMultiplayerLobbyMessage::serialize (cBinaryArchiveOut& archive)
 {
 	cNetMessage::serialize (archive);
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 bool ILobbyMessageHandler::handleMessage (const cNetMessage& message)
 {
 	if (message.getType() != eNetMessageType::MULTIPLAYER_LOBBY) return false;
@@ -149,15 +154,18 @@ bool ILobbyMessageHandler::handleMessage (const cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgChat::cMuMsgChat (const std::string& message) :
 	message (message)
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgChat::cMuMsgChat (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgChat::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -165,15 +173,18 @@ void cMuMsgChat::serialize (cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgPlayerNr::cMuMsgPlayerNr (int newPlayerNr) :
 	newPlayerNr (newPlayerNr)
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgPlayerNr::cMuMsgPlayerNr (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgPlayerNr::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -181,16 +192,19 @@ void cMuMsgPlayerNr::serialize (cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgOptions::cMuMsgOptions() :
 	saveInfo (-1)
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgOptions::cMuMsgOptions (cBinaryArchiveIn& archive) :
 	saveInfo (-1)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgOptions::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -198,20 +212,24 @@ void cMuMsgOptions::serialize (cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgSaveSlots::cMuMsgSaveSlots()
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgSaveSlots::cMuMsgSaveSlots (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgSaveSlots::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cMuMsgPlayerList::cMuMsgPlayerList (const std::vector<std::shared_ptr<cPlayerBasicData>>& playerList_) :
 	playerList (ranges::Transform (playerList_, [] (const auto& data) { return *data; }))
@@ -224,11 +242,13 @@ cMuMsgPlayerList::cMuMsgPlayerList (std::vector<cPlayerBasicData> playerList_) :
 {
 }
 
+//------------------------------------------------------------------------------
 cMuMsgPlayerList::cMuMsgPlayerList (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgPlayerList::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -236,21 +256,26 @@ void cMuMsgPlayerList::serialize (cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby()
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby (cBinaryArchiveIn& archive)
 {}
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgCannotEndLobby::cMuMsgCannotEndLobby()
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgCannotEndLobby::cMuMsgCannotEndLobby (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgCannotEndLobby::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -258,22 +283,27 @@ void cMuMsgCannotEndLobby::serialize (cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame()
 {}
+//------------------------------------------------------------------------------
 cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame (cBinaryArchiveIn& archive)
 {}
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cMuMsgStartGamePreparations::cMuMsgStartGamePreparations (std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData) :
 	unitsData (unitsData),
 	clanData (clanData)
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgStartGamePreparations::cMuMsgStartGamePreparations (cBinaryArchiveIn& archive)
 {
 	loadThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgStartGamePreparations::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -281,15 +311,18 @@ void cMuMsgStartGamePreparations::serialize (cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgPlayerHasSelectedLandingPosition::cMuMsgPlayerHasSelectedLandingPosition (int landedPlayer) :
 	landedPlayer (landedPlayer)
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgPlayerHasSelectedLandingPosition::cMuMsgPlayerHasSelectedLandingPosition (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgPlayerHasSelectedLandingPosition::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -297,16 +330,19 @@ void cMuMsgPlayerHasSelectedLandingPosition::serialize (cBinaryArchiveOut& archi
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgInLandingPositionSelectionStatus::cMuMsgInLandingPositionSelectionStatus (int playerNr, bool isIn) :
 	landingPlayer (playerNr),
 	isIn (isIn)
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgInLandingPositionSelectionStatus::cMuMsgInLandingPositionSelectionStatus (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgInLandingPositionSelectionStatus::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -314,15 +350,18 @@ void cMuMsgInLandingPositionSelectionStatus::serialize (cBinaryArchiveOut& archi
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgLandingState::cMuMsgLandingState (eLandingPositionState state) :
 	state (state)
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgLandingState::cMuMsgLandingState (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgLandingState::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -330,33 +369,42 @@ void cMuMsgLandingState::serialize (cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgStartGame::cMuMsgStartGame()
 {}
+//------------------------------------------------------------------------------
 cMuMsgStartGame::cMuMsgStartGame (cBinaryArchiveIn& archive)
 {}
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations()
 {}
+//------------------------------------------------------------------------------
 cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations (cBinaryArchiveIn& archive)
 {}
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload()
 {}
+//------------------------------------------------------------------------------
 cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload (cBinaryArchiveIn& archive)
 {}
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cMuMsgLandingPosition::cMuMsgLandingPosition (const cPosition& position) :
 	position (position)
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgLandingPosition::cMuMsgLandingPosition (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgLandingPosition::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -364,15 +412,18 @@ void cMuMsgLandingPosition::serialize (cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgRequestMap::cMuMsgRequestMap (const std::filesystem::path& mapFilename) :
 	mapFilename (mapFilename)
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgRequestMap::cMuMsgRequestMap (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgRequestMap::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -380,16 +431,19 @@ void cMuMsgRequestMap::serialize (cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgStartMapDownload::cMuMsgStartMapDownload (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 cMuMsgStartMapDownload::cMuMsgStartMapDownload (const std::filesystem::path& mapFilename, int mapSize) :
 	mapFilename (mapFilename),
 	mapSize (mapSize)
 {}
 
+//------------------------------------------------------------------------------
 void cMuMsgStartMapDownload::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -397,14 +451,17 @@ void cMuMsgStartMapDownload::serialize (cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgMapDownloadData::cMuMsgMapDownloadData()
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgMapDownloadData::cMuMsgMapDownloadData (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgMapDownloadData::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);
@@ -412,11 +469,14 @@ void cMuMsgMapDownloadData::serialize (cBinaryArchiveOut& archive)
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload()
 {}
+//------------------------------------------------------------------------------
 cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload (cBinaryArchiveIn& archive)
 {}
 
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 cMuMsgIdentification::cMuMsgIdentification (const cPlayerBasicData& player) :
 	playerName (player.getName()),
@@ -424,11 +484,13 @@ cMuMsgIdentification::cMuMsgIdentification (const cPlayerBasicData& player) :
 	ready (player.isReady())
 {}
 
+//------------------------------------------------------------------------------
 cMuMsgIdentification::cMuMsgIdentification (cBinaryArchiveIn& archive)
 {
 	serializeThis (archive);
 }
 
+//------------------------------------------------------------------------------
 void cMuMsgIdentification::serialize (cBinaryArchiveOut& archive)
 {
 	cMultiplayerLobbyMessage::serialize (archive);

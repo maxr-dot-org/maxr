@@ -41,6 +41,7 @@
 // cVehicle Class Implementation
 //-----------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
 cVehicle::cVehicle (unsigned int ID) :
 	cUnit (nullptr, nullptr, nullptr, ID),
 	bandPosition (0, 0),
@@ -57,7 +58,7 @@ cVehicle::cVehicle (unsigned int ID) :
 	autoMoveJobChanged.connect ([this]() { statusChanged(); });
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& dynamicData, cPlayer* owner, unsigned int ID) :
 	cUnit (&dynamicData, &staticData, owner, ID),
 	bandPosition (0, 0),
@@ -74,11 +75,12 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 	autoMoveJobChanged.connect ([this]() { statusChanged(); });
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cVehicle::~cVehicle()
 {
 }
 
+//------------------------------------------------------------------------------
 void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 {
 	if (isUnitBuildingABuilding() == false || getBuildTurns() == 0) return;
@@ -180,6 +182,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cVehicle::continuePathBuilding (cModel& model)
 {
 	if (!BuildPath) return;
@@ -198,6 +201,7 @@ void cVehicle::continuePathBuilding (cModel& model)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cVehicle::proceedClearing (cModel& model)
 {
 	if (isUnitClearing() == false || getClearingTurns() == 0) return;
@@ -221,10 +225,9 @@ void cVehicle::proceedClearing (cModel& model)
 	model.deleteRubble (*rubble);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Initializes all unit data to its maximum values */
-//-----------------------------------------------------------------------------
-
+//------------------------------------------------------------------------------
 void cVehicle::refreshData()
 {
 	if (staticData && staticData->doesSelfRepair)
@@ -251,16 +254,16 @@ int cVehicle::getPossibleShotCountForSpeed (int speed) const
 	return s;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Reduces the remaining speedCur and shotsCur during movement */
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::DecSpeed (int value)
 {
 	data.setSpeed (data.getSpeed() - value);
 	data.setShots (std::min (data.getShots(), getPossibleShotCountForSpeed(data.getSpeed())));
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<int, 3>& turboBuildCosts, int buildCosts) const
 {
 	turboBuildTurns[0] = 0;
@@ -317,9 +320,9 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Scans for resources */
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::doSurvey (const cMap& map)
 {
 	if (!getOwner()) return false;
@@ -348,9 +351,9 @@ bool cVehicle::doSurvey (const cMap& map)
 	return resourceFound;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** checks, if resources can be transferred to the unit */
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::canTransferTo (const cPosition& position, const cMapView& map) const
 {
 	const auto& field = map.getField (position);
@@ -417,7 +420,7 @@ bool cVehicle::canTransferTo (const cUnit& unit) const
 	return false;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::makeAttackOnThis (cModel& model, cUnit* opponentUnit, const std::string& reasonForLog) const
 {
 	cMapView mapView (model.getMap(), nullptr);
@@ -431,7 +434,7 @@ bool cVehicle::makeAttackOnThis (cModel& model, cUnit* opponentUnit, const std::
 	return true;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::makeSentryAttack (cModel& model, cUnit* sentryUnit) const
 {
 	cMapView mapView (model.getMap(), nullptr);
@@ -443,7 +446,7 @@ bool cVehicle::makeSentryAttack (cModel& model, cUnit* sentryUnit) const
 	return false;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::inSentryRange (cModel& model)
 {
 	for (const auto& player : model.getPlayerList())
@@ -473,7 +476,7 @@ bool cVehicle::inSentryRange (cModel& model)
 	return provokeReactionFire (model);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::isOtherUnitOffendedByThis (const cModel& model, const cUnit& otherUnit) const
 {
 	// don't treat the cheap buildings
@@ -492,7 +495,7 @@ bool cVehicle::isOtherUnitOffendedByThis (const cModel& model, const cUnit& othe
 	return false;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (const cModel& model, const cPlayer* player) const
 {
 	if (model.getGameSettings()->gameType == eGameSettingsGameType::Turns)
@@ -519,7 +522,7 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (const cModel& mo
 	return false;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const
 {
 	cMapView mapView (model.getMap(), nullptr);
@@ -535,7 +538,7 @@ bool cVehicle::doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const
 	return false;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::doReactionFire (cModel& model, cPlayer* player) const
 {
 	// search a unit of the opponent, that could fire on this vehicle
@@ -553,7 +556,7 @@ bool cVehicle::doReactionFire (cModel& model, cPlayer* player) const
 	return false;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::provokeReactionFire (cModel& model)
 {
 	// unit can't fire, so it can't provoke a reaction fire
@@ -581,7 +584,7 @@ bool cVehicle::provokeReactionFire (cModel& model)
 	return false;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const
 {
 	if (!map.possiblePlaceVehicle (unitData, position)) return false;
@@ -591,7 +594,7 @@ bool cVehicle::canExitTo (const cPosition& position, const cMapView& map, const 
 	return true;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const
 {
 	if (!map.possiblePlaceVehicle (unitData, position, getOwner())) return false;
@@ -601,7 +604,7 @@ bool cVehicle::canExitTo (const cPosition& position, const cMap& map, const cSta
 	return true;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::canLoad (const cPosition& position, const cMapView& map, bool checkPosition) const
 {
 	if (map.isValidPosition (position) == false) return false;
@@ -609,7 +612,7 @@ bool cVehicle::canLoad (const cPosition& position, const cMapView& map, bool che
 	return canLoad (map.getField (position).getVehicle(), checkPosition);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::canLoad (const cVehicle* vehicle, bool checkPosition) const
 {
 	if (loaded) return false;
@@ -635,9 +638,9 @@ bool cVehicle::canLoad (const cVehicle* vehicle, bool checkPosition) const
 	return true;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Checks, if an object can get ammunition. */
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::canSupply (const cMapView& map, const cPosition& position, eSupplyType supplyType) const
 {
 	if (map.isValidPosition (position) == false) return false;
@@ -653,7 +656,7 @@ bool cVehicle::canSupply (const cMapView& map, const cPosition& position, eSuppl
 	return false;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::canSupply (const cUnit* unit, eSupplyType supplyType) const
 {
 	if (unit == nullptr || unit == this)
@@ -695,7 +698,7 @@ bool cVehicle::canSupply (const cUnit* unit, eSupplyType supplyType) const
 	return true;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::layMine (cModel& model)
 {
 	if (getStoredResources() <= 0) return;
@@ -711,7 +714,7 @@ void cVehicle::layMine (cModel& model)
 	if (getStoredResources() <= 0) setLayMines (false);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::clearMine (cModel& model)
 {
 	const cMap& map = *model.getMap();
@@ -731,7 +734,7 @@ void cVehicle::clearMine (cModel& model)
 	return;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::tryResetOfDetectionStateBeforeMove (const cMap& map, const std::vector<std::shared_ptr<cPlayer>>& playerList)
 {
 	for (const auto& player : playerList)
@@ -771,19 +774,19 @@ uint32_t cVehicle::getChecksum (uint32_t crc) const
 	return crc;
 }
 
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //-- methods, that already have been extracted as part of cUnit refactoring
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::canBeStoppedViaUnitMenu() const
 {
 	return (moveJob != nullptr || (isUnitBuildingABuilding() && getBuildTurns() > 0) || (isUnitClearing() && getClearingTurns() > 0));
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cVehicle::canLand (const cMap& map) const
 {
 	// normal vehicles are always "landed"
@@ -811,14 +814,14 @@ bool cVehicle::canLand (const cMap& map) const
 	return true;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setMoving (bool value)
 {
 	std::swap (moving, value);
 	if (value != moving) movingChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setLoaded (bool value)
 {
 	std::swap (loaded, value);
@@ -831,54 +834,54 @@ void cVehicle::setLoaded (bool value)
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setClearing (bool value)
 {
 	std::swap (isClearing, value);
 	if (value != isClearing) clearingChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setBuildingABuilding (bool value)
 {
 	std::swap (isBuilding, value);
 	if (value != isBuilding) buildingChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setLayMines (bool value)
 {
 	std::swap (layMines, value);
 	if (value != layMines) layingMinesChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setClearMines (bool value)
 {
 	std::swap (clearMines, value);
 	if (value != clearMines) clearingMinesChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cVehicle::getClearingTurns() const
 {
 	return clearingTurns;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setClearingTurns (int value)
 {
 	std::swap (clearingTurns, value);
 	if (value != clearingTurns) clearingTurnsChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const sID& cVehicle::getBuildingType() const
 {
 	return buildingTyp;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setBuildingType (const sID& id)
 {
 	auto oldId = id;
@@ -886,52 +889,52 @@ void cVehicle::setBuildingType (const sID& id)
 	if (buildingTyp != oldId) buildingTypeChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cVehicle::getBuildCosts() const
 {
 	return buildCosts;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setBuildCosts (int value)
 {
 	std::swap (buildCosts, value);
 	if (value != buildCosts) buildingCostsChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cVehicle::getBuildTurns() const
 {
 	return buildTurns;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setBuildTurns (int value)
 {
 	std::swap (buildTurns, value);
 	if (value != buildTurns) buildingTurnsChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cVehicle::getBuildCostsStart() const
 {
 	return buildCostsStart;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setBuildCostsStart (int value)
 {
 	std::swap (buildCostsStart, value);
 	//if (value != buildCostsStart) event();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cVehicle::getBuildTurnsStart() const
 {
 	return buildTurnsStart;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setBuildTurnsStart (int value)
 {
 	std::swap (buildTurnsStart, value);
@@ -946,13 +949,13 @@ void cVehicle::setSurveyorAutoMoveActive (bool value)
 	if (value != surveyorAutoMoveActive) autoMoveJobChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cVehicle::getFlightHeight() const
 {
 	return flightHeight;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setFlightHeight (int value)
 {
 	value = std::min (std::max (value, 0), MAX_FLIGHT_HEIGHT);
@@ -960,19 +963,19 @@ void cVehicle::setFlightHeight (int value)
 	if (flightHeight != value) flightHeightChanged();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMoveJob* cVehicle::getMoveJob()
 {
 	return moveJob;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const cMoveJob* cVehicle::getMoveJob() const
 {
 	return moveJob;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cVehicle::setMoveJob (cMoveJob* moveJob_)
 {
 	std::swap (moveJob, moveJob_);

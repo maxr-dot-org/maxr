@@ -26,7 +26,7 @@
 #include "game/data/units/unitdata.h"
 #include "utility/log.h"
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cCasualtiesTracker::logCasualty (const cUnit& unit)
 {
 	if (!unit.getOwner()) return;
@@ -37,7 +37,7 @@ void cCasualtiesTracker::logCasualty (const cUnit& unit)
 	casualtiesChanged();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cCasualtiesTracker::increaseCasualty (sID unitType, int playerNr)
 {
 	auto signalCaller = makeScopedOperation ([=]() { casualtyChanged (unitType, playerNr); });
@@ -67,7 +67,7 @@ void cCasualtiesTracker::increaseCasualty (sID unitType, int playerNr)
 	casualties.push_back (newCasualtyEntry);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cCasualtiesTracker::getCasualtiesOfUnitType (sID unitType, int playerNr) const
 {
 	const std::vector<Casualty>& casualties = getCasualtiesOfPlayer (playerNr);
@@ -79,7 +79,7 @@ int cCasualtiesTracker::getCasualtiesOfUnitType (sID unitType, int playerNr) con
 	return 0;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::vector<sID> cCasualtiesTracker::getUnitTypesWithLosses() const
 {
 	std::vector<sID> result;
@@ -117,7 +117,7 @@ uint32_t cCasualtiesTracker::getChecksum (uint32_t crc) const
 	return calcCheckSum (casualtiesPerPlayer, crc);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::vector<cCasualtiesTracker::Casualty>& cCasualtiesTracker::getCasualtiesOfPlayer (int playerNr) const
 {
 	for (unsigned int i = 0; i < casualtiesPerPlayer.size(); i++)
@@ -141,6 +141,7 @@ std::vector<cCasualtiesTracker::Casualty>& cCasualtiesTracker::getCasualtiesOfPl
 	return casualtiesPerPlayer.back().casualties;
 }
 
+//------------------------------------------------------------------------------
 uint32_t cCasualtiesTracker::CasualtiesOfPlayer::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (casualties, crc);
@@ -149,6 +150,7 @@ uint32_t cCasualtiesTracker::CasualtiesOfPlayer::getChecksum (uint32_t crc) cons
 	return crc;
 }
 
+//------------------------------------------------------------------------------
 uint32_t cCasualtiesTracker::Casualty::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (unitID, crc);

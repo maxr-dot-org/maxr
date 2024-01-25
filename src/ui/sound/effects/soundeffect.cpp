@@ -22,13 +22,13 @@
 #include "output/sound/soundchannel.h"
 #include "utility/position.h"
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundEffect::cSoundEffect (eSoundEffectType type_, const cSoundChunk& sound_) :
 	type (type_),
 	sound (&sound_)
 {}
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundEffect::~cSoundEffect()
 {
 	signalConnectionManager.disconnectAll();
@@ -50,13 +50,13 @@ cSoundEffect::~cSoundEffect()
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 eSoundChannelType cSoundEffect::getChannelType() const
 {
 	return eSoundChannelType::General;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundEffect::play (cSoundChannel& channel_, bool loop)
 {
 	stop();
@@ -87,7 +87,7 @@ void cSoundEffect::play (cSoundChannel& channel_, bool loop)
 	started();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundEffect::stop()
 {
 	bool hadChannel = false;
@@ -107,7 +107,7 @@ void cSoundEffect::stop()
 	if (hadChannel) stopped();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundEffect::pause()
 {
 	std::unique_lock<std::recursive_mutex> lock (channelMutex);
@@ -117,7 +117,7 @@ void cSoundEffect::pause()
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cSoundEffect::resume()
 {
 	std::unique_lock<std::recursive_mutex> lock (channelMutex);
@@ -127,20 +127,20 @@ void cSoundEffect::resume()
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cSoundChannel* cSoundEffect::getChannel() const
 {
 	std::unique_lock<std::recursive_mutex> lock (channelMutex);
 	return channel;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundEffect::isInConflict (const cSoundEffect& other) const
 {
 	return type == other.type;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundEffect::hasConflictAtSameGameTimeOnly() const
 {
 	switch (type)
@@ -153,7 +153,7 @@ bool cSoundEffect::hasConflictAtSameGameTimeOnly() const
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 unsigned int cSoundEffect::getMaxConcurrentConflictedCount() const
 {
 	switch (type)
@@ -189,7 +189,7 @@ unsigned int cSoundEffect::getMaxConcurrentConflictedCount() const
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 eSoundConflictHandlingType cSoundEffect::getSoundConflictHandlingType() const
 {
 	switch (type)
@@ -225,13 +225,13 @@ eSoundConflictHandlingType cSoundEffect::getSoundConflictHandlingType() const
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cSoundEffect::hasPosition() const
 {
 	return false;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const cPosition& cSoundEffect::getPosition() const
 {
 	static cPosition dummyPosition (0, 0);
