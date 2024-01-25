@@ -43,7 +43,7 @@ protected:
 
 private:
 	eMouseCursorAmountType type;
-	int percent;
+	int percent = -1;
 
 	mutable UniqueSurface surface;
 

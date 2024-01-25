@@ -46,7 +46,7 @@ public:
 
 private:
 	cPlayerBasicData player;
-	bool selectedPosition;
+	bool selectedPosition = false;
 };
 
 class cChatBoxLandingPlayerListViewItem : public cAbstractListViewItem
@@ -70,7 +70,7 @@ private:
 
 	const cPlayerLandingStatus& playerLandingStatus;
 
-	const cLandingPositionManager* landingPositionManager;
+	const cLandingPositionManager* landingPositionManager = nullptr;
 
 	void updatePlayerName();
 	void updatePlayerColor();

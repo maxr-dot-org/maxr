@@ -50,6 +50,14 @@ public:
 	void stopAllSounds();
 
 private:
+	cSoundChannel* getChannelForSound (cSoundEffect& sound);
+
+	void finishedSound (cSoundEffect& sound);
+
+	void updateSoundPosition (cSoundEffect& sound);
+	void updateAllSoundPositions();
+
+private:
 	struct sStoredSound
 	{
 		sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_);
@@ -68,9 +76,11 @@ private:
 		bool active;
 		cSignalConnectionManager signalConnectionManager;
 	};
+
+private:
 	cSignalConnectionManager signalConnectionManager;
 
-	const cModel* model;
+	const cModel* model = nullptr;
 
 	std::recursive_mutex playingSoundsMutex;
 	std::vector<sStoredSound> playingSounds;
@@ -78,14 +88,7 @@ private:
 	cPosition listenerPosition;
 	int maxListeningDistance;
 
-	bool muted;
-
-	cSoundChannel* getChannelForSound (cSoundEffect& sound);
-
-	void finishedSound (cSoundEffect& sound);
-
-	void updateSoundPosition (cSoundEffect& sound);
-	void updateAllSoundPositions();
+	bool muted = false;
 };
 
 #endif // ui_sound_soundmanagerH

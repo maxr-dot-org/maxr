@@ -35,8 +35,7 @@
 //------------------------------------------------------------------------------
 cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) :
 	cWidget (area),
-	drawLines (drawLines_),
-	unit (nullptr)
+	drawLines (drawLines_)
 {
 	const auto size = getSize();
 	if (std::size_t (size.y()) < maxRows * rowHeight) resize (cPosition (getSize().x(), maxRows * rowHeight));

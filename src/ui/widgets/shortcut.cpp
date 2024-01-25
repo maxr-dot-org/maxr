@@ -21,8 +21,7 @@
 
 //------------------------------------------------------------------------------
 cShortcut::cShortcut (cKeySequence keySequence_) :
-	keySequence (keySequence_),
-	active (true)
+	keySequence (keySequence_)
 {}
 
 //------------------------------------------------------------------------------

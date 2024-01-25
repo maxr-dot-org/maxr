@@ -23,13 +23,7 @@
 
 //------------------------------------------------------------------------------
 cRadioGroup::cRadioGroup (bool allowUncheckAll_) :
-	currentlyCheckedButton (nullptr),
-	allowUncheckAll (allowUncheckAll_),
-	internalMoving (false)
-{}
-
-//------------------------------------------------------------------------------
-cRadioGroup::~cRadioGroup()
+	allowUncheckAll (allowUncheckAll_)
 {}
 
 //------------------------------------------------------------------------------

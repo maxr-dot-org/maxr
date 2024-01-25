@@ -31,8 +31,7 @@
 
 //------------------------------------------------------------------------------
 cUnitDetailsStored::cUnitDetailsStored (const cBox<cPosition>& area) :
-	cWidget (area),
-	unit (nullptr)
+	cWidget (area)
 {
 	const auto size = getSize();
 	if (std::size_t (size.y()) < maxRows * rowHeight) resize (cPosition (getSize().x(), maxRows * rowHeight));

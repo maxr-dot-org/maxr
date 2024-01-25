@@ -21,6 +21,7 @@
 #define utility_scopedoperationH
 
 #include <functional>
+#include <utility>
 
 /**
  * Generic RAII-class that calls a function object on its destruction.
@@ -33,22 +34,19 @@ class cScopedOperation
 {
 public:
 	explicit cScopedOperation (const FunctionType& function_) :
-		function (function_),
-		dismissed (false)
+		function (function_)
 	{}
 	cScopedOperation (const cScopedOperation<FunctionType>&) = delete;
 	cScopedOperation& operator= (const cScopedOperation<FunctionType>&) = delete;
 	cScopedOperation (cScopedOperation<FunctionType>&& other) :
 		function (std::move (other.function)),
-		dismissed (false)
+		dismissed (std::exchange (other.dismissed, true))
 	{
-		other.dismissed = true;
 	}
 	cScopedOperation<FunctionType>& operator= (cScopedOperation<FunctionType>&& other)
 	{
 		function = std::move (other.function);
-		dismissed = other.dismissed;
-		other.dismissed = true;
+		dismissed = std::exchange (other.dismissed, true);
 		return *this;
 	}
 
@@ -68,7 +66,7 @@ public:
 
 private:
 	FunctionType function;
-	bool dismissed;
+	bool dismissed = false;
 };
 
 /**

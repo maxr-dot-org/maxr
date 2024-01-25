@@ -27,8 +27,7 @@
 
 cAirTransportLoadJob::cAirTransportLoadJob (cVehicle& loadedVehicle, cUnit& loadingUnit) :
 	cJob (loadingUnit),
-	vehicleToLoadId (loadedVehicle.getId()),
-	landing (true)
+	vehicleToLoadId (loadedVehicle.getId())
 {
 	connectionManager.connect (loadedVehicle.destroyed, [this]() { finished = true; });
 }

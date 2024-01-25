@@ -178,8 +178,6 @@ cFxCorpse::cFxCorpse (const cPosition& position_) :
 //------------------------------------------------------------------------------
 cFxTracks::cFxTracks (const cPosition& position_, int dir_) :
 	cFx (true, position_),
-	alphaStart (100),
-	alphaEnd (0),
 	dir (dir_)
 {
 	length = 1024;
@@ -188,9 +186,7 @@ cFxTracks::cFxTracks (const cPosition& position_, int dir_) :
 //------------------------------------------------------------------------------
 cFxRocket::cFxRocket (const cPosition& startPosition_, const cPosition& endPosition_, int dir_, bool bottom, sID id_) :
 	cFx (bottom, startPosition_),
-	speed (8),
 	dir (dir_),
-	distance (0),
 	startPosition (startPosition_),
 	endPosition (endPosition_),
 	id (id_)
@@ -226,11 +222,7 @@ bool cFxRocket::isFinished() const
 
 cFxDarkSmoke::cFxDarkSmoke (const cPosition& position_, int alpha, float windDir) :
 	cFx (false, position_),
-	dx (0),
-	dy (0),
-	alphaStart (alpha),
-	alphaEnd (0),
-	frames (50)
+	alphaStart (alpha)
 {
 	length = 200;
 

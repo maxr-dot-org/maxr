@@ -47,14 +47,10 @@ cVideo Video;
 #define MINHEIGHT 480
 
 cVideo::cVideo() :
-	sdlWindow (nullptr),
-	sdlRenderer (nullptr),
-	sdlTexture (nullptr),
 	resolutionX (MINWIDTH),
 	resolutionY (MINHEIGHT),
 	displayIndex (MINWIDTH),
-	colorDepth (COLOURDEPTH),
-	windowMode (false)
+	colorDepth (COLOURDEPTH)
 {
 	signalConnectionManager.connect (cKeyboard::getInstance().keyPressed, [this] (cKeyboard& keyboard, SDL_Keycode key) { keyPressed (keyboard, key); });
 }

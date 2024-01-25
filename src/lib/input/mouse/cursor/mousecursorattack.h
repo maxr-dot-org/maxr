@@ -30,7 +30,7 @@ class cMapView;
 class cMouseCursorAttack : public cMouseCursor
 {
 public:
-	cMouseCursorAttack();
+	cMouseCursorAttack() = default;
 	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMapView&);
 	cMouseCursorAttack (int currentHealthPercent, int newHealthPercent, bool inRange);
 
@@ -42,14 +42,15 @@ protected:
 	bool equal (const cMouseCursor& other) const override;
 
 private:
-	int currentHealthPercent;
-	int newHealthPercent;
+	void generateSurface() const;
 
-	bool inRange;
+private:
+	int currentHealthPercent = -1;
+	int newHealthPercent = -1;
+
+	bool inRange = true;
 
 	mutable UniqueSurface surface;
-
-	void generateSurface() const;
 };
 
 #endif // input_mouse_cursor_mousecursorattackH

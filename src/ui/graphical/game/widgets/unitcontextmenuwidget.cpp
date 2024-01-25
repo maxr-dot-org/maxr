@@ -30,11 +30,6 @@
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
-cUnitContextMenuWidget::cUnitContextMenuWidget() :
-	unit (nullptr)
-{}
-
-//------------------------------------------------------------------------------
 void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseInputMode, const cPlayer* player, const cMapView* map)
 {
 	unit = unit_;

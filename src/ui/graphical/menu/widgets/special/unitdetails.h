@@ -54,11 +54,11 @@ private:
 	static const int rowHeight = 19;
 
 	UniqueSurface surface;
-	std::array<cLabel*, maxRows> amountLabels;
-	std::array<cLabel*, maxRows> nameLabels;
+	std::array<cLabel*, maxRows> amountLabels{};
+	std::array<cLabel*, maxRows> nameLabels{};
 
 	sID unitId;
-	const cStaticUnitData* staticUnitData;
+	const cStaticUnitData* staticUnitData = nullptr;
 	const cDynamicUnitData* playerOriginalData = nullptr;
 	const cDynamicUnitData* playerCurrentData = nullptr;
 	const cDynamicUnitData* unitObjectCurrentData = nullptr;

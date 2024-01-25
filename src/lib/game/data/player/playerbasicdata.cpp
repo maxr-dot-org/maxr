@@ -30,17 +30,9 @@
 }
 
 //------------------------------------------------------------------------------
-cPlayerBasicData::cPlayerBasicData() :
-	nr (0),
-	ready (false),
-	defeated (false)
-{}
-
-//------------------------------------------------------------------------------
 cPlayerBasicData::cPlayerBasicData (const sPlayerSettings& player, int nr, bool defeated) :
 	player (player),
 	nr (nr),
-	ready (false),
 	defeated (defeated)
 {}
 

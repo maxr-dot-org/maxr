@@ -152,7 +152,7 @@ private:
 	std::shared_ptr<cConnectionManager> connectionManager;
 	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
 	std::shared_ptr<cGameTimerClient> gameTimer;
-	cPlayer* activePlayer;
+	cPlayer* activePlayer = nullptr;
 	cFreezeModes freezeModes;
 	std::map<int, ePlayerConnectionState> playerConnectionStates;
 	std::vector<std::unique_ptr<cSurveyorAi>> surveyorAiJobs;

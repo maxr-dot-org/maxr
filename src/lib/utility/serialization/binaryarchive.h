@@ -141,10 +141,10 @@ public:
 	size_t dataLeft() const;
 
 private:
-	const unsigned char* data;
+	const unsigned char* data = nullptr;
 	size_t length;
 
-	size_t readPosition;
+	size_t readPosition = 0;
 
 	template <size_t SIZE, typename T1>
 	void readFromBuffer (T1& value);

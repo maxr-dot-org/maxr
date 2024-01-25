@@ -44,17 +44,6 @@ public:
 	void handleLooseMouseFocus (cApplication&) override;
 
 private:
-	cHsvColor currentColor;
-
-	bool startedPressInColor;
-	bool startedPressInBar;
-
-	cImage* colorsImage;
-	cImage* colorBarImage;
-
-	cImage* selectedColorMarker;
-	cImage* selectedColorHueMarker;
-
 	UniqueSurface createColorsSurface();
 	UniqueSurface createColorBarSurface();
 
@@ -65,6 +54,18 @@ private:
 
 	void updateColorByMousePosition (const cPosition& mousePosition);
 	void updateColorHueByMousePosition (const cPosition& mousePosition);
+
+private:
+	cHsvColor currentColor;
+
+	bool startedPressInColor = false;
+	bool startedPressInBar = false;
+
+	cImage* colorsImage = nullptr;
+	cImage* colorBarImage = nullptr;
+
+	cImage* selectedColorMarker = nullptr;
+	cImage* selectedColorHueMarker = nullptr;
 };
 
 #endif // ui_graphical_menu_widgets_frameH

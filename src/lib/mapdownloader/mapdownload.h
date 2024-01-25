@@ -59,7 +59,7 @@ public:
 
 private:
 	std::filesystem::path mapFilename;
-	std::size_t bytesReceived;
+	std::size_t bytesReceived = 0;
 	std::vector<char> readBuffer;
 };
 

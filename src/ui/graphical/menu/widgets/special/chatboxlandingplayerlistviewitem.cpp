@@ -29,8 +29,7 @@
 
 //------------------------------------------------------------------------------
 cPlayerLandingStatus::cPlayerLandingStatus (const cPlayerBasicData& player) :
-	player (player),
-	selectedPosition (false)
+	player (player)
 {}
 
 //------------------------------------------------------------------------------
@@ -55,8 +54,7 @@ void cPlayerLandingStatus::setHasSelectedPosition (bool value)
 //------------------------------------------------------------------------------
 cChatBoxLandingPlayerListViewItem::cChatBoxLandingPlayerListViewItem (const cPlayerLandingStatus& playerLandingStatus_) :
 	cAbstractListViewItem (cPosition (50, 0)),
-	playerLandingStatus (playerLandingStatus_),
-	landingPositionManager (nullptr)
+	playerLandingStatus (playerLandingStatus_)
 {
 	const auto& player = playerLandingStatus.getPlayer();
 

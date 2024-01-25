@@ -55,13 +55,13 @@ protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
-	cLabel* numberLabel;
-	cLabel* typeLabel;
-	cLabel* timeLabel;
-	cLineEdit* nameLineEdit;
+	cLabel* numberLabel = nullptr;
+	cLabel* typeLabel = nullptr;
+	cLabel* timeLabel = nullptr;
+	cLineEdit* nameLineEdit = nullptr;
 
-	bool empty;
-	bool renameable;
+	bool empty = true;
+	bool renameable = false;
 };
 
 #endif // ui_graphical_menu_widgets_special_saveslotwidgetH

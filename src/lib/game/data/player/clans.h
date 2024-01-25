@@ -81,8 +81,7 @@ class cClan
 public:
 	cClan (int num) :
 		num (num) {}
-	cClan() :
-		num (-1) {}
+	cClan() = default;
 
 	cClan (const cClan&) = default;
 
@@ -112,7 +111,7 @@ public:
 	}
 
 private:
-	int num;
+	int num = -1;
 	std::string description;
 	std::string name;
 	std::vector<cClanUnitStat> stats;

@@ -33,7 +33,7 @@ class cDestroyJob : public cJob
 public:
 	cDestroyJob (cUnit& unit, cModel& model);
 	template <typename Archive>
-	cDestroyJob (Archive& archive)
+	explicit cDestroyJob (Archive& archive)
 	{
 		serializeThis (archive);
 	}
@@ -70,7 +70,7 @@ private:
 		// clang-format on
 	}
 
-	int counter;
+	int counter = 0;
 };
 
 #endif

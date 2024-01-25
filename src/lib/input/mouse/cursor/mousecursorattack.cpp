@@ -29,16 +29,7 @@
 #include <cassert>
 
 //------------------------------------------------------------------------------
-cMouseCursorAttack::cMouseCursorAttack() :
-	currentHealthPercent (-1),
-	newHealthPercent (-1),
-	inRange (true)
-{}
-
-//------------------------------------------------------------------------------
 cMouseCursorAttack::cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMapView& map) :
-	currentHealthPercent (-1),
-	newHealthPercent (-1),
 	inRange (sourceUnit.isInRange (targetPosition))
 {
 	const cUnit* target = cAttackJob::selectTarget (targetPosition, sourceUnit.getStaticUnitData().canAttack, map, sourceUnit.getOwner());

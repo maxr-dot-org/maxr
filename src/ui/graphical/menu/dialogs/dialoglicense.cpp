@@ -39,9 +39,7 @@ namespace
 
 //------------------------------------------------------------------------------
 cDialogLicense::cDialogLicense() :
-	cWindow (LoadPCX (GFXOD_DIALOG4), eWindowBackgrounds::Alpha),
-	currentPage (0),
-	maxPage (3)
+	cWindow (LoadPCX (GFXOD_DIALOG4), eWindowBackgrounds::Alpha)
 {
 	auto* font = cUnicodeFont::font.get();
 

@@ -37,7 +37,6 @@ static constexpr cRgbColor neutralColor = cRgbColor::black();
 cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap) :
 	cClickableWidget (area),
 	staticMap (std::move (staticMap)),
-	mapView (nullptr),
 	offset (0, 0),
 	mapViewWindow (cPosition (0, 0), cPosition (0, 0))
 {

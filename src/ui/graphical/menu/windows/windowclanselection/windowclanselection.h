@@ -48,9 +48,9 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	static const size_t clanRows = 2;
-	static const size_t clanColumns = 4;
-	static const size_t clanCount = clanRows * clanColumns;
+	static constexpr size_t clanRows = 2;
+	static constexpr size_t clanColumns = 4;
+	static constexpr size_t clanCount = clanRows * clanColumns;
 
 	std::array<cImage*, clanCount> clanImages;
 	std::array<cLabel*, clanCount> clanTitles;
@@ -66,7 +66,7 @@ private:
 	std::shared_ptr<const cUnitsData> unitsData;
 	std::shared_ptr<const cClanData> clanData;
 
-	unsigned int selectedClan;
+	unsigned int selectedClan = 0;
 
 	void clanClicked (const cImage* clanImage);
 

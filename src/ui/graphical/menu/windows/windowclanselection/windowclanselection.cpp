@@ -33,8 +33,7 @@
 cWindowClanSelection::cWindowClanSelection (std::shared_ptr<const cUnitsData> unitsData, std::shared_ptr<const cClanData> clanData) :
 	cWindow (LoadPCX (GFXOD_CLAN_SELECT)),
 	unitsData (unitsData),
-	clanData (clanData),
-	selectedClan (0)
+	clanData (clanData)
 {
 	assert (unitsData);
 	assert (clanData);

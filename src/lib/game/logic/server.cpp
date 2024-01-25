@@ -38,11 +38,7 @@
 
 //------------------------------------------------------------------------------
 cServer::cServer (std::shared_ptr<cConnectionManager> connectionManager) :
-	model(),
-	gameTimer(),
-	connectionManager (connectionManager),
-	serverThread (nullptr),
-	exit (false)
+	connectionManager (connectionManager)
 {
 	model.turnEnded.connect ([this]() {
 		enableFreezeMode (eFreezeMode::WaitForTurnend);

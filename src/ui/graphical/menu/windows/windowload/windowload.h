@@ -81,10 +81,10 @@ private:
 
 	std::array<cSaveSlotWidget*, rows * columns> saveSlots;
 
-	int page;
+	int page = 0;
 	const int lastPage;
 
-	int selectedSaveNumber;
+	int selectedSaveNumber = -1;
 	std::string selectedOriginalName;
 
 	std::function<std::vector<cSaveGameInfo>()> saveGamesGetter;

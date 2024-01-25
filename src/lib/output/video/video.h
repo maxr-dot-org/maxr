@@ -184,9 +184,9 @@ private:
 	void detectResolutions();
 
 private:
-	SDL_Window* sdlWindow;
-	SDL_Renderer* sdlRenderer;
-	SDL_Texture* sdlTexture;
+	SDL_Window* sdlWindow = nullptr;
+	SDL_Renderer* sdlRenderer = nullptr;
+	SDL_Texture* sdlTexture = nullptr;
 
 	int resolutionX;
 	int resolutionY;
@@ -195,7 +195,7 @@ private:
 
 	int colorDepth;
 
-	bool windowMode;
+	bool windowMode = false;
 
 	cSignalConnectionManager signalConnectionManager;
 

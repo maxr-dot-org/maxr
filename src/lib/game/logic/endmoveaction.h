@@ -69,7 +69,7 @@ private:
 
 private:
 	eEndMoveActionType endMoveAction;
-	int destID;
+	int destID = -1;
 };
 
 #endif // !game_logic_endmoveaction_h

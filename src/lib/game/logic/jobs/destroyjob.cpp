@@ -26,8 +26,7 @@
 
 //------------------------------------------------------------------------------
 cDestroyJob::cDestroyJob (cUnit& unit, cModel& model) :
-	cJob (unit),
-	counter (0)
+	cJob (unit)
 {
 	createDestroyFx (model);
 }

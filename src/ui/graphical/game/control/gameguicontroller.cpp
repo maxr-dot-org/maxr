@@ -104,7 +104,6 @@ cGameGuiController::cGameGuiController (cApplication& application_, std::shared_
 	soundManager (std::make_shared<cSoundManager>()),
 	animationTimer (std::make_shared<cAnimationTimer>()),
 	gameGui (std::make_shared<cGameGui> (std::move (staticMap), soundManager, animationTimer, application_.frameCounter)),
-	server (nullptr),
 	upgradesFilterState (std::make_shared<cWindowUpgradesFilterState>())
 {
 	connectGuiStaticCommands();

@@ -36,9 +36,7 @@
 
 #include <algorithm>
 
-sDrawingCacheEntry::sDrawingCacheEntry()
-{}
-
+//------------------------------------------------------------------------------
 void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, const cPlayer* player, unsigned long long animationTime, double zoom_, unsigned long long frameNr)
 {
 	dir = vehicle.dir;
@@ -95,6 +93,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 	SDL_FillRect (surface.get(), nullptr, toSdlAlphaColor (cRgbColor::transparent(), *surface));
 }
 
+//------------------------------------------------------------------------------
 void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned long long frameNr)
 {
 	BaseN = building.BaseN;
@@ -124,23 +123,21 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned
 	SDL_FillRect (surface.get(), nullptr, toSdlAlphaColor(cRgbColor::transparent(), *surface));
 }
 
+//------------------------------------------------------------------------------
 cDrawingCache::cDrawingCache (std::shared_ptr<const cFrameCounter> frameCounter_) :
-	frameCounter (frameCounter_),
-	player (nullptr)
+	frameCounter (frameCounter_)
 {
-	cacheHits = 0;
-	cacheMisses = 0;
-	notCached = 0;
-	cacheSize = 0;
 	const std::size_t maxCacheSize = cSettings::getInstance().getCacheSize(); //set cache size from config
 	cachedImages.resize (maxCacheSize);
 }
 
+//------------------------------------------------------------------------------
 void cDrawingCache::setPlayer (const cPlayer* player_)
 {
 	player = player_;
 }
 
+//------------------------------------------------------------------------------
 SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zoom, unsigned long long animationTime)
 {
 	if (!canCache (building)) return nullptr;
@@ -184,6 +181,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom, const cMapView& map, unsigned long long animationTime)
 {
 	if (!canCache (vehicle)) return nullptr;
@@ -250,6 +248,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zoom, unsigned long long animationTime)
 {
 	if (!canCache (building))
@@ -292,6 +291,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zo
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom, const cMapView& map, unsigned long long animationTime)
 {
 	if (!canCache (vehicle))
@@ -333,11 +333,13 @@ SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 void cDrawingCache::flush()
 {
 	cacheSize = 0;
 }
 
+//------------------------------------------------------------------------------
 bool cDrawingCache::canCache (const cBuilding& building)
 {
 	auto& uiData = UnitsUiData.getBuildingUI (building);
@@ -350,6 +352,7 @@ bool cDrawingCache::canCache (const cBuilding& building)
 	return true;
 }
 
+//------------------------------------------------------------------------------
 bool cDrawingCache::canCache (const cVehicle& vehicle)
 {
 	if ((vehicle.isUnitBuildingABuilding() || vehicle.isUnitClearing()) && vehicle.jobActive)
@@ -378,6 +381,7 @@ bool cDrawingCache::canCache (const cVehicle& vehicle)
 	return true;
 }
 
+//------------------------------------------------------------------------------
 void cDrawingCache::resetStatistics()
 {
 	cacheMisses = 0;
@@ -385,11 +389,13 @@ void cDrawingCache::resetStatistics()
 	notCached = 0;
 }
 
+//------------------------------------------------------------------------------
 int cDrawingCache::getMaxCacheSize() const
 {
 	return cachedImages.size();
 }
 
+//------------------------------------------------------------------------------
 void cDrawingCache::setMaxCacheSize (unsigned int newSize)
 {
 	cachedImages.clear();
@@ -400,21 +406,25 @@ void cDrawingCache::setMaxCacheSize (unsigned int newSize)
 	cSettings::getInstance().saveInFile();
 }
 
+//------------------------------------------------------------------------------
 int cDrawingCache::getCacheSize() const
 {
 	return cacheSize;
 }
 
+//------------------------------------------------------------------------------
 int cDrawingCache::getCacheHits() const
 {
 	return cacheHits;
 }
 
+//------------------------------------------------------------------------------
 int cDrawingCache::getCacheMisses() const
 {
 	return cacheMisses;
 }
 
+//------------------------------------------------------------------------------
 int cDrawingCache::getNotCached() const
 {
 	return notCached / 2;

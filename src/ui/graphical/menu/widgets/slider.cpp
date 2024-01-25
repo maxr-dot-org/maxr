@@ -45,7 +45,6 @@ cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOr
 //------------------------------------------------------------------------------
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderHandleType handleType, eSliderType sliderType) :
 	cClickableWidget (area),
-	surface (nullptr),
 	type (sliderType),
 	currentValue (minValue_),
 	minValue (minValue_),

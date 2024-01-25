@@ -41,7 +41,7 @@ class cServer : public INetMessageReceiver
 	friend class cDebugOutputWidget;
 
 public:
-	cServer (std::shared_ptr<cConnectionManager>);
+	explicit cServer (std::shared_ptr<cConnectionManager>);
 	~cServer();
 
 	void pushMessage (std::unique_ptr<cNetMessage>);
@@ -81,17 +81,6 @@ public:
 	void clearPlayerNotResponding (int playerId);
 
 private:
-	cModel model;
-
-	std::map<int, ePlayerConnectionState> playerConnectionStates;
-	cFreezeModes freezeModes;
-	cGameTimerServer gameTimer;
-
-	std::shared_ptr<cConnectionManager> connectionManager;
-	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
-
-	mutable int savingID = -1; //identifier number, to make sure the gui info from clients are written to the correct save file
-
 	void initRandomGenerator();
 	/**
 	* Update the player connection state and halt game if necessary.
@@ -121,8 +110,21 @@ private:
 	// manage the server thread
 	static int serverThreadCallback (void* arg);
 	void run();
-	mutable SDL_Thread* serverThread;
-	mutable bool exit;
+
+private:
+	cModel model;
+
+	std::map<int, ePlayerConnectionState> playerConnectionStates;
+	cFreezeModes freezeModes;
+	cGameTimerServer gameTimer;
+
+	std::shared_ptr<cConnectionManager> connectionManager;
+	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
+
+	mutable int savingID = -1; //identifier number, to make sure the gui info from clients are written to the correct save file
+
+	mutable SDL_Thread* serverThread = nullptr;
+	mutable bool exit = false;
 };
 
 #endif

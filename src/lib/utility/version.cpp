@@ -28,10 +28,7 @@
 #endif
 
 //------------------------------------------------------------------------------
-cVersion::cVersion (const std::string& string) :
-	major (0),
-	minor (0),
-	revision (0)
+cVersion::cVersion (const std::string& string)
 {
 	parseFromString (string);
 }

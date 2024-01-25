@@ -23,26 +23,13 @@
 #include "ui/widgets/application.h"
 
 //------------------------------------------------------------------------------
-cClickableWidget::cClickableWidget() :
-	isPressed (false),
-	mouseWasOver (false),
-	consumeClick (true)
-{}
-
-//------------------------------------------------------------------------------
 cClickableWidget::cClickableWidget (const cPosition& position) :
-	cWidget (position),
-	isPressed (false),
-	mouseWasOver (false),
-	consumeClick (true)
+	cWidget (position)
 {}
 
 //------------------------------------------------------------------------------
 cClickableWidget::cClickableWidget (const cBox<cPosition>& area) :
-	cWidget (area),
-	isPressed (false),
-	mouseWasOver (false),
-	consumeClick (true)
+	cWidget (area)
 {}
 
 //------------------------------------------------------------------------------

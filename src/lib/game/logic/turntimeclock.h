@@ -110,8 +110,8 @@ private:
 	const cModel& model;
 	std::vector<cTurnTimeDeadline> deadlines;
 
-	unsigned int nextDeadlineId;
-	unsigned int startTurnGameTime;
+	unsigned int nextDeadlineId = 1;
+	unsigned int startTurnGameTime = 0;
 
 	std::chrono::milliseconds getTimeTillDeadlineReached (const cTurnTimeDeadline& deadline) const;
 };

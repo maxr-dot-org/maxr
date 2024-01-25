@@ -53,8 +53,8 @@ private:
 
 private:
 	const cVehicle& vehicle; // the vehicle the auto move job belongs to
-	bool finished; // true when the job can be deleted
-	int counter;
+	bool finished = false; // true when the job can be deleted
+	int counter = 0;
 
 	// the operation point of the surveyor
 	// the surveyor tries to stay near this coordinates

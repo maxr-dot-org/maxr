@@ -76,19 +76,19 @@ private:
 	const bool canStoreShips;
 
 	const size_t columns;
-	size_t page;
+	size_t page = 0;
 
-	static const int maxColumns = 3;
-	static const int maxRows = 2;
+	static constexpr int maxColumns = 3;
+	static constexpr int maxRows = 2;
 
-	std::array<cPushButton*, maxColumns * maxRows> activateButtons;
-	std::array<cPushButton*, maxColumns * maxRows> reloadButtons;
-	std::array<cPushButton*, maxColumns * maxRows> repairButtons;
-	std::array<cPushButton*, maxColumns * maxRows> upgradeButtons;
+	std::array<cPushButton*, maxColumns * maxRows> activateButtons{};
+	std::array<cPushButton*, maxColumns * maxRows> reloadButtons{};
+	std::array<cPushButton*, maxColumns * maxRows> repairButtons{};
+	std::array<cPushButton*, maxColumns * maxRows> upgradeButtons{};
 
-	std::array<cImage*, maxColumns * maxRows> unitImages;
-	std::array<cLabel*, maxColumns * maxRows> unitNames;
-	std::array<cUnitDetailsStored*, maxColumns * maxRows> unitDetails;
+	std::array<cImage*, maxColumns * maxRows> unitImages{};
+	std::array<cLabel*, maxColumns * maxRows> unitNames{};
+	std::array<cUnitDetailsStored*, maxColumns * maxRows> unitDetails{};
 
 	void updateUnitsWidgets();
 	void updateUnitButtons (const cVehicle& unit, size_t positionIndex);

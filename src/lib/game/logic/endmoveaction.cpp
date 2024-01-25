@@ -57,8 +57,7 @@ cEndMoveAction::cEndMoveAction (const cUnit& destUnit, eEndMoveActionType type) 
 
 //------------------------------------------------------------------------------
 cEndMoveAction::cEndMoveAction() :
-	endMoveAction (eEndMoveActionType::None),
-	destID (-1)
+	endMoveAction (eEndMoveActionType::None)
 {}
 
 //------------------------------------------------------------------------------

@@ -33,8 +33,7 @@ cLandingPositionManager::sLandingPositionData::sLandingPositionData (cPlayerBasi
 	landingPosition (0, 0),
 	lastLandingPosition (0, 0),
 	state (eLandingPositionState::Unknown),
-	player (player_),
-	needNewPosition (true)
+	player (player_)
 {}
 
 //------------------------------------------------------------------------------

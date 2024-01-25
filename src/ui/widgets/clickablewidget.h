@@ -31,7 +31,7 @@ class cShortcut;
 class cClickableWidget : public cWidget
 {
 public:
-	cClickableWidget();
+	cClickableWidget() = default;
 	explicit cClickableWidget (const cPosition&);
 	explicit cClickableWidget (const cBox<cPosition>& area);
 
@@ -45,11 +45,6 @@ public:
 	void setConsumeClick (bool consumeClick);
 
 protected:
-	bool isPressed;
-	bool mouseWasOver;
-
-	bool consumeClick;
-
 	virtual void setPressed (bool pressed);
 
 	void finishMousePressed (cApplication&, cMouse&, eMouseButtonType);
@@ -59,11 +54,18 @@ protected:
 	virtual bool acceptButton (eMouseButtonType) const;
 
 private:
+	bool& getStartedClickWithin (eMouseButtonType);
+
+protected:
+	bool isPressed = false;
+	bool mouseWasOver = false;
+
+	bool consumeClick = true;
+
+private:
 	cSignalConnectionManager signalConnectionManager;
 
 	std::map<eMouseButtonType, bool> startedClickWithin;
-
-	bool& getStartedClickWithin (eMouseButtonType);
 };
 
 #endif

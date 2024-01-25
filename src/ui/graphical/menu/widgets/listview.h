@@ -49,7 +49,7 @@ class cListView : public cClickableWidget
 
 public:
 	explicit cListView (const cBox<cPosition>& area, bool allowMultiSelection = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
-	explicit cListView (const cBox<cPosition>& area, eScrollBarStyle, bool allowMultiSelection = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
+	cListView (const cBox<cPosition>& area, eScrollBarStyle, bool allowMultiSelection = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
 
 	void disableSelectable();
 	void enableSelectable();
@@ -114,30 +114,30 @@ protected:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cScrollBar* scrollBar;
+	cScrollBar* scrollBar = nullptr;
 
 	cPosition beginMargin;
 	cPosition endMargin;
 	int itemDistance;
 
-	cSoundChunk* clickSound;
+	cSoundChunk* clickSound = nullptr;
 
-	bool removeTookPlace;
+	bool removeTookPlace = false;
 
 	std::vector<std::pair<int, std::unique_ptr<ItemType>>> items;
 
 	std::vector<ItemType*> selectedItems;
 
-	int pixelOffset;
-	int pixelScrollOffset;
-	bool pixelScrollOffsetInitialized;
+	int pixelOffset = 0;
+	int pixelScrollOffset = 0;
+	bool pixelScrollOffsetInitialized = false;
 
-	size_t beginDisplayItem;
-	size_t endDisplayItem;
+	size_t beginDisplayItem = 0;
+	size_t endDisplayItem = 0;
 
-	bool selectable;
+	bool selectable = true;
 
-	bool hasKeyFocus;
+	bool hasKeyFocus = false;
 
 	void updateDisplayItems();
 };
@@ -146,18 +146,10 @@ private:
 template <typename ItemType>
 cListView<ItemType>::cListView (const cBox<cPosition>& area, bool allowMultiSelection, cSoundChunk* clickSound_) :
 	cClickableWidget (area),
-	scrollBar (nullptr),
 	beginMargin (3, 4),
 	endMargin (2, 2),
 	itemDistance (3),
-	clickSound (clickSound_),
-	pixelOffset (0),
-	pixelScrollOffset (0),
-	pixelScrollOffsetInitialized (false),
-	beginDisplayItem (0),
-	endDisplayItem (0),
-	selectable (true),
-	hasKeyFocus (false)
+	clickSound (clickSound_)
 {
 	assert (!allowMultiSelection); // multi selection not yet implemented
 }

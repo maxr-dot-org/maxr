@@ -104,9 +104,9 @@ private:
 
 	static const size_t maxUpgradeButtons = 8;
 
-	std::array<cPushButton*, maxUpgradeButtons> upgradeDecreaseButton;
-	std::array<cPushButton*, maxUpgradeButtons> upgradeIncreaseButton;
-	std::array<cLabel*, maxUpgradeButtons> upgradeCostLabel;
+	std::array<cPushButton*, maxUpgradeButtons> upgradeDecreaseButton{};
+	std::array<cPushButton*, maxUpgradeButtons> upgradeIncreaseButton{};
+	std::array<cLabel*, maxUpgradeButtons> upgradeCostLabel{};
 
 	std::map<sID, cUnitUpgrade> unitUpgrades;
 };

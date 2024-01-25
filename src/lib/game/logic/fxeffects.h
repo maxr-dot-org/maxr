@@ -239,8 +239,8 @@ public:
 class cFxTracks : public cFx
 {
 public:
-	const int alphaStart;
-	const int alphaEnd;
+	static constexpr int alphaStart = 100;
+	static constexpr int alphaEnd = 0;
 	const int dir;
 
 public:
@@ -251,7 +251,7 @@ public:
 class cFxRocket : public cFx
 {
 private:
-	const int speed;
+	static constexpr int speed = 8;
 	std::vector<std::unique_ptr<cFx>> subEffects;
 	int dir;
 	int distance;
@@ -280,8 +280,8 @@ private:
 
 public:
 	const int alphaStart;
-	const int alphaEnd;
-	const int frames;
+	static constexpr int alphaEnd = 0;
+	static constexpr int frames = 50;
 
 public:
 	cFxDarkSmoke (const cPosition& position, int alpha, float windDir);

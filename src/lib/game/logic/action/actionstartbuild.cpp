@@ -26,8 +26,7 @@ cActionStartBuild::cActionStartBuild (const cVehicle& vehicle, sID buildingTypeI
 	vehicleID (vehicle.getId()),
 	buildingTypeID (buildingTypeID),
 	buildSpeed (buildSpeed),
-	buildPosition (buildPosition),
-	buildPath (false)
+	buildPosition (buildPosition)
 {}
 
 //------------------------------------------------------------------------------
@@ -36,7 +35,6 @@ cActionStartBuild::cActionStartBuild (const cVehicle& vehicle, sID buildingTypeI
 	buildingTypeID (buildingTypeID),
 	buildSpeed (buildSpeed),
 	buildPosition (buildPosition),
-	buildPath (true),
 	pathEndPosition (pathEndPosition)
 {}
 

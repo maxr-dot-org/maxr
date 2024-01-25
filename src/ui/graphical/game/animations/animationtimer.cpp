@@ -32,9 +32,7 @@ namespace
 } // namespace
 
 //--------------------------------------------------------------------------
-cAnimationTimer::cAnimationTimer() :
-	sdlTimerInterval (10),
-	timerTime (0)
+cAnimationTimer::cAnimationTimer()
 {
 	timerId = SDL_AddTimer (sdlTimerInterval, timerCallback, this);
 

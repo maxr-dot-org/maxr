@@ -30,7 +30,6 @@
 //------------------------------------------------------------------------------
 cSliderHandle::cSliderHandle (const cPosition& position, eSliderHandleType sliderHandleType, eOrientationType orientation_) :
 	cWidget (position),
-	surface (nullptr),
 	orientation (orientation_)
 {
 	minPosition = maxPosition = (orientation == eOrientationType::Horizontal ? getPosition().x() : getPosition().y());

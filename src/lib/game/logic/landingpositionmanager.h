@@ -34,16 +34,16 @@ class cLandingPositionManager
 {
 	struct sLandingPositionData
 	{
-		sLandingPositionData (cPlayerBasicData player);
+		explicit sLandingPositionData (cPlayerBasicData player);
 
 		cPosition landingPosition;
 		cPosition lastLandingPosition;
 
-		eLandingPositionState state;
+		eLandingPositionState state = eLandingPositionState::Unknown;
 
 		cPlayerBasicData player;
 
-		bool needNewPosition;
+		bool needNewPosition = true;
 	};
 
 public:
@@ -55,7 +55,7 @@ public:
 	 *
 	 * @param players The players whose landings should be managed by this object.
 	 */
-	cLandingPositionManager (const std::vector<cPlayerBasicData>& players);
+	explicit cLandingPositionManager (const std::vector<cPlayerBasicData>& players);
 
 	/**
 	 * Sets a new landing position for the given player.

@@ -155,10 +155,8 @@ cNetMessageTcpHello::cNetMessageTcpHello() :
 
 //------------------------------------------------------------------------------
 cNetMessageTcpWantConnect::cNetMessageTcpWantConnect() :
-	ready (false),
 	packageVersion (PACKAGE_VERSION),
-	packageRev (PACKAGE_REV),
-	socket (nullptr)
+	packageRev (PACKAGE_REV)
 {}
 
 //------------------------------------------------------------------------------

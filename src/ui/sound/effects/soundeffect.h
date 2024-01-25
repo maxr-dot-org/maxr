@@ -86,9 +86,9 @@ private:
 	mutable std::recursive_mutex channelMutex;
 
 	eSoundEffectType type;
-	const cSoundChunk* sound;
+	const cSoundChunk* sound = nullptr;
 
-	cSoundChannel* channel;
+	cSoundChannel* channel = nullptr;
 };
 
 #endif

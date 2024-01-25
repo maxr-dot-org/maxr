@@ -42,8 +42,7 @@ bool cSoundManager::sStoredSound::operator< (const sStoredSound& other) const
 //--------------------------------------------------------------------------
 cSoundManager::cSoundManager() :
 	listenerPosition (0, 0),
-	maxListeningDistance (20),
-	muted (false)
+	maxListeningDistance (20)
 {}
 
 //--------------------------------------------------------------------------

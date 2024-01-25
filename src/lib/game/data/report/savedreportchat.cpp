@@ -31,7 +31,6 @@ cSavedReportChat::cSavedReportChat (const cPlayer& player, std::string text_) :
 //------------------------------------------------------------------------------
 cSavedReportChat::cSavedReportChat (std::string playerName_, std::string text_) :
 	playerName (std::move (playerName_)),
-	playerNumber (-1),
 	text (std::move (text_))
 {}
 

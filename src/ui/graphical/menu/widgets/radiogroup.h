@@ -29,22 +29,22 @@ class cRadioGroup : public cWidget
 {
 public:
 	explicit cRadioGroup (bool allowUncheckAll = false);
-	~cRadioGroup();
+	~cRadioGroup() = default;
 
 	cCheckBox* addButton (std::unique_ptr<cCheckBox> button);
 
 	void handleMoved (const cPosition& offset) override;
 
 private:
+	void buttonToggled (cCheckBox* button);
+
+private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cCheckBox* currentlyCheckedButton;
+	cCheckBox* currentlyCheckedButton = nullptr;
 
-	bool allowUncheckAll;
-
-	bool internalMoving;
-
-	void buttonToggled (cCheckBox* button);
+	bool allowUncheckAll = false;
+	bool internalMoving = false;
 };
 
 #endif // ui_graphical_menu_widgets_radiogroupH

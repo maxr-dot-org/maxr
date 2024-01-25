@@ -86,14 +86,14 @@ private:
 
 	int currentValue;
 
-	bool fixedMinEnabled;
+	bool fixedMinEnabled = false;
 	int fixedMinValue;
-	bool fixedMaxEnabled;
+	bool fixedMaxEnabled = false;
 	int fixedMaxValue;
 
-	bool inverted;
+	bool inverted = false;
 
-	int stepSize;
+	int stepSize = 1;
 };
 
 #endif // ui_graphical_menu_widgets_special_resourcebarH

@@ -19,13 +19,14 @@
 
 #include "savegameinfo.h"
 
+//------------------------------------------------------------------------------
 cSaveGameInfo::cSaveGameInfo() :
 	cSaveGameInfo (-1)
 {}
 
+//------------------------------------------------------------------------------
 cSaveGameInfo::cSaveGameInfo (int number) :
 	saveVersion ("0.0"),
 	type (eGameType::Single),
 	number (number)
-//turn (0)
 {}

@@ -237,13 +237,10 @@ private:
 	PriceMap shots_2;
 
 	std::optional<int> lookupPrice (const PriceMap&, int value) const;
-	void setupLookupTables();
 
 	int getNearestPossibleCost (float realCost, int costDifference) const;
 
 	void printToLog (const char* str, int value = -1000) const;
-
-	bool setupDone;
 };
 
 //-------------------------------------------

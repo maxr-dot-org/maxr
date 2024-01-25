@@ -40,9 +40,7 @@
 //------------------------------------------------------------------------------
 cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, std::function<std::vector<cSaveGameInfo>()> saveGamesGetter) :
 	cWindow (LoadPCX (GFXOD_SAVELOAD)),
-	page (0),
 	lastPage ((int) std::ceil ((double) maximalDisplayedSaves / (rows * columns)) - 1),
-	selectedSaveNumber (-1),
 	saveGamesGetter (saveGamesGetter)
 {
 	titleLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 12), getPosition() + cPosition (getArea().getMaxCorner().x(), 12 + 10)), lngPack.i18n ("Title~Load"), eUnicodeFontType::LatinNormal, eAlignmentType::CenterHorizontal);

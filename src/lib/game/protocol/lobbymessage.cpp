@@ -182,8 +182,7 @@ void cMuMsgPlayerNr::serialize (cBinaryArchiveOut& archive)
 
 //------------------------------------------------------------------------------
 cMuMsgOptions::cMuMsgOptions() :
-	saveInfo (-1),
-	mapCrc (0)
+	saveInfo (-1)
 {}
 
 cMuMsgOptions::cMuMsgOptions (cBinaryArchiveIn& archive) :

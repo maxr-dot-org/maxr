@@ -90,12 +90,8 @@ cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxV
 	minValue (minValue_),
 	maxValue (maxValue_),
 	currentValue (maxValue_),
-	fixedMinEnabled (false),
 	fixedMinValue (minValue_),
-	fixedMaxEnabled (false),
-	fixedMaxValue (maxValue_),
-	inverted (false),
-	stepSize (1)
+	fixedMaxValue (maxValue_)
 {
 	assert (minValue <= maxValue);
 	assert (minValue >= 0 && maxValue >= 0);

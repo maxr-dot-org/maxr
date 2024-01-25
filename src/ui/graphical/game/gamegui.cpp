@@ -73,8 +73,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	animationTimer (std::move (animationTimer_)),
 	soundManager (std::move (soundManager_)),
 	staticMap (std::move (staticMap_)),
-	mouseScrollDirection (0, 0),
-	openPanelOnActivation (true)
+	mouseScrollDirection (0, 0)
 {
 	auto hudOwning = std::make_unique<cHud> (animationTimer);
 

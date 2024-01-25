@@ -140,7 +140,6 @@ uint32_t MapDownload::calculateCheckSum (const std::filesystem::path& mapFilenam
 //------------------------------------------------------------------------------
 cMapReceiver::cMapReceiver (const std::filesystem::path& mapFilename, int mapSize) :
 	mapFilename (mapFilename),
-	bytesReceived (0),
 	readBuffer (mapSize)
 {
 }

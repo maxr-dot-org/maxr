@@ -53,36 +53,38 @@ namespace
 } // namespace
 
 //------------------------------------------------------------------------------
-cMapField::cMapField()
-{}
-
 cVehicle* cMapField::getVehicle() const
 {
 	if (vehicles.empty()) return nullptr;
 	return vehicles[0];
 }
 
+//------------------------------------------------------------------------------
 cVehicle* cMapField::getPlane() const
 {
 	if (planes.empty()) return nullptr;
 	return planes[0];
 }
 
+//------------------------------------------------------------------------------
 const std::vector<cBuilding*>& cMapField::getBuildings() const
 {
 	return buildings;
 }
 
+//------------------------------------------------------------------------------
 const std::vector<cVehicle*>& cMapField::getVehicles() const
 {
 	return vehicles;
 }
 
+//------------------------------------------------------------------------------
 const std::vector<cVehicle*>& cMapField::getPlanes() const
 {
 	return planes;
 }
 
+//------------------------------------------------------------------------------
 std::vector<cUnit*> cMapField::getUnits() const
 {
 	std::vector<cUnit*> units;
@@ -93,12 +95,14 @@ std::vector<cUnit*> cMapField::getUnits() const
 	return units;
 }
 
+//------------------------------------------------------------------------------
 cBuilding* cMapField::getBuilding() const
 {
 	if (buildings.empty()) return nullptr;
 	return buildings[0];
 }
 
+//------------------------------------------------------------------------------
 cBuilding* cMapField::getTopBuilding() const
 {
 	if (buildings.empty()) return nullptr;
@@ -109,6 +113,7 @@ cBuilding* cMapField::getTopBuilding() const
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 cBuilding* cMapField::getBaseBuilding() const
 {
 	for (cBuilding* building : buildings)
@@ -121,6 +126,7 @@ cBuilding* cMapField::getBaseBuilding() const
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 cBuilding* cMapField::getRubble() const
 {
 	for (cBuilding* building : buildings)
@@ -129,6 +135,7 @@ cBuilding* cMapField::getRubble() const
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 cBuilding* cMapField::getMine() const
 {
 	for (cBuilding* building : buildings)
@@ -137,6 +144,7 @@ cBuilding* cMapField::getMine() const
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 bool cMapField::hasBridgeOrPlattform() const
 {
 	for (cBuilding* building : buildings)
@@ -149,6 +157,7 @@ bool cMapField::hasBridgeOrPlattform() const
 	return false;
 }
 
+//------------------------------------------------------------------------------
 void cMapField::addBuilding (cBuilding& building, size_t index)
 {
 	assert (index <= buildings.size());
@@ -156,6 +165,8 @@ void cMapField::addBuilding (cBuilding& building, size_t index)
 
 	unitsChanged();
 }
+
+//------------------------------------------------------------------------------
 void cMapField::addVehicle (cVehicle& vehicle, size_t index)
 {
 	assert (index <= vehicles.size());
@@ -164,6 +175,7 @@ void cMapField::addVehicle (cVehicle& vehicle, size_t index)
 	unitsChanged();
 }
 
+//------------------------------------------------------------------------------
 void cMapField::addPlane (cVehicle& plane, size_t index)
 {
 	assert (index <= planes.size());
@@ -172,6 +184,7 @@ void cMapField::addPlane (cVehicle& plane, size_t index)
 	unitsChanged();
 }
 
+//------------------------------------------------------------------------------
 void cMapField::removeBuilding (const cBuilding& building)
 {
 	Remove (buildings, &building);
@@ -179,6 +192,7 @@ void cMapField::removeBuilding (const cBuilding& building)
 	unitsChanged();
 }
 
+//------------------------------------------------------------------------------
 void cMapField::removeVehicle (const cVehicle& vehicle)
 {
 	Remove (vehicles, &vehicle);
@@ -186,6 +200,7 @@ void cMapField::removeVehicle (const cVehicle& vehicle)
 	unitsChanged();
 }
 
+//------------------------------------------------------------------------------
 void cMapField::removePlane (const cVehicle& plane)
 {
 	Remove (planes, &plane);
@@ -193,6 +208,7 @@ void cMapField::removePlane (const cVehicle& plane)
 	unitsChanged();
 }
 
+//------------------------------------------------------------------------------
 void cMapField::removeAll()
 {
 	buildings.clear();
@@ -204,45 +220,54 @@ void cMapField::removeAll()
 
 // cStaticMap //////////////////////////////////////////////////
 
+//------------------------------------------------------------------------------
 cStaticMap::cStaticMap() :
-	crc (0), size (0), terrains(), graphic (this)
+	graphic (this)
 {
 }
 
+//------------------------------------------------------------------------------
 cStaticMap::~cStaticMap()
 {
 }
 
+//------------------------------------------------------------------------------
 std::size_t cStaticMap::getTileIndex (const cPosition& position) const
 {
 	return Kacheln[getOffset (position)];
 }
 
+//------------------------------------------------------------------------------
 const sTerrain& cStaticMap::getTerrain (const cPosition& position) const
 {
 	return terrains[getTileIndex (position)];
 }
 
+//------------------------------------------------------------------------------
 bool cStaticMap::isBlocked (const cPosition& position) const
 {
 	return getTerrain (position).blocked;
 }
 
+//------------------------------------------------------------------------------
 bool cStaticMap::isCoast (const cPosition& position) const
 {
 	return getTerrain (position).coast;
 }
 
+//------------------------------------------------------------------------------
 bool cStaticMap::isWater (const cPosition& position) const
 {
 	return getTerrain (position).water;
 }
 
+//------------------------------------------------------------------------------
 bool cStaticMap::isGround (const cPosition& position) const
 {
 	return !getTerrain (position).water && !getTerrain (position).coast;
 }
 
+//------------------------------------------------------------------------------
 bool cStaticMap::possiblePlace (const cStaticUnitData& data, const cPosition& position) const
 {
 	const auto positions = getPositions (position, data.ID.isABuilding() && data.buildingData.isBig);
@@ -259,11 +284,13 @@ bool cStaticMap::possiblePlace (const cStaticUnitData& data, const cPosition& po
 	return true;
 }
 
+//------------------------------------------------------------------------------
 bool cStaticMap::isValidPosition (const cPosition& position) const
 {
 	return 0 <= position.x() && position.x() < size && 0 <= position.y() && position.y() < size;
 }
 
+//------------------------------------------------------------------------------
 void cStaticMap::clear()
 {
 	filename.clear();
@@ -273,11 +300,13 @@ void cStaticMap::clear()
 	Kacheln.clear();
 }
 
+//------------------------------------------------------------------------------
 bool cStaticMap::isValid() const
 {
 	return !filename.empty();
 }
 
+//------------------------------------------------------------------------------
 /** Loads a map file */
 bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 {
@@ -409,18 +438,21 @@ bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 	return true;
 }
 
+//------------------------------------------------------------------------------
 uint32_t cStaticMap::getChecksum (uint32_t crc) const
 {
 	return calcCheckSum (this->crc, crc);
 }
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 cMap::cMap (std::shared_ptr<cStaticMap> staticMap_) :
 	staticMap (std::move (staticMap_))
 {
 	init();
 }
 
+//------------------------------------------------------------------------------
 void cMap::init()
 {
 	const std::size_t size = staticMap->getSize().x() * staticMap->getSize().y();
@@ -431,27 +463,31 @@ void cMap::init()
 	}
 }
 
+//------------------------------------------------------------------------------
 cMap::~cMap()
 {
 }
 
+//------------------------------------------------------------------------------
 cMapField& cMap::getField (const cPosition& position)
 {
 	return fields[getOffset (position)];
 }
 
+//------------------------------------------------------------------------------
 const cMapField& cMap::getField (const cPosition& position) const
 {
 	return fields[getOffset (position)];
 }
 
+//------------------------------------------------------------------------------
 bool cMap::isWaterOrCoast (const cPosition& position) const
 {
 	const sTerrain& terrainType = staticMap->getTerrain (position);
 	return terrainType.water || terrainType.coast;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string cMap::resourcesToString() const
 {
 	std::string str;
@@ -464,7 +500,7 @@ std::string cMap::resourcesToString() const
 	return str;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cMap::setResourcesFromString (const std::string& str)
 {
 	for (size_t i = 0; i != Resources.size(); ++i)
@@ -477,6 +513,7 @@ void cMap::setResourcesFromString (const std::string& str)
 	}
 }
 
+//------------------------------------------------------------------------------
 /* static */ int cMap::getMapLevel (const cBuilding& building)
 {
 	const cStaticUnitData& data = building.getStaticUnitData();
@@ -493,6 +530,7 @@ void cMap::setResourcesFromString (const std::string& str)
 	return 1; // other buildings
 }
 
+//------------------------------------------------------------------------------
 /* static */ int cMap::getMapLevel (const cVehicle& vehicle)
 {
 	if (vehicle.getStaticUnitData().factorSea > 0 && vehicle.getStaticUnitData().factorGround == 0) return 8; // ships
@@ -501,6 +539,7 @@ void cMap::setResourcesFromString (const std::string& str)
 	return 2; // other vehicles
 }
 
+//------------------------------------------------------------------------------
 void cMap::addBuilding (cBuilding& building, const cPosition& position)
 {
 	//big base building are not implemented
@@ -521,6 +560,7 @@ void cMap::addBuilding (cBuilding& building, const cPosition& position)
 	addedUnit (building);
 }
 
+//------------------------------------------------------------------------------
 void cMap::addVehicle (cVehicle& vehicle, const cPosition& position)
 {
 	auto& field = getField (position);
@@ -541,6 +581,7 @@ void cMap::addVehicle (cVehicle& vehicle, const cPosition& position)
 	addedUnit (vehicle);
 }
 
+//------------------------------------------------------------------------------
 void cMap::deleteBuilding (const cBuilding& building)
 {
 	for (const auto& position : building.getPositions())
@@ -550,6 +591,7 @@ void cMap::deleteBuilding (const cBuilding& building)
 	removedUnit (building);
 }
 
+//------------------------------------------------------------------------------
 void cMap::deleteVehicle (const cVehicle& vehicle)
 {
 	if (vehicle.getStaticUnitData().factorAir > 0)
@@ -566,6 +608,7 @@ void cMap::deleteVehicle (const cVehicle& vehicle)
 	removedUnit (vehicle);
 }
 
+//------------------------------------------------------------------------------
 void cMap::deleteUnit (const cUnit& unit)
 {
 	if (unit.isABuilding())
@@ -579,6 +622,7 @@ void cMap::deleteUnit (const cUnit& unit)
 	}
 }
 
+//------------------------------------------------------------------------------
 void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height)
 {
 	const auto oldPosition = vehicle.getPosition();
@@ -603,6 +647,7 @@ void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height
 	movedVehicle (vehicle, oldPosition);
 }
 
+//------------------------------------------------------------------------------
 void cMap::moveVehicleBig (cVehicle& vehicle, const cPosition& position)
 {
 	if (vehicle.getIsBig())
@@ -629,11 +674,13 @@ void cMap::moveVehicleBig (cVehicle& vehicle, const cPosition& position)
 	movedVehicle (vehicle, oldPosition);
 }
 
+//------------------------------------------------------------------------------
 bool cMap::possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer, bool ignoreMovingVehicles) const
 {
 	return possiblePlaceVehicle (vehicle.getStaticUnitData(), position, checkPlayer ? vehicle.getOwner() : nullptr, ignoreMovingVehicles);
 }
 
+//------------------------------------------------------------------------------
 bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool ignoreMovingVehicles) const
 {
 	if (isValidPosition (position) == false) return false;
@@ -731,6 +778,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 	return true;
 }
 
+//------------------------------------------------------------------------------
 bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPosition& position, const cPlayer* player, const cVehicle* vehicle) const
 {
 	if (!isValidPosition (position)) return false;
@@ -790,6 +838,8 @@ bool cMap::possiblePlaceBuilding (const cStaticUnitData& buildingData, const cPo
 	}
 	return true;
 }
+
+//------------------------------------------------------------------------------
 void cMap::reset()
 {
 	for (int i = 0; i < getSize().x() * getSize().y(); i++)
@@ -798,6 +848,7 @@ void cMap::reset()
 	}
 }
 
+//------------------------------------------------------------------------------
 uint32_t cMap::getChecksum (uint32_t crc) const
 {
 	crc = staticMap->getChecksum (crc);
@@ -807,6 +858,7 @@ uint32_t cMap::getChecksum (uint32_t crc) const
 	return crc;
 }
 
+//------------------------------------------------------------------------------
 uint32_t sResources::getChecksum (uint32_t crc) const
 {
 	crc = calcCheckSum (value, crc);

@@ -101,8 +101,7 @@ void cBinaryArchiveOut::pushValue (double value)
 //------------------------------------------------------------------------------
 cBinaryArchiveIn::cBinaryArchiveIn (const unsigned char* data, size_t length) :
 	data (data),
-	length (length),
-	readPosition (0)
+	length (length)
 {}
 //------------------------------------------------------------------------------
 size_t cBinaryArchiveIn::dataLeft() const

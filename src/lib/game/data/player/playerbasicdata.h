@@ -35,7 +35,7 @@ class cPlayerBasicData
 public:
 	static cPlayerBasicData fromSettings();
 
-	cPlayerBasicData();
+	cPlayerBasicData() = default;
 	cPlayerBasicData (const sPlayerSettings&, int nr, bool defeated);
 	cPlayerBasicData (const cPlayerBasicData&);
 	cPlayerBasicData& operator= (const cPlayerBasicData&);
@@ -54,12 +54,6 @@ public:
 	bool operator== (const cPlayerBasicData&) const;
 	bool operator!= (const cPlayerBasicData& rhs) const { return !(*this == rhs); }
 
-	mutable cSignal<void()> nameChanged;
-	mutable cSignal<void()> numberChanged;
-	mutable cSignal<void()> colorChanged;
-	mutable cSignal<void()> readyChanged;
-	mutable cSignal<void()> isDefeatedChanged;
-
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
@@ -72,11 +66,17 @@ public:
 		// clang-format on
 	}
 
+	mutable cSignal<void()> nameChanged;
+	mutable cSignal<void()> numberChanged;
+	mutable cSignal<void()> colorChanged;
+	mutable cSignal<void()> readyChanged;
+	mutable cSignal<void()> isDefeatedChanged;
+
 private:
 	sPlayerSettings player;
-	int nr;
-	bool ready;
-	bool defeated;
+	int nr = 0;
+	bool ready = false;
+	bool defeated = false;
 };
 
 //--------------------------------------------------------------------------

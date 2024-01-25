@@ -37,14 +37,14 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cLabel* headerLabel;
-	cLabel* textLabel;
+	cLabel* headerLabel = nullptr;
+	cLabel* textLabel = nullptr;
 
-	cPushButton* upButton;
-	cPushButton* downButton;
+	cPushButton* upButton = nullptr;
+	cPushButton* downButton = nullptr;
 
-	int currentPage;
-	const int maxPage;
+	int currentPage = 0;
+	static constexpr int maxPage = 3;
 
 	std::string authors;
 

@@ -38,7 +38,7 @@ class cFrameCounter;
 */
 struct sDrawingCacheEntry
 {
-	sDrawingCacheEntry();
+	sDrawingCacheEntry() = default;
 	sDrawingCacheEntry (sDrawingCacheEntry&&) = default;
 	sDrawingCacheEntry& operator= (sDrawingCacheEntry&&) = default;
 	sDrawingCacheEntry (const sDrawingCacheEntry&) = delete;
@@ -51,31 +51,31 @@ struct sDrawingCacheEntry
 	void init (const cBuilding&, double zoom, unsigned long long frameNr);
 
 	//building properties
-	bool BaseN;
-	bool BaseBN;
-	bool BaseE;
-	bool BaseBE;
-	bool BaseS;
-	bool BaseBS;
-	bool BaseW;
-	bool BaseBW;
-	int clan;
+	bool BaseN = false;
+	bool BaseBN = false;
+	bool BaseE = false;
+	bool BaseBE = false;
+	bool BaseS = false;
+	bool BaseBS = false;
+	bool BaseW = false;
+	bool BaseBW = false;
+	int clan = -1;
 
 	//vehicle properties
-	unsigned int frame;
-	int flightHigh;
-	bool big;
-	bool isBuilding;
-	bool isClearing;
-	bool stealth;
-	bool water;
+	unsigned int frame = 0;
+	int flightHigh = 0;
+	bool big = false;
+	bool isBuilding = false;
+	bool isClearing = false;
+	bool stealth = false;
+	bool water = false;
 
 	//common properties
 	sID id;
 	cPlayer* owner = nullptr;
-	int dir;
-	double zoom;
-	unsigned long long lastUsed;
+	int dir = 0;
+	double zoom = 0.;
+	unsigned long long lastUsed = 0;
 
 	UniqueSurface surface;
 };
@@ -116,17 +116,17 @@ public:
 
 private:
 	std::shared_ptr<const cFrameCounter> frameCounter;
-	const cPlayer* player;
+	const cPlayer* player = nullptr;
 
-	unsigned int cacheSize;
+	unsigned int cacheSize = 0;
 	std::vector<sDrawingCacheEntry> cachedImages;
 	bool canCache (const cBuilding& building);
 	bool canCache (const cVehicle& vehicle);
 
 	//statistics
-	int cacheHits;
-	int cacheMisses;
-	int notCached;
+	int cacheHits = 0;
+	int cacheMisses = 0;
+	int notCached = 0;
 };
 
 #endif

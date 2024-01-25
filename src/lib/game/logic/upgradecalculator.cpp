@@ -33,19 +33,11 @@
 cUpgradeCalculator& cUpgradeCalculator::instance()
 {
 	static cUpgradeCalculator _instance;
-	// do the setup on the first call, not on startup of the program
-	if (!_instance.setupDone)
-		_instance.setupLookupTables();
 	return _instance;
 }
 
 //------------------------------------------------------------------------------
-cUpgradeCalculator::cUpgradeCalculator() :
-	setupDone (false)
-{}
-
-//------------------------------------------------------------------------------
-void cUpgradeCalculator::setupLookupTables()
+cUpgradeCalculator::cUpgradeCalculator()
 {
 	// ------------------------------ HITPOINTS and ARMOR and AMMO
 	hitpointsArmorAmmo_2[2] = 39;
@@ -592,9 +584,6 @@ void cUpgradeCalculator::setupLookupTables()
 
 	shots_2[2] = 79;
 	shots_2[3] = 641;
-
-	// finished....
-	setupDone = true;
 }
 
 //------------------------------------------------------------------------------

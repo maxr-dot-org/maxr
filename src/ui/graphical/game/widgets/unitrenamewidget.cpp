@@ -27,9 +27,7 @@
 
 //------------------------------------------------------------------------------
 cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
-	cWidget (position),
-	activeUnit (nullptr),
-	player (nullptr)
+	cWidget (position)
 {
 	selectedUnitStatusLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (0, 10), getPosition() + cPosition (width, 10 + 110)), "", eUnicodeFontType::LatinSmallWhite, eAlignmentType::Left);
 	selectedUnitNamePrefixLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition(), getPosition() + cPosition (width, 10)), "", eUnicodeFontType::LatinSmallGreen, eAlignmentType::Left);

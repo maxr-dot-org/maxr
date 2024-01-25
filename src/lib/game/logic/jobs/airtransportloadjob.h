@@ -73,7 +73,7 @@ private:
 
 	int vehicleToLoadId;
 	cSignalConnectionManager connectionManager;
-	bool landing;
+	bool landing = true;
 };
 
 #endif

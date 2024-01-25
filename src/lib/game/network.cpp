@@ -78,7 +78,6 @@ void cDataBuffer::deleteFront (uint32_t n)
 
 cNetwork::cNetwork (cConnectionManager& connectionManager, std::recursive_mutex& mutex) :
 	tcpMutex (mutex),
-	serverSocket (nullptr),
 	socketSet (SDLNet_AllocSocketSet (MAX_TCP_CONNECTIONS)),
 	connectionManager (connectionManager),
 	tcpHandleThread ([this]() {

@@ -39,9 +39,7 @@
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------
-cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
-	player (nullptr),
-	unitsData (nullptr)
+cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer)
 {
 	surface = generateSurface();
 	resize (cPosition (surface->w, surface->h));

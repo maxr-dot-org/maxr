@@ -103,10 +103,10 @@ public:
 	cSignal<void()> triggered400msCatchUp;
 
 private:
-	const Uint32 sdlTimerInterval;
+	static constexpr Uint32 sdlTimerInterval = 10;
 	SDL_TimerID timerId;
 
-	std::atomic<unsigned long long> timerTime;
+	std::atomic<unsigned long long> timerTime{0};
 
 	unsigned long long nextTrigger10msTime;
 	unsigned long long nextTrigger50msTime;

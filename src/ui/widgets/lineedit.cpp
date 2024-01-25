@@ -38,15 +38,8 @@ cLineEdit::cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType_
 	cClickableWidget (area),
 	cursorVisibleTime (800),
 	cursorInvisibleTime (500),
-	text (""),
 	fontType (fontType_),
-	frameType (frameType_),
-	cursorPos (0),
-	startOffset (0),
-	endOffset (0),
-	readOnly (false),
-	hasKeyFocus (false),
-	showCursor (false)
+	frameType (frameType_)
 {
 	createBackground();
 }

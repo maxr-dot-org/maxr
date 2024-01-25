@@ -180,7 +180,7 @@ class cMuMsgOptions : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage:
 {
 public:
 	cMuMsgOptions();
-	cMuMsgOptions (cBinaryArchiveIn& archive);
+	explicit cMuMsgOptions (cBinaryArchiveIn& archive);
 
 	void serialize (cBinaryArchiveOut& archive) override;
 	void serialize (cJsonArchiveOut& archive) override
@@ -191,7 +191,7 @@ public:
 
 	cSaveGameInfo saveInfo;
 	std::filesystem::path mapFilename;
-	Uint32 mapCrc;
+	Uint32 mapCrc = 0;
 	std::optional<cGameSettings> settings;
 
 private:

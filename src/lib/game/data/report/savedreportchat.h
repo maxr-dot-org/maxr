@@ -67,7 +67,7 @@ private:
 	}
 
 	std::string playerName;
-	int playerNumber;
+	int playerNumber = -1;
 	std::string text;
 };
 

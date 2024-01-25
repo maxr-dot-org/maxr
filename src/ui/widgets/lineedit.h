@@ -68,27 +68,6 @@ protected:
 	bool handleClicked (cApplication&, cMouse&, eMouseButtonType) override;
 
 private:
-	const std::chrono::milliseconds cursorVisibleTime;
-	const std::chrono::milliseconds cursorInvisibleTime;
-
-	UniqueSurface surface;
-
-	std::string text;
-	eUnicodeFontType fontType;
-
-	eLineEditFrameType frameType;
-
-	int cursorPos;
-	int startOffset, endOffset;
-
-	bool readOnly;
-	std::unique_ptr<cValidator> validator;
-
-	bool hasKeyFocus;
-
-	bool showCursor;
-	std::chrono::steady_clock::time_point lastCursorBlinkTime;
-
 	void createBackground();
 
 	cPosition getTextDrawOffset() const;
@@ -103,6 +82,29 @@ private:
 	void deleteRight();
 
 	void finishEditingInternal();
+
+private:
+	const std::chrono::milliseconds cursorVisibleTime;
+	const std::chrono::milliseconds cursorInvisibleTime;
+
+	UniqueSurface surface;
+
+	std::string text;
+	eUnicodeFontType fontType;
+
+	eLineEditFrameType frameType;
+
+	int cursorPos = 0;
+	int startOffset = 0;
+	int endOffset = 0;
+
+	bool readOnly = false;
+	std::unique_ptr<cValidator> validator;
+
+	bool hasKeyFocus = false;
+
+	bool showCursor = false;
+	std::chrono::steady_clock::time_point lastCursorBlinkTime;
 };
 
 #endif

@@ -47,8 +47,8 @@ class cStaticUnitData;
 struct sResources
 {
 public:
-	sResources() :
-		value (0), typ (eResourceType::None) {}
+	sResources() = default;
+
 	template <typename Archive>
 	void serialize (Archive& archive)
 	{
@@ -61,15 +61,15 @@ public:
 	uint32_t getChecksum (uint32_t crc) const;
 
 public:
-	unsigned char value;
-	eResourceType typ;
+	unsigned char value = 0;
+	eResourceType typ = eResourceType::None;
 };
 
 /** contains all information of a map field */
 class cMapField
 {
 public:
-	cMapField();
+	cMapField() = default;
 
 	/** returns the top vehicle on this field */
 	cVehicle* getVehicle() const;
@@ -206,8 +206,8 @@ public:
 	SERIALIZATION_SPLIT_MEMBER()
 private:
 	std::filesystem::path filename; // Name of the current map
-	uint32_t crc;
-	int size;
+	uint32_t crc = 0;
+	int size = 0;
 	std::vector<int> Kacheln; // Terrain numbers of the map fields
 	std::vector<sTerrain> terrains; // The different terrain type.
 	mutable cGraphicStaticMap graphic;

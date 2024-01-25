@@ -20,15 +20,8 @@
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 
 //------------------------------------------------------------------------------
-cAbstractListViewItem::cAbstractListViewItem() :
-	cWidget(),
-	selected (false)
-{}
-
-//------------------------------------------------------------------------------
 cAbstractListViewItem::cAbstractListViewItem (const cPosition& size) :
-	cWidget (cBox<cPosition> (cPosition (0, 0), size)),
-	selected (false)
+	cWidget (cBox<cPosition> (cPosition (0, 0), size))
 {}
 
 //------------------------------------------------------------------------------

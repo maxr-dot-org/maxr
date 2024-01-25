@@ -25,8 +25,7 @@
 //--------------------------------------------------------------------------
 cSoundEffect::cSoundEffect (eSoundEffectType type_, const cSoundChunk& sound_) :
 	type (type_),
-	sound (&sound_),
-	channel (nullptr)
+	sound (&sound_)
 {}
 
 //--------------------------------------------------------------------------

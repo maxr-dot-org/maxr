@@ -31,8 +31,7 @@ class cAbstractListViewItem : public cWidget
 	friend class cListView;
 
 public:
-	cAbstractListViewItem();
-
+	cAbstractListViewItem() = default;
 	explicit cAbstractListViewItem (const cPosition& size);
 
 	cSignal<void (const cPosition&)> resized;
@@ -46,7 +45,7 @@ protected:
 	bool isSelected() const;
 
 private:
-	bool selected;
+	bool selected = false;
 };
 
 #endif // ui_graphical_menu_widgets_abstractlistviewitemH

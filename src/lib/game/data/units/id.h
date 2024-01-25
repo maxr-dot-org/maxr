@@ -27,7 +27,7 @@
 struct sID
 {
 	sID() :
-		firstPart (0), secondPart (0) {}
+		sID (0, 0) {}
 	sID (int first, int second) :
 		firstPart (first), secondPart (second) {}
 

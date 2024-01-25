@@ -40,14 +40,12 @@
 cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const cModel& model) :
 	aggressorId (aggressor.getId()),
 	targetPosition (targetPosition),
-	fireDir (0),
+	fireDir (calcFireDir (aggressor)),
 	counter (10),
 	state (eAJState::Rotating)
 {
 	NetLog.debug (" cAttackJob: Started attack, aggressor ID: " + std::to_string (aggressor.getId()) + " @" + std::to_string (model.getGameTime()));
 	assert (!aggressor.isAVehicle() || !static_cast<cVehicle&> (aggressor).isUnitMoving());
-
-	fireDir = calcFireDir (aggressor);
 
 	lockTarget (*model.getMap(), aggressor);
 

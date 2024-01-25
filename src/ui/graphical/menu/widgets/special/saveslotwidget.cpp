@@ -30,9 +30,7 @@
 
 //------------------------------------------------------------------------------
 cSaveSlotWidget::cSaveSlotWidget (const cPosition& position) :
-	cClickableWidget (position),
-	empty (true),
-	renameable (false)
+	cClickableWidget (position)
 {
 	numberLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (13, 28), getPosition() + cPosition (13 + 20, 28 + 15)), "", eUnicodeFontType::LatinBig);
 	numberLabel->setConsumeClick (false);

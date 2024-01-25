@@ -33,7 +33,7 @@ class cVehicle;
 class cUnitContextMenuWidget : public cWidget
 {
 public:
-	cUnitContextMenuWidget();
+	cUnitContextMenuWidget() = default;
 
 	void setUnit (const cUnit*, eMouseModeType mouseInputMode, const cPlayer*, const cMapView*);
 	const cUnit* getUnit() const;

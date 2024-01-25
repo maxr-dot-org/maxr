@@ -85,9 +85,9 @@ private:
 private:
 	std::recursive_mutex& tcpMutex;
 
-	TCPsocket serverSocket;
+	TCPsocket serverSocket = nullptr;
 	std::vector<std::unique_ptr<cSocket>> sockets;
-	SDLNet_SocketSet socketSet;
+	SDLNet_SocketSet socketSet = nullptr;
 	std::vector<TCPsocket> closingSockets; //list of sockets to be closed. This needs to be done inside the network thread.
 
 	cConnectionManager& connectionManager;

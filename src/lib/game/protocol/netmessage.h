@@ -89,11 +89,11 @@ public:
 		return *this;
 	}
 
-	int playerNr;
+	int playerNr = -1;
 
 protected:
-	cNetMessage (eNetMessageType type) :
-		playerNr (-1), type (type) {}
+	explicit cNetMessage (eNetMessageType type) :
+		type (type) {}
 
 private:
 	template <typename Archive>
@@ -137,7 +137,7 @@ class cNetMessageTcpHello : public cNetMessageT<eNetMessageType::TCP_HELLO>
 {
 public:
 	cNetMessageTcpHello();
-	cNetMessageTcpHello (cBinaryArchiveIn& archive)
+	explicit cNetMessageTcpHello (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -173,7 +173,7 @@ class cNetMessageTcpWantConnect : public cNetMessageT<eNetMessageType::TCP_WANT_
 {
 public:
 	cNetMessageTcpWantConnect();
-	cNetMessageTcpWantConnect (cBinaryArchiveIn& archive)
+	explicit cNetMessageTcpWantConnect (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -190,11 +190,11 @@ public:
 	}
 
 	sPlayerSettings player;
-	bool ready;
+	bool ready = false;
 	std::string packageVersion;
 	std::string packageRev;
 
-	const cSocket* socket;
+	const cSocket* socket = nullptr;
 
 private:
 	template <typename Archive>
@@ -215,8 +215,8 @@ private:
 class cNetMessageTcpConnected : public cNetMessageT<eNetMessageType::TCP_CONNECTED>
 {
 public:
-	cNetMessageTcpConnected (int playerNr);
-	cNetMessageTcpConnected (cBinaryArchiveIn& archive)
+	explicit cNetMessageTcpConnected (int playerNr);
+	explicit cNetMessageTcpConnected (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -256,10 +256,10 @@ enum class eDeclineConnectionReason;
 class cNetMessageTcpConnectFailed : public cNetMessageT<eNetMessageType::TCP_CONNECT_FAILED>
 {
 public:
-	cNetMessageTcpConnectFailed (eDeclineConnectionReason reason) :
+	explicit cNetMessageTcpConnectFailed (eDeclineConnectionReason reason) :
 		reason (reason)
 	{}
-	cNetMessageTcpConnectFailed (cBinaryArchiveIn& archive)
+	explicit cNetMessageTcpConnectFailed (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -292,7 +292,7 @@ private:
 class cNetMessageTcpClose : public cNetMessageT<eNetMessageType::TCP_CLOSE>
 {
 public:
-	cNetMessageTcpClose (int playerNr_)
+	explicit cNetMessageTcpClose (int playerNr_)
 	{
 		playerNr = playerNr_;
 	}
@@ -303,7 +303,7 @@ class cNetMessageSyncServer : public cNetMessageT<eNetMessageType::GAMETIME_SYNC
 {
 public:
 	cNetMessageSyncServer() = default;
-	cNetMessageSyncServer (cBinaryArchiveIn& archive)
+	explicit cNetMessageSyncServer (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -319,9 +319,9 @@ public:
 		serializeThis (archive);
 	}
 
-	unsigned int gameTime;
-	unsigned int checksum;
-	unsigned int ping;
+	unsigned int gameTime = 0;
+	unsigned int checksum = 0;
+	unsigned int ping = 0;
 
 private:
 	template <typename Archive>
@@ -341,7 +341,7 @@ class cNetMessageSyncClient : public cNetMessageT<eNetMessageType::GAMETIME_SYNC
 {
 public:
 	cNetMessageSyncClient() = default;
-	cNetMessageSyncClient (cBinaryArchiveIn& archive)
+	explicit cNetMessageSyncClient (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -357,14 +357,14 @@ public:
 		serializeThis (archive);
 	}
 
-	unsigned int gameTime;
+	unsigned int gameTime = 0;
 
 	//send debug data to server
-	bool crcOK;
-	unsigned int timeBuffer;
-	unsigned int ticksPerFrame;
-	unsigned int queueSize;
-	unsigned int eventCounter;
+	bool crcOK = false;
+	unsigned int timeBuffer = 0;
+	unsigned int ticksPerFrame = 0;
+	unsigned int queueSize = 0;
+	unsigned int eventCounter = 0;
 
 private:
 	template <typename Archive>
@@ -388,7 +388,7 @@ class cNetMessageRandomSeed : public cNetMessageT<eNetMessageType::RANDOM_SEED>
 public:
 	explicit cNetMessageRandomSeed (uint64_t seed) :
 		seed (seed) {}
-	cNetMessageRandomSeed (cBinaryArchiveIn& archive)
+	explicit cNetMessageRandomSeed (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -425,7 +425,7 @@ public:
 		freezeModes (freezeModes),
 		playerStates (playerStates)
 	{}
-	cNetMessageFreezeModes (cBinaryArchiveIn& archive)
+	explicit cNetMessageFreezeModes (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -461,11 +461,11 @@ class cNetMessageReport : public cNetMessageT<eNetMessageType::REPORT>
 {
 public:
 	cNetMessageReport() = default;
-	cNetMessageReport (std::unique_ptr<cSavedReport> report) :
+	explicit cNetMessageReport (std::unique_ptr<cSavedReport> report) :
 		report (std::move (report))
 	{}
 
-	cNetMessageReport (cBinaryArchiveIn& archive)
+	explicit cNetMessageReport (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -502,7 +502,7 @@ public:
 		slot (slot),
 		savingID (savingID)
 	{}
-	cNetMessageGUISaveInfo (cBinaryArchiveIn& archive)
+	explicit cNetMessageGUISaveInfo (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -543,7 +543,7 @@ public:
 		slot (slot),
 		savingID (savingID)
 	{}
-	cNetMessageRequestGUISaveInfo (cBinaryArchiveIn& archive)
+	explicit cNetMessageRequestGUISaveInfo (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -578,8 +578,8 @@ private:
 class cNetMessageResyncModel : public cNetMessageT<eNetMessageType::RESYNC_MODEL>
 {
 public:
-	cNetMessageResyncModel (const cModel& model);
-	cNetMessageResyncModel (cBinaryArchiveIn& archive)
+	explicit cNetMessageResyncModel (const cModel& model);
+	explicit cNetMessageResyncModel (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -613,11 +613,11 @@ private:
 class cNetMessageRequestResync : public cNetMessageT<eNetMessageType::REQUEST_RESYNC_MODEL>
 {
 public:
-	cNetMessageRequestResync (int playerToSync = -1, int saveNumberForGuiInfo = -1) :
+	explicit cNetMessageRequestResync (int playerToSync = -1, int saveNumberForGuiInfo = -1) :
 		playerToSync (playerToSync),
 		saveNumberForGuiInfo (saveNumberForGuiInfo)
 	{}
-	cNetMessageRequestResync (cBinaryArchiveIn& archive)
+	explicit cNetMessageRequestResync (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -652,8 +652,8 @@ private:
 class cNetMessageGameAlreadyRunning : public cNetMessageT<eNetMessageType::GAME_ALREADY_RUNNING>
 {
 public:
-	cNetMessageGameAlreadyRunning (const cModel& model);
-	cNetMessageGameAlreadyRunning (cBinaryArchiveIn& archive)
+	explicit cNetMessageGameAlreadyRunning (const cModel& model);
+	explicit cNetMessageGameAlreadyRunning (cBinaryArchiveIn& archive)
 	{
 		serializeThis (archive);
 	}
@@ -691,7 +691,7 @@ class cNetMessageWantRejoinGame : public cNetMessageT<eNetMessageType::WANT_REJO
 {
 public:
 	cNetMessageWantRejoinGame() = default;
-	cNetMessageWantRejoinGame (cBinaryArchiveIn& archive)
+	explicit cNetMessageWantRejoinGame (cBinaryArchiveIn& archive)
 	{}
 };
 

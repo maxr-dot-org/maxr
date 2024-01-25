@@ -65,7 +65,7 @@ private:
 	sID buildingTypeID;
 	int buildSpeed;
 	cPosition buildPosition;
-	bool buildPath;
+	bool buildPath = true;
 	cPosition pathEndPosition;
 };
 
