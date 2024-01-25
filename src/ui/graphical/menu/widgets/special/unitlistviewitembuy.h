@@ -36,8 +36,8 @@ public:
 	void showPrice();
 
 private:
-	int cost;
-	cLabel* costLabel;
+	int cost = 0;
+	cLabel* costLabel = nullptr;
 };
 
 #endif // ui_graphical_menu_widgets_special_unitlistviewitembuyH

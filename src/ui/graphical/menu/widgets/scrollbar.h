@@ -54,17 +54,14 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cPushButton* forwardButton;
-	cPushButton* backButton;
+	cPushButton* forwardButton = nullptr;
+	cPushButton* backButton = nullptr;
 
-	cSlider* slider;
+	cSlider* slider = nullptr;
 
 	eScrollBarStyle style;
 
 	eOrientationType orientation;
-
-	size_t range;
-	size_t offset;
 };
 
 #endif // ui_graphical_menu_widgets_scrollbarH

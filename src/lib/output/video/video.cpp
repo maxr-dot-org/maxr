@@ -568,12 +568,12 @@ drawpixel:
 SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int height)
 {
 	if (width <= 0 || height <= 0 || !scr) return nullptr;
-	SDL_Surface* surface;
 
 	// can not enlage an existing surface
 	if (width > scr->w && dest) width = scr->w;
 	if (height > scr->h && dest) height = scr->h;
 
+	SDL_Surface* surface = nullptr;
 	// generate new surface if necessary
 	if (dest == nullptr)
 		surface = SDL_CreateRGBSurface (0, width, height, scr->format->BitsPerPixel, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);

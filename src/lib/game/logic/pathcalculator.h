@@ -38,9 +38,11 @@ struct sPathNode
 	/* x and y coords */
 	cPosition position;
 	/* the different cost types */
-	int costF, costG, costH;
+	int costF = 0;
+	int costG = 0;
+	int costH = 0;
 	/* previous node of this one in the hole path */
-	sPathNode* prev;
+	sPathNode* prev = nullptr;
 };
 
 enum class ePathDestinationType
@@ -54,9 +56,9 @@ class cPathDestHandler
 {
 	ePathDestinationType type;
 
-	const cVehicle* srcVehicle;
+	const cVehicle* srcVehicle = nullptr;
 
-	const cUnit* destUnit;
+	const cUnit* destUnit = nullptr;
 	cPosition destination;
 
 public:
@@ -90,23 +92,24 @@ public:
 	static int calcNextCost (const cPosition& source, const cPosition& destination, const cVehicle*, const T* map);
 
 	/* the map on which the path will be calculated */
-	const cMapView* Map;
+	const cMapView* Map = nullptr;
 	/* the moving vehicle */
-	const cVehicle* Vehicle;
+	const cVehicle* Vehicle = nullptr;
 	/* if more then one vehicle is moving in a group this is the list of all moving vehicles */
-	const std::vector<cVehicle*>* group;
+	const std::vector<cVehicle*>* group = nullptr;
 	/* source and destination coords */
 	cPosition source;
-	bool bPlane, bShip;
+	bool bPlane = false;
+	bool bShip = false;
 	std::unique_ptr<cPathDestHandler> destHandler;
 
 private:
 	/* memoryblocks for the nodes */
 	std::vector<std::vector<sPathNode>> MemBlocks;
 	/* number of blocks */
-	int blocknum;
+	int blocknum = 0;
 	/* restsize of the last block */
-	int blocksize;
+	int blocksize = 0;
 
 	/* heaplist where all nodes are sorted by there costF value */
 	std::vector<sPathNode*> nodesHeap;
@@ -115,7 +118,7 @@ private:
 	/* closed nodes map */
 	std::vector<sPathNode*> closedList;
 	/* number of nodes saved on the heaplist; equal to number of nodes in the openlist */
-	int heapCount;
+	int heapCount = 0;
 	/**
 	* expands the nodes around the overgiven one
 	*@author alzi alias DoctorDeath

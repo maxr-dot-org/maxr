@@ -27,7 +27,7 @@
 static const struct
 {
 	SDL_Keycode key;
-	const char* name;
+	const char* name = nullptr;
 } keyNames[] =
 	{
 

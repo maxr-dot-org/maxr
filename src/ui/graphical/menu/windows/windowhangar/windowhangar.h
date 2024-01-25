@@ -70,12 +70,12 @@ protected:
 
 	// TODO: the following widgets should be private instead.
 	// They are protect at the moment because some inheriting windows need to move/resize the widgets.
-	cListView<cUnitListViewItemBuy>* selectionUnitList;
+	cListView<cUnitListViewItemBuy>* selectionUnitList = nullptr;
 
-	cPushButton* okButton;
-	cPushButton* backButton;
-	cPushButton* selectionListUpButton;
-	cPushButton* selectionListDownButton;
+	cPushButton* okButton = nullptr;
+	cPushButton* backButton = nullptr;
+	cPushButton* selectionListUpButton = nullptr;
+	cPushButton* selectionListDownButton = nullptr;
 
 	cSignal<void (const cUnitListViewItemBuy&)> selectionUnitClickedSecondTime;
 
@@ -87,12 +87,12 @@ private:
 	std::unique_ptr<cPlayer> temporaryPlayer;
 	const cPlayer& player;
 
-	cImage* infoImage;
-	cLabel* infoLabel;
+	cImage* infoImage = nullptr;
+	cLabel* infoLabel = nullptr;
 
-	cUnitDetails* unitDetails;
+	cUnitDetails* unitDetails = nullptr;
 
-	cCheckBox* infoTextCheckBox;
+	cCheckBox* infoTextCheckBox = nullptr;
 
 	void initialize();
 

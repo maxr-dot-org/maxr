@@ -25,8 +25,8 @@ std::string to_roman (unsigned int value)
 {
 	struct romandata_t
 	{
-		unsigned int value;
-		char const* numeral;
+		unsigned int value = 0;
+		char const* numeral = nullptr;
 	};
 	const struct romandata_t romandata[] =
 		{

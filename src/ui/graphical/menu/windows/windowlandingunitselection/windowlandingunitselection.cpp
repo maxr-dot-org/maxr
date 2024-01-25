@@ -183,7 +183,7 @@ void cWindowLandingUnitSelection::setActiveUnit (const sID& unitId)
 {
 	cWindowAdvancedHangar<cUnitListViewItemCargo>::setActiveUnit (unitId);
 
-	cUnitUpgrade* unitUpgrade;
+	cUnitUpgrade* unitUpgrade = nullptr;
 	auto iter = unitUpgrades.find (unitId);
 	if (iter == unitUpgrades.end())
 	{

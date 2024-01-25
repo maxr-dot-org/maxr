@@ -62,9 +62,9 @@ private:
 	UniqueSurface listViewBackground;
 	UniqueSurface lineEditBackground;
 
-	cListView<cTextListViewItem>* listView;
-	cCheckBox* downButton;
-	cLineEdit* lineEdit;
+	cListView<cTextListViewItem>* listView = nullptr;
+	cCheckBox* downButton = nullptr;
+	cLineEdit* lineEdit = nullptr;
 
 	size_t maxVisibleItems;
 

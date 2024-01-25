@@ -70,20 +70,18 @@ public:
 	cSignal<void (const std::string&)> commandEntered;
 
 private:
+	void sendCommand();
+	void createBackground();
+
+private:
 	cSignalConnectionManager signalConnectionManager;
 
 	UniqueSurface nonFocusBackground;
 	UniqueSurface focusBackground;
 
-	cLineEdit* chatLineEdit;
-
-	cListView<ChatListItemType>* chatList;
-
-	cListView<PlayerListItemType>* playersList;
-
-	void sendCommand();
-
-	void createBackground();
+	cLineEdit* chatLineEdit = nullptr;
+	cListView<ChatListItemType>* chatList = nullptr;
+	cListView<PlayerListItemType>* playersList = nullptr;
 };
 
 //------------------------------------------------------------------------------

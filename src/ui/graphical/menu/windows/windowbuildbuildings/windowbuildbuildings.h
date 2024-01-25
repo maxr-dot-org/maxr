@@ -47,7 +47,7 @@ private:
 
 	const cVehicle& vehicle;
 
-	cBuildSpeedHandlerWidget* speedHandler;
+	cBuildSpeedHandlerWidget* speedHandler = nullptr;
 	cLabel* titleLabel = nullptr;
 	cPushButton* pathButton = nullptr;
 

@@ -45,7 +45,7 @@ protected:
 
 private:
 	UniqueSurface image;
-	cSoundChunk* clickSound;
+	cSoundChunk* clickSound = nullptr;
 	bool disabledAtTransparent = false;
 };
 

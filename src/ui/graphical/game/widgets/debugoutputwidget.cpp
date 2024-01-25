@@ -417,8 +417,7 @@ void cDebugOutputWidget::trace()
 	if (!gameMap->getArea().withinOrTouches (mouse->getPosition())) return;
 
 	const auto mapPosition = gameMap->getMapTilePosition (mouse->getPosition());
-
-	const cMapField* field;
+	const cMapField* field = nullptr;
 
 	if (debugTraceServer && server)
 	{

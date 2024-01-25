@@ -64,9 +64,9 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager managerSignalConnectionManager;
 
-	cLabel* nameLabel;
-	cImage* colorImage;
-	cImage* readyImage;
+	cLabel* nameLabel = nullptr;
+	cImage* colorImage = nullptr;
+	cImage* readyImage = nullptr;
 
 	const cPlayerLandingStatus& playerLandingStatus;
 

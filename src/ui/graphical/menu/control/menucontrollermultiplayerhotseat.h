@@ -48,8 +48,8 @@ private:
 
 	cApplication& application;
 
-	cWindowPlayerSelection* windowPlayerSelection;
-	cWindow* firstWindow;
+	cWindowPlayerSelection* windowPlayerSelection = nullptr;
+	cWindow* firstWindow = nullptr;
 
 	std::shared_ptr<cLocalHotSeatGameNew> game;
 

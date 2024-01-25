@@ -104,13 +104,13 @@ private:
 	cPushButton* downButton = nullptr;
 
 	cFrame* unitsFrame = nullptr;
-	cListView<cReportUnitListViewItem>* unitsList;
+	cListView<cReportUnitListViewItem>* unitsList = nullptr;
 
 	cFrame* disadvantagesFrame = nullptr;
 	cListView<cReportDisadvantagesListViewItem>* disadvantagesList = nullptr;
 
 	cFrame* scoreFrame = nullptr;
-	cPlot<int, int>* scorePlot;
+	cPlot<int, int>* scorePlot = nullptr;
 
 	cFrame* reportsFrame = nullptr;
 	cListView<cReportMessageListViewItem>* reportsList = nullptr;

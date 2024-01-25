@@ -184,12 +184,9 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				// when we have a group of units, the units will not block each other
 				if (group)
 				{
+					const auto& field = Map->getField (currentPosition);
 					// get the blocking unit
-					cVehicle* blockingUnit;
-					if (Vehicle->getStaticUnitData().factorAir > 0)
-						blockingUnit = Map->getField (currentPosition).getPlane();
-					else
-						blockingUnit = Map->getField (currentPosition).getVehicle();
+					cVehicle* blockingUnit = (Vehicle->getStaticUnitData().factorAir > 0) ? field.getPlane() : field.getVehicle();
 					// check whether the blocking unit is the group
 					bool isInGroup = ranges::contains (*group, blockingUnit);
 					if (!isInGroup) continue;

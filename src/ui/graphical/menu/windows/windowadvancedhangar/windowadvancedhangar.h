@@ -45,9 +45,9 @@ protected:
 
 	// TODO: the following widgets should be private instead.
 	// They are protect at the moment because some inheriting windows need to move/resize the widgets.
-	cListView<SelectedUnitItemType>* selectedUnitList;
-	cPushButton* selectedListUpButton;
-	cPushButton* selectedListDownButton;
+	cListView<SelectedUnitItemType>* selectedUnitList = nullptr;
+	cPushButton* selectedListUpButton = nullptr;
+	cPushButton* selectedListDownButton = nullptr;
 
 	cSignal<void (SelectedUnitItemType*)> selectedUnitSelectionChanged;
 

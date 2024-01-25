@@ -41,8 +41,8 @@ public:
 	void handleResized (const cPosition& oldSize) override;
 
 private:
-	cLabel* messageLabel;
-	cLabel* prefixLabel;
+	cLabel* messageLabel = nullptr;
+	cLabel* prefixLabel = nullptr;
 };
 
 #endif // ui_graphical_menu_widgets_special_lobbychatboxlistviewitemH

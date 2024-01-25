@@ -45,9 +45,9 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cLabel* nameLabel;
-	cImage* colorImage;
-	cImage* readyImage;
+	cLabel* nameLabel = nullptr;
+	cImage* colorImage = nullptr;
+	cImage* readyImage = nullptr;
 
 	std::shared_ptr<cPlayerBasicData> player;
 

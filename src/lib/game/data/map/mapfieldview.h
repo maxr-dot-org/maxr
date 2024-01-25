@@ -67,7 +67,7 @@ public:
 private:
 	const cMapField& mapField;
 	const sTerrain& terrain;
-	const cPlayer* player; // may be null
+	const cPlayer* player = nullptr; // may be null
 };
 
 #endif

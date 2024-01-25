@@ -34,7 +34,7 @@ public:
 	void handleResized (const cPosition& oldSize) override;
 
 protected:
-	cLabel* label;
+	cLabel* label = nullptr;
 };
 
 #endif // ui_graphical_menu_widgets_special_textlistviewitemH

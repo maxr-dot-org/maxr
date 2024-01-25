@@ -119,7 +119,7 @@ void cWindowUpgrades::setActiveUnit (const sID& unitId)
 {
 	cWindowHangar::setActiveUnit (unitId);
 
-	cUnitUpgrade* unitUpgrade;
+	cUnitUpgrade* unitUpgrade = nullptr;
 	auto iter = unitUpgrades.find (unitId);
 	if (iter == unitUpgrades.end())
 	{

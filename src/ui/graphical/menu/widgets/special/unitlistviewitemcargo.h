@@ -34,9 +34,9 @@ private:
 	void updateCargoLabel();
 
 private:
-	cLabel* cargoLabel;
+	cLabel* cargoLabel = nullptr;
 	int cargo = 0;
-	int cargoMax;
+	int cargoMax = 0;
 };
 
 #endif // ui_graphical_menu_widgets_special_unitlistviewitemcargoH

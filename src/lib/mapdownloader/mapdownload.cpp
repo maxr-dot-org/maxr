@@ -41,8 +41,8 @@ bool MapDownload::isMapOriginal (const std::filesystem::path& mapFilename, int32
 
 	const struct
 	{
-		const char* filename;
-		int32_t checksum;
+		const char* filename = nullptr;
+		int32_t checksum = 0;
 	} maps[] =
 		{
 			{"bottleneck.wrl", 344087468},

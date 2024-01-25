@@ -253,7 +253,7 @@ void cWindowStorage::updateUnitsWidgets()
 			{
 				unitNames[positionIndex]->setText ("");
 
-				SDL_Surface* srcSurface;
+				SDL_Surface* srcSurface = nullptr;
 				if (canStoreShips)
 					srcSurface = GraphicsData.gfx_edock.get();
 				else if (canStorePlanes)

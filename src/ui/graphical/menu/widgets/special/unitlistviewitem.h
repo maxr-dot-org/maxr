@@ -42,8 +42,8 @@ public:
 	const sID& getUnitId() const { return unitId; }
 
 protected:
-	cImage* unitImage;
-	cLabel* nameLabel;
+	cImage* unitImage = nullptr;
+	cLabel* nameLabel = nullptr;
 
 private:
 	sID unitId;
