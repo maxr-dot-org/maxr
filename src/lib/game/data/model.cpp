@@ -66,10 +66,9 @@ cModel::~cModel()
 //------------------------------------------------------------------------------
 void cModel::initGameId()
 {
-	if (gameId == 0)
+	while (gameId == 0)
 	{
-		while ((gameId = randomGenerator.get()) == 0)
-			;
+		gameId = randomGenerator.get();
 	}
 }
 
@@ -149,27 +148,24 @@ const cPlayer* cModel::getPlayer (int playerNr) const
 	return it == playerList.end() ? nullptr : it->get();
 }
 //------------------------------------------------------------------------------
-const cPlayer* cModel::getPlayer (std::string player) const
+const cPlayer* cModel::getPlayer (std::string playerName) const
 {
 	// first try to find player by number
-	const int playerNr = atoi (player.c_str());
-	if (playerNr != 0 || player[0] == '0')
+	const int playerNr = atoi (playerName.c_str());
+	if (playerNr != 0 || playerName == "0")
 	{
 		return getPlayer (playerNr);
 	}
 
 	// try to find player by name
-	for (auto p : playerList)
-	{
-		if (p->getName() == player)
-			return p.get();
-	}
-	return nullptr;
+	auto it = ranges::find_if (playerList, [&] (const auto& player) { return player->getName() == playerName; });
+	return it == playerList.end() ? nullptr : it->get();
 }
+
 //------------------------------------------------------------------------------
 void cModel::setPlayerList (const std::vector<cPlayerBasicData>& splayers)
 {
-	assert (playerList.size() == 0);
+	assert (playerList.empty());
 
 	for (const auto& playerInfo : splayers)
 	{
@@ -552,9 +548,9 @@ cUnit* cModel::getUnitFromID (unsigned int id) const
 //------------------------------------------------------------------------------
 cVehicle* cModel::getVehicleFromID (unsigned int id) const
 {
-	for (size_t i = 0; i != playerList.size(); ++i)
+	for (const auto& player : playerList)
 	{
-		auto unit = playerList[i]->getVehicleFromId (id);
+		auto unit = player->getVehicleFromId (id);
 		if (unit) return unit;
 	}
 	auto iter = neutralVehicles.find (id);
@@ -565,9 +561,9 @@ cVehicle* cModel::getVehicleFromID (unsigned int id) const
 //------------------------------------------------------------------------------
 cBuilding* cModel::getBuildingFromID (unsigned int id) const
 {
-	for (size_t i = 0; i != playerList.size(); ++i)
+	for (const auto& player : playerList)
 	{
-		auto unit = playerList[i]->getBuildingFromId (id);
+		auto unit = player->getBuildingFromId (id);
 		if (unit) return unit;
 	}
 
@@ -893,14 +889,13 @@ bool cModel::isVictoryConditionMet() const
 //------------------------------------------------------------------------------
 void cModel::defeatLoserPlayers()
 {
-	for (size_t i = 0; i != playerList.size(); ++i)
+	for (const auto& player : playerList)
 	{
-		cPlayer& player = *playerList[i];
-		if (player.isDefeated) continue;
-		if (player.mayHaveOffensiveUnit()) continue;
+		if (player->isDefeated) continue;
+		if (player->mayHaveOffensiveUnit()) continue;
 
-		player.isDefeated = true;
-		playerHasLost (player);
+		player->isDefeated = true;
+		playerHasLost (*player);
 	}
 }
 
@@ -913,7 +908,7 @@ void cModel::checkDefeats()
 	std::set<cPlayer*> winners;
 	int best_score = -1;
 
-	// find player (s) with highest score
+	// find player(s) with highest score
 	for (const auto& player : playerList)
 	{
 		if (player->isDefeated) continue;
@@ -943,7 +938,7 @@ void cModel::checkDefeats()
 		for (const auto& player : playerList)
 		{
 			if (player->isDefeated) continue;
-			if (winners.find (player.get()) != winners.end())
+			if (winners.count (player.get()) != 0)
 			{
 				playerHasWon (*player);
 			}
