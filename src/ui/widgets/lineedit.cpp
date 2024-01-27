@@ -67,6 +67,7 @@ void cLineEdit::setText (std::string text_)
 		}
 	}
 	resetTextPosition();
+	textEdited(text);
 	textSet();
 }
 
@@ -329,6 +330,7 @@ void cLineEdit::deleteLeft()
 		doPosIncrease (endOffset, endOffset);
 		cursorPos = index;
 		scrollLeft (false);
+		textEdited (text);
 	}
 }
 
@@ -343,6 +345,7 @@ void cLineEdit::deleteRight()
 		text.erase (cursorPos, index - cursorPos);
 		endOffset -= index - cursorPos;
 		doPosIncrease(endOffset, endOffset);
+		textEdited (text);
 	}
 }
 
@@ -401,6 +404,7 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 				SDL_SetClipboardText (text.c_str());
 				text.clear();
 				resetTextPosition();
+				textEdited (text);
 			}
 			break;
 		case SDLK_v:
@@ -428,6 +432,7 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 
 				while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
 					doPosIncrease (startOffset, startOffset);
+				textEdited (text);
 			}
 			break;
 		default: // normal characters are handled as textInput:
@@ -469,4 +474,5 @@ void cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboar
 		if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize().x() - getBorderSize())
 			doPosDecrease (endOffset);
 	}
+	textEdited (text);
 }

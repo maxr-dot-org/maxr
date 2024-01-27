@@ -64,6 +64,11 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	signalConnectionManager.connect (chatLineEdit->returnPressed, [this]() { triggerChatMessage (true); });
 	sendButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 416), ePushButtonType::StandardSmall, lngPack.i18n ("Title~Send"));
 	signalConnectionManager.connect (sendButton->clicked, [this]() { triggerChatMessage (false); });
+	signalConnectionManager.connect (chatLineEdit->textEdited, [this] (const std::string& text) {
+		if (text.empty()) { sendButton->lock(); }
+		else { sendButton->unlock(); }
+	});
+	sendButton->lock();
 	chatList = emplaceChild<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition() + cPosition (14, 284), getPosition() + cPosition (14 + 439, 284 + 124)), eScrollBarStyle::Classic);
 	chatList->disableSelectable();
 	chatList->setBeginMargin (cPosition (12, 12));

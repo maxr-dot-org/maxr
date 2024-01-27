@@ -62,6 +62,7 @@ public:
 	cSignal<void()> textSet;
 	cSignal<void()> escapePressed;
 	cSignal<void()> returnPressed;
+	cSignal<void (const std::string&)> textEdited;
 	cSignal<void (eValidatorState)> editingFinished;
 
 protected:
