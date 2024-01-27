@@ -258,6 +258,9 @@ void cMenuControllerMultiplayerHost::startHost()
 		{
 			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Multiplayer~Network_Open", std::to_string (windowNetworkLobby->getPort())));
 			windowNetworkLobby->disablePortEdit();
+			if (auto* p = dynamic_cast<cWindowNetworkLobbyHost*>(windowNetworkLobby.get())) {
+				p->disableStartHostButton();
+			}
 			break;
 		}
 		case eOpenServerResult::Failed:

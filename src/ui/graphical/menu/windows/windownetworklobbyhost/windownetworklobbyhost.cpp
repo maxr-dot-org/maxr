@@ -38,3 +38,9 @@ void cWindowNetworkLobbyHost::retranslate()
 	setTitle (lngPack.i18n ("Others~TCPIP_Host"));
 	startButton->setText (lngPack.i18n ("Others~Host_Start"));
 }
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobbyHost::disableStartHostButton()
+{
+	startButton->lock();
+}

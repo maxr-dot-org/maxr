@@ -31,6 +31,8 @@ public:
 
 	void retranslate() override;
 
+	void disableStartHostButton();
+
 	cSignal<void()> triggeredStartHost;
 
 private:
