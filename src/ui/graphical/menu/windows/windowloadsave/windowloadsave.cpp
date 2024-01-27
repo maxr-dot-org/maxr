@@ -66,18 +66,17 @@ void cWindowLoadSave::handleSlotDoubleClicked (size_t index)
 void cWindowLoadSave::handleSaveClicked()
 {
 	auto saveNumber = getSelectedSaveNumber();
-	if (saveNumber == -1) return;
+	if (!saveNumber.has_value()) return;
 
-	auto slot = getSaveSlotFromSaveNumber (saveNumber);
-	if (slot)
+	if (const auto* slot = getSaveSlotFromSaveNumber (*saveNumber))
 	{
-		save (saveNumber, slot->getName());
+		save (*saveNumber, slot->getName());
 	}
 	else
 	{
-		auto saveFile = getSaveFile (saveNumber);
-		if (!saveFile) return;
-
-		save (saveNumber, saveFile->gameName);
+		if (auto saveFile = getSaveFile (saveNumber))
+		{
+			save (*saveNumber, saveFile->gameName);
+		}
 	}
 }

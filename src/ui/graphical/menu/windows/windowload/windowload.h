@@ -52,11 +52,11 @@ protected:
 
 	void selectSlot (size_t slotIndex, bool makeRenameable);
 
-	int getSelectedSaveNumber() const;
+	std::optional<std::size_t> getSelectedSaveNumber() const;
 
-	cSaveGameInfo* getSaveFile (int saveNumber);
+	cSaveGameInfo* getSaveFile (std::optional<std::size_t> saveNumber);
 
-	cSaveSlotWidget* getSaveSlotFromSaveNumber (size_t saveNumber);
+	cSaveSlotWidget* getSaveSlotFromSaveNumber (std::optional<std::size_t> saveNumber);
 	cSaveSlotWidget& getSaveSlot (size_t slotIndex);
 
 private:
@@ -84,7 +84,7 @@ private:
 	int page = 0;
 	const int lastPage;
 
-	int selectedSaveNumber = -1;
+	std::optional<std::size_t> selectedSaveNumber;
 	std::string selectedOriginalName;
 
 	std::function<std::vector<cSaveGameInfo>()> saveGamesGetter;

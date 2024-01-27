@@ -135,10 +135,7 @@ void cWindowLoad::updateSlots()
 			{
 				slot->reset (saveNumber);
 			}
-			if (selectedSaveNumber == static_cast<int> (saveNumber))
-				slot->setSelected (true);
-			else
-				slot->setSelected (false);
+			slot->setSelected (selectedSaveNumber == saveNumber);
 		}
 	}
 }
@@ -177,11 +174,9 @@ void cWindowLoad::handleSlotDoubleClicked (size_t index)
 //------------------------------------------------------------------------------
 void cWindowLoad::selectSlot (size_t slotIndex, bool makeRenameable)
 {
-	auto oldSelected = getSaveFile (selectedSaveNumber);
-	if (oldSelected)
+	if (auto oldSelected = getSaveFile (selectedSaveNumber))
 	{
-		auto slot = getSaveSlotFromSaveNumber (selectedSaveNumber);
-		if (slot) slot->setSaveData (*oldSelected);
+		if (auto slot = getSaveSlotFromSaveNumber (selectedSaveNumber)) slot->setSaveData (*oldSelected);
 	}
 
 	selectedSaveNumber = page * (columns * rows) + slotIndex + 1;
@@ -216,13 +211,13 @@ void cWindowLoad::selectSlot (size_t slotIndex, bool makeRenameable)
 }
 
 //------------------------------------------------------------------------------
-int cWindowLoad::getSelectedSaveNumber() const
+std::optional<std::size_t> cWindowLoad::getSelectedSaveNumber() const
 {
 	return selectedSaveNumber;
 }
 
 //------------------------------------------------------------------------------
-cSaveGameInfo* cWindowLoad::getSaveFile (int saveNumber)
+cSaveGameInfo* cWindowLoad::getSaveFile (std::optional<std::size_t> saveNumber)
 {
 	auto iter = ranges::find_if (saveGames, [=] (const cSaveGameInfo& save) { return save.number == saveNumber; });
 	return iter == saveGames.end() ? nullptr : &(*iter);
@@ -235,11 +230,12 @@ cSaveSlotWidget& cWindowLoad::getSaveSlot (size_t slotIndex)
 }
 
 //------------------------------------------------------------------------------
-cSaveSlotWidget* cWindowLoad::getSaveSlotFromSaveNumber (size_t saveNumber)
+cSaveSlotWidget* cWindowLoad::getSaveSlotFromSaveNumber (std::optional<std::size_t> saveNumber)
 {
-	if (saveNumber - 1 >= page * (rows * columns) && saveNumber - 1 < (page + 1) * (rows * columns))
+	if (!saveNumber.has_value()) { return nullptr; }
+	if (*saveNumber - 1 >= page * (rows * columns) && *saveNumber - 1 < (page + 1) * (rows * columns))
 	{
-		return &getSaveSlot (saveNumber - 1 - page * (rows * columns));
+		return &getSaveSlot (*saveNumber - 1 - page * (rows * columns));
 	}
 	else
 		return nullptr;
@@ -270,7 +266,7 @@ void cWindowLoad::handleUpClicked()
 //------------------------------------------------------------------------------
 void cWindowLoad::handleLoadClicked()
 {
-	if (selectedSaveNumber == -1) return;
+	if (!selectedSaveNumber.has_value()) return;
 
 	auto saveInfo = getSaveFile (selectedSaveNumber);
 	if (cVersion (saveInfo->saveVersion) == cVersion ("0.0"))
@@ -281,7 +277,7 @@ void cWindowLoad::handleLoadClicked()
 	if (cVersion (saveInfo->saveVersion) < cVersion (MINIMUM_REQUIRED_SAVE_VERSION))
 	{
 		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Incompatible", MINIMUM_REQUIRED_MAXR_VERSION)));
-		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName (selectedSaveNumber).u8string() + " is not compatible");
+		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName (*selectedSaveNumber).u8string() + " is not compatible");
 		return;
 	}
 
