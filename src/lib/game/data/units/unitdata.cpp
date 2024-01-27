@@ -194,17 +194,6 @@ cUnitsData::cUnitsData()
 }
 
 //------------------------------------------------------------------------------
-int cUnitsData::getUnitIndexBy (sID id) const
-{
-	for (unsigned int i = 0; i != staticUnitData.size(); ++i)
-	{
-		if (staticUnitData[i].ID == id) return i;
-	}
-	Log.error ("Unitdata with id (" + std::to_string (id.firstPart) + ", " + std::to_string (id.secondPart) + ") not found");
-	return -1;
-}
-
-//------------------------------------------------------------------------------
 void cUnitsData::initializeIDData()
 {
 	for (const auto& data : staticUnitData)
@@ -261,7 +250,12 @@ void cUnitsData::initializeClanUnitData (const cClanData& clanData)
 //------------------------------------------------------------------------------
 bool cUnitsData::isValidId (const sID& id) const
 {
-	return getUnitIndexBy (id) != -1;
+	if (ranges::any_of (staticUnitData, [&] (const auto& unitData) { return unitData.ID == id; }))
+	{
+		return true;
+	}
+	Log.error ("Unitdata with id (" + std::to_string (id.firstPart) + ", " + std::to_string (id.secondPart) + ") not found");
+	return false;
 }
 
 //------------------------------------------------------------------------------

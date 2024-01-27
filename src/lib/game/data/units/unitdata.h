@@ -565,8 +565,6 @@ public:
 	}
 
 private:
-	int getUnitIndexBy (sID id) const;
-
 	sSpecialBuildingsId specialBuildings;
 	sSpecialVehiclesId specialVehicles;
 
