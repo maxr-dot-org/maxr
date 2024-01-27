@@ -120,8 +120,9 @@ void cWindowMapSelection::downClicked()
 //------------------------------------------------------------------------------
 void cWindowMapSelection::okClicked()
 {
-	assert (static_cast<std::size_t> (selectedMapIndex) < maps.size());
-	done (maps[selectedMapIndex]);
+	assert (selectedMapIndex);
+	assert (*selectedMapIndex < maps.size());
+	done (maps[*selectedMapIndex]);
 }
 
 //------------------------------------------------------------------------------
@@ -178,7 +179,7 @@ void cWindowMapSelection::updateMaps()
 			}
 			mapName += mapSizeTxt;
 
-			if (selectedMapIndex == static_cast<int> (mapIndex))
+			if (selectedMapIndex == mapIndex)
 			{
 				SDL_FillRect (imageSurface.get(), nullptr, selectedColor);
 

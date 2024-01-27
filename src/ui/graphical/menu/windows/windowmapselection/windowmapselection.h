@@ -73,7 +73,7 @@ private:
 	cPushButton* backButton = nullptr;
 
 	std::vector<std::filesystem::path> maps;
-	int selectedMapIndex = -1;
+	std::optional<std::size_t> selectedMapIndex;
 	unsigned int page = 0;
 };
 
