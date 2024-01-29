@@ -150,7 +150,7 @@ void cServer::sendGuiInfoToClients (int saveGameNumber, int playerNr /*= -1*/)
 //------------------------------------------------------------------------------
 void cServer::resyncClientModel (int playerNr /*= -1*/) const
 {
-	assert (SDL_ThreadID() == SDL_GetThreadID (serverThread));
+	assert (serverThread == nullptr || SDL_ThreadID() == SDL_GetThreadID (serverThread));
 
 	NetLog.debug (" Server: Resynchronize client model " + std::to_string (playerNr));
 	cNetMessageResyncModel msg (model);
@@ -185,7 +185,7 @@ void cServer::sendMessageToClients (const cNetMessage& message, int playerNr /* 
 }
 
 //------------------------------------------------------------------------------
-void cServer::start()
+void cServer::start (bool resync)
 {
 	if (serverThread) return;
 
@@ -193,6 +193,10 @@ void cServer::start()
 	initPlayerConnectionState();
 	updateWaitForClientFlag();
 
+	if (resync)
+	{
+		resyncClientModel();
+	}
 	serverThread = SDL_CreateThread (serverThreadCallback, "server", this);
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
 	gameTimer.start();

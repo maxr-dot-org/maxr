@@ -226,6 +226,7 @@ void cClient::handleNetMessages()
 
 				//FIXME: deserializing model does not trigger signals on changed data members. Use this signal to trigger some gui updates
 				freezeModeChanged();
+				resynced();
 			}
 			break;
 			case eNetMessageType::FREEZE_MODES:

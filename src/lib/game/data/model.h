@@ -33,6 +33,7 @@
 #include "units/unit.h"
 #include "utility/crossplattformrandom.h"
 #include "utility/flatset.h"
+#include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/serialization.h"
 
 #include <cassert>
@@ -208,7 +209,25 @@ public:
 		archive >> serialization::makeNvp ("unitsData", *unitsData);
 		//TODO: check UIData available
 
-		archive >> serialization::makeNvp ("players", playerList);
+		// Don't load directly playerList as pointer might be stored (signal, gui, ...)
+		std::vector<std::shared_ptr<cPlayer>> players;
+		archive >> serialization::makeNvp ("players", players);
+		playerList.resize (players.size());
+		for (std::size_t i = 0; i != playerList.size(); ++i)
+		{
+			if (playerList[i] == nullptr)
+			{
+				playerList[i] = std::move (players[i]);
+			}
+			else
+			{
+				std::vector<unsigned char> buffer;
+				cBinaryArchiveOut out(buffer);
+				out << players[i];
+				cBinaryArchiveIn in (buffer.data(), buffer.size());
+				in >> *playerList[i];
+			}
+		}
 		for (auto& player : playerList)
 		{
 			player->postLoad (*this);

@@ -233,7 +233,8 @@ void cGameGuiController::setServer (cServer* server_)
 //------------------------------------------------------------------------------
 void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 {
-	if (activeClient == client_) { return; }
+	const bool wasSame = activeClient == client_;
+
 	activeClient = std::move (client_);
 	if (activeClient)
 	{
@@ -256,7 +257,7 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 
 	if (activeClient != nullptr)
 	{
-		connectClient (*activeClient);
+		if (!wasSame) { connectClient (*activeClient); }
 		auto iter = playerGameGuiStates.find (activeClient->getActivePlayer().getId());
 		if (iter != playerGameGuiStates.end())
 		{
@@ -947,6 +948,13 @@ void cGameGuiController::connectClient (cClient& client)
 		updateEndButtonState();
 		updateGuiInfoTexts();
 		updateChangeAllowed();
+	});
+
+	clientSignalConnectionManager.connect (client.resynced, [this]() {
+		if (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get())
+		{
+			setActiveClient (activeClient);
+		}
 	});
 
 	clientSignalConnectionManager.connect (model.newTurnStarted, [this] (const sNewTurnReport&) {

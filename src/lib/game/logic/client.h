@@ -133,6 +133,7 @@ public:
 	cSignal<void (int slot, int savingID)> guiSaveInfoRequested;
 	cSignal<void (const cNetMessageGUISaveInfo&)> guiSaveInfoReceived;
 	cSignal<void()> freezeModeChanged;
+	cSignal<void()> resynced;
 	cSignal<void()> connectionToServerLost;
 	cSignal<void (const cVehicle&)> surveyorAiConfused;
 
