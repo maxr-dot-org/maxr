@@ -59,10 +59,10 @@ void cActionStartBuild::execute (cModel& model) const
 	if (!model.getUnitsData()->isValidId (buildingTypeID)) return;
 	if (!buildingTypeID.isABuilding()) return;
 	if (!map.isValidPosition (buildPosition)) return;
-	if (buildPath && !map.isValidPosition (pathEndPosition)) return;
+	if (pathEndPosition && !map.isValidPosition (*pathEndPosition)) return;
 	if (buildSpeed > 2 || buildSpeed < 0) return;
 
-	if (vehicle->isUnitBuildingABuilding() || vehicle->BuildPath) return;
+	if (vehicle->isUnitBuildingABuilding() || vehicle->bandPosition) return;
 	if (vehicle->isDisabled()) return;
 	if (vehicle->isUnitMoving()) return;
 
@@ -122,7 +122,6 @@ void cActionStartBuild::execute (cModel& model) const
 	vehicle->setBuildTurnsStart (vehicle->getBuildTurns());
 
 	vehicle->setBuildingABuilding (true);
-	vehicle->BuildPath = buildPath;
 
 	model.addJob (std::make_unique<cStartBuildJob> (*vehicle, oldPosition, data.buildingData.isBig));
 

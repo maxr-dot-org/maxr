@@ -60,7 +60,7 @@ void cActionStop::execute (cModel& model) const
 			if (vehicle->getBuildTurns() == 0) return;
 
 			vehicle->setBuildingABuilding (false);
-			vehicle->BuildPath = false;
+			vehicle->bandPosition.reset();
 
 			if (vehicle->getIsBig())
 			{

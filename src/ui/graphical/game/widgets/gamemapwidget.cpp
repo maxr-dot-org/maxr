@@ -530,7 +530,7 @@ void cGameMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 		drawResources();
 	}
 
-	if (selectedVehicle && ((selectedVehicle->getMoveJob() && !selectedVehicle->isUnitMoving()) || selectedVehicle->BuildPath))
+	if (selectedVehicle && ((selectedVehicle->getMoveJob() && !selectedVehicle->isUnitMoving()) || selectedVehicle->bandPosition))
 	{
 		drawPath (*selectedVehicle);
 	}
@@ -1435,7 +1435,7 @@ void cGameMapWidget::drawExitPoints()
 
 	if (selectedVehicle && selectedVehicle->isDisabled() == false)
 	{
-		if (mapView && selectedVehicle->getOwner() == player.get() && ((selectedVehicle->isUnitBuildingABuilding() && selectedVehicle->getBuildTurns() == 0) || (selectedVehicle->isUnitClearing() && selectedVehicle->getClearingTurns() == 0)) && !selectedVehicle->BuildPath)
+		if (mapView && selectedVehicle->getOwner() == player.get() && ((selectedVehicle->isUnitBuildingABuilding() && selectedVehicle->getBuildTurns() == 0) || (selectedVehicle->isUnitClearing() && selectedVehicle->getClearingTurns() == 0)) && !selectedVehicle->bandPosition)
 		{
 			drawExitPointsIf (*selectedVehicle, [&] (const cPosition& position) { return mapView->possiblePlace (*selectedVehicle, position); });
 		}
@@ -1575,43 +1575,42 @@ void cGameMapWidget::drawLockList()
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 {
-	if (!vehicle.BuildPath || (vehicle.bandPosition == vehicle.getPosition()) || mouseMode->getType() == eMouseModeType::SelectBuildPathDestintaion) return;
+	if (!vehicle.bandPosition || (*vehicle.bandPosition == vehicle.getPosition()) || mouseMode->getType() == eMouseModeType::SelectBuildPathDestintaion) return;
 
 	const auto zoomedTileSize = getZoomedTileSize();
 
-	int mx = vehicle.getPosition().x();
-	int my = vehicle.getPosition().y();
+	cPosition m = vehicle.getPosition();
 	int sp;
-	if (mx < vehicle.bandPosition.x())
+	if (m.x() < vehicle.bandPosition->x())
 		sp = 4;
-	else if (mx > vehicle.bandPosition.x())
+	else if (m.x() > vehicle.bandPosition->x())
 		sp = 3;
-	else if (my < vehicle.bandPosition.y())
+	else if (m.y() < vehicle.bandPosition->y())
 		sp = 1;
 	else
 		sp = 6;
 
-	while (mx != vehicle.bandPosition.x() || my != vehicle.bandPosition.y())
+	while (m != vehicle.bandPosition)
 	{
 		SDL_Rect dest;
-		dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * mx;
-		dest.y = getPosition().y() - (int) (pixelOffset.y() * getZoomFactor()) + zoomedTileSize.y() * my;
+		dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * m.x();
+		dest.y = getPosition().y() - (int) (pixelOffset.y() * getZoomFactor()) + zoomedTileSize.y() * m.y();
 
 		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x()].get(), nullptr, cVideo::buffer, &dest);
 
-		if (mx < vehicle.bandPosition.x())
-			mx++;
-		else if (mx > vehicle.bandPosition.x())
-			mx--;
+		if (m.x() < vehicle.bandPosition->x())
+			m.x()++;
+		else if (m.x() > vehicle.bandPosition->x())
+			m.x()--;
 
-		if (my < vehicle.bandPosition.y())
-			my++;
-		else if (my > vehicle.bandPosition.y())
-			my--;
+		if (m.y() < vehicle.bandPosition->y())
+			m.y()++;
+		else if (m.y() > vehicle.bandPosition->y())
+			m.y()--;
 	}
 	SDL_Rect dest;
-	dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * mx;
-	dest.y = getPosition().y() - (int) (pixelOffset.y() * getZoomFactor()) + zoomedTileSize.y() * my;
+	dest.x = getPosition().x() - (int) (pixelOffset.x() * getZoomFactor()) + zoomedTileSize.x() * m.x();
+	dest.y = getPosition().y() - (int) (pixelOffset.y() * getZoomFactor()) + zoomedTileSize.y() * m.y();
 
 	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x()].get(), nullptr, cVideo::buffer, &dest);
 }

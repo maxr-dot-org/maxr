@@ -56,7 +56,6 @@ private:
 		archive & NVP (buildingTypeID);
 		archive & NVP (buildSpeed);
 		archive & NVP (buildPosition);
-		archive & NVP (buildPath);
 		archive & NVP (pathEndPosition);
 		// clang-format on
 	}
@@ -65,8 +64,7 @@ private:
 	sID buildingTypeID;
 	int buildSpeed;
 	cPosition buildPosition;
-	bool buildPath = true;
-	cPosition pathEndPosition;
+	std::optional<cPosition> pathEndPosition;
 };
 
 #endif // game_logic_actionTransferH

@@ -88,7 +88,7 @@ void cActionFinishBuild::finishABuilding (cModel& model, cVehicle& vehicle) cons
 
 	// end building
 	vehicle.setBuildingABuilding (false);
-	vehicle.BuildPath = false;
+	vehicle.bandPosition.reset();
 
 	// set the vehicle to the border
 	if (vehicle.getIsBig())

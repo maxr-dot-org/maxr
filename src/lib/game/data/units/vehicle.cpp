@@ -44,7 +44,6 @@
 //------------------------------------------------------------------------------
 cVehicle::cVehicle (unsigned int ID) :
 	cUnit (nullptr, nullptr, nullptr, ID),
-	bandPosition (0, 0),
 	buildBigSavedPosition (0, 0),
 	tileMovementOffset (0, 0)
 {
@@ -61,7 +60,6 @@ cVehicle::cVehicle (unsigned int ID) :
 //------------------------------------------------------------------------------
 cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& dynamicData, cPlayer* owner, unsigned int ID) :
 	cUnit (&dynamicData, &staticData, owner, ID),
-	bandPosition (0, 0),
 	buildBigSavedPosition (0, 0),
 	tileMovementOffset (0, 0)
 {
@@ -98,7 +96,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 	// here the new building is added (if possible) and
 	// the move job to the next field is generated
 	// the new build event is generated in cMoveJob::endMove()
-	if (BuildPath)
+	if (bandPosition)
 	{
 		// Find a next position that either
 		// a) is something we can't move to
@@ -107,13 +105,13 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 		cPosition nextPosition (getPosition());
 		bool found_next = false;
 
-		while (!found_next && (nextPosition != bandPosition))
+		while (!found_next && (nextPosition != *bandPosition))
 		{
 			// Calculate the next position in the path.
-			if (getPosition().x() > bandPosition.x()) nextPosition.x()--;
-			if (getPosition().x() < bandPosition.x()) nextPosition.x()++;
-			if (getPosition().y() > bandPosition.y()) nextPosition.y()--;
-			if (getPosition().y() < bandPosition.y()) nextPosition.y()++;
+			if (getPosition().x() > bandPosition->x()) nextPosition.x()--;
+			if (getPosition().x() < bandPosition->x()) nextPosition.x()++;
+			if (getPosition().y() > bandPosition->y()) nextPosition.y()--;
+			if (getPosition().y() < bandPosition->y()) nextPosition.y()++;
 			// Can we move to this position?
 			// If not, we need to kill the path building now.
 			model.sideStepStealthUnit (nextPosition, *this);
@@ -162,7 +160,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 				}
 				model.addBuilding (getPosition(), getBuildingType(), getOwner());
 			}
-			BuildPath = false;
+			bandPosition.reset();
 			if (getOwner()) getOwner()->buildPathInterrupted (*this);
 		}
 	}
@@ -185,7 +183,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 //------------------------------------------------------------------------------
 void cVehicle::continuePathBuilding (cModel& model)
 {
-	if (!BuildPath) return;
+	if (!bandPosition) return;
 
 	if (getStoredResources() >= getBuildCostsStart() && model.getMap()->possiblePlaceBuilding (model.getUnitsData()->getStaticUnitData (getBuildingType()), getPosition(), nullptr, this))
 	{
@@ -196,7 +194,7 @@ void cVehicle::continuePathBuilding (cModel& model)
 	}
 	else
 	{
-		BuildPath = false;
+		bandPosition.reset();
 		if (getOwner()) getOwner()->buildPathInterrupted (*this);
 	}
 }
@@ -753,7 +751,6 @@ uint32_t cVehicle::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (surveyorAutoMoveActive, crc);
 	crc = calcCheckSum (bandPosition, crc);
 	crc = calcCheckSum (buildBigSavedPosition, crc);
-	crc = calcCheckSum (BuildPath, crc);
 	crc = calcCheckSum (WalkFrame, crc);
 	crc = calcCheckSum (tileMovementOffset, crc);
 	crc = calcCheckSum (loaded, crc);

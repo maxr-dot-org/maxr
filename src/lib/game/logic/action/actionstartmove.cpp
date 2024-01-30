@@ -75,7 +75,7 @@ void cActionStartMove::execute (cModel& model) const
 		NetLog.debug (" Cannot move a vehicle currently attacking");
 		return;
 	}
-	if (vehicle->isUnitBuildingABuilding() || vehicle->BuildPath)
+	if (vehicle->isUnitBuildingABuilding() || vehicle->bandPosition)
 	{
 		NetLog.debug (" Cannot move a vehicle currently building");
 		return;

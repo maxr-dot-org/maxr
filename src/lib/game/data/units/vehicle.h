@@ -183,7 +183,6 @@ public:
 		archive & NVP (surveyorAutoMoveActive);
 		archive & NVP (bandPosition);
 		archive & NVP (buildBigSavedPosition);
-		archive & NVP (BuildPath);
 		archive & NVP (WalkFrame);
 		archive & NVP (tileMovementOffset);
 		archive & NVP (loaded);
@@ -225,9 +224,8 @@ private:
 public:
 	mutable cPosition dither;
 	mutable int bigBetonAlpha = 254;
-	cPosition bandPosition; // X,Y Position für das Band
+	std::optional<cPosition> bandPosition; // X,Y Position für das Band
 	cPosition buildBigSavedPosition; // last position before building has started
-	bool BuildPath = false; // Gibt an, ob ein Pfad gebaut werden soll
 	cPosition DamageFXPoint; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	unsigned int WalkFrame = 0; // Frame der Geh-Annimation
 private:

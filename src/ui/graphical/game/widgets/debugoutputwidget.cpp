@@ -473,7 +473,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 	font->showText (drawPosition, tmpString, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
-	tmpString = " band: " + toString (vehicle.bandPosition) + " build_big_saved_pos: " + std::to_string (vehicle.buildBigSavedPosition.x()) + "x" + std::to_string (vehicle.buildBigSavedPosition.y()) + " build_path: " + std::to_string (vehicle.BuildPath);
+	tmpString = (vehicle.bandPosition ? " band: " + toString (*vehicle.bandPosition) : "") + " build_big_saved_pos: " + std::to_string (vehicle.buildBigSavedPosition.x()) + "x" + std::to_string (vehicle.buildBigSavedPosition.y());
 	font->showText (drawPosition, tmpString, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
