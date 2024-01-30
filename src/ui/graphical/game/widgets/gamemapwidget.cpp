@@ -2304,12 +2304,12 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 	if (uiData.staticData.hasDamageEffect && building.data.getHitpoints() < building.data.getHitpointsMax() && (building.getOwner() == player.get() || (!player || mapView->canSeeUnit (building))))
 	{
 		int intense = (int) (200 - 200 * ((float) building.data.getHitpoints() / building.data.getHitpointsMax()));
-		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPoint.x(), building.getPosition().y() * 64 + building.DamageFXPoint.y()), intense, windDirection));
+		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.getDamageFXPoint().x(), building.getPosition().y() * 64 + building.getDamageFXPoint().y()), intense, windDirection));
 
 		if (building.getIsBig() && intense > 50)
 		{
 			intense -= 50;
-			addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPoint2.x(), building.getPosition().y() * 64 + building.DamageFXPoint2.y()), intense, windDirection));
+			addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.getDamageFXPoint2().x(), building.getPosition().y() * 64 + building.getDamageFXPoint2().y()), intense, windDirection));
 		}
 	}
 }

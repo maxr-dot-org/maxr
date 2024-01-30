@@ -146,6 +146,9 @@ public:
 	void setRubbleValue (int value, cCrossPlattformRandom& randomGenerator);
 	int getRubbleValue() const;
 
+	const cPosition& getDamageFXPoint() const;
+	const cPosition& getDamageFXPoint2() const;
+
 	uint32_t getChecksum (uint32_t crc) const override;
 
 	cSignal<void()> buildListChanged;
@@ -222,7 +225,6 @@ public:
 	cSubBase* subBase = nullptr; // the subbase to which this building belongs
 	sMiningResource prod; // production settings (from mine allocation menu)
 
-	cPosition DamageFXPoint, DamageFXPoint2; // the points, where smoke will be generated when the building is damaged
 	/** true if the building was has been working before it was disabled */
 	bool wasWorking = false;
 	int points = 0; // accumulated eco-sphere points
@@ -240,6 +242,10 @@ private:
 	cResearch::eResearchArea researchArea = cResearch::eResearchArea::AttackResearch; ///< if the building can research, this is the area the building last researched or is researching
 
 	std::vector<cBuildListItem> buildList; // list with the units to be build by this factory
+
+	// Gui stuff
+	mutable std::optional<cPosition> DamageFXPoint; // the points, where smoke will be generated when the building is damaged
+	mutable std::optional<cPosition> DamageFXPoint2;
 };
 
 #endif // game_data_units_buildingH

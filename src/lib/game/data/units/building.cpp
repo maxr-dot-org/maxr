@@ -124,17 +124,6 @@ cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData*
 {
 	setSentryActive (staticData && staticData->canAttack != eTerrainFlag::None);
 
-	if (isBig)
-	{
-		DamageFXPoint = {random (64) + 32, random (64) + 32};
-		DamageFXPoint2 = {random (64) + 32, random (64) + 32};
-	}
-	else
-	{
-		DamageFXPoint = {random (64 - 24), random (64 - 24)};
-		DamageFXPoint2 = {0, 0};
-	}
-
 	refreshData();
 
 	buildListChanged.connect ([this]() { statusChanged(); });
@@ -733,6 +722,26 @@ void cBuilding::setRubbleValue (int value, cCrossPlattformRandom& randomGenerato
 int cBuilding::getRubbleValue() const
 {
 	return rubbleValue;
+}
+
+//------------------------------------------------------------------------------
+const cPosition& cBuilding::getDamageFXPoint() const
+{
+	if (!DamageFXPoint)
+	{
+		DamageFXPoint = (isBig ? cPosition (random (64) + 32, random (64) + 32) : cPosition (random (64 - 24), random (64 - 24)));
+	}
+	return *DamageFXPoint;
+}
+
+//------------------------------------------------------------------------------
+const cPosition& cBuilding::getDamageFXPoint2() const
+{
+	if (!DamageFXPoint2)
+	{
+		DamageFXPoint2 = (isBig ? cPosition (random (64) + 32, random (64) + 32) : cPosition (0, 0));
+	}
+	return *DamageFXPoint2;
 }
 
 //------------------------------------------------------------------------------
