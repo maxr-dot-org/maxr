@@ -185,7 +185,7 @@ void cServer::sendMessageToClients (const cNetMessage& message, int playerNr /* 
 }
 
 //------------------------------------------------------------------------------
-void cServer::start (bool resync)
+void cServer::start (std::optional<int> saveGameNumber)
 {
 	if (serverThread) return;
 
@@ -193,9 +193,10 @@ void cServer::start (bool resync)
 	initPlayerConnectionState();
 	updateWaitForClientFlag();
 
-	if (resync)
+	if (saveGameNumber)
 	{
 		resyncClientModel();
+		sendGuiInfoToClients (*saveGameNumber, -1);
 	}
 	serverThread = SDL_CreateThread (serverThreadCallback, "server", this);
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
