@@ -153,9 +153,7 @@ public:
 
 	//protected:
 	virtual bool canBeStoppedViaUnitMenu() const = 0;
-
-	bool getIsBig() const { return isBig; }
-	void setIsBig (bool value);
+	virtual bool getIsBig() const = 0;
 
 	void forEachStoredUnits (std::function<void (const cVehicle&)> func) const;
 	void forEachStoredUnits (std::function<void (cVehicle&)> func);
@@ -194,7 +192,6 @@ public:
 	mutable cSignal<void()> clearingChanged;
 	mutable cSignal<void()> workingChanged;
 	mutable cSignal<void()> storedResourcesChanged;
-	mutable cSignal<void()> isBigChanged;
 
 	template <typename Archive>
 	void serializeThis (Archive& archive)
@@ -224,7 +221,6 @@ public:
 		archive & NVP (attacking);
 		archive & NVP (beeingAttacked);
 		archive & NVP (beenAttacked);
-		archive & NVP (isBig);
 		archive & NVP (storageResCur);
 		archive & NVP (jobActive);
 		// clang-format on
@@ -267,7 +263,6 @@ protected:
 	std::vector<int> detectedInThisTurnByPlayerList;
 
 	const cStaticUnitData* staticData = nullptr;
-	bool isBig = false;
 
 	//-----------------------------------------------------------------------------
 private:

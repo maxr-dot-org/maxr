@@ -45,8 +45,6 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 
 	data.setMaximumCurrentValues();
 
-	isBig = (staticData && staticData->ID.isABuilding() && staticData->buildingData.isBig);
-
 	disabledChanged.connect ([this]() { statusChanged(); });
 	sentryChanged.connect ([this]() { statusChanged(); });
 	manualFireChanged.connect ([this]() { statusChanged(); });
@@ -215,7 +213,7 @@ std::vector<cPosition> cUnit::getPositions() const
 //------------------------------------------------------------------------------
 std::vector<cPosition> cUnit::getAdjacentPositions() const
 {
-	if (isBig)
+	if (getIsBig())
 	{
 		return {
 			position.relative (-1, -1),
@@ -275,7 +273,7 @@ bool cUnit::isNextTo (const cPosition& position) const
 	if (position.x() + 1 < this->position.x() || position.y() + 1 < this->position.y())
 		return false;
 
-	const int size = isBig ? 2 : 1;
+	const int size = getIsBig() ? 2 : 1;
 
 	if (position.x() - size > this->position.x() || position.y() - size > this->position.y())
 		return false;
@@ -286,13 +284,6 @@ bool cUnit::isNextTo (const cPosition& position) const
 bool cUnit::isAbove (const cPosition& position) const
 {
 	return getArea().withinOrTouches (position);
-}
-
-//------------------------------------------------------------------------------
-void cUnit::setIsBig (bool value)
-{
-	std::swap (isBig, value);
-	if (isBig != value) isBigChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -307,7 +298,6 @@ uint32_t cUnit::getChecksum (uint32_t crc) const
 		crc = calcCheckSum (p, crc);
 	for (const auto& p : detectedInThisTurnByPlayerList)
 		crc = calcCheckSum (p, crc);
-	crc = calcCheckSum (isBig, crc);
 	crc = calcCheckSum (owner, crc);
 	crc = calcCheckSum (position, crc);
 	crc = calcCheckSum (customName, crc);
@@ -325,7 +315,7 @@ uint32_t cUnit::getChecksum (uint32_t crc) const
 //------------------------------------------------------------------------------
 cBox<cPosition> cUnit::getArea() const
 {
-	return cBox<cPosition> (position, position + (isBig ? cPosition (1, 1) : cPosition (0, 0)));
+	return cBox<cPosition> (position, position + (getIsBig() ? cPosition (1, 1) : cPosition (0, 0)));
 }
 
 //------------------------------------------------------------------------------
@@ -596,7 +586,7 @@ const cStaticUnitData& cUnit::getStaticUnitData() const
 bool cUnit::checkDetectedByPlayer (const cPlayer& player, const cMap& map) const
 {
 	//big stealth units not implemented yet
-	if (isBig)
+	if (getIsBig())
 		return false;
 
 	if (&player == owner)

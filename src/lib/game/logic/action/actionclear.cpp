@@ -69,7 +69,6 @@ void cActionClear::execute (cModel& model) const
 			return;
 		}
 
-		vehicle->buildBigSavedPosition = vehicle->getPosition();
 		vehicle->getOwner()->updateScan (*vehicle, rubblePosition, true);
 		map->moveVehicleBig (*vehicle, rubblePosition);
 	}

@@ -575,7 +575,7 @@ void cMap::addVehicle (cVehicle& vehicle, const cPosition& position)
 
 	if (vehicle.getIsBig())
 	{
-		vehicle.setIsBig (false);
+		vehicle.buildBigSavedPosition.reset();
 		moveVehicleBig (vehicle, position);
 	}
 	addedUnit (vehicle);
@@ -641,7 +641,7 @@ void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height
 		{
 			getField (pos).removeVehicle (vehicle);
 		}
-		vehicle.setIsBig (false);
+		vehicle.buildBigSavedPosition.reset();
 		getField (position).addVehicle (vehicle, 0);
 	}
 	movedVehicle (vehicle, oldPosition);
@@ -669,7 +669,7 @@ void cMap::moveVehicleBig (cVehicle& vehicle, const cPosition& position)
 	getField (position + cPosition (1, 1)).addVehicle (vehicle, 0);
 	getField (position + cPosition (0, 1)).addVehicle (vehicle, 0);
 
-	vehicle.setIsBig (true);
+	vehicle.buildBigSavedPosition = oldPosition;
 
 	movedVehicle (vehicle, oldPosition);
 }

@@ -62,10 +62,10 @@ void cActionStop::execute (cModel& model) const
 			vehicle->setBuildingABuilding (false);
 			vehicle->bandPosition.reset();
 
-			if (vehicle->getIsBig())
+			if (vehicle->buildBigSavedPosition)
 			{
-				vehicle->getOwner()->updateScan (*vehicle, vehicle->buildBigSavedPosition);
-				model.getMap()->moveVehicle (*vehicle, vehicle->buildBigSavedPosition);
+				vehicle->getOwner()->updateScan (*vehicle, *vehicle->buildBigSavedPosition);
+				model.getMap()->moveVehicle (*vehicle, *vehicle->buildBigSavedPosition);
 			}
 		}
 		else if (vehicle->isUnitClearing())
@@ -73,10 +73,10 @@ void cActionStop::execute (cModel& model) const
 			vehicle->setClearing (false);
 			vehicle->setClearingTurns (0);
 
-			if (vehicle->getIsBig())
+			if (vehicle->buildBigSavedPosition)
 			{
-				vehicle->getOwner()->updateScan (*vehicle, vehicle->buildBigSavedPosition);
-				model.getMap()->moveVehicle (*vehicle, vehicle->buildBigSavedPosition);
+				vehicle->getOwner()->updateScan (*vehicle, *vehicle->buildBigSavedPosition);
+				model.getMap()->moveVehicle (*vehicle, *vehicle->buildBigSavedPosition);
 			}
 		}
 	}

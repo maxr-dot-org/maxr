@@ -65,6 +65,9 @@ public:
 	const cPosition& getMovementOffset() const override { return tileMovementOffset; }
 	void setMovementOffset (const cPosition& newOffset) { tileMovementOffset = newOffset; }
 
+	bool getIsBig() const override;
+	void setIsBig (bool value);
+
 	void refreshData();
 	void proceedBuilding (cModel&, sNewTurnPlayerReport&);
 	void continuePathBuilding (cModel&);
@@ -225,7 +228,7 @@ public:
 	mutable cPosition dither;
 	mutable int bigBetonAlpha = 254;
 	std::optional<cPosition> bandPosition; // X,Y Position für das Band
-	cPosition buildBigSavedPosition; // last position before building has started
+	std::optional<cPosition> buildBigSavedPosition; // last position before building has started
 	cPosition DamageFXPoint; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	unsigned int WalkFrame = 0; // Frame der Geh-Annimation
 private:

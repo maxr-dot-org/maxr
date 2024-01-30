@@ -44,7 +44,6 @@
 //------------------------------------------------------------------------------
 cVehicle::cVehicle (unsigned int ID) :
 	cUnit (nullptr, nullptr, nullptr, ID),
-	buildBigSavedPosition (0, 0),
 	tileMovementOffset (0, 0)
 {
 	DamageFXPoint = {random (7) + 26 - 3, random (7) + 26 - 3};
@@ -60,7 +59,6 @@ cVehicle::cVehicle (unsigned int ID) :
 //------------------------------------------------------------------------------
 cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& dynamicData, cPlayer* owner, unsigned int ID) :
 	cUnit (&dynamicData, &staticData, owner, ID),
-	buildBigSavedPosition (0, 0),
 	tileMovementOffset (0, 0)
 {
 	DamageFXPoint = {random (7) + 26 - 3, random (7) + 26 - 3};
@@ -76,6 +74,12 @@ cVehicle::cVehicle (const cStaticUnitData& staticData, const cDynamicUnitData& d
 //------------------------------------------------------------------------------
 cVehicle::~cVehicle()
 {
+}
+
+//------------------------------------------------------------------------------
+bool cVehicle::getIsBig() const /* override */
+{
+	return buildBigSavedPosition.has_value();
 }
 
 //------------------------------------------------------------------------------
@@ -213,10 +217,10 @@ void cVehicle::proceedClearing (cModel& model)
 
 	cMap& map = *model.getMap();
 	cBuilding* rubble = map.getField (getPosition()).getRubble();
-	if (isBig)
+	if (buildBigSavedPosition)
 	{
-		if (getOwner()) getOwner()->updateScan (*this, buildBigSavedPosition);
-		map.moveVehicle (*this, buildBigSavedPosition);
+		if (getOwner()) getOwner()->updateScan (*this, *buildBigSavedPosition);
+		map.moveVehicle (*this, *buildBigSavedPosition);
 	}
 
 	setStoredResources (getStoredResources() + rubble->getRubbleValue());

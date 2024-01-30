@@ -141,6 +141,13 @@ cBuilding::~cBuilding()
 }
 
 //------------------------------------------------------------------------------
+bool cBuilding::getIsBig() const /* override */
+{
+	assert (staticData);
+	return staticData->ID.isABuilding() && staticData->buildingData.isBig;
+}
+
+//------------------------------------------------------------------------------
 /** Refreshs all data to the maximum values */
 //------------------------------------------------------------------------------
 void cBuilding::refreshData()
@@ -162,7 +169,7 @@ void cBuilding::postLoad (cModel& model)
 	if (isRubble())
 	{
 		const auto& unitsData = model.getUnitsData();
-		staticData = isBig ? &unitsData->getRubbleBigData() : &unitsData->getRubbleSmallData();
+		staticData = getIsBig() ? &unitsData->getRubbleBigData() : &unitsData->getRubbleSmallData();
 	}
 	registerOwnerEvents();
 	connectFirstBuildListItem();
@@ -183,7 +190,7 @@ void cBuilding::connectFirstBuildListItem()
 void cBuilding::updateNeighbours (const cMap& map)
 {
 	if (!getOwner()) return;
-	if (!isBig)
+	if (!getIsBig())
 	{
 		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, -1), *this, map);
 		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, 0), *this, map);
@@ -218,7 +225,7 @@ void cBuilding::CheckNeighbours (const cMap& map)
 		{m = true;}else{m = false;} \
 	}
 
-	if (!isBig)
+	if (!getIsBig())
 	{
 		CHECK_NEIGHBOUR (getPosition().x(), getPosition().y() - 1, BaseN)
 		CHECK_NEIGHBOUR (getPosition().x() + 1, getPosition().y(), BaseE)
@@ -446,7 +453,7 @@ void cBuilding::initMineResourceProd (const cMap& map)
 
 	if (res->typ != eResourceType::None) maxProd.get (res->typ) += res->value;
 
-	if (isBig)
+	if (getIsBig())
 	{
 		position.x()++;
 		res = &map.getResource (position);
@@ -707,15 +714,7 @@ cResearch::eResearchArea cBuilding::getResearchArea() const
 void cBuilding::setRubbleValue (int value, cCrossPlattformRandom& randomGenerator)
 {
 	rubbleValue = value;
-
-	if (isBig)
-	{
-		rubbleTyp = randomGenerator.get (2);
-	}
-	else
-	{
-		rubbleTyp = randomGenerator.get (5);
-	}
+	rubbleTyp = randomGenerator.get (getIsBig() ? 2 : 5);
 }
 
 //------------------------------------------------------------------------------
@@ -729,7 +728,7 @@ const cPosition& cBuilding::getDamageFXPoint() const
 {
 	if (!DamageFXPoint)
 	{
-		DamageFXPoint = (isBig ? cPosition (random (64) + 32, random (64) + 32) : cPosition (random (64 - 24), random (64 - 24)));
+		DamageFXPoint = (getIsBig() ? cPosition (random (64) + 32, random (64) + 32) : cPosition (random (64 - 24), random (64 - 24)));
 	}
 	return *DamageFXPoint;
 }
@@ -739,7 +738,7 @@ const cPosition& cBuilding::getDamageFXPoint2() const
 {
 	if (!DamageFXPoint2)
 	{
-		DamageFXPoint2 = (isBig ? cPosition (random (64) + 32, random (64) + 32) : cPosition (0, 0));
+		DamageFXPoint2 = (getIsBig() ? cPosition (random (64) + 32, random (64) + 32) : cPosition (0, 0));
 	}
 	return *DamageFXPoint2;
 }
