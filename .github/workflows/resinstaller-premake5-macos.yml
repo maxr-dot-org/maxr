@@ -20,13 +20,13 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: install dependencies SDL2 ogg vorbis
       run: brew install sdl2 libogg libvorbis
 
     - name: checkout premake5
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
           repository: premake/premake-core
           path: premake-build

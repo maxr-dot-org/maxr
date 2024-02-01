@@ -12,16 +12,16 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: checkout premake5
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: premake/premake-core
         path: premake-build
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1.3
+      uses: microsoft/setup-msbuild@v2
 
     - name: Build premake5
       run: |
@@ -52,12 +52,12 @@ jobs:
       run: cp solution/vs2022/resinstaller/bin/Release/resinstaller.exe data/
 
     - name: Create nsis installer
-      uses: joncloud/makensis-action@publish
+      uses: joncloud/makensis-action@v4
       with:
         script-file: mk/win32/installer/maxr-installer.nsi
 
     - name: Upload maxr
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: maxr-installer.exe
         path: mk/win32/installer/maxr-*.exe
