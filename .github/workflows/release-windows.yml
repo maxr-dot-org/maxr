@@ -29,10 +29,16 @@ jobs:
         cmd.exe /c "call ""$vcvarall_path"" x86_amd64 && cd premake-build && nmake -f Bootstrap.mak MSDEV=vs2022 windows-msbuild PLATFORM=Win32 CONFIG=release"
         cp premake-build/bin/release/premake5.exe ./
 
+    - name: Retrieve CrashRpt_v.1.4.3_r1645
+      run: |
+        curl -o CrashRpt_v.1.4.3_r1645.7z https://kumisystems.dl.sourceforge.net/project/crashrpt/CrashRpt_v.1.4.3_r1645.7z
+        7z x -o"./CrashRpt_v.1.4.3_r1645" "CrashRpt_v.1.4.3_r1645.7z" "lib/*.*" "include/*.*" "bin/CrashRpt1403.dll" "bin/CrashSender1403.exe" "bin/crashrpt_lang.ini"
+        7z e -o"data/CrashRpt"          CrashRpt_v.1.4.3_r1645.7z "lang_files/*.ini"
+
     - name: run premake5
       run: |
         ./premake5.exe vs2022 --to=../solution/vs2022/resinstaller --file=resinstaller/premake5.lua
-        ./premake5.exe vs2022 --to=solution/vs2022/maxr
+        ./premake5.exe vs2022 --to=solution/vs2022/maxr --crashRpt_root=CrashRpt_v.1.4.3_r1645
 
     - name: build
       run: |
