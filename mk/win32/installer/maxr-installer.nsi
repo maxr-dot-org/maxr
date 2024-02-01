@@ -11,7 +11,7 @@
 ${StrStr}
 
 # --- Main defines ---
-!define VERSION                    "0.2.13"
+!define VERSION                    "0.2.14"
 !define NAME                       "M.A.X. Reloaded"
 !define FILESFOLDER                "..\..\..\data\" ;the folder to the files that should be installed with this installer
 !define DEDICATEDSERVER_EXE        "dedicatedserver.exe"
@@ -19,7 +19,7 @@ ${StrStr}
 !define MAXR_EXE                   "maxr.exe"
 # estimated size of components (in kb):
 !define SIZE_RES_SOUND             145801
-!define SIZE_RES_GRAPHIC           1 ; original graphics doen't need more space, than ours
+!define SIZE_RES_GRAPHIC           1 ; original graphics doesn't need more space, than ours
 
 Name "${NAME}"
 OutFile "maxr-${VERSION}.exe"

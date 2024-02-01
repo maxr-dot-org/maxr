@@ -1,3 +1,14 @@
+Mechanized Assault & eXploration Reloaded 0.2.14 (February, 2024)
+=======================================================================
+- Fix game initialization: initial resources should be correc now (mining station would have resources)
+- Fix loading of TCP games.
+- Fix window for resources redistribution (especially when gold > oil).
+- Fix some issues when shorten (utf-8) string
+- Draw possible shots with path
+- Improve some buttons' status ("play"/"pause" of "unit video", "up"/"down" button in loading, "send" button in network lobby)
+- Include resinstaller repo inside Maxr repo
+- Include CrashReporter in Win32 installer
+
 Mechanized Assault & eXploration Reloaded 0.2.13 (October, 2023)
 =======================================================================
 - Fix position of alien in multiplayer
