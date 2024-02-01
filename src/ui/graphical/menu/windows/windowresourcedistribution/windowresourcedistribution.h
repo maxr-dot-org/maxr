@@ -60,15 +60,15 @@ private:
 
 	const cBuilding& building;
 
-	std::array<cResourceBar*, 3> metalBars;
-	std::array<cResourceBar*, 3> oilBars;
-	std::array<cResourceBar*, 3> goldBars;
+	std::array<cResourceBar*, 3> metalBars{};
+	std::array<cResourceBar*, 3> oilBars{};
+	std::array<cResourceBar*, 3> goldBars{};
 
-	std::array<cResourceBar*, 3> noneBars;
+	std::array<cResourceBar*, 3> noneBars{};
 
-	std::array<cLabel*, 3> metalLabels;
-	std::array<cLabel*, 3> oilLabels;
-	std::array<cLabel*, 3> goldLabels;
+	std::array<cLabel*, 3> metalLabels{};
+	std::array<cLabel*, 3> oilLabels{};
+	std::array<cLabel*, 3> goldLabels{};
 
 	std::array<cLabel*, 3> resourceLabels{};
 	std::array<cLabel*, 3> usageLabels{};

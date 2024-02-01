@@ -132,7 +132,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	const sMiningResource& prod = building.subBase->getProd();
 	metalBars[0]->setValue (prod.metal);
 	oilBars[0]->setValue (prod.oil);
-	goldBars[0]->setValue (prod.oil);
+	goldBars[0]->setValue (prod.gold);
 
 	setBarValues();
 	setBarLabels();
@@ -145,9 +145,9 @@ cWindowResourceDistribution::cWindowResourceDistribution (const cBuilding& build
 	doneButton->addClickShortcut (cKeySequence (cKeyCombination (SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [this]() { done(); });
 
-	//close window, when the mine, from which this menu was called, gets destroyed.
+	// close window, when the mine, from which this menu was called, gets destroyed.
 	signalConnectionManager.connect (building.destroyed, [this]() { closeOnUnitDestruction(); });
-	//update subbase values, when any other building in the subbase gets destroyed
+	// update subbase values, when any other building in the subbase gets destroyed
 	if (building.getOwner()) signalConnectionManager.connect (building.getOwner()->base.onSubbaseConfigurationChanged, [this] (const std::vector<cBuilding*>& buildings) { updateOnSubbaseChanged (buildings); });
 }
 
@@ -171,11 +171,13 @@ void cWindowResourceDistribution::retranslate()
 	doneButton->setText (lngPack.i18n ("Others~Done"));
 }
 
+//------------------------------------------------------------------------------
 sMiningResource cWindowResourceDistribution::getProduction() const
 {
 	return {metalBars[0]->getValue(), oilBars[0]->getValue(), goldBars[0]->getValue()};
 }
 
+//------------------------------------------------------------------------------
 void cWindowResourceDistribution::updateOnSubbaseChanged (const std::vector<cBuilding*>& buildings)
 {
 	if (building.subBase == nullptr || !ranges::contains (buildings, &building)) return;
@@ -188,7 +190,7 @@ void cWindowResourceDistribution::updateOnSubbaseChanged (const std::vector<cBui
 	const sMiningResource& prod = building.subBase->getProd();
 	metalBars[0]->setValue (prod.metal);
 	oilBars[0]->setValue (prod.oil);
-	goldBars[0]->setValue (prod.oil);
+	goldBars[0]->setValue (prod.gold);
 }
 
 //------------------------------------------------------------------------------
@@ -258,9 +260,10 @@ void cWindowResourceDistribution::handleMetalChanged()
 	if (inSignal) return;
 	inSignal = true;
 
-	if (metalBars[0]->getValue() > metalBars[0]->getMaxValue() - noneBars[0]->getValue())
+	const auto maxAllowed = metalBars[0]->getMaxValue() - noneBars[0]->getValue();
+	if (metalBars[0]->getValue() > maxAllowed)
 	{
-		metalBars[0]->setValue (metalBars[0]->getMaxValue() - noneBars[1]->getValue());
+		metalBars[0]->setValue (maxAllowed);
 	}
 	//	else
 	{
@@ -269,14 +272,17 @@ void cWindowResourceDistribution::handleMetalChanged()
 	}
 	inSignal = false;
 }
+
 //------------------------------------------------------------------------------
 void cWindowResourceDistribution::handleOilChanged()
 {
 	if (inSignal) return;
 	inSignal = true;
-	if (oilBars[0]->getValue() > oilBars[0]->getMaxValue() - noneBars[1]->getValue())
+
+	const auto maxAllowed = oilBars[0]->getMaxValue() - noneBars[1]->getValue();
+	if (oilBars[0]->getValue() > maxAllowed)
 	{
-		oilBars[0]->setValue (oilBars[0]->getMaxValue() - noneBars[1]->getValue());
+		oilBars[0]->setValue (maxAllowed);
 	}
 	//	else
 	{
@@ -285,14 +291,17 @@ void cWindowResourceDistribution::handleOilChanged()
 	}
 	inSignal = false;
 }
+
 //------------------------------------------------------------------------------
 void cWindowResourceDistribution::handleGoldChanged()
 {
 	if (inSignal) return;
 	inSignal = true;
-	if (goldBars[0]->getValue() > goldBars[0]->getMaxValue() - noneBars[2]->getValue())
+
+	const auto maxAllowed = goldBars[0]->getMaxValue() - noneBars[2]->getValue();
+	if (goldBars[0]->getValue() > maxAllowed)
 	{
-		goldBars[0]->setValue (goldBars[0]->getMaxValue() - noneBars[2]->getValue());
+		goldBars[0]->setValue (maxAllowed);
 	}
 	setBarValues();
 	setBarLabels();
@@ -303,8 +312,7 @@ void cWindowResourceDistribution::handleGoldChanged()
 void cWindowResourceDistribution::closeOnUnitDestruction()
 {
 	close();
-	auto application = getActiveApplication();
-	if (application)
+	if (auto application = getActiveApplication())
 	{
 		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Others~Unit_destroyed")));
 	}
