@@ -230,14 +230,14 @@ void cMouseModeDefault::establishUnitSelectionConnections()
 		selectedUnitSignalConnectionManager.connect (unit->data.ammoChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (unit->attackingChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (unit->beenAttackedChanged, refresher);
-		selectedUnitSignalConnectionManager.connect (unit->clearingChanged, refresher);
-		selectedUnitSignalConnectionManager.connect (unit->buildingChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (unit->disabledChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (unit->positionChanged, refresher);
 	}
 
 	if (auto* vehicle = dynamic_cast<cVehicle*> (unit))
 	{
+		selectedUnitSignalConnectionManager.connect (vehicle->clearingChanged, refresher);
+		selectedUnitSignalConnectionManager.connect (vehicle->buildingChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (vehicle->moveJobChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (vehicle->movingChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (vehicle->buildingTurnsChanged, refresher);

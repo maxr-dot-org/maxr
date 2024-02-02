@@ -50,12 +50,6 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 	manualFireChanged.connect ([this]() { statusChanged(); });
 	attackingChanged.connect ([this]() { statusChanged(); });
 	beeingAttackedChanged.connect ([this]() { statusChanged(); });
-
-	layingMinesChanged.connect ([this]() { statusChanged(); });
-	clearingMinesChanged.connect ([this]() { statusChanged(); });
-	buildingChanged.connect ([this]() { statusChanged(); });
-	clearingChanged.connect ([this]() { statusChanged(); });
-	movingChanged.connect ([this]() { statusChanged(); });
 }
 
 //------------------------------------------------------------------------------

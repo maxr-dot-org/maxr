@@ -49,6 +49,12 @@ cVehicle::cVehicle (unsigned int ID) :
 	DamageFXPoint = {random (7) + 26 - 3, random (7) + 26 - 3};
 	refreshData();
 
+	layingMinesChanged.connect ([this]() { statusChanged(); });
+	clearingMinesChanged.connect ([this]() { statusChanged(); });
+	buildingChanged.connect ([this]() { statusChanged(); });
+	clearingChanged.connect ([this]() { statusChanged(); });
+	movingChanged.connect ([this]() { statusChanged(); });
+
 	clearingTurnsChanged.connect ([this]() { statusChanged(); });
 	buildingTurnsChanged.connect ([this]() { statusChanged(); });
 	buildingTypeChanged.connect ([this]() { statusChanged(); });

@@ -86,14 +86,19 @@ void cMouseModeEnter::establishUnitSelectionConnections()
 {
 	const auto selectedUnit = unitSelection.getSelectedUnit();
 
-	if (selectedUnit)
+	if (!selectedUnit)
 	{
-		selectedUnitSignalConnectionManager.connect (selectedUnit->movingChanged, [this]() { needRefresh(); });
-		selectedUnitSignalConnectionManager.connect (selectedUnit->clearingChanged, [this]() { needRefresh(); });
-		selectedUnitSignalConnectionManager.connect (selectedUnit->disabledChanged, [this]() { needRefresh(); });
-		selectedUnitSignalConnectionManager.connect (selectedUnit->ownerChanged, [this]() { needRefresh(); });
-		selectedUnitSignalConnectionManager.connect (selectedUnit->buildingChanged, [this]() { needRefresh(); });
-		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this]() { needRefresh(); });
+		return;
+	}
+	selectedUnitSignalConnectionManager.connect (selectedUnit->movingChanged, [this]() { needRefresh(); });
+	selectedUnitSignalConnectionManager.connect (selectedUnit->disabledChanged, [this]() { needRefresh(); });
+	selectedUnitSignalConnectionManager.connect (selectedUnit->ownerChanged, [this]() { needRefresh(); });
+	selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this]() { needRefresh(); });
+
+	if (auto selectedVehicle = dynamic_cast<cVehicle*>(selectedUnit)) {
+
+		selectedUnitSignalConnectionManager.connect (selectedVehicle->buildingChanged, [this]() { needRefresh(); });
+		selectedUnitSignalConnectionManager.connect (selectedVehicle->clearingChanged, [this]() { needRefresh(); });
 	}
 }
 

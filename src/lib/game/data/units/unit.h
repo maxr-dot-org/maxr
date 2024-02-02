@@ -183,13 +183,7 @@ public:
 	mutable cSignal<void()> movingChanged;
 
 	mutable cSignal<void()> storedUnitsChanged; //the unit has loaded or unloaded another unit
-	mutable cSignal<void()> stored; //this unit has been loaded by another unit
-	mutable cSignal<void()> activated; //this unit has been unloaded by another unit
 
-	mutable cSignal<void()> layingMinesChanged;
-	mutable cSignal<void()> clearingMinesChanged;
-	mutable cSignal<void()> buildingChanged;
-	mutable cSignal<void()> clearingChanged;
 	mutable cSignal<void()> storedResourcesChanged;
 
 	template <typename Archive>

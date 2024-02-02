@@ -153,6 +153,11 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const override;
 
+	mutable cSignal<void()> layingMinesChanged;
+	mutable cSignal<void()> clearingMinesChanged;
+	mutable cSignal<void()> buildingChanged;
+	mutable cSignal<void()> clearingChanged;
+
 	mutable cSignal<void()> clearingTurnsChanged;
 	mutable cSignal<void()> buildingTurnsChanged;
 	mutable cSignal<void()> buildingCostsChanged;
@@ -162,6 +167,9 @@ public:
 	mutable cSignal<void()> moveJobChanged;
 	mutable cSignal<void()> autoMoveJobChanged;
 	mutable cSignal<void()> moveJobBlocked;
+
+	mutable cSignal<void()> stored; // this unit has been loaded by another unit
+	mutable cSignal<void()> activated; // this unit has been unloaded by another unit
 
 	template <typename Archive>
 	static std::unique_ptr<cVehicle> createFrom (Archive& archive)

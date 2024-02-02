@@ -506,14 +506,6 @@ void cGameGui::connectSelectedUnit()
 
 	if (!selectedUnit) return;
 
-	selectedUnitConnectionManager.connect (selectedUnit->buildingChanged, [this]() {
-		updateSelectedUnitIdleSound();
-	});
-
-	selectedUnitConnectionManager.connect (selectedUnit->clearingChanged, [this]() {
-		updateSelectedUnitIdleSound();
-	});
-
 	if (auto selectedBuilding = dynamic_cast<cBuilding*> (selectedUnit))
 	{
 		selectedUnitConnectionManager.connect (selectedBuilding->workingChanged, [selectedBuilding, this]() {
@@ -528,6 +520,12 @@ void cGameGui::connectSelectedUnit()
 
 	if (auto selectedVehicle = dynamic_cast<cVehicle*> (selectedUnit))
 	{
+		selectedUnitConnectionManager.connect (selectedVehicle->buildingChanged, [this]() {
+			updateSelectedUnitIdleSound();
+		});
+		selectedUnitConnectionManager.connect (selectedVehicle->clearingChanged, [this]() {
+			updateSelectedUnitIdleSound();
+		});
 		selectedUnitConnectionManager.connect (selectedVehicle->movingChanged, [selectedVehicle, this]() {
 			if (selectedVehicle == gameMap->getUnitSelection().getSelectedVehicle())
 			{
