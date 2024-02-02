@@ -232,7 +232,6 @@ void cMouseModeDefault::establishUnitSelectionConnections()
 		selectedUnitSignalConnectionManager.connect (unit->beenAttackedChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (unit->clearingChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (unit->buildingChanged, refresher);
-		selectedUnitSignalConnectionManager.connect (unit->workingChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (unit->disabledChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (unit->positionChanged, refresher);
 	}
@@ -247,6 +246,7 @@ void cMouseModeDefault::establishUnitSelectionConnections()
 
 	if (auto* building = dynamic_cast<cBuilding*> (unit))
 	{
+		selectedUnitSignalConnectionManager.connect (building->workingChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (building->buildListChanged, refresher);
 		selectedUnitSignalConnectionManager.connect (building->buildListFirstItemDataChanged, refresher);
 	}

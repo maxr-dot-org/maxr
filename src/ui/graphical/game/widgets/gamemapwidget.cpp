@@ -157,12 +157,15 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, shortcutsUpdater);
 		selectedUnitSignalConnectionManager.connect (selectedUnit->sentryChanged, shortcutsUpdater);
 		selectedUnitSignalConnectionManager.connect (selectedUnit->manualFireChanged, shortcutsUpdater);
-		selectedUnitSignalConnectionManager.connect (selectedUnit->workingChanged, shortcutsUpdater);
 		selectedUnitSignalConnectionManager.connect (selectedUnit->clearingChanged, shortcutsUpdater);
 		selectedUnitSignalConnectionManager.connect (selectedUnit->buildingChanged, shortcutsUpdater);
-		if (selectedUnit->isAVehicle())
+
+		if (auto* selectedBuilding = dynamic_cast<cBuilding*> (selectedUnit))
 		{
-			const auto selectedVehicle = static_cast<const cVehicle*> (selectedUnit);
+			selectedUnitSignalConnectionManager.connect (selectedBuilding->workingChanged, shortcutsUpdater);
+		}
+		if (auto* selectedVehicle = dynamic_cast<cVehicle*> (selectedUnit))
+		{
 			selectedUnitSignalConnectionManager.connect (selectedVehicle->moveJobChanged, shortcutsUpdater);
 			selectedUnitSignalConnectionManager.connect (selectedVehicle->clearingTurnsChanged, shortcutsUpdater);
 			selectedUnitSignalConnectionManager.connect (selectedVehicle->buildingTurnsChanged, shortcutsUpdater);

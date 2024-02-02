@@ -153,6 +153,7 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const override;
 
+	mutable cSignal<void()> workingChanged;
 	cSignal<void()> buildListChanged;
 	cSignal<void()> buildListFirstItemDataChanged;
 	cSignal<void()> researchAreaChanged;

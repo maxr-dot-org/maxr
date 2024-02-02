@@ -190,7 +190,6 @@ public:
 	mutable cSignal<void()> clearingMinesChanged;
 	mutable cSignal<void()> buildingChanged;
 	mutable cSignal<void()> clearingChanged;
-	mutable cSignal<void()> workingChanged;
 	mutable cSignal<void()> storedResourcesChanged;
 
 	template <typename Archive>

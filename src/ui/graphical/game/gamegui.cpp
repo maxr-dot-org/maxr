@@ -506,21 +506,6 @@ void cGameGui::connectSelectedUnit()
 
 	if (!selectedUnit) return;
 
-	selectedUnitConnectionManager.connect (selectedUnit->workingChanged, [selectedUnit, this]() {
-		stopSelectedUnitSound();
-		if (selectedUnit->data.getId().isABuilding())
-		{
-			const auto& building = static_cast<const cBuilding&> (*selectedUnit);
-			auto& uiData = UnitsUiData.getBuildingUI (building);
-
-			if (building.isUnitWorking())
-				soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartWork, uiData.Start, building));
-			else
-				soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStopWork, uiData.Stop, building));
-		}
-		updateSelectedUnitIdleSound();
-	});
-
 	selectedUnitConnectionManager.connect (selectedUnit->buildingChanged, [this]() {
 		updateSelectedUnitIdleSound();
 	});
@@ -529,9 +514,20 @@ void cGameGui::connectSelectedUnit()
 		updateSelectedUnitIdleSound();
 	});
 
-	if (selectedUnit->isAVehicle())
+	if (auto selectedBuilding = dynamic_cast<cBuilding*> (selectedUnit))
 	{
-		const auto selectedVehicle = static_cast<cVehicle*> (selectedUnit);
+		selectedUnitConnectionManager.connect (selectedBuilding->workingChanged, [selectedBuilding, this]() {
+			stopSelectedUnitSound();
+			const auto& building = *selectedBuilding;
+			auto& uiData = UnitsUiData.getBuildingUI (building);
+			const auto& soundChunk = building.isUnitWorking() ? uiData.Start : uiData.Stop;
+			soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartWork, soundChunk, building));
+			updateSelectedUnitIdleSound();
+		});
+	}
+
+	if (auto selectedVehicle = dynamic_cast<cVehicle*> (selectedUnit))
+	{
 		selectedUnitConnectionManager.connect (selectedVehicle->movingChanged, [selectedVehicle, this]() {
 			if (selectedVehicle == gameMap->getUnitSelection().getSelectedVehicle())
 			{

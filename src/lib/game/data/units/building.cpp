@@ -126,6 +126,7 @@ cBuilding::cBuilding (const cStaticUnitData* staticData, const cDynamicUnitData*
 
 	refreshData();
 
+	workingChanged.connect ([this]() { statusChanged(); });
 	buildListChanged.connect ([this]() { statusChanged(); });
 	buildListFirstItemDataChanged.connect ([this]() { statusChanged(); });
 	researchAreaChanged.connect ([this]() { statusChanged(); });

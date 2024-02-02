@@ -55,7 +55,6 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 	clearingMinesChanged.connect ([this]() { statusChanged(); });
 	buildingChanged.connect ([this]() { statusChanged(); });
 	clearingChanged.connect ([this]() { statusChanged(); });
-	workingChanged.connect ([this]() { statusChanged(); });
 	movingChanged.connect ([this]() { statusChanged(); });
 }
 
