@@ -328,10 +328,8 @@ bool cBuilding::canTransferTo (const cUnit& unit) const
 	if (&unit == this)
 		return false;
 
-	if (unit.isAVehicle())
+	if (const cVehicle* v = dynamic_cast<const cVehicle*> (&unit))
 	{
-		const cVehicle* v = static_cast<const cVehicle*> (&unit);
-
 		if (v->getStaticUnitData().storeResType != staticData->storeResType)
 			return false;
 
@@ -339,9 +337,8 @@ bool cBuilding::canTransferTo (const cUnit& unit) const
 			return false;
 		return ranges::any_of (subBase->getBuildings(), [&] (const auto& b) { return b->isNextTo (v->getPosition()); });
 	}
-	else if (unit.isABuilding())
+	else if (const cBuilding* b = dynamic_cast<const cBuilding*> (&unit))
 	{
-		const cBuilding* b = static_cast<const cBuilding*> (&unit);
 		if (b->subBase != subBase)
 			return false;
 

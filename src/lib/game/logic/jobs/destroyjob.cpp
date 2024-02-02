@@ -79,47 +79,43 @@ void cDestroyJob::createDestroyFx (cModel& model)
 	auto* unit = model.getUnitFromID (unitId);
 
 	std::shared_ptr<cFx> fx;
-	if (unit->isAVehicle())
+	if (auto* vehicle = dynamic_cast<cVehicle*> (unit))
 	{
-		auto& vehicle = *static_cast<cVehicle*> (unit);
-
-		if (vehicle.getIsBig())
+		if (vehicle->getIsBig())
 		{
-			fx = std::make_shared<cFxExploBig> (vehicle.getPosition() * 64 + 64, map.isWaterOrCoast (vehicle.getPosition()));
+			fx = std::make_shared<cFxExploBig> (vehicle->getPosition() * 64 + 64, map.isWaterOrCoast (vehicle->getPosition()));
 		}
-		else if (vehicle.getStaticUnitData().factorAir > 0 && vehicle.getFlightHeight() != 0)
+		else if (vehicle->getStaticUnitData().factorAir > 0 && vehicle->getFlightHeight() != 0)
 		{
-			fx = std::make_shared<cFxExploAir> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32);
+			fx = std::make_shared<cFxExploAir> (vehicle->getPosition() * 64 + vehicle->getMovementOffset() + 32);
 		}
-		else if (map.isWaterOrCoast (vehicle.getPosition()))
+		else if (map.isWaterOrCoast (vehicle->getPosition()))
 		{
-			fx = std::make_shared<cFxExploWater> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32);
+			fx = std::make_shared<cFxExploWater> (vehicle->getPosition() * 64 + vehicle->getMovementOffset() + 32);
 		}
 		else
 		{
-			fx = std::make_shared<cFxExploSmall> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32);
+			fx = std::make_shared<cFxExploSmall> (vehicle->getPosition() * 64 + vehicle->getMovementOffset() + 32);
 		}
 		counter = fx->getLength() / 2;
 		model.addFx (fx);
 
-		if (vehicle.getStaticData().hasCorpse)
+		if (vehicle->getStaticData().hasCorpse)
 		{
 			// add corpse
-			model.addFx (std::make_shared<cFxCorpse> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
+			model.addFx (std::make_shared<cFxCorpse> (vehicle->getPosition() * 64 + vehicle->getMovementOffset() + 32));
 		}
 	}
-	else
+	else if (auto* building = dynamic_cast<cBuilding*> (unit))
 	{
-		auto& building = *static_cast<cBuilding*> (unit);
-
-		const cBuilding* topBuilding = map.getField (building.getPosition()).getBuilding();
+		const cBuilding* topBuilding = map.getField (building->getPosition()).getBuilding();
 		if (topBuilding && topBuilding->getIsBig())
 		{
 			fx = std::make_shared<cFxExploBig> (topBuilding->getPosition() * 64 + 64, map.isWaterOrCoast (topBuilding->getPosition()));
 		}
 		else
 		{
-			fx = std::make_shared<cFxExploSmall> (building.getPosition() * 64 + 32);
+			fx = std::make_shared<cFxExploSmall> (building->getPosition() * 64 + 32);
 		}
 
 		counter = fx->getLength() / 2;
@@ -131,23 +127,24 @@ void cDestroyJob::createDestroyFx (cModel& model)
 void cDestroyJob::deleteUnit (cModel& model)
 {
 	auto* unit = model.getUnitFromID (unitId);
+	assert (unit);
 	bool isVehicle = false;
 	const auto position = unit->getPosition();
 	auto& map = *model.getMap();
 	auto& field = map.getField (position);
 
-	//delete planes immediately
-	if (unit->isAVehicle())
+	// delete planes immediately
+	if (auto* vehicle = dynamic_cast<cVehicle*> (unit))
 	{
 		isVehicle = true;
-		auto& vehicle = *static_cast<cVehicle*> (unit);
-		if (vehicle.getOwner())
+		
+		if (auto* owner = vehicle->getOwner())
 		{
-			vehicle.getOwner()->getGameOverStat().lostVehiclesCount++;
+			owner->getGameOverStat().lostVehiclesCount++;
 		}
-		if (vehicle.getStaticUnitData().factorAir > 0 && vehicle.getFlightHeight() > 0)
+		if (vehicle->getStaticUnitData().factorAir > 0 && vehicle->getFlightHeight() > 0)
 		{
-			model.deleteUnit (&vehicle);
+			model.deleteUnit (vehicle);
 			return;
 		}
 	}
@@ -160,10 +157,8 @@ void cDestroyJob::deleteUnit (cModel& model)
 	}
 
 	//check, if there is a big unit on the field
-	bool bigUnit = false;
-	auto topBuilding = field.getTopBuilding();
-	if ((topBuilding && topBuilding->getIsBig()) || unit->getIsBig())
-		bigUnit = true;
+	const auto* topBuilding = field.getTopBuilding();
+	const bool bigUnit = (topBuilding && topBuilding->getIsBig()) || unit->getIsBig();
 
 	//delete unit
 	int rubbleValue = 0;
@@ -185,9 +180,8 @@ void cDestroyJob::deleteUnit (cModel& model)
 		rubbleValue += deleteAllBuildingsOnField (map.getField (position + cPosition (1, 1)), !isVehicle, model);
 	}
 
-	//add rubble
-	auto rubble = field.getRubble();
-	if (rubble)
+	// add rubble
+	if (auto* rubble = field.getRubble())
 	{
 		rubble->setRubbleValue (rubble->getRubbleValue() + rubbleValue / 2, model.randomGenerator);
 	}

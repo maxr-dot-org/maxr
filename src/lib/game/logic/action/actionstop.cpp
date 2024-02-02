@@ -41,16 +41,12 @@ void cActionStop::execute (cModel& model) const
 	if (unit == nullptr || !unit->getOwner()) return;
 	if (unit->getOwner()->getId() != playerNr) return;
 
-	if (unit->isABuilding())
+	if (auto* b = dynamic_cast<cBuilding*> (unit))
 	{
-		auto b = static_cast<cBuilding*> (unit);
-
 		b->stopWork();
 	}
-	else
+	else if (auto* vehicle = dynamic_cast<cVehicle*> (unit))
 	{
-		auto vehicle = static_cast<cVehicle*> (unit);
-
 		if (vehicle->getMoveJob())
 		{
 			vehicle->getMoveJob()->stop (*vehicle);

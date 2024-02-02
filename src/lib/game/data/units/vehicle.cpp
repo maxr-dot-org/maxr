@@ -393,10 +393,8 @@ bool cVehicle::canTransferTo (const cUnit& unit) const
 	if (unit.getOwner() != getOwner())
 		return false;
 
-	if (unit.isAVehicle())
+	if (const cVehicle* v = dynamic_cast<const cVehicle*> (&unit))
 	{
-		const cVehicle* v = static_cast<const cVehicle*> (&unit);
-
 		if (v->staticData->storeResType != staticData->storeResType)
 			return false;
 
@@ -405,10 +403,8 @@ bool cVehicle::canTransferTo (const cUnit& unit) const
 
 		return true;
 	}
-	else if (unit.isABuilding())
+	else if (const cBuilding* b = dynamic_cast<const cBuilding*> (&unit))
 	{
-		const cBuilding* b = static_cast<const cBuilding*> (&unit);
-
 		if (!b->subBase)
 			return false;
 

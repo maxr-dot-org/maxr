@@ -2020,30 +2020,26 @@ void cGameMapWidget::addAnimationsForUnit (const cUnit& unit)
 {
 	if (!cSettings::getInstance().isAnimations()) return;
 
-	if (unit.isABuilding())
+	if (const cBuilding* building = dynamic_cast<const cBuilding*> (&unit))
 	{
-		const cBuilding& building = static_cast<const cBuilding&> (unit);
-		if (building.isRubble()) return;
-		auto& uiData = UnitsUiData.getBuildingUI (building);
+		if (building->isRubble()) return;
+		auto& uiData = UnitsUiData.getBuildingUI (*building);
 
-		if (uiData.staticData.powerOnGraphic || building.getStaticData().canWork)
+		if (uiData.staticData.powerOnGraphic || building->getStaticData().canWork)
 		{
-			animations.push_back (std::make_unique<cAnimationWork> (*animationTimer, building));
+			animations.push_back (std::make_unique<cAnimationWork> (*animationTimer, *building));
 		}
 	}
-	if (unit.getStaticUnitData().factorAir > 0)
+	else if (const auto* vehicle = dynamic_cast<const cVehicle*> (&unit))
 	{
-		assert (unit.isAVehicle());
-		auto& vehicle = static_cast<const cVehicle&> (unit);
-
-		animations.push_back (std::make_unique<cAnimationDither> (*animationTimer, vehicle));
-	}
-	if (unit.getStaticUnitData().canBuild.compare ("BigBuilding") == 0)
-	{
-		assert (unit.isAVehicle());
-		auto& vehicle = static_cast<const cVehicle&> (unit);
-
-		animations.push_back (std::make_unique<cAnimationStartUpBuildingSite> (*animationTimer, vehicle));
+		if (unit.getStaticUnitData().factorAir > 0)
+		{
+			animations.push_back (std::make_unique<cAnimationDither> (*animationTimer, *vehicle));
+		}
+		if (unit.getStaticUnitData().canBuild.compare ("BigBuilding") == 0)
+		{
+			animations.push_back (std::make_unique<cAnimationStartUpBuildingSite> (*animationTimer, *vehicle));
+		}
 	}
 }
 

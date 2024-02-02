@@ -141,12 +141,11 @@ void cUnitDetailsHud::reset()
 
 			drawRow (1, symbolType, unit->getStoredResources(), staticData.storageResMax, lngPack.i18n ("Others~Cargo_7"));
 
-			if (unit->isABuilding())
+			if (const auto* building = dynamic_cast<const cBuilding*> (unit))
 			{
-				const auto& building = static_cast<const cBuilding&> (*unit);
-				if (!building.subBase) return;
-				const sMiningResource& stored = building.subBase->getResourcesStored();
-				const sMiningResource& maxStored = building.subBase->getMaxResourcesStored();
+				if (!building->subBase) return;
+				const sMiningResource& stored = building->subBase->getResourcesStored();
+				const sMiningResource& maxStored = building->subBase->getMaxResourcesStored();
 
 				switch (staticData.storeResType)
 				{

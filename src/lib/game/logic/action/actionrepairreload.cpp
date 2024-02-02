@@ -52,14 +52,13 @@ void cActionRepairReload::execute (cModel& model) const
 	if (supplyType == eSupplyType::REARM)
 	{
 		// reduce cargo
-		if (sourceUnit->isAVehicle())
+		if (auto* sourceBuilding = dynamic_cast<cBuilding*> (sourceUnit))
 		{
-			sourceUnit->setStoredResources (sourceUnit->getStoredResources() - 1);
+			sourceBuilding->subBase->addMetal (-1);
 		}
 		else
 		{
-			auto sourceBuilding = static_cast<cBuilding*> (sourceUnit);
-			sourceBuilding->subBase->addMetal (-1);
+			sourceUnit->setStoredResources (sourceUnit->getStoredResources() - 1);
 		}
 
 		// refill ammo
@@ -68,13 +67,13 @@ void cActionRepairReload::execute (cModel& model) const
 	else if (supplyType == eSupplyType::REPAIR)
 	{
 		int availableMetal = 0;
-		if (sourceUnit->isAVehicle())
+		if (auto* sourceBuilding = dynamic_cast<cBuilding*> (sourceUnit))
 		{
-			availableMetal = sourceUnit->getStoredResources();
+			availableMetal = sourceBuilding->subBase->getResourcesStored().metal;
 		}
 		else
 		{
-			availableMetal = static_cast<cBuilding*> (sourceUnit)->subBase->getResourcesStored().metal;
+			availableMetal = sourceUnit->getStoredResources();
 		}
 		int newHitpoints = destUnit->data.getHitpoints();
 
@@ -85,14 +84,14 @@ void cActionRepairReload::execute (cModel& model) const
 			availableMetal--;
 		}
 
-		if (sourceUnit->isAVehicle())
+		if (auto* sourceBuilding = dynamic_cast<cBuilding*> (sourceUnit))
 		{
-			sourceUnit->setStoredResources (availableMetal);
+			auto subBase = sourceBuilding->subBase;
+			subBase->addMetal (availableMetal - subBase->getResourcesStored().metal);
 		}
 		else
 		{
-			auto subBase = static_cast<cBuilding*> (sourceUnit)->subBase;
-			subBase->addMetal (availableMetal - subBase->getResourcesStored().metal);
+			sourceUnit->setStoredResources (availableMetal);
 		}
 		destUnit->data.setHitpoints (std::min (newHitpoints, destUnit->data.getHitpointsMax()));
 	}

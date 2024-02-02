@@ -591,13 +591,13 @@ void cGameGuiController::connectGuiStaticCommands()
 	signalConnectionManager.connect (gameGui->getGameMap().triggeredUnitHelp, [this] (const cUnit& unit) { showUnitHelpWindow (unit); });
 	signalConnectionManager.connect (gameGui->getGameMap().triggeredTransfer, [this] (const cUnit& source, const cUnit& dest) { showUnitTransferDialog (source, dest); });
 	signalConnectionManager.connect (gameGui->getGameMap().triggeredBuild, [this] (const cUnit& unit) {
-		if (unit.isAVehicle())
+		if (const auto* vehicle = dynamic_cast<const cVehicle*> (&unit))
 		{
-			showBuildBuildingsWindow (static_cast<const cVehicle&> (unit));
+			showBuildBuildingsWindow (*vehicle);
 		}
-		else if (unit.isABuilding())
+		else if (const auto* building = dynamic_cast<const cBuilding*> (&unit))
 		{
-			showBuildVehiclesWindow (static_cast<const cBuilding&> (unit));
+			showBuildVehiclesWindow (*building);
 		}
 	});
 	signalConnectionManager.connect (gameGui->getGameMap().triggeredResourceDistribution, [this] (const cUnit& unit) { showResourceDistributionDialog (unit); });
@@ -671,17 +671,15 @@ void cGameGuiController::connectClient (cClient& client)
 		client.stopWork (unit);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAutoMoveJob, [&] (const cUnit& unit) {
-		if (unit.isAVehicle())
+		if (const auto* vehicle = dynamic_cast<const cVehicle*> (&unit))
 		{
-			auto& vehicle = static_cast<const cVehicle&> (unit);
-
-			if (!vehicle.isSurveyorAutoMoveActive())
+			if (!vehicle->isSurveyorAutoMoveActive())
 			{
-				client.addSurveyorMoveJob (vehicle);
+				client.addSurveyorMoveJob (*vehicle);
 			}
 			else
 			{
-				client.removeSurveyorMoveJob (vehicle);
+				client.removeSurveyorMoveJob (*vehicle);
 			}
 		}
 	});
@@ -707,12 +705,11 @@ void cGameGuiController::connectClient (cClient& client)
 		client.toggleCollectMines (vehicle);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredUnitDone, [this] (const cUnit& unit) {
-		if (unit.isAVehicle())
+		if (const auto* vehicle = dynamic_cast<const cVehicle*> (&unit))
 		{
-			auto& vehicle = *static_cast<const cVehicle*> (&unit);
-			if (vehicle.getMoveJob() && !vehicle.isUnitMoving())
+			if (vehicle->getMoveJob() && !vehicle->isUnitMoving())
 			{
-				resumeMoveJobTriggered (vehicle);
+				resumeMoveJobTriggered (*vehicle);
 			}
 		}
 		playerGameGuiStates[activeClient->getActivePlayer().getId()].doneList.push_back (unit.getId());
@@ -746,22 +743,21 @@ void cGameGuiController::connectClient (cClient& client)
 		const auto& field = client.getModel().getMap()->getField (position);
 		auto overVehicle = field.getVehicle();
 		auto overPlane = field.getPlane();
-		if (unit.isAVehicle())
+		if (const auto& vehicle = dynamic_cast<const cVehicle*> (&unit))
 		{
-			const auto& vehicle = static_cast<const cVehicle&> (unit);
-			if (vehicle.getStaticUnitData().factorAir > 0 && overVehicle)
+			if (vehicle->getStaticUnitData().factorAir > 0 && overVehicle)
 			{
-				if (overVehicle->getPosition() == vehicle.getPosition())
+				if (overVehicle->getPosition() == vehicle->getPosition())
 				{
 					client.load (unit, *overVehicle);
 				}
 				else
 				{
-					cPathCalculator pc (vehicle, *mapView, position, false);
+					cPathCalculator pc (*vehicle, *mapView, position, false);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
-						client.startMove (vehicle, path, eStart::Immediate, eStopOn::Never, cEndMoveAction::Load (*overVehicle));
+						client.startMove (*vehicle, path, eStart::Immediate, eStopOn::Never, cEndMoveAction::Load (*overVehicle));
 					}
 					else
 					{
@@ -771,13 +767,13 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			else if (overVehicle)
 			{
-				if (vehicle.isNextTo (overVehicle->getPosition()))
+				if (vehicle->isNextTo (overVehicle->getPosition()))
 				{
 					client.load (unit, *overVehicle);
 				}
 				else
 				{
-					cPathCalculator pc (*overVehicle, *mapView, vehicle, true);
+					cPathCalculator pc (*overVehicle, *mapView, *vehicle, true);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
@@ -790,18 +786,18 @@ void cGameGuiController::connectClient (cClient& client)
 				}
 			}
 		}
-		else if (unit.isABuilding())
+		else if (const auto* building = dynamic_cast<const cBuilding*> (&unit))
 		{
-			const auto& building = static_cast<const cBuilding&> (unit);
-			if (overVehicle && building.canLoad (overVehicle, false))
+			
+			if (overVehicle && building->canLoad (overVehicle, false))
 			{
-				if (building.isNextTo (overVehicle->getPosition()))
+				if (building->isNextTo (overVehicle->getPosition()))
 				{
 					client.load (unit, *overVehicle);
 				}
 				else
 				{
-					cPathCalculator pc (*overVehicle, *mapView, building, true);
+					cPathCalculator pc (*overVehicle, *mapView, *building, true);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
@@ -813,15 +809,15 @@ void cGameGuiController::connectClient (cClient& client)
 					}
 				}
 			}
-			else if (overPlane && building.canLoad (overPlane, false))
+			else if (overPlane && building->canLoad (overPlane, false))
 			{
-				if (building.isNextTo (overPlane->getPosition()))
+				if (building->isNextTo (overPlane->getPosition()))
 				{
 					client.load (unit, *overPlane);
 				}
 				else
 				{
-					cPathCalculator pc (*overPlane, *mapView, building, true);
+					cPathCalculator pc (*overPlane, *mapView, *building, true);
 					const auto path = pc.calcPath();
 					if (!path.empty())
 					{
@@ -842,23 +838,21 @@ void cGameGuiController::connectClient (cClient& client)
 		client.repair (sourceUnit, destinationUnit);
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredAttack, [&] (const cUnit& unit, const cPosition& position) {
-		if (unit.isAVehicle())
+		if (const auto* vehicle = dynamic_cast<const cVehicle*> (&unit))
 		{
-			const auto& vehicle = static_cast<const cVehicle&> (unit);
+			cUnit* target = cAttackJob::selectTarget (position, vehicle->getStaticUnitData().canAttack, *mapView, vehicle->getOwner());
 
-			cUnit* target = cAttackJob::selectTarget (position, vehicle.getStaticUnitData().canAttack, *mapView, vehicle.getOwner());
-
-			if (vehicle.isInRange (position))
+			if (vehicle->isInRange (position))
 			{
-				client.attack (vehicle, position, target);
+				client.attack (*vehicle, position, target);
 			}
 			else if (target)
 			{
-				cPathCalculator pc (vehicle, *mapView, position, true);
+				cPathCalculator pc (*vehicle, *mapView, position, true);
 				const auto path = pc.calcPath();
 				if (!path.empty())
 				{
-					client.startMove (vehicle, path, eStart::Immediate, eStopOn::Never, cEndMoveAction::Attacking (*target));
+					client.startMove (*vehicle, path, eStart::Immediate, eStopOn::Never, cEndMoveAction::Attacking (*target));
 				}
 				else
 				{
@@ -866,12 +860,11 @@ void cGameGuiController::connectClient (cClient& client)
 				}
 			}
 		}
-		else if (unit.isABuilding())
+		else if (const auto* building = dynamic_cast<const cBuilding*> (&unit))
 		{
-			const auto& building = static_cast<const cBuilding&> (unit);
-			cUnit* target = cAttackJob::selectTarget (position, building.getStaticUnitData().canAttack, *mapView, building.getOwner());
+			cUnit* target = cAttackJob::selectTarget (position, building->getStaticUnitData().canAttack, *mapView, building->getOwner());
 
-			client.attack (building, position, target);
+			client.attack (*building, position, target);
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredSteal, [&] (const cVehicle& infiltrator, const cUnit& destinationUnit) {
@@ -1701,9 +1694,8 @@ void cGameGuiController::markSelectedUnitAsDone()
 	if (unit && unit->getOwner() == player.get())
 	{
 		playerGameGuiStates[player->getId()].doneList.push_back (unit->getId());
-		if (unit->isAVehicle())
+		if (const cVehicle* vehicle = dynamic_cast<const cVehicle*> (unit))
 		{
-			const cVehicle* vehicle = static_cast<const cVehicle*> (unit);
 			if (vehicle->getMoveJob() && !vehicle->isUnitMoving())
 			{
 				resumeMoveJobTriggered (*vehicle);

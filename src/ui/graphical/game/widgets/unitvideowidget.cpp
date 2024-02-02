@@ -113,10 +113,9 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 	}
 	else
 	{
-		if (unit->isAVehicle())
+		if (const auto* vehicle = dynamic_cast<const cVehicle*> (unit))
 		{
-			const auto& vehicle = *static_cast<const cVehicle*> (unit);
-			auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
+			auto* uiData = UnitsUiData.getVehicleUI (vehicle->getStaticUnitData().ID);
 
 			if (std::filesystem::exists (uiData->FLCFile))
 			{
@@ -131,10 +130,9 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 				currentFrameImage->setImage (uiData->storage.get());
 			}
 		}
-		else if (unit->isABuilding())
+		else if (const auto* building = dynamic_cast<const cBuilding*> (unit))
 		{
-			const auto& building = *static_cast<const cBuilding*> (unit);
-			auto& uiData = UnitsUiData.getBuildingUI (building);
+			auto& uiData = UnitsUiData.getBuildingUI (*building);
 
 			fliAnimation = nullptr;
 			currentFrameImage->setImage (uiData.video.get());

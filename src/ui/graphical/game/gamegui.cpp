@@ -753,44 +753,42 @@ void cGameGui::updateSelectedUnitIdleSound()
 	{
 		stopSelectedUnitSound();
 	}
-	else if (selectedUnit->isABuilding())
+	else if (const auto* building = dynamic_cast<const cBuilding*> (selectedUnit))
 	{
-		const auto& building = static_cast<const cBuilding&> (*selectedUnit);
-		auto& uiData = UnitsUiData.getBuildingUI (building);
+		auto& uiData = UnitsUiData.getBuildingUI (*building);
 
-		if (building.isUnitWorking())
+		if (building->isUnitWorking())
 		{
-			startSelectedUnitSound (building, uiData.Running);
+			startSelectedUnitSound (*building, uiData.Running);
 		}
 		else
 		{
-			startSelectedUnitSound (building, uiData.Wait);
+			startSelectedUnitSound (*building, uiData.Wait);
 		}
 	}
-	else
+	else if (const auto* vehicle = dynamic_cast<const cVehicle*> (selectedUnit))
 	{
-		const auto& vehicle = static_cast<const cVehicle&> (*selectedUnit);
-		auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
+		auto* uiData = UnitsUiData.getVehicleUI (vehicle->getStaticUnitData().ID);
 
-		const cBuilding* building = mapView ? mapView->getField (vehicle.getPosition()).getBaseBuilding() : nullptr;
-		bool water = staticMap->isWater (vehicle.getPosition());
-		if (vehicle.getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == eSurfacePosition::Base || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)) water = false;
+		const cBuilding* building = mapView ? mapView->getField (vehicle->getPosition()).getBaseBuilding() : nullptr;
+		bool water = staticMap->isWater (vehicle->getPosition());
+		if (vehicle->getStaticUnitData().factorGround > 0 && building && (building->getStaticUnitData().surfacePosition == eSurfacePosition::Base || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase || building->getStaticUnitData().surfacePosition == eSurfacePosition::AboveSea)) water = false;
 
-		if (vehicle.isUnitBuildingABuilding() && (vehicle.getBuildTurns() || player.get() != vehicle.getOwner()))
+		if (vehicle->isUnitBuildingABuilding() && (vehicle->getBuildTurns() || player.get() != vehicle->getOwner()))
 		{
-			startSelectedUnitSound (vehicle, SoundData.SNDBuilding);
+			startSelectedUnitSound (*vehicle, SoundData.SNDBuilding);
 		}
-		else if (vehicle.isUnitClearing())
+		else if (vehicle->isUnitClearing())
 		{
-			startSelectedUnitSound (vehicle, SoundData.SNDClearing);
+			startSelectedUnitSound (*vehicle, SoundData.SNDClearing);
 		}
-		else if (water && vehicle.getStaticUnitData().factorSea > 0)
+		else if (water && vehicle->getStaticUnitData().factorSea > 0)
 		{
-			startSelectedUnitSound (vehicle, uiData->WaitWater);
+			startSelectedUnitSound (*vehicle, uiData->WaitWater);
 		}
 		else
 		{
-			startSelectedUnitSound (vehicle, uiData->Wait);
+			startSelectedUnitSound (*vehicle, uiData->Wait);
 		}
 	}
 }

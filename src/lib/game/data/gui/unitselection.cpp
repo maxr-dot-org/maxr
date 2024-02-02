@@ -211,12 +211,11 @@ std::vector<cUnit*> cUnitSelection::getSelectedUnits() const
 std::vector<cVehicle*> cUnitSelection::getSelectedVehicles() const
 {
 	std::vector<cVehicle*> result;
-	for (const auto& p : selectedUnits)
+	for (const auto& [unit, _] : selectedUnits)
 	{
-		auto* unit = p.first;
-		if (unit->isAVehicle())
+		if (auto* vehicle = dynamic_cast<cVehicle*>(unit))
 		{
-			result.push_back (static_cast<cVehicle*> (unit));
+			result.push_back (vehicle);
 		}
 	}
 	return result;
@@ -226,12 +225,11 @@ std::vector<cVehicle*> cUnitSelection::getSelectedVehicles() const
 std::vector<cBuilding*> cUnitSelection::getSelectedBuildings() const
 {
 	std::vector<cBuilding*> result;
-	for (const auto& p : selectedUnits)
+	for (const auto& [unit, _] : selectedUnits)
 	{
-		auto* unit = p.first;
-		if (unit->isABuilding())
+		if (auto* building = dynamic_cast<cBuilding*> (unit))
 		{
-			result.push_back (static_cast<cBuilding*> (unit));
+			result.push_back (building);
 		}
 	}
 	return result;
@@ -354,19 +352,17 @@ cUnit* cUnitSelection::getNextUnit (const cPlayer& player, const std::vector<uns
 		cBuilding* nextBuilding = getNextBuilding (player, doneList, nullptr);
 		if (nextBuilding) return nextBuilding;
 	}
-	else if (start->isAVehicle())
+	else if (auto* vehicle = dynamic_cast<cVehicle*> (start))
 	{
-		cVehicle* nextVehicle = getNextVehicle (player, doneList, static_cast<cVehicle*> (start));
+		cVehicle* nextVehicle = getNextVehicle (player, doneList, vehicle);
 		if (nextVehicle) return nextVehicle;
 		cBuilding* nextBuilding = getNextBuilding (player, doneList, nullptr);
 		if (nextBuilding) return nextBuilding;
 		nextVehicle = getNextVehicle (player, doneList, nullptr);
 		if (nextVehicle) return nextVehicle;
 	}
-	else
+	else if (auto* building = dynamic_cast<cBuilding*> (start))
 	{
-		assert (start->isABuilding());
-		cBuilding* building = static_cast<cBuilding*> (start);
 		cBuilding* nextBuilding = getNextBuilding (player, doneList, building);
 		if (nextBuilding) return nextBuilding;
 		cVehicle* nextVehicle = getNextVehicle (player, doneList, nullptr);
@@ -451,19 +447,17 @@ cUnit* cUnitSelection::getPrevUnit (const cPlayer& player, const std::vector<uns
 		cBuilding* prevBuilding = getPrevBuilding (player, doneList, nullptr);
 		if (prevBuilding) return prevBuilding;
 	}
-	else if (start->isAVehicle())
+	else if (auto* vehicle = dynamic_cast<cVehicle*> (start))
 	{
-		cVehicle* prevVehicle = getPrevVehicle (player, doneList, static_cast<cVehicle*> (start));
+		cVehicle* prevVehicle = getPrevVehicle (player, doneList, vehicle);
 		if (prevVehicle) return prevVehicle;
 		cBuilding* prevBuilding = getPrevBuilding (player, doneList, nullptr);
 		if (prevBuilding) return prevBuilding;
 		prevVehicle = getPrevVehicle (player, doneList, nullptr);
 		if (prevVehicle) return prevVehicle;
 	}
-	else
+	else if (auto* building = dynamic_cast<cBuilding*> (start))
 	{
-		assert (start->isABuilding());
-		cBuilding* building = static_cast<cBuilding*> (start);
 		cBuilding* prevBuilding = getPrevBuilding (player, doneList, building);
 		if (prevBuilding) return prevBuilding;
 		cVehicle* prevVehicle = getPrevVehicle (player, doneList, nullptr);

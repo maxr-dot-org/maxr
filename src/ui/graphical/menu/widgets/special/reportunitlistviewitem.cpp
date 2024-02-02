@@ -43,18 +43,16 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_, const cUnitsData
 	SDL_FillRect (surface.get(), nullptr, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	if (unit.data.getId().isAVehicle())
+	if (const auto* vehicle = dynamic_cast<const cVehicle*> (&unit))
 	{
-		const auto& vehicle = static_cast<const cVehicle&> (unit);
 		const float zoomFactor = unitImageSize / 64.0f;
-		render_simple (vehicle, *surface, dest, zoomFactor);
-		drawOverlayAnimation (vehicle, *surface, dest, zoomFactor, 0);
+		render_simple (*vehicle, *surface, dest, zoomFactor);
+		drawOverlayAnimation (*vehicle, *surface, dest, zoomFactor, 0);
 	}
-	else if (unit.data.getId().isABuilding())
+	else if (const auto* building = dynamic_cast<const cBuilding*> (&unit))
 	{
-		const auto& building = static_cast<const cBuilding&> (unit);
-		const float zoomFactor = unitImageSize / (building.getIsBig() ? 128.0f : 64.0f);
-		render_simple (building, *surface, dest, zoomFactor, 0);
+		const float zoomFactor = unitImageSize / (building->getIsBig() ? 128.0f : 64.0f);
+		render_simple (*building, *surface, dest, zoomFactor, 0);
 	}
 	else
 		surface = nullptr;

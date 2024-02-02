@@ -44,13 +44,13 @@ void cActionFinishBuild::execute (cModel& model) const
 	if (player == nullptr) return;
 	if (player->getId() != playerNr) return;
 
-	if (unit->isAVehicle())
+	if (auto* vehicle = dynamic_cast<cVehicle*> (unit))
 	{
-		finishABuilding (model, *static_cast<cVehicle*> (unit));
+		finishABuilding (model, *vehicle);
 	}
-	else
+	else if (auto* building = dynamic_cast<cBuilding*> (unit))
 	{
-		finishAVehicle (model, *static_cast<cBuilding*> (unit));
+		finishAVehicle (model, *building);
 	}
 }
 

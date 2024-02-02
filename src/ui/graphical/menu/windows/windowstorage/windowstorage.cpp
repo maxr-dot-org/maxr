@@ -101,14 +101,12 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	// Metal Bar
 	//
 	auto metalValue = 0;
-	if (unit.isABuilding())
+	if (const auto* building = dynamic_cast<const cBuilding*> (&unit))
 	{
-		const auto& building = static_cast<const cBuilding&> (unit);
+		metalValue = building->subBase->getResourcesStored().metal;
 
-		metalValue = building.subBase->getResourcesStored().metal;
-
-		signalConnectionManager.connect (building.subBase->metalChanged, [&]() {
-			metalBar->setValue (building.subBase->getResourcesStored().metal);
+		signalConnectionManager.connect (building->subBase->metalChanged, [&]() {
+			metalBar->setValue (building->subBase->getResourcesStored().metal);
 		});
 	}
 

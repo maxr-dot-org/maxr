@@ -151,15 +151,13 @@ void cNewDialogTransfer::initUnitImage (cImage& image, const cUnit& unit)
 
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	if (unit.isABuilding())
+	if (const auto* building = dynamic_cast<const cBuilding*> (&unit))
 	{
-		const auto& building = static_cast<const cBuilding&> (unit);
-		render (building, 0, *unitImageSurface, dest, zoom, false, false);
+		render (*building, 0, *unitImageSurface, dest, zoom, false, false);
 	}
-	else if (unit.isAVehicle())
+	else if (const auto* vehicle = dynamic_cast<const cVehicle*> (&unit))
 	{
-		const auto& vehicle = static_cast<const cVehicle&> (unit);
-		render (vehicle, nullptr, 0, nullptr, *unitImageSurface, dest, zoom, false);
+		render (*vehicle, nullptr, 0, nullptr, *unitImageSurface, dest, zoom, false);
 	}
 
 	image.setImage (unitImageSurface.get());
@@ -168,14 +166,12 @@ void cNewDialogTransfer::initUnitImage (cImage& image, const cUnit& unit)
 //------------------------------------------------------------------------------
 void cNewDialogTransfer::initCargo (int& cargo, int& maxCargo, const cUnit& unit1, const cUnit& unit2)
 {
-	if (unit1.isABuilding())
+	if (const auto* building = dynamic_cast<const cBuilding*> (&unit1))
 	{
-		const auto& building = static_cast<const cBuilding&> (unit1);
-
 		if (unit2.isAVehicle())
 		{
-			const sMiningResource& maxStored = building.subBase->getMaxResourcesStored();
-			const sMiningResource& stored = building.subBase->getResourcesStored();
+			const sMiningResource& maxStored = building->subBase->getMaxResourcesStored();
+			const sMiningResource& stored = building->subBase->getResourcesStored();
 
 			switch (unit2.getStaticUnitData().storeResType)
 			{
@@ -196,8 +192,8 @@ void cNewDialogTransfer::initCargo (int& cargo, int& maxCargo, const cUnit& unit
 		}
 		else if (unit2.isABuilding())
 		{
-			maxCargo = building.getStaticUnitData().storageResMax;
-			cargo = building.getStoredResources();
+			maxCargo = building->getStaticUnitData().storageResMax;
+			cargo = building->getStoredResources();
 		}
 	}
 	else if (unit1.isAVehicle())

@@ -611,14 +611,13 @@ void cMap::deleteVehicle (const cVehicle& vehicle)
 //------------------------------------------------------------------------------
 void cMap::deleteUnit (const cUnit& unit)
 {
-	if (unit.isABuilding())
+	if (const auto* building = dynamic_cast<const cBuilding*> (&unit))
 	{
-		deleteBuilding (static_cast<const cBuilding&> (unit));
+		deleteBuilding (*building);
 	}
-	else
+	else if (const auto* vehicle = dynamic_cast<const cVehicle*> (&unit))
 	{
-		assert (unit.isAVehicle());
-		deleteVehicle (static_cast<const cVehicle&> (unit));
+		deleteVehicle (*vehicle);
 	}
 }
 

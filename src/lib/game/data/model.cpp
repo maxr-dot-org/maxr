@@ -347,14 +347,12 @@ void cModel::deleteUnit (cUnit* unit)
 	std::shared_ptr<cUnit> owningPtr; // keep owning ptr to make sure that unit instance will outlive the following method.
 	if (owner)
 	{
-		if (unit->isABuilding())
+		if (cBuilding* building = dynamic_cast<cBuilding*> (unit))
 		{
-			cBuilding* building = static_cast<cBuilding*> (unit);
 			owningPtr = owner->removeUnit (*building);
 		}
-		else
+		else if (cVehicle* vehicle = dynamic_cast<cVehicle*> (unit))
 		{
-			cVehicle* vehicle = static_cast<cVehicle*> (unit);
 			owningPtr = owner->removeUnit (*vehicle);
 		}
 		unit->forEachStoredUnits ([owner] (const auto& storedVehicle) { owner->removeUnit (storedVehicle); });
@@ -362,9 +360,8 @@ void cModel::deleteUnit (cUnit* unit)
 	helperJobs.onRemoveUnit (*unit);
 
 	// detach from move job
-	if (unit->isAVehicle())
+	if (cVehicle* vehicle = dynamic_cast<cVehicle*> (unit))
 	{
-		cVehicle* vehicle = static_cast<cVehicle*> (unit);
 		if (vehicle->getMoveJob())
 		{
 			assert (vehicle->getMoveJob()->getVehicleId() == vehicle->getId());
@@ -385,10 +382,10 @@ void cModel::deleteUnit (cUnit* unit)
 		owner->changeScore (-static_cast<cBuilding*> (unit)->points);
 	}
 
-	if (unit->isABuilding())
-		map->deleteBuilding (*static_cast<cBuilding*> (unit));
-	else
-		map->deleteVehicle (*static_cast<cVehicle*> (unit));
+	if (auto* building = dynamic_cast<cBuilding*> (unit))
+		map->deleteBuilding (*building);
+	else if (auto* vehicle = dynamic_cast<cVehicle*> (unit))
+		map->deleteVehicle (*vehicle);
 
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->subBase != nullptr && owner)
 		owner->base.deleteBuilding (static_cast<cBuilding&> (*unit), *map);
