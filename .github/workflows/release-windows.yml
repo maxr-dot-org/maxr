@@ -52,7 +52,7 @@ jobs:
       run: cp solution/vs2022/resinstaller/bin/Release/resinstaller.exe data/
 
     - name: Create nsis installer
-      uses: joncloud/makensis-action@v4
+      uses: joncloud/makensis-action@v4.1
       with:
         script-file: mk/win32/installer/maxr-installer.nsi
 
