@@ -190,7 +190,7 @@ cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlaye
 	auto addedBuilding = std::make_shared<cBuilding> (&staticUnitData, &dynamicUnitData, player, nextUnitId++);
 
 	addedBuilding->setPosition (position);
-	map->addBuilding (*addedBuilding, position);
+	map->addBuilding (*addedBuilding);
 	if (player)
 	{
 		player->addUnit (addedBuilding);
@@ -322,7 +322,7 @@ void cModel::addRubble (const cPosition& position, int value, bool big)
 	rubble->setPosition (position);
 	rubble->setRubbleValue (value, randomGenerator);
 
-	map->addBuilding (*rubble, position);
+	map->addBuilding (*rubble);
 
 	neutralBuildings.insert (std::move (rubble));
 }
@@ -581,12 +581,12 @@ void cModel::refreshMapPointer()
 		}
 		for (const auto& building : player->getBuildings())
 		{
-			map->addBuilding (*building, building->getPosition());
+			map->addBuilding (*building);
 		}
 	}
 	for (const auto& building : neutralBuildings)
 	{
-		map->addBuilding (*building, building->getPosition());
+		map->addBuilding (*building);
 	}
 	for (const auto& vehicle : neutralVehicles)
 	{

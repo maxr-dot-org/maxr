@@ -237,7 +237,7 @@ public:
 	cMapField& getField (const cPosition&);
 	const cMapField& getField (const cPosition&) const;
 
-	void addBuilding (cBuilding&, const cPosition&);
+	void addBuilding (cBuilding&);
 	void addVehicle (cVehicle&);
 
 	/**

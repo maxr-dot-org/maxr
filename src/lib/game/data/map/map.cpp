@@ -540,14 +540,14 @@ void cMap::setResourcesFromString (const std::string& str)
 }
 
 //------------------------------------------------------------------------------
-void cMap::addBuilding (cBuilding& building, const cPosition& position)
+void cMap::addBuilding (cBuilding& building)
 {
 	//big base building are not implemented
 	if (building.getStaticUnitData().surfacePosition != eSurfacePosition::Ground && building.getIsBig() && !building.isRubble()) return;
 
 	const int mapLevel = cMap::getMapLevel (building);
 
-	for (const auto& pos : getPositions (position, building.getIsBig()))
+	for (const auto& pos : getPositions (building.getPosition(), building.getIsBig()))
 	{
 		auto& field = getField (pos);
 		std::size_t i = 0;
