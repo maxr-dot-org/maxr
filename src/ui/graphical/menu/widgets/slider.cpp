@@ -108,7 +108,7 @@ int cSlider::getValueFromHandlePosition() const
 
 	const auto handlePosition = (orientation == eOrientationType::Horizontal ? handle->getPosition().x() : handle->getPosition().y());
 
-	return positionDiff != 0 ? minValue + Round ((float) (handlePosition - minPosition) * valueDiff / positionDiff) : minValue;
+	return positionDiff != 0 ? minValue + (handlePosition - minPosition) * valueDiff / positionDiff : minValue;
 }
 
 //------------------------------------------------------------------------------

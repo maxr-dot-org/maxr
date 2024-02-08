@@ -615,7 +615,7 @@ void cSubBase::makeTurnStartRepairs (cBuilding& building)
 		return;
 	}
 	// calc new hitpoints
-	const auto newHitPoints = building.data.getHitpoints() + Round (((float) building.data.getHitpointsMax() / building.data.getBuildCost()) * 4);
+	const auto newHitPoints = building.data.getHitpoints() + (4 * building.data.getHitpointsMax() / building.data.getBuildCost());
 	building.data.setHitpoints (std::min (building.data.getHitpointsMax(), newHitPoints));
 	addMetal (-1);
 }

@@ -224,7 +224,7 @@ void cResourceBar::setValue (int value)
 
 	if (value < (maxValue / stepSize) * stepSize && value % stepSize != 0)
 	{
-		value = Round ((float) value / stepSize) * stepSize;
+		value = (value / stepSize) * stepSize;
 	}
 
 	value = std::max (getFixedMinValue(), value);

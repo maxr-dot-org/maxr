@@ -1557,7 +1557,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 					auto value = storedUnit->data.getHitpoints();
 					while (value < storedUnit->data.getHitpointsMax() && remainingResources > 0)
 					{
-						value += Round (((float) storedUnit->data.getHitpointsMax() / storedUnit->data.getBuildCost()) * 4);
+						value += 4 * storedUnit->data.getHitpointsMax() / storedUnit->data.getBuildCost();
 						remainingResources--;
 					}
 				}

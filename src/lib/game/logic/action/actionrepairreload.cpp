@@ -77,7 +77,7 @@ void cActionRepairReload::execute (cModel& model) const
 		}
 		int newHitpoints = destUnit->data.getHitpoints();
 
-		int hitpointsPerMetal = Round (((float) destUnit->data.getHitpointsMax() / destUnit->data.getBuildCost()) * 4);
+		const int hitpointsPerMetal = 4 * destUnit->data.getHitpointsMax() / destUnit->data.getBuildCost();
 		while (availableMetal > 0 && newHitpoints < destUnit->data.getHitpointsMax())
 		{
 			newHitpoints += hitpointsPerMetal;
