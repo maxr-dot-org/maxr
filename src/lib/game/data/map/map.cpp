@@ -561,8 +561,9 @@ void cMap::addBuilding (cBuilding& building, const cPosition& position)
 }
 
 //------------------------------------------------------------------------------
-void cMap::addVehicle (cVehicle& vehicle, const cPosition& position)
+void cMap::addVehicle (cVehicle& vehicle)
 {
+	const cPosition position = vehicle.buildBigSavedPosition.value_or(vehicle.getPosition());
 	auto& field = getField (position);
 	if (vehicle.getStaticUnitData().factorAir > 0)
 	{
@@ -575,8 +576,10 @@ void cMap::addVehicle (cVehicle& vehicle, const cPosition& position)
 
 	if (vehicle.getIsBig())
 	{
+		const auto targetPosition = vehicle.getPosition();
+		vehicle.setPosition(*vehicle.buildBigSavedPosition);
 		vehicle.buildBigSavedPosition.reset();
-		moveVehicleBig (vehicle, position);
+		moveVehicleBig (vehicle, targetPosition);
 	}
 	addedUnit (vehicle);
 }

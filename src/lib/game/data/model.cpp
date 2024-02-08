@@ -241,7 +241,7 @@ cVehicle& cModel::addVehicle (const cPosition& position, const sID& id, cPlayer*
 	auto addedVehicle = std::make_shared<cVehicle> (staticUnitData, dynamicUnitData, player, nextUnitId++);
 	addedVehicle->setPosition (position);
 
-	map->addVehicle (*addedVehicle, position);
+	map->addVehicle (*addedVehicle);
 	if (player)
 	{
 		player->addUnit (addedVehicle);
@@ -577,7 +577,7 @@ void cModel::refreshMapPointer()
 		for (const auto& vehicle : player->getVehicles())
 		{
 			if (!vehicle->isUnitLoaded())
-				map->addVehicle (*vehicle, vehicle->getPosition());
+				map->addVehicle (*vehicle);
 		}
 		for (const auto& building : player->getBuildings())
 		{
@@ -590,7 +590,7 @@ void cModel::refreshMapPointer()
 	}
 	for (const auto& vehicle : neutralVehicles)
 	{
-		map->addVehicle (*vehicle, vehicle->getPosition());
+		map->addVehicle (*vehicle);
 	}
 }
 

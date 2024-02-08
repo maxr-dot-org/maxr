@@ -111,7 +111,7 @@ void cUnit::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& m
 	vehicle.setLoaded (false);
 
 	vehicle.setPosition (position);
-	map.addVehicle (vehicle, position);
+	map.addVehicle (vehicle);
 
 	if (vehicle.getOwner()) vehicle.getOwner()->addToScan (vehicle);
 }

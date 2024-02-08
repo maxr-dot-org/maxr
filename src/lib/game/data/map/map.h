@@ -238,7 +238,7 @@ public:
 	const cMapField& getField (const cPosition&) const;
 
 	void addBuilding (cBuilding&, const cPosition&);
-	void addVehicle (cVehicle&, const cPosition&);
+	void addVehicle (cVehicle&);
 
 	/**
 	* moves a vehicle to the given position
