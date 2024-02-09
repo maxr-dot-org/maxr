@@ -89,8 +89,6 @@ public:
 	void lock();
 	void unlock();
 
-	static cPosition getButtonSize (ePushButtonType);
-
 	cSignal<void()> clicked;
 
 protected:

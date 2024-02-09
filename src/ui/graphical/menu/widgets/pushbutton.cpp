@@ -32,47 +32,6 @@
 #include <cassert>
 
 //------------------------------------------------------------------------------
-/* static */ cPosition cPushButton::getButtonSize (ePushButtonType buttonType)
-{
-	switch (buttonType)
-	{
-		default:
-		case ePushButtonType::StandardBig: return cPosition (200, 29);
-		case ePushButtonType::StandardSmall: return cPosition (150, 29);
-		case ePushButtonType::Huge: return cPosition (109, 40);
-		case ePushButtonType::ArrowUpBig: return cPosition (28, 29);
-		case ePushButtonType::ArrowDownBig: return cPosition (28, 29);
-		case ePushButtonType::ArrowLeftBig: return cPosition (28, 29);
-		case ePushButtonType::ArrowRightBig: return cPosition (28, 29);
-		case ePushButtonType::ArrowUpSmall: return cPosition (18, 17);
-		case ePushButtonType::ArrowDownSmall: return cPosition (18, 17);
-		case ePushButtonType::ArrowLeftSmall: return cPosition (18, 17);
-		case ePushButtonType::ArrowRightSmall: return cPosition (18, 17);
-		case ePushButtonType::ArrowUpBar: return cPosition (17, 17);
-		case ePushButtonType::ArrowDownBar: return cPosition (17, 17);
-		case ePushButtonType::Angular: return cPosition (78, 23);
-		case ePushButtonType::HudHelp: return cPosition (26, 24);
-		case ePushButtonType::HudCenter: return cPosition (21, 22);
-		case ePushButtonType::HudReport: return cPosition (49, 20);
-		case ePushButtonType::HudChat: return cPosition (49, 20);
-		case ePushButtonType::HudNext: return cPosition (39, 23);
-		case ePushButtonType::HudPrev: return cPosition (38, 23);
-		case ePushButtonType::HudDone: return cPosition (26, 24);
-		case ePushButtonType::HudEnd: return cPosition (70, 17);
-		case ePushButtonType::HudPreferences: return cPosition (67, 20);
-		case ePushButtonType::HudFiles: return cPosition (67, 20);
-		case ePushButtonType::HudPlay: return cPosition (19, 18);
-		case ePushButtonType::HudStop: return cPosition (19, 19);
-		case ePushButtonType::UnitContextMenu: return cPosition (42, 21);
-		case ePushButtonType::Destroy: return cPosition (59, 56);
-		case ePushButtonType::ArrowUpSmallModern: return cPosition (16, 8);
-		case ePushButtonType::ArrowDownSmallModern: return cPosition (16, 8);
-		case ePushButtonType::ArrowLeftSmallModern: return cPosition (8, 16);
-		case ePushButtonType::ArrowRightSmallModern: return cPosition (8, 16);
-	}
-}
-
-//------------------------------------------------------------------------------
 cPushButton::cPushButton (const cBox<cPosition>& area) :
 	cClickableWidget (area),
 	buttonType (ePushButtonType::Invisible),
@@ -206,154 +165,120 @@ void cPushButton::renewSurface()
 		return;
 	}
 
-	cPosition size = getButtonSize (buttonType);
-	SDL_Rect src;
+	sPartialSurface partialSurface{};
 	switch (buttonType)
 	{
 		default:
 		case ePushButtonType::StandardBig:
-			src.x = 0;
-			src.y = (isPressed || isLocked) ? 29 : 0;
+			partialSurface = GraphicsData.get_PushButton_StandardBig (isPressed || isLocked);
 			break;
 		case ePushButtonType::StandardSmall:
-			src.x = 0;
-			src.y = (isPressed || isLocked) ? 87 : 58;
+			partialSurface = GraphicsData.get_PushButton_StandardSmall (isPressed || isLocked);
 			break;
 		case ePushButtonType::Huge:
-			src.x = (isPressed || isLocked) ? 109 : 0;
-			src.y = 116;
+			partialSurface = GraphicsData.get_PushButton_Huge (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowUpBig:
-			src.x = (isPressed || isLocked) ? 125 : 97;
-			src.y = 157;
+			partialSurface = GraphicsData.get_PushButton_ArrowUpBig (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowDownBig:
-			src.x = (isPressed || isLocked) ? 181 : 153;
-			src.y = 157;
+			partialSurface = GraphicsData.get_PushButton_ArrowDownBig (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowLeftBig:
-			src.x = (isPressed || isLocked) ? 293 : 265;
-			src.y = 157;
+			partialSurface = GraphicsData.get_PushButton_ArrowLeftBig (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowRightBig:
-			src.x = (isPressed || isLocked) ? 237 : 209;
-			src.y = 157;
+			partialSurface = GraphicsData.get_PushButton_ArrowRightBig (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowUpSmall:
-			src.x = (isPressed || isLocked) ? 151 + size.x() : 151;
-			src.y = 59;
+			partialSurface = GraphicsData.get_PushButton_ArrowUpSmall (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowDownSmall:
-			src.x = (isPressed || isLocked) ? 187 + size.x() : 187;
-			src.y = 59;
+			partialSurface = GraphicsData.get_PushButton_ArrowDownSmall (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowLeftSmall:
-			src.x = (isPressed || isLocked) ? 151 + size.x() : 151;
-			src.y = 76;
+			partialSurface = GraphicsData.get_PushButton_ArrowLeftSmall (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowRightSmall:
-			src.x = (isPressed || isLocked) ? 187 + size.x() : 187;
-			src.y = 76;
+			partialSurface = GraphicsData.get_PushButton_ArrowRightSmall (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowUpBar:
-			src.x = (isPressed || isLocked) ? 201 + size.x() : 201;
-			src.y = 1;
+			partialSurface = GraphicsData.get_PushButton_ArrowUpBar (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowDownBar:
-			src.x = (isPressed || isLocked) ? 201 + size.x() : 201;
-			src.y = 18;
+			partialSurface = GraphicsData.get_PushButton_ArrowDownBar (isPressed || isLocked);
 			break;
 		case ePushButtonType::Angular:
-			src.x = (isPressed || isLocked) ? size.x() : 0;
-			src.y = 196;
+			partialSurface = GraphicsData.get_PushButton_Angular (isPressed || isLocked);
 			break;
 		case ePushButtonType::HudHelp:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudHelpPressed() : cGraphicsData::getRect_PushButton_HudHelp();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudHelpPressed() : GraphicsData.get_PushButton_HudHelp();
 			break;
 		case ePushButtonType::HudCenter:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudCenterPressed() : cGraphicsData::getRect_PushButton_HudCenter();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudCenterPressed() : GraphicsData.get_PushButton_HudCenter();
 			break;
 		case ePushButtonType::HudNext:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudNextPressed() : cGraphicsData::getRect_PushButton_HudNext();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudNextPressed() : GraphicsData.get_PushButton_HudNext();
 			break;
 		case ePushButtonType::HudPrev:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudPrevPressed() : cGraphicsData::getRect_PushButton_HudPrev();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudPrevPressed() : GraphicsData.get_PushButton_HudPrev();
 			break;
 		case ePushButtonType::HudDone:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudDonePressed() : cGraphicsData::getRect_PushButton_HudDone();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudDonePressed() : GraphicsData.get_PushButton_HudDone();
 			break;
 		case ePushButtonType::HudReport:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudReportPressed() : cGraphicsData::getRect_PushButton_HudReport();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudReportPressed() : GraphicsData.get_PushButton_HudReport();
 			break;
 		case ePushButtonType::HudChat:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudChatPressed() : cGraphicsData::getRect_PushButton_HudChat();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudChatPressed() : GraphicsData.get_PushButton_HudChat();
 			break;
 		case ePushButtonType::HudPreferences:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudPreferencesPressed() : cGraphicsData::getRect_PushButton_HudPreferences();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudPreferencesPressed() : GraphicsData.get_PushButton_HudPreferences();
 			break;
 		case ePushButtonType::HudFiles:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudFilesPressed() : cGraphicsData::getRect_PushButton_HudFiles();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudFilesPressed() : GraphicsData.get_PushButton_HudFiles();
 			break;
 		case ePushButtonType::HudEnd:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudEndPressed() : cGraphicsData::getRect_PushButton_HudEnd();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudEndPressed() : GraphicsData.get_PushButton_HudEnd();
 			break;
 		case ePushButtonType::HudPlay:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudPlayPressed() : cGraphicsData::getRect_PushButton_HudPlay();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudPlayPressed() : GraphicsData.get_PushButton_HudPlay();
 			break;
 		case ePushButtonType::HudStop:
-			src = (isPressed || isLocked) ? cGraphicsData::getRect_PushButton_HudStopPressed() : cGraphicsData::getRect_PushButton_HudStop();
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_HudStopPressed() : GraphicsData.get_PushButton_HudStop();
 			break;
 		case ePushButtonType::UnitContextMenu:
-			src.x = 0;
-			src.y = (isPressed || isLocked) ? 21 : 0;
+			partialSurface = GraphicsData.get_PushButton_UnitContextMenu (isPressed || isLocked);
 			break;
 		case ePushButtonType::Destroy:
-			src.x = (isPressed || isLocked) ? 6 : 15;
-			src.y = (isPressed || isLocked) ? 269 : 13;
+			partialSurface = (isPressed || isLocked) ? GraphicsData.get_PushButton_DestroyPressed()
+			                                         : GraphicsData.get_PushButton_Destroy();
 			break;
 		case ePushButtonType::ArrowUpSmallModern:
-			src.x = 224;
-			src.y = (isPressed || isLocked) ? 75 : 83;
+			partialSurface = GraphicsData.get_PushButton_ArrowUpSmallModern (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowDownSmallModern:
-			src.x = 224;
-			src.y = (isPressed || isLocked) ? 59 : 67;
+			partialSurface = GraphicsData.get_PushButton_ArrowDownSmallModern (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowLeftSmallModern:
-			src.x = (isPressed || isLocked) ? 272 : 264;
-			src.y = 59;
+			partialSurface = GraphicsData.get_PushButton_ArrowLeftSmallModern (isPressed || isLocked);
 			break;
 		case ePushButtonType::ArrowRightSmallModern:
-			src.x = (isPressed || isLocked) ? 256 : 248;
-			src.y = 59;
+			partialSurface = GraphicsData.get_PushButton_ArrowRightSmallModern (isPressed || isLocked);
 			break;
 	}
-	resize (size);
+	resize ({partialSurface.rect.w, partialSurface.rect.h});
 
-	src.w = size.x();
-	src.h = size.y();
-
-	surface = UniqueSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	surface = UniqueSurface (SDL_CreateRGBSurface (0, partialSurface.rect.w, partialSurface.rect.h, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 
-	SDL_Surface* srcSurface = nullptr;
+	assert (partialSurface.surface != nullptr);
 
-	if (buttonType >= ePushButtonType::HudHelp && buttonType <= ePushButtonType::HudStop)
-		srcSurface = GraphicsData.gfx_hud_stuff.get();
-	else if (buttonType == ePushButtonType::UnitContextMenu)
-		srcSurface = GraphicsData.gfx_context_menu.get();
-	else if (buttonType == ePushButtonType::Destroy)
-		srcSurface = (isPressed || isLocked) ? GraphicsData.gfx_hud_stuff.get() : GraphicsData.gfx_destruction.get();
-	else
-		srcSurface = GraphicsData.gfx_menu_stuff.get();
-
-	assert (srcSurface != nullptr);
-
-	SDL_BlitSurface (srcSurface, &src, surface.get(), nullptr);
+	SDL_BlitSurface (partialSurface.surface, &partialSurface.rect, surface.get(), nullptr);
 
 	if (shorten) {
-		text = cUnicodeFont::font->shortenStringToSize (text, size.x() - getBordersSize(), fontType);
+		text = cUnicodeFont::font->shortenStringToSize (text, partialSurface.rect.w - getBordersSize(), fontType);
 	}
 }
 

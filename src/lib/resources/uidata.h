@@ -35,10 +35,93 @@ class cPlayer;
 struct sBuildingUIData;
 struct sVehicleUIData;
 
+struct sPartialSurface
+{
+	SDL_Surface* surface = nullptr;
+	SDL_Rect rect{};
+};
+
 // GraphicsData - Class containing all normal graphic surfaces ////////////////
 class cGraphicsData
 {
 public:
+	sPartialSurface get_CheckBox_Round (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 151 + 18 : 151, 93, 18, 17}}; }
+	sPartialSurface get_CheckBox_Angular (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 78 : 0, 196, 78, 23}}; }
+	sPartialSurface get_CheckBox_Standard (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 187 + 18 : 187, 93, 18, 17}}; }
+	sPartialSurface get_CheckBox_Tank (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 32 : 0, 219, 32, 31}}; }
+	sPartialSurface get_CheckBox_Plane (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 32 * 2 + 32 : 32 * 2, 219, 32, 31}}; }
+	sPartialSurface get_CheckBox_Ship (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 32 * 4 + 32 : 32 * 4, 219, 32, 31}}; }
+	sPartialSurface get_CheckBox_Building (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 32 * 6 + 32 : 32 * 6, 219, 32, 31}}; }
+	sPartialSurface get_CheckBox_Tnt (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 32 * 8 + 32 : 32 * 8, 219, 32, 31}}; }
+
+	sPartialSurface get_CheckBox_HudIndex00 (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 0 : 167, 44, 55, 18}}; }
+	sPartialSurface get_CheckBox_HudIndex01 (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 55 : 222, 44, 55, 18}}; }
+	sPartialSurface get_CheckBox_HudIndex02 (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 110 : 277, 44, 55, 18}}; }
+	sPartialSurface get_CheckBox_HudIndex10 (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 0 : 167, 62, 55, 16}}; }
+	sPartialSurface get_CheckBox_HudIndex11 (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 55 : 222, 62, 55, 16}}; }
+	sPartialSurface get_CheckBox_HudIndex12 (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 110 : 277, 62, 55, 16}}; }
+	sPartialSurface get_CheckBox_HudIndex20 (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 0 : 167, 78, 55, 18}}; }
+	sPartialSurface get_CheckBox_HudIndex21 (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 55 : 222, 78, 55, 18}}; }
+	sPartialSurface get_CheckBox_HudIndex22 (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 110 : 277, 78, 55, 18}}; }
+
+	sPartialSurface get_CheckBox_UnitContextMenu (bool pressed) const { return {gfx_context_menu.get(), {0, pressed ? 21 : 0, 42, 21}}; }
+	sPartialSurface get_CheckBox_ArrowDownSmall (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 187 + 18 : 187, 59, 18, 17}}; }
+
+	sPartialSurface get_CheckBox_HudLock() const { return {gfx_hud_stuff.get(), {397, 298, 21, 22}}; }
+	sPartialSurface get_CheckBox_HudUnlock() const { return {gfx_hud_stuff.get(), {397, 321, 21, 22}}; }
+	sPartialSurface get_CheckBox_HudTnt (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 362 : 334, 24, 27, 28}}; }
+	sPartialSurface get_CheckBox_Hud2x (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 362 : 334, 53, 27, 28}}; }
+	sPartialSurface get_CheckBox_HudChat (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 160 : 196, pressed ? 21 : 129, 49, 20}}; }
+	sPartialSurface get_CheckBox_HudPlayer (bool pressed) const { return {gfx_hud_stuff.get(), {pressed ? 344 : 317, 479, 27, 28}}; }
+
+	sPartialSurface get_PushButton_StandardBig (bool pressed) const { return {gfx_menu_stuff.get(), {0, pressed ? 29 : 0, 200, 29}}; }
+	sPartialSurface get_PushButton_StandardSmall (bool pressed) const { return {gfx_menu_stuff.get(), {0, pressed ? 87 : 58, 150, 29}}; }
+	sPartialSurface get_PushButton_Huge (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 109 : 0, 116, 109, 40}}; }
+	sPartialSurface get_PushButton_ArrowUpBig (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 125 : 97, 157, 28, 29}}; }
+	sPartialSurface get_PushButton_ArrowDownBig (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 181 : 153, 157, 28, 29}}; }
+	sPartialSurface get_PushButton_ArrowLeftBig (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 293 : 265, 157, 28, 29}}; }
+	sPartialSurface get_PushButton_ArrowRightBig (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 237 : 209, 157, 28, 29}}; }
+	sPartialSurface get_PushButton_ArrowUpSmall (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 151 + 18 : 151, 59, 18, 17}}; }
+	sPartialSurface get_PushButton_ArrowDownSmall (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 187 + 18 : 187, 59, 18, 17}}; }
+	sPartialSurface get_PushButton_ArrowLeftSmall (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 151 + 18 : 151, 76, 18, 17}}; }
+	sPartialSurface get_PushButton_ArrowRightSmall (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 187 + 18 : 187, 76, 18, 17}}; }
+	sPartialSurface get_PushButton_ArrowUpBar (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 201 + 17 : 201, 1, 17, 17}}; }
+	sPartialSurface get_PushButton_ArrowDownBar (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 201 + 17 : 201, 18, 17, 17}}; }
+	sPartialSurface get_PushButton_Angular (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 78 : 0, 196, 78, 23}}; }
+
+	sPartialSurface get_PushButton_HudHelpPressed() const { return {gfx_hud_stuff.get(), {366, 0, 26, 24}}; }
+	sPartialSurface get_PushButton_HudHelp() const { return {gfx_hud_stuff.get(), {268, 151, 26, 24}}; }
+	sPartialSurface get_PushButton_HudCenterPressed() const { return {gfx_hud_stuff.get(), {0, 21, 21, 22}}; }
+	sPartialSurface get_PushButton_HudCenter() const { return {gfx_hud_stuff.get(), {139, 149, 21, 22}}; }
+	sPartialSurface get_PushButton_HudNextPressed() const { return {gfx_hud_stuff.get(), {288, 0, 39, 23}}; }
+	sPartialSurface get_PushButton_HudNext() const { return {gfx_hud_stuff.get(), {158, 172, 39, 23}}; }
+	sPartialSurface get_PushButton_HudPrevPressed() const { return {gfx_hud_stuff.get(), {327, 0, 38, 23}}; }
+	sPartialSurface get_PushButton_HudPrev() const { return {gfx_hud_stuff.get(), {198, 172, 38, 23}}; }
+	sPartialSurface get_PushButton_HudDonePressed() const { return {gfx_hud_stuff.get(), {262, 0, 26, 24}}; }
+	sPartialSurface get_PushButton_HudDone() const { return {gfx_hud_stuff.get(), {132, 172, 26, 24}}; }
+	sPartialSurface get_PushButton_HudReportPressed() const { return {gfx_hud_stuff.get(), {210, 21, 49, 20}}; }
+	sPartialSurface get_PushButton_HudReport() const { return {gfx_hud_stuff.get(), {245, 130, 49, 20}}; }
+	sPartialSurface get_PushButton_HudChatPressed() const { return {gfx_hud_stuff.get(), {160, 21, 49, 20}}; }
+	sPartialSurface get_PushButton_HudChat() const { return {gfx_hud_stuff.get(), {196, 129, 49, 20}}; }
+	sPartialSurface get_PushButton_HudPreferencesPressed() const { return {gfx_hud_stuff.get(), {195, 0, 67, 20}}; }
+	sPartialSurface get_PushButton_HudPreferences() const { return {gfx_hud_stuff.get(), {0, 169, 67, 20}}; }
+	sPartialSurface get_PushButton_HudFilesPressed() const { return {gfx_hud_stuff.get(), {93, 21, 67, 20}}; }
+	sPartialSurface get_PushButton_HudFiles() const { return {gfx_hud_stuff.get(), {71, 151, 67, 20}}; }
+	sPartialSurface get_PushButton_HudEndPressed() const { return {gfx_hud_stuff.get(), {22, 21, 70, 17}}; }
+	sPartialSurface get_PushButton_HudEnd() const { return {gfx_hud_stuff.get(), {0, 151, 70, 17}}; }
+	sPartialSurface get_PushButton_HudPlayPressed() const { return {gfx_hud_stuff.get(), {157, 0, 19, 18}}; }
+	sPartialSurface get_PushButton_HudPlay() const { return {gfx_hud_stuff.get(), {0, 132, 19, 18}}; }
+	sPartialSurface get_PushButton_HudStopPressed() const { return {gfx_hud_stuff.get(), {176, 0, 19, 19}}; }
+	sPartialSurface get_PushButton_HudStop() const { return {gfx_hud_stuff.get(), {19, 132, 19, 19}}; }
+
+	sPartialSurface get_PushButton_UnitContextMenu (bool pressed) const { return {gfx_context_menu.get(), {0, pressed ? 21 : 0, 42, 21}}; }
+	sPartialSurface get_PushButton_DestroyPressed() const { return {gfx_hud_stuff.get(), {6, 269, 59, 56}}; }
+	sPartialSurface get_PushButton_Destroy() const { return {gfx_destruction.get(), {15, 13, 59, 56}}; }
+	sPartialSurface get_PushButton_ArrowUpSmallModern (bool pressed) const { return {gfx_menu_stuff.get(), {224, pressed ? 75 : 83, 16, 8}}; }
+	sPartialSurface get_PushButton_ArrowDownSmallModern (bool pressed) const { return {gfx_menu_stuff.get(), {224, pressed ? 59 : 67, 16, 8}}; }
+	sPartialSurface get_PushButton_ArrowLeftSmallModern (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 272 : 264, 59, 8, 16}}; }
+	sPartialSurface get_PushButton_ArrowRightSmallModern (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 256 : 248, 59, 8, 16}}; }
+
 	UniqueSurface gfx_Chand;
 	UniqueSurface gfx_Cno;
 	UniqueSurface gfx_Cselect;
@@ -137,61 +220,6 @@ public:
 	static SDL_Rect getRect_BigSymbol_Energy() { return {125, 109, 13, 17}; }
 	static SDL_Rect getRect_BigSymbol_Human() { return {138, 109, 12, 16}; }
 	static SDL_Rect getRect_BigSymbol_MetalEmpty() { return {175, 109, 12, 15}; }
-
-	static SDL_Rect getRect_CheckBox_HudLock() { return {397, 298, 21, 22}; }
-	static SDL_Rect getRect_CheckBox_HudUnlock() { return {397, 321, 21, 22}; }
-	static SDL_Rect getRect_CheckBox_HudTnt() { return {334, 24, 27, 28}; }
-	static SDL_Rect getRect_CheckBox_HudTntPressed() { return {362, 24, 27, 28}; }
-	static SDL_Rect getRect_CheckBox_Hud2x() { return {334, 53, 27, 28}; }
-	static SDL_Rect getRect_CheckBox_Hud2xPressed() { return {362, 53, 27, 28}; }
-	static SDL_Rect getRect_CheckBox_HudChat() { return {196, 129, 49, 20}; }
-	static SDL_Rect getRect_CheckBox_HudChatPressed() { return {160, 21, 49, 20}; }
-	static SDL_Rect getRect_CheckBox_HudPlayer() { return {317, 479, 27, 28}; }
-	static SDL_Rect getRect_CheckBox_HudPlayerPressed() { return {344, 479, 27, 28}; }
-
-	static SDL_Rect getRect_CheckBox_HudIndex00Pressed() { return {0, 44, 55, 18}; }
-	static SDL_Rect getRect_CheckBox_HudIndex00() { return {167, 44, 55, 18}; }
-	static SDL_Rect getRect_CheckBox_HudIndex01Pressed() { return {55, 44, 55, 18}; }
-	static SDL_Rect getRect_CheckBox_HudIndex01() { return {222, 44, 55, 18}; }
-	static SDL_Rect getRect_CheckBox_HudIndex02Pressed() { return {110, 44, 55, 18}; }
-	static SDL_Rect getRect_CheckBox_HudIndex02() { return {277, 44, 55, 18}; }
-	static SDL_Rect getRect_CheckBox_HudIndex10Pressed() { return {0, 62, 55, 16}; }
-	static SDL_Rect getRect_CheckBox_HudIndex10() { return {167, 62, 55, 16}; }
-	static SDL_Rect getRect_CheckBox_HudIndex11Pressed() { return {55, 62, 55, 16}; }
-	static SDL_Rect getRect_CheckBox_HudIndex11() { return {222, 62, 55, 16}; }
-	static SDL_Rect getRect_CheckBox_HudIndex12Pressed() { return {110, 62, 55, 16}; }
-	static SDL_Rect getRect_CheckBox_HudIndex12() { return {277, 62, 55, 16}; }
-	static SDL_Rect getRect_CheckBox_HudIndex20Pressed() { return {0, 78, 55, 18}; }
-	static SDL_Rect getRect_CheckBox_HudIndex20() { return {167, 78, 55, 18}; }
-	static SDL_Rect getRect_CheckBox_HudIndex21Pressed() { return {55, 78, 55, 18}; }
-	static SDL_Rect getRect_CheckBox_HudIndex21() { return {222, 78, 55, 18}; }
-	static SDL_Rect getRect_CheckBox_HudIndex22Pressed() { return {110, 78, 55, 18}; }
-	static SDL_Rect getRect_CheckBox_HudIndex22() { return {277, 78, 55, 18}; }
-
-	static SDL_Rect getRect_PushButton_HudHelpPressed() { return {366, 0, 26, 24}; }
-	static SDL_Rect getRect_PushButton_HudHelp() { return {268, 151, 26, 24}; }
-	static SDL_Rect getRect_PushButton_HudCenterPressed() { return {0, 21, 21, 22}; }
-	static SDL_Rect getRect_PushButton_HudCenter() { return {139, 149, 21, 22}; }
-	static SDL_Rect getRect_PushButton_HudNextPressed() { return {288, 0, 39, 23}; }
-	static SDL_Rect getRect_PushButton_HudNext() { return {158, 172, 39, 23}; }
-	static SDL_Rect getRect_PushButton_HudPrevPressed() { return {327, 0, 38, 23}; }
-	static SDL_Rect getRect_PushButton_HudPrev() { return {198, 172, 38, 23}; }
-	static SDL_Rect getRect_PushButton_HudDonePressed() { return {262, 0, 26, 24}; }
-	static SDL_Rect getRect_PushButton_HudDone() { return {132, 172, 26, 24}; }
-	static SDL_Rect getRect_PushButton_HudReportPressed() { return {210, 21, 49, 20}; }
-	static SDL_Rect getRect_PushButton_HudReport() { return {245, 130, 49, 20}; }
-	static SDL_Rect getRect_PushButton_HudChatPressed() { return {160, 21, 49, 20}; }
-	static SDL_Rect getRect_PushButton_HudChat() { return {196, 129, 49, 20}; }
-	static SDL_Rect getRect_PushButton_HudPreferencesPressed() { return {195, 0, 67, 20}; }
-	static SDL_Rect getRect_PushButton_HudPreferences() { return {0, 169, 67, 20}; }
-	static SDL_Rect getRect_PushButton_HudFilesPressed() { return {93, 21, 67, 20}; }
-	static SDL_Rect getRect_PushButton_HudFiles() { return {71, 151, 67, 20}; }
-	static SDL_Rect getRect_PushButton_HudEndPressed() { return {22, 21, 70, 17}; }
-	static SDL_Rect getRect_PushButton_HudEnd() { return {0, 151, 70, 17}; }
-	static SDL_Rect getRect_PushButton_HudPlayPressed() { return {157, 0, 19, 18}; }
-	static SDL_Rect getRect_PushButton_HudPlay() { return {0, 132, 19, 18}; }
-	static SDL_Rect getRect_PushButton_HudStopPressed() { return {176, 0, 19, 19}; }
-	static SDL_Rect getRect_PushButton_HudStop() { return {19, 132, 19, 19}; }
 
 	static SDL_Rect getRect_Slider_HudZoom() { return {132, 0, 26, 16}; }
 };

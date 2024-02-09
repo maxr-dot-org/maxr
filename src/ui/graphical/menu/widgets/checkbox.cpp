@@ -216,154 +216,102 @@ bool cCheckBox::handleClicked (cApplication& application, cMouse& mouse, eMouseB
 //------------------------------------------------------------------------------
 void cCheckBox::renewSurface()
 {
-	cPosition size;
-	SDL_Rect src = {0, 0, 0, 0};
 	auto font = cUnicodeFont::font.get();
-	int textLimitWidth = -1;
+	std::optional<int> textLimitWidth;
 
-	if (type >= eCheckBoxType::HudIndex_00 && type <= eCheckBoxType::HudIndex_22)
-	{
-		src.y = 44;
-		size = cPosition (55, 0);
-	}
+	sPartialSurface partialSurface{};
 	switch (type)
 	{
 		case eCheckBoxType::TextOnly:
 			surface = nullptr;
-			size = cPosition (font->getTextWide (text, fontType), font->getFontHeight (fontType));
+			partialSurface.rect.w = font->getTextWide (text, fontType);
+			partialSurface.rect.h = font->getFontHeight (fontType);
 			break;
 		default:
 		case eCheckBoxType::Round:
-			size = cPosition (18, 17);
-			src.x = (checked || isPressed) ? 151 + size.x() : 151;
-			src.y = 93;
+			partialSurface = GraphicsData.get_CheckBox_Round (checked || isPressed);
 			break;
 		case eCheckBoxType::Angular:
-			size = cPosition (78, 23);
-			src.x = (checked || isPressed) ? size.x() : 0;
-			src.y = 196;
-			textLimitWidth = size.x() - 16;
+			partialSurface = GraphicsData.get_CheckBox_Angular (checked || isPressed);
+			textLimitWidth = partialSurface.rect.w - 16;
 			break;
 		case eCheckBoxType::Standard:
-			size = cPosition (18, 17);
-			src.x = (checked || isPressed) ? 187 + size.x() : 187;
-			src.y = 93;
+			partialSurface = GraphicsData.get_CheckBox_Standard (checked || isPressed);
 			break;
 		case eCheckBoxType::Tank:
-			size = cPosition (32, 31);
-			src.x = (checked || isPressed) ? size.x() : 0;
-			src.y = 219;
+			partialSurface = GraphicsData.get_CheckBox_Tank (checked || isPressed);
 			break;
 		case eCheckBoxType::Plane:
-			size = cPosition (32, 31);
-			src.x = (checked || isPressed) ? 32 * 2 + size.x() : 32 * 2;
-			src.y = 219;
+			partialSurface = GraphicsData.get_CheckBox_Plane (checked || isPressed);
 			break;
 		case eCheckBoxType::Ship:
-			size = cPosition (32, 31);
-			src.x = (checked || isPressed) ? 32 * 4 + size.x() : 32 * 4;
-			src.y = 219;
+			partialSurface = GraphicsData.get_CheckBox_Ship (checked || isPressed);
 			break;
 		case eCheckBoxType::Building:
-			size = cPosition (32, 31);
-			src.x = (checked || isPressed) ? 32 * 6 + size.x() : 32 * 6;
-			src.y = 219;
+			partialSurface = GraphicsData.get_CheckBox_Building (checked || isPressed);
 			break;
 		case eCheckBoxType::Tnt:
-			size = cPosition (32, 31);
-			src.x = (checked || isPressed) ? 32 * 8 + size.x() : 32 * 8;
-			src.y = 219;
+			partialSurface = GraphicsData.get_CheckBox_Tnt (checked || isPressed);
 			break;
 		case eCheckBoxType::HudIndex_00:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex00Pressed() : cGraphicsData::getRect_CheckBox_HudIndex00();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudIndex00 (checked || isPressed);
 			break;
 		case eCheckBoxType::HudIndex_01:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex01Pressed() : cGraphicsData::getRect_CheckBox_HudIndex01();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudIndex01 (checked || isPressed);
 			break;
 		case eCheckBoxType::HudIndex_02:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex02Pressed() : cGraphicsData::getRect_CheckBox_HudIndex02();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudIndex02 (checked || isPressed);
 			break;
 		case eCheckBoxType::HudIndex_10:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex10Pressed() : cGraphicsData::getRect_CheckBox_HudIndex10();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudIndex10 (checked || isPressed);
 			break;
 		case eCheckBoxType::HudIndex_11:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex11Pressed() : cGraphicsData::getRect_CheckBox_HudIndex11();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudIndex11 (checked || isPressed);
 			break;
 		case eCheckBoxType::HudIndex_12:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex12Pressed() : cGraphicsData::getRect_CheckBox_HudIndex12();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudIndex12 (checked || isPressed);
 			break;
 		case eCheckBoxType::HudIndex_20:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex20Pressed() : cGraphicsData::getRect_CheckBox_HudIndex20();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudIndex20 (checked || isPressed);
 			break;
 		case eCheckBoxType::HudIndex_21:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex21Pressed() : cGraphicsData::getRect_CheckBox_HudIndex21();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudIndex21 (checked || isPressed);
 			break;
 		case eCheckBoxType::HudIndex_22:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudIndex22Pressed() : cGraphicsData::getRect_CheckBox_HudIndex22();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudIndex22 (checked || isPressed);
 			break;
 		case eCheckBoxType::HudChat:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudChatPressed() : cGraphicsData::getRect_CheckBox_HudChat();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudChat (checked || isPressed);
 			break;
 		case eCheckBoxType::HudLock:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudLock() : cGraphicsData::getRect_CheckBox_HudUnlock();
-			size = cPosition (src.w, src.h);
+			partialSurface = (checked || isPressed) ? GraphicsData.get_CheckBox_HudLock() : GraphicsData.get_CheckBox_HudUnlock();
 			break;
 		case eCheckBoxType::HudTnt:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudTntPressed() : cGraphicsData::getRect_CheckBox_HudTnt();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudTnt (checked || isPressed);
 			break;
 		case eCheckBoxType::Hud2x:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_Hud2xPressed() : cGraphicsData::getRect_CheckBox_Hud2x();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_Hud2x (checked || isPressed);
 			break;
 		case eCheckBoxType::HudPlayers:
-			src = (checked || isPressed) ? cGraphicsData::getRect_CheckBox_HudPlayerPressed() : cGraphicsData::getRect_CheckBox_HudPlayer();
-			size = cPosition (src.w, src.h);
+			partialSurface = GraphicsData.get_CheckBox_HudPlayer (checked || isPressed);
 			break;
 		case eCheckBoxType::UnitContextMenu:
-			size = cPosition (42, 21);
-			src.x = 0;
-			src.y = (checked || isPressed) ? 21 : 0;
+			partialSurface = GraphicsData.get_CheckBox_UnitContextMenu (checked || isPressed);
 			break;
 		case eCheckBoxType::ArrowDownSmall:
-			size = cPosition (18, 17);
-			src.x = (checked || isPressed) ? 187 + size.x() : 187;
-			src.y = 59;
+			partialSurface = GraphicsData.get_CheckBox_ArrowDownSmall (checked || isPressed);
 			break;
 	}
-	resize (size);
-	src.w = size.x();
-	src.h = size.y();
+	resize ({partialSurface.rect.w, partialSurface.rect.h});
 
-	if (src.w > 0)
+	if (partialSurface.surface)
 	{
-		surface = UniqueSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+		surface = UniqueSurface (SDL_CreateRGBSurface (0, partialSurface.rect.w, partialSurface.rect.h, Video.getColDepth(), 0, 0, 0, 0));
 		SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 		SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
 
-		SDL_Surface* srcSurface = nullptr;
-
-		if (type >= eCheckBoxType::HudIndex_00 && type <= eCheckBoxType::HudPlayers)
-			srcSurface = GraphicsData.gfx_hud_stuff.get();
-		else if (type == eCheckBoxType::UnitContextMenu)
-			srcSurface = GraphicsData.gfx_context_menu.get();
-		else
-			srcSurface = GraphicsData.gfx_menu_stuff.get();
-
-		assert (srcSurface != nullptr);
-
-		SDL_BlitSurface (srcSurface, &src, surface.get(), nullptr);
+		SDL_BlitSurface (partialSurface.surface, &partialSurface.rect, surface.get(), nullptr);
 	}
 
-	if (shorten && textLimitWidth != -1) text = font->shortenStringToSize (text, textLimitWidth, fontType);
+	if (shorten && textLimitWidth) text = font->shortenStringToSize (text, *textLimitWidth, fontType);
 }
