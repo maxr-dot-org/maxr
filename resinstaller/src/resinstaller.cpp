@@ -61,8 +61,36 @@ bool wasError = false;
 
 bool oggEncode = false;
 
+//------------------------------------------------------------------------------
+static void trimSpaces (std::string& str, const std::locale& loc = std::locale())
+{
+	// trim spaces at the beginning
+	std::string::size_type pos = 0;
+	while (pos < str.size() && isspace (str[pos], loc))
+		pos++;
+	str.erase (0, pos);
+	// trim spaces at the end
+	pos = str.size();
+	while (pos > 0 && isspace (str[pos - 1], loc))
+		pos--;
+	str.erase (pos);
+}
+
+//------------------------------------------------------------------------------
+static void trimQuotes (std::string& str)
+{
+	std::string::size_type pos = 0;
+	while (pos < str.size() && str[pos] == '"')
+		pos++;
+	str.erase (0, pos);
+	pos = str.size();
+	while (pos > 0 && str[pos - 1] == '"')
+		pos--;
+	str.erase (pos);
+}
+
 //-------------------------------------------------------------
-int installMVEs()
+static void installMVEs()
 {
 	iTotalFiles = 3;
 	iErrors = 0;
@@ -89,11 +117,10 @@ int installMVEs()
 
 	std::cout << "\n";
 	std::cout << std::to_string (iErrors) << " errors\n";
-	return 1;
 }
 
 //-------------------------------------------------------------
-int installVehicleGraphics()
+static void installVehicleGraphics()
 {
 	iTotalFiles = 824;
 	iErrors = 0;
@@ -1366,11 +1393,10 @@ int installVehicleGraphics()
 
 	std::cout << "\n";
 	std::cout << std::to_string (iErrors) << " errors\n";
-	return 1;
 }
 
 //-------------------------------------------------------------
-int installBuildingGraphics()
+static void installBuildingGraphics()
 {
 	iTotalFiles = 161;
 	iErrors = 0;
@@ -2137,12 +2163,10 @@ int installBuildingGraphics()
 		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
-
-	return 1;
 }
 
 //-------------------------------------------------------------
-int installVehicleVideos()
+static void installVehicleVideos()
 {
 	iTotalFiles = 35;
 	iErrors = 0;
@@ -2202,12 +2226,10 @@ int installVehicleVideos()
 		writeLog (std::to_string (iErrors) + " errors" + TEXT_FILE_LF);
 		writeLog (std::string ("========================================================================") + TEXT_FILE_LF);
 	}
-
-	return 1;
 }
 
 //-------------------------------------------------------------
-int installFX()
+static void installFX()
 {
 	SDL_Surface *surface, *output;
 	iTotalFiles = 9;
@@ -2443,12 +2465,10 @@ int installFX()
 
 	std::cout << "\n";
 	std::cout << std::to_string (iErrors) << " errors\n";
-
-	return 1;
 }
 
 //-------------------------------------------------------------
-int installGfx()
+static void installGfx()
 {
 	SDL_Surface *surface, *output;
 	iTotalFiles = 44;
@@ -3087,12 +3107,10 @@ int installGfx()
 
 	std::cout << "\n";
 	std::cout << std::to_string (iErrors) << " errors\n";
-
-	return 1;
 }
 
 //-------------------------------------------------------------
-int installBuildingSounds()
+static void installBuildingSounds()
 {
 	iTotalFiles = 46;
 	iErrors = 0;
@@ -3228,11 +3246,10 @@ int installBuildingSounds()
 
 	std::cout << "\n";
 	std::cout << std::to_string (iErrors) << " errors\n";
-	return 1;
 }
 
 //-------------------------------------------------------------
-int installVehicleSounds()
+static void installVehicleSounds()
 {
 	iTotalFiles = 178;
 	iErrors = 0;
@@ -3538,11 +3555,10 @@ int installVehicleSounds()
 
 	std::cout << "\n";
 	std::cout << std::to_string (iErrors) << " errors\n";
-	return 1;
 }
 
 //-------------------------------------------------------------
-void installVoices()
+static void installVoices()
 {
 	iTotalFiles = 65;
 	iErrors = 0;
@@ -3672,7 +3688,7 @@ void installVoices()
 }
 
 //-------------------------------------------------------------
-void installMaps()
+static void installMaps()
 {
 	iTotalFiles = 24;
 	iErrors = 0;
@@ -3723,7 +3739,7 @@ void installMaps()
 }
 
 //-------------------------------------------------------------
-void installSounds()
+static void installSounds()
 {
 	iTotalFiles = 31;
 	iErrors = 0;
@@ -3783,7 +3799,7 @@ void installSounds()
 }
 
 //-------------------------------------------------------------
-void installMusic()
+static void installMusic()
 {
 	iTotalFiles = 13;
 	iErrors = 0;
@@ -3825,7 +3841,7 @@ void installMusic()
 }
 
 //-------------------------------------------------------------
-void initialize()
+static void initialize()
 {
 	// at startup SDL_Init should be called before all other SDL functions
 	if (SDL_Init (SDL_INIT_VIDEO) == -1)
@@ -3846,7 +3862,7 @@ void initialize()
 }
 
 //-------------------------------------------------------------
-void showIntroduction()
+static void showIntroduction()
 {
 	std::string strAbout1 = "Resinstaller - installs graphics and sounds from Interplay's M.A.X. to ";
 	std::string strAbout2 = "M.A.X.R. for original game look and feel. For this you need an existing ";
@@ -3886,7 +3902,7 @@ void showIntroduction()
 }
 
 #ifdef WIN32
-std::filesystem::path getHomeDir()
+static std::filesystem::path getHomeDir()
 {
 	char szPath[MAX_PATH];
 	if (SHGetFolderPathA (nullptr, CSIDL_PERSONAL, nullptr, 0, szPath) == S_OK)
@@ -3898,7 +3914,7 @@ std::filesystem::path getHomeDir()
 #endif
 
 //-------------------------------------------------------------
-void createLogFile (const std::filesystem::path& dataDir)
+static void createLogFile (const std::filesystem::path& dataDir)
 {
 	std::filesystem::path path;
 	if (!dataDir.empty() && DirExists (dataDir / "portable"))
@@ -3942,7 +3958,7 @@ void createLogFile (const std::filesystem::path& dataDir)
 	writeLog (std::string ("resinstaller version ") + VERSION + TEXT_FILE_LF);
 }
 
-void checkWritePermissions (const std::string& appName, bool bDoNotElevate)
+static void checkWritePermissions (const std::string& appName, bool bDoNotElevate)
 {
 #ifdef WIN32
 	// create test file
@@ -3986,7 +4002,7 @@ void checkWritePermissions (const std::string& appName, bool bDoNotElevate)
 }
 
 //-------------------------------------------------------------
-bool validateMAXPath (std::filesystem::path& maxPath)
+static bool validateMAXPath (std::filesystem::path& maxPath)
 {
 	const std::filesystem::path dirs[] = {
 		maxPath,
@@ -4010,7 +4026,7 @@ bool validateMAXPath (std::filesystem::path& maxPath)
 }
 
 //-------------------------------------------------------------
-std::filesystem::path getMAXPathFromUser (std::string cmdLineMaxPath)
+static std::filesystem::path getMAXPathFromUser (std::string cmdLineMaxPath)
 {
 #if MAC
 	// pass the validateMAXPath-Method as function pointer, so that the askForCDPath-Method can determine, if the path is valid.
@@ -4055,13 +4071,13 @@ std::filesystem::path getMAXPathFromUser (std::string cmdLineMaxPath)
 }
 
 //-------------------------------------------------------------
-bool validateOutputPath (const std::string& outputPath)
+static bool validateOutputPath (const std::string& outputPath)
 {
 	return std::filesystem::exists (std::filesystem::path (outputPath) / "init.pcx");
 }
 
 //-------------------------------------------------------------
-std::string validateResources (std::string zChoices)
+static std::string validateResources (std::string zChoices)
 {
 	if (zChoices.find ("all") != std::string::npos)
 	{
@@ -4075,7 +4091,7 @@ std::string validateResources (std::string zChoices)
 }
 
 //-------------------------------------------------------------
-void getResChoiceFromUser()
+static void getResChoiceFromUser()
 {
 	std::string sChoiceFromUser = "";
 	// what kind of resources should the resinstaller import into M.A.X. Reloaded
@@ -4110,7 +4126,7 @@ void getResChoiceFromUser()
 }
 
 //-------------------------------------------------------------
-std::filesystem::path getOutputPathFromUser (std::string cmdLineOutputPath)
+static std::filesystem::path getOutputPathFromUser (std::string cmdLineOutputPath)
 {
 #if MAC
 	// pass the validateOutputPath-Method as function pointer, so that the askForOutputPath-Method can determine, if the path is valid.
@@ -4154,7 +4170,7 @@ std::filesystem::path getOutputPathFromUser (std::string cmdLineOutputPath)
 }
 
 //-------------------------------------------------------------
-int checkForAvailableLanguages (std::string testFileName, bool& bGerman, bool& bItalian, bool& bFrench, bool& bUppercase)
+static int checkForAvailableLanguages (std::string testFileName, bool& bGerman, bool& bItalian, bool& bFrench, bool& bUppercase)
 {
 	int iLanguages = 0;
 	if (std::filesystem::exists (sMAXPath / "german" / (testFileName + waveExtension)))
@@ -4199,7 +4215,7 @@ int checkForAvailableLanguages (std::string testFileName, bool& bGerman, bool& b
 bool gFinishedInstalling = false; // MAC: needed as flag, for closing the progess bar window, when the installation is finished.
 
 //-------------------------------------------------------------
-int installEverything (void*)
+static int installEverything (void*)
 {
 	gFinishedInstalling = false;
 
@@ -4342,32 +4358,6 @@ int installEverything (void*)
 	gFinishedInstalling = true;
 
 	return 0;
-}
-
-void trimSpaces (std::string& str, const std::locale& loc)
-{
-	// trim spaces at the beginning
-	std::string::size_type pos = 0;
-	while (pos < str.size() && isspace (str[pos], loc))
-		pos++;
-	str.erase (0, pos);
-	// trim spaces at the end
-	pos = str.size();
-	while (pos > 0 && isspace (str[pos - 1], loc))
-		pos--;
-	str.erase (pos);
-}
-
-void trimQuotes (std::string& str)
-{
-	std::string::size_type pos = 0;
-	while (pos < str.size() && str[pos] == '"')
-		pos++;
-	str.erase (0, pos);
-	pos = str.size();
-	while (pos > 0 && str[pos - 1] == '"')
-		pos--;
-	str.erase (pos);
 }
 
 //-------------------------------------------------------------

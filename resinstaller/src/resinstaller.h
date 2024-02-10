@@ -51,10 +51,6 @@ public:
 	InstallException (std::string m) { message = m; };
 };
 
-void trimSpaces (std::string& str, const std::locale& loc = std::locale());
-
-void trimQuotes (std::string& str);
-
 // makes all necessary actions after a successful
 // or unsuccessful attempt to install a file
 #define END_INSTALL_FILE(file) \
