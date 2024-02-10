@@ -37,13 +37,13 @@
 
 #if MAC
 # include "mac/sources/resinstallerGUI.h"
+# include <thread>
 #elif WIN32
 # include <Shlobj.h>
 # include <conio.h> // for getch
 #endif
 
 static std::filesystem::path sMAXPath;
-static std::filesystem::path sVoicePath;
 std::filesystem::path sOutputPath;
 static std::string sLanguage;
 static std::string sResChoice;
@@ -90,7 +90,7 @@ static void trimQuotes (std::string& str)
 }
 
 //-------------------------------------------------------------
-static void installMVEs()
+static void installMVEs (const std::filesystem::path& voicePath)
 {
 	iTotalFiles = 3;
 	iErrors = 0;
@@ -104,7 +104,7 @@ static void installMVEs()
 	std::cout << "MVE files\n";
 
 	const auto path = sOutputPath / "mve";
-	copyFile (sVoicePath / "MAXINT.MVE", path / "MAXINT.MVE");
+	copyFile (voicePath / "MAXINT.MVE", path / "MAXINT.MVE");
 	copyFile (sMAXPath / "MAXMVE1.MVE", path / "MAXMVE1.MVE");
 	copyFile (sMAXPath / "MAXMVE2.MVE", path / "MAXMVE2.MVE");
 
@@ -3558,7 +3558,7 @@ static void installVehicleSounds()
 }
 
 //-------------------------------------------------------------
-static void installVoices()
+static void installVoices (const std::filesystem::path& sVoicePath)
 {
 	iTotalFiles = 65;
 	iErrors = 0;
@@ -4215,7 +4215,7 @@ static int checkForAvailableLanguages (std::string testFileName, bool& bGerman, 
 bool gFinishedInstalling = false; // MAC: needed as flag, for closing the progess bar window, when the installation is finished.
 
 //-------------------------------------------------------------
-static int installEverything (void*)
+static void installEverything (const std::filesystem::path& sVoicePath)
 {
 	gFinishedInstalling = false;
 
@@ -4247,7 +4247,7 @@ static int installEverything (void*)
 
 	if (sResChoice.find ("2") != std::string::npos)
 	{
-		installVoices();
+		installVoices (sVoicePath);
 	}
 	else
 	{
@@ -4280,7 +4280,7 @@ static int installEverything (void*)
 
 	if (sResChoice.find ("5") != std::string::npos)
 	{
-		installMVEs();
+		installMVEs (sVoicePath);
 	}
 	else
 	{
@@ -4356,8 +4356,127 @@ static int installEverything (void*)
 	}
 
 	gFinishedInstalling = true;
+}
 
-	return 0;
+//-------------------------------------------------------------
+static std::filesystem::path getVoicePathFromUser()
+{
+	const std::string testFileName = "F001";
+	bool bGerman = false, bItalian = false, bFrench = false;
+	bool bUppercase = false;
+	const int iLanguages = checkForAvailableLanguages (testFileName, bGerman, bItalian, bFrench, bUppercase);
+
+	// choose the language to install
+	if (iLanguages == 0)
+	{
+		// we are not installing from CD
+		return sMAXPath;
+	}
+	// we got the language parameter from commandline
+	if (!sLanguage.empty())
+	{
+		writeLog ("Language argument from command line: " + sLanguage + TEXT_FILE_LF);
+		if (sLanguage == "english" || sLanguage == "ENG")
+		{
+			return sMAXPath;
+		}
+		else if ((sLanguage == "german" || sLanguage == "GER") && bGerman)
+		{
+			return bUppercase ? sMAXPath / "GERMAN" : (sMAXPath / "german");
+		}
+		else if ((sLanguage == "french" || sLanguage == "FRE") && bFrench)
+		{
+			return bUppercase ? sMAXPath / "FRENCH" : (sMAXPath / "french");
+		}
+		else if ((sLanguage == "italian" || sLanguage == "ITA") && bItalian)
+		{
+			return bUppercase ? sMAXPath / "ITALIAN" : (sMAXPath / "italian");
+		}
+		else
+		{
+			writeLog ("Language is not available");
+			return sMAXPath;
+		}
+	}
+	// ask the user, which language to install
+#if MAC
+	switch (askForLanguage(bGerman, bItalian, bFrench))
+	{
+		default: // default - but should not happen
+		case 0: return sMAXPath; // english
+		case 1: return bUppercase ? sMAXPath / "GERMAN" : (sMAXPath / "german");
+		case 2: return bUppercase ? sMAXPath / "ITALIAN" : (sMAXPath / "italian");
+		case 3: return bUppercase ? sMAXPath / "FRENCH" : (sMAXPath / "french");
+	}
+#else
+
+	// make menu values
+	std::vector<std::string> vectorLanguages{"english"}; // initialize empty vector of strings
+
+	if (bGerman)
+	{
+		vectorLanguages.push_back ("german");
+	}
+	if (bItalian)
+	{
+		vectorLanguages.push_back ("italian");
+	}
+	if (bFrench)
+	{
+		vectorLanguages.push_back ("french");
+	}
+
+	while (true)
+	{
+		// make menu output
+		std::cout << "\nThe following voice samples are available from your install source:\n";
+		std::cout << "\n No. | as word\n";
+		std::cout << " ------------- " << std::endl;
+		for (unsigned ii = 0; ii < vectorLanguages.size(); ii++)
+		{
+			std::cout << "  " << ii + 1 << "  | " << vectorLanguages[ii] << std::endl; // output languages from vector with increased number to start menu with 1 instead of 0
+			std::cout << " ------------- " << std::endl;
+		}
+
+		std::cout << "\nPlease enter your preferred language (as number or word): ";
+
+		// read lang from cin
+		std::string input;
+		std::getline (std::cin, input);
+		trimSpaces (input);
+		transform (input.begin(), input.end(), input.begin(), ::tolower);
+
+		long int value = strtol (input.c_str(), nullptr, 10); // If no valid conversion could be performed, a zero value is returned
+		if (value > 0 && value <= (long) vectorLanguages.size())
+		{
+			input = vectorLanguages[value - 1];
+		}
+		sLanguage = input;
+		std::string errormsg;
+		if (value < 0 || value > (long) vectorLanguages.size())
+		{
+			errormsg = "you inserted an invalid number";
+		}
+		else // no number entered. Search language by string
+		{
+			if (input == "english")
+			{
+				return sMAXPath;
+			}
+			auto it = std::find (vectorLanguages.begin(), vectorLanguages.end(), input);
+			if (it != vectorLanguages.end())
+			{
+				if (bUppercase) {
+					transform (input.begin(), input.end(), input.begin(), ::toupper);
+				}
+				return sMAXPath / input;
+			}
+			errormsg = "you inserted an invalid word as language";
+		}
+		std::cout << "\nSo sorry, but " << errormsg << std::endl;
+		std::cout << " Please try it again...\n";
+	}
+#endif
 }
 
 //-------------------------------------------------------------
@@ -4410,155 +4529,8 @@ int main (int argc, char* argv[])
 	catch (InstallException)
 	{}
 
-	bool bGerman = false, bItalian = false, bFrench = false;
-	bool bUppercase;
-	int iLanguages = checkForAvailableLanguages (testFileName, bGerman, bItalian, bFrench, bUppercase);
-
-	// choose the language to install
-	if (iLanguages == 0)
-	{
-		// we are not installing from CD
-		sVoicePath = sMAXPath;
-	}
-	// we got the language parameter from commandline
-	else if (!sLanguage.empty())
-	{
-		writeLog ("Language argument from command line: " + sLanguage + TEXT_FILE_LF);
-		if (sLanguage == "english" || sLanguage == "ENG")
-		{
-			sVoicePath = sMAXPath;
-		}
-		else if ((sLanguage == "german" || sLanguage == "GER") && bGerman)
-		{
-			if (bUppercase)
-				sVoicePath = sMAXPath / "GERMAN";
-			else
-				sVoicePath = sMAXPath / "german";
-		}
-		else if ((sLanguage == "french" || sLanguage == "FRE") && bFrench)
-		{
-			if (bUppercase)
-				sVoicePath = sMAXPath / "FRENCH";
-			else
-				sVoicePath = sMAXPath / "french";
-		}
-		else if ((sLanguage == "italian" || sLanguage == "ITA") && bItalian)
-		{
-			if (bUppercase)
-				sVoicePath = sMAXPath / "ITALIAN";
-			else
-				sVoicePath = sMAXPath / "italian";
-		}
-		else
-		{
-			sVoicePath = sMAXPath;
-			writeLog ("Language is not available");
-		}
-		writeLog ("Voice path: " + sVoicePath.u8string() + TEXT_FILE_LF);
-	}
-	// ask the user, which language to install
-	else
-	{
-#if MAC
-		int languageChosen = askForLanguage (bGerman, bItalian, bFrench);
-		if (languageChosen == 0) // english
-			sVoicePath = sMAXPath;
-		else if (languageChosen == 1 && bUppercase)
-			sVoicePath = sMAXPath / "GERMAN";
-		else if (languageChosen == 1 && !bUppercase)
-			sVoicePath = sMAXPath / "german";
-		else if (languageChosen == 2 && bUppercase)
-			sVoicePath = sMAXPath / "ITALIAN";
-		else if (languageChosen == 2 && !bUppercase)
-			sVoicePath = sMAXPath / "italian";
-		else if (languageChosen == 3 && bUppercase)
-			sVoicePath = sMAXPath / "FRENCH";
-		else if (languageChosen == 3 && !bUppercase)
-			sVoicePath = sMAXPath / "french";
-		else
-			sVoicePath = sMAXPath; // default - but should not happen
-#else
-
-		// make menu values
-		std::vector<std::string> vectorLanguages{"english"}; // initialize empty vector of strings
-
-		if (bGerman)
-		{
-			vectorLanguages.push_back ("german");
-		}
-		if (bItalian)
-		{
-			vectorLanguages.push_back ("italian");
-		}
-		if (bFrench)
-		{
-			vectorLanguages.push_back ("french");
-		}
-
-		do
-		{
-			// make menu output
-			std::cout << "\nThe following voice samples are available from your install source:\n";
-			std::cout << "\n No. | as word\n";
-			std::cout << " ------------- " << std::endl;
-			for (unsigned ii = 0; ii < vectorLanguages.size(); ii++)
-			{
-				std::cout << "  " << ii + 1 << "  | " << vectorLanguages[ii] << std::endl; // output languages from vector with increased number to start menu with 1 instead of 0
-				std::cout << " ------------- " << std::endl;
-			}
-
-			std::cout << "\nPlease enter your preferred language (as number or word): ";
-
-			// read lang from cin
-			std::string input;
-			std::getline (std::cin, input);
-			trimSpaces (input);
-			transform (input.begin(), input.end(), input.begin(), ::tolower);
-
-			long int value = strtol (input.c_str(), nullptr, 10); // If no valid conversion could be performed, a zero value is returned
-			if (value > 0 && value <= (long) vectorLanguages.size())
-			{
-				input = vectorLanguages[value - 1];
-			}
-			sLanguage = input;
-			std::string errormsg;
-			if (value < 0 || value > (long) vectorLanguages.size())
-			{
-				errormsg = "you inserted an invalid number";
-			}
-			else // no number entered. Search language by string
-			{
-				for (unsigned ii = 0; ii < vectorLanguages.size(); ii++)
-				{
-					if (input == "english")
-					{
-						sVoicePath = sMAXPath;
-					}
-					else if (!bUppercase && input == vectorLanguages[ii])
-					{
-						sVoicePath = sMAXPath / input;
-					}
-					else if (bUppercase && input == vectorLanguages[ii])
-					{
-						transform (input.begin(), input.end(), input.begin(), ::toupper);
-						sVoicePath = sMAXPath / input;
-					}
-				}
-			}
-
-			if (errormsg.empty() && sVoicePath.empty())
-			{
-				errormsg = "you inserted an invalid word as language";
-			}
-			if (sVoicePath.empty())
-			{
-				std::cout << "\nSo sorry, but " << errormsg << std::endl;
-				std::cout << " Please try it again...\n";
-			}
-		} while (sVoicePath.empty());
-
-#endif
-	}
+	const auto sVoicePath = getVoicePathFromUser();
+	writeLog ("Voice path: " + sVoicePath.u8string() + TEXT_FILE_LF);
 
 	// check if we need admin rights for the selected output directory
 	checkWritePermissions (appName, bDoNotElevate);
@@ -4621,16 +4593,12 @@ int main (int argc, char* argv[])
 	// Do the work: Install the resources
 #if MAC
 	// on MAC the installation has to happen in a separate thread to allow displaying and updating a progress window
-	SDL_Thread* installThread = nullptr;
 	gFinishedInstalling = false;
-	installThread = SDL_CreateThread (installEverything, nullptr);
-	if (installThread != 0)
-	{
-		displayProgressWindow (gFinishedInstalling);
-		SDL_WaitThread (installThread, nullptr);
-	}
+	std::thread installThread([&]() { installEverything (sVoicePath); });
+	displayProgressWindow (gFinishedInstalling);
+	installThread.join();
 #else
-	installEverything (nullptr);
+	installEverything (sVoicePath);
 #endif
 
 	if (wasError)
