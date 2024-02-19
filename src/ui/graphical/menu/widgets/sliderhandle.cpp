@@ -111,10 +111,10 @@ bool cSliderHandle::handleMouseMoved (cApplication& application, cMouse& mouse, 
 	switch (orientation)
 	{
 		case eOrientationType::Horizontal:
-			offset.x() = std::min (std::max (mouse.getPosition().x() - grapOffset, minPosition), maxPosition) - getPosition().x();
+			offset.x() = std::clamp (mouse.getPosition().x() - grapOffset, minPosition, maxPosition) - getPosition().x();
 			break;
 		case eOrientationType::Vertical:
-			offset.y() = std::min (std::max (mouse.getPosition().y() - grapOffset, minPosition), maxPosition) - getPosition().y();
+			offset.y() = std::clamp (mouse.getPosition().y() - grapOffset, minPosition, maxPosition) - getPosition().y();
 			break;
 	}
 	if (offset != 0)

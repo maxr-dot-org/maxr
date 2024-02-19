@@ -258,7 +258,7 @@ void cSoundManager::updateSoundPosition (cSoundEffect& sound)
 		pan *= distanceFactor;
 
 		// just to make 100% sure that there are no overflows
-		pan = std::max (std::min (pan, 1.), -1.);
+		pan = std::clamp (pan, -1., -1.);
 	}
 	const auto right = std::min ((int) (std::numeric_limits<unsigned char>::max() * (pan + 1)), (int) std::numeric_limits<unsigned char>::max());
 	const auto left = std::min ((int) (std::numeric_limits<unsigned char>::max() * (-1. * pan + 1)), (int) std::numeric_limits<unsigned char>::max());

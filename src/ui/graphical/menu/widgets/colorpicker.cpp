@@ -214,8 +214,8 @@ void cRgbColorPicker::updateColorByMousePosition (const cPosition& mousePosition
 {
 	const cPosition relativePosition = mousePosition - colorsImage->getPosition();
 
-	const auto relativeX = std::max (std::min (relativePosition.x(), colorsImage->getSize().x() - 1), 0);
-	const auto relativeY = std::max (std::min (relativePosition.y(), colorsImage->getSize().y() - 1), 0);
+	const auto relativeX = std::clamp (relativePosition.x(), 0, colorsImage->getSize().x() - 1);
+	const auto relativeY = std::clamp (relativePosition.y(), 0, colorsImage->getSize().y() - 1);
 
 	auto newColor = currentColor;
 
@@ -230,7 +230,7 @@ void cRgbColorPicker::updateColorHueByMousePosition (const cPosition& mousePosit
 {
 	const cPosition relativePosition = mousePosition - colorBarImage->getPosition();
 
-	const auto relativeY = std::max (std::min (relativePosition.y(), colorBarImage->getSize().y() - 1), 0);
+	const auto relativeY = std::clamp (relativePosition.y(), 0, colorBarImage->getSize().y() - 1);
 
 	auto newColor = currentColor;
 

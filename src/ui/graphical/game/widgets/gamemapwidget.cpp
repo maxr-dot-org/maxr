@@ -1742,7 +1742,7 @@ cPosition cGameMapWidget::getMapTilePosition (const cPosition& pixelPosition) co
 	const auto x = (int) ((pixelPosition.x() - getPosition().x() + pixelOffset.x() * getZoomFactor()) / zoomedTileSize.x());
 	const auto y = (int) ((pixelPosition.y() - getPosition().y() + pixelOffset.y() * getZoomFactor()) / zoomedTileSize.y());
 
-	const cPosition tilePosition (std::max (std::min (x, staticMap->getSize().x() - 1), 0), std::max (std::min (y, staticMap->getSize().y() - 1), 0));
+	const cPosition tilePosition (std::clamp (x, 0, staticMap->getSize().x() - 1), std::clamp (y, 0, staticMap->getSize().y() - 1));
 
 	return tilePosition;
 }

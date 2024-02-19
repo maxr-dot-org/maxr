@@ -62,7 +62,7 @@ void cValidatorInt::fixup (std::string& text) const
 
 	if (text.empty())
 	{
-		text = std::to_string (std::max (std::min (0, maxValue), minValue));
+		text = std::to_string (std::clamp (0, minValue, maxValue));
 	}
 	else
 	{

@@ -961,7 +961,7 @@ int cVehicle::getFlightHeight() const
 //------------------------------------------------------------------------------
 void cVehicle::setFlightHeight (int value)
 {
-	value = std::min (std::max (value, 0), MAX_FLIGHT_HEIGHT);
+	value = std::clamp (value, 0, MAX_FLIGHT_HEIGHT);
 	std::swap (flightHeight, value);
 	if (flightHeight != value) flightHeightChanged();
 }

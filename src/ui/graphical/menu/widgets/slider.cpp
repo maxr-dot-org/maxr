@@ -243,7 +243,7 @@ bool cSlider::handleClicked (cApplication& application, cMouse& mouse, eMouseBut
 	int minPosition, maxPosition;
 	computeHandleMinMaxPosition (minPosition, maxPosition);
 
-	newHandlePosition = std::max (std::min (newHandlePosition, maxPosition), minPosition);
+	newHandlePosition = std::clamp (newHandlePosition, minPosition, maxPosition);
 
 	cPosition position = handle->getPosition();
 	(orientation == eOrientationType::Horizontal ? position.x() : position.y()) = newHandlePosition;

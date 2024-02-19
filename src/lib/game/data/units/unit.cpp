@@ -485,7 +485,7 @@ void cUnit::setHasBeenAttacked (bool value)
 //------------------------------------------------------------------------------
 void cUnit::setStoredResources (int value)
 {
-	value = std::max (std::min (value, staticData->storageResMax), 0);
+	value = std::clamp (value, 0, staticData->storageResMax);
 	std::swap (storageResCur, value);
 	if (storageResCur != value) storedResourcesChanged();
 }
