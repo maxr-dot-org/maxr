@@ -4480,6 +4480,39 @@ static std::filesystem::path getVoicePathFromUser()
 }
 
 //-------------------------------------------------------------
+void seekAfterEOD()
+{
+	SDL_RWseek (res, 0, SEEK_END);
+	lEndOfFile = SDL_RWtell (res);
+
+	// the '[EOD]' should be after this position for all versions of max.res
+	lPosBegin = 15'000'000;
+
+	// a little state machine for searching the string "[EOD]" in max.res
+	unsigned char state = 0;
+	SDL_RWseek (res, lPosBegin, SEEK_SET);
+
+	while (lPosBegin < lEndOfFile)
+	{
+		unsigned char c;
+		SDL_RWread (res, &c, sizeof (char), 1);
+		lPosBegin++;
+
+		switch (state)
+		{
+			case 1: state = (c == 'E' ? 2 : 0); break;
+			case 2: state = (c == 'O' ? 3 : 0); break;
+			case 3: state = (c == 'D' ? 4 : 0); break;
+			case 4: state = (c == ']' ? 5 : 0); break;
+		}
+		if (state == 5) return;
+		if (c == '[') state = 1;
+	}
+	std::cout << "Error: [EOD] not found in resource file. Please contact the developer!";
+	exit (-1);
+}
+
+//-------------------------------------------------------------
 int main (int argc, char* argv[])
 {
 	initialize();
@@ -4536,59 +4569,7 @@ int main (int argc, char* argv[])
 	checkWritePermissions (appName, bDoNotElevate);
 
 	// init res converter
-	SDL_RWseek (res, 0, SEEK_END);
-	lEndOfFile = SDL_RWtell (res);
-
-	lPosBegin = 15000000; // the '[EOD]' should be after this position
-		// for all versions of max.res, I think
-
-	// a little state machine for searching the string "[EOD]" in max.res
-	unsigned char temp, state = 0;
-	SDL_RWseek (res, lPosBegin, SEEK_SET);
-
-	while (lPosBegin < lEndOfFile)
-	{
-		SDL_RWread (res, &temp, sizeof (char), 1);
-		lPosBegin++;
-
-		switch (state)
-		{
-			case 1:
-				if (temp == 'E')
-					state = 2;
-				else
-					state = 0;
-				break;
-			case 2:
-				if (temp == 'O')
-					state = 3;
-				else
-					state = 0;
-				break;
-			case 3:
-				if (temp == 'D')
-					state = 4;
-				else
-					state = 0;
-				break;
-			case 4:
-				if (temp == ']')
-					state = 5;
-				else
-					state = 0;
-				break;
-		}
-
-		if (temp == '[') state = 1;
-
-		if (state == 5) break;
-	}
-
-	if (lPosBegin == lEndOfFile)
-	{
-		std::cout << "Error: [EOD] not found in resource file. Please contact the developer!";
-		exit (-1);
-	}
+	seekAfterEOD();
 
 	// Do the work: Install the resources
 #if MAC
