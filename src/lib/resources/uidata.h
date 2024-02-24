@@ -20,11 +20,11 @@
 #ifndef resources_uidataH
 #define resources_uidataH
 
+#include "SDLutility/partialsurface.h"
 #include "SDLutility/uniquesurface.h"
 #include "game/data/player/clans.h"
 #include "game/data/units/unitdata.h"
 
-#include <SDL.h>
 #include <filesystem>
 #include <vector>
 
@@ -34,12 +34,6 @@ class cLanguage;
 class cPlayer;
 struct sBuildingUIData;
 struct sVehicleUIData;
-
-struct sPartialSurface
-{
-	SDL_Surface* surface = nullptr;
-	SDL_Rect rect{};
-};
 
 // GraphicsData - Class containing all normal graphic surfaces ////////////////
 class cGraphicsData
