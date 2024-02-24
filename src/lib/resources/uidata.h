@@ -221,7 +221,7 @@ public:
 	static SDL_Rect getRect_BigSymbol_Human() { return {138, 109, 12, 16}; }
 	static SDL_Rect getRect_BigSymbol_MetalEmpty() { return {175, 109, 12, 15}; }
 
-	static SDL_Rect getRect_Slider_HudZoom() { return {132, 0, 26, 16}; }
+	static SDL_Rect getRect_Slider_HudZoom() { return {132, 0, 25, 16}; }
 };
 
 // Effects - Class containing all effect surfaces /////////////////////////////

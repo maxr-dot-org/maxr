@@ -21,29 +21,47 @@
 
 #include "SDLutility/tosdl.h"
 #include "input/mouse/mouse.h"
-#include "output/video/video.h"
 #include "resources/uidata.h"
 #include "ui/widgets/application.h"
 
 #include <algorithm>
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	sPartialSurface getPartialSurface (eSliderHandleType sliderHandleType)
+	{
+		switch (sliderHandleType)
+		{
+			case eSliderHandleType::Horizontal: return {GraphicsData.gfx_menu_stuff.get(), {218, 35, 14, 17}};
+			case eSliderHandleType::Vertical: return {GraphicsData.gfx_menu_stuff.get(), {201, 35, 17, 14}};
+			case eSliderHandleType::HudZoom: return {GraphicsData.gfx_hud_stuff.get(), cGraphicsData::getRect_Slider_HudZoom()};
+			case eSliderHandleType::ModernHorizontal: return {GraphicsData.gfx_menu_stuff.get(), {241, 59, 8, 16}};
+			case eSliderHandleType::ModernVertical: return {GraphicsData.gfx_menu_stuff.get(), {224, 91, 16, 8}};
+		}
+		throw std::runtime_error ("Unknown enum eSliderHandleType: " + std::to_string (static_cast<int>(sliderHandleType)));
+	}
+
+}
+
 //------------------------------------------------------------------------------
 cSliderHandle::cSliderHandle (const cPosition& position, eSliderHandleType sliderHandleType, eOrientationType orientation_) :
 	cWidget (position),
+	partialSurface (getPartialSurface (sliderHandleType)),
 	orientation (orientation_)
 {
 	minPosition = maxPosition = (orientation == eOrientationType::Horizontal ? getPosition().x() : getPosition().y());
 
-	createSurface (sliderHandleType);
+	resize (cPosition (partialSurface.rect.w, partialSurface.rect.h));
 }
 
 //------------------------------------------------------------------------------
 void cSliderHandle::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
-	if (surface != nullptr)
+	if (partialSurface.surface != nullptr)
 	{
 		auto positionRect = toSdlRect (getArea());
-		SDL_BlitSurface (surface.get(), nullptr, &destination, &positionRect);
+		SDL_BlitSurface (partialSurface.surface, &partialSurface.rect, &destination, &positionRect);
 	}
 
 	cWidget::draw (destination, clipRect);
@@ -54,52 +72,6 @@ void cSliderHandle::setMinMaxPosition (int minPosition_, int maxPosition_)
 {
 	minPosition = minPosition_;
 	maxPosition = maxPosition_;
-}
-
-//------------------------------------------------------------------------------
-void cSliderHandle::createSurface (eSliderHandleType sliderHandleType)
-{
-	cPosition size;
-	cPosition srcPoint;
-	switch (sliderHandleType)
-	{
-		case eSliderHandleType::Horizontal:
-			srcPoint = cPosition (218, 35);
-			size = cPosition (14, 17);
-			break;
-		case eSliderHandleType::Vertical:
-			srcPoint = cPosition (201, 35);
-			size = cPosition (17, 14);
-			break;
-		case eSliderHandleType::HudZoom:
-		{
-			auto rect = cGraphicsData::getRect_Slider_HudZoom();
-			srcPoint = cPosition (rect.x, rect.y);
-			size = cPosition (rect.w - 1, rect.h - 1);
-			break;
-		}
-		case eSliderHandleType::ModernHorizontal:
-			srcPoint = cPosition (241, 59);
-			size = cPosition (8, 16);
-			break;
-		case eSliderHandleType::ModernVertical:
-			srcPoint = cPosition (224, 91);
-			size = cPosition (16, 8);
-			break;
-	}
-	const cBox<cPosition> src (srcPoint, srcPoint + size);
-	auto srcRect = toSdlRect (src);
-
-	surface = UniqueSurface (SDL_CreateRGBSurface (0, size.x(), size.y(), Video.getColDepth(), 0, 0, 0, 0));
-	SDL_FillRect (surface.get(), nullptr, 0xFF00FF);
-
-	if (sliderHandleType == eSliderHandleType::HudZoom)
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), nullptr);
-	else
-		SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &srcRect, surface.get(), nullptr);
-	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
-
-	resize (size);
 }
 
 //------------------------------------------------------------------------------

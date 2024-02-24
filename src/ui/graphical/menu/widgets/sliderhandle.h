@@ -21,11 +21,10 @@
 #define ui_graphical_menu_widgets_sliderhandleH
 
 #include "SDLutility/uniquesurface.h"
+#include "resources/uidata.h"
 #include "ui/widgets/orientation.h"
 #include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"
-
-struct SDL_Surface;
 
 enum class eSliderHandleType
 {
@@ -48,21 +47,21 @@ public:
 	cSignal<void()> moved;
 
 private:
-	UniqueSurface surface;
+
+	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
+	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
+	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
+	void handleMoved (const cPosition& offset) override;
+
+private:
+	sPartialSurface partialSurface;
 
 	eOrientationType orientation;
 
 	int minPosition;
 	int maxPosition;
 
-	int grapOffset;
-
-	void createSurface (eSliderHandleType);
-
-	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
-	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
-	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
-	void handleMoved (const cPosition& offset) override;
+	int grapOffset = 0;
 };
 
 #endif // ui_graphical_menu_widgets_sliderhandleH
