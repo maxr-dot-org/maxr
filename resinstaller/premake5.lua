@@ -12,7 +12,7 @@ end
 local locationDir = _OPTIONS["to"]
 
 local nugetPackages = {
-	"sdl2.nuget:2.26.5", "sdl2.nuget.redist:2.26.5",
+	"sdl2.nuget:2.28.0", "sdl2.nuget.redist:2.28.0",
 	-- "vorbis-msvc14-x64:1.3.5.7785", "ogg-msvc-x64:1.3.2.8787", -- x64
 	"vorbis-msvc14-x86:1.3.5.7785", "ogg-msvc-x86:1.3.2.8787",  -- x86
 }
