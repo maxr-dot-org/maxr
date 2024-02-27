@@ -153,6 +153,7 @@ void CR_EMULATE_CRASH()
 //------------------------------------------------------------------------------
 void CR_INIT_CRASHREPORTING()
 {
+	Log.info ("CrashRpt " + std::to_string (CRASHRPT_VER));
 	initCrashreporting();
 }
 

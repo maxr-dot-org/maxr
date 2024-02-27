@@ -20,6 +20,7 @@
 #include "3rd/mveplayer/mveplayer.h"
 #include "SDLutility/sdlcomponent.h"
 #include "SDLutility/sdlnetcomponent.h"
+#include "SDLutility/sdlversion.h"
 #include "crashreporter/debug.h"
 #include "defines.h"
 #include "input/keyboard/keyboard.h"
@@ -103,6 +104,7 @@ try
 
 	is_main_thread();
 	logMAXRVersion();
+	logSDLVersions();
 	CR_INIT_CRASHREPORTING();
 
 	SDLComponent sdlComponent (true);

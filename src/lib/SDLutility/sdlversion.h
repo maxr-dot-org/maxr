@@ -17,43 +17,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "SDLutility/sdlcomponent.h"
-#include "SDLutility/sdlnetcomponent.h"
-#include "SDLutility/sdlversion.h"
-#include "crashreporter/debug.h"
-#include "dedicatedserver/dedicatedserver.h"
-#include "defines.h"
-#include "maxrversion.h"
-#include "resources/loaddata.h"
-#include "settings.h"
-#include "utility/log.h"
+#ifndef SDLutility_sdlversionH
+# define SDLutility_sdlversionH
 
-//------------------------------------------------------------------------------
-int main (int, char**)
-try
-{
-	if (!cSettings::getInstance().isInitialized())
-	{
-		return -1;
-	}
-	logMAXRVersion();
-	logSDLVersions();
-	CR_INIT_CRASHREPORTING();
+void logSDLVersions();
 
-	SDLComponent sdlComponent (false);
-	SDLNetComponent sdlNetComponent;
-
-	if (LoadData (false) == eLoadingState::Error)
-	{
-		Log.error ("Error while loading data!");
-		return -1;
-	}
-	cDedicatedServer (DEFAULTPORT).run();
-	Log.info ("EOF");
-	return 0;
-}
-catch (const std::exception& ex)
-{
-	Log.error (ex.what());
-	return -1;
-}
+#endif
