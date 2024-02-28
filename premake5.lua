@@ -22,7 +22,21 @@ local nugetPackages = {
 	"sdl2_mixer.nuget:2.8.0", "sdl2_mixer.nuget.redist:2.8.0",
 	"sdl2_net.nuget:2.2.0", "sdl2_net.nuget.redist:2.2.0",
 	-- "CrashRpt2.CPP:1.5.3", "CrashRpt2.CPP.redist:1.5.3",
+	"vorbis-msvc14-x86:1.3.5.7785", "ogg-msvc-x86:1.3.2.8787",  -- x86
+	-- "vorbis-msvc14-x64:1.3.5.7785", "ogg-msvc-x64:1.3.2.8787", -- x64
 }
+
+local SDL2_DIR = os.getenv("SDL2_DIR")
+local SDL2_headerPath = os.findheader("SDL2/SDL.h", SDL2_DIR)
+local SDL2_libraryPath = os.findlib("SDL2", SDL2_DIR)
+local vorbis_headerPath = os.findheader("vorbis/vorbisenc.h")
+local ogg_headerPath = os.findheader("ogg/ogg.h")
+
+print("SDL2_DIR: ", SDL2_DIR)
+print("SDL2 header path: ", SDL2_headerPath)
+print("SDL2 library path: ", SDL2_libraryPath)
+print("vorbis header path: ", vorbis_headerPath)
+print("ogg header path: ", ogg_headerPath)
 
 local function linksToCrashRpt()
 	if _OPTIONS["crashRpt_root"] ~= nil then
@@ -63,6 +77,7 @@ end
 		buildoptions { "/Zc:__cplusplus" } -- else __cplusplus would be 199711L
 		disablewarnings {
 			"4100", -- '%var': unreferenced formal parameter
+			"4013", -- '$func' undefined, assuming extern return int
 			"4244", -- '=': conversion from '$type1' to '$type2', possible loss of data
 			"4245", -- '=': conversion from '$type1' to '$type2', signed/unsigned mismatch
 			"4389", -- '==': signed/unsigned mismatch
@@ -71,6 +86,9 @@ end
 			"4458", -- declaration of '$var' hides class member
 			"4459", -- declaration of '$var' hides global declaration
 			"4701", -- potentially uninitialized local variable '$var' used
+			"4703", -- potentially uninitialized local pointer variable '$var' used
+			"4996", -- '$func': The POSIX name of this item is deprecated. Instead, use the ISO C and C++ conformant name: $func2. See online help for details.
+
 		}
 
 	filter { "configurations:Debug" }
@@ -85,6 +103,43 @@ end
 
 	filter "system:windows"
 		defines { "WIN32" }
+
+project "resinstaller"
+	kind "ConsoleApp"
+	uuid "9DEEC088-8951-502D-32D7-88E31E191CB0"
+	
+	targetdir "data"
+	debugdir "data"
+	filter { "configurations:Release" }
+		targetname "resinstaller"
+	filter { "configurations:Debug" }
+		targetname "resinstaller_%{_ACTION}_%{cfg.buildcfg}"
+	filter {}
+
+	warnings "Extra"
+	-- flags { "FatalWarnings"} -- We still have warnings :-(
+
+	files { "resinstaller/src/**.cpp", "resinstaller/src/**.c", "resinstaller/src/**.h" } -- source files
+	files { "resinstaller/.clang-format", "resinstaller/ABOUT", "resinstaller/AUTHORS", "resinstaller/Readme.md" } -- extra files
+	includedirs { "resinstaller/src" }
+
+	--links "SDL_flic"
+
+	filter "action:not vs*"
+if vorbis_headerPath then
+		includedirsafter { vorbis_headerPath }
+end
+if ogg_headerPath then
+		includedirsafter { ogg_headerPath }
+end
+if SDL2_headerPath then
+		externalincludedirs { path.join(SDL2_headerPath, "SDL2") }
+end
+if SDL2_libraryPath then
+		libdirs { SDL2_libraryPath }
+end
+		links { "SDL2", "ogg", "vorbis", "vorbisfile", "vorbisenc" }
+	filter {}
 
 project "maxr"
 	kind "WindowedApp"
@@ -203,12 +258,4 @@ project "data" -- data
 	files { "data/**.*" }
 	vpaths { ["data/*"] = "data" }
 	removefiles { "data/**.dll", "data/**.exe" }
-end
-
-if os.isdir(path.join(locationDir, "../resinstaller")) then
-group "resinstaller"
-externalproject "resinstaller"
-	kind "ConsoleApp"
-	location(path.join(locationDir, "../resinstaller"))
-	uuid "9DEEC088-8951-502D-32D7-88E31E191CB0"
 end

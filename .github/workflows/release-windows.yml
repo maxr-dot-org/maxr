@@ -37,19 +37,13 @@ jobs:
 
     - name: run premake5
       run: |
-        ./premake5.exe vs2022 --to=../solution/vs2022/resinstaller --file=resinstaller/premake5.lua
-        ./premake5.exe vs2022 --to=solution/vs2022/maxr --crashRpt_root=CrashRpt_v.1.4.3_r1645
+        ./premake5.exe vs2022 --to=solution/vs2022 --crashRpt_root=CrashRpt_v.1.4.3_r1645
 
     - name: build
       run: |
-        cd solution/vs2022/resinstaller
-        nuget install packages.config -OutputDirectory packages
-        cd ../maxr
+        cd solution/vs2022
         nuget install packages.config -OutputDirectory packages
         msbuild.exe /property:Configuration=Release Maxr.sln
-
-    - name: copy resinstaller
-      run: cp solution/vs2022/resinstaller/bin/Release/resinstaller.exe data/
 
     - name: Create nsis installer
       uses: joncloud/makensis-action@v4.1

@@ -44,17 +44,17 @@ jobs:
         7z e -o"data/CrashRpt"          CrashRpt_v.1.4.3_r1645.7z "lang_files/*.ini"
 
     - name: run premake5
-      run: ./premake5.exe vs2022 --to=solution/vs2022/maxr --crashRpt_root=CrashRpt_v.1.4.3_r1645
+      run: ./premake5.exe vs2022 --to=solution/vs2022 --crashRpt_root=CrashRpt_v.1.4.3_r1645
 
     - name: build
       run: |
-        cd solution/vs2022/maxr
+        cd solution/vs2022
         nuget install packages.config -OutputDirectory packages
         msbuild.exe /property:Configuration=Release Maxr.sln
 
     - name: run tests
       run: |
-        cd solution/vs2022/maxr/bin/Release
+        cd solution/vs2022/bin/Release
         ./maxr_tests.exe
 
     - name: upload maxr
