@@ -22,8 +22,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: install SDL2
-      run: brew install sdl2 sdl2_mixer sdl2_net
+    - name: install dependencies
+      run: brew install sdl2 sdl2_mixer sdl2_net libogg libvorbis
 
     - name: cmake --version
       run: cmake --version
@@ -32,6 +32,6 @@ jobs:
       run: |
         mkdir build && cd build
         cmake ..
-        make maxr_dedicatedserver maxr maxr_tests -j4
+        make maxr_dedicatedserver maxr maxr_tests resinstaller -j4
         ./maxr_tests
 

@@ -1,11 +1,5 @@
 # Resinstaller
 
-![CMake-ubuntu-badge](https://github.com/MAX-Reloaded/maxr/workflows/resinstaller-ubuntu/badge.svg)
-![CMake-macos-badge](https://github.com/MAX-Reloaded/maxr/workflows/resinstaller-macos/badge.svg)
-![premake5-ubuntu-badge](https://github.com/MAX-Reloaded/maxr/workflows/resinstaller-premake5-ubuntu/badge.svg)
-![premake5-macos-badge](https://github.com/MAX-Reloaded/maxr/workflows/resinstaller-premake5-macos/badge.svg)
-![premake5-windows-badge](https://github.com/MAX-Reloaded/maxr/workflows/resinstaller-premake5-windows/badge.svg)
-
 ## Introduction
 
 Data tool extractor for original [Mechanized Assault and Exploration (c) 1996 Interplay](https://en.wikipedia.org/wiki/Mechanized_Assault_%26_Exploration) to be used by [M.A.X.R.](https://github.com/MAX-Reloaded/maxr)

@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.1)
 
 project(maxr)
@@ -13,6 +12,11 @@ include_directories(src/lib)
 # ============================================
 # === Global defines
 # ============================================
+
+if(RESINSTALLER_VERSION)
+  MESSAGE (STATUS "  Resinstaller version: ${RESINSTALLER_VERSION}")
+  add_definitions( "-DVERSION=\"${RESINSTALLER_VERSION}\"")
+endif()
 
 if(PACKAGE_VERSION)
   add_definitions( "-DPACKAGE_VERSION=\"${PACKAGE_VERSION}\"")
@@ -104,6 +108,16 @@ endmacro()
 GroupSources(src)
 # source_group(TREE . FILES maxr_SRCS)
 
+add_executable(resinstaller
+	resinstaller/src/converter.cpp
+	resinstaller/src/file.cpp
+	resinstaller/src/ogg_encode.cpp
+	resinstaller/src/pcx.cpp
+	resinstaller/src/resinstaller.cpp
+	resinstaller/src/3rd/SDL_flic/SDL_flic.c
+	resinstaller/src/wave.cpp
+)
+
 add_library(maxr_lib ${maxr_LIB_SRCS})
 
 add_executable(maxr_dedicatedserver ${maxr_dedicatedserver_SRCS} ${RESOURCE_FILE})
@@ -150,6 +164,8 @@ target_include_directories(mve_player PUBLIC ${SDL2_INCLUDE_DIR})
 target_link_libraries(mve_player PUBLIC ${SDL2_LIBRARY})
 target_include_directories(SDL_flic PUBLIC ${SDL2_INCLUDE_DIR})
 target_link_libraries(SDL_flic PUBLIC ${SDL2_LIBRARY})
+target_include_directories(resinstaller PUBLIC ${SDL2_INCLUDE_DIR})
+target_link_libraries(resinstaller ${SDL2_LIBRARY})
 
 # ---------------------------------------
 # SDL2_mixer
@@ -164,6 +180,20 @@ find_package(SDL2_net REQUIRED)
 
 target_include_directories(maxr_lib PUBLIC ${SDL2_NET_INCLUDE_DIR})
 target_link_libraries(maxr_lib PUBLIC ${SDL2_NET_LIBRARY})
+
+# ---------------------------------------
+# OggVorbis
+
+find_package(OggVorbis REQUIRED)
+
+target_include_directories(resinstaller PUBLIC ${OGG_INCLUDE_DIR})
+target_include_directories(resinstaller PUBLIC ${VORBIS_INCLUDE_DIR})
+target_link_libraries(resinstaller ${OGG_LIBRARY})
+target_link_libraries(resinstaller ${VORBIS_LIBRARY})
+if(WIN32)
+else()
+	target_link_libraries(resinstaller ${VORBISFILE_LIBRARY} ${VORBISENC_LIBRARY})
+endif()
 
 # ---------------------------------------
 # add crash reporting library

@@ -25,9 +25,9 @@ jobs:
     - name: apt-get update
       run: sudo apt-get update
 
-    - name: install SDL2
-      run: | # libsdl2-2.0-0 libsdl2-mixer-2.0-0 libsdl2-net-2.0-0
-        sudo apt-get install libsdl2-dev libsdl2-mixer-dev libsdl2-net-dev
+    - name: install dependencies
+      run: |
+        sudo apt-get install libsdl2-dev libsdl2-mixer-dev libsdl2-net-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisidec-dev
 
     - name: cmake --version
       run: cmake --version
@@ -36,6 +36,6 @@ jobs:
       run: |
         mkdir build && cd build
         cmake ..
-        make maxr_dedicatedserver maxr maxr_tests -j4
+        make maxr_dedicatedserver maxr maxr_tests resinstaller -j4
         ./maxr_tests
 
