@@ -32,8 +32,8 @@ namespace
 	//--------------------------------------------------------------------------
 	std::string getCompileTimeYear()
 	{
-		// __DATE__ format is Mmm dd yyyy
-		return __DATE__ + 7;
+		// __DATE__ format is "Mmm dd yyyy"
+		return &__DATE__[7];
 	}
 } // namespace
 
