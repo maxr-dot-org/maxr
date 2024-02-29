@@ -37,7 +37,7 @@ cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOr
              minValue_,
              maxValue_,
              orientation_,
-             orientation == eOrientationType::Horizontal ? eSliderHandleType::Horizontal : eSliderHandleType::Vertical,
+             orientation_ == eOrientationType::Horizontal ? eSliderHandleType::Horizontal : eSliderHandleType::Vertical,
              sliderType)
 {
 }
