@@ -28,6 +28,12 @@
 #include <string>
 #include <vorbis/vorbisenc.h>
 
+namespace
+{
+	constexpr auto READ = 1024;
+	constexpr auto VORBIS_QUALITY = 0.4f;
+}
+
 void encodeWAV (std::filesystem::path fileName, cWaveFile& waveFile)
 {
 	static unsigned char serialNr = 0;
@@ -66,7 +72,7 @@ void encodeWAV (std::filesystem::path fileName, cWaveFile& waveFile)
 	}
 
 	vorbis_info_init (&vorbisInfo);
-	ret = vorbis_encode_init_vbr (&vorbisInfo, waveFile.spec.channels, waveFile.spec.freq, (float) VORBIS_QUALITY);
+	ret = vorbis_encode_init_vbr (&vorbisInfo, waveFile.spec.channels, waveFile.spec.freq, VORBIS_QUALITY);
 	if (ret != 0)
 	{
 		throw InstallException (std::string ("Couldn't initialize vorbis encoder") + TEXT_FILE_LF);

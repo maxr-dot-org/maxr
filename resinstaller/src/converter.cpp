@@ -37,12 +37,6 @@
 
 cImage* cImage::Image = nullptr;
 
-cImage::cImage()
-{
-	palette = nullptr;
-	iImageCount = 0;
-}
-
 cImage::~cImage()
 {
 	if (palette)
@@ -705,7 +699,7 @@ void removePlayerColor (SDL_Surface* surface)
 	}
 }
 
-int saveAllFiles()
+void saveAllFiles()
 {
 	Uint32 lPosOfFile = lPosBegin;
 	while (lPosOfFile < lEndOfFile)
@@ -738,7 +732,6 @@ int saveAllFiles()
 
 		lPosOfFile += 16;
 	}
-	return 1;
 }
 
 void copyFileFromRes (std::string src, const std::filesystem::path& dst, int number)

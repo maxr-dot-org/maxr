@@ -27,11 +27,28 @@
 
 #include <SDL.h>
 
-cWaveFile::cWaveFile()
-{
-	buffer = nullptr;
-	smplChunk.ListofSampleLoops = nullptr;
-}
+// WAVE files are little-endian
+// a detailed description of the wav format can be found here:
+// http://www.sonicspot.com/guide/wavefiles.html
+
+/*******************************************/
+/* Define values for Microsoft WAVE format */
+/*******************************************/
+#define RIFF 0x46464952 // "RIFF"
+#define WAVE 0x45564157 // "WAVE"
+#define FACT 0x74636166 // "fact"
+#define LIST 0x5453494c // "LIST"
+#define FMT 0x20746D66 // "fmt "
+#define DATA 0x61746164 // "data"
+#define SMPL 0x6C706D73 // "smpl"
+#define PCM_CODE 0x0001
+#define MS_ADPCM_CODE 0x0002
+#define IMA_ADPCM_CODE 0x0011
+#define WAVE_MONO 1
+#define WAVE_STEREO 2
+#define FMT_DATA_SIZE 16 // size of format chunk data
+#define HEADER_SIZE 28 // header from "WAVE" onwards
+#define TO_SINT16 0x8000 // converts Uint16 to Sint16
 
 cWaveFile::~cWaveFile()
 {
@@ -89,7 +106,7 @@ int readSmplChunk (SDL_RWops* file, cWaveFile& waveFile)
 	return 1;
 }
 
-int loadWAV (const std::filesystem::path& src, cWaveFile& waveFile)
+void loadWAV (const std::filesystem::path& src, cWaveFile& waveFile)
 {
 	SDL_RWops* file;
 	file = openFile (src, "rb");
@@ -104,7 +121,6 @@ int loadWAV (const std::filesystem::path& src, cWaveFile& waveFile)
 	readSmplChunk (file, waveFile);
 
 	SDL_RWclose (file);
-	return 1;
 }
 
 void saveWAV (const std::filesystem::path& dst, const cWaveFile& waveFile)

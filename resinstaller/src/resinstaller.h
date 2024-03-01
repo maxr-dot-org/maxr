@@ -47,8 +47,11 @@ extern bool oggEncode;
 class InstallException
 {
 public:
+	explicit InstallException (std::string m) :
+		message{std::move (m)} {}
+
+public:
 	std::string message;
-	InstallException (std::string m) { message = m; };
 };
 
 // makes all necessary actions after a successful
