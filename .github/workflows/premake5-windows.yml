@@ -4,13 +4,17 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - 'resinstaller/**'
       - 'src/**'
+      - 'test/**'
       - '.github/workflows/premake5-windows.yml'
       - 'premake5.lua'
 
   pull_request:
     paths:
+      - 'resinstaller/**'
       - 'src/**'
+      - 'test/**'
       - '.github/workflows/premake5-windows.yml'
       - 'premake5.lua'
 

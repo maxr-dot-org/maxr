@@ -4,13 +4,17 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - 'resinstaller/**'
       - 'src/**'
+      - 'test/**'
       - '.github/workflows/ubuntu.yml'
       - 'CMakeLists.txt'
 
   pull_request:
     paths:
+      - 'resinstaller/**'
       - 'src/**'
+      - 'test/**'
       - '.github/workflows/ubuntu.yml'
       - 'CMakeLists.txt'
 
