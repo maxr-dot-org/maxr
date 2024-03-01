@@ -121,9 +121,9 @@ project "resinstaller"
 
 	files { "resinstaller/src/**.cpp", "resinstaller/src/**.c", "resinstaller/src/**.h" } -- source files
 	files { "resinstaller/.clang-format", "resinstaller/ABOUT", "resinstaller/AUTHORS", "resinstaller/Readme.md" } -- extra files
-	includedirs { "resinstaller/src" }
+	includedirs { "src", "resinstaller/src" }
 
-	--links "SDL_flic"
+	links "SDL_flic"
 
 	filter "action:not vs*"
 if vorbis_headerPath then

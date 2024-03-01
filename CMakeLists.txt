@@ -114,7 +114,6 @@ add_executable(resinstaller
 	resinstaller/src/ogg_encode.cpp
 	resinstaller/src/pcx.cpp
 	resinstaller/src/resinstaller.cpp
-	resinstaller/src/3rd/SDL_flic/SDL_flic.c
 	resinstaller/src/wave.cpp
 )
 
@@ -126,6 +125,7 @@ add_executable(maxr_tests ${maxr_tests_SRCS})
 
 target_include_directories(maxr_lib SYSTEM PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/3rd/spiritless_po/include")
 
+target_link_libraries(resinstaller SDL_flic)
 target_link_libraries(maxr maxr_lib SDL_flic mve_player)
 target_link_libraries(maxr_dedicatedserver maxr_lib)
 target_link_libraries(maxr_tests maxr_lib)
