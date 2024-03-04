@@ -232,7 +232,6 @@ public:
 		serializeThis (archive);
 	}
 
-	int playerNr;
 	std::string packageVersion;
 	std::string packageRev;
 
@@ -242,7 +241,6 @@ private:
 	{
 		// clang-format off
 		// See https://github.com/llvm/llvm-project/issues/44312
-		archive & NVP (playerNr);
 		archive & NVP (packageVersion);
 		archive & NVP (packageRev);
 		// clang-format on

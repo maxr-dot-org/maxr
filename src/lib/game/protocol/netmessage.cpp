@@ -161,10 +161,11 @@ cNetMessageTcpWantConnect::cNetMessageTcpWantConnect() :
 
 //------------------------------------------------------------------------------
 cNetMessageTcpConnected::cNetMessageTcpConnected (int playerNr) :
-	playerNr (playerNr),
 	packageVersion (PACKAGE_VERSION),
 	packageRev (PACKAGE_REV)
-{}
+{
+	this->playerNr = playerNr;
+}
 
 //------------------------------------------------------------------------------
 cNetMessageResyncModel::cNetMessageResyncModel (const cModel& model)
