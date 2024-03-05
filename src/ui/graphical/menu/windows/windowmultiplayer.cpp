@@ -105,8 +105,7 @@ void cWindowMultiPlayer::loadHotSeatClicked()
 
 	auto windowLoad = getActiveApplication()->show (std::make_shared<cWindowLoad>());
 	windowLoad->load.connect ([=] (const cSaveGameInfo& saveInfo) {
-		auto game = std::make_shared<cLocalHotSeatGameSaved>();
-		game->setSaveGameNumber (saveInfo.number);
+		auto game = std::make_shared<cLocalHotSeatGameSaved> (saveInfo.number);
 		game->start (*application);
 
 		windowLoad->close();

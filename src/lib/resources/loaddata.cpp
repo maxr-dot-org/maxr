@@ -937,7 +937,7 @@ namespace
 	//--------------------------------------------------------------------------
 	struct sUnitDirectory
 	{
-		int id;
+		int id = -1;
 		std::filesystem::path path;
 		int insertionIndex = ++currentIndex;
 		static int currentIndex;

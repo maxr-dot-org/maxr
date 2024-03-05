@@ -77,7 +77,7 @@ public:
 private:
 	bool isOptional;
 	std::string name;
-	ValueType value;
+	ValueType value{};
 	const ValueType defaultValue;
 };
 

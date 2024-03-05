@@ -320,6 +320,7 @@ void cBinaryArchiveIn::readFromBuffer (T1& value)
 		}
 		default:
 			static_assert (SIZE == 1 || SIZE == 2 || SIZE == 4 || SIZE == 8, "!");
+			break;
 	}
 
 	readPosition += SIZE;

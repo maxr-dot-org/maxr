@@ -45,13 +45,13 @@ class cVehicle;
 class cBuildListItem
 {
 public:
-	cBuildListItem();
+	cBuildListItem() = default;
 	cBuildListItem (sID type, int remainingMetal);
-	cBuildListItem (const cBuildListItem&);
-	cBuildListItem (cBuildListItem&&);
+	cBuildListItem (const cBuildListItem&) noexcept;
+	cBuildListItem (cBuildListItem&&) noexcept;
 
 	cBuildListItem& operator= (const cBuildListItem&);
-	cBuildListItem& operator= (cBuildListItem&&);
+	cBuildListItem& operator= (cBuildListItem&&) noexcept;
 
 	const sID& getType() const;
 	void setType (const sID& type);
@@ -76,7 +76,7 @@ public:
 
 private:
 	sID type;
-	int remainingMetal;
+	int remainingMetal = 0;
 };
 
 //--------------------------------------------------------------------------

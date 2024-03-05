@@ -26,9 +26,10 @@
 class cLocalHotSeatGameSaved : public cLocalHotSeatGame
 {
 public:
-	void start (cApplication& application);
+	explicit cLocalHotSeatGameSaved (int saveGameNumber) :
+		saveGameNumber{saveGameNumber} {}
 
-	void setSaveGameNumber (int saveGameNumber);
+	void start (cApplication& application);
 
 private:
 	cSignalConnectionManager signalConnectionManager;

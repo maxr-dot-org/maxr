@@ -237,7 +237,7 @@ namespace
 		resSpotTypes.resize (resSpots.size());
 		for (std::size_t i = playerCount; i < resSpots.size(); i++)
 		{
-			std::map<eResourceType, double> amount;
+			std::map<eResourceType, float> amount;
 			for (std::size_t j = 0; j < i; j++)
 			{
 				const float maxDist = 40.f;

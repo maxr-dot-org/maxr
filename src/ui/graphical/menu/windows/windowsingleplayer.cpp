@@ -109,8 +109,7 @@ void cWindowSinglePlayer::loadGameClicked()
 
 	auto windowLoad = getActiveApplication()->show (std::make_shared<cWindowLoad>());
 	windowLoad->load.connect ([=] (const cSaveGameInfo& saveInfo) {
-		auto game = std::make_shared<cLocalSingleplayerGameSaved>();
-		game->setSaveGameNumber (saveInfo.number);
+		auto game = std::make_shared<cLocalSingleplayerGameSaved> (saveInfo.number);
 		try
 		{
 			game->start (*application);

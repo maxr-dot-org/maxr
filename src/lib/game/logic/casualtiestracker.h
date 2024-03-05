@@ -55,7 +55,7 @@ private:
 	struct Casualty
 	{
 		sID unitID;
-		int numberOfLosses;
+		int numberOfLosses = 0;
 
 		template <typename Archive>
 		void serialize (Archive& archive)
@@ -71,7 +71,7 @@ private:
 	struct CasualtiesOfPlayer
 	{
 		std::vector<Casualty> casualties;
-		int playerNr;
+		int playerNr = -1;
 
 		template <typename Archive>
 		void serialize (Archive& archive)

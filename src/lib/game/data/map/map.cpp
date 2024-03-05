@@ -352,14 +352,14 @@ bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 	SDL_RWseek (fpMapFile, 2, SEEK_CUR);
 
 	// Read informations and get positions from the map-file
-	const short sWidth = SDL_ReadLE16 (fpMapFile);
+	const Sint64 sWidth = SDL_ReadLE16 (fpMapFile);
 	Log.debug ("SizeX: " + std::to_string (sWidth));
-	const short sHeight = SDL_ReadLE16 (fpMapFile);
+	const Sint64 sHeight = SDL_ReadLE16 (fpMapFile);
 	Log.debug ("SizeY: " + std::to_string (sHeight));
 	SDL_RWseek (fpMapFile, sWidth * sHeight, SEEK_CUR); // Ignore Mini-Map
 	const Sint64 iDataPos = SDL_RWtell (fpMapFile); // Map-Data
 	SDL_RWseek (fpMapFile, sWidth * sHeight * 2, SEEK_CUR);
-	const int iNumberOfTerrains = SDL_ReadLE16 (fpMapFile); // Read PicCount
+	const Sint64 iNumberOfTerrains = SDL_ReadLE16 (fpMapFile); // Read PicCount
 	Log.debug ("Number of terrains: " + std::to_string (iNumberOfTerrains));
 	const Sint64 iGraphicsPos = SDL_RWtell (fpMapFile); // Terrain Graphics
 	const Sint64 iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64; // Palette

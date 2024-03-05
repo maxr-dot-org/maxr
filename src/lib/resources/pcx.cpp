@@ -101,7 +101,7 @@ private:
 private:
 	static const unsigned int bufferSize = 1024;
 	SDL_RWops* file = nullptr;
-	char internalBuffer[bufferSize];
+	char internalBuffer[bufferSize]{};
 	unsigned int start = 0;
 	unsigned int end = 0;
 };

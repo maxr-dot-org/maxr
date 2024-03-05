@@ -61,8 +61,8 @@ private:
 private:
 	const cStaticMap* map = nullptr;
 	std::vector<sGraphicTile> tiles; // The different terrain graphics.
-	SDL_Color palette[256]; // Palette with all Colors for the terrain graphics
-	SDL_Color palette_shw[256];
+	SDL_Color palette[256]{}; // Palette with all Colors for the terrain graphics
+	SDL_Color palette_shw[256]{};
 };
 
 #endif

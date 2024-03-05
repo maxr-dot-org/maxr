@@ -35,23 +35,19 @@
 #include <cmath>
 
 //------------------------------------------------------------------------------
-cBuildListItem::cBuildListItem()
-{}
-
-//------------------------------------------------------------------------------
 cBuildListItem::cBuildListItem (sID type_, int remainingMetal_) :
 	type (type_),
 	remainingMetal (remainingMetal_)
 {}
 
 //------------------------------------------------------------------------------
-cBuildListItem::cBuildListItem (const cBuildListItem& other) :
+cBuildListItem::cBuildListItem (const cBuildListItem& other) noexcept :
 	type (other.type),
 	remainingMetal (other.remainingMetal)
 {}
 
 //------------------------------------------------------------------------------
-cBuildListItem::cBuildListItem (cBuildListItem&& other) :
+cBuildListItem::cBuildListItem (cBuildListItem&& other) noexcept :
 	type (std::move (other.type)),
 	remainingMetal (std::move (other.remainingMetal))
 {}
@@ -65,7 +61,7 @@ cBuildListItem& cBuildListItem::operator= (const cBuildListItem& other)
 }
 
 //------------------------------------------------------------------------------
-cBuildListItem& cBuildListItem::operator= (cBuildListItem&& other)
+cBuildListItem& cBuildListItem::operator= (cBuildListItem&& other) noexcept
 {
 	type = std::move (other.type);
 	remainingMetal = std::move (other.remainingMetal);

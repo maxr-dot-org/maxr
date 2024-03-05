@@ -26,8 +26,7 @@
 
 struct sID
 {
-	sID() :
-		sID (0, 0) {}
+	sID() = default;
 	sID (int first, int second) :
 		firstPart (first), secondPart (second) {}
 
@@ -58,8 +57,8 @@ struct sID
 	}
 
 public:
-	int firstPart;
-	int secondPart;
+	int firstPart = 0;
+	int secondPart = 0;
 };
 
 #endif

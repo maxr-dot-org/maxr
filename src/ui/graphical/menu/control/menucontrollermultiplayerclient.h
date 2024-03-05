@@ -65,7 +65,7 @@ private:
 	void reconnectToGame (std::shared_ptr<cClient>);
 
 	void saveOptions();
-	bool connectionLost;
+	bool connectionLost = false;
 };
 
 #endif // ui_graphical_menu_control_menucontrollermultiplayerclientH

@@ -25,7 +25,7 @@
 struct sLandingUnit
 {
 	sID unitID;
-	unsigned cargo;
+	unsigned cargo = 0;
 
 	template <typename Archive>
 	void serialize (Archive& archive)

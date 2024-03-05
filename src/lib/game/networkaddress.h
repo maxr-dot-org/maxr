@@ -27,7 +27,7 @@
 struct sNetworkAddress
 {
 	std::string ip = "127.0.0.1"; // string? why not int array? --beko
-	std::uint16_t port;
+	std::uint16_t port = 0;
 
 	std::string toString() const { return ip + ":" + std::to_string (port); }
 

@@ -63,7 +63,7 @@ struct sTurnstartReport
 	/** unit type of the report */
 	sID type;
 	/** counter for this report */
-	int count;
+	int count = 0;
 };
 
 struct sNewTurnPlayerReport

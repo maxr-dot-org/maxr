@@ -93,7 +93,7 @@ void cGraphicStaticMap::loadPalette (SDL_RWops* fpMapFile, std::size_t paletteOf
 	SDL_SetPaletteColors (surface->format->palette, colors, 0, 256);
 
 	// Go to position of filedata
-	SDL_RWseek (fpMapFile, iGraphicsPos + 64 * 64 * (iNum), SEEK_SET);
+	SDL_RWseek (fpMapFile, iGraphicsPos + 64 * 64 * static_cast<Sint64>(iNum), SEEK_SET);
 
 	// Read pixel data and write to surface
 	if (SDL_RWread (fpMapFile, surface->pixels, 1, 64 * 64) != 64 * 64) return 0;

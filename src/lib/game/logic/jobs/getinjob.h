@@ -74,11 +74,11 @@ private:
 		// clang-format on
 	}
 
-	int loadedVehicleId;
-	int loadingUnitId;
+	int loadedVehicleId = -1;
+	int loadingUnitId = -1;
 	cSignalConnectionManager connectionManager;
-	int counter;
-	int startFlightHeight;
+	int counter = 0;
+	int startFlightHeight = -1;
 };
 
 #endif

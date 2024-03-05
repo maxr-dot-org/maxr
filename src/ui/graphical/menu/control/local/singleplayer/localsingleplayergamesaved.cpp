@@ -64,9 +64,3 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 
 	signalConnectionManager.connect (gameGuiController->terminated, [this]() { exit(); });
 }
-
-//------------------------------------------------------------------------------
-void cLocalSingleplayerGameSaved::setSaveGameNumber (int saveGameNumber_)
-{
-	saveGameNumber = saveGameNumber_;
-}
