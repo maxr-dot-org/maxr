@@ -6,6 +6,7 @@ on:
     paths:
       - 'resinstaller/src/**'
       - 'src/**'
+      - 'submodules/**'
       - 'test/**'
       - '.github/workflows/macos.yml'
       - 'CMakeLists.txt'
@@ -15,6 +16,7 @@ on:
     paths:
       - 'resinstaller/src/**'
       - 'src/**'
+      - 'submodules/**'
       - 'test/**'
       - '.github/workflows/macos.yml'
       - 'CMakeLists.txt'
@@ -27,6 +29,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
     - name: install dependencies
       run: brew install sdl2 sdl2_mixer sdl2_net libogg libvorbis

@@ -206,7 +206,7 @@ project "maxr_lib"
 
 	files { "src/lib/**.cpp", "src/lib/**.h", "src/**.in", "src/.clang-format", "CMakeList.txt" }
 	includedirs { "src", "src/lib" }
-	externalincludedirs { "src/3rd/spiritless_po/include" }
+	externalincludedirs { "submodules/spiritless_po/include" }
 
 if _OPTIONS["crashRpt_root"] ~= nil then
 	externalincludedirs { path.join(_OPTIONS["crashRpt_root"], "include") }
@@ -254,8 +254,8 @@ project "nlohmann" -- header only
 project "spiritless_po" -- header only
 	kind "None"
 
-	files { "src/3rd/spiritless_po/**.*" }
-	vpaths { ["spiritless_po/*"] = "src/3rd/spiritless_po" }
+	files { "submodules/spiritless_po/**.*" }
+	vpaths { ["spiritless_po/*"] = "submodules/spiritless_po" }
 
 group ""
 project "data" -- data

@@ -123,7 +123,7 @@ add_executable(maxr_dedicatedserver ${maxr_dedicatedserver_SRCS} ${RESOURCE_FILE
 add_executable(maxr ${maxr_SRCS} ${RESOURCE_FILE})
 add_executable(maxr_tests ${maxr_tests_SRCS})
 
-target_include_directories(maxr_lib SYSTEM PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/3rd/spiritless_po/include")
+target_include_directories(maxr_lib SYSTEM PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/submodules/spiritless_po/include")
 
 target_link_libraries(resinstaller SDL_flic)
 target_link_libraries(maxr maxr_lib SDL_flic mve_player)

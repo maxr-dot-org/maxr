@@ -6,6 +6,7 @@ on:
     paths:
       - 'resinstaller/**'
       - 'src/**'
+      - 'submodules/**'
       - 'test/**'
       - '.github/workflows/premake5-windows.yml'
       - 'premake5.lua'
@@ -14,6 +15,7 @@ on:
     paths:
       - 'resinstaller/**'
       - 'src/**'
+      - 'submodules/**'
       - 'test/**'
       - '.github/workflows/premake5-windows.yml'
       - 'premake5.lua'
@@ -25,6 +27,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
     - name: checkout premake5
       uses: actions/checkout@v4
