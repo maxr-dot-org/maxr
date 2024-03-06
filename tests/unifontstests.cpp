@@ -20,7 +20,7 @@
 #include "output/video/unifonts.h"
 #include "unittesttag.h"
 
-#include <3rd/doctest/doctest.h>
+#include <doctest.h>
 #include <regex>
 
 static constexpr const std::size_t charWidth = 2;

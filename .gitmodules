@@ -1,3 +1,6 @@
 [submodule "submodules/spiritless_po"]
 	path = submodules/spiritless_po
 	url = https://github.com/oo13/spiritless_po.git
+[submodule "submodules/doctest"]
+	path = submodules/doctest
+	url = https://github.com/doctest/doctest.git

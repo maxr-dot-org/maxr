@@ -21,7 +21,7 @@
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/jsonarchive.h"
 
-#include <3rd/doctest/doctest.h>
+#include <doctest.h>
 #include <iostream>
 #include <string>
 #include <vector>

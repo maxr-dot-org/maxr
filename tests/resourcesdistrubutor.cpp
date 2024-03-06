@@ -22,7 +22,7 @@
 #include "game/logic/subbaseresourcedistribution.h"
 #include "utility/listhelpers.h"
 
-#include <3rd/doctest/doctest.h>
+#include <doctest.h>
 #include <iostream>
 
 //------------------------------------------------------------------------------

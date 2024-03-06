@@ -20,7 +20,7 @@
 #include "input/keyboard/keycombination.h"
 #include "input/keyboard/keysequence.h"
 
-#include <3rd/doctest/doctest.h>
+#include <doctest.h>
 
 //------------------------------------------------------------------------------
 TEST_CASE ("Parsing KeyCombination")

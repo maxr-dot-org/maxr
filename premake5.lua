@@ -192,6 +192,7 @@ project "tests"
 	vpaths { ["tests/*"] = "tests" }
 
 	includedirs { "src", "src/lib" }
+	externalincludedirs { "submodules/doctest/doctest" }
 	links { "maxr_lib" }
 	linksToCrashRpt()
 
@@ -242,8 +243,8 @@ if premake.action.supports("None") then
 project "doctest" -- header only
 	kind "None"
 
-	files { "src/3rd/doctest/**.*" }
-	vpaths { ["doctest/*"] = "src/3rd/doctest" }
+	files { "submodules/doctest/**.*" }
+	vpaths { ["doctest/*"] = "submodules/doctest" }
 
 project "nlohmann" -- header only
 	kind "None"

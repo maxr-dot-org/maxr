@@ -21,7 +21,7 @@
 #include "chatcommand/chatcommandarguments.h"
 #include "chatcommand/chatcommandexecutor.h"
 
-#include <3rd/doctest/doctest.h>
+#include <doctest.h>
 #include <map>
 #include <string>
 #include <vector>
