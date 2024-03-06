@@ -4,3 +4,6 @@
 [submodule "submodules/doctest"]
 	path = submodules/doctest
 	url = https://github.com/doctest/doctest.git
+[submodule "submodules/nlohmann"]
+	path = submodules/nlohmann
+	url = https://github.com/nlohmann/json.git

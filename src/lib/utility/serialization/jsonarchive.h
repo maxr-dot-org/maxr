@@ -24,7 +24,7 @@
 #include "utility/log.h"
 #include "utility/narrow_cast.h"
 
-#include <3rd/nlohmann/json.hpp>
+#include <nlohmann/json.hpp>
 
 class cJsonArchiveOut
 {

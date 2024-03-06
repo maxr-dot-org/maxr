@@ -156,6 +156,7 @@ project "maxr"
 
 	files { "src/ui/**.cpp", "src/ui/**.h", "src/maxr.rc" }
 	includedirs { "src", "src/lib" }
+	externalincludedirs { "submodules/nlohmann/single_include" }
 	links { "maxr_lib", "SDL_flic", "mveplayer" }
 	linksToCrashRpt()
 
@@ -175,6 +176,7 @@ project "dedicated_server"
 
 	files { "src/dedicatedserver/**.cpp", "src/dedicated_server/**.h", "src/maxr.rc" }
 	includedirs { "src", "src/lib" }
+	externalincludedirs { "submodules/nlohmann/single_include" }
 	links { "maxr_lib", "SDL_flic", "mveplayer" }
 	linksToCrashRpt()
 
@@ -192,7 +194,7 @@ project "tests"
 	vpaths { ["tests/*"] = "tests" }
 
 	includedirs { "src", "src/lib" }
-	externalincludedirs { "submodules/doctest/doctest" }
+	externalincludedirs { "submodules/doctest/doctest", "submodules/nlohmann/single_include" }
 	links { "maxr_lib" }
 	linksToCrashRpt()
 
@@ -207,7 +209,7 @@ project "maxr_lib"
 
 	files { "src/lib/**.cpp", "src/lib/**.h", "src/**.in", "src/.clang-format", "CMakeList.txt" }
 	includedirs { "src", "src/lib" }
-	externalincludedirs { "submodules/spiritless_po/include" }
+	externalincludedirs { "submodules/nlohmann/single_include", "submodules/spiritless_po/include" }
 
 if _OPTIONS["crashRpt_root"] ~= nil then
 	externalincludedirs { path.join(_OPTIONS["crashRpt_root"], "include") }
@@ -249,8 +251,8 @@ project "doctest" -- header only
 project "nlohmann" -- header only
 	kind "None"
 
-	files { "src/3rd/nlohmann/**.*" }
-	vpaths { ["nlohmann/*"] = "src/3rd/nlohmann" }
+	files { "submodules/nlohmann/**.*" }
+	vpaths { ["nlohmann/*"] = "submodules/nlohmann" }
 
 project "spiritless_po" -- header only
 	kind "None"

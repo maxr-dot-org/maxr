@@ -83,9 +83,9 @@ endif()
 
 add_library(SDL_flic src/3rd/SDL_flic/SDL_flic.c src/3rd/SDL_flic/SDL_flic.h)
 add_library(mve_player src/3rd/mveplayer/mveplayer.cpp src/3rd/mveplayer/mveplayer.h)
-# nlohman is library header library for json
-# spiritless_po is library header for gettext po translation
-# doctest is library header for test framework
+# nlohmann is a library header for json
+# spiritless_po is a library header for gettext po translation
+# doctest is a library header for test framework
 
 file(GLOB_RECURSE maxr_LIB_SRCS "src/lib/*.cpp" "src/lib/*.h")
 file(GLOB_RECURSE maxr_SRCS "src/ui/*.cpp" "src/ui/*.h")
@@ -124,6 +124,7 @@ add_executable(maxr ${maxr_SRCS} ${RESOURCE_FILE})
 add_executable(maxr_tests ${maxr_tests_SRCS})
 
 target_include_directories(maxr_lib SYSTEM PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/submodules/spiritless_po/include")
+target_include_directories(maxr_lib SYSTEM PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/submodules/nlohmann/single_include")
 target_include_directories(maxr_tests SYSTEM PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/submodules/doctest/doctest")
 
 target_link_libraries(resinstaller SDL_flic)
