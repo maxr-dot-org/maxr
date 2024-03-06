@@ -241,7 +241,7 @@ namespace
 			for (std::size_t j = 0; j < i; j++)
 			{
 				const float maxDist = 40.f;
-				float dist = (resSpots[i] - resSpots[j]).l2Norm();
+				float dist = narrow_cast<float> ((resSpots[i] - resSpots[j]).l2Norm());
 				if (dist < maxDist) amount[resSpotTypes[j]] += 1 - sqrtf (dist / maxDist);
 			}
 
@@ -283,13 +283,13 @@ namespace
 						res.typ = type;
 						if (i >= playerCount)
 						{
-							res.value = 1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2);
-							if (p == pos) res.value += 3 + model.randomGenerator.get (4 + getResourceAmountFactor (frequencies[type]) * 2);
+							res.value = narrow_cast<char> (1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2));
+							if (p == pos) res.value += narrow_cast<char> (3 + model.randomGenerator.get (4 + getResourceAmountFactor (frequencies[type]) * 2));
 						}
 						else
 						{
-							res.value = 1 + 4 + getResourceAmountFactor (frequencies[type]);
-							if (p == pos) res.value += 3 + 2 + getResourceAmountFactor (frequencies[type]);
+							res.value = narrow_cast<char> (1 + 4 + getResourceAmountFactor (frequencies[type]));
+							if (p == pos) res.value += narrow_cast<char> (3 + 2 + getResourceAmountFactor (frequencies[type]));
 						}
 						res.value = std::min<unsigned char> (16, res.value);
 						model.getMap()->setResource (p, res);
@@ -360,7 +360,7 @@ void cActionInitNewGame::execute (cModel& model) const
 
 	const auto playerReadyCount = ranges::count_if (model.getPlayerList(), [] (const auto& player) { return player->getLandingPos() != cPosition{-1, -1}; });
 
-	if (playerReadyCount == model.getPlayerList().size())
+	if (narrow_cast<std::size_t> (playerReadyCount) == model.getPlayerList().size())
 	{
 		placeInitialResources (model);
 		if (model.getGameSettings()->bridgeheadType == eGameSettingsBridgeheadType::Definite) placeMiningStations (model);

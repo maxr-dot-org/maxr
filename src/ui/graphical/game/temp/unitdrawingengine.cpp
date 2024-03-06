@@ -33,6 +33,7 @@
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "utility/box.h"
 #include "utility/listhelpers.h"
+#include "utility/narrow_cast.h"
 #include "utility/random.h"
 
 //------------------------------------------------------------------------------
@@ -113,7 +114,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	if (uiData.staticData.powerOnGraphic && cSettings::getInstance().isAnimations() && (building.isUnitWorking() || !building.getStaticData().canWork))
 	{
 		SDL_Rect tmp = dest;
-		SDL_SetSurfaceAlphaMod (uiData.eff.get(), building.effectAlpha);
+		SDL_SetSurfaceAlphaMod (uiData.eff.get(), narrow_cast<Uint8> (building.effectAlpha));
 
 		CHECK_SCALING (*uiData.eff, *uiData.eff_org, zoomFactor);
 		SDL_BlitSurface (uiData.eff.get(), nullptr, cVideo::buffer, &tmp);
@@ -146,8 +147,8 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	// draw the selected-unit-flash-frame for buildings
 	if (unitSelection && &building == unitSelection->getSelectedBuilding())
 	{
-		Uint16 maxX = building.getIsBig() ? destination.w * 2 : destination.w;
-		Uint16 maxY = building.getIsBig() ? destination.h * 2 : destination.h;
+		auto maxX = building.getIsBig() ? destination.w * 2 : destination.w;
+		auto maxY = building.getIsBig() ? destination.h * 2 : destination.h;
 		const int len = maxX / 4;
 		maxX -= 3;
 		maxY -= 3;
@@ -269,8 +270,8 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	// draw the seleted-unit-flash-frame for vehicles
 	if (unitSelection && &vehicle == unitSelection->getSelectedVehicle())
 	{
-		Uint16 maxX = vehicle.getIsBig() ? destination.w * 2 : destination.w;
-		Uint16 maxY = vehicle.getIsBig() ? destination.h * 2 : destination.h;
+		auto maxX = vehicle.getIsBig() ? destination.w * 2 : destination.w;
+		auto maxY = vehicle.getIsBig() ? destination.h * 2 : destination.h;
 		const int len = maxX / 4;
 		maxX -= 3;
 		maxY -= 3;

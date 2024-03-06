@@ -29,6 +29,7 @@
 #include "utility/crc.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
+#include "utility/narrow_cast.h"
 
 #include <algorithm>
 #include <cassert>
@@ -120,7 +121,7 @@ bool cAttackJob::finished() const
 //------------------------------------------------------------------------------
 void cAttackJob::onRemoveUnit (const cUnit& unit)
 {
-	if (aggressorId == unit.getId())
+	if (narrow_cast<unsigned> (aggressorId) == unit.getId())
 	{
 		aggressorId = -1;
 	}

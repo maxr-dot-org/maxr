@@ -76,9 +76,9 @@ void initCrashreporting()
 	info.uMiniDumpType = MiniDumpWithIndirectlyReferencedMemory;
 	//info.pszUrl
 	//info.uPriorities[CR_SFTP] = 1;
-	info.uPriorities[CR_SMAPI] = -1;
-	info.uPriorities[CR_SMTP] = -1;
-	info.uPriorities[CR_HTTP] = -1;
+	info.uPriorities[CR_SMAPI] = static_cast<UINT> (-1);
+	info.uPriorities[CR_SMTP] = static_cast<UINT> (-1);
+	info.uPriorities[CR_HTTP] = static_cast<UINT> (-1);
 	//info.dwFlags = CR_INST_DONT_SEND_REPORT;
 	//info.dwFlags = CR_INST_STORE_ZIP_ARCHIVES;
 	info.dwFlags = CR_INST_SHOW_ADDITIONAL_INFO_FIELDS;

@@ -24,6 +24,7 @@
 #include "job.h"
 #include "utility/crc.h"
 #include "utility/log.h"
+#include "utility/narrow_cast.h"
 #include "utility/ranges.h"
 
 #include <algorithm>
@@ -78,7 +79,7 @@ std::vector<std::unique_ptr<cJob>>::iterator cJobContainer::releaseJob (const cM
 	if (unit)
 	{
 		auto nr = ranges::count_if (jobs, [&] (const auto& x) {
-			return x->unitId == unit->getId();
+			return narrow_cast<unsigned> (x->unitId) == unit->getId();
 		});
 		if (nr <= 1)
 		{
@@ -93,7 +94,7 @@ void cJobContainer::onRemoveUnit (const cUnit& unit)
 {
 	for (auto& job : jobs)
 	{
-		if (job->unitId == unit.getId())
+		if (narrow_cast<unsigned> (job->unitId) == unit.getId())
 		{
 			job->unitId = -1;
 			job->finished = true;

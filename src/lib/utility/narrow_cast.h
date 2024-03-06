@@ -17,41 +17,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "utility/mathtools.h"
-#include "utility/narrow_cast.h"
+#ifndef utility_narrowcastH
+#define utility_narrowcastH
 
-#include <cmath>
+#include <utility>
 
-namespace
+/**
+ * A searchable way to do narrowing casts of values
+ * @tparam Out the output type.
+ * @tparam T The input type.
+ * @param value The value to cast.
+ * @return The casted value.
+ */
+template <typename Out, typename T>
+constexpr Out narrow_cast (T&& value)
 {
-	//--------------------------------------------------------------------------
-	constexpr int pow10 (unsigned int n)
-	{
-		int res = 1;
-		for (unsigned int i = 0; i != n; ++i)
-		{
-			res *= 10;
-		}
-		return res;
-	}
-} // namespace
-
-//------------------------------------------------------------------------------
-// Rounds a Number to 'iDecimalPlace' digits after the comma:
-float Round (float dValueToRound, unsigned int iDecimalPlace)
-{
-	const auto factor = pow10 (iDecimalPlace);
-	dValueToRound *= factor;
-	if (dValueToRound >= 0)
-		dValueToRound = floorf (dValueToRound + 0.5f);
-	else
-		dValueToRound = ceilf (dValueToRound - 0.5f);
-	dValueToRound /= factor;
-	return dValueToRound;
+	return static_cast<Out> (std::forward<T> (value));
 }
 
-//------------------------------------------------------------------------------
-int Round (float dValueToRound)
-{
-	return narrow_cast<int> (Round (dValueToRound, 0));
-}
+#endif

@@ -25,6 +25,7 @@
 #include "settings.h"
 #include "utility/color.h"
 #include "utility/log.h"
+#include "utility/narrow_cast.h"
 #include "utility/position.h"
 #include "utility/string/trim.h"
 #include "utility/string/utf-8.h"
@@ -600,7 +601,7 @@ void cUnicodeFont::showText (int x, int y, const std::string& text, eUnicodeFont
 		case eUnicodeFontType::LatinSmallWhite:
 		case eUnicodeFontType::LatinSmallYellow:
 			for (char& c : sText)
-				c = toupper (c);
+				c = narrow_cast<char> (toupper (narrow_cast<int> (narrow_cast<unsigned char> (c))));
 			iSpace = 1;
 			break;
 		case eUnicodeFontType::LatinNormal:
@@ -814,7 +815,7 @@ SDL_Rect cUnicodeFont::getTextSize (const std::string& text, eUnicodeFontType fo
 		case eUnicodeFontType::LatinSmallWhite:
 		case eUnicodeFontType::LatinSmallYellow:
 			for (char& c : sText)
-				c = toupper (c);
+				c = narrow_cast<char> (toupper (narrow_cast<int> (narrow_cast<unsigned char> (c))));
 			iSpace = 1;
 			break;
 		case eUnicodeFontType::LatinNormal:
@@ -923,7 +924,7 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 		case eUnicodeFontType::LatinSmallRed:
 		case eUnicodeFontType::LatinSmallWhite:
 		case eUnicodeFontType::LatinSmallYellow:
-			unicodeCharacter = toupper (unicodeCharacter);
+			unicodeCharacter = narrow_cast<Uint16> (toupper (narrow_cast<int> (unicodeCharacter)));
 			space = 1;
 			break;
 		default:

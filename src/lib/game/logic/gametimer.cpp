@@ -42,7 +42,7 @@ cGameTimer::cGameTimer() :
 	mutex()
 {
 	eventCounter = 0;
-	maxEventQueueSize = -1;
+	maxEventQueueSize = static_cast<unsigned>(-1);
 	timerID = 0;
 }
 

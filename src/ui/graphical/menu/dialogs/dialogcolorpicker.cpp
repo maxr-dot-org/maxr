@@ -30,6 +30,7 @@
 #include "ui/widgets/lineedit.h"
 #include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
+#include "utility/narrow_cast.h"
 
 //------------------------------------------------------------------------------
 cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgrounds backgroundType) :
@@ -80,7 +81,7 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 	});
 	signalConnectionManager.connect (redValueLineEdit->editingFinished, [this] (eValidatorState) {
 		const auto color = colorPicker->getSelectedColor();
-		const auto newRed = atoi (redValueLineEdit->getText().c_str());
+		const auto newRed = narrow_cast<unsigned char> (atoi (redValueLineEdit->getText().c_str()));
 		if (newRed != color.r)
 		{
 			colorPicker->setSelectedColor (color.exchangeRed (newRed));
@@ -88,7 +89,7 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 	});
 	signalConnectionManager.connect (greenValueLineEdit->editingFinished, [this] (eValidatorState) {
 		const auto color = colorPicker->getSelectedColor();
-		const auto newGreen = atoi (greenValueLineEdit->getText().c_str());
+		const auto newGreen = narrow_cast<unsigned char> (atoi (greenValueLineEdit->getText().c_str()));
 		if (newGreen != color.g)
 		{
 			colorPicker->setSelectedColor (color.exchangeGreen (newGreen));
@@ -96,7 +97,7 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 	});
 	signalConnectionManager.connect (blueValueLineEdit->editingFinished, [this] (eValidatorState) {
 		const auto color = colorPicker->getSelectedColor();
-		const auto newBlue = atoi (blueValueLineEdit->getText().c_str());
+		const auto newBlue = narrow_cast<unsigned char> (atoi (blueValueLineEdit->getText().c_str()));
 		if (newBlue != color.b)
 		{
 			colorPicker->setSelectedColor (color.exchangeBlue (newBlue));

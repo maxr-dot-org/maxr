@@ -32,6 +32,7 @@
 #include "ui/widgets/lineedit.h"
 #include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
+#include "utility/narrow_cast.h"
 
 namespace
 {
@@ -179,12 +180,12 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Title~Turn_limit") + lngPack.i18n ("Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	turnLimitGroup = emplaceChild<cRadioGroupValue<int>>();
 	turnLimitGroup->emplaceCheckBox (unlimited, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Settings~Unlimited_11"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	turnLimitGroup->emplaceCheckBox (cGameSettings::defaultTurnLimitOption0.count(), getPosition() + cPosition (240 + 85, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption0.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	turnLimitGroup->emplaceCheckBox (cGameSettings::defaultTurnLimitOption1.count(), getPosition() + cPosition (240 + 85 + 40, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption1.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	turnLimitGroup->emplaceCheckBox (cGameSettings::defaultTurnLimitOption2.count(), getPosition() + cPosition (240 + 85 + 40 * 2, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption2.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	turnLimitGroup->emplaceCheckBox (cGameSettings::defaultTurnLimitOption3.count(), getPosition() + cPosition (240 + 85 + 40 * 3, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption3.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	turnLimitGroup->emplaceCheckBox (cGameSettings::defaultTurnLimitOption4.count(), getPosition() + cPosition (240 + 85 + 40 * 4, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption4.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	turnLimitGroup->emplaceCheckBox (cGameSettings::defaultTurnLimitOption5.count(), getPosition() + cPosition (240 + 85 + 40 * 5, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption5.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	turnLimitGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultTurnLimitOption0.count()), getPosition() + cPosition (240 + 85, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption0.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	turnLimitGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultTurnLimitOption1.count()), getPosition() + cPosition (240 + 85 + 40, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption1.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	turnLimitGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultTurnLimitOption2.count()), getPosition() + cPosition (240 + 85 + 40 * 2, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption2.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	turnLimitGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultTurnLimitOption3.count()), getPosition() + cPosition (240 + 85 + 40 * 3, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption3.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	turnLimitGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultTurnLimitOption4.count()), getPosition() + cPosition (240 + 85 + 40 * 4, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption4.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	turnLimitGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultTurnLimitOption5.count()), getPosition() + cPosition (240 + 85 + 40 * 5, currentLine), std::to_string (cGameSettings::defaultTurnLimitOption5.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	currentLine += lineHeight;
 
 	customTurnLimitCheckBox = turnLimitGroup->addCheckBox (custom, std::make_unique<cEditableCheckBox> (cBox<cPosition> (getPosition() + cPosition (240, currentLine), cPosition (240 + 85 + 30, currentLine + 10)), lngPack.i18n ("Title~Custom_11") + lngPack.i18n ("Punctuation~Colon"), "s", eUnicodeFontType::LatinNormal));
@@ -197,12 +198,12 @@ cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame_) :
 	turnEndDeadlineLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (64, currentLine), getPosition() + cPosition (230, currentLine + 10)), lngPack.i18n ("Title~Turn_end") + lngPack.i18n ("Punctuation~Colon"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	endTurnDeadlineGroup = emplaceChild<cRadioGroupValue<int>>();
 	endTurnDeadlineGroup->emplaceCheckBox (unlimited, getPosition() + cPosition (240, currentLine), lngPack.i18n ("Settings~Unlimited_11"), eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	endTurnDeadlineGroup->emplaceCheckBox (cGameSettings::defaultEndTurnDeadlineOption0.count(), getPosition() + cPosition (240 + 85, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption0.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	endTurnDeadlineGroup->emplaceCheckBox (cGameSettings::defaultEndTurnDeadlineOption1.count(), getPosition() + cPosition (240 + 85 + 40, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption1.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	endTurnDeadlineGroup->emplaceCheckBox (cGameSettings::defaultEndTurnDeadlineOption2.count(), getPosition() + cPosition (240 + 85 + 40 * 2, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption2.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	endTurnDeadlineGroup->emplaceCheckBox (cGameSettings::defaultEndTurnDeadlineOption3.count(), getPosition() + cPosition (240 + 85 + 40 * 3, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption3.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	endTurnDeadlineGroup->emplaceCheckBox (cGameSettings::defaultEndTurnDeadlineOption4.count(), getPosition() + cPosition (240 + 85 + 40 * 4, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption4.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
-	endTurnDeadlineGroup->emplaceCheckBox (cGameSettings::defaultEndTurnDeadlineOption5.count(), getPosition() + cPosition (240 + 85 + 40 * 5, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption5.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	endTurnDeadlineGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultEndTurnDeadlineOption0.count()), getPosition() + cPosition (240 + 85, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption0.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	endTurnDeadlineGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultEndTurnDeadlineOption1.count()), getPosition() + cPosition (240 + 85 + 40, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption1.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	endTurnDeadlineGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultEndTurnDeadlineOption2.count()), getPosition() + cPosition (240 + 85 + 40 * 2, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption2.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	endTurnDeadlineGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultEndTurnDeadlineOption3.count()), getPosition() + cPosition (240 + 85 + 40 * 3, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption3.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	endTurnDeadlineGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultEndTurnDeadlineOption4.count()), getPosition() + cPosition (240 + 85 + 40 * 4, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption4.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
+	endTurnDeadlineGroup->emplaceCheckBox (narrow_cast<int> (cGameSettings::defaultEndTurnDeadlineOption5.count()), getPosition() + cPosition (240 + 85 + 40 * 5, currentLine), std::to_string (cGameSettings::defaultEndTurnDeadlineOption5.count()) + "s", eUnicodeFontType::LatinNormal, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly);
 	currentLine += lineHeight;
 
 	customEndTurnDeadlineCheckBox = endTurnDeadlineGroup->addCheckBox (custom, std::make_unique<cEditableCheckBox> (cBox<cPosition> (getPosition() + cPosition (240, currentLine), cPosition (240 + 85 + 30, currentLine + 10)), lngPack.i18n ("Title~Custom_11") + lngPack.i18n ("Punctuation~Colon"), "s", eUnicodeFontType::LatinNormal));
@@ -280,7 +281,7 @@ void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 
 	if (gameSettings.turnLimitActive)
 	{
-		if (!turnLimitGroup->selectValue (gameSettings.turnLimit.count()))
+		if (!turnLimitGroup->selectValue (narrow_cast<int> (gameSettings.turnLimit.count())))
 		{
 			turnLimitGroup->selectValue (custom);
 			customTurnLimitCheckBox->setText (std::to_string (gameSettings.turnLimit.count()));
@@ -293,7 +294,7 @@ void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 
 	if (gameSettings.turnEndDeadlineActive)
 	{
-		if (!endTurnDeadlineGroup->selectValue (gameSettings.turnEndDeadline.count()))
+		if (!endTurnDeadlineGroup->selectValue (narrow_cast<int> (gameSettings.turnEndDeadline.count())))
 		{
 			endTurnDeadlineGroup->selectValue (custom);
 			customEndTurnDeadlineCheckBox->setText (std::to_string (gameSettings.turnEndDeadline.count()));

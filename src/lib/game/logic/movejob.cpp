@@ -26,6 +26,7 @@
 #include "game/data/units/vehicle.h"
 #include "game/logic/gametimer.h"
 #include "game/logic/pathcalculator.h"
+#include "utility/narrow_cast.h"
 #include "utility/ranges.h"
 
 //                                 N, NE, E, SE, S, SW, W, NW
@@ -373,7 +374,7 @@ void cMoveJob::updateSpeed (cVehicle& vehicle, const cMap& map)
 
 	if (path.empty() || state == eMoveJobState::Stopping || cPathCalculator::calcNextCost (vehicle.getPosition(), path.front(), &vehicle, &map) > vehicle.data.getSpeed())
 	{
-		int maxSpeedBreaking = 100 * sqrt (2 * MOVE_ACCELERATION * vehicle.getMovementOffset().l2Norm());
+		int maxSpeedBreaking = narrow_cast<int> (100 * sqrt (2 * MOVE_ACCELERATION * vehicle.getMovementOffset().l2Norm()));
 		maxSpeed = std::min (maxSpeed, maxSpeedBreaking);
 
 		//don't break to zero before movejob is stopped
@@ -382,7 +383,7 @@ void cMoveJob::updateSpeed (cVehicle& vehicle, const cMap& map)
 
 	if (currentSpeed < maxSpeed)
 	{
-		currentSpeed += 100 * MOVE_ACCELERATION;
+		currentSpeed += narrow_cast<std::size_t> (100 * MOVE_ACCELERATION);
 	}
 	if (currentSpeed > maxSpeed)
 	{

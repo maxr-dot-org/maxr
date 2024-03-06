@@ -78,9 +78,6 @@ end
 		disablewarnings {
 			"4100", -- '%var': unreferenced formal parameter
 			"4013", -- '$func' undefined, assuming extern return int
-			"4244", -- '=': conversion from '$type1' to '$type2', possible loss of data
-			"4245", -- '=': conversion from '$type1' to '$type2', signed/unsigned mismatch
-			"4389", -- '==': signed/unsigned mismatch
 			"4456", -- declaration of '$var' hides previous local declaration
 			"4457", -- declaration of '$var' hides function parameter
 			"4458", -- declaration of '$var' hides class member
@@ -88,7 +85,6 @@ end
 			"4701", -- potentially uninitialized local variable '$var' used
 			"4703", -- potentially uninitialized local pointer variable '$var' used
 			"4996", -- '$func': The POSIX name of this item is deprecated. Instead, use the ISO C and C++ conformant name: $func2. See online help for details.
-
 		}
 
 	filter { "configurations:Debug" }
@@ -125,6 +121,10 @@ project "resinstaller"
 
 	links "SDL_flic"
 
+	filter { "toolset:msc*" }
+		disablewarnings {
+			"4244", -- '=': conversion from '$type1' to '$type2', possible loss of data
+		}
 	filter "action:not vs*"
 if vorbis_headerPath then
 		includedirsafter { vorbis_headerPath }
@@ -231,6 +231,12 @@ project "SDL_flic"
 
 	files { "src/3rd/SDL_flic/**.c", "src/3rd/SDL_flic/**.h" }
 	vpaths { ["SDL_flic/*"] = "src/3rd/SDL_flic" }
+
+	filter { "toolset:msc*" }
+		disablewarnings {
+			"4244", -- '=': conversion from '$type1' to '$type2', possible loss of data
+		}
+	filter {}
 
 if premake.action.supports("None") then
 project "doctest" -- header only

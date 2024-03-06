@@ -24,6 +24,7 @@
 #include "input/mouse/mouse.h"
 #include "ui/widgets/application.h"
 #include "ui/widgets/image.h"
+#include "utility/narrow_cast.h"
 
 //------------------------------------------------------------------------------
 cRgbColorPicker::cRgbColorPicker (const cBox<cPosition>& area, const cRgbColor& color) :
@@ -92,8 +93,8 @@ UniqueSurface cRgbColorPicker::createColorsSurface()
 	{
 		for (int x = 0; x < size.x(); ++x)
 		{
-			color.s = x * 100 / (size.x() - 1);
-			color.v = 100 - (y * 100 / (size.y() - 1));
+			color.s = narrow_cast<unsigned char> (x * 100 / (size.x() - 1));
+			color.v = narrow_cast<unsigned char> (100 - (y * 100 / (size.y() - 1)));
 
 			putPixel (*surface, cPosition (x, y), toSdlAlphaColor (color.toRgb(), surface->format));
 		}
@@ -111,7 +112,7 @@ UniqueSurface cRgbColorPicker::createColorBarSurface()
 
 	for (int y = 0; y < size.y(); ++y)
 	{
-		const auto color = cHsvColor (y * 360 / size.y(), 100, 100);
+		const auto color = cHsvColor (narrow_cast<unsigned short> (y * 360 / size.y()), 100, 100);
 		for (int x = 0; x < size.x(); ++x)
 		{
 			const cPosition position (x, y);
@@ -219,8 +220,8 @@ void cRgbColorPicker::updateColorByMousePosition (const cPosition& mousePosition
 
 	auto newColor = currentColor;
 
-	newColor.s = relativeX * 100 / (colorsImage->getSize().x() - 1);
-	newColor.v = 100 - (relativeY * 100 / (colorsImage->getSize().y() - 1));
+	newColor.s = narrow_cast<unsigned char> (relativeX * 100 / (colorsImage->getSize().x() - 1));
+	newColor.v = narrow_cast<unsigned char> (100 - (relativeY * 100 / (colorsImage->getSize().y() - 1)));
 
 	setSelectedColor (newColor);
 }
@@ -234,7 +235,7 @@ void cRgbColorPicker::updateColorHueByMousePosition (const cPosition& mousePosit
 
 	auto newColor = currentColor;
 
-	newColor.h = relativeY * 360 / colorBarImage->getSize().y();
+	newColor.h = narrow_cast<unsigned short> (relativeY * 360 / colorBarImage->getSize().y());
 
 	setSelectedColor (newColor);
 }

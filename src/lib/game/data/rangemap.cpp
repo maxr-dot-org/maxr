@@ -20,6 +20,7 @@
 #include "rangemap.h"
 
 #include "utility/crc.h"
+#include "utility/narrow_cast.h"
 
 #include <cassert>
 
@@ -223,7 +224,7 @@ void cRangeMap::subtract (const std::vector<uint16_t>& data)
 	for (size_t i = 0; i < data.size(); i++)
 	{
 		auto oldValue = map[i];
-		map[i] = std::max (oldValue - data[i], 0);
+		map[i] = narrow_cast<std::uint16_t> (std::max (oldValue - data[i], 0));
 		if (map[i] == 0 && oldValue > 0)
 		{
 			positions.push_back (cPosition (i % size.x(), i / size.x()));

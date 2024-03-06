@@ -25,6 +25,7 @@
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "utility/crc.h"
+#include "utility/narrow_cast.h"
 #include "utility/position.h"
 
 #include <cstdint>
@@ -91,7 +92,7 @@
 	{
 		rank = rank + 1.f / (((int) rank + 5) / 5);
 	}
-	return rank;
+	return narrow_cast<int> (rank);
 }
 
 //------------------------------------------------------------------------------

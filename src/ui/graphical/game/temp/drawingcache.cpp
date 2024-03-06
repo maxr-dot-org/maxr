@@ -75,11 +75,11 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMapView& map, con
 
 	//determine needed size of the surface
 	auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
-	int height = (int) std::max (uiData->img_org[vehicle.dir]->h * zoom, uiData->shw_org[vehicle.dir]->h * zoom);
-	int width = (int) std::max (uiData->img_org[vehicle.dir]->w * zoom, uiData->shw_org[vehicle.dir]->w * zoom);
+	int height = narrow_cast<int> (std::max (uiData->img_org[vehicle.dir]->h * zoom, uiData->shw_org[vehicle.dir]->h * zoom));
+	int width = narrow_cast<int> (std::max (uiData->img_org[vehicle.dir]->w * zoom, uiData->shw_org[vehicle.dir]->w * zoom));
 	if (vehicle.getFlightHeight() > 0)
 	{
-		int shwOff = ((int) (Round (uiData->img_org[vehicle.dir]->w * zoom) * (vehicle.getFlightHeight() / 64.0f)));
+		int shwOff = narrow_cast<int> (Round (narrow_cast<float> (uiData->img_org[vehicle.dir]->w * zoom)) * (vehicle.getFlightHeight() / 64.0f));
 		height += shwOff;
 		width += shwOff;
 	}

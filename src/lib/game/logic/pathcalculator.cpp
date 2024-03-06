@@ -27,6 +27,7 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/mathtools.h"
+#include "utility/narrow_cast.h"
 
 #include <cassert>
 #include <forward_list>
@@ -69,7 +70,7 @@ int cPathDestHandler::heuristicCost (const cPosition& source) const
 		case ePathDestinationType::Attack:
 		default:
 		{
-			return Round ((destination - source).l2Norm());
+			return Round (narrow_cast<float> ((destination - source).l2Norm()));
 		}
 	}
 }

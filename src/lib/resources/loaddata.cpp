@@ -1459,8 +1459,8 @@ static int LoadEffectAlphaToSurface (UniqueSurface (&dest)[2], const std::filesy
 
 	dest[0] = LoadPCX (filepath);
 	dest[1] = CloneSDLSurface (*dest[0]);
-	SDL_SetSurfaceAlphaMod (dest[0].get(), alpha);
-	SDL_SetSurfaceAlphaMod (dest[1].get(), alpha);
+	SDL_SetSurfaceAlphaMod (dest[0].get(), narrow_cast<Uint8> (alpha));
+	SDL_SetSurfaceAlphaMod (dest[1].get(), narrow_cast<Uint8> (alpha));
 
 	Log.debug ("Effectalpha loaded: " + filepath.u8string());
 	return 1;

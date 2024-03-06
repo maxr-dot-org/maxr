@@ -25,6 +25,7 @@
 #include "resources/playercolor.h"
 #include "resources/uidata.h"
 #include "utility/mathtools.h"
+#include "utility/narrow_cast.h"
 
 #include <cassert>
 
@@ -39,7 +40,7 @@ namespace
 			CHECK_SCALING (*GraphicsData.gfx_big_beton, *GraphicsData.gfx_big_beton_org, zoomFactor);
 
 			if (building.alphaEffectValue && cSettings::getInstance().isAlphaEffects())
-				SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get(), building.alphaEffectValue);
+				SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get(), narrow_cast<Uint8> (building.alphaEffectValue));
 			else
 				SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get(), 254);
 
@@ -49,7 +50,7 @@ namespace
 		{
 			CHECK_SCALING (*UnitsUiData.ptr_small_beton, *UnitsUiData.ptr_small_beton_org, zoomFactor);
 			if (building.alphaEffectValue && cSettings::getInstance().isAlphaEffects())
-				SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_small_beton, building.alphaEffectValue);
+				SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_small_beton, narrow_cast<Uint8> (building.alphaEffectValue));
 			else
 				SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_small_beton, 254);
 
@@ -175,7 +176,7 @@ void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest,
 	src.x = 0;
 	src.y = 0;
 
-	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp.get(), alpha);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp.get(), narrow_cast<Uint8> (alpha));
 	SDL_BlitSurface (GraphicsData.gfx_tmp.get(), &src, &surface, &tmp);
 }
 
@@ -220,7 +221,7 @@ void sBuildingUIData::render (unsigned long long animationTime, SDL_Surface& sur
 	{
 		SDL_Rect tmp = dest;
 		if (building.alphaEffectValue && cSettings::getInstance().isAlphaEffects())
-			SDL_SetSurfaceAlphaMod (shw.get(), building.alphaEffectValue / 5);
+			SDL_SetSurfaceAlphaMod (shw.get(), narrow_cast<Uint8> (building.alphaEffectValue / 5));
 		else
 			SDL_SetSurfaceAlphaMod (shw.get(), 50);
 
@@ -241,7 +242,7 @@ void sBuildingUIData::drawConnectors (SDL_Surface& surface, SDL_Rect dest, float
 	CHECK_SCALING (*UnitsUiData.ptr_connector_shw, *UnitsUiData.ptr_connector_shw_org, zoomFactor);
 
 	if (building.alphaEffectValue)
-		SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_connector, building.alphaEffectValue);
+		SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_connector, narrow_cast<Uint8> (building.alphaEffectValue));
 	else
 		SDL_SetSurfaceAlphaMod (UnitsUiData.ptr_connector, 254);
 

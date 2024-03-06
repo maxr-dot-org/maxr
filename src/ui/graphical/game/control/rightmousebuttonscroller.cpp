@@ -27,6 +27,7 @@
 #include "ui/widgets/application.h"
 #include "ui/widgets/image.h"
 #include "utility/color.h"
+#include "utility/narrow_cast.h"
 
 const double cRightMouseButtonScrollerWidget::factor = 0.05;
 const double cRightMouseButtonScrollerWidget::minDistanceSquared = 15 * 15;
@@ -53,7 +54,7 @@ cRightMouseButtonScrollerWidget::cRightMouseButtonScrollerWidget (std::shared_pt
 			const auto distance = (p - middle).l2NormSquared();
 			if (distance < (9 * 9) && distance > (3 * 3))
 			{
-				const auto colorValue = 30 + std::abs (distance - (6 * 6));
+				const auto colorValue = narrow_cast<unsigned char> (30 + std::abs (distance - (6 * 6)));
 				drawPoint (*image, p, cRgbColor (colorValue, colorValue, colorValue));
 			}
 		}

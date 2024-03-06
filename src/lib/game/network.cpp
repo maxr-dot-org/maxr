@@ -23,6 +23,7 @@
 #include "game/protocol/netmessage.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
+#include "utility/narrow_cast.h"
 
 namespace
 {
@@ -119,7 +120,7 @@ int cNetwork::openServer (int port)
 	NetLog.debug ("Network: Open server on port: " + std::to_string (port));
 
 	IPaddress ipaddr;
-	if (SDLNet_ResolveHost (&ipaddr, nullptr, port) == -1)
+	if (SDLNet_ResolveHost (&ipaddr, nullptr, narrow_cast<Uint16> (port)) == -1)
 	{
 		return -1;
 	}

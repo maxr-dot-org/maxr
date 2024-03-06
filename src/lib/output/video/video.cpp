@@ -28,6 +28,7 @@
 #include "utility/os.h"
 #include "SDLutility/tosdl.h"
 #include "SDLutility/uniquesurface.h"
+#include "utility/narrow_cast.h"
 #include "utility/thread/ismainthread.h"
 
 #include <SDL.h>
@@ -515,7 +516,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 			g = (((dcolor & dgmask) * (255 - srcAlpha) * dalpha) >> 8) + g * srcAlpha;
 			b = (((dcolor & dbmask) * (255 - srcAlpha) * dalpha) >> 8) + b * srcAlpha;
 
-			const Uint8 a = srcAlpha + dalpha - (srcAlpha * dalpha) / 255;
+			const Uint8 a = narrow_cast<Uint8> (srcAlpha + dalpha - (srcAlpha * dalpha) / 255);
 
 			if (a > 0)
 			{

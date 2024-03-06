@@ -28,6 +28,7 @@
 #include "resources/playercolor.h"
 #include "resources/uidata.h"
 #include "utility/mathtools.h"
+#include "utility/narrow_cast.h"
 
 #include <cassert>
 
@@ -39,7 +40,7 @@ namespace
 		if (!cSettings::getInstance().shouldDoPrescale())
 		{
 			const int height = (int) (org_src.h * factor);
-			const int width = (frames > 1) ? height * frames : (org_src.w * factor);
+			const int width = (frames > 1) ? height * frames : narrow_cast<int> (org_src.w * factor);
 			if (src.w != width || src.h != height)
 			{
 				scaleSurface (&org_src, &src, width, height);
@@ -57,7 +58,7 @@ void sVehicleUIData::render_shadow (const cVehicle& vehicle, const cMapView& map
 
 	if (vehicle.alphaEffectValue && cSettings::getInstance().isAlphaEffects())
 	{
-		SDL_SetSurfaceAlphaMod (shw[vehicle.dir].get(), vehicle.alphaEffectValue / 5);
+		SDL_SetSurfaceAlphaMod (shw[vehicle.dir].get(), narrow_cast<Uint8> (vehicle.alphaEffectValue / 5));
 	}
 	else
 	{
@@ -76,7 +77,7 @@ void sVehicleUIData::render_shadow (const cVehicle& vehicle, const cMapView& map
 	}
 	else if (vehicle.getStaticData().animationMovement)
 	{
-		const Uint16 size = (int) (img_org[vehicle.dir]->h * zoomFactor);
+		const Uint16 size = narrow_cast<Uint16> (img_org[vehicle.dir]->h * zoomFactor);
 		SDL_Rect r = {Sint16 (vehicle.WalkFrame * size), 0, size, size};
 		blitWithPreScale (*shw_org[vehicle.dir], *shw[vehicle.dir], &r, surface, &tmp, zoomFactor);
 	}
@@ -120,7 +121,7 @@ void sVehicleUIData::render_BuildingOrBigClearing (const cVehicle& vehicle, cons
 	SDL_Rect tmp = dest;
 	if (vehicle.isUnitBuildingABuilding() && vehicle.getIsBig() && (!map.isWaterOrCoast (vehicle.getPosition()) || map.getField (vehicle.getPosition()).getBaseBuilding()))
 	{
-		SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get(), vehicle.bigBetonAlpha);
+		SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get(), narrow_cast<Uint8> (vehicle.bigBetonAlpha));
 		CHECK_SCALING (*GraphicsData.gfx_big_beton, *GraphicsData.gfx_big_beton_org, zoomFactor);
 		SDL_BlitSurface (GraphicsData.gfx_big_beton.get(), nullptr, &surface, &tmp);
 	}
@@ -183,7 +184,7 @@ void sVehicleUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, 
 	src.y = 0;
 	SDL_Rect tmp = dest;
 
-	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp.get(), alpha);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp.get(), narrow_cast<Uint8> (alpha));
 	blittAlphaSurface (GraphicsData.gfx_tmp.get(), &src, &surface, &tmp);
 }
 
@@ -244,8 +245,8 @@ void sVehicleUIData::drawOverlayAnimation (SDL_Surface& surface, const SDL_Rect&
 {
 	if (staticData.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
-	const Uint16 size = (Uint16) (overlay_org->h * zoomFactor);
-	const Uint16 srcX = Round ((overlay_org->h * frameNr) * zoomFactor);
+	const Uint16 size = narrow_cast<Uint16> (overlay_org->h * zoomFactor);
+	const Uint16 srcX = narrow_cast<Uint16> (Round ((overlay_org->h * frameNr) * zoomFactor));
 	SDL_Rect src = {srcX, 0, size, size};
 
 	SDL_Rect tmp = dest;
@@ -253,7 +254,7 @@ void sVehicleUIData::drawOverlayAnimation (SDL_Surface& surface, const SDL_Rect&
 	tmp.x += offset;
 	tmp.y += offset;
 
-	SDL_SetSurfaceAlphaMod (overlay.get(), alpha);
+	SDL_SetSurfaceAlphaMod (overlay.get(), narrow_cast<Uint8> (alpha));
 	blitWithPreScale (*overlay_org, *overlay, &src, surface, &tmp, zoomFactor);
 }
 

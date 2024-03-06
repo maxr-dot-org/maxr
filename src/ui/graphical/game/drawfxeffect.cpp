@@ -22,6 +22,7 @@
 #include "game/logic/fxeffects.h"
 #include "output/video/video.h"
 #include "resources/uidata.h"
+#include "utility/narrow_cast.h"
 #include "utility/position.h"
 
 namespace
@@ -65,7 +66,7 @@ namespace
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
 		const int alpha = (fx.alphaEnd - fx.alphaStart) * fx.getTick() / fx.getLength() + fx.alphaStart;
-		SDL_SetSurfaceAlphaMod (images[1].get(), alpha);
+		SDL_SetSurfaceAlphaMod (images[1].get(), narrow_cast<Uint8> (alpha));
 
 		SDL_Rect dest = {destination.x() - static_cast<int> ((images[0]->w / 2) * zoom), destination.y() - static_cast<int> ((images[0]->h / 2) * zoom), 0, 0};
 		SDL_BlitSurface (images[1].get(), nullptr, cVideo::buffer, &dest);
@@ -112,7 +113,7 @@ namespace
 		SDL_Rect dest = {destination.x() + static_cast<int> ((tick * fx.getDx()) * zoom), destination.y() + static_cast<int> ((tick * fx.getDy()) * zoom), 0, 0};
 
 		const int alpha = (fx.alphaEnd - fx.alphaStart) * tick / fx.getLength() + fx.alphaStart;
-		SDL_SetSurfaceAlphaMod (images[1].get(), alpha);
+		SDL_SetSurfaceAlphaMod (images[1].get(), narrow_cast<Uint8> (alpha));
 		SDL_BlitSurface (images[1].get(), &src, cVideo::buffer, &dest);
 	}
 
@@ -122,7 +123,7 @@ namespace
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
 		const int alpha = (fx.alphaEnd - fx.alphaStart) * fx.getTick() / fx.getLength() + fx.alphaStart;
-		SDL_SetSurfaceAlphaMod (images[1].get(), alpha);
+		SDL_SetSurfaceAlphaMod (images[1].get(), narrow_cast<Uint8> (alpha));
 
 		SDL_Rect src;
 		src.y = 0;

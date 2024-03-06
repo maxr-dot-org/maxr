@@ -21,6 +21,7 @@
 
 #include "crc.h"
 #include "utility/comparison.h"
+#include "utility/narrow_cast.h"
 
 #include <algorithm>
 #include <cassert>
@@ -81,11 +82,11 @@ cHsvColor cRgbColor::toHsv() const
 	if (maxValue == minValue)
 		hTemp = 0;
 	else if (maxValue == r)
-		hTemp = (60 * ((int) g - b) / delta);
+		hTemp = narrow_cast<short> (60 * ((int) g - b) / delta);
 	else if (maxValue == g)
-		hTemp = (120 + 60 * ((int) b - r) / delta);
+		hTemp = narrow_cast<short> (120 + 60 * ((int) b - r) / delta);
 	else if (maxValue == b)
-		hTemp = (240 + 60 * ((int) r - g) / delta);
+		hTemp = narrow_cast<short> (240 + 60 * ((int) r - g) / delta);
 
 	if (hTemp < 0) hTemp += 360;
 
@@ -96,7 +97,7 @@ cHsvColor cRgbColor::toHsv() const
 	if (maxValue == 0)
 		result.s = 0;
 	else
-		result.s = delta * 100 / maxValue;
+		result.s = narrow_cast<unsigned char> (delta * 100 / maxValue);
 
 	result.v = maxValue * 100 / 255;
 

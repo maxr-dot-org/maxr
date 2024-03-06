@@ -72,6 +72,7 @@
 #include "utility/indexiterator.h"
 #include "utility/listhelpers.h"
 #include "utility/mathtools.h"
+#include "utility/narrow_cast.h"
 #include "utility/random.h"
 #include "utility/ranges.h"
 
@@ -1651,10 +1652,10 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 			SDL_Rect src = cGraphicsData::getRect_SmallSymbol_Shots();
 			SDL_Rect shotDest = dest;
 			shotDest.x += (zoomedTileSize.x() - shotCount * (src.w + 2)) / 2;
-			shotDest.y += zoomedTileSize.y() - (src.h + 4) * getZoomFactor();
+			shotDest.y += zoomedTileSize.y() - narrow_cast<int> ((src.h + 4) * getZoomFactor());
 			for (int i = 0; i != shotCount; ++i) {
 				SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, cVideo::buffer, &shotDest);
-				shotDest.x += (src.w + 2) * getZoomFactor();
+				shotDest.x += narrow_cast<int> ((src.w + 2) * getZoomFactor());
 			}
 		}
 	};

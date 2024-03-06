@@ -25,6 +25,7 @@
 #include "settings.h"
 #include "ui/sound/effects/soundeffect.h"
 #include "utility/listhelpers.h"
+#include "utility/narrow_cast.h"
 
 //--------------------------------------------------------------------------
 cSoundManager::sStoredSound::sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_) :
@@ -260,8 +261,8 @@ void cSoundManager::updateSoundPosition (cSoundEffect& sound)
 		// just to make 100% sure that there are no overflows
 		pan = std::clamp (pan, -1., -1.);
 	}
-	const auto right = std::min ((int) (std::numeric_limits<unsigned char>::max() * (pan + 1)), (int) std::numeric_limits<unsigned char>::max());
-	const auto left = std::min ((int) (std::numeric_limits<unsigned char>::max() * (-1. * pan + 1)), (int) std::numeric_limits<unsigned char>::max());
+	const auto right = narrow_cast<unsigned char> (std::min ((int) (std::numeric_limits<unsigned char>::max() * (pan + 1)), (int) std::numeric_limits<unsigned char>::max()));
+	const auto left = narrow_cast<unsigned char> (std::min ((int) (std::numeric_limits<unsigned char>::max() * (-1. * pan + 1)), (int) std::numeric_limits<unsigned char>::max()));
 
 	channel->setPanning (left, right);
 }

@@ -23,6 +23,7 @@
 #include "SDLutility/uniquesurface.h"
 #include "utility/box.h"
 #include "utility/color.h"
+#include "utility/narrow_cast.h"
 #include "utility/position.h"
 
 //------------------------------------------------------------------------------
@@ -179,11 +180,11 @@ void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel)
 	switch (bpp)
 	{
 		case 1:
-			*p = pixel;
+			*p = narrow_cast<Uint8> (pixel);
 			break;
 
 		case 2:
-			*(Uint16*) p = pixel;
+			*(Uint16*) p = narrow_cast<Uint16> (pixel);
 			break;
 
 		case 3:

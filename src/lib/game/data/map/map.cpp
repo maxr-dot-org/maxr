@@ -28,6 +28,7 @@
 #include "utility/crc.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
+#include "utility/narrow_cast.h"
 #include "utility/position.h"
 #include "utility/ranges.h"
 #include "utility/string/toString.h"
@@ -374,11 +375,11 @@ bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 	}
 
 	// Generate new Map
-	this->size = std::max<int> (16, sWidth);
+	this->size = std::max<int> (16, narrow_cast<int> (sWidth));
 	Kacheln.resize (size * size, 0);
-	terrains.resize (iNumberOfTerrains);
+	terrains.resize (narrow_cast<std::size_t> (iNumberOfTerrains));
 
-	graphic.loadPalette (fpMapFile, iPalettePos, iNumberOfTerrains);
+	graphic.loadPalette (fpMapFile, narrow_cast<std::size_t> (iPalettePos), narrow_cast<std::size_t> (iNumberOfTerrains));
 	// Load necessary Terrain Graphics
 	for (int iNum = 0; iNum < iNumberOfTerrains; iNum++)
 	{
@@ -407,7 +408,7 @@ bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 				//SDL_RWclose (fpMapFile);
 				//return false;
 		}
-		if (!graphic.loadTile (fpMapFile, iGraphicsPos, iNum))
+		if (!graphic.loadTile (fpMapFile, narrow_cast<std::size_t> (iGraphicsPos), iNum))
 		{
 			clear();
 			return false;
@@ -494,7 +495,7 @@ std::string cMap::resourcesToString() const
 	str.reserve (4 * Resources.size() + 1);
 	for (size_t i = 0; i != Resources.size(); ++i)
 	{
-		str += getHexValue (static_cast<int> (Resources[i].typ));
+		str += getHexValue (narrow_cast<unsigned char> (Resources[i].typ));
 		str += getHexValue (Resources[i].value);
 	}
 	return str;

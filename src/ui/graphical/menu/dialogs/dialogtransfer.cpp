@@ -251,11 +251,11 @@ void cNewDialogTransfer::transferValueChanged()
 		arrowImage->show();
 		// Set right to left arrow image.
 		// little hack: flip part of the image that represent the arrow
-		const unsigned int w = 40;
-		const unsigned int h = 20;
+		const int w = 40;
+		const int h = 20;
 		UniqueSurface arrowSurface (SDL_CreateRGBSurface (0, w, h, Video.getColDepth(), 0, 0, 0, 0));
-		const Sint16 x = arrowImage->getPosition().x() - getPosition().x(); // 140
-		const Sint16 y = arrowImage->getPosition().y() - getPosition().y(); //  77
+		const int x = arrowImage->getPosition().x() - getPosition().x(); // 140
+		const int y = arrowImage->getPosition().y() - getPosition().y(); //  77
 		SDL_Rect src = {x, y, w, h};
 		SDL_BlitSurface (getSurface(), &src, arrowSurface.get(), nullptr);
 		FlipSurfaceHorizontally (*arrowSurface);

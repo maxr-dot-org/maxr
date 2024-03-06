@@ -44,6 +44,7 @@
 #include "ui/widgets/lineedit.h"
 #include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
+#include "utility/narrow_cast.h"
 #include "utility/string/utf-8.h"
 
 //------------------------------------------------------------------------------
@@ -575,7 +576,7 @@ std::shared_ptr<cPlayerBasicData> cWindowNetworkLobby::getPlayer (int playerNr) 
 //------------------------------------------------------------------------------
 unsigned short cWindowNetworkLobby::getPort() const
 {
-	return atoi (portLineEdit->getText().c_str());
+	return narrow_cast<unsigned short> (atoi (portLineEdit->getText().c_str()));
 }
 
 //------------------------------------------------------------------------------

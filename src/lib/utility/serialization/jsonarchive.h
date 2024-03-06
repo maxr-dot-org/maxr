@@ -22,6 +22,7 @@
 
 #include "serialization.h"
 #include "utility/log.h"
+#include "utility/narrow_cast.h"
 
 #include <3rd/nlohmann/json.hpp>
 
@@ -292,9 +293,9 @@ private:
 	// pop fundamental types
 	//
 	void popValue (bool& b) { b = json; }
-	void popValue (char& c) { c = static_cast<int> (json); }
-	void popValue (signed char& c) { c = static_cast<int> (json); }
-	void popValue (unsigned char& c) { c = static_cast<int> (json); }
+	void popValue (char& c) { c = narrow_cast<char> (json.get<int>()); }
+	void popValue (signed char& c) { c = narrow_cast<signed char> (json.get<int>()); }
+	void popValue (unsigned char& c) { c = narrow_cast<unsigned char> (json.get<int>()); }
 	void popValue (signed short& n) { n = json; }
 	void popValue (unsigned short& n) { n = json; }
 	void popValue (signed int& n) { n = json; }
