@@ -203,13 +203,13 @@ float cSurveyorAi::calcFactor (const cPosition& position, const std::forward_lis
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			const cPosition position (x, y);
-			if (positionHasBeenSurveyedByPath (position, path)) continue;
+			const cPosition aroundPosition (x, y);
+			if (positionHasBeenSurveyedByPath (aroundPosition, path)) continue;
 
-			if (!owner.hasResourceExplored (position)) //&& !map.isBlocked (position))
+			if (!owner.hasResourceExplored (aroundPosition)) //&& !map.isBlocked (aroundPosition))
 			{
 				nrSurvFields++;
-				if (hasAdjacentResources (position, map))
+				if (hasAdjacentResources (aroundPosition, map))
 				{
 					// spots with adjacent revealed resources have a high probability
 					// for more resources
@@ -345,9 +345,9 @@ bool cSurveyorAi::hasAdjacentResources (const cPosition& position, const cMap& m
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			const cPosition position (x, y);
+			const cPosition aroundPosition (x, y);
 
-			if (owner.hasResourceExplored (position) && map.getResource (position).typ != eResourceType::None)
+			if (owner.hasResourceExplored (aroundPosition) && map.getResource (aroundPosition).typ != eResourceType::None)
 			{
 				return true;
 			}

@@ -151,13 +151,13 @@ void cActionFinishBuild::finishAVehicle (cModel& model, cBuilding& building) con
 
 	if (!building.isBuildListEmpty())
 	{
-		cBuildListItem& buildingListItem = building.getBuildListItem (0);
+		cBuildListItem& nextBuildingListItem = building.getBuildListItem (0);
 		if (buildingListItem.getRemainingMetal() == -1)
 		{
 			std::array<int, 3> turboBuildRounds;
 			std::array<int, 3> turboBuildCosts;
-			building.calcTurboBuild (turboBuildRounds, turboBuildCosts, player->getLastUnitData (buildingListItem.getType())->getBuildCost());
-			buildingListItem.setRemainingMetal (turboBuildCosts[building.getBuildSpeed()]);
+			building.calcTurboBuild (turboBuildRounds, turboBuildCosts, player->getLastUnitData (nextBuildingListItem.getType())->getBuildCost());
+			nextBuildingListItem.setRemainingMetal (turboBuildCosts[building.getBuildSpeed()]);
 		}
 		building.startWork();
 	}

@@ -71,7 +71,7 @@ bool cRightMouseButtonScrollerWidget::isScrolling() const
 }
 
 //------------------------------------------------------------------------------
-bool cRightMouseButtonScrollerWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
+bool cRightMouseButtonScrollerWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition&)
 {
 	if (hasStartedScrolling)
 	{

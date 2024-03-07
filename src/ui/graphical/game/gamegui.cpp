@@ -753,19 +753,6 @@ void cGameGui::updateSelectedUnitIdleSound()
 	{
 		stopSelectedUnitSound();
 	}
-	else if (const auto* building = dynamic_cast<const cBuilding*> (selectedUnit))
-	{
-		auto& uiData = UnitsUiData.getBuildingUI (*building);
-
-		if (building->isUnitWorking())
-		{
-			startSelectedUnitSound (*building, uiData.Running);
-		}
-		else
-		{
-			startSelectedUnitSound (*building, uiData.Wait);
-		}
-	}
 	else if (const auto* vehicle = dynamic_cast<const cVehicle*> (selectedUnit))
 	{
 		auto* uiData = UnitsUiData.getVehicleUI (vehicle->getStaticUnitData().ID);
@@ -789,6 +776,19 @@ void cGameGui::updateSelectedUnitIdleSound()
 		else
 		{
 			startSelectedUnitSound (*vehicle, uiData->Wait);
+		}
+	}
+	else if (const auto* building = dynamic_cast<const cBuilding*> (selectedUnit))
+	{
+		auto& uiData = UnitsUiData.getBuildingUI (*building);
+
+		if (building->isUnitWorking())
+		{
+			startSelectedUnitSound (*building, uiData.Running);
+		}
+		else
+		{
+			startSelectedUnitSound (*building, uiData.Wait);
 		}
 	}
 }

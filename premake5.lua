@@ -78,10 +78,7 @@ end
 		disablewarnings {
 			"4100", -- '%var': unreferenced formal parameter
 			"4013", -- '$func' undefined, assuming extern return int
-			"4456", -- declaration of '$var' hides previous local declaration
-			"4457", -- declaration of '$var' hides function parameter
 			"4458", -- declaration of '$var' hides class member
-			"4459", -- declaration of '$var' hides global declaration
 			"4701", -- potentially uninitialized local variable '$var' used
 			"4703", -- potentially uninitialized local pointer variable '$var' used
 			"4996", -- '$func': The POSIX name of this item is deprecated. Instead, use the ISO C and C++ conformant name: $func2. See online help for details.
@@ -124,6 +121,7 @@ project "resinstaller"
 	filter { "toolset:msc*" }
 		disablewarnings {
 			"4244", -- '=': conversion from '$type1' to '$type2', possible loss of data
+			"4456", -- declaration of '$var' hides previous local declaration
 		}
 	filter "action:not vs*"
 if vorbis_headerPath then
@@ -197,6 +195,12 @@ project "tests"
 	externalincludedirs { "submodules/doctest/doctest", "submodules/nlohmann/single_include" }
 	links { "maxr_lib" }
 	linksToCrashRpt()
+
+	filter { "toolset:msc*" }
+		disablewarnings {
+			"4459", -- declaration of '$var' hides global declaration
+		}
+	filter {}
 
 project "maxr_lib"
 	kind "StaticLib"
