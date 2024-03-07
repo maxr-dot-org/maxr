@@ -71,7 +71,7 @@ bool cRightMouseButtonScrollerWidget::isScrolling() const
 }
 
 //------------------------------------------------------------------------------
-bool cRightMouseButtonScrollerWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition&)
+bool cRightMouseButtonScrollerWidget::handleMouseMoved (cApplication&, cMouse& mouse, const cPosition&) /* override */
 {
 	if (hasStartedScrolling)
 	{
@@ -158,7 +158,7 @@ bool cRightMouseButtonScrollerWidget::handleMouseReleased (cApplication& applica
 }
 
 //------------------------------------------------------------------------------
-void cRightMouseButtonScrollerWidget::handleLooseMouseFocus (cApplication& application)
+void cRightMouseButtonScrollerWidget::handleLooseMouseFocus (cApplication&) /* override */
 {
 	mouseFocusReleased();
 }

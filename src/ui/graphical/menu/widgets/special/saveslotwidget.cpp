@@ -118,7 +118,7 @@ void cSaveSlotWidget::forceKeyFocus()
 }
 
 //------------------------------------------------------------------------------
-bool cSaveSlotWidget::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cSaveSlotWidget::handleClicked (cApplication&, cMouse& mouse, eMouseButtonType button) /* override */
 {
 	if (button == eMouseButtonType::Left)
 	{

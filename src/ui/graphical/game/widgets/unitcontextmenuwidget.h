@@ -64,8 +64,8 @@ public:
 	static bool unitHasCollectMinesEntry (const cVehicle*, const cPlayer*);
 	static bool unitHasSabotageEntry (const cVehicle*, const cPlayer*);
 	static bool unitHasStealEntry (const cVehicle*, const cPlayer*);
-	static bool unitHasInfoEntry (const cUnit*, const cPlayer*);
-	static bool unitHasDoneEntry (const cUnit*, const cPlayer*);
+	static bool unitHasInfoEntry (const cUnit*);
+	static bool unitHasDoneEntry (const cUnit*);
 
 	cSignal<void()> attackToggled;
 	cSignal<void()> buildClicked;

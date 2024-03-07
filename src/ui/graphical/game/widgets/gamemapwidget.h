@@ -90,7 +90,7 @@ public:
 
 	bool startFindBuildPosition (const sID& buildId);
 	void startFindPathBuildPosition();
-	void startActivateVehicle (const cUnit&, size_t index);
+	void startActivateVehicle (size_t index);
 
 	void addEffect (std::shared_ptr<cFx>, bool playSound = true);
 

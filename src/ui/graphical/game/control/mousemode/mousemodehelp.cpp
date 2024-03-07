@@ -38,13 +38,13 @@ eMouseModeType cMouseModeHelp::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeHelp::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
+void cMouseModeHelp::setCursor (cMouse& mouse, const cPosition&, const cUnitsData&) const /* override */
 {
 	mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Help));
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeHelp::getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const
+std::unique_ptr<cMouseAction> cMouseModeHelp::getMouseAction (const cPosition&, const cUnitsData&) const /* override */
 {
 	return std::make_unique<cMouseActionHelp>();
 }

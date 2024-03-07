@@ -444,7 +444,7 @@ cMoveJob* cModel::addMoveJob (cVehicle& vehicle, const std::forward_list<cPositi
 			currentMoveJob->removeVehicle();
 		}
 	}
-	auto moveJob = std::make_unique<cMoveJob> (path, vehicle, *this);
+	auto moveJob = std::make_unique<cMoveJob> (path, vehicle);
 	vehicle.setMoveJob (moveJob.get());
 
 	moveJobs.push_back (std::move (moveJob));

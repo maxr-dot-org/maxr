@@ -384,7 +384,7 @@ void cLobbyClient::handleNetMessage_TCP_CONNECT_FAILED (const cNetMessageTcpConn
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::handleNetMessage_TCP_CLOSE (const cNetMessageTcpClose& message)
+void cLobbyClient::handleNetMessage_TCP_CLOSE (const cNetMessageTcpClose&)
 {
 	localPlayer.setReady (false);
 	localPlayer.setNr (-1);
@@ -529,7 +529,7 @@ void cLobbyClient::handleNetMessage_MU_MSG_LANDING_STATE (const cMuMsgLandingSta
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::handleNetMessage_MU_MSG_START_GAME (const cMuMsgStartGame& message)
+void cLobbyClient::handleNetMessage_MU_MSG_START_GAME (const cMuMsgStartGame&)
 {
 	client = std::make_shared<cClient> (connectionManager);
 	client->setPlayers (players, localPlayer.getNr());

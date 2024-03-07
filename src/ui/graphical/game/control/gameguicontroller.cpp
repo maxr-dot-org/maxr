@@ -1130,7 +1130,7 @@ void cGameGuiController::connectReportSources (cClient& client)
 	playerGameGuiStates[player.getId()].reports = std::make_shared<std::vector<std::unique_ptr<cSavedReport>>>();
 
 	//report message received from server
-	allClientsSignalConnectionManager.connect (client.reportMessageReceived, [this] (int fromPlayerNr, std::unique_ptr<cSavedReport>& report, int toPlayerNr) {
+	allClientsSignalConnectionManager.connect (client.reportMessageReceived, [this] (int, std::unique_ptr<cSavedReport>& report, int toPlayerNr) {
 		addSavedReport (std::move (report), toPlayerNr);
 	});
 
@@ -1286,7 +1286,7 @@ void cGameGuiController::showFilesWindow()
 			gameGui->exit();
 		});
 	});
-	loadSaveWindow->load.connect ([this, loadSaveWindow] (const cSaveGameInfo& saveInfo) {
+	loadSaveWindow->load.connect ([this, loadSaveWindow] (const cSaveGameInfo&) {
 		// loading games while game is running is not yet implemented
 		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~INFO_Not_Implemented")));
 	});
@@ -1478,7 +1478,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 		}
 		else
 		{
-			gameGui->getGameMap().startActivateVehicle (unit, index);
+			gameGui->getGameMap().startActivateVehicle (index);
 		}
 		storageWindow->close();
 	});

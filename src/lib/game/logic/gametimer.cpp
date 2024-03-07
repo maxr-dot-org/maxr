@@ -264,7 +264,7 @@ void cGameTimerClient::run (cClient& client, cModel& model)
 		if (syncMessageReceived)
 		{
 			model.advanceGameTime();
-			client.runClientJobs (model);
+			client.runClientJobs();
 
 			//check crc
 			localChecksum = model.getChecksum();

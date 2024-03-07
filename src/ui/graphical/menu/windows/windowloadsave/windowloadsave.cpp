@@ -59,7 +59,7 @@ void cWindowLoadSave::handleSlotClicked (size_t index)
 }
 
 //------------------------------------------------------------------------------
-void cWindowLoadSave::handleSlotDoubleClicked (size_t index)
+void cWindowLoadSave::handleSlotDoubleClicked (size_t) /* override */
 {}
 
 //------------------------------------------------------------------------------

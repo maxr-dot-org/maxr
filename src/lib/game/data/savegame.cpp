@@ -71,7 +71,7 @@ namespace
 	}
 
 	//--------------------------------------------------------------------------
-	void writeHeader (nlohmann::json& json, int slot, const std::string& saveName, const cModel& model)
+	void writeHeader (nlohmann::json& json, const std::string& saveName, const cModel& model)
 	{
 		//init document
 		json["version"] = SAVE_FORMAT_VERSION;
@@ -97,7 +97,7 @@ namespace
 void cSavegame::save (const cModel& model, int slot, const std::string& saveName) const
 {
 	nlohmann::json json;
-	writeHeader (json, slot, saveName, model);
+	writeHeader (json, saveName, model);
 
 	cJsonArchiveOut archive (json);
 	archive << NVP (model);

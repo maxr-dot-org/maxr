@@ -146,12 +146,13 @@ void cClient::sendSyncMessage (unsigned int gameTime, bool crcOK, unsigned int t
 }
 
 //------------------------------------------------------------------------------
-void cClient::runClientJobs (const cModel& model)
+void cClient::runClientJobs()
 {
 	// run surveyor AI
 	handleSurveyorMoveJobs();
 }
 
+//------------------------------------------------------------------------------
 void cClient::handleNetMessages()
 {
 	std::unique_ptr<cNetMessage> message;

@@ -91,7 +91,7 @@ bool cImage::isAt (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-bool cImage::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cImage::handleClicked (cApplication&, cMouse&, eMouseButtonType button) /* override */
 {
 	if (button == eMouseButtonType::Left)
 	{

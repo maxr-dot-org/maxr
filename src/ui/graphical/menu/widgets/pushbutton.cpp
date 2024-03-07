@@ -118,7 +118,7 @@ bool cPushButton::handleMouseReleased (cApplication& application, cMouse& mouse,
 }
 
 //------------------------------------------------------------------------------
-bool cPushButton::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cPushButton::handleClicked (cApplication&, cMouse&, eMouseButtonType button) /* override */
 {
 	if (button == eMouseButtonType::Left && !isLocked)
 	{

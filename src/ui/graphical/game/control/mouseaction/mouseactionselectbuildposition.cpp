@@ -30,7 +30,7 @@ cMouseActionSelectBuildPosition::cMouseActionSelectBuildPosition (sID buildId_, 
 {}
 
 //------------------------------------------------------------------------------
-bool cMouseActionSelectBuildPosition::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
+bool cMouseActionSelectBuildPosition::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView&, const cPosition&, cUnitSelection& unitSelection, bool /* changeAllowed */) const /* override */
 {
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 

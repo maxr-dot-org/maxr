@@ -30,7 +30,7 @@ cMouseActionMove::cMouseActionMove (eStart start) :
 {}
 
 //------------------------------------------------------------------------------
-bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
+bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView&, const cPosition& mapPosition, cUnitSelection& unitSelection, bool /* changeAllowed */) const /* override */
 {
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 

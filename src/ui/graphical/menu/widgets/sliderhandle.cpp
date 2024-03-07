@@ -117,7 +117,7 @@ bool cSliderHandle::handleMousePressed (cApplication& application, cMouse& mouse
 }
 
 //------------------------------------------------------------------------------
-bool cSliderHandle::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cSliderHandle::handleMouseReleased (cApplication& application, cMouse&, eMouseButtonType button) /* override */
 {
 	if (button == eMouseButtonType::Left && application.hasMouseFocus (*this))
 	{

@@ -31,7 +31,7 @@ class cWindowAdvancedHangar : public cWindowHangar
 public:
 	cWindowAdvancedHangar (UniqueSurface, std::shared_ptr<const cUnitsData>, cRgbColor playerColor, int playerClan);
 	cWindowAdvancedHangar (UniqueSurface, std::shared_ptr<const cUnitsData>, const cPlayer&);
-	~cWindowAdvancedHangar();
+	~cWindowAdvancedHangar() = default;
 
 protected:
 	SelectedUnitItemType& addSelectedUnit (const sID& unitId);
@@ -40,8 +40,8 @@ protected:
 	SelectedUnitItemType& getSelectedUnit (size_t index);
 	const SelectedUnitItemType& getSelectedUnit (size_t index) const;
 
-	virtual bool tryAddSelectedUnit (const cUnitListViewItemBuy& unitItem) const;
-	virtual bool tryRemoveSelectedUnit (const SelectedUnitItemType& unitItem) const;
+	virtual bool tryAddSelectedUnit (const cUnitListViewItemBuy&) const { return true; }
+	virtual bool tryRemoveSelectedUnit (const SelectedUnitItemType&) const { return true; }
 
 	// TODO: the following widgets should be private instead.
 	// They are protect at the moment because some inheriting windows need to move/resize the widgets.
@@ -95,25 +95,6 @@ void cWindowAdvancedHangar<SelectedUnitItemType>::initialize()
 	signalConnectionManager.connect (selectedListDownButton->clicked, [this]() { selectedUnitList->pageDown(); });
 
 	signalConnectionManager.connect (selectionUnitClickedSecondTime, [this] (const cUnitListViewItemBuy& unitItem) { handleSelectionUnitClickedSecondTime (unitItem); });
-}
-
-//------------------------------------------------------------------------------
-template <typename SelectedUnitItemType>
-cWindowAdvancedHangar<SelectedUnitItemType>::~cWindowAdvancedHangar()
-{}
-
-//------------------------------------------------------------------------------
-template <typename SelectedUnitItemType>
-bool cWindowAdvancedHangar<SelectedUnitItemType>::tryAddSelectedUnit (const cUnitListViewItemBuy& unitItem) const
-{
-	return true;
-}
-
-//------------------------------------------------------------------------------
-template <typename SelectedUnitItemType>
-bool cWindowAdvancedHangar<SelectedUnitItemType>::tryRemoveSelectedUnit (const SelectedUnitItemType& unitItem) const
-{
-	return true;
 }
 
 //------------------------------------------------------------------------------

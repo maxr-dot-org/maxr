@@ -72,12 +72,9 @@ end
 	filter { "action:vs*" }
 		nuget(nugetPackages)
 	filter { "toolset:msc*" }
-		--defines { "USE_CRASH_RPT" }
 		defines { "_CRT_SECURE_NO_WARNINGS" } -- 4996: '$func': This function or variable may be unsafe. Consider using $func2 instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 		buildoptions { "/Zc:__cplusplus" } -- else __cplusplus would be 199711L
 		disablewarnings {
-			"4100", -- '%var': unreferenced formal parameter
-			"4013", -- '$func' undefined, assuming extern return int
 			"4458", -- declaration of '$var' hides class member
 			"4701", -- potentially uninitialized local variable '$var' used
 			"4703", -- potentially uninitialized local pointer variable '$var' used

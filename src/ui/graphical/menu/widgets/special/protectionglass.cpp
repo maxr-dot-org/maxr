@@ -48,7 +48,7 @@ void cProtectionGlass::open()
 }
 
 //------------------------------------------------------------------------------
-void cProtectionGlass::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
+void cProtectionGlass::draw (SDL_Surface& destination, const cBox<cPosition>&) /* override */
 {
 	const auto offset = (int) (getSize().y() * (100. - percentClosed) / 100);
 

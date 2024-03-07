@@ -388,7 +388,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	infoShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuInfo));
 	infoShortcut->triggered.connect ([this]() {
-		if (cUnitContextMenuWidget::unitHasInfoEntry (unitSelection.getSelectedUnit(), player.get()))
+		if (cUnitContextMenuWidget::unitHasInfoEntry (unitSelection.getSelectedUnit()))
 		{
 			triggeredUnitHelp (*unitSelection.getSelectedUnit());
 		}
@@ -893,7 +893,7 @@ void cGameMapWidget::startFindPathBuildPosition()
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::startActivateVehicle (const cUnit& unit, size_t index)
+void cGameMapWidget::startActivateVehicle (size_t index)
 {
 	setMouseInputMode (std::make_unique<cMouseModeActivateLoaded> (mapView.get(), unitSelection, player.get(), index));
 }
@@ -1825,7 +1825,7 @@ bool cGameMapWidget::handleMouseReleased (cApplication& application, cMouse& mou
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::handleLooseMouseFocus (cApplication& application)
+void cGameMapWidget::handleLooseMouseFocus (cApplication&) /* override */
 {
 	mouseFocusReleased();
 }
@@ -1845,7 +1845,7 @@ bool cGameMapWidget::acceptButton (eMouseButtonType button) const
 }
 
 //------------------------------------------------------------------------------
-bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cGameMapWidget::handleClicked (cApplication&, cMouse& mouse, eMouseButtonType button) /* override */
 {
 	if (!getArea().withinOrTouches (mouse.getPosition())) return false;
 
@@ -2225,7 +2225,7 @@ void cGameMapWidget::updateActiveUnitCommandShortcuts()
 	//if (cUnitContextMenuWidget::unitHasUpgradeThisEntry (selectedBuilding, player.get(), dynamicMap.get())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
 	//if (cUnitContextMenuWidget::unitHasUpgradeAllEntry (selectedBuilding, player.get(), dynamicMap.get())) activateShortcutConditional (*shortcut, blockedShortcuts, collidingUnitCommandShortcuts[shortcut]);
 	if (cUnitContextMenuWidget::unitHasSelfDestroyEntry (selectedBuilding, player.get())) activateShortcutConditional (*destroyShortcut, blockedShortcuts, collidingUnitCommandShortcuts[destroyShortcut]);
-	if (cUnitContextMenuWidget::unitHasInfoEntry (selectedUnit, player.get())) activateShortcutConditional (*infoShortcut, blockedShortcuts, collidingUnitCommandShortcuts[infoShortcut]);
+	if (cUnitContextMenuWidget::unitHasInfoEntry (selectedUnit)) activateShortcutConditional (*infoShortcut, blockedShortcuts, collidingUnitCommandShortcuts[infoShortcut]);
 }
 
 //------------------------------------------------------------------------------

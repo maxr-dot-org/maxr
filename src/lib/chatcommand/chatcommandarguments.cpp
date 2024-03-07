@@ -237,7 +237,7 @@ cChatCommandArgumentServer::cChatCommandArgumentServer (cServer*& serverPointer,
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentServer::parse (const std::string& command, size_t position)
+size_t cChatCommandArgumentServer::parse (const std::string&, size_t position)
 {
 	value = serverPointer;
 	if (value == nullptr)
@@ -276,7 +276,7 @@ cChatCommandArgumentClient::cChatCommandArgumentClient (const std::shared_ptr<cC
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentClient::parse (const std::string& command, size_t position)
+size_t cChatCommandArgumentClient::parse (const std::string&, size_t position)
 {
 	if (activeClientPointer == nullptr)
 	{

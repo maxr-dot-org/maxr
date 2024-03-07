@@ -76,7 +76,7 @@ void cWindow::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 }
 
 //------------------------------------------------------------------------------
-void cWindow::handleActivated (cApplication& application, bool firstTime)
+/* virtual */ void cWindow::handleActivated (cApplication& application, bool)
 {
 	// one window should not be displayed in multiple applications at once
 	// (we have only one application anyway...)

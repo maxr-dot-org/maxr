@@ -150,7 +150,7 @@ void cLineEdit::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 }
 
 //------------------------------------------------------------------------------
-bool cLineEdit::handleGetKeyFocus (cApplication& application)
+bool cLineEdit::handleGetKeyFocus (cApplication&) /* override */
 {
 	if (readOnly) return false;
 
@@ -177,7 +177,7 @@ bool cLineEdit::handleGetKeyFocus (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-void cLineEdit::handleLooseKeyFocus (cApplication& application)
+void cLineEdit::handleLooseKeyFocus (cApplication&) /* override */
 {
 	if (hasKeyFocus)
 	{
@@ -187,7 +187,7 @@ void cLineEdit::handleLooseKeyFocus (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-bool cLineEdit::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cLineEdit::handleClicked (cApplication&, cMouse& mouse, eMouseButtonType) /* override */
 {
 	clicked();
 
@@ -442,7 +442,7 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 }
 
 //------------------------------------------------------------------------------
-void cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* inputText)
+void cLineEdit::handleTextEntered (cApplication&, cKeyboard&, const char* inputText) /* override */
 {
 	if (readOnly || !hasKeyFocus) return;
 

@@ -250,7 +250,7 @@ void cResourceBar::decrease (int offset)
 }
 
 //------------------------------------------------------------------------------
-bool cResourceBar::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cResourceBar::handleClicked (cApplication&, cMouse& mouse, eMouseButtonType button) /* override */
 {
 	if (button == eMouseButtonType::Left)
 	{

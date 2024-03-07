@@ -54,7 +54,7 @@ void cGameMessageListView::clear()
 }
 
 //------------------------------------------------------------------------------
-bool cGameMessageListView::isAt (const cPosition& position) const
+bool cGameMessageListView::isAt (const cPosition&) const /* override */
 {
 	return false; // fully transparent. Do not take any input events
 }

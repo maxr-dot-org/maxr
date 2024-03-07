@@ -134,8 +134,9 @@ void cServer::loadGameState (int saveGameNumber)
 	gameTimer.setPlayerNumbers (model.getPlayerList());
 }
 //------------------------------------------------------------------------------
-void cServer::sendGuiInfoToClients (int saveGameNumber, int playerNr /*= -1*/)
+void cServer::sendGuiInfoToClients (int saveGameNumber, [[maybe_unused]] int playerNr /*= -1*/)
 {
+	// TODO: handle playerNr
 	try
 	{
 		cSavegame savegame;

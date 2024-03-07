@@ -27,7 +27,7 @@
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionRepair::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
+bool cMouseActionRepair::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool /* changeAllowed */) const /* override */
 {
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 

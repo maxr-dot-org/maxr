@@ -57,7 +57,7 @@ public:
 
 private:
 	//--------------------------------------------------------------------------
-	static uint32_t callback (uint32_t intervall, void* arg)
+	static uint32_t callback (uint32_t, void* arg)
 	{
 		cHandshakeTimeout* thisPtr = reinterpret_cast<cHandshakeTimeout*> (arg);
 		thisPtr->connectionManager->handshakeTimeoutCallback (*thisPtr);

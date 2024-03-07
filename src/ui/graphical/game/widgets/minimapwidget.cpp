@@ -199,7 +199,7 @@ void cMiniMapWidget::handleLooseMouseFocus (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-bool cMiniMapWidget::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cMiniMapWidget::handleClicked (cApplication&, cMouse& mouse, eMouseButtonType button) /* override */
 {
 	if (button == eMouseButtonType::Right)
 	{

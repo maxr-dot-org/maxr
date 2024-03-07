@@ -261,7 +261,7 @@ cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby()
 {}
 
 //------------------------------------------------------------------------------
-cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby (cBinaryArchiveIn& archive)
+cMuMsgAskToFinishLobby::cMuMsgAskToFinishLobby (cBinaryArchiveIn&)
 {}
 
 //------------------------------------------------------------------------------
@@ -287,7 +287,7 @@ void cMuMsgCannotEndLobby::serialize (cBinaryArchiveOut& archive)
 cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame()
 {}
 //------------------------------------------------------------------------------
-cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame (cBinaryArchiveIn& archive)
+cMuMsgDisconnectNotInSavedGame::cMuMsgDisconnectNotInSavedGame (cBinaryArchiveIn&)
 {}
 
 //------------------------------------------------------------------------------
@@ -373,7 +373,7 @@ void cMuMsgLandingState::serialize (cBinaryArchiveOut& archive)
 cMuMsgStartGame::cMuMsgStartGame()
 {}
 //------------------------------------------------------------------------------
-cMuMsgStartGame::cMuMsgStartGame (cBinaryArchiveIn& archive)
+cMuMsgStartGame::cMuMsgStartGame (cBinaryArchiveIn&)
 {}
 
 //------------------------------------------------------------------------------
@@ -381,7 +381,7 @@ cMuMsgStartGame::cMuMsgStartGame (cBinaryArchiveIn& archive)
 cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations()
 {}
 //------------------------------------------------------------------------------
-cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations (cBinaryArchiveIn& archive)
+cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations (cBinaryArchiveIn&)
 {}
 
 //------------------------------------------------------------------------------
@@ -389,7 +389,7 @@ cMuMsgPlayerAbortedGamePreparations::cMuMsgPlayerAbortedGamePreparations (cBinar
 cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload()
 {}
 //------------------------------------------------------------------------------
-cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload (cBinaryArchiveIn& archive)
+cMuMsgFinishedMapDownload::cMuMsgFinishedMapDownload (cBinaryArchiveIn&)
 {}
 
 //------------------------------------------------------------------------------
@@ -473,7 +473,7 @@ void cMuMsgMapDownloadData::serialize (cBinaryArchiveOut& archive)
 cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload()
 {}
 //------------------------------------------------------------------------------
-cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload (cBinaryArchiveIn& archive)
+cMuMsgCanceledMapDownload::cMuMsgCanceledMapDownload (cBinaryArchiveIn&)
 {}
 
 //------------------------------------------------------------------------------

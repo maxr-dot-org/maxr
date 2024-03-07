@@ -48,7 +48,7 @@ cShortcut& cClickableWidget::addClickShortcut (cKeySequence keySequence, eMouseB
 }
 
 //------------------------------------------------------------------------------
-bool cClickableWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
+bool cClickableWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition&) /* override */
 {
 	if (!application.hasMouseFocus (*this)) return false;
 
@@ -88,7 +88,7 @@ bool cClickableWidget::handleMousePressed (cApplication& application, cMouse& mo
 }
 
 //------------------------------------------------------------------------------
-void cClickableWidget::finishMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button)
+void cClickableWidget::finishMousePressed (cApplication& application, cMouse&, eMouseButtonType button) /* override */
 {
 	if (getStartedClickWithin (button))
 	{
@@ -114,7 +114,7 @@ bool cClickableWidget::handleMouseReleased (cApplication& application, cMouse& m
 }
 
 //------------------------------------------------------------------------------
-void cClickableWidget::handleLooseMouseFocus (cApplication& application)
+void cClickableWidget::handleLooseMouseFocus (cApplication&) /* override */
 {
 	if (isPressed)
 	{

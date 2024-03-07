@@ -204,7 +204,7 @@ void cCheckBox::setPressed (bool pressed)
 }
 
 //------------------------------------------------------------------------------
-bool cCheckBox::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cCheckBox::handleClicked (cApplication&, cMouse&, eMouseButtonType) /* override */
 {
 	if (clickSound) cSoundDevice::getInstance().playSoundEffect (*clickSound);
 

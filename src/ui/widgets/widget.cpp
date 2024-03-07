@@ -219,7 +219,7 @@ void cWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::handleMouseMoved (cApplication&, cMouse&, const cPosition& offset)
+/* virtual */ bool cWidget::handleMouseMoved (cApplication&, cMouse&, const cPosition&)
 {
 	return false;
 }
@@ -237,7 +237,7 @@ bool cWidget::handleMouseReleased (cApplication&, cMouse&, eMouseButtonType)
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::handleMouseWheelMoved (cApplication&, cMouse&, const cPosition& amount)
+/* virtual */ bool cWidget::handleMouseWheelMoved (cApplication&, cMouse&, const cPosition&)
 {
 	return false;
 }
@@ -269,7 +269,7 @@ bool cWidget::handleKeyReleased (cApplication& application, cKeyboard& keyboard,
 }
 
 //------------------------------------------------------------------------------
-void cWidget::handleTextEntered (cApplication&, cKeyboard&, const char* text)
+/* virtual */ void cWidget::handleTextEntered (cApplication&, cKeyboard&, const char*)
 {}
 
 ////------------------------------------------------------------------------------

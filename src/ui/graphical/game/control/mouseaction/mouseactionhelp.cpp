@@ -27,7 +27,7 @@
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionHelp::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
+bool cMouseActionHelp::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection&, bool /* changeAllowed */) const /* override */
 {
 	const auto& field = map.getField (mapPosition);
 

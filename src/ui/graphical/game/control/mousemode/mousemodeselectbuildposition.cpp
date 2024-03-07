@@ -39,7 +39,7 @@ eMouseModeType cMouseModeSelectBuildPosition::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSelectBuildPosition::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
+void cMouseModeSelectBuildPosition::setCursor (cMouse& mouse, const cPosition&, const cUnitsData&) const /* override */
 {
 	mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Band));
 }

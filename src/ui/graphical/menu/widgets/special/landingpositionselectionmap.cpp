@@ -52,7 +52,7 @@ void cLandingPositionSelectionMap::draw (SDL_Surface& destination, const cBox<cP
 }
 
 //------------------------------------------------------------------------------
-bool cLandingPositionSelectionMap::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cLandingPositionSelectionMap::handleClicked (cApplication&, cMouse& mouse, eMouseButtonType) /* override */
 {
 	cPosition mapPosition = (mouse.getPosition() - getPosition()) * map->getSize() / getSize();
 

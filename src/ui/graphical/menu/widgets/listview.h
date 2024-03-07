@@ -144,7 +144,7 @@ private:
 
 //------------------------------------------------------------------------------
 template <typename ItemType>
-cListView<ItemType>::cListView (const cBox<cPosition>& area, bool allowMultiSelection, cSoundChunk* clickSound_) :
+cListView<ItemType>::cListView (const cBox<cPosition>& area, [[maybe_unused]]bool allowMultiSelection, cSoundChunk* clickSound_) :
 	cClickableWidget (area),
 	beginMargin (3, 4),
 	endMargin (2, 2),
@@ -424,7 +424,7 @@ cWidget* cListView<ItemType>::getChildAt (const cPosition& position) const
 
 //------------------------------------------------------------------------------
 template <typename ItemType>
-bool cListView<ItemType>::handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount)
+bool cListView<ItemType>::handleMouseWheelMoved (cApplication&, cMouse&, const cPosition& amount) /* override */
 {
 	if (amount.y() > 0)
 	{
@@ -441,7 +441,7 @@ bool cListView<ItemType>::handleMouseWheelMoved (cApplication& application, cMou
 
 //------------------------------------------------------------------------------
 template <typename ItemType>
-bool cListView<ItemType>::handleGetKeyFocus (cApplication& application)
+bool cListView<ItemType>::handleGetKeyFocus (cApplication&) /* override */
 {
 	if (!isEnabled()) return false;
 
@@ -452,14 +452,14 @@ bool cListView<ItemType>::handleGetKeyFocus (cApplication& application)
 
 //------------------------------------------------------------------------------
 template <typename ItemType>
-void cListView<ItemType>::handleLooseKeyFocus (cApplication& application)
+void cListView<ItemType>::handleLooseKeyFocus (cApplication&) /* override */
 {
 	hasKeyFocus = false;
 }
 
 //------------------------------------------------------------------------------
 template <typename ItemType>
-bool cListView<ItemType>::handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
+bool cListView<ItemType>::handleKeyPressed (cApplication&, cKeyboard&, SDL_Keycode key) /* override */
 {
 	if (!hasKeyFocus) return false;
 
@@ -571,7 +571,7 @@ void cListView<ItemType>::handleResized (const cPosition& oldSize)
 
 //------------------------------------------------------------------------------
 template <typename ItemType>
-bool cListView<ItemType>::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cListView<ItemType>::handleClicked (cApplication&, cMouse& mouse, eMouseButtonType button) /* override */
 {
 	if (!selectable) return false;
 

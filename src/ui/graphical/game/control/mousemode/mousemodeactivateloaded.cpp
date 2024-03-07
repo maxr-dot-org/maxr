@@ -43,14 +43,14 @@ eMouseModeType cMouseModeActivateLoaded::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeActivateLoaded::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
+void cMouseModeActivateLoaded::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData&) const /* override */
 {
 	const auto cursorType = canExecuteAction (mapPosition) ? eMouseCursorSimpleType::Activate : eMouseCursorSimpleType::No;
 	mouse.setCursor (std::make_unique<cMouseCursorSimple> (cursorType));
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeActivateLoaded::getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const
+std::unique_ptr<cMouseAction> cMouseModeActivateLoaded::getMouseAction (const cPosition& mapPosition, const cUnitsData&) const /* override */
 {
 	if (canExecuteAction (mapPosition))
 	{

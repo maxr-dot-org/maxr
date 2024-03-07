@@ -89,7 +89,7 @@ cMoveJob::cMoveJob() :
 {}
 
 //------------------------------------------------------------------------------
-cMoveJob::cMoveJob (const std::forward_list<cPosition>& path, cVehicle& vehicle, cModel& model) :
+cMoveJob::cMoveJob (const std::forward_list<cPosition>& path, cVehicle& vehicle) :
 	vehicleId (vehicle.getId()),
 	path (path),
 	state (eMoveJobState::Waiting),

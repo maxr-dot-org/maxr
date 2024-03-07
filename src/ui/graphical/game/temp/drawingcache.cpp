@@ -138,8 +138,9 @@ void cDrawingCache::setPlayer (const cPlayer* player_)
 }
 
 //------------------------------------------------------------------------------
-SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zoom, unsigned long long animationTime)
+SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zoom, [[maybe_unused]]unsigned long long animationTime)
 {
+	// TODO: handle animationTime
 	if (!canCache (building)) return nullptr;
 
 	for (unsigned int i = 0; i < cacheSize; i++)
@@ -249,8 +250,9 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 }
 
 //------------------------------------------------------------------------------
-SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zoom, unsigned long long animationTime)
+SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zoom, [[maybe_unused]]unsigned long long animationTime)
 {
+	// TODO: handle animationTime
 	if (!canCache (building))
 		return nullptr;
 

@@ -77,9 +77,9 @@ void cMouseMode::setPlayer (const cPlayer* player_)
 }
 
 //------------------------------------------------------------------------------
-void cMouseMode::establishUnitSelectionConnections()
+/* virtual */ void cMouseMode::establishUnitSelectionConnections()
 {}
 
 //------------------------------------------------------------------------------
-void cMouseMode::establishMapFieldConnections (const cMapFieldView& field)
+/* virtual */ void cMouseMode::establishMapFieldConnections (const cMapFieldView&)
 {}

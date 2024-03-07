@@ -273,7 +273,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Info
-	if (unitHasInfoEntry (unit, player))
+	if (unitHasInfoEntry (unit))
 	{
 		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Others~Info_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { infoClicked(); });
@@ -282,7 +282,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	}
 
 	// Done
-	if (unitHasDoneEntry (unit, player))
+	if (unitHasDoneEntry (unit))
 	{
 		auto button = emplaceChild<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, &SoundData.SNDObjectMenu, lngPack.i18n ("Others~Done_7"), eUnicodeFontType::LatinSmallWhite);
 		button->clicked.connect ([this]() { doneClicked(); });
@@ -458,13 +458,13 @@ const cVehicle* cUnitContextMenuWidget::getVehicle() const
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasInfoEntry (const cUnit* unit, const cPlayer* player)
+/*static*/ bool cUnitContextMenuWidget::unitHasInfoEntry (const cUnit* unit)
 {
 	return unit != nullptr;
 }
 
 //------------------------------------------------------------------------------
-/*static*/ bool cUnitContextMenuWidget::unitHasDoneEntry (const cUnit* unit, const cPlayer* player)
+/*static*/ bool cUnitContextMenuWidget::unitHasDoneEntry (const cUnit* unit)
 {
 	return unit != nullptr;
 }

@@ -45,7 +45,7 @@
 # endif
 
 //------------------------------------------------------------------------------
-int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO* pInfo)
+int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO*)
 {
 	// The application has crashed!
 	if (cVideo::buffer)

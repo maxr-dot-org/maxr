@@ -123,7 +123,7 @@ public:
 
 	void handleNetMessages();
 
-	void runClientJobs (const cModel&);
+	void runClientJobs();
 
 	const std::shared_ptr<cGameTimerClient>& getGameTimer() const { return gameTimer; }
 

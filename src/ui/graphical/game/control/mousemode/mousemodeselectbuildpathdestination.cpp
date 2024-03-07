@@ -35,13 +35,13 @@ eMouseModeType cMouseModeSelectBuildPathDestination::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSelectBuildPathDestination::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
+void cMouseModeSelectBuildPathDestination::setCursor (cMouse& mouse, const cPosition&, const cUnitsData&) const /* override */
 {
 	mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Band));
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeSelectBuildPathDestination::getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const
+std::unique_ptr<cMouseAction> cMouseModeSelectBuildPathDestination::getMouseAction (const cPosition&, const cUnitsData&) const /* override */
 {
 	return std::make_unique<cMouseActionSelectBuildPathDestination>();
 }

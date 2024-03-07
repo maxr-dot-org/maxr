@@ -62,7 +62,7 @@ void cHudPanels::close()
 }
 
 //------------------------------------------------------------------------------
-void cHudPanels::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
+void cHudPanels::draw (SDL_Surface& destination, const cBox<cPosition>&) /* override */
 {
 	SDL_Rect top = {getPosition().x(), getPosition().y() + (getSize().y() / 2) - GraphicsData.gfx_panel_top->h, GraphicsData.gfx_panel_top->w, GraphicsData.gfx_panel_top->h};
 	SDL_Rect bottom = {getPosition().x(), getPosition().y() + (getSize().y() / 2), GraphicsData.gfx_panel_bottom->w, GraphicsData.gfx_panel_top->h};

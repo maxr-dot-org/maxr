@@ -89,7 +89,7 @@ void cChatBoxLandingPlayerListViewItem::setLandingPositionManager (const cLandin
 
 	updatePlayerName();
 
-	managerSignalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData& player, eLandingPositionState state) {
+	managerSignalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData& player, eLandingPositionState) {
 		if (player.getNr() == playerLandingStatus.getPlayer().getNr())
 		{
 			updatePlayerName();

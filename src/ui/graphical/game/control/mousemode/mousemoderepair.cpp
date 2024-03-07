@@ -42,7 +42,7 @@ eMouseModeType cMouseModeRepair::getType() const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeRepair::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData& unitsData) const
+void cMouseModeRepair::setCursor (cMouse& mouse, const cPosition& mapPosition, const cUnitsData&) const /* override */
 {
 	if (canExecuteAction (mapPosition))
 	{
@@ -55,7 +55,7 @@ void cMouseModeRepair::setCursor (cMouse& mouse, const cPosition& mapPosition, c
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeRepair::getMouseAction (const cPosition& mapPosition, const cUnitsData& unitsData) const
+std::unique_ptr<cMouseAction> cMouseModeRepair::getMouseAction (const cPosition& mapPosition, const cUnitsData&) const /* override */
 {
 	if (canExecuteAction (mapPosition))
 	{

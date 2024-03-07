@@ -42,7 +42,7 @@ class cMoveJob
 {
 public:
 	cMoveJob();
-	cMoveJob (const std::forward_list<cPosition>& path, cVehicle&, cModel&);
+	cMoveJob (const std::forward_list<cPosition>& path, cVehicle&);
 	/**
 	* gets the list of position that make up the path. First element is the position,
 	* the unit will drive to when starting the next movement step.

@@ -196,7 +196,7 @@ void cLabel::handleResized (const cPosition& oldSize)
 }
 
 //------------------------------------------------------------------------------
-bool cLabel::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cLabel::handleClicked (cApplication&, cMouse&, eMouseButtonType) /* override */
 {
 	clicked();
 

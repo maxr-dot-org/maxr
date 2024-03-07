@@ -689,7 +689,7 @@ class cNetMessageWantRejoinGame : public cNetMessageT<eNetMessageType::WANT_REJO
 {
 public:
 	cNetMessageWantRejoinGame() = default;
-	explicit cNetMessageWantRejoinGame (cBinaryArchiveIn& archive)
+	explicit cNetMessageWantRejoinGame (cBinaryArchiveIn&)
 	{}
 };
 

@@ -232,7 +232,7 @@ void cSlider::setHandleMinMaxPosition()
 }
 
 //------------------------------------------------------------------------------
-bool cSlider::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cSlider::handleClicked (cApplication&, cMouse& mouse, eMouseButtonType) /* override */
 {
 	if (!handle) return false;
 

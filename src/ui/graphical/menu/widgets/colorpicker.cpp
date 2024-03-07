@@ -160,7 +160,7 @@ void cRgbColorPicker::updateMarkers()
 }
 
 //------------------------------------------------------------------------------
-bool cRgbColorPicker::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
+bool cRgbColorPicker::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition&) /* override */
 {
 	if (!application.hasMouseFocus (*this)) return false;
 
@@ -197,14 +197,14 @@ bool cRgbColorPicker::handleMousePressed (cApplication& application, cMouse& mou
 }
 
 //------------------------------------------------------------------------------
-bool cRgbColorPicker::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
+bool cRgbColorPicker::handleMouseReleased (cApplication& application, cMouse&, eMouseButtonType) /* override */
 {
 	application.releaseMouseFocus (*this);
 	return false;
 }
 
 //------------------------------------------------------------------------------
-void cRgbColorPicker::handleLooseMouseFocus (cApplication& application)
+void cRgbColorPicker::handleLooseMouseFocus (cApplication&) /* override */
 {
 	startedPressInBar = false;
 	startedPressInColor = false;

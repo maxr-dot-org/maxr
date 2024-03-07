@@ -634,7 +634,7 @@ bool cGameGui::handleMouseMoved (cApplication& application, cMouse& mouse, const
 }
 
 //------------------------------------------------------------------------------
-bool cGameGui::handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount)
+bool cGameGui::handleMouseWheelMoved (cApplication&, cMouse& mouse, const cPosition& amount) /* override */
 {
 	const auto oldZoomFactor = gameMap->getZoomFactor();
 	bool consumed = false;

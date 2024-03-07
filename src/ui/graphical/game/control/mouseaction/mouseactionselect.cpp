@@ -29,7 +29,7 @@
 #include "utility/listhelpers.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
+bool cMouseActionSelect::executeLeftClick (cGameMapWidget&, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const /* override */
 {
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();

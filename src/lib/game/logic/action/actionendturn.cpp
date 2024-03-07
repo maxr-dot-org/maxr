@@ -26,7 +26,7 @@ cActionEndTurn::cActionEndTurn()
 {}
 
 //------------------------------------------------------------------------------
-cActionEndTurn::cActionEndTurn (cBinaryArchiveIn& archive)
+cActionEndTurn::cActionEndTurn (cBinaryArchiveIn&)
 {}
 
 //------------------------------------------------------------------------------

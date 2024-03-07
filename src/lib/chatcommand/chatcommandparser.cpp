@@ -37,13 +37,13 @@ cChatCommandParser<>::cChatCommandParser (cChatCommand command_) :
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandParser<>::parse (const std::string& command, size_t position) const
+size_t cChatCommandParser<>::parse (const std::string&, size_t position) const
 {
 	return position;
 }
 
 //------------------------------------------------------------------------------
-void cChatCommandParser<>::printArguments (std::ostream& result) const
+void cChatCommandParser<>::printArguments (std::ostream&) const
 {}
 
 //------------------------------------------------------------------------------
