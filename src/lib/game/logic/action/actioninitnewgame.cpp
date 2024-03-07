@@ -265,35 +265,27 @@ namespace
 		{
 			const auto& pos = resSpots[i];
 			bool hasGold = model.randomGenerator.get (100) < 40;
-			const int minx = std::max (pos.x() - 1, 0);
-			const int maxx = std::min (pos.x() + 1, map.getSize().x() - 1);
-			const int miny = std::max (pos.y() - 1, 0);
-			const int maxy = std::min (pos.y() + 1, map.getSize().y() - 1);
-			cPosition p;
-			for (p.y() = miny; p.y() <= maxy; ++p.y())
+			for (const auto& p : map.collectPositions ({resSpots[i].relative (-1, -1), resSpots[i].relative (1, 1)}))
 			{
-				for (p.x() = minx; p.x() <= maxx; ++p.x())
-				{
-					const eResourceType type = static_cast<eResourceType> ((p.y() % 2) * 2 + (p.x() % 2));
+				const eResourceType type = static_cast<eResourceType> ((p.y() % 2) * 2 + (p.x() % 2));
 
-					if (type != eResourceType::None && !map.isBlocked (p)
-					    && ((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold))
+				if (type != eResourceType::None && !map.isBlocked (p)
+					&& ((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold))
+				{
+					sResources res;
+					res.typ = type;
+					if (i >= playerCount)
 					{
-						sResources res;
-						res.typ = type;
-						if (i >= playerCount)
-						{
-							res.value = narrow_cast<char> (1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2));
-							if (p == pos) res.value += narrow_cast<char> (3 + model.randomGenerator.get (4 + getResourceAmountFactor (frequencies[type]) * 2));
-						}
-						else
-						{
-							res.value = narrow_cast<char> (1 + 4 + getResourceAmountFactor (frequencies[type]));
-							if (p == pos) res.value += narrow_cast<char> (3 + 2 + getResourceAmountFactor (frequencies[type]));
-						}
-						res.value = std::min<unsigned char> (16, res.value);
-						model.getMap()->setResource (p, res);
+						res.value = narrow_cast<char> (1 + model.randomGenerator.get (2 + getResourceAmountFactor (frequencies[type]) * 2));
+						if (p == pos) res.value += narrow_cast<char> (3 + model.randomGenerator.get (4 + getResourceAmountFactor (frequencies[type]) * 2));
 					}
+					else
+					{
+						res.value = narrow_cast<char> (1 + 4 + getResourceAmountFactor (frequencies[type]));
+						if (p == pos) res.value += narrow_cast<char> (3 + 2 + getResourceAmountFactor (frequencies[type]));
+					}
+					res.value = std::min<unsigned char> (16, res.value);
+					model.getMap()->setResource (p, res);
 				}
 			}
 		}

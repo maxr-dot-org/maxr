@@ -131,30 +131,18 @@ void cSurveyorAi::planMove (std::forward_list<cPosition>& path, int remainingMov
 	float bestNextFactor = FIELD_BLOCKED;
 	int bestNextMoveCosts;
 
-	const int minx = std::max (position.x() - 1, 0);
-	const int maxx = std::min (position.x() + 1, map.getSize().x() - 1);
-	const int miny = std::max (position.y() - 1, 0);
-	const int maxy = std::min (position.y() + 1, map.getSize().y() - 1);
-	for (int x = minx; x <= maxx; ++x)
+	for (const cPosition nextPosition : map.staticMap->collectAroundPositions (position, vehicle.getIsBig()))
 	{
-		for (int y = miny; y <= maxy; ++y)
+		// check out of move points
+		int nextMoveCosts = cPathCalculator::calcNextCost (position, nextPosition, &vehicle, &map);
+		if (nextMoveCosts > remainingMovePoints) continue;
+
+		const float nextFactor = calcFactor (nextPosition, path, jobs, map);
+		if (nextFactor > bestNextFactor)
 		{
-			const cPosition nextPosition (x, y);
-
-			// skip the surveyor's current position
-			if (position == nextPosition) continue;
-
-			// check out of move points
-			int nextMoveCosts = cPathCalculator::calcNextCost (position, nextPosition, &vehicle, &map);
-			if (nextMoveCosts > remainingMovePoints) continue;
-
-			const float nextFactor = calcFactor (nextPosition, path, jobs, map);
-			if (nextFactor > bestNextFactor)
-			{
-				bestNextFactor = nextFactor;
-				bestNextPosition = nextPosition;
-				bestNextMoveCosts = nextMoveCosts;
-			}
+			bestNextFactor = nextFactor;
+			bestNextPosition = nextPosition;
+			bestNextMoveCosts = nextMoveCosts;
 		}
 	}
 
@@ -195,26 +183,18 @@ float cSurveyorAi::calcFactor (const cPosition& position, const std::forward_lis
 	// also count how many of these fields are adjacent to already revealed resources
 	float nrSurvFields = 0;
 	float nrFielsdWithAdjacentRes = 0;
-	const int minx = std::max (position.x() - 1, 0);
-	const int maxx = std::min (position.x() + 1, map.getSize().x() - 1);
-	const int miny = std::max (position.y() - 1, 0);
-	const int maxy = std::min (position.y() + 1, map.getSize().y() - 1);
-	for (int x = minx; x <= maxx; ++x)
+	for (const auto& aroundPosition : map.staticMap->collectAroundPositions (position, vehicle.getIsBig()))
 	{
-		for (int y = miny; y <= maxy; ++y)
-		{
-			const cPosition aroundPosition (x, y);
-			if (positionHasBeenSurveyedByPath (aroundPosition, path)) continue;
+		if (positionHasBeenSurveyedByPath (aroundPosition, path)) continue;
 
-			if (!owner.hasResourceExplored (aroundPosition)) //&& !map.isBlocked (aroundPosition))
+		if (!owner.hasResourceExplored (aroundPosition)) //&& !map.isBlocked (aroundPosition))
+		{
+			nrSurvFields++;
+			if (hasAdjacentResources (aroundPosition, map))
 			{
-				nrSurvFields++;
-				if (hasAdjacentResources (aroundPosition, map))
-				{
-					// spots with adjacent revealed resources have a high probability
-					// for more resources
-					nrFielsdWithAdjacentRes++;
-				}
+				// spots with adjacent revealed resources have a high probability
+				// for more resources
+				nrFielsdWithAdjacentRes++;
 			}
 		}
 	}
@@ -333,25 +313,11 @@ bool cSurveyorAi::positionHasBeenSurveyedByPath (const cPosition& position, cons
 }
 
 //------------------------------------------------------------------------------
-bool cSurveyorAi::hasAdjacentResources (const cPosition& position, const cMap& map) const
+bool cSurveyorAi::hasAdjacentResources (const cPosition& centerPosition, const cMap& map) const
 {
 	const cPlayer& owner = *vehicle.getOwner();
 
-	const int minx = std::max (position.x() - 1, 0);
-	const int maxx = std::min (position.x() + 1, map.getSize().x() - 1);
-	const int miny = std::max (position.y() - 1, 0);
-	const int maxy = std::min (position.y() + 1, map.getSize().y() - 1);
-	for (int x = minx; x <= maxx; ++x)
-	{
-		for (int y = miny; y <= maxy; ++y)
-		{
-			const cPosition aroundPosition (x, y);
-
-			if (owner.hasResourceExplored (aroundPosition) && map.getResource (aroundPosition).typ != eResourceType::None)
-			{
-				return true;
-			}
-		}
-	}
-	return false;
+	return ranges::any_of (map.staticMap->collectAroundPositions (centerPosition, vehicle.getIsBig()), [&] (const cPosition& position) {
+		return owner.hasResourceExplored (position) && map.getResource (position).typ != eResourceType::None;
+	});
 }

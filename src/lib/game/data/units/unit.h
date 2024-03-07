@@ -91,9 +91,7 @@ public:
 
 	std::vector<cPosition> getPositions() const;
 
-	cBox<cPosition> getArea() const;
-
-	std::vector<cPosition> getAdjacentPositions() const;
+	cBox<cPosition> getArea (int range = 0) const;
 
 	int calcHealth (int damage) const;
 	bool isInRange (const cPosition& position) const;

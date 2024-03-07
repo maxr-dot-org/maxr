@@ -24,6 +24,7 @@
 #include "game/data/resourcetype.h"
 #include "resources/map/graphicstaticmap.h"
 #include "utility/arraycrc.h"
+#include "utility/box.h"
 #include "utility/log.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
@@ -172,6 +173,9 @@ public:
 
 	std::size_t getTileIndex (const cPosition&) const;
 	const sTerrain& getTerrain (const cPosition&) const;
+
+	std::vector<cPosition> collectPositions (const cBox<cPosition>&) const;
+	std::vector<cPosition> collectAroundPositions (const cPosition&, bool isBig) const;
 
 	cGraphicStaticMap& getGraphic() const { return graphic; }
 

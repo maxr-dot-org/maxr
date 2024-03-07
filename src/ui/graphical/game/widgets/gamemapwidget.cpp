@@ -1471,7 +1471,7 @@ void cGameMapWidget::drawExitPointsIf (const cUnit& unit, const std::function<bo
 {
 	if (!mapView) return;
 
-	for (const auto& adjacentPosition : unit.getAdjacentPositions())
+	for (const auto& adjacentPosition : staticMap->collectAroundPositions(unit.getPosition(), unit.getIsBig()))
 	{
 		if (predicate (adjacentPosition))
 		{

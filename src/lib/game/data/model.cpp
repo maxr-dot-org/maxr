@@ -770,84 +770,72 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 	}
 
 	// found a stealth unit. Try to find a place where the unit can move
-	bool placeFound = false;
 	int minCosts = 99;
-	cPosition bestPosition;
-	const int minx = std::max (position.x() - 1, 0);
-	const int maxx = std::min (position.x() + 1, map->getSize().x() - 1);
-	const int miny = std::max (position.y() - 1, 0);
-	const int maxy = std::min (position.y() + 1, map->getSize().y() - 1);
-	for (int x = minx; x <= maxx; ++x)
+	std::optional<cPosition> bestPosition;
+	for (const cPosition& currentPosition : map->staticMap->collectAroundPositions (position, stealthVehicle->getIsBig()))
 	{
-		for (int y = miny; y <= maxy; ++y)
+		// when a bigOffet was passed,
+		// for example a constructor needs space for a big building
+		// so not all directions are allowed for the side stepping
+		if (bigOffset != -1)
 		{
-			const cPosition currentPosition (x, y);
-			if (currentPosition == position) continue;
+			if (currentPosition == bigOffset || currentPosition == bigOffset + cPosition (1, 0) || currentPosition == bigOffset + cPosition (0, 1) || currentPosition == bigOffset + cPosition (1, 1)) continue;
+		}
 
-			// when a bigOffet was passed,
-			// for example a constructor needs space for a big building
-			// so not all directions are allowed for the side stepping
-			if (bigOffset != -1)
+		// check whether this field is a possible destination
+		if (!map->possiblePlace (*stealthVehicle, currentPosition, false)) continue;
+
+		// check costs of the move
+		int costs = cPathCalculator::calcNextCost (position, currentPosition, stealthVehicle, map.get());
+		if (costs > stealthVehicle->data.getSpeed()) continue;
+
+		// check whether the vehicle would be detected
+		// on the destination field
+		bool detectOnDest = false;
+		if (stealthVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Ground)
+		{
+			if (ranges::any_of (playerList, [&] (auto& player) {
+					return player.get() != stealthVehicle->getOwner() && player->hasLandDetection (currentPosition);
+				}))
 			{
-				if (currentPosition == bigOffset || currentPosition == bigOffset + cPosition (1, 0) || currentPosition == bigOffset + cPosition (0, 1) || currentPosition == bigOffset + cPosition (1, 1)) continue;
+				detectOnDest = true;
 			}
-
-			// check whether this field is a possible destination
-			if (!map->possiblePlace (*stealthVehicle, currentPosition, false)) continue;
-
-			// check costs of the move
-			int costs = cPathCalculator::calcNextCost (position, currentPosition, stealthVehicle, map.get());
-			if (costs > stealthVehicle->data.getSpeed()) continue;
-
-			// check whether the vehicle would be detected
-			// on the destination field
-			bool detectOnDest = false;
-			if (stealthVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Ground)
+			if (map->isWater (currentPosition)) detectOnDest = true;
+		}
+		if (stealthVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Sea)
+		{
+			if (ranges::any_of (playerList, [&] (auto& player) {
+					return player.get() != stealthVehicle->getOwner() && player->hasSeaDetection (currentPosition);
+				}))
 			{
-				if (ranges::any_of (playerList, [&] (auto& player) {
-						return player.get() != stealthVehicle->getOwner() && player->hasLandDetection (currentPosition);
-					}))
+				detectOnDest = true;
+			}
+			if (!map->isWater (currentPosition)) detectOnDest = true;
+
+			if (stealthVehicle->getStaticUnitData().factorGround > 0)
+			{
+				if (map->getField (currentPosition).hasBridgeOrPlattform())
 				{
 					detectOnDest = true;
 				}
-				if (map->isWater (currentPosition)) detectOnDest = true;
 			}
-			if (stealthVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Sea)
-			{
-				if (ranges::any_of (playerList, [&] (auto& player) {
-						return player.get() != stealthVehicle->getOwner() && player->hasSeaDetection (currentPosition);
-					}))
-				{
-					detectOnDest = true;
-				}
-				if (!map->isWater (currentPosition)) detectOnDest = true;
+		}
+		if (detectOnDest) continue;
 
-				if (stealthVehicle->getStaticUnitData().factorGround > 0)
-				{
-					if (map->getField (currentPosition).hasBridgeOrPlattform())
-					{
-						detectOnDest = true;
-					}
-				}
-			}
-			if (detectOnDest) continue;
-
-			// take the move with the lowest costs.
-			// Decide randomly, when costs are equal
-			if (costs < minCosts || (costs == minCosts && randomGenerator.get (2)))
-			{
-				// this is a good candidate for a destination
-				minCosts = costs;
-				bestPosition = currentPosition;
-				placeFound = true;
-			}
+		// take the move with the lowest costs.
+		// Decide randomly, when costs are equal
+		if (costs < minCosts || (costs == minCosts && randomGenerator.get (2)))
+		{
+			// this is a good candidate for a destination
+			minCosts = costs;
+			bestPosition = currentPosition;
 		}
 	}
 
-	if (placeFound)
+	if (bestPosition)
 	{
 		std::forward_list<cPosition> path;
-		path.push_front (bestPosition);
+		path.push_front (*bestPosition);
 		auto moveJob = addMoveJob (*stealthVehicle, path);
 		moveJob->resume();
 		return;

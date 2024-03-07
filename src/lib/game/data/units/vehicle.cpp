@@ -337,25 +337,15 @@ bool cVehicle::doSurvey (const cMap& map)
 	auto& owner = *getOwner();
 	bool resourceFound = false;
 
-	const int minx = std::max (getPosition().x() - 1, 0);
-	const int maxx = std::min (getPosition().x() + 1, owner.getMapSize().x() - 1);
-	const int miny = std::max (getPosition().y() - 1, 0);
-	const int maxy = std::min (getPosition().y() + 1, owner.getMapSize().y() - 1);
-
-	for (int y = miny; y <= maxy; ++y)
+	for (const cPosition& position : map.staticMap->collectPositions (getArea(1)))
 	{
-		for (int x = minx; x <= maxx; ++x)
+		if (!owner.hasResourceExplored (position) && map.getResource (position).typ != eResourceType::None)
 		{
-			const cPosition position (x, y);
-			if (!owner.hasResourceExplored (position) && map.getResource (position).typ != eResourceType::None)
-			{
-				resourceFound = true;
-			}
-
-			owner.exploreResource (position);
+			resourceFound = true;
 		}
-	}
 
+		owner.exploreResource (position);
+	}
 	return resourceFound;
 }
 

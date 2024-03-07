@@ -308,6 +308,59 @@ bool cStaticMap::isValid() const
 }
 
 //------------------------------------------------------------------------------
+std::vector<cPosition> cStaticMap::collectPositions (const cBox<cPosition>& box) const
+{
+	const int minx = std::max (box.getMinCorner().x(), 0);
+	const int maxx = std::min (box.getMaxCorner().x(), getSize().x() - 1);
+	const int miny = std::max (box.getMinCorner().y(), 0);
+	const int maxy = std::min (box.getMaxCorner().y(), getSize().y() - 1);
+
+	std::vector<cPosition> res;
+	for (int x = minx; x <= maxx; ++x)
+	{
+		for (int y = miny; y <= maxy; ++y)
+		{
+			res.emplace_back (x, y);
+		}
+	}
+	return res;
+}
+
+//------------------------------------------------------------------------------
+std::vector<cPosition> cStaticMap::collectAroundPositions (const cPosition& position, bool isBig) const
+{
+	const auto aroundBigPositions = [&]() {
+		return std::vector{
+			position.relative (-1, -1),
+			position.relative (0, -1),
+			position.relative (1, -1),
+			position.relative (2, -1),
+			position.relative (-1, 0),
+			position.relative (2, 0),
+			position.relative (-1, 1),
+			position.relative (2, 1),
+			position.relative (-1, 2),
+			position.relative (0, 2),
+			position.relative (1, 2),
+			position.relative (2, 2)};
+	};
+	const auto aroundSmallPositions = [&]() {
+		return std::vector{
+			position.relative (-1, -1),
+			position.relative (0, -1),
+			position.relative (1, -1),
+			position.relative (-1, 0),
+			position.relative (1, 0),
+			position.relative (-1, 1),
+			position.relative (0, 1),
+			position.relative (1, 1)};
+	};
+	auto res = isBig ? aroundBigPositions() : aroundSmallPositions();
+	EraseIf (res, [this] (const auto& pos) { return !this->isValidPosition(pos); });
+	return res;
+}
+
+//------------------------------------------------------------------------------
 /** Loads a map file */
 bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 {

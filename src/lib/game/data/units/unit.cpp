@@ -204,39 +204,6 @@ std::vector<cPosition> cUnit::getPositions() const
 }
 
 //------------------------------------------------------------------------------
-std::vector<cPosition> cUnit::getAdjacentPositions() const
-{
-	if (getIsBig())
-	{
-		return {
-			position.relative (-1, -1),
-			position.relative (0, -1),
-			position.relative (1, -1),
-			position.relative (2, -1),
-			position.relative (-1, 0),
-			position.relative (2, 0),
-			position.relative (-1, 1),
-			position.relative (2, 1),
-			position.relative (-1, 2),
-			position.relative (0, 2),
-			position.relative (1, 2),
-			position.relative (2, 2)};
-	}
-	else
-	{
-		return {
-			position.relative (-1, -1),
-			position.relative (0, -1),
-			position.relative (1, -1),
-			position.relative (-1, 0),
-			position.relative (1, 0),
-			position.relative (-1, 1),
-			position.relative (0, 1),
-			position.relative (1, 1)};
-	}
-}
-
-//------------------------------------------------------------------------------
 /** returns the remaining hitpoints after an attack */
 //------------------------------------------------------------------------------
 int cUnit::calcHealth (int damage) const
@@ -306,9 +273,10 @@ uint32_t cUnit::getChecksum (uint32_t crc) const
 }
 
 //------------------------------------------------------------------------------
-cBox<cPosition> cUnit::getArea() const
+cBox<cPosition> cUnit::getArea(int range) const
 {
-	return cBox<cPosition> (position, position + (getIsBig() ? cPosition (1, 1) : cPosition (0, 0)));
+	const auto offset = getIsBig() ? 1 + range : range;
+	return {position.relative (-range, -range), position.relative (offset, offset)};
 }
 
 //------------------------------------------------------------------------------
@@ -536,34 +504,25 @@ void cUnit::detectOtherUnits (const cMap& map) const
 {
 	if (!owner || staticData->canDetectStealthOn == eTerrainFlag::None) return;
 
-	const int minx = std::max (getPosition().x() - data.getScan(), 0);
-	const int maxx = std::min (getPosition().x() + data.getScan(), map.getSize().x() - 1);
-	const int miny = std::max (getPosition().y() - data.getScan(), 0);
-	const int maxy = std::min (getPosition().y() + data.getScan(), map.getSize().y() - 1);
-
-	for (int x = minx; x <= maxx; ++x)
+	for (const cPosition& pos : map.staticMap->collectPositions (getArea(data.getScan())))
 	{
-		for (int y = miny; y <= maxy; ++y)
-		{
-			const cPosition checkAtPos (x, y);
-			int scanSquared = data.getScan() * data.getScan();
-			if ((getPosition() - checkAtPos).l2NormSquared() > scanSquared) continue;
+		const int scanSquared = data.getScan() * data.getScan();
+		if ((getPosition() - pos).l2NormSquared() > scanSquared) continue;
 
-			const auto& vehicles = map.getField (checkAtPos).getVehicles();
-			for (const auto& vehicle : vehicles)
+		const auto& vehicles = map.getField (pos).getVehicles();
+		for (const auto& vehicle : vehicles)
+		{
+			if (vehicle->checkDetectedByPlayer (*owner, map))
 			{
-				if (vehicle->checkDetectedByPlayer (*owner, map))
-				{
-					vehicle->setDetectedByPlayer (owner);
-				}
+				vehicle->setDetectedByPlayer (owner);
 			}
-			const auto& buildings = map.getField (checkAtPos).getBuildings();
-			for (const auto& building : buildings)
+		}
+		const auto& buildings = map.getField (pos).getBuildings();
+		for (const auto& building : buildings)
+		{
+			if (building->checkDetectedByPlayer (*owner, map))
 			{
-				if (building->checkDetectedByPlayer (*owner, map))
-				{
-					building->setDetectedByPlayer (owner);
-				}
+				building->setDetectedByPlayer (owner);
 			}
 		}
 	}
