@@ -166,7 +166,9 @@ void cUnitDetails::reset()
 			case eResourceType::Gold:
 				symbolType = eUnitDataSymbolType::Gold;
 				break;
-			case eResourceType::None: break;
+			default:
+			case eResourceType::None:
+				throw std::runtime_error ("unreachable");
 		}
 		drawRow (rowIndex++, symbolType, staticUnitData->storageResMax, lngPack.i18n ("Others~Cargo_7"), staticUnitData->storageResMax, staticUnitData->storageResMax);
 	}

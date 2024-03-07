@@ -76,9 +76,6 @@ end
 		buildoptions { "/Zc:__cplusplus" } -- else __cplusplus would be 199711L
 		disablewarnings {
 			"4458", -- declaration of '$var' hides class member
-			"4701", -- potentially uninitialized local variable '$var' used
-			"4703", -- potentially uninitialized local pointer variable '$var' used
-			"4996", -- '$func': The POSIX name of this item is deprecated. Instead, use the ISO C and C++ conformant name: $func2. See online help for details.
 		}
 
 	filter { "configurations:Debug" }
@@ -119,6 +116,9 @@ project "resinstaller"
 		disablewarnings {
 			"4244", -- '=': conversion from '$type1' to '$type2', possible loss of data
 			"4456", -- declaration of '$var' hides previous local declaration
+			"4701", -- potentially uninitialized local variable '$var' used
+			"4703", -- potentially uninitialized local pointer variable '$var' used
+			"4996", -- '$func': The POSIX name of this item is deprecated. Instead, use the ISO C and C++ conformant name: $func2. See online help for details.
 		}
 	filter "action:not vs*"
 if vorbis_headerPath then

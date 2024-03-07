@@ -129,7 +129,7 @@ void cSurveyorAi::planMove (std::forward_list<cPosition>& path, int remainingMov
 
 	cPosition bestNextPosition;
 	float bestNextFactor = FIELD_BLOCKED;
-	int bestNextMoveCosts;
+	int bestNextMoveCosts{};
 
 	for (const cPosition nextPosition : map.staticMap->collectAroundPositions (position, vehicle.getIsBig()))
 	{

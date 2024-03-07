@@ -329,38 +329,35 @@ size_t cChatCommandArgumentServerPlayer::parse (const std::string& command, size
 
 	const auto nextWordLength = getNextWordLength (command, position);
 
-	bool isNumber = true;
-	size_t pos;
-	int playerNumber;
+	std::optional<int> playerNumber;
 	try
 	{
+		size_t pos{};
 		playerNumber = std::stoi (command.substr (position, nextWordLength), &pos);
+		if (pos != nextWordLength)
+		{
+			playerNumber.reset();
+		}
 	}
 	catch (const std::invalid_argument&)
 	{
-		isNumber = false;
+		playerNumber.reset();
 	}
 	catch (const std::out_of_range&)
 	{
 		// TODO: translate
 		throw std::runtime_error ("Invalid player number");
 	}
-
-	if (pos != nextWordLength)
-	{
-		isNumber = false;
-	}
-
-	if (isNumber)
+	if (playerNumber)
 	{
 		try
 		{
-			value = server->getModel().getPlayer (playerNumber);
+			value = server->getModel().getPlayer (*playerNumber);
 		}
 		catch (std::exception&)
 		{
 			// TODO: translate
-			throw std::runtime_error ("Could not find player with number " + std::to_string (playerNumber));
+			throw std::runtime_error ("Could not find player with number " + std::to_string (*playerNumber));
 		}
 	}
 	else
@@ -422,16 +419,19 @@ size_t cChatCommandArgumentClientPlayer::parse (const std::string& command, size
 
 	const auto nextWordLength = getNextWordLength (command, position);
 
-	bool isNumber = true;
-	size_t pos;
-	int playerNumber;
+	std::optional<int> playerNumber;
 	try
 	{
+		size_t pos{};
 		playerNumber = std::stoi (command.substr (position, nextWordLength), &pos);
+		if (pos != nextWordLength)
+		{
+			playerNumber.reset();
+		}
 	}
 	catch (const std::invalid_argument&)
 	{
-		isNumber = false;
+		playerNumber.reset();
 	}
 	catch (const std::out_of_range&)
 	{
@@ -439,19 +439,13 @@ size_t cChatCommandArgumentClientPlayer::parse (const std::string& command, size
 		throw std::runtime_error ("Invalid player number");
 	}
 
-	if (pos != nextWordLength)
+	if (playerNumber)
 	{
-		isNumber = false;
-	}
-
-	if (isNumber)
-	{
-		value = activeClientPointer->getModel().getPlayer (playerNumber);
-
+		value = activeClientPointer->getModel().getPlayer (*playerNumber);
 		if (value == nullptr)
 		{
 			// TODO: translate
-			throw std::runtime_error ("Could not find player with number " + std::to_string (playerNumber));
+			throw std::runtime_error ("Could not find player with number " + std::to_string (*playerNumber));
 		}
 	}
 	else
@@ -459,7 +453,6 @@ size_t cChatCommandArgumentClientPlayer::parse (const std::string& command, size
 		const auto& playerName = command.substr (position, nextWordLength);
 
 		value = activeClientPointer->getModel().getPlayer (playerName);
-
 		if (value == nullptr)
 		{
 			if (nextWordLength == 0 && this->isOptional)

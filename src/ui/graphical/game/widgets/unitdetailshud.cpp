@@ -136,7 +136,9 @@ void cUnitDetailsHud::reset()
 				case eResourceType::Gold:
 					symbolType = eUnitDataSymbolType::Gold;
 					break;
-				case eResourceType::None: break;
+				default:
+				case eResourceType::None:
+					throw std::runtime_error("unreachable");
 			}
 
 			drawRow (1, symbolType, unit->getStoredResources(), staticData.storageResMax, lngPack.i18n ("Others~Cargo_7"));
@@ -177,7 +179,9 @@ void cUnitDetailsHud::reset()
 				case eStorageUnitsImageType::Human:
 					symbolType = eUnitDataSymbolType::Human;
 					break;
-				case eStorageUnitsImageType::None: break;
+				default:
+				case eStorageUnitsImageType::None:
+					throw std::runtime_error ("unreachable");
 			}
 
 			drawRow (1, symbolType, unit->storedUnits.size(), staticData.storageUnitsMax, lngPack.i18n ("Others~Cargo_7"));

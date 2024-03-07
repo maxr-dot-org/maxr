@@ -24,6 +24,7 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -207,55 +208,47 @@ size_t cChatCommandArgumentInt<T>::parse (const std::string& command, size_t pos
 {
 	const auto nextWordLength = getNextWordLength (command, position);
 
-	bool success = true;
-	size_t pos;
-	long long longValue;
+	std::optional<long long> longValue;
 	try
 	{
+		size_t pos{};
 		longValue = std::stoll (command.substr (position, nextWordLength), &pos);
+		if (pos != nextWordLength)
+		{
+			longValue.reset();
+		}
 	}
 	catch (const std::exception&)
 	{
-		success = false;
+		longValue.reset();
 	}
 
-	if (pos != nextWordLength)
+	if (longValue && (*longValue < static_cast<long long> (std::numeric_limits<ValueType>::min()) || *longValue > static_cast<long long> (std::numeric_limits<ValueType>::max())))
 	{
-		success = false;
+		longValue.reset();
 	}
 
-	if (success && (longValue < static_cast<long long> (std::numeric_limits<ValueType>::min()) || longValue > static_cast<long long> (std::numeric_limits<ValueType>::max())))
+	if (longValue)
 	{
-		success = false;
+		value = static_cast<ValueType> (*longValue);
+		return position + nextWordLength;
 	}
-
-	if (!success)
+	else if (isOptional)
 	{
-		if (isOptional)
-		{
-			value = defaultValue;
-			return position;
-		}
-		else
-		{
-			std::stringstream errorString;
-			if (nextWordLength == 0)
-			{
-				throw std::runtime_error ("Missing integer argument <" + name + ">");
-			}
-			else
-			{
-				// TODO: translate
-				errorString << "'" << command.substr (position, nextWordLength) << "' is not a valid integer";
-			}
-			throw std::runtime_error (errorString.str());
-		}
+		value = defaultValue;
+		return position;
+	}
+	else if (nextWordLength == 0)
+	{
+		throw std::runtime_error ("Missing integer argument <" + name + ">");
 	}
 	else
 	{
-		value = static_cast<ValueType> (longValue);
+		std::stringstream errorString;
+		// TODO: translate
+		errorString << "'" << command.substr (position, nextWordLength) << "' is not a valid integer";
+		throw std::runtime_error (errorString.str());
 	}
-	return position + nextWordLength;
 }
 
 //------------------------------------------------------------------------------
