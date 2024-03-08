@@ -33,7 +33,7 @@ struct sID
 	std::string getText() const;
 
 	bool isAVehicle() const { return firstPart == 0; }
-	bool isABuilding() const { return firstPart == 1; }
+	bool isABuilding() const { return firstPart == 1 || firstPart == 2; }
 
 	bool operator== (const sID& ID) const;
 	bool operator!= (const sID& rhs) const { return !(*this == rhs); }

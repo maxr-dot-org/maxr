@@ -40,8 +40,16 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 	staticData (staticData),
 	owner (owner)
 {
-	if (unitData != nullptr)
+	if (unitData == nullptr)
+	{
+		if (staticData) {
+			data.setId (staticData->ID);
+		}
+	}
+	else
+	{
 		data = *unitData;
+	}
 
 	data.setMaximumCurrentValues();
 
@@ -61,9 +69,22 @@ cUnit::~cUnit()
 //------------------------------------------------------------------------------
 void cUnit::postLoad (cModel& model)
 {
-	if (data.getId() != sID (0, 0))
+	//restore pointer to static unit data
+	if (data.getId() == sID (0, 0)) // workaround for old savegame
 	{
-		//restore pointer to static unit data
+		Log.warn ("Rubble of 'Old' save game (doesn't respect isBig)");
+		staticData = &model.getUnitsData()->getRubbleSmallData();
+	}
+	else if (data.getId() == model.getUnitsData()->getRubbleSmallData().ID)
+	{
+		staticData = &model.getUnitsData()->getRubbleSmallData();
+	}
+	else if (data.getId() == model.getUnitsData()->getRubbleBigData().ID)
+	{
+		staticData = &model.getUnitsData()->getRubbleBigData();
+	}
+	else
+	{
 		if (!model.getUnitsData()->isValidId (data.getId()))
 		{
 			NetLog.error ("Static unit data for sID " + data.getId().getText() + " not found.");

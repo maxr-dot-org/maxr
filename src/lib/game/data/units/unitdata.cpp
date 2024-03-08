@@ -187,10 +187,10 @@ void sSpecialVehiclesId::logMissing() const
 //------------------------------------------------------------------------------
 cUnitsData::cUnitsData()
 {
-	rubbleSmall.ID.firstPart = 1;
-	rubbleBig.ID.firstPart = 1;
-	rubbleBig.buildingData.isBig = true;
+	rubbleSmall.ID = {2, 1};
 	rubbleSmall.buildingData.isBig = false;
+	rubbleBig.ID = {2, 2};
+	rubbleBig.buildingData.isBig = true;
 }
 
 //------------------------------------------------------------------------------
