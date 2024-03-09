@@ -72,3 +72,5 @@ jobs:
         path: |
           data/**.exe
           data/**.dll
+          data/**.pdb
+          solution/vs2022/bin/Release/**.pdb

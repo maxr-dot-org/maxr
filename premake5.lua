@@ -88,6 +88,9 @@ end
 		defines { "NDEBUG" }
 		optimize "On"
 
+	filter { "toolset:msc*" }
+		symbols "On" -- pdb even on release
+
 	filter "system:windows"
 		defines { "WIN32" }
 

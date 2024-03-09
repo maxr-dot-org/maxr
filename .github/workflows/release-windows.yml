@@ -57,3 +57,11 @@ jobs:
       with:
         name: maxr-installer.exe
         path: mk/win32/installer/maxr-*.exe
+
+    - name: Upload pdb files
+      uses: actions/upload-artifact@v4
+      with:
+        name: maxr_pdbs
+        path: |
+          data/*.pdb
+          solution/vs2022/bin/Release/*.pdb

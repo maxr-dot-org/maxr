@@ -162,7 +162,7 @@ Section "$(TITLE_Section_Main)" Section_Main
     SetOutPath $INSTDIR
 
     # now install all files
-    File /r "${FILESFOLDER}"
+    File /r /x *.pdb "${FILESFOLDER}"
 SectionEnd
 
 Section "$(TITLE_Section_Start_Menu_Link)" Section_Start_Menu_Link
