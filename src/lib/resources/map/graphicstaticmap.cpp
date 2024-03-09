@@ -25,14 +25,6 @@
 
 #include <string>
 
-#if 1 // TODO: [SDL2]: SDL_SetColors
-//------------------------------------------------------------------------------
-inline void SDL_SetColors (SDL_Surface* surface, const SDL_Color* colors, int index, int size)
-{
-	SDL_SetPaletteColors (surface->format->palette, colors, index, size);
-}
-#endif
-
 //------------------------------------------------------------------------------
 void sGraphicTile::copySrfToTerData (SDL_Surface& surface, const SDL_Color (&palette_shw)[256])
 {
@@ -50,16 +42,16 @@ void sGraphicTile::copySrfToTerData (SDL_Surface& surface, const SDL_Color (&pal
 
 	//copy the terrains with fog
 	shw_org = UniqueSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
-	SDL_SetColors (shw_org.get(), surface.format->palette->colors, 0, 256);
+	SDL_SetPaletteColors (shw_org->format->palette, surface.format->palette->colors, 0, 256);
 	SDL_BlitSurface (&surface, nullptr, shw_org.get(), nullptr);
 
 	shw = UniqueSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
-	SDL_SetColors (shw.get(), surface.format->palette->colors, 0, 256);
+	SDL_SetPaletteColors (shw->format->palette, surface.format->palette->colors, 0, 256);
 	SDL_BlitSurface (&surface, nullptr, shw.get(), nullptr);
 
 	//now set the palette for the fog terrains
-	SDL_SetColors (shw_org.get(), palette_shw, 0, 256);
-	SDL_SetColors (shw.get(), palette_shw, 0, 256);
+	SDL_SetPaletteColors (shw_org->format->palette, palette_shw, 0, 256);
+	SDL_SetPaletteColors (shw->format->palette, palette_shw, 0, 256);
 }
 
 //------------------------------------------------------------------------------
@@ -138,10 +130,10 @@ void cGraphicStaticMap::generateNextAnimationFrame()
 	//set the new palette for all terrain surfaces
 	for (auto& terrain : tiles)
 	{
-		SDL_SetColors (terrain.sf.get(), palette + 96, 96, 127);
-		//SDL_SetColors (TerrainInUse[i]->sf_org, palette + 96, 96, 127);
-		SDL_SetColors (terrain.shw.get(), palette_shw + 96, 96, 127);
-		//SDL_SetColors (TerrainInUse[i]->shw_org, palette_shw + 96, 96, 127);
+		SDL_SetPaletteColors (terrain.sf->format->palette, palette + 96, 96, 127);
+		//SDL_SetPaletteColors (TerrainInUse[i]->sf_org->format->palette, palette + 96, 96, 127);
+		SDL_SetPaletteColors (terrain.shw->format->palette, palette_shw + 96, 96, 127);
+		//SDL_SetPaletteColors (TerrainInUse[i]->shw_org->format->palette, palette_shw + 96, 96, 127);
 	}
 }
 
