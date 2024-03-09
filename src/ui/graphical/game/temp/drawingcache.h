@@ -91,7 +91,7 @@ public:
 	* This method looks for a cached image, that matches the properties of the passed building.
 	* @return a pointer to a surface, which contains the already rendered image of the building or nullptr when no matching cache entry exists.
 	*/
-	SDL_Surface* getCachedImage (const cBuilding& building, double zoom, unsigned long long animationTime);
+	SDL_Surface* getCachedImage (const cBuilding& building, double zoom);
 	SDL_Surface* getCachedImage (const cVehicle& vehicle, double zoom, const cMapView& map, unsigned long long animationTime);
 	/**
 	* This method creates a new chace entry, when there is space in the cache.
@@ -99,7 +99,7 @@ public:
 	* When there is no free space and no old entries, nullptr is returned.
 	* @return a surface to which the building has to be drawn, after calling this function. Returns nullptr when the cache is full.
 	*/
-	SDL_Surface* createNewEntry (const cBuilding& building, double zoom, unsigned long long animationTime);
+	SDL_Surface* createNewEntry (const cBuilding& building, double zoom);
 	SDL_Surface* createNewEntry (const cVehicle& vehicle, double zoom, const cMapView& map, unsigned long long animationTime);
 	/**
 	* Deletes all cache entries.

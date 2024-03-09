@@ -72,28 +72,24 @@ void cUnitDrawingEngine::setDrawColor (bool drawColor)
 //------------------------------------------------------------------------------
 void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player, const std::vector<cResearch::eResearchArea>& currentTurnResearchAreasFinished)
 {
-	unsigned long long animationTime = animationTimer->getAnimationTime(); //call getAnimationTime only once in this method and save the result,
-	//to avoid a changing time within this method
+	// call getAnimationTime only once in this method and save the result,
+	// to avoid a changing time within this method
+	const unsigned long long animationTime = animationTimer->getAnimationTime();
 
 	SDL_Rect dest = {0, 0, 0, 0};
-	bool bDraw = false;
-	SDL_Surface* drawingSurface = drawingCache.getCachedImage (building, zoomFactor, animationTime);
+	SDL_Surface* drawingSurface = drawingCache.getCachedImage (building, zoomFactor);
 	if (drawingSurface == nullptr)
 	{
 		// no cached image found. building needs to be redrawn.
-		bDraw = true;
-		drawingSurface = drawingCache.createNewEntry (building, zoomFactor, animationTime);
-	}
+		drawingSurface = drawingCache.createNewEntry (building, zoomFactor);
 
-	if (drawingSurface == nullptr)
-	{
-		// image will not be cached. So blitt directly to the screen buffer.
-		dest = destination;
-		drawingSurface = cVideo::buffer;
-	}
+		if (drawingSurface == nullptr)
+		{
+			// image will not be cached. So blitt directly to the screen buffer.
+			dest = destination;
+			drawingSurface = cVideo::buffer;
+		}
 
-	if (bDraw)
-	{
 		render (building, animationTime, *drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows(), true);
 	}
 
@@ -179,8 +175,9 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 //------------------------------------------------------------------------------
 void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination, float zoomFactor, const cMapView& map, const cUnitSelection* unitSelection, const cPlayer* player)
 {
-	unsigned long long animationTime = animationTimer->getAnimationTime(); //call getAnimationTime only once in this method and save the result,
-	//to avoid a changing time within this method
+	// call getAnimationTime only once in this method and save the result,
+	// to avoid a changing time within this method
+	const unsigned long long animationTime = animationTimer->getAnimationTime();
 
 	// calculate screen position
 	int ox = (int) (vehicle.getMovementOffset().x() * zoomFactor);
@@ -195,26 +192,20 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 		destination.y += vehicle.dither.y();
 	}
 
-	SDL_Rect dest;
-	dest.x = dest.y = 0;
-	bool bDraw = false;
+	SDL_Rect dest{};
 	SDL_Surface* drawingSurface = drawingCache.getCachedImage (vehicle, zoomFactor, map, animationTime);
 	if (drawingSurface == nullptr)
 	{
 		// no cached image found. building needs to be redrawn.
-		bDraw = true;
 		drawingSurface = drawingCache.createNewEntry (vehicle, zoomFactor, map, animationTime);
-	}
 
-	if (drawingSurface == nullptr)
-	{
-		// image will not be cached. So blitt directly to the screen buffer.
-		dest = destination;
-		drawingSurface = cVideo::buffer;
-	}
+		if (drawingSurface == nullptr)
+		{
+			// image will not be cached. So blitt directly to the screen buffer.
+			dest = destination;
+			drawingSurface = cVideo::buffer;
+		}
 
-	if (bDraw)
-	{
 		render (vehicle, &map, animationTime, player, *drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows());
 	}
 
