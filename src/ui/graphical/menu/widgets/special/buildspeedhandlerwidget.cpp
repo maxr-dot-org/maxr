@@ -85,12 +85,11 @@ void cBuildSpeedHandlerWidget::setBuildSpeedIndex (size_t speedIndex)
 }
 
 //------------------------------------------------------------------------------
-size_t cBuildSpeedHandlerWidget::getBuildSpeedIndex()
+size_t cBuildSpeedHandlerWidget::getBuildSpeedIndex() const
 {
 	for (size_t i = 0; i < elementsCount; ++i)
 	{
 		if (buttons[i]->isChecked()) return i;
 	}
-	assert (false);
-	return 0;
+	throw std::runtime_error ("unreachable");
 }

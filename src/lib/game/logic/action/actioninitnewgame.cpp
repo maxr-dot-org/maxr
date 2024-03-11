@@ -52,8 +52,7 @@ namespace
 			case eGameSettingsResourceDensity::TooMuch:
 				return 3;
 		}
-		assert (false);
-		return 0;
+		throw std::runtime_error ("unreachable");
 	}
 
 	//--------------------------------------------------------------------------
@@ -70,8 +69,7 @@ namespace
 			case eGameSettingsResourceAmount::TooMuch:
 				return 3;
 		}
-		assert (false);
-		return 0;
+		throw std::runtime_error ("unreachable");
 	}
 
 	//--------------------------------------------------------------------------

@@ -764,7 +764,7 @@ void cGameMapWidget::toggleMouseInputMode (eMouseModeType mouseModeType)
 			case eMouseModeType::SelectBuildPosition:
 			case eMouseModeType::Activate:
 				assert (false);
-			// fall through
+				[[fallthrough]];
 			default:
 			case eMouseModeType::Default:
 				setMouseInputMode (std::make_unique<cMouseModeDefault> (mapView.get(), unitSelection, player.get()));

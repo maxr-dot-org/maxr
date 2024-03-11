@@ -290,9 +290,8 @@ int cSubBase::getResource (eResourceType storeResType) const
 		case eResourceType::Gold:
 			return stored.gold;
 		default:
-			assert (0);
+			throw std::runtime_error("unreachable");
 	}
-	return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -310,7 +309,7 @@ void cSubBase::setResource (eResourceType storeResType, int value)
 			setGold (value);
 			break;
 		default:
-			assert (0);
+			throw std::runtime_error ("unreachable");
 	}
 }
 

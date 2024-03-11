@@ -1607,7 +1607,7 @@ void cUnitUpgrade::updateUnitData (cDynamicUnitData& data) const
 			case sUnitUpgrade::eUpgradeType::None:
 				break;
 			default:
-				assert (false);
+				throw std::runtime_error ("unreachable");
 		}
 	}
 }

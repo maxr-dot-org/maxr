@@ -143,8 +143,7 @@ std::string toTranslatedString (eGameSettingsResourceAmount amount)
 		case eGameSettingsResourceAmount::TooMuch:
 			return lngPack.i18n ("Option~TooMuch");
 	}
-	assert (false);
-	return "";
+	throw std::runtime_error ("unreachable");
 }
 
 //------------------------------------------------------------------------------
@@ -161,8 +160,7 @@ std::string toTranslatedString (eGameSettingsResourceDensity density)
 		case eGameSettingsResourceDensity::TooMuch:
 			return lngPack.i18n ("Option~TooMuch");
 	}
-	assert (false);
-	return "";
+	throw std::runtime_error ("unreachable");
 }
 
 //------------------------------------------------------------------------------
@@ -175,8 +173,7 @@ std::string toTranslatedString (eGameSettingsBridgeheadType type)
 		case eGameSettingsBridgeheadType::Mobile:
 			return lngPack.i18n ("Option~Mobile");
 	}
-	assert (false);
-	return "";
+	throw std::runtime_error ("unreachable");
 }
 
 //------------------------------------------------------------------------------
@@ -191,8 +188,7 @@ std::string toTranslatedString (eGameSettingsGameType type)
 		case eGameSettingsGameType::HotSeat:
 			return lngPack.i18n ("Option~Type_HotSeat");
 	}
-	assert (false);
-	return "";
+	throw std::runtime_error ("unreachable");
 }
 
 //------------------------------------------------------------------------------
@@ -207,8 +203,7 @@ std::string toTranslatedString (eGameSettingsVictoryCondition condition, int tur
 		case eGameSettingsVictoryCondition::Death:
 			return lngPack.i18n ("Comp~NoLimit");
 	}
-	assert (false);
-	return "";
+	throw std::runtime_error ("unreachable");
 }
 
 //------------------------------------------------------------------------------

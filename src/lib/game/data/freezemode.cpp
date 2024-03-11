@@ -61,7 +61,7 @@ void cFreezeModes::enable (eFreezeMode mode)
 			waitForServer = true;
 			return;
 	}
-	assert (false);
+	throw std::runtime_error ("unreachable");
 }
 
 //------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ void cFreezeModes::disable (eFreezeMode mode)
 			waitForServer = false;
 			return;
 	}
-	assert (false);
+	throw std::runtime_error ("unreachable");
 }
 
 //------------------------------------------------------------------------------
@@ -107,6 +107,5 @@ bool cFreezeModes::isEnabled (eFreezeMode mode) const
 		case eFreezeMode::WaitForClient: return waitForClient;
 		case eFreezeMode::WaitForServer: return waitForServer;
 	}
-	assert (0); // Incorrect parameter
-	return false;
+	throw std::runtime_error ("unreachable");
 }
