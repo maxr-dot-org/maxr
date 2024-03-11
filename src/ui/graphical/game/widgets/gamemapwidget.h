@@ -60,7 +60,6 @@ public:
 	void setMapView (std::shared_ptr<const cMapView>);
 	void setPlayer (std::shared_ptr<const cPlayer>);
 	void setUnitsData (std::shared_ptr<const cUnitsData>);
-	void setUnitSelection (const cUnitSelection*);
 
 	void setZoomFactor (float zoomFactor, bool center);
 	float getZoomFactor() const;
@@ -211,7 +210,6 @@ protected:
 
 	bool shouldDrawUnit (const cUnit&, const cPosition& visitingPosition, const std::pair<cPosition, cPosition>& tileDrawingRange);
 
-	void addEffect();
 	//
 	// position handling methods
 	//
