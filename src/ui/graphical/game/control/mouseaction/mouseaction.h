@@ -39,14 +39,11 @@ public:
 	 * Executes the action on a left click.
 	 *
 	 * @param gameMapWidget The game map widget to execute the action on.
-	 * @param map The current map.
 	 * @param mapPosition The map position on that the action should be executed.
-	 * @param unitSelection The current unit selection.
-	 * @param changeAllowed True if changes on the game state are currently allowed. False if not (e.g. when the client is currently frozen).
 	 *
 	 * @return True if the action has been executed successfully.
 	 */
-	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const = 0;
+	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cPosition& mapPosition) const = 0;
 
 	/**
 	 * Should return true if the action does change the game state and therefore should not be executed while e.g. the client is frozen.

@@ -57,7 +57,6 @@ class cGameMapWidget : public cClickableWidget
 public:
 	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap>, std::shared_ptr<cAnimationTimer>, std::shared_ptr<cSoundManager>, std::shared_ptr<const cFrameCounter>);
 	~cGameMapWidget();
-	void setMapView (std::shared_ptr<const cMapView>);
 	void setPlayer (std::shared_ptr<const cPlayer>);
 	void setUnitsData (std::shared_ptr<const cUnitsData>);
 
@@ -65,6 +64,9 @@ public:
 	float getZoomFactor() const;
 
 	float computeMinimalZoomFactor() const;
+
+	void setMapView (std::shared_ptr<const cMapView>);
+	const cMapView& getMapView() const;
 
 	cUnitSelection& getUnitSelection();
 	const cUnitSelection& getUnitSelection() const;
@@ -112,6 +114,7 @@ public:
 	void updateMouseCursor (cMouse&);
 
 	void setChangeAllowed (bool value);
+	bool isChangeAllowed() const { return changeAllowed; }
 
 	cDrawingCache& getDrawingCache();
 	const cDrawingCache& getDrawingCache() const;

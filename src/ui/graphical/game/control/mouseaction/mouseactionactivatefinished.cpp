@@ -23,8 +23,9 @@
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionActivateFinished::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView&, const cPosition& mapPosition, cUnitSelection& unitSelection, bool /* changeAllowed */) const /* override */
+bool cMouseActionActivateFinished::executeLeftClick (cGameMapWidget& gameMapWidget, const cPosition& mapPosition) const /* override */
 {
+	cUnitSelection& unitSelection = gameMapWidget.getUnitSelection();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
 	if (!selectedBuilding) return false;

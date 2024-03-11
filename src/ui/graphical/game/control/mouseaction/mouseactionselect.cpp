@@ -29,11 +29,13 @@
 #include "utility/listhelpers.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionSelect::executeLeftClick (cGameMapWidget&, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const /* override */
+bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const cPosition& mapPosition) const /* override */
 {
+	cUnitSelection& unitSelection = gameMapWidget.getUnitSelection();
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding();
 
+	const cMapView& map = gameMapWidget.getMapView();
 	const auto& field = map.getField (mapPosition);
 
 	const auto overVehicle = field.getVehicle();
@@ -44,7 +46,7 @@ bool cMouseActionSelect::executeLeftClick (cGameMapWidget&, const cMapView& map,
 	{
 		/*do nothing here*/
 	}
-	else if (KeysList.getMouseStyle() == eMouseStyle::Modern && (!changeAllowed || ((!selectedVehicle || (!ranges::contains (field.getPlanes(), selectedVehicle) && selectedVehicle != overVehicle)) && (!selectedBuilding || (overBaseBuilding != selectedBuilding && overBuilding != selectedBuilding)))) && unitSelection.selectUnitAt (field, true))
+	else if (KeysList.getMouseStyle() == eMouseStyle::Modern && (!gameMapWidget.isChangeAllowed() || ((!selectedVehicle || (!ranges::contains (field.getPlanes(), selectedVehicle) && selectedVehicle != overVehicle)) && (!selectedBuilding || (overBaseBuilding != selectedBuilding && overBuilding != selectedBuilding)))) && unitSelection.selectUnitAt (field, true))
 	{
 		/*do nothing here*/
 	}

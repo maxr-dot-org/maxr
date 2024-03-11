@@ -26,12 +26,14 @@
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionSteal::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool /*  changeAllowed */) const /* override */
+bool cMouseActionSteal::executeLeftClick (cGameMapWidget& gameMapWidget, const cPosition& mapPosition) const /* override */
 {
+	cUnitSelection& unitSelection = gameMapWidget.getUnitSelection();
 	const auto selectedVehicle = unitSelection.getSelectedVehicle();
 
 	if (!selectedVehicle) return false;
 
+	const cMapView& map = gameMapWidget.getMapView();
 	const auto& field = map.getField (mapPosition);
 
 	const auto overVehicle = field.getVehicle();

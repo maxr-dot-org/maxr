@@ -25,7 +25,7 @@
 class cMouseActionAttack : public cMouseAction
 {
 public:
-	bool executeLeftClick (cGameMapWidget&, const cMapView&, const cPosition& mapPosition, cUnitSelection&, bool changeAllowed) const override;
+	bool executeLeftClick (cGameMapWidget&, const cPosition& mapPosition) const override;
 	bool doesChangeState() const override;
 	bool isSingleAction() const override;
 };

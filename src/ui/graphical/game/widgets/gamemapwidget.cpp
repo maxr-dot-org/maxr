@@ -492,6 +492,13 @@ void cGameMapWidget::setMapView (std::shared_ptr<const cMapView> mapView_)
 }
 
 //------------------------------------------------------------------------------
+const cMapView& cGameMapWidget::getMapView() const
+{
+	assert (mapView);
+	return *mapView;
+}
+
+//------------------------------------------------------------------------------
 void cGameMapWidget::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
 	player = std::move (player_);
@@ -1919,7 +1926,7 @@ bool cGameMapWidget::handleClicked (cApplication&, cMouse& mouse, eMouseButtonTy
 		auto action = mouseMode->getMouseAction (tilePosition, *unitsData);
 		if (action && (changeAllowed || !action->doesChangeState()))
 		{
-			consumed = action->executeLeftClick (*this, *mapView, tilePosition, unitSelection, changeAllowed);
+			consumed = action->executeLeftClick (*this, tilePosition);
 
 			if (action->isSingleAction() && mouseMode->getType() != eMouseModeType::Default)
 			{

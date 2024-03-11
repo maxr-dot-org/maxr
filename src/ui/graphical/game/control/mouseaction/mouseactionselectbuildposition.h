@@ -29,7 +29,7 @@ class cMouseActionSelectBuildPosition : public cMouseAction
 public:
 	cMouseActionSelectBuildPosition (sID buildId, const cPosition& buildPosition);
 
-	bool executeLeftClick (cGameMapWidget&, const cMapView&, const cPosition& mapPosition, cUnitSelection&, bool changeAllowed) const override;
+	bool executeLeftClick (cGameMapWidget&, const cPosition& mapPosition) const override;
 	bool doesChangeState() const override;
 	bool isSingleAction() const override;
 

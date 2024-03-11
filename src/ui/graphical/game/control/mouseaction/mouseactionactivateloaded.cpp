@@ -28,8 +28,9 @@ cMouseActionActivateLoaded::cMouseActionActivateLoaded (int vehicleToActivateInd
 {}
 
 //------------------------------------------------------------------------------
-bool cMouseActionActivateLoaded::executeLeftClick (cGameMapWidget& gameMapWidget, const cMapView&, const cPosition& mapPosition, cUnitSelection& unitSelection, bool /* changeAllowed */) const /* override */
+bool cMouseActionActivateLoaded::executeLeftClick (cGameMapWidget& gameMapWidget, const cPosition& mapPosition) const /* override */
 {
+	cUnitSelection& unitSelection = gameMapWidget.getUnitSelection();
 	const auto selectedUnit = unitSelection.getSelectedUnit();
 
 	if (!selectedUnit) return false;
