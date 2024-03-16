@@ -191,7 +191,7 @@ project "tests"
 	files { "tests/**.cpp", "tests/**.h" }
 	vpaths { ["tests/*"] = "tests" }
 
-	includedirs { "src", "src/lib" }
+	includedirs { "src/lib" }
 	externalincludedirs { "submodules/doctest/doctest", "submodules/nlohmann/single_include" }
 	links { "maxr_lib" }
 	linksToCrashRpt()
@@ -211,7 +211,10 @@ project "maxr_lib"
 	warnings "Extra"
 	flags { "FatalWarnings"}
 
-	files { "src/lib/**.cpp", "src/lib/**.h", "src/**.in", "src/.clang-format", "CMakeList.txt" }
+	files { "src/lib/**.cpp", "src/lib/**.h" } -- Source
+	files { "src/autoversion.h.in"} -- template to generate autoversion.h
+	files { "src/.clang-format" }
+	files { "CMakeLists.txt", "mk/cmake/**.*" } --CMake stuff
 	includedirs { "src", "src/lib" }
 	externalincludedirs { "submodules/nlohmann/single_include", "submodules/spiritless_po/include" }
 
