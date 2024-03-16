@@ -5,11 +5,12 @@ project(maxr)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/mk/cmake)
 
 # ============================================
-# === Global additional includes directories
+# === Additional Packages
 # ============================================
-
-include_directories(src)
-include_directories(src/lib)
+find_package(SDL2 REQUIRED)
+find_package(SDL2_mixer REQUIRED)
+find_package(SDL2_net REQUIRED)
+find_package(OggVorbis REQUIRED)
 
 # ============================================
 # === Global defines
@@ -18,10 +19,6 @@ include_directories(src/lib)
 if(RESINSTALLER_VERSION)
   MESSAGE (STATUS "  Resinstaller version: ${RESINSTALLER_VERSION}")
   add_definitions( "-DVERSION=\"${RESINSTALLER_VERSION}\"")
-endif()
-
-if(CRASH_RPT_INCLUDE_DIR)
-  add_definitions( -DUSE_CRASH_RPT )
 endif()
 
 # ============================================
@@ -55,20 +52,109 @@ endif()
 
 
 # ============================================
-# === Target
+# === Targets
 # ============================================
 
-add_library(SDL_flic src/3rd/SDL_flic/SDL_flic.c src/3rd/SDL_flic/SDL_flic.h)
-add_library(mve_player src/3rd/mveplayer/mveplayer.cpp src/3rd/mveplayer/mveplayer.h)
 # nlohmann is a library header for json
+add_library(nlohmann INTERFACE IMPORTED)
+target_include_directories(nlohmann SYSTEM INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/submodules/nlohmann/single_include")
+
 # spiritless_po is a library header for gettext po translation
+add_library(spiritless_po INTERFACE IMPORTED)
+target_include_directories(spiritless_po SYSTEM INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/submodules/spiritless_po/include")
+
 # doctest is a library header for test framework
+add_library(doctest INTERFACE IMPORTED)
+target_include_directories(doctest SYSTEM INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/submodules/doctest/doctest")
 
+# SDL_flic
+add_library(SDL_flic src/3rd/SDL_flic/SDL_flic.c src/3rd/SDL_flic/SDL_flic.h)
+target_include_directories(SDL_flic PUBLIC ${SDL2_INCLUDE_DIR})
+target_include_directories(SDL_flic INTERFACE src)
+target_link_libraries(SDL_flic PUBLIC ${SDL2_LIBRARY})
+
+# mve player
+add_library(mve_player src/3rd/mveplayer/mveplayer.cpp src/3rd/mveplayer/mveplayer.h)
+target_include_directories(mve_player PUBLIC ${SDL2_INCLUDE_DIR})
+target_include_directories(mve_player PRIVATE src/lib) # Should be removed
+target_include_directories(mve_player INTERFACE src)
+target_link_libraries(mve_player PUBLIC ${SDL2_LIBRARY})
+
+# maxr library
 file(GLOB_RECURSE maxr_LIB_SRCS "src/lib/*.cpp" "src/lib/*.h")
-file(GLOB_RECURSE maxr_SRCS "src/ui/*.cpp" "src/ui/*.h")
-file(GLOB_RECURSE maxr_dedicatedserver_SRCS "src/dedicatedserver/*.cpp" "src/dedicatedserver/*.h")
-file(GLOB_RECURSE maxr_tests_SRCS "tests/*.cpp" "tests/*.h")
+add_library(maxr_lib ${maxr_LIB_SRCS})
+target_include_directories(maxr_lib PUBLIC src/lib)
+target_include_directories(maxr_lib PUBLIC ${SDL2_INCLUDE_DIR} ${SDL2_MIXER_INCLUDE_DIR} ${SDL2_NET_INCLUDE_DIR})
+target_link_libraries(maxr_lib PUBLIC nlohmann ${SDL2_LIBRARY} ${SDL2_MIXER_LIBRARY} ${SDL2_NET_LIBRARY})
+target_link_libraries(maxr_lib PRIVATE spiritless_po)
 
+## add crash reporting library
+if(CRASH_RPT_INCLUDE_DIR)
+  target_compile_definitions(maxr_lib PUBLIC USE_CRASH_RPT)
+  target_include_directories(maxr_lib PUBLIC ${CRASH_RPT_INCLUDE_DIR})
+  target_link_libraries(maxr_lib PUBLIC ${CRASH_RPT_LIB})
+endif()
+## Add GIT Revision
+include(GetGitRevisionDescription)
+git_describe(GIT_DESC --always)
+
+if (GIT_DESC)
+  message(STATUS "Setting cpp define GIT_DESC to ${GIT_DESC}")
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/autoversion.h.in" "${CMAKE_CURRENT_BINARY_DIR}/autoversion.h")
+  target_include_directories(maxr_lib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+else()
+  message("Could not automativally set the maxr GIT_DESC from git. Set cmake variable GIT_EXECUTABLE to use this feature.")
+endif()
+
+# maxr dedicated server
+file(GLOB_RECURSE maxr_dedicatedserver_SRCS "src/dedicatedserver/*.cpp" "src/dedicatedserver/*.h")
+add_executable(maxr_dedicatedserver ${maxr_dedicatedserver_SRCS} ${RESOURCE_FILE})
+target_include_directories(maxr_lib PUBLIC src)
+target_link_libraries(maxr_dedicatedserver maxr_lib)
+
+# maxr
+file(GLOB_RECURSE maxr_SRCS "src/ui/*.cpp" "src/ui/*.h")
+add_executable(maxr ${maxr_SRCS} ${RESOURCE_FILE})
+target_link_libraries(maxr maxr_lib SDL_flic mve_player)
+
+# maxr tests
+file(GLOB_RECURSE maxr_tests_SRCS "tests/*.cpp" "tests/*.h")
+add_executable(maxr_tests ${maxr_tests_SRCS})
+target_link_libraries(maxr_tests maxr_lib doctest)
+
+# resinstaller
+add_executable(resinstaller
+	resinstaller/src/converter.cpp
+	resinstaller/src/converter.h
+	resinstaller/src/defines.h
+	resinstaller/src/file.cpp
+	resinstaller/src/file.h
+	resinstaller/src/ogg_encode.cpp
+	resinstaller/src/ogg_encode.h
+	resinstaller/src/palette.h
+	resinstaller/src/pcx.cpp
+	resinstaller/src/pcx.h
+	resinstaller/src/resinstaller.cpp
+	resinstaller/src/resinstaller.h
+	resinstaller/src/wave.cpp
+	resinstaller/src/wave.h
+)
+target_include_directories(resinstaller PUBLIC ${SDL2_INCLUDE_DIR} ${OGG_INCLUDE_DIR} ${VORBIS_INCLUDE_DIR})
+target_link_libraries(resinstaller SDL_flic ${SDL2_LIBRARY} ${OGG_LIBRARY} ${VORBIS_LIBRARY})
+if(WIN32)
+else()
+	target_link_libraries(resinstaller ${VORBISFILE_LIBRARY} ${VORBISENC_LIBRARY})
+endif()
+
+# set linker flags for target
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  set_target_properties(maxr PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+  target_compile_definitions(maxr_lib PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
+  target_compile_definitions(maxr PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
+  target_compile_definitions(maxr_dedicatedserver PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
+endif()
+
+# Source group for IDE
 macro(GroupSources curdir)
   file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
 
@@ -85,53 +171,6 @@ endmacro()
 GroupSources(src)
 # source_group(TREE . FILES maxr_SRCS)
 
-add_executable(resinstaller
-	resinstaller/src/converter.cpp
-	resinstaller/src/file.cpp
-	resinstaller/src/ogg_encode.cpp
-	resinstaller/src/pcx.cpp
-	resinstaller/src/resinstaller.cpp
-	resinstaller/src/wave.cpp
-)
-
-add_library(maxr_lib ${maxr_LIB_SRCS})
-
-add_executable(maxr_dedicatedserver ${maxr_dedicatedserver_SRCS} ${RESOURCE_FILE})
-add_executable(maxr ${maxr_SRCS} ${RESOURCE_FILE})
-add_executable(maxr_tests ${maxr_tests_SRCS})
-
-target_include_directories(maxr_lib SYSTEM PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/submodules/spiritless_po/include")
-target_include_directories(maxr_lib SYSTEM PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/submodules/nlohmann/single_include")
-target_include_directories(maxr_tests SYSTEM PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/submodules/doctest/doctest")
-
-target_link_libraries(resinstaller SDL_flic)
-target_link_libraries(maxr maxr_lib SDL_flic mve_player)
-target_link_libraries(maxr_dedicatedserver maxr_lib)
-target_link_libraries(maxr_tests maxr_lib)
-
-# set linker flags for target
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-  set_target_properties(maxr PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
-  target_compile_definitions(maxr_lib PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
-  target_compile_definitions(maxr PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
-  target_compile_definitions(maxr_dedicatedserver PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
-endif()
-
-# ============================================
-# === Add GIT Revision
-# ============================================
-
-include(GetGitRevisionDescription)
-git_describe(GIT_DESC --always)
-
-if (GIT_DESC)
-  message(STATUS "Setting cpp define GIT_DESC to ${GIT_DESC}")
-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/autoversion.h.in" "${CMAKE_CURRENT_BINARY_DIR}/autoversion.h")
-  target_include_directories(maxr_lib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-else()
-  message("Could not automativally set the maxr GIT_DESC from git. Set cmake variable GIT_EXECUTABLE to use this feature.")
-endif()
-
 # ============================================
 # === Install
 # ============================================
@@ -142,56 +181,4 @@ if (UNIX)
     DESTINATION share/maxr
     PATTERN ".gitignore" EXCLUDE
   )
-endif()
-
-# ============================================
-# === Additional Packages
-# ============================================
-
-# ---------------------------------------
-# SDL2
-find_package(SDL2 REQUIRED)
-
-target_include_directories(maxr_lib PUBLIC ${SDL2_INCLUDE_DIR})
-target_link_libraries(maxr_lib PUBLIC ${SDL2_LIBRARY})
-target_include_directories(mve_player PUBLIC ${SDL2_INCLUDE_DIR})
-target_link_libraries(mve_player PUBLIC ${SDL2_LIBRARY})
-target_include_directories(SDL_flic PUBLIC ${SDL2_INCLUDE_DIR})
-target_link_libraries(SDL_flic PUBLIC ${SDL2_LIBRARY})
-target_include_directories(resinstaller PUBLIC ${SDL2_INCLUDE_DIR})
-target_link_libraries(resinstaller ${SDL2_LIBRARY})
-
-# ---------------------------------------
-# SDL2_mixer
-find_package(SDL2_mixer REQUIRED)
-
-target_include_directories(maxr_lib PUBLIC ${SDL2_MIXER_INCLUDE_DIR})
-target_link_libraries(maxr_lib PUBLIC ${SDL2_MIXER_LIBRARY})
-
-# ---------------------------------------
-# SDL2_net
-find_package(SDL2_net REQUIRED)
-
-target_include_directories(maxr_lib PUBLIC ${SDL2_NET_INCLUDE_DIR})
-target_link_libraries(maxr_lib PUBLIC ${SDL2_NET_LIBRARY})
-
-# ---------------------------------------
-# OggVorbis
-
-find_package(OggVorbis REQUIRED)
-
-target_include_directories(resinstaller PUBLIC ${OGG_INCLUDE_DIR})
-target_include_directories(resinstaller PUBLIC ${VORBIS_INCLUDE_DIR})
-target_link_libraries(resinstaller ${OGG_LIBRARY})
-target_link_libraries(resinstaller ${VORBIS_LIBRARY})
-if(WIN32)
-else()
-	target_link_libraries(resinstaller ${VORBISFILE_LIBRARY} ${VORBISENC_LIBRARY})
-endif()
-
-# ---------------------------------------
-# add crash reporting library
-if(CRASH_RPT_INCLUDE_DIR)
-  target_include_directories(maxr_lib PUBLIC ${CRASH_RPT_INCLUDE_DIR})
-  target_link_libraries(maxr_lib PUBLIC ${CRASH_RPT_LIB})
 endif()
