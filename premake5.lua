@@ -38,6 +38,33 @@ print("SDL2 library path: ", SDL2_libraryPath)
 print("vorbis header path: ", vorbis_headerPath)
 print("ogg header path: ", ogg_headerPath)
 
+local function autoversion_h()
+	local git_tag, errorCode = os.outputof("git describe --tag")
+	if errorCode == 0 then
+		print("git description: ", git_tag)
+		local content = io.readfile("src/autoversion.h.in")
+		content = content:gsub("${GIT_DESC}", git_tag)
+		
+		local f, err = os.writefile_ifnotequal(content, path.join(locationDir, "autoversion.h"))
+		
+		if (f == 0) then
+			-- file not modified
+		elseif (f < 0) then
+			error(err, 0)
+			return false
+		elseif (f > 0) then
+			print("Generated autoversion.h...")
+		end
+
+		return true
+	else
+		print("`git describe --tag` failed with error code", errorCode)
+		return false
+	end
+end
+
+local have_autoversion_h = autoversion_h()
+
 local function linksToCrashRpt()
 	if _OPTIONS["crashRpt_root"] ~= nil then
 		files {
@@ -152,6 +179,10 @@ project "maxr"
 	warnings "Extra"
 	flags { "FatalWarnings"}
 
+	if have_autoversion_h then
+		includedirs { locationDir } -- for generated file (autoversion.h)
+	end
+
 	files { "src/ui/**.cpp", "src/ui/**.h", "src/maxr.rc" }
 	includedirs { "src", "src/lib" }
 	externalincludedirs { "submodules/nlohmann/single_include" }
@@ -171,6 +202,10 @@ project "dedicated_server"
 
 	warnings "Extra"
 	flags { "FatalWarnings"}
+
+	if have_autoversion_h then
+		includedirs { locationDir } -- for generated file (autoversion.h)
+	end
 
 	files { "src/dedicatedserver/**.cpp", "src/dedicated_server/**.h", "src/maxr.rc" }
 	includedirs { "src", "src/lib" }
@@ -210,6 +245,11 @@ project "maxr_lib"
 
 	warnings "Extra"
 	flags { "FatalWarnings"}
+
+	if have_autoversion_h then
+		files { path.join(locationDir, "autoversion.h") } -- generated file
+		includedirs { locationDir } -- for generated file (autoversion.h)
+	end
 
 	files { "src/lib/**.cpp", "src/lib/**.h" } -- Source
 	files { "src/autoversion.h.in"} -- template to generate autoversion.h

@@ -59,8 +59,8 @@ namespace
 			{
 				// most important position holds value of configure --prefix
 				// to gamedata in %prefix%/$(datadir)/maxr or default path
-				// if autoversion.h wasn't used
-				BUILD_DATADIR,
+
+				"/usr/share/maxr",
 				"/usr/local/share/maxr",
 				"/usr/games/maxr",
 				"/usr/local/games/maxr",

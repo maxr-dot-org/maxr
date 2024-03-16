@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.1)
 
 project(maxr)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/mk/cmake)
+
 # ============================================
 # === Global additional includes directories
 # ============================================
@@ -18,16 +20,8 @@ if(RESINSTALLER_VERSION)
   add_definitions( "-DVERSION=\"${RESINSTALLER_VERSION}\"")
 endif()
 
-if(PACKAGE_VERSION)
-  add_definitions( "-DPACKAGE_VERSION=\"${PACKAGE_VERSION}\"")
-endif()
-
 if(CRASH_RPT_INCLUDE_DIR)
   add_definitions( -DUSE_CRASH_RPT )
-endif()
-
-if(NIGHTLY_BUILD)
-  add_definitions( -DNIGHTLY_BUILD )
 endif()
 
 # ============================================
@@ -59,23 +53,6 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes") # remove noises about C++17 attributes used
 endif()
 
-# ============================================
-# === Add GIT Revision
-# ============================================
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/mk/cmake)
-include(GetGitRevisionDescription)
-git_describe(GIT_DESC --always)
-
-if (GIT_DESC)
-  message(STATUS "Setting cpp define PACKAGE_REV to ${GIT_DESC}")
-  add_definitions("-DHAVE_AUTOVERSION_H")
-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/autoversion.h.in" "${CMAKE_CURRENT_BINARY_DIR}/autoversion.h")
-  include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-else()
-  message("Could not automativally set the maxr PACKAGE_REV from git. Set cmake variable GIT_EXECUTABLE to use this feature.")
-endif()
 
 # ============================================
 # === Target
@@ -138,6 +115,21 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   target_compile_definitions(maxr_lib PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
   target_compile_definitions(maxr PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
   target_compile_definitions(maxr_dedicatedserver PRIVATE "NOMINMAX" "_USE_MATH_DEFINES")
+endif()
+
+# ============================================
+# === Add GIT Revision
+# ============================================
+
+include(GetGitRevisionDescription)
+git_describe(GIT_DESC --always)
+
+if (GIT_DESC)
+  message(STATUS "Setting cpp define GIT_DESC to ${GIT_DESC}")
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/autoversion.h.in" "${CMAKE_CURRENT_BINARY_DIR}/autoversion.h")
+  target_include_directories(maxr_lib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+else()
+  message("Could not automativally set the maxr GIT_DESC from git. Set cmake variable GIT_EXECUTABLE to use this feature.")
 endif()
 
 # ============================================
