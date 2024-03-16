@@ -24,15 +24,10 @@
 //------------------------------------------------------------------------------
 void logMAXRVersion()
 {
-	std::string sVersion = PACKAGE_NAME;
-	sVersion += " ";
-	sVersion += PACKAGE_VERSION;
-	sVersion += " ";
-	sVersion += PACKAGE_REV;
-	sVersion += " ";
+	const auto sVersion = PACKAGE_NAME " " PACKAGE_VERSION " " PACKAGE_REV;
+
 	Log.info (sVersion);
-	std::string sBuild = "Build: ";
-	sBuild += MAX_BUILD_DATE;
+	const std::string sBuild = "Build: " + MAX_BUILD_DATE;
 	Log.info (sBuild);
 	Log.mark();
 	NetLog.debug (sVersion);

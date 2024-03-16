@@ -60,10 +60,10 @@
 std::string getBuildVersion()
 {
 	std::string sVersion = PACKAGE_NAME;
-	sVersion += " BUILD: ";
-	sVersion += MAX_BUILD_DATE;
 	sVersion += " ";
-	sVersion += PACKAGE_REV;
+	sVersion += GIT_DESC;
+	sVersion += " BUILT ";
+	sVersion += MAX_BUILD_DATE;
 	return sVersion;
 }
 
