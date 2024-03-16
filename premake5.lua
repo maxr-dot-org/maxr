@@ -39,14 +39,15 @@ print("vorbis header path: ", vorbis_headerPath)
 print("ogg header path: ", ogg_headerPath)
 
 local function autoversion_h()
-	local git_tag, errorCode = os.outputof("git describe --tag")
+	local git_tag, errorCode = os.outputof("git describe --tag --always")
 	if errorCode == 0 then
 		print("git description: ", git_tag)
 		local content = io.readfile("src/autoversion.h.in")
 		content = content:gsub("${GIT_DESC}", git_tag)
-		
+
+		os.mkdir(locationDir)
 		local f, err = os.writefile_ifnotequal(content, path.join(locationDir, "autoversion.h"))
-		
+
 		if (f == 0) then
 			-- file not modified
 		elseif (f < 0) then
@@ -58,7 +59,7 @@ local function autoversion_h()
 
 		return true
 	else
-		print("`git describe --tag` failed with error code", errorCode)
+		print("`git describe --tag` failed with error code", errorCode, git_tag)
 		return false
 	end
 end
