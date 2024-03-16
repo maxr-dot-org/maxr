@@ -399,7 +399,7 @@ msgid "Init~Voices"
 msgstr "Lade Stimmen..."
 
 msgid "Main~Credits_Reloaded"
-msgstr "M.A.X.R. basierend auf Interplays Mechanized Assault and eXploration"
+msgstr "M.A.X.R. %s basierend auf Interplays Mechanized Assault and eXploration"
 
 msgid "Main~Version"
 msgstr "Version V%s"

@@ -392,7 +392,7 @@ msgid "Init~Voices"
 msgstr "Loading voices..."
 
 msgid "Main~Credits_Reloaded"
-msgstr "M.A.X.R. based on Interplay's Mechanized Assault and eXploration"
+msgstr "M.A.X.R. %s based on Interplay's Mechanized Assault and eXploration"
 
 msgid "Main~Version"
 msgstr "version v%s"

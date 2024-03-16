@@ -411,7 +411,7 @@ msgid "Init~Voices"
 msgstr "Загрузка голосов..."
 
 msgid "Main~Credits_Reloaded"
-msgstr "M.A.X.R. основывается на M.A.X. от Interplay"
+msgstr "M.A.X.R. %s основывается на M.A.X. от Interplay"
 
 msgid "Main~Version"
 msgstr "версия %s"

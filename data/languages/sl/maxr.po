@@ -417,7 +417,7 @@ msgid "Init~Voices"
 msgstr "Nalagam glasove ..."
 
 msgid "Main~Credits_Reloaded"
-msgstr "M.A.X.R. temelji na Interplayevi igri Mechanized Assault and Exploration"
+msgstr "M.A.X.R. %s temelji na Interplayevi igri Mechanized Assault and Exploration"
 
 msgid "Main~Version"
 msgstr "verzija v%s"
