@@ -271,7 +271,6 @@ project "mveplayer"
 
 	files { "src/3rd/mveplayer/**.cpp", "src/3rd/mveplayer/**.h" }
 	vpaths { ["mveplayer/*"] = "src/3rd/mveplayer" }
-	includedirs { "src", "src/lib" }
 
 project "SDL_flic"
 	kind "StaticLib"

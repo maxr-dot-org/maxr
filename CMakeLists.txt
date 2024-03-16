@@ -76,7 +76,6 @@ target_link_libraries(SDL_flic PUBLIC ${SDL2_LIBRARY})
 # mve player
 add_library(mve_player src/3rd/mveplayer/mveplayer.cpp src/3rd/mveplayer/mveplayer.h)
 target_include_directories(mve_player PUBLIC ${SDL2_INCLUDE_DIR})
-target_include_directories(mve_player PRIVATE src/lib) # Should be removed
 target_include_directories(mve_player INTERFACE src)
 target_link_libraries(mve_player PUBLIC ${SDL2_LIBRARY})
 

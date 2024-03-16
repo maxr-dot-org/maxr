@@ -27,13 +27,11 @@
 
 #include "mveplayer.h"
 
-#include "SDLutility/uniquesurface.h"
-
 #include <SDL.h>
-
-#include <cassert>
-#include <vector>
 #include <algorithm>
+#include <cassert>
+#include <memory>
+#include <vector>
 
 /* define (potentially) handled opcode types */
 #define STOP_PLAYBACK			0x00
@@ -60,6 +58,19 @@
 /* internally used structures */
 /******************************/
 
+namespace
+{
+
+struct SdlSurfaceDeleter
+{
+	void operator() (SDL_Surface* surface) const
+	{
+		SDL_FreeSurface (surface);
+	}
+};
+
+using UniqueSurface = std::unique_ptr<SDL_Surface, SdlSurfaceDeleter>;
+
 struct chunk
 {
 	Uint16 length;
@@ -77,6 +88,8 @@ struct mvebuffer
 {
 	std::vector<Uint8> data;
 };
+
+}
 
 /********************/
 /* global variables */
@@ -108,7 +121,7 @@ static float ms_per_frame = 0;
 /* function prototypes */
 /***********************/
 #ifndef NOAUDIO
-void MVEPlayerAudioCB (void* userdata, Uint8* stream, Sint32 len);
+void MVEPlayerAudioCB (void* userdata, Uint8* stream, int len);
 void MVEPlayerDecodeAudio (mvebuffer* input);
 #endif
 void MVEPlayerDecodeVideo (Uint16 wblocks, Uint16 hblocks, Uint8* video_data, Uint8* decoding_map);
