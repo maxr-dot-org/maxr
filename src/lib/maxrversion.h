@@ -21,7 +21,7 @@
 #define maxrversionH
 
 #define PACKAGE_NAME "M.A.X.R."
-#define PACKAGE_VERSION "0.2.14"
+#define PACKAGE_VERSION "0.2.15"
 
 #if __has_include("autoversion.h")
 # include "autoversion.h" // created by cmake/premake from autoversion.h.in

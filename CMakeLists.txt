@@ -13,15 +13,6 @@ find_package(SDL2_net REQUIRED)
 find_package(OggVorbis REQUIRED)
 
 # ============================================
-# === Global defines
-# ============================================
-
-if(RESINSTALLER_VERSION)
-  MESSAGE (STATUS "  Resinstaller version: ${RESINSTALLER_VERSION}")
-  add_definitions( "-DVERSION=\"${RESINSTALLER_VERSION}\"")
-endif()
-
-# ============================================
 # === Checks
 # ============================================
 

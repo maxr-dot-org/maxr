@@ -1,6 +1,16 @@
+Mechanized Assault & eXploration Reloaded 0.2.15 (March, 2024)
+=======================================================================
+- Fix loading of big (clearing/building) vehicle.
+- Fix Rubble loading.
+- [resinstaller] update nuget package from sdl2.nuget:2.26.5 to sdl2.nuget:2.28.0
+- update nuget package from sdl2_mixer.nuget:2.6.3 to sdl2_mixer.nuget:2.8.0
+- update submodule nlohmann from 3.10.2 to 3.11.3.
+- Log version of some dependencies (sdl/crash_reporter/Nlohmann).
+- provide .pdb files for easier debugging from crash reports.
+
 Mechanized Assault & eXploration Reloaded 0.2.14 (February, 2024)
 =======================================================================
-- Fix game initialization: initial resources should be correc now (mining station would have resources)
+- Fix game initialization: initial resources should be correct now (mining station would have resources)
 - Fix loading of TCP games.
 - Fix window for resources redistribution (especially when gold > oil).
 - Fix some issues when shorten (utf-8) string
