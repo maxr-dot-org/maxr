@@ -21,6 +21,8 @@
 
 #include "utility/log.h"
 
+#include <nlohmann/json.hpp>
+
 //------------------------------------------------------------------------------
 void logMAXRVersion()
 {
@@ -32,4 +34,14 @@ void logMAXRVersion()
 	Log.mark();
 	NetLog.debug (sVersion);
 	NetLog.debug (sBuild);
+}
+
+//------------------------------------------------------------------------------
+void logNlohmannVersion()
+{
+	const auto version = "nlohmann json v"
+	                   + std::to_string (NLOHMANN_JSON_VERSION_MAJOR) + "."
+	                   + std::to_string (NLOHMANN_JSON_VERSION_MINOR) + "."
+	                   + std::to_string (NLOHMANN_JSON_VERSION_PATCH);
+	Log.info (version);
 }

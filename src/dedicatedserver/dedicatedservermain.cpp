@@ -38,6 +38,7 @@ try
 	}
 	logMAXRVersion();
 	logSDLVersions();
+	logNlohmannVersion();
 	CR_INIT_CRASHREPORTING();
 
 	SDLComponent sdlComponent (false);

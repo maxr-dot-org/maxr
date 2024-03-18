@@ -105,6 +105,7 @@ try
 	is_main_thread();
 	logMAXRVersion();
 	logSDLVersions();
+	logNlohmannVersion();
 	CR_INIT_CRASHREPORTING();
 
 	SDLComponent sdlComponent (true);

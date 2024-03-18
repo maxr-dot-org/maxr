@@ -36,4 +36,7 @@
 
 void logMAXRVersion();
 
+// Dependencies
+void logNlohmannVersion();
+
 #endif
