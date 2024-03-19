@@ -15,7 +15,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: recursive
-        fetch-tags: true
 
     - name: checkout premake5
       uses: actions/checkout@v4
