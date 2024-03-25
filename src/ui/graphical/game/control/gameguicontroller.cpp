@@ -574,7 +574,18 @@ void cGameGuiController::connectGuiStaticCommands()
 
 	signalConnectionManager.connect (gameGui->getHud().nextClicked, [this]() { selectNextUnit(); });
 	signalConnectionManager.connect (gameGui->getHud().prevClicked, [this]() { selectPreviousUnit(); });
-	signalConnectionManager.connect (gameGui->getHud().doneClicked, [this]() {
+	const auto updatePrevNextButtons = [this]() {
+		const auto player = getActivePlayer();
+		if (!player)
+		{
+			gameGui->getHud().setCanSelectNextUnit (false);
+			return;
+		}
+		const auto& unitSelection = gameGui->getGameMap().getUnitSelection();
+		const bool canSelectNextUnit = unitSelection.canSelectNextUnit (*player, playerGameGuiStates[player->getId()].doneList);
+		gameGui->getHud().setCanSelectNextUnit (canSelectNextUnit);
+	};
+	signalConnectionManager.connect (gameGui->getHud().doneClicked, [=]() {
 		auto keyboard = application.getActiveKeyboard();
 		if (keyboard && keyboard->isAnyModifierActive (toEnumFlag (eKeyModifierType::Ctrl)))
 		{
@@ -583,8 +594,10 @@ void cGameGuiController::connectGuiStaticCommands()
 		else
 		{
 			markSelectedUnitAsDone();
+			updatePrevNextButtons();
 		}
 	});
+	signalConnectionManager.connect (gameGui->getGameMap().getUnitSelection().selectionChanged, updatePrevNextButtons);
 
 	signalConnectionManager.connect (gameGui->getHud().reportsClicked, [this]() { showReportsWindow(); });
 

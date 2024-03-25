@@ -108,10 +108,10 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer)
 	chatButton = emplaceChild<cCheckBox> (cPosition (51, 252), lngPack.i18n ("Others~Chat"), eUnicodeFontType::LatinSmallWhite, eCheckBoxTextAnchor::Left, eCheckBoxType::HudChat);
 	signalConnectionManager.connect (chatButton->toggled, [this]() { chatToggled(); });
 
-	auto nextButton = emplaceChild<cPushButton> (cPosition (124, 227), ePushButtonType::HudNext, ">>");
+	nextButton = emplaceChild<cPushButton> (cPosition (124, 227), ePushButtonType::HudNext, ">>");
 	nextButton->addClickShortcut (KeysList.keyUnitNext);
 	signalConnectionManager.connect (nextButton->clicked, [this]() { nextClicked(); });
-	auto prevButton = emplaceChild<cPushButton> (cPosition (60, 227), ePushButtonType::HudPrev, "<<");
+	prevButton = emplaceChild<cPushButton> (cPosition (60, 227), ePushButtonType::HudPrev, "<<");
 	prevButton->addClickShortcut (KeysList.keyUnitPrev);
 	signalConnectionManager.connect (prevButton->clicked, [this]() { prevClicked(); });
 	doneButton = emplaceChild<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Others~Proceed_4"));
@@ -597,4 +597,19 @@ void cHud::setActiveUnit (const cUnit* unit)
 	unitRenameWidget->setUnit (unit, *unitsData);
 	unitVideo->setUnit (unit);
 	unitDetails->setUnit (unit);
+}
+
+//------------------------------------------------------------------------------
+void cHud::setCanSelectNextUnit(bool value)
+{
+	if (value)
+	{
+		prevButton->unlock();
+		nextButton->unlock();
+	}
+	else
+	{
+		prevButton->lock();
+		nextButton->lock();
+	}
 }

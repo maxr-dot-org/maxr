@@ -267,6 +267,14 @@ bool cUnitSelection::canSelect (const cUnit* unit) const
 }
 
 //------------------------------------------------------------------------------
+bool cUnitSelection::canSelectNextUnit (const cPlayer& player, const std::vector<unsigned int>& doneList) const
+{
+	const auto currentSelected = getSelectedUnit();
+	const auto next = getNextUnit (player, doneList, currentSelected);
+	return next != nullptr && next != currentSelected;
+}
+
+//------------------------------------------------------------------------------
 bool cUnitSelection::selectNextUnit (const cPlayer& player, const std::vector<unsigned int>& doneList)
 {
 	const auto unit = getNextUnit (player, doneList, getSelectedUnit());

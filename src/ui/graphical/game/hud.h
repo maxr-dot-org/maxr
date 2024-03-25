@@ -121,6 +121,8 @@ public:
 	void activateShortcuts();
 	void deactivateShortcuts();
 
+	void setCanSelectNextUnit (bool);
+
 	mutable cSignal<void()> zoomChanged;
 
 	mutable cSignal<void()> surveyToggled;
@@ -163,7 +165,6 @@ public:
 private:
 	void handleZoomPlusClicked();
 	void handleZoomMinusClicked();
-	void handlePreferencesClicked();
 
 private:
 	UniqueSurface surface;
@@ -194,7 +195,9 @@ private:
 	cCheckBox* chatButton = nullptr;
 
 	cPushButton* reportsButton = nullptr;
+	cPushButton* prevButton = nullptr;
 	cPushButton* doneButton = nullptr;
+	cPushButton* nextButton = nullptr;
 
 	cShortcut* surveyShortcut = nullptr;
 	cShortcut* hitsShortcut = nullptr;

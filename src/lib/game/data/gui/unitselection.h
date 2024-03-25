@@ -64,6 +64,8 @@ public:
 
 	bool canSelect (const cUnit*) const;
 
+	bool canSelectNextUnit (const cPlayer&, const std::vector<unsigned int>& doneList) const;
+
 	mutable cSignal<void()> selectionChanged;
 	mutable cSignal<void()> mainSelectionChanged;
 	mutable cSignal<void()> groupSelectionChanged;

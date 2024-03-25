@@ -152,7 +152,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 		const auto selectedUnit = unitSelection.getSelectedUnit();
 		if (!selectedUnit) return;
 
-		const auto shortcutsUpdater = [this]() { updateActiveUnitCommandShortcuts(); };
+		const auto shortcutsUpdater = [this]() { updateActiveUnitCommandShortcuts(); unitSelection.selectionChanged(); };
 		selectedUnitSignalConnectionManager.connect (selectedUnit->data.shotsChanged, shortcutsUpdater);
 		selectedUnitSignalConnectionManager.connect (selectedUnit->storedResourcesChanged, shortcutsUpdater);
 		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, shortcutsUpdater);
