@@ -105,7 +105,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	{
 		metalValue = building->subBase->getResourcesStored().metal;
 
-		signalConnectionManager.connect (building->subBase->metalChanged, [&]() {
+		signalConnectionManager.connect (building->subBase->metalChanged, [=]() {
 			metalBar->setValue (building->subBase->getResourcesStored().metal);
 		});
 	}
