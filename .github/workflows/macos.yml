@@ -41,7 +41,8 @@ jobs:
     - name: test projects
       run: |
         mkdir build && cd build
-        cmake ..
+        cmake .. -DBUILD_TESTING=1
         make maxr_dedicatedserver maxr maxr_tests resinstaller -j4
+        ctest
         ./maxr_tests
 

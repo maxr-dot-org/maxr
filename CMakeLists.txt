@@ -55,8 +55,13 @@ add_library(spiritless_po INTERFACE IMPORTED)
 target_include_directories(spiritless_po SYSTEM INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/submodules/spiritless_po/include")
 
 # doctest is a library header for test framework
-add_library(doctest INTERFACE IMPORTED)
-target_include_directories(doctest SYSTEM INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/submodules/doctest/doctest")
+include(CTest)
+if(BUILD_TESTING)
+  add_library(doctest INTERFACE IMPORTED)
+  target_include_directories(doctest SYSTEM INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/submodules/doctest/doctest")
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/submodules/doctest/scripts/cmake")
+  include(doctest)
+endif()
 
 # SDL_flic
 add_library(SDL_flic src/3rd/SDL_flic/SDL_flic.c src/3rd/SDL_flic/SDL_flic.h)
@@ -108,9 +113,12 @@ add_executable(maxr ${maxr_SRCS} ${RESOURCE_FILE})
 target_link_libraries(maxr maxr_lib SDL_flic mve_player)
 
 # maxr tests
-file(GLOB_RECURSE maxr_tests_SRCS "tests/*.cpp" "tests/*.h")
-add_executable(maxr_tests ${maxr_tests_SRCS})
-target_link_libraries(maxr_tests maxr_lib doctest)
+if(BUILD_TESTING)
+  file(GLOB_RECURSE maxr_tests_SRCS "tests/*.cpp" "tests/*.h")
+  add_executable(maxr_tests ${maxr_tests_SRCS})
+  target_link_libraries(maxr_tests maxr_lib doctest)
+  doctest_discover_tests(maxr_tests)
+endif()
 
 # resinstaller
 add_executable(resinstaller
