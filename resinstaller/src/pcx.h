@@ -25,7 +25,7 @@
 #include <SDL.h>
 #include <filesystem>
 
-int savePCX (const SDL_Surface*, const std::filesystem::path& fileName);
+void savePCX (const SDL_Surface*, const std::filesystem::path& fileName);
 SDL_Surface* loadPCX (const std::filesystem::path& name);
 
 #endif //#ifndef pcx_h

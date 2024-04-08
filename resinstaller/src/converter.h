@@ -27,6 +27,8 @@
 
 #include <SDL.h>
 #include <filesystem>
+#include <string_view>
+#include <vector>
 
 struct sPixel
 {
@@ -46,8 +48,8 @@ struct cImageData
 
 	cImageData* Images = nullptr;
 
-	unsigned char* data = nullptr;
-	unsigned char* alpha = nullptr;
+	std::vector<unsigned char> data;
+	std::vector<unsigned char> alpha;
 
 	SDL_Surface* surface = nullptr;
 };
@@ -70,14 +72,12 @@ public:
 	void decodeFile();
 	void resampleFile();
 	void saveFile();
-	SDL_Surface* getSurface (int imageNr = 0);
+	SDL_Surface* getSurface (std::size_t imageNr = 0);
 
 private:
 	short sWidth = 0;
 	short sHeight = 0;
-	cImageData* Images = nullptr;
-
-	int iImageCount = 0;
+	std::vector<cImageData> Images;
 
 	short sHotX = 0;
 	short sHotY = 0;
@@ -89,7 +89,7 @@ public:
 	Sint32 lPos = 0;
 	Sint32 lLenght = 0;
 
-	sPixel* palette = nullptr;
+	std::vector<sPixel> palette;
 };
 
 SDL_Surface* getImageFromRes (std::string file_name, int imageNr = 0);
@@ -113,6 +113,6 @@ void setColor (SDL_Surface* surface, unsigned char nr, unsigned char r, unsigned
 void generateAnimationFrame (SDL_Surface* surface, unsigned char frame);
 
 void updateProgressbar();
-void writeLog (std::string msg);
+void writeLog (std::string_view msg);
 
 #endif // ConvertH

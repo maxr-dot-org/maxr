@@ -214,23 +214,22 @@ namespace
 	}
 } // namespace
 
-int savePCX (const SDL_Surface* surface, const std::filesystem::path& fileName)
+void savePCX (const SDL_Surface* surface, const std::filesystem::path& fileName)
 {
 	if (!surface)
-		return 0;
+		return;
 
-	if (surface->format->BitsPerPixel == 8) // palette color
+	switch (surface->format->BitsPerPixel)
 	{
-		savePCX_8bpp (*surface, fileName);
-		return 1;
+		case 8: // palette color
+			savePCX_8bpp (*surface, fileName);
+			break;
+		case 32: // rgb
+			savePCX_32bpp (*surface, fileName);
+			break;
+		default:
+			break;
 	}
-	else if (surface->format->BitsPerPixel == 32) // rgb
-	{
-		savePCX_32bpp (*surface, fileName);
-		return 1;
-	}
-
-	return 0;
 }
 
 SDL_Surface* loadPCX (const std::filesystem::path& name)

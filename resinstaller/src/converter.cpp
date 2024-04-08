@@ -39,21 +39,9 @@ cImage* cImage::Image = nullptr;
 
 cImage::~cImage()
 {
-	if (palette)
+	for (auto& image : Images)
 	{
-		free (palette);
-	}
-
-	if (bDecoded)
-	{
-		for (int i = 0; i < iImageCount; i++)
-		{
-			SDL_FreeSurface (Images[i].surface);
-
-			free (Images[i].data);
-			free (Images[i].alpha);
-		}
-		free (Images);
+		SDL_FreeSurface (image.surface);
 	}
 }
 
@@ -61,26 +49,21 @@ void cImage::saveFile()
 {
 	if (!bDecoded)
 		return;
-	for (int iNum = 0; iNum < iImageCount; iNum++)
+	for (std::size_t i = 0; i != Images.size(); ++i)
 	{
 		std::string sOutputname = name;
-		if (iImageCount > 1)
+		if (Images.size() > 1)
 		{
 			sOutputname += "_";
 			char szTmp[13];
-			sprintf (szTmp, "%0.3d", iNum);
+			sprintf (szTmp, "%0.3d", (int) i);
 			sOutputname += szTmp;
 		}
 		sOutputname += ".pcx";
 
-		savePCX (Images[iNum].surface, sOutputPath / sOutputname);
+		savePCX (Images[i].surface, sOutputPath / sOutputname);
 
-		std::cout << name;
-		if (iImageCount > 1)
-		{
-			std::cout << "_" << iNum;
-		}
-		std::cout << "\n";
+		std::cout << sOutputname << "\n";
 	}
 }
 
@@ -88,25 +71,12 @@ void cImage::resampleFile()
 {
 	if (!bDecoded) return;
 	int iMaxHotX = 0, iMaxHotY = 0, iMaxRight = 0, iMaxBottom = 0;
-	cImageData ImageData;
-	for (int j = 0; j < iImageCount; j++)
+	for (const auto& image : Images)
 	{
-		if (iMaxHotX < Images[j].sUHotX)
-		{
-			iMaxHotX = Images[j].sUHotX;
-		}
-		if (iMaxHotY < Images[j].sUHotY)
-		{
-			iMaxHotY = Images[j].sUHotY;
-		}
-		if (iMaxRight < Images[j].sWidth - Images[j].sUHotX)
-		{
-			iMaxRight = Images[j].sWidth - Images[j].sUHotX;
-		}
-		if (iMaxBottom < Images[j].sHeight - Images[j].sUHotY)
-		{
-			iMaxBottom = Images[j].sHeight - Images[j].sUHotY;
-		}
+		iMaxHotX = std::max(iMaxHotX, (int)image.sUHotX);
+		iMaxHotY = std::max (iMaxHotY, (int) image.sUHotY);
+		iMaxRight = std::max(iMaxRight, image.sWidth - image.sUHotX);
+		iMaxBottom = std::max(iMaxBottom, image.sHeight - image.sUHotY);
 	}
 	sWidth = iMaxHotX + iMaxRight;
 	sHeight = iMaxHotY + iMaxBottom;
@@ -132,7 +102,7 @@ void cImage::resampleFile()
 		palette[backgroundIndex].Red = 255;
 	}
 
-	for (int iF = 0; iF < iImageCount; iF++)
+	for (auto& image : Images)
 	{
 		//create surface
 		SDL_Surface* surface = SDL_CreateRGBSurface (SDL_SWSURFACE, sWidth, sHeight, 8, 0, 0, 0, 0);
@@ -164,31 +134,30 @@ void cImage::resampleFile()
 
 				*pixel = backgroundIndex;
 
-				ImageData = Images[iF];
-
-				if (iX < iMaxHotX - ImageData.sUHotX)
+				if (iX < iMaxHotX - image.sUHotX)
 				{
 					continue; // Image is right than point
 				}
-				if (iY < iMaxHotY - ImageData.sUHotY)
+				if (iY < iMaxHotY - image.sUHotY)
 				{
 					continue; // Image is bottom than point
 				}
-				if (iX >= ImageData.sWidth - ImageData.sUHotX + iMaxHotX)
+				if (iX >= image.sWidth - image.sUHotX + iMaxHotX)
 				{
 					continue; // Image is left than point
 				}
-				if (iY >= ImageData.sHeight - ImageData.sUHotY + iMaxHotY)
+				if (iY >= image.sHeight - image.sUHotY + iMaxHotY)
 				{
 					continue; // Image is top than point
 				}
-				if (ImageData.alpha[iX - iMaxHotX + ImageData.sUHotX + (iY - iMaxHotY + ImageData.sUHotY) * ImageData.sWidth] == 0)
+				const auto index = iX - iMaxHotX + image.sUHotX + (iY - iMaxHotY + image.sUHotY) * image.sWidth;
+				if (image.alpha[index] == 0)
 				{
-					*pixel = ImageData.data[iX - iMaxHotX + ImageData.sUHotX + (iY - iMaxHotY + ImageData.sUHotY) * ImageData.sWidth];
+					*pixel = image.data[index];
 				}
 			}
 		}
-		Images[iF].surface = surface;
+		image.surface = surface;
 	}
 }
 
@@ -218,12 +187,11 @@ void cImage::decodeFile()
 
 bool cImage::decodeSimpleImage()
 {
-	Sint16 sLocWidth, sLocHeight, sLocHotX, sLocHotY;
 	SDL_RWseek (res, lPos, SEEK_SET);
-	sLocWidth = (Sint16) SDL_ReadLE16 (res);
-	sLocHeight = (Sint16) SDL_ReadLE16 (res);
-	sLocHotX = (Sint16) SDL_ReadLE16 (res);
-	sLocHotY = (Sint16) SDL_ReadLE16 (res);
+	const Sint16 sLocWidth = (Sint16) SDL_ReadLE16 (res);
+	const Sint16 sLocHeight = (Sint16) SDL_ReadLE16 (res);
+	const Sint16 sLocHotX = (Sint16) SDL_ReadLE16 (res);
+	const Sint16 sLocHotY = (Sint16) SDL_ReadLE16 (res);
 
 	if (sLocWidth > 640 || sLocHeight > 480)
 	{
@@ -237,8 +205,7 @@ bool cImage::decodeSimpleImage()
 	{
 		return false;
 	}
-	iImageCount = 1;
-	Images = (cImageData*) malloc (sizeof (cImageData) * iImageCount);
+	Images.resize (1);
 	Images[0].sWidth = sLocWidth;
 	Images[0].sHeight = sLocHeight;
 	Images[0].sHotX = sLocHotX;
@@ -246,28 +213,21 @@ bool cImage::decodeSimpleImage()
 	Images[0].sUHotX = 0;
 	Images[0].sUHotY = 0;
 
-	Images[0].data = (unsigned char*) malloc (sizeof (unsigned char) * sLocWidth * sLocHeight);
-	SDL_RWread (res, Images[0].data, sizeof (unsigned char), sLocWidth * sLocHeight);
-	Images[0].alpha = (unsigned char*) malloc (sizeof (unsigned char) * sLocWidth * sLocHeight);
-	memset (Images[0].alpha, 0, sLocWidth * sLocHeight);
+	Images[0].data.resize (sLocWidth * sLocHeight);
+	SDL_RWread (res, Images[0].data.data(), sizeof (unsigned char), sLocWidth * sLocHeight);
+	Images[0].alpha.resize(sLocWidth * sLocHeight, 0);
 
-	iImageCount = 1;
 	return true;
 }
 
 bool cImage::decodeMultiShadow()
 {
-	Sint32 iX, iY, iBlockIndex, iPicIndex;
-	Sint32 lBegin, lEnd, *lBounds, *lRows;
-	Sint16 sCount, sLocWidth, sLocHeight, sLocHotX, sLocHotY;
-	unsigned char Opacity, Color;
-
 	if (lLenght < 2)
 	{
 		return false;
 	}
 	SDL_RWseek (res, lPos, SEEK_SET);
-	sCount = (Sint16) SDL_ReadLE16 (res);
+	const auto sCount = (Sint16) SDL_ReadLE16 (res);
 	if (sCount < 1)
 	{
 		return false;
@@ -276,25 +236,24 @@ bool cImage::decodeMultiShadow()
 	{
 		return false;
 	}
-	lBounds = (Sint32*) malloc (sizeof (Sint32) * sCount);
-	for (iPicIndex = 0; iPicIndex < sCount; iPicIndex++)
+	std::vector <Sint32> lBounds (sCount);
+	for (Sint32 iPicIndex = 0; iPicIndex < sCount; iPicIndex++)
 	{
 		SDL_RWseek (res, lPos + 2 + iPicIndex * 4, SEEK_SET);
 		lBounds[iPicIndex] = (Sint32) SDL_ReadLE32 (res);
 		if (lBounds[iPicIndex] > lLenght)
 		{
-			free (lBounds);
 			return false;
 		}
 	}
-	Images = (cImageData*) malloc (sizeof (cImageData) * sCount);
+	Images.resize (sCount);
 
-	for (iPicIndex = 0; iPicIndex < sCount; iPicIndex++)
+	for (Sint32 iPicIndex = 0; iPicIndex < sCount; iPicIndex++)
 	{
 		SDL_RWseek (res, lPos + 2 + iPicIndex * 4, SEEK_SET);
-		lBegin = (Sint32) SDL_ReadLE32 (res);
-		lEnd = lLenght;
-		for (iX = 0; iX < sCount; iX++)
+		Sint32 lBegin = (Sint32) SDL_ReadLE32 (res);
+		Sint32 lEnd = lLenght;
+		for (Sint32 iX = 0; iX < sCount; iX++)
 		{
 			if (lEnd > lBounds[iX] && lBegin < lBounds[iX])
 			{
@@ -305,15 +264,13 @@ bool cImage::decodeMultiShadow()
 		lEnd += lPos;
 
 		SDL_RWseek (res, lBegin, SEEK_SET);
-		sLocWidth = (Sint16) SDL_ReadLE16 (res);
-		sLocHeight = (Sint16) SDL_ReadLE16 (res);
-		sLocHotX = (Sint16) SDL_ReadLE16 (res);
-		sLocHotY = (Sint16) SDL_ReadLE16 (res);
+		const Sint16 sLocWidth = (Sint16) SDL_ReadLE16 (res);
+		const Sint16 sLocHeight = (Sint16) SDL_ReadLE16 (res);
+		const Sint16 sLocHotX = (Sint16) SDL_ReadLE16 (res);
+		const Sint16 sLocHotY = (Sint16) SDL_ReadLE16 (res);
 
 		if (sLocWidth < 1 || sLocWidth > 640 || sLocHeight < 1 || sLocHeight > 480 || abs (sLocHotX) > 640 || abs (sLocHotY) > 480)
 		{
-			free (lBounds);
-			free (Images);
 			return false;
 		}
 
@@ -324,28 +281,25 @@ bool cImage::decodeMultiShadow()
 		Images[iPicIndex].sUHotX = sLocHotX;
 		Images[iPicIndex].sUHotY = sLocHotY;
 
-		Images[iPicIndex].data = (unsigned char*) malloc (sizeof (unsigned char) * sLocWidth * sLocHeight);
-		memset (Images[iPicIndex].data, 0, sLocWidth * sLocHeight);
-		Images[iPicIndex].alpha = (unsigned char*) malloc (sizeof (unsigned char) * sLocWidth * sLocHeight);
-		memset (Images[iPicIndex].alpha, 255, sLocWidth * sLocHeight);
-		lRows = (Sint32*) malloc (sizeof (Sint32) * sLocHeight);
+		Images[iPicIndex].data.resize (sLocWidth * sLocHeight, 0);
+		Images[iPicIndex].alpha.resize(sLocWidth * sLocHeight, 255);
 
 		if (lBegin + 8 + sLocHeight * 4 > lEnd)
 		{
-			//free memory here
 			return false;
 		}
 		SDL_RWseek (res, lBegin + 8, SEEK_SET);
+		std::vector<Sint32> lRows (sLocHeight);
 		for (int i = 0; i < sLocHeight; i++)
 			lRows[i] = (Sint32) SDL_ReadLE32 (res);
 
 		//SDL_WRread ( res, lRows, sizeof( Sint32 ), sLocHeight, );
-		for (iY = 0; iY < sLocHeight; iY++)
+		for (Sint32 iY = 0; iY < sLocHeight; iY++)
 		{
-			Color = 0;
-			iX = 0;
-			Opacity = 255;
-			iBlockIndex = 0;
+			unsigned char Color = 0;
+			Sint32 iX = 0;
+			unsigned char Opacity = 255;
+			Sint32 iBlockIndex = 0;
 			unsigned char CurData;
 
 			SDL_RWseek (res, lRows[iY] + iBlockIndex + lPos, SEEK_SET);
@@ -354,7 +308,6 @@ bool cImage::decodeMultiShadow()
 			{
 				if (iY * sLocWidth + iX + CurData > sLocWidth * sLocHeight)
 				{
-					//free memory here
 					return false;
 				}
 				memset (&Images[iPicIndex].data[iY * sLocWidth + iX], Color, CurData);
@@ -369,29 +322,20 @@ bool cImage::decodeMultiShadow()
 			}
 		}
 	}
-	memset (palette, 255, 3);
-	memset (&palette[1], 0, 3);
-	iImageCount = sCount;
+	palette[0] = {255, 255, 255};
+	palette[1] = {0, 0, 0};
 
-	free (lBounds);
-	free (lRows);
 	return true;
 }
 
 bool cImage::decodeMultiImage()
 {
-	Sint32 iX, iY, iBlockIndex, iPicIndex;
-	Sint32 lBegin, lEnd, *lBounds, *lRows;
-	Sint16 sCount, sLocWidth, sLocHeight, sLocHotX, sLocHotY;
-	bool bCopyNotSkip;
-	unsigned char Opacity;
-
 	if (lLenght < 2)
 	{
 		return false;
 	}
 	SDL_RWseek (res, lPos, SEEK_SET);
-	sCount = (Sint16) SDL_ReadLE16 (res);
+	const Sint16 sCount = (Sint16) SDL_ReadLE16 (res);
 	if (sCount < 1)
 	{
 		return false;
@@ -400,24 +344,24 @@ bool cImage::decodeMultiImage()
 	{
 		return false;
 	}
-	lBounds = (Sint32*) malloc (sizeof (long) * sCount);
-	for (iPicIndex = 0; iPicIndex < sCount; iPicIndex++)
+	std::vector<Sint32> lBounds (sCount);
+	for (int i = 0; i != sCount; ++i)
 	{
-		SDL_RWseek (res, lPos + 2 + iPicIndex * 4, SEEK_SET);
-		lBounds[iPicIndex] = (Sint32) SDL_ReadLE32 (res);
-		if (lBounds[iPicIndex] > lLenght)
+		SDL_RWseek (res, lPos + 2 + i * 4, SEEK_SET);
+		lBounds[i] = (Sint32) SDL_ReadLE32 (res);
+		if (lBounds[i] > lLenght)
 		{
 			return false;
 		}
 	}
-	Images = (cImageData*) malloc (sizeof (cImageData) * sCount);
+	Images.resize (sCount);
 
-	for (iPicIndex = 0; iPicIndex < sCount; iPicIndex++)
+	for (int iPicIndex = 0; iPicIndex < sCount; iPicIndex++)
 	{
 		SDL_RWseek (res, lPos + 2 + iPicIndex * 4, SEEK_SET);
-		lBegin = (Sint32) SDL_ReadLE32 (res);
-		lEnd = lLenght;
-		for (iX = 0; iX < sCount; iX++)
+		Sint32 lBegin = (Sint32) SDL_ReadLE32 (res);
+		Sint32 lEnd = lLenght;
+		for (Sint32 iX = 0; iX < sCount; iX++)
 		{
 			if (lEnd > lBounds[iX] && lBegin < lBounds[iX])
 			{
@@ -428,10 +372,10 @@ bool cImage::decodeMultiImage()
 		lEnd += lPos;
 
 		SDL_RWseek (res, lBegin, SEEK_SET);
-		sLocWidth = (Sint16) SDL_ReadLE16 (res);
-		sLocHeight = (Sint16) SDL_ReadLE16 (res);
-		sLocHotX = (Sint16) SDL_ReadLE16 (res);
-		sLocHotY = (Sint16) SDL_ReadLE16 (res);
+		const Sint16 sLocWidth = (Sint16) SDL_ReadLE16 (res);
+		const Sint16 sLocHeight = (Sint16) SDL_ReadLE16 (res);
+		const Sint16 sLocHotX = (Sint16) SDL_ReadLE16 (res);
+		const Sint16 sLocHotY = (Sint16) SDL_ReadLE16 (res);
 
 		if (sLocWidth < 1 || sLocWidth > 640 || sLocHeight < 1 || sLocHeight > 480 || abs (sLocHotX) > 640 || abs (sLocHotY) > 480)
 		{
@@ -445,26 +389,24 @@ bool cImage::decodeMultiImage()
 		Images[iPicIndex].sUHotX = sLocHotX;
 		Images[iPicIndex].sUHotY = sLocHotY;
 
-		Images[iPicIndex].data = (unsigned char*) malloc (sizeof (unsigned char) * sLocWidth * sLocHeight);
-		memset (Images[iPicIndex].data, 0, sLocWidth * sLocHeight);
-		Images[iPicIndex].alpha = (unsigned char*) malloc (sizeof (unsigned char) * sLocWidth * sLocHeight);
-		memset (Images[iPicIndex].alpha, 255, sLocWidth * sLocHeight);
-		lRows = (Sint32*) malloc (sizeof (Sint32) * sLocHeight);
+		Images[iPicIndex].data.resize (sLocWidth * sLocHeight, 0);
+		Images[iPicIndex].alpha.resize(sLocWidth * sLocHeight, 255);
 
 		if (lBegin + 8 + sLocHeight * 4 > lEnd)
 		{
 			return false;
 		}
 		SDL_RWseek (res, lBegin + 8, SEEK_SET);
-		for (int i = 0; i < sLocHeight; i++)
-			lRows[i] = (Sint32) SDL_ReadLE32 (res);
+		std::vector<Sint32> lRows (sLocHeight);
+		for (auto& n : lRows)
+			n = (Sint32) SDL_ReadLE32 (res);
 
-		for (iY = 0; iY < sLocHeight; iY++)
+		for (Sint32 iY = 0; iY < sLocHeight; iY++)
 		{
-			bCopyNotSkip = false;
-			iX = 0;
-			Opacity = 255;
-			iBlockIndex = 0;
+			bool bCopyNotSkip = false;
+			Sint32 iX = 0;
+			unsigned char Opacity = 255;
+			Sint32 iBlockIndex = 0;
 			unsigned char CurData;
 
 			SDL_RWseek (res, lRows[iY] + iBlockIndex + lPos, SEEK_SET);
@@ -498,36 +440,28 @@ bool cImage::decodeMultiImage()
 			}
 		}
 	}
-	free (lBounds);
-	free (lRows);
 
-	iImageCount = sCount;
 	return true;
 }
 
 bool cImage::decodeBigImage()
 {
-	Sint16 sLocWidth, sLocHeight, sLocHotX, sLocHotY, sCnt;
-	int iOutOfs, iInOfs;
 
 	if (lLenght < 776)
 	{
 		return false;
 	}
 	SDL_RWseek (res, lPos, SEEK_SET);
-	sLocHotX = (Sint16) SDL_ReadLE16 (res);
-	sLocHotY = (Sint16) SDL_ReadLE16 (res);
-	sLocWidth = (Sint16) SDL_ReadLE16 (res);
-	sLocHeight = (Sint16) SDL_ReadLE16 (res);
+	const Sint16 sLocHotX = (Sint16) SDL_ReadLE16 (res);
+	const Sint16 sLocHotY = (Sint16) SDL_ReadLE16 (res);
+	const Sint16 sLocWidth = (Sint16) SDL_ReadLE16 (res);
+	const Sint16 sLocHeight = (Sint16) SDL_ReadLE16 (res);
 
 	if (sLocWidth > 640 || sLocHeight > 480 || sLocWidth < 1 || sLocHeight < 1)
 	{
 		return false;
 	}
-	iInOfs = 776;
-	iOutOfs = 0;
-	iImageCount = 1;
-	Images = (cImageData*) malloc (sizeof (cImageData) * iImageCount);
+	Images.resize (1);
 	Images[0].sWidth = sLocWidth;
 	Images[0].sHeight = sLocHeight;
 	Images[0].sHotX = sLocHotX;
@@ -535,18 +469,18 @@ bool cImage::decodeBigImage()
 	Images[0].sUHotX = 0;
 	Images[0].sUHotY = 0;
 
-	Images[0].data = (unsigned char*) malloc (sizeof (unsigned char) * sLocWidth * sLocHeight);
-	Images[0].alpha = (unsigned char*) malloc (sizeof (unsigned char) * sLocWidth * sLocHeight);
-	memset (Images[0].alpha, 0, sLocWidth * sLocHeight);
+	Images[0].data.resize (sLocWidth * sLocHeight);
+	Images[0].alpha.resize (sLocWidth * sLocHeight, 0);
 
-	unsigned char* Buffer = nullptr;
+	int iInOfs = 776;
+	int iOutOfs = 0;
 	while (iInOfs + 1 < lLenght && iOutOfs < sLocWidth * sLocHeight)
 	{
 		SDL_RWseek (res, lPos + iInOfs, SEEK_SET);
-		sCnt = (Sint16) SDL_ReadLE16 (res);
+		Sint16 sCnt = (Sint16) SDL_ReadLE16 (res);
 		iInOfs += 2;
 
-		Buffer = (unsigned char*) malloc (1);
+		std::vector<unsigned char> Buffer (1);
 
 		if (sCnt <= 0)
 		{
@@ -557,7 +491,7 @@ bool cImage::decodeBigImage()
 			}
 
 			SDL_RWseek (res, lPos + iInOfs, SEEK_SET);
-			SDL_RWread (res, Buffer, sizeof (char), 1);
+			SDL_RWread (res, Buffer.data(), sizeof (char), Buffer.size());
 			for (int i = 0; i < sCnt; i++)
 			{
 				Images[0].data[iOutOfs + i] = Buffer[0];
@@ -573,22 +507,19 @@ bool cImage::decodeBigImage()
 			}
 
 			SDL_RWseek (res, lPos + iInOfs, SEEK_SET);
-			SDL_RWread (res, Buffer, sizeof (char), 1);
+			SDL_RWread (res, Buffer.data(), sizeof (char), Buffer.size());
 			for (int i = 0; i < sCnt; i++)
 			{
 				Images[0].data[iOutOfs + i] = Buffer[0];
 			}
 
-			free (Buffer);
-			Buffer = (unsigned char*) malloc (sCnt);
+			Buffer.resize (sCnt);
 			SDL_RWseek (res, lPos + iInOfs, SEEK_SET);
-			SDL_RWread (res, Buffer, sizeof (char), sCnt);
+			SDL_RWread (res, Buffer.data(), sizeof (char), Buffer.size());
 			for (int i = 0; i < sCnt; i++)
 			{
 				Images[0].data[iOutOfs + i] = Buffer[i];
 			}
-
-			free (Buffer);
 
 			iInOfs += sCnt;
 			iOutOfs += sCnt;
@@ -597,24 +528,21 @@ bool cImage::decodeBigImage()
 
 	if (iInOfs != lLenght || iOutOfs != sLocWidth * sLocHeight)
 	{
-		Images[0].data = nullptr;
-		Images[0].alpha = nullptr;
-		Images = nullptr;
+		Images.clear();
 		return false;
 	}
 	else
 	{
 		SDL_RWseek (res, lPos + 8, SEEK_SET);
-		SDL_RWread (res, palette, sizeof (char), 768);
+		SDL_RWread (res, palette.data(), sizeof (char), 768);
 	}
 
-	iImageCount = 1;
 	return true;
 }
 
-SDL_Surface* cImage::getSurface (int imageNr)
+SDL_Surface* cImage::getSurface (std::size_t imageNr)
 {
-	if (imageNr > iImageCount - 1)
+	if (imageNr >= Images.size())
 	{
 		throw InstallException (std::string ("Image '") + name + "' number " + std::to_string (imageNr) + " not found in max.res");
 	}
@@ -661,13 +589,7 @@ SDL_Surface* getImageFromRes (std::string file_name, int imageNr)
 		Image->lLenght = (Sint32) SDL_ReadLE32 (res);
 
 		//copy color table
-		Image->palette = (sPixel*) malloc (sizeof (sPixel) * 256);
-		for (int i = 0; i < 256; i++)
-		{
-			Image->palette[i].Blue = orig_palette[3 * i];
-			Image->palette[i].Green = orig_palette[3 * i + 1];
-			Image->palette[i].Red = orig_palette[3 * i + 2];
-		}
+		Image->palette.assign (std::begin (orig_palette), std::end (orig_palette));
 
 		//extract image
 		Image->decodeFile();
@@ -716,13 +638,7 @@ void saveAllFiles()
 		Image.lLenght = (Sint32) SDL_ReadLE32 (res);
 
 		//copy color table
-		Image.palette = (sPixel*) malloc (sizeof (sPixel) * 256);
-		for (int i = 0; i < 256; i++)
-		{
-			Image.palette[i].Blue = orig_palette[i];
-			Image.palette[i].Green = orig_palette[i + 1];
-			Image.palette[i].Red = orig_palette[i + 2];
-		}
+		Image.palette.assign(std::begin(orig_palette), std::end(orig_palette));
 
 		//extract image
 		Image.decodeFile();
@@ -736,10 +652,9 @@ void saveAllFiles()
 
 void copyFileFromRes (std::string src, const std::filesystem::path& dst, int number)
 {
-	SDL_Surface* surface = nullptr;
 	try
 	{
-		surface = getImageFromRes (src, number);
+		SDL_Surface* surface = surface = getImageFromRes (src, number);
 		savePCX (surface, dst);
 		SDL_FreeSurface (surface);
 	}
@@ -749,10 +664,9 @@ void copyFileFromRes (std::string src, const std::filesystem::path& dst, int num
 //rpc stands for "remove player color"
 void copyFileFromRes_rpc (std::string src, const std::filesystem::path& dst, int number)
 {
-	SDL_Surface* surface = nullptr;
 	try
 	{
-		surface = getImageFromRes (src, number);
+		SDL_Surface* surface = getImageFromRes (src, number);
 		removePlayerColor (surface);
 		savePCX (surface, dst);
 		SDL_FreeSurface (surface);
@@ -765,15 +679,14 @@ void copyImageFromFLC (const std::filesystem::path& fileName, const std::filesys
 	try
 	{
 		SDL_RWops* file = openFile (fileName, "rb");
-		int error;
-		FLI_Animation* animation;
 
 		if (file == nullptr)
 		{
 			throw InstallException ("FLC-File '" + fileName.u8string() + "' not found" + TEXT_FILE_LF);
 		}
 
-		animation = FLI_Open (file, &error);
+		int error;
+		FLI_Animation* animation = FLI_Open (file, &error);
 		if (error != 0)
 		{
 			throw InstallException ("FLC-File '" + fileName.u8string() + "' may be corrupted" + TEXT_FILE_LF);
@@ -793,12 +706,11 @@ void copyImageFromFLC (const std::filesystem::path& fileName, const std::filesys
 
 void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w)
 {
-	SDL_Rect dst_rect, src_rect;
-	SDL_Surface* resizedSurface;
 
 	if (surface->format->BitsPerPixel != 8)
 		return;
 
+	SDL_Rect dst_rect, src_rect;
 	if (surface->h > h)
 	{
 		dst_rect.y = 0;
@@ -825,7 +737,7 @@ void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w)
 		src_rect.w = surface->w;
 	}
 
-	resizedSurface = SDL_CreateRGBSurface (SDL_SWSURFACE, h, w, 8, 0, 0, 0, 0);
+	SDL_Surface* resizedSurface = SDL_CreateRGBSurface (SDL_SWSURFACE, h, w, 8, 0, 0, 0, 0);
 	if (resizedSurface == nullptr)
 	{
 		std::cout << "Out of memory";
@@ -1147,7 +1059,7 @@ void updateProgressbar()
 		value = 0;
 	}
 
-	int newValue = (int) ((float) iInstalledFiles * 72 / iTotalFiles);
+	const int newValue = iInstalledFiles * 72 / iTotalFiles;
 
 	for (int i = value; i < newValue; i++)
 		std::cout << ".";
@@ -1159,11 +1071,11 @@ void updateProgressbar()
 #endif
 }
 
-void writeLog (std::string msg)
+void writeLog (std::string_view msg)
 {
 	if (logFile != nullptr)
 	{
-		SDL_RWwrite (logFile, msg.c_str(), msg.length(), 1);
+		SDL_RWwrite (logFile, msg.data(), msg.length(), 1);
 	}
 	else
 	{

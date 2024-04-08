@@ -37,16 +37,6 @@ namespace
 void encodeWAV (std::filesystem::path fileName, cWaveFile& waveFile)
 {
 	static unsigned char serialNr = 0;
-	int ret;
-
-	ogg_stream_state oggStream;
-	ogg_page oggPage;
-	ogg_packet oggPacket;
-
-	vorbis_info vorbisInfo;
-	vorbis_comment vorbisComment;
-	vorbis_dsp_state vorbisDSPState;
-	vorbis_block vorbisBlock;
 
 	//if the file name ends with .wav it has to be replaced with .ogg
 	std::string extension = fileName.extension().string();
@@ -71,17 +61,22 @@ void encodeWAV (std::filesystem::path fileName, cWaveFile& waveFile)
 		throw InstallException (std::string ("Encoding of wave files with ") + std::to_string (bytesPerSample) + " bytes per sample not supported" + TEXT_FILE_LF);
 	}
 
+	vorbis_info vorbisInfo;
 	vorbis_info_init (&vorbisInfo);
-	ret = vorbis_encode_init_vbr (&vorbisInfo, waveFile.spec.channels, waveFile.spec.freq, VORBIS_QUALITY);
-	if (ret != 0)
+	if (vorbis_encode_init_vbr (&vorbisInfo, waveFile.spec.channels, waveFile.spec.freq, VORBIS_QUALITY) != 0)
 	{
 		throw InstallException (std::string ("Couldn't initialize vorbis encoder") + TEXT_FILE_LF);
 	}
+
+	vorbis_comment vorbisComment;
+	vorbis_dsp_state vorbisDSPState;
+	vorbis_block vorbisBlock;
 
 	vorbis_comment_init (&vorbisComment);
 	vorbis_analysis_init (&vorbisDSPState, &vorbisInfo);
 	vorbis_block_init (&vorbisDSPState, &vorbisBlock);
 
+	ogg_stream_state oggStream;
 	ogg_stream_init (&oggStream, serialNr);
 	serialNr++;
 
@@ -96,6 +91,7 @@ void encodeWAV (std::filesystem::path fileName, cWaveFile& waveFile)
 	ogg_stream_packetin (&oggStream, &header_code);
 
 	//flush the ogg stream
+	ogg_page oggPage;
 	while (ogg_stream_flush (&oggStream, &oggPage) != 0)
 	{
 		SDL_RWwrite (file, oggPage.header, oggPage.header_len, 1);
@@ -129,6 +125,7 @@ void encodeWAV (std::filesystem::path fileName, cWaveFile& waveFile)
 			vorbis_analysis (&vorbisBlock, nullptr);
 			vorbis_bitrate_addblock (&vorbisBlock);
 
+			ogg_packet oggPacket;
 			while (vorbis_bitrate_flushpacket (&vorbisDSPState, &oggPacket))
 			{
 				ogg_stream_packetin (&oggStream, &oggPacket);
