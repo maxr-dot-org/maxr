@@ -1,3 +1,8 @@
+Mechanized Assault & eXploration Reloaded 0.2.16 (April, 2024)
+=======================================================================
+- Fix crash when using metal (reparation/upgrade/reload) in any building.
+- Lock prev/next buttons when those buttons would do nothing.
+
 Mechanized Assault & eXploration Reloaded 0.2.15 (March, 2024)
 =======================================================================
 - Fix loading of big (clearing/building) vehicle.
