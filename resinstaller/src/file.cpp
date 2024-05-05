@@ -28,6 +28,7 @@
 
 namespace
 {
+	//--------------------------------------------------------------------------
 	std::string toLower (std::string s)
 	{
 		for (char& c : s)
@@ -37,6 +38,7 @@ namespace
 		return s;
 	}
 
+	//--------------------------------------------------------------------------
 	std::string toUpper (std::string s)
 	{
 		for (char& c : s)
@@ -48,6 +50,7 @@ namespace
 
 } // namespace
 
+//------------------------------------------------------------------------------
 //first tries to open a file with lowercase name
 //if this fails, tries to open the file with uppercase name
 SDL_RWops* openFile (const std::filesystem::path& path, const char* mode)
@@ -74,6 +77,7 @@ SDL_RWops* openFile (const std::filesystem::path& path, const char* mode)
 	return nullptr;
 }
 
+//------------------------------------------------------------------------------
 void copyFile (const std::filesystem::path& source, const std::filesystem::path& dest)
 {
 	try
@@ -98,7 +102,7 @@ void copyFile (const std::filesystem::path& source, const std::filesystem::path&
 	END_INSTALL_FILE (dest);
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool DirExists (const std::filesystem::path& path)
 {
 	return std::filesystem::exists (path) && std::filesystem::is_directory (path);

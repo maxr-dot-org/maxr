@@ -89,7 +89,7 @@ static void trimQuotes (std::string& str)
 	str.erase (pos);
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installMVEs (const std::filesystem::path& voicePath)
 {
 	iTotalFiles = 3;
@@ -119,7 +119,7 @@ static void installMVEs (const std::filesystem::path& voicePath)
 	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installVehicleGraphics()
 {
 	iTotalFiles = 824;
@@ -1395,7 +1395,7 @@ static void installVehicleGraphics()
 	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installBuildingGraphics()
 {
 	iTotalFiles = 161;
@@ -2165,7 +2165,7 @@ static void installBuildingGraphics()
 	}
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installVehicleVideos()
 {
 	iTotalFiles = 35;
@@ -2228,7 +2228,7 @@ static void installVehicleVideos()
 	}
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installFX()
 {
 	SDL_Surface *surface, *output;
@@ -2467,7 +2467,7 @@ static void installFX()
 	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installGfx()
 {
 	SDL_Surface *surface, *output;
@@ -3109,7 +3109,7 @@ static void installGfx()
 	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installBuildingSounds()
 {
 	iTotalFiles = 46;
@@ -3248,7 +3248,7 @@ static void installBuildingSounds()
 	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installVehicleSounds()
 {
 	iTotalFiles = 178;
@@ -3557,7 +3557,7 @@ static void installVehicleSounds()
 	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installVoices (const std::filesystem::path& sVoicePath)
 {
 	iTotalFiles = 65;
@@ -3687,7 +3687,7 @@ static void installVoices (const std::filesystem::path& sVoicePath)
 	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installMaps()
 {
 	iTotalFiles = 24;
@@ -3738,7 +3738,7 @@ static void installMaps()
 	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installSounds()
 {
 	iTotalFiles = 31;
@@ -3798,7 +3798,7 @@ static void installSounds()
 	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installMusic()
 {
 	iTotalFiles = 13;
@@ -3840,7 +3840,7 @@ static void installMusic()
 	std::cout << std::to_string (iErrors) << " errors\n";
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void initialize()
 {
 	// at startup SDL_Init should be called before all other SDL functions
@@ -3861,7 +3861,7 @@ static void initialize()
 	atexit (SDL_Quit);
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void showIntroduction()
 {
 	std::string strAbout1 = "Resinstaller - installs graphics and sounds from Interplay's M.A.X. to ";
@@ -3902,6 +3902,7 @@ static void showIntroduction()
 }
 
 #ifdef WIN32
+//------------------------------------------------------------------------------
 static std::filesystem::path getHomeDir()
 {
 	char szPath[MAX_PATH];
@@ -3913,7 +3914,7 @@ static std::filesystem::path getHomeDir()
 }
 #endif
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void createLogFile (const std::filesystem::path& dataDir)
 {
 	std::filesystem::path path;
@@ -3958,6 +3959,7 @@ static void createLogFile (const std::filesystem::path& dataDir)
 	writeLog (std::string ("resinstaller version ") + VERSION + TEXT_FILE_LF);
 }
 
+//------------------------------------------------------------------------------
 static void checkWritePermissions (const std::string& appName, bool bDoNotElevate)
 {
 #ifdef WIN32
@@ -4001,7 +4003,7 @@ static void checkWritePermissions (const std::string& appName, bool bDoNotElevat
 #endif
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static bool validateMAXPath (std::filesystem::path& maxPath)
 {
 	const std::filesystem::path dirs[] = {
@@ -4025,7 +4027,7 @@ static bool validateMAXPath (std::filesystem::path& maxPath)
 	return false;
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static std::filesystem::path getMAXPathFromUser (std::string cmdLineMaxPath)
 {
 #if MAC
@@ -4070,13 +4072,13 @@ static std::filesystem::path getMAXPathFromUser (std::string cmdLineMaxPath)
 #endif
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static bool validateOutputPath (const std::string& outputPath)
 {
 	return std::filesystem::exists (std::filesystem::path (outputPath) / "init.pcx");
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static std::string validateResources (std::string zChoices)
 {
 	if (zChoices.find ("all") != std::string::npos)
@@ -4090,7 +4092,7 @@ static std::string validateResources (std::string zChoices)
 	return zChoices;
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void getResChoiceFromUser()
 {
 	std::string sChoiceFromUser = "";
@@ -4125,7 +4127,7 @@ static void getResChoiceFromUser()
 	sResChoice = validateResources (sChoiceFromUser); // call validate function
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static std::filesystem::path getOutputPathFromUser (std::string cmdLineOutputPath)
 {
 #if MAC
@@ -4169,7 +4171,7 @@ static std::filesystem::path getOutputPathFromUser (std::string cmdLineOutputPat
 #endif
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static int checkForAvailableLanguages (std::string testFileName, bool& bGerman, bool& bItalian, bool& bFrench, bool& bUppercase)
 {
 	int iLanguages = 0;
@@ -4214,7 +4216,7 @@ static int checkForAvailableLanguages (std::string testFileName, bool& bGerman, 
 
 bool gFinishedInstalling = false; // MAC: needed as flag, for closing the progess bar window, when the installation is finished.
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void installEverything (const std::filesystem::path& sVoicePath)
 {
 	gFinishedInstalling = false;
@@ -4358,7 +4360,7 @@ static void installEverything (const std::filesystem::path& sVoicePath)
 	gFinishedInstalling = true;
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 static std::filesystem::path getVoicePathFromUser()
 {
 	const std::string testFileName = "F001";
@@ -4479,7 +4481,7 @@ static std::filesystem::path getVoicePathFromUser()
 #endif
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 void seekAfterEOD()
 {
 	SDL_RWseek (res, 0, SEEK_END);
@@ -4512,7 +4514,7 @@ void seekAfterEOD()
 	exit (-1);
 }
 
-//-------------------------------------------------------------
+//------------------------------------------------------------------------------
 int main (int argc, char* argv[])
 {
 	initialize();

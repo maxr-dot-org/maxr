@@ -214,6 +214,7 @@ namespace
 	}
 } // namespace
 
+//------------------------------------------------------------------------------
 void savePCX (const SDL_Surface* surface, const std::filesystem::path& fileName)
 {
 	if (!surface)
@@ -232,6 +233,7 @@ void savePCX (const SDL_Surface* surface, const std::filesystem::path& fileName)
 	}
 }
 
+//------------------------------------------------------------------------------
 SDL_Surface* loadPCX (const std::filesystem::path& name)
 {
 	//open file

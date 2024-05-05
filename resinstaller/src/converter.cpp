@@ -37,6 +37,7 @@
 
 cImage* cImage::Image = nullptr;
 
+//------------------------------------------------------------------------------
 cImage::~cImage()
 {
 	for (auto& image : Images)
@@ -45,6 +46,7 @@ cImage::~cImage()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cImage::saveFile()
 {
 	if (!bDecoded)
@@ -67,6 +69,7 @@ void cImage::saveFile()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cImage::resampleFile()
 {
 	if (!bDecoded) return;
@@ -161,6 +164,7 @@ void cImage::resampleFile()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cImage::decodeFile()
 {
 	if (decodeSimpleImage())
@@ -185,6 +189,7 @@ void cImage::decodeFile()
 	}
 }
 
+//------------------------------------------------------------------------------
 bool cImage::decodeSimpleImage()
 {
 	SDL_RWseek (res, lPos, SEEK_SET);
@@ -220,6 +225,7 @@ bool cImage::decodeSimpleImage()
 	return true;
 }
 
+//------------------------------------------------------------------------------
 bool cImage::decodeMultiShadow()
 {
 	if (lLenght < 2)
@@ -328,6 +334,7 @@ bool cImage::decodeMultiShadow()
 	return true;
 }
 
+//------------------------------------------------------------------------------
 bool cImage::decodeMultiImage()
 {
 	if (lLenght < 2)
@@ -444,6 +451,7 @@ bool cImage::decodeMultiImage()
 	return true;
 }
 
+//------------------------------------------------------------------------------
 bool cImage::decodeBigImage()
 {
 
@@ -540,6 +548,7 @@ bool cImage::decodeBigImage()
 	return true;
 }
 
+//------------------------------------------------------------------------------
 SDL_Surface* cImage::getSurface (std::size_t imageNr)
 {
 	if (imageNr >= Images.size())
@@ -552,6 +561,7 @@ SDL_Surface* cImage::getSurface (std::size_t imageNr)
 	return Images[imageNr].surface;
 }
 
+//------------------------------------------------------------------------------
 SDL_Surface* getImageFromRes (std::string file_name, int imageNr)
 {
 	if (res == nullptr)
@@ -610,6 +620,7 @@ SDL_Surface* getImageFromRes (std::string file_name, int imageNr)
 	return Image->getSurface (imageNr);
 }
 
+//------------------------------------------------------------------------------
 //sets the player colors in the color table to white
 //note that the information about the player colors are lost, when blitting the surface
 void removePlayerColor (SDL_Surface* surface)
@@ -621,6 +632,7 @@ void removePlayerColor (SDL_Surface* surface)
 	}
 }
 
+//------------------------------------------------------------------------------
 void saveAllFiles()
 {
 	Uint32 lPosOfFile = lPosBegin;
@@ -650,6 +662,7 @@ void saveAllFiles()
 	}
 }
 
+//------------------------------------------------------------------------------
 void copyFileFromRes (std::string src, const std::filesystem::path& dst, int number)
 {
 	try
@@ -661,6 +674,7 @@ void copyFileFromRes (std::string src, const std::filesystem::path& dst, int num
 	END_INSTALL_FILE (dst)
 }
 
+//------------------------------------------------------------------------------
 //rpc stands for "remove player color"
 void copyFileFromRes_rpc (std::string src, const std::filesystem::path& dst, int number)
 {
@@ -674,6 +688,7 @@ void copyFileFromRes_rpc (std::string src, const std::filesystem::path& dst, int
 	END_INSTALL_FILE (dst)
 }
 
+//------------------------------------------------------------------------------
 void copyImageFromFLC (const std::filesystem::path& fileName, const std::filesystem::path& dst)
 {
 	try
@@ -704,6 +719,7 @@ void copyImageFromFLC (const std::filesystem::path& fileName, const std::filesys
 	END_INSTALL_FILE (dst)
 }
 
+//------------------------------------------------------------------------------
 void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w)
 {
 
@@ -758,6 +774,7 @@ void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w)
 	surface = resizedSurface;
 }
 
+//------------------------------------------------------------------------------
 void setColor (SDL_Surface* surface, unsigned char nr, unsigned char r, unsigned char g, unsigned char b)
 {
 	SDL_Color color;
@@ -767,6 +784,7 @@ void setColor (SDL_Surface* surface, unsigned char nr, unsigned char r, unsigned
 	SDL_SetPaletteColors (surface->format->palette, &color, nr, 1);
 }
 
+//------------------------------------------------------------------------------
 void setAnimationColor (SDL_Surface* surface, unsigned char index, unsigned char frame)
 {
 	switch (index)
@@ -1030,6 +1048,7 @@ void setAnimationColor (SDL_Surface* surface, unsigned char index, unsigned char
 	}
 }
 
+//------------------------------------------------------------------------------
 //change palette of surface to generate an animation frame
 void generateAnimationFrame (SDL_Surface* surface, unsigned char frame)
 {
@@ -1050,6 +1069,7 @@ void generateAnimationFrame (SDL_Surface* surface, unsigned char frame)
 	setAnimationColor (surface, 24, frame);
 }
 
+//------------------------------------------------------------------------------
 void updateProgressbar()
 {
 	static int value = 0;
@@ -1071,6 +1091,7 @@ void updateProgressbar()
 #endif
 }
 
+//------------------------------------------------------------------------------
 void writeLog (std::string_view msg)
 {
 	if (logFile != nullptr)

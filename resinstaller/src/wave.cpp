@@ -50,12 +50,14 @@
 #define HEADER_SIZE 28 // header from "WAVE" onwards
 #define TO_SINT16 0x8000 // converts Uint16 to Sint16
 
+//------------------------------------------------------------------------------
 cWaveFile::~cWaveFile()
 {
 	//memory has to be deleted manually
 	//because we can't determine here if it was allocated by SDL or malloc
 }
 
+//------------------------------------------------------------------------------
 int readSmplChunk (SDL_RWops* file, cWaveFile& waveFile)
 {
 	waveFile.smplChunk.ListofSampleLoops = nullptr;
@@ -106,6 +108,7 @@ int readSmplChunk (SDL_RWops* file, cWaveFile& waveFile)
 	return 1;
 }
 
+//------------------------------------------------------------------------------
 void loadWAV (const std::filesystem::path& src, cWaveFile& waveFile)
 {
 	SDL_RWops* file;
@@ -123,6 +126,7 @@ void loadWAV (const std::filesystem::path& src, cWaveFile& waveFile)
 	SDL_RWclose (file);
 }
 
+//------------------------------------------------------------------------------
 void saveWAV (const std::filesystem::path& dst, const cWaveFile& waveFile)
 {
 	int was_error = 0;
@@ -236,6 +240,7 @@ done:
 	}
 }
 
+//------------------------------------------------------------------------------
 void copyPartOfWAV (const std::filesystem::path& src, const std::filesystem::path& dst, Uint8 nr)
 {
 	cWaveFile waveFile;
@@ -311,6 +316,7 @@ void copyPartOfWAV (const std::filesystem::path& src, const std::filesystem::pat
 	END_INSTALL_FILE (dst.string())
 }
 
+//------------------------------------------------------------------------------
 void copyWAV (const std::filesystem::path& src, const std::filesystem::path& dst)
 {
 	if (oggEncode)
