@@ -47,7 +47,7 @@ jobs:
 
     - name: Retrieve CrashRpt_v.1.4.3_r1645
       run: |
-        curl -o CrashRpt_v.1.4.3_r1645.7z https://kumisystems.dl.sourceforge.net/project/crashrpt/CrashRpt_v.1.4.3_r1645.7z
+        curl -o CrashRpt_v.1.4.3_r1645.7z -L https://kumisystems.dl.sourceforge.net/project/crashrpt/CrashRpt_v.1.4.3_r1645.7z
         7z x -o"./CrashRpt_v.1.4.3_r1645" "CrashRpt_v.1.4.3_r1645.7z" "lib/*.*" "include/*.*" "bin/CrashRpt1403.dll" "bin/CrashSender1403.exe" "bin/crashrpt_lang.ini"
         7z e -o"data/CrashRpt"          CrashRpt_v.1.4.3_r1645.7z "lang_files/*.ini"
 
