@@ -165,7 +165,7 @@ void cInitGamePreparation::startLandingPositionSelection()
 		const std::string& playerName = lobbyClient.getLocalPlayer().getName();
 		windowLandingPositionSelection->addChatEntry (playerName, text);
 		cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
-		lobbyClient.sendChatMessage (text);
+		lobbyClient.sendChatMessage (std::string (text));
 	});
 }
 

@@ -30,7 +30,7 @@
 #endif
 
 //------------------------------------------------------------------------------
-cVersion::cVersion (const std::string& string)
+cVersion::cVersion (std::string_view string)
 {
 	parseFromString (string);
 }
@@ -79,7 +79,7 @@ void cVersion::setRevision (int value)
 }
 
 //------------------------------------------------------------------------------
-void cVersion::parseFromString (const std::string& string)
+void cVersion::parseFromString (std::string_view string)
 {
 	// NOTE: do we need this to be more robust?
 

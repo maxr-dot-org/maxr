@@ -41,7 +41,7 @@ public:
 	cPlayerBasicData& operator= (const cPlayerBasicData&);
 
 	const std::string& getName() const;
-	void setName (std::string);
+	void setName (std::string&&);
 	const cRgbColor& getColor() const { return player.color; }
 	void setColor (cRgbColor);
 	int getNr() const { return nr; }

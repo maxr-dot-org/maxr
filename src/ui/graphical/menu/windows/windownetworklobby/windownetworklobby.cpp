@@ -106,7 +106,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 		auto application = getActiveApplication();
 		if (application) application->releaseKeyFocus (*nameLineEdit);
 	});
-	signalConnectionManager.connect (nameLineEdit->editingFinished, [&, nameLineEdit] (eValidatorState) { localPlayer->setName (nameLineEdit->getText()); });
+	signalConnectionManager.connect (nameLineEdit->editingFinished, [&, nameLineEdit] (eValidatorState) { localPlayer->setName (std::string (nameLineEdit->getText())); });
 
 	mapButton = emplaceChild<cPushButton> (getPosition() + cPosition (470, 42), ePushButtonType::StandardSmall, lngPack.i18n ("Title~Choose_Planet"));
 	signalConnectionManager.connect (mapButton->clicked, [this]() { triggeredSelectMap(); });
@@ -174,14 +174,14 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 	signalConnectionManager.connect (lobbyClient.onLocalPlayerConnected, [this]() {
 		addInfoEntry (lngPack.i18n ("Multiplayer~Network_Connected"));
 	});
-	signalConnectionManager.connect (lobbyClient.onDifferentVersion, [this] (const std::string& version, const std::string& revision) {
+	signalConnectionManager.connect (lobbyClient.onDifferentVersion, [this] (std::string_view version, std::string_view revision) {
 		if (version != PACKAGE_VERSION)
 		{
 			addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Error", version));
 			addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Own", PACKAGE_VERSION));
 			return;
 		}
-		addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Warning_Client", version + " " + revision));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Warning_Client", std::string(version) + " " + std::string(revision)));
 		addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Own", (std::string) PACKAGE_VERSION + " " + PACKAGE_REV));
 	});
 	signalConnectionManager.connect (lobbyClient.onConnectionFailed, [this] (eDeclineConnectionReason reason) {
@@ -278,7 +278,7 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 
 		if (chatMessage.empty()) return;
 
-		lobbyClient.sendChatMessage (chatMessage);
+		lobbyClient.sendChatMessage (std::string (chatMessage));
 
 		const auto& localPlayer = getLocalPlayer();
 
@@ -293,7 +293,7 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 	auto handleLocalPlayerAttributesChanged = [&lobbyClient, this]() {
 		const auto& player = getLocalPlayer();
 
-		lobbyClient.changeLocalPlayerProperties (player->getName(), player->getColor(), player->isReady());
+		lobbyClient.changeLocalPlayerProperties (std::string (player->getName()), player->getColor(), player->isReady());
 	};
 	signalConnectionManager.connect (getLocalPlayer()->nameChanged, handleLocalPlayerAttributesChanged);
 	signalConnectionManager.connect (getLocalPlayer()->colorChanged, handleLocalPlayerAttributesChanged);
@@ -623,7 +623,7 @@ void cWindowNetworkLobby::updatePlayerList (const cPlayerBasicData& local, const
 {
 	// Cannot use *localPlayer = local because of signal.
 	localPlayer->setColor (local.getColor());
-	localPlayer->setName (local.getName());
+	localPlayer->setName (std::string (local.getName()));
 	localPlayer->setNr (local.getNr());
 	localPlayer->setReady (local.isReady());
 

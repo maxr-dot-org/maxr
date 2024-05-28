@@ -101,7 +101,7 @@ public:
 	bool isAbove (const cPosition& position) const;
 
 	std::optional<std::string> getCustomName() const;
-	void changeName (const std::string& newName);
+	void changeName (std::string&& newName);
 
 	void rotateTo (int newDir);
 

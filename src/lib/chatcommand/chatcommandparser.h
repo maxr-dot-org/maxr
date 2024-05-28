@@ -27,7 +27,7 @@
 # include <string>
 # include <tuple>
 
-void skipWhiteSpace (const std::string& command, size_t& position);
+void skipWhiteSpace (std::string_view command, size_t& position);
 
 template <typename... Arguments>
 class cChatCommandParser;
@@ -40,7 +40,7 @@ public:
 
 	cChatCommandParser (cChatCommand command_);
 
-	size_t parse (const std::string& command, size_t position) const;
+	size_t parse (std::string_view command, size_t position) const;
 	void printArguments (std::ostream& result) const;
 
 	const cChatCommand& getCommand() const;
@@ -58,7 +58,7 @@ public:
 	using ArgumentValueTypes = std::tuple<typename LastArguments::ValueTypes..., typename Argument::ValueType>;
 
 	cChatCommandParser (cChatCommandParser<LastArguments...> lastParser_, Argument argument_);
-	size_t parse (const std::string& command, size_t position) const;
+	size_t parse (std::string_view command, size_t position) const;
 
 	template <typename NewArgument, typename... Args>
 	cChatCommandParser<NewArgument, Argument, LastArguments...> addArgument (Args&&... args) &&;
@@ -84,7 +84,7 @@ cChatCommandParser<Argument, LastArguments...>::cChatCommandParser (cChatCommand
 
 //------------------------------------------------------------------------------
 template <typename Argument, typename... LastArguments>
-size_t cChatCommandParser<Argument, LastArguments...>::parse (const std::string& command, size_t position) const
+size_t cChatCommandParser<Argument, LastArguments...>::parse (std::string_view command, size_t position) const
 {
 	position = lastParser.parse (command, position);
 	try

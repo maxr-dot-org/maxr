@@ -67,7 +67,7 @@ namespace
 			return std::nullopt;
 		}
 		cVersion version;
-		version.parseFromString (jsonVersion);
+		version.parseFromString (jsonVersion.get<std::string>());
 		return version;
 	}
 

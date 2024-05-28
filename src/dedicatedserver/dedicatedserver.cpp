@@ -278,7 +278,7 @@ void cDedicatedServer::stopGames()
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::setProperty (const std::string& property, const std::string& value)
+void cDedicatedServer::setProperty (std::string_view property, std::string_view value)
 {
 	if (property == "port")
 	{

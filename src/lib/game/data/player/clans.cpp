@@ -79,15 +79,15 @@ cClanUnitStat* cClan::addUnitStat (sID id)
 }
 
 //------------------------------------------------------------------------------
-void cClan::setDefaultDescription (const std::string& newDescription)
+void cClan::setDefaultDescription (std::string&& newDescription)
 {
-	description = newDescription;
+	description = std::move (newDescription);
 }
 
 //------------------------------------------------------------------------------
-void cClan::setDefaultName (const std::string& newName)
+void cClan::setDefaultName (std::string&& newName)
 {
-	name = newName;
+	name = std::move (newName);
 }
 
 //------------------------------------------------------------------------------

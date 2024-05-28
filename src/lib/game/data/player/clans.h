@@ -85,10 +85,10 @@ public:
 
 	cClan (const cClan&) = default;
 
-	void setDefaultDescription (const std::string&);
+	void setDefaultDescription (std::string&&);
 	const std::string& getDefaultDescription() const { return description; }
 
-	void setDefaultName (const std::string&);
+	void setDefaultName (std::string&&);
 	const std::string& getDefaultName() const { return name; }
 
 	int getClanID() const { return num; }

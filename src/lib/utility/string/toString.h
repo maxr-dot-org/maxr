@@ -21,8 +21,9 @@
 #define utility_string_toStringH
 
 #include <string>
+#include <string_view>
 
 std::string getHexValue (unsigned char byte);
-unsigned char getByteValue (const std::string& str, int index);
+unsigned char getByteValue (std::string_view str, int index);
 
 #endif // utility_string_toStringH

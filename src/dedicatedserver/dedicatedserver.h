@@ -22,6 +22,7 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 class cDedicatedServerGame;
@@ -53,7 +54,7 @@ private:
 	void printGames() const;
 	void printMaps() const;
 	bool startServer (int saveGameNumber = -1);
-	void setProperty (const std::string& property, const std::string& value);
+	void setProperty (std::string_view property, std::string_view value);
 	void saveGame (int saveGameNumber);
 	void stopGames();
 

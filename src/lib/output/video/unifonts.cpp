@@ -584,7 +584,7 @@ const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset) con
 }
 
 //------------------------------------------------------------------------------
-void cUnicodeFont::showText (int x, int y, const std::string& text, eUnicodeFontType fonttype)
+void cUnicodeFont::showText (int x, int y, std::string_view text, eUnicodeFontType fonttype)
 {
 	std::string sText (text);
 	int offX = x;
@@ -649,19 +649,19 @@ void cUnicodeFont::showText (int x, int y, const std::string& text, eUnicodeFont
 	});
 	if (cSettings::getInstance().isDebug() && surface->w < offX)
 	{
-		Log.warn ("Cannot display entirely: '" + text + "'");
+		Log.warn ("Cannot display entirely: '" + std::string (text) + "'");
 		Log.debug ("surface weight: " + std::to_string (surface->w) + " < offX = " + std::to_string (offX));
 	}
 }
 
 //------------------------------------------------------------------------------
-void cUnicodeFont::showText (const cPosition& position, const std::string& text, eUnicodeFontType fonttype)
+void cUnicodeFont::showText (const cPosition& position, std::string_view text, eUnicodeFontType fonttype)
 {
 	showText (position.x(), position.y(), text, fonttype);
 }
 
 //------------------------------------------------------------------------------
-int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const std::string& text, eUnicodeFontType fonttype)
+int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, std::string_view text, eUnicodeFontType fonttype)
 {
 	std::string sText (text);
 	std::string drawString = "";
@@ -721,7 +721,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const std::string& text, e
 }
 
 //------------------------------------------------------------------------------
-int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const std::string& text, eUnicodeFontType fonttype)
+int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, std::string_view text, eUnicodeFontType fonttype)
 {
 	std::string sText (text);
 	size_t k;
@@ -779,27 +779,27 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const std::string& text, eUni
 }
 
 //------------------------------------------------------------------------------
-void cUnicodeFont::showTextCentered (int x, int y, const std::string& sText, eUnicodeFontType fonttype)
+void cUnicodeFont::showTextCentered (int x, int y, std::string_view sText, eUnicodeFontType fonttype)
 {
 	SDL_Rect rTmp = getTextSize (sText, fonttype);
 	showText (x - rTmp.w / 2, y, sText, fonttype);
 }
 
 //------------------------------------------------------------------------------
-void cUnicodeFont::showTextCentered (const cPosition& position, const std::string& sText, eUnicodeFontType fonttype)
+void cUnicodeFont::showTextCentered (const cPosition& position, std::string_view sText, eUnicodeFontType fonttype)
 {
 	showTextCentered (position.x(), position.y(), sText, fonttype);
 }
 
 //------------------------------------------------------------------------------
-int cUnicodeFont::getTextWide (const std::string& sText, eUnicodeFontType fonttype) const
+int cUnicodeFont::getTextWide (std::string_view sText, eUnicodeFontType fonttype) const
 {
 	SDL_Rect rTmp = getTextSize (sText, fonttype);
 	return rTmp.w;
 }
 
 //------------------------------------------------------------------------------
-SDL_Rect cUnicodeFont::getTextSize (const std::string& text, eUnicodeFontType fonttype) const
+SDL_Rect cUnicodeFont::getTextSize (std::string_view text, eUnicodeFontType fonttype) const
 {
 	std::string sText (text);
 	int iSpace = 0;
@@ -891,7 +891,7 @@ int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype) const
 }
 
 //------------------------------------------------------------------------------
-std::string cUnicodeFont::shortenStringToSize (const std::string& str, int size, eUnicodeFontType fonttype) const
+std::string cUnicodeFont::shortenStringToSize (std::string_view str, int size, eUnicodeFontType fonttype) const
 {
 	std::string res (str);
 
@@ -904,7 +904,7 @@ std::string cUnicodeFont::shortenStringToSize (const std::string& str, int size,
 		res += ".";
 		if (cSettings::getInstance().isDebug())
 		{
-			Log.warn ("shorten string : '" + str + "' to '" + res + "'");
+			Log.warn ("shorten string : '" + std::string (str) + "' to '" + res + "'");
 		}
 	}
 	return res;
@@ -946,7 +946,7 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 }
 
 //------------------------------------------------------------------------------
-std::vector<std::string> cUnicodeFont::breakText (const std::string& text, int maximalWidth, eUnicodeFontType fontType) const
+std::vector<std::string> cUnicodeFont::breakText (std::string_view text, int maximalWidth, eUnicodeFontType fontType) const
 {
 	const auto isSpace = [] (char c) {
 		return c == ' ' || c == '\f' || c == '\r' || c == '\t' || c == '\v';
@@ -963,7 +963,7 @@ std::vector<std::string> cUnicodeFont::breakText (const std::string& text, int m
 		while (next != nextLine)
 		{
 			auto candidate = std::find_if (next + 1, nextLine, isSpace);
-			auto size = getTextWide ({it, candidate}, fontType);
+			const auto size = getTextWide ({&*it, narrow_cast<std::size_t>(candidate - it)}, fontType);
 			if (size > maximalWidth)
 			{
 				break;

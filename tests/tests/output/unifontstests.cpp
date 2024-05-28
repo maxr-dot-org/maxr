@@ -21,6 +21,7 @@
 #include "unittesttag.h"
 
 #include <doctest.h>
+#include <iostream>
 #include <regex>
 
 static constexpr const std::size_t charWidth = 2;
@@ -96,7 +97,7 @@ TEST_CASE ("BreakText_newline_emptyline")
 namespace
 {
 	//--------------------------------------------------------------------------
-	void TestBreakSpace (const std::string& expected, const std::string& text, std::size_t nbPixels)
+	void TestBreakSpace (std::string_view expected, std::string_view text, std::size_t nbPixels)
 	{
 		const auto font = std::make_unique<cUnicodeFont> (cUnitTestTag{});
 

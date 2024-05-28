@@ -31,7 +31,7 @@
 
 #include "utility/string/toNumber.h"
 
-size_t getNextWordLength (const std::string& s, size_t position);
+size_t getNextWordLength (std::string_view s, size_t position);
 
 class cPlayer;
 class cClient;
@@ -47,7 +47,7 @@ public:
 
 	explicit cChatCommandArgumentBool (bool isOptional = false, ValueType defaultValue = false);
 
-	size_t parse (const std::string& command, size_t position);
+	size_t parse (std::string_view command, size_t position);
 
 	std::string toString() const;
 
@@ -71,7 +71,7 @@ public:
 		defaultValue (std::move (defaultValue))
 	{}
 
-	size_t parse (const std::string& command, size_t position);
+	size_t parse (std::string_view command, size_t position);
 
 	std::string toString() const;
 
@@ -91,7 +91,7 @@ public:
 
 	explicit cChatCommandArgumentChoice (std::vector<std::string> choices, bool isOptional = false, size_t defaultSelection = 0);
 
-	size_t parse (const std::string& command, size_t position);
+	size_t parse (std::string_view command, size_t position);
 
 	std::string toString() const;
 
@@ -111,7 +111,7 @@ public:
 
 	explicit cChatCommandArgumentString (std::string name, bool isOptional = false, ValueType defaultValue = "");
 
-	size_t parse (const std::string& command, size_t position);
+	size_t parse (std::string_view command, size_t position);
 
 	std::string toString() const;
 
@@ -131,7 +131,7 @@ public:
 
 	explicit cChatCommandArgumentServer (cServer*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
-	size_t parse (const std::string& command, size_t position);
+	size_t parse (std::string_view command, size_t position);
 
 	std::string toString() const;
 
@@ -151,7 +151,7 @@ public:
 
 	explicit cChatCommandArgumentClient (const std::shared_ptr<cClient>& activeClientPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
-	size_t parse (const std::string& command, size_t position);
+	size_t parse (std::string_view command, size_t position);
 
 	std::string toString() const;
 
@@ -171,7 +171,7 @@ public:
 
 	explicit cChatCommandArgumentServerPlayer (cServer*& serverPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
-	size_t parse (const std::string& command, size_t position);
+	size_t parse (std::string_view command, size_t position);
 
 	std::string toString() const;
 
@@ -191,7 +191,7 @@ public:
 
 	explicit cChatCommandArgumentClientPlayer (const std::shared_ptr<cClient>& activeClientPointer, bool isOptional = false, ValueType defaultValue = nullptr);
 
-	size_t parse (const std::string& command, size_t position);
+	size_t parse (std::string_view command, size_t position);
 
 	std::string toString() const;
 
@@ -206,7 +206,7 @@ private:
 
 //------------------------------------------------------------------------------
 template <typename T>
-size_t cChatCommandArgumentInt<T>::parse (const std::string& command, size_t position)
+size_t cChatCommandArgumentInt<T>::parse (std::string_view command, size_t position)
 {
 	const auto nextWordLength = getNextWordLength (command, position);
 

@@ -25,6 +25,7 @@
 
 #include "loaddata.h"
 
+#include "SDLutility/tosdl.h"
 #include "SDLutility/uniquesurface.h"
 #include "crashreporter/debug.h"
 #include "game/data/player/clans.h"
@@ -40,7 +41,6 @@
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "settings.h"
-#include "SDLutility/tosdl.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
@@ -174,7 +174,7 @@ static UniqueSurface CloneSDLSurface (SDL_Surface& src)
 static void createShadowGfx()
 {
 	GraphicsData.gfx_shadow = UniqueSurface (SDL_CreateRGBSurface (0, 1, 1, Video.getColDepth(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
-	SDL_FillRect (GraphicsData.gfx_shadow.get(), nullptr, toSdlAlphaColor (cRgbColor::black(50), *GraphicsData.gfx_shadow));
+	SDL_FillRect (GraphicsData.gfx_shadow.get(), nullptr, toSdlAlphaColor (cRgbColor::black (50), *GraphicsData.gfx_shadow));
 }
 
 //------------------------------------------------------------------------------
@@ -469,13 +469,13 @@ static cDynamicUnitData createDynamicUnitData (const sID& id, const sInitialDyna
 }
 
 //------------------------------------------------------------------------------
-static cStaticUnitData createStaticUnitData (const sID& id, const sStaticCommonUnitData& commonData, const std::string& name, const std::string& desc)
+static cStaticUnitData createStaticUnitData (const sID& id, const sStaticCommonUnitData& commonData, std::string&& name, std::string&& desc)
 {
 	cStaticUnitData res;
 	static_cast<sStaticCommonUnitData&> (res) = commonData;
 	res.ID = id;
-	res.setDefaultName (name);
-	res.setDefaultDescription (desc);
+	res.setDefaultName (std::move (name));
+	res.setDefaultDescription (std::move (desc));
 
 	// TODO: make the code differ between attacking sea units and land units.
 	// until this is done being able to attack sea units means being able to attack ground units.
@@ -1061,7 +1061,7 @@ static int LoadBuildings (bool includingUiData)
 		}
 		if (!checkUniqueness (buildingData.id)) return 0;
 
-		cStaticUnitData staticData = createStaticUnitData (buildingData.id, buildingData.commonData, buildingData.defaultName, buildingData.description);
+		cStaticUnitData staticData = createStaticUnitData (buildingData.id, buildingData.commonData, std::move (buildingData.defaultName), std::move (buildingData.description));
 		cDynamicUnitData dynamicData = createDynamicUnitData (buildingData.id, buildingData.dynamicData);
 		staticData.buildingData = buildingData.staticBuildingData;
 
@@ -1152,7 +1152,7 @@ static int LoadVehicles (bool includingUiData)
 		}
 		if (!checkUniqueness (vehicleData.id)) return 0;
 
-		cStaticUnitData staticData = createStaticUnitData (vehicleData.id, vehicleData.commonData, vehicleData.defaultName, vehicleData.description);
+		cStaticUnitData staticData = createStaticUnitData (vehicleData.id, vehicleData.commonData, std::move (vehicleData.defaultName), std::move (vehicleData.description));
 		cDynamicUnitData dynamicData = createDynamicUnitData (vehicleData.id, vehicleData.dynamicData);
 
 		if (staticData.factorGround == 0 && staticData.factorSea == 0 && staticData.factorAir == 0 && staticData.factorCoast == 0)

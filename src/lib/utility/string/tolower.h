@@ -23,16 +23,17 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include <string_view>
 
-static inline std::string& to_lower (std::string& s)
+inline std::string& to_lower (std::string& s)
 {
 	std::transform (s.begin(), s.end(), s.begin(), [] (unsigned char c) { return std::tolower (c); });
 	return s;
 }
 
-static inline std::string to_lower_copy (const std::string& s)
+[[nodiscard]] inline std::string to_lower_copy (std::string_view s)
 {
-	std::string s2 = s;
+	std::string s2{s};
 	return to_lower (s2);
 }
 

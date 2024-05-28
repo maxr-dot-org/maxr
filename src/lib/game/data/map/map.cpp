@@ -555,7 +555,7 @@ std::string cMap::resourcesToString() const
 }
 
 //------------------------------------------------------------------------------
-void cMap::setResourcesFromString (const std::string& str)
+void cMap::setResourcesFromString (std::string_view str)
 {
 	for (size_t i = 0; i != Resources.size(); ++i)
 	{

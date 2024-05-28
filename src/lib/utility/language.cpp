@@ -163,7 +163,7 @@ std::string cLanguage::i18n (const std::string& s) const
 
 //------------------------------------------------------------------------------
 // Translation with replace %s
-std::string cLanguage::i18n (const std::string& format, const std::string& insertText) const
+std::string cLanguage::i18n (const std::string& format, std::string_view insertText) const
 {
 	std::string translated = getText (pimpl->maxrCatalogEng, pimpl->maxrCatalog, format);
 	auto pos = translated.find ("%s");
@@ -172,7 +172,7 @@ std::string cLanguage::i18n (const std::string& format, const std::string& inser
 	{
 		Log.warn ("Found no place holder in language string. Update language file!");
 		Log.warn ("*-> String in question is: \"" + format + "\"");
-		return format + insertText;
+		return format + std::string (insertText);
 	}
 	else
 	{

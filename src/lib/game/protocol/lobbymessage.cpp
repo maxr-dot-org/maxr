@@ -155,8 +155,8 @@ bool ILobbyMessageHandler::handleMessage (const cNetMessage& message)
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-cMuMsgChat::cMuMsgChat (const std::string& message) :
-	message (message)
+cMuMsgChat::cMuMsgChat (std::string&& message) :
+	message (std::move (message))
 {}
 
 //------------------------------------------------------------------------------

@@ -27,7 +27,7 @@ class cUnit;
 class cActionChangeUnitName : public cActionT<cAction::eActiontype::ChangeUnitName>
 {
 public:
-	cActionChangeUnitName (const cUnit& unit, const std::string& newName);
+	cActionChangeUnitName (const cUnit& unit, std::string&& newName);
 	cActionChangeUnitName (cBinaryArchiveIn& archive);
 
 	void serialize (cBinaryArchiveOut& archive) override

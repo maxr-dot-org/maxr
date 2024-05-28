@@ -28,6 +28,7 @@
 #include <filesystem>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 struct sID;
@@ -48,7 +49,7 @@ public:
 
 	std::string i18n (const std::string&) const;
 	// Translation with replace %s
-	std::string i18n (const std::string& text, const std::string& insertText) const;
+	std::string i18n (const std::string& text, std::string_view insertText) const;
 
 	std::string plural (const std::string& text, std::size_t) const;
 

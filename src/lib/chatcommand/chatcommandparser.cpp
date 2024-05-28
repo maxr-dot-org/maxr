@@ -23,7 +23,7 @@
 #include <string>
 
 //------------------------------------------------------------------------------
-void skipWhiteSpace (const std::string& command, size_t& position)
+void skipWhiteSpace (std::string_view command, size_t& position)
 {
 	while (position < command.size() && std::isspace (static_cast<unsigned char>(command[position])))
 	{
@@ -37,7 +37,7 @@ cChatCommandParser<>::cChatCommandParser (cChatCommand command_) :
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandParser<>::parse (const std::string&, size_t position) const
+size_t cChatCommandParser<>::parse (std::string_view, size_t position) const
 {
 	return position;
 }

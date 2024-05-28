@@ -254,14 +254,14 @@ void cLobbyServer::askedToFinishLobby (int fromPlayer)
 }
 
 //------------------------------------------------------------------------------
-void cLobbyServer::sendChatMessage (const std::string& message, int receiverPlayerNr /*= -1*/)
+void cLobbyServer::sendChatMessage (std::string&& message, int receiverPlayerNr /*= -1*/)
 {
 	NetLog.debug ("LobbyServer: --> " + message + " to " + std::to_string (receiverPlayerNr));
 
 	if (receiverPlayerNr == -1)
-		connectionManager->sendToPlayers (cMuMsgChat (message));
+		connectionManager->sendToPlayers (cMuMsgChat (std::move (message)));
 	else
-		connectionManager->sendToPlayer (cMuMsgChat (message), receiverPlayerNr);
+		connectionManager->sendToPlayer (cMuMsgChat (std::move (message)), receiverPlayerNr);
 }
 
 //------------------------------------------------------------------------------
@@ -391,7 +391,7 @@ void cLobbyServer::changePlayerAttributes (const cMuMsgIdentification& message)
 	if (player == nullptr) return;
 
 	player->setColor (message.playerColor);
-	player->setName (message.playerName);
+	player->setName (std::string (message.playerName));
 	player->setReady (message.ready);
 
 	switch (checkTakenPlayerAttributes (players, *player))

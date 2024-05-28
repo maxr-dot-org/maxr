@@ -22,9 +22,9 @@
 #include "game/data/model.h"
 
 //------------------------------------------------------------------------------
-cActionChangeUnitName::cActionChangeUnitName (const cUnit& unit, const std::string& newName) :
+cActionChangeUnitName::cActionChangeUnitName (const cUnit& unit, std::string&& newName) :
 	unitId (unit.getId()),
-	newName (newName)
+	newName (std::move (newName))
 {}
 
 //------------------------------------------------------------------------------
@@ -44,5 +44,5 @@ void cActionChangeUnitName::execute (cModel& model) const
 	if (!unit->getOwner()) return;
 	if (unit->getOwner()->getId() != playerNr) return;
 
-	unit->changeName (newName);
+	unit->changeName (std::string (newName));
 }

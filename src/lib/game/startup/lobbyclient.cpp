@@ -135,9 +135,9 @@ void cLobbyClient::sendNetMessage (cNetMessage&& message)
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::sendChatMessage (const std::string& message)
+void cLobbyClient::sendChatMessage (std::string&& message)
 {
-	sendNetMessage (cMuMsgChat (message));
+	sendNetMessage (cMuMsgChat (std::move (message)));
 }
 
 //------------------------------------------------------------------------------
@@ -186,14 +186,14 @@ void cLobbyClient::tryToSwitchReadyState()
 	}
 	else
 		ready = !localPlayer.isReady();
-	changeLocalPlayerProperties (localPlayer.getName(), localPlayer.getColor(), ready);
+	changeLocalPlayerProperties (std::string (localPlayer.getName()), localPlayer.getColor(), ready);
 }
 
 //------------------------------------------------------------------------------
-void cLobbyClient::changeLocalPlayerProperties (const std::string& name, cRgbColor color, bool ready)
+void cLobbyClient::changeLocalPlayerProperties (std::string&& name, cRgbColor color, bool ready)
 {
 	const auto old = localPlayer;
-	localPlayer.setName (name);
+	localPlayer.setName (std::move (name));
 	localPlayer.setColor (color);
 	localPlayer.setReady (ready);
 

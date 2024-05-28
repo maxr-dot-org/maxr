@@ -23,6 +23,7 @@
 #include "utility/serialization/serialization.h"
 
 #include <string>
+#include <string_view>
 
 /**
  * Class representing a simple 3-part version of the form
@@ -34,7 +35,7 @@ class cVersion
 {
 public:
 	cVersion() = default;
-	explicit cVersion (const std::string& string);
+	explicit cVersion (std::string_view string);
 	explicit cVersion (int major, int minor = 0, int revision = 0);
 
 	int getMajor() const;
@@ -54,7 +55,7 @@ public:
 	 *
 	 * @param string The string to parse the version from.
 	 */
-	void parseFromString (const std::string& string);
+	void parseFromString (std::string_view string);
 	std::string toString() const;
 
 	bool operator== (const cVersion& other) const;

@@ -59,7 +59,7 @@ private:
 
 		if (json.contains (nvp.name))
 		{
-			Log.error ("Entry " + nvp.name + " already present. old data will be overwritten");
+			Log.error ("Entry " + std::string (nvp.name) + " already present. old data will be overwritten");
 		}
 		cJsonArchiveOut (json[nvp.name]) << nvp.value;
 	}
@@ -115,6 +115,7 @@ private:
 	//
 	// push STL types
 	//
+	void pushValue (std::string_view s) { json = std::string (s); }
 	void pushValue (const std::string& s) { json = s; }
 
 	//--------------------------------------------------------------------------
@@ -253,7 +254,7 @@ private:
 				cJsonArchiveIn (*it, strict) >> nvp.value;
 			}
 			else {
-				Log.warn ("Entry " + nvp.name + " is missing.");
+				Log.warn ("Entry " + std::string (nvp.name) + " is missing.");
 			}
 		}
 	}

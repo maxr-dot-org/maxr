@@ -86,7 +86,7 @@ cDedicatedServerGame::cDedicatedServerGame (int saveGameNumber) :
 	signalConnectionManager.connect (lobbyServer.onClientConnected, [this] (const cPlayerBasicData& player) {
 		lobbyServer.sendChatMessage ("type --server help for dedicated server help", player.getNr());
 	});
-	signalConnectionManager.connect (lobbyServer.onDifferentVersion, [] (const std::string& version, const std::string& revision) {
+	signalConnectionManager.connect (lobbyServer.onDifferentVersion, [] (std::string_view version, std::string_view revision) {
 		std::cout << "player connects with different version:" << version << " " << revision << std::endl;
 	});
 
@@ -249,13 +249,13 @@ void cDedicatedServerGame::handleChatCommand (int fromPlayer, const std::vector<
 				lobbyServer.selectMap (map);
 				std::string reply = senderPlayer->getName();
 				reply += " changed the map.";
-				lobbyServer.sendChatMessage (reply);
+				lobbyServer.sendChatMessage (std::move (reply));
 			}
 			else
 			{
 				std::string reply = "Could not load map ";
 				reply += mapName;
-				lobbyServer.sendChatMessage (reply, senderPlayer->getNr());
+				lobbyServer.sendChatMessage (std::move (reply), senderPlayer->getNr());
 			}
 		}
 	}

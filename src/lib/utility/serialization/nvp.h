@@ -21,32 +21,35 @@
 #define serialization_nvpH
 
 #include <string>
+#include <string_view>
 
 namespace serialization
 {
 	template <typename T>
 	struct sNameValuePair
 	{
-		sNameValuePair (const std::string& name, T& value) :
+		sNameValuePair (std::string_view name, T& value) :
 			name (name),
 			value (value)
 		{}
 
-		const std::string& name;
+		std::string_view name;
 		T& value;
 	};
 
 	template <typename T>
-	sNameValuePair<T> makeNvp (const std::string& name, T& value)
+	sNameValuePair<T> makeNvp (std::string_view name, T& value)
 	{
 		return sNameValuePair<T> (name, value);
 	}
 	template <typename T>
-	sNameValuePair<T> makeNvp (const std::string& name, const T& value)
+	sNameValuePair<T> makeNvp (std::string_view name, const T& value)
 	{
 		T& value_nonconst = const_cast<T&> (value);
 		return sNameValuePair<T> (name, value_nonconst);
 	}
+
+	void makeNvp (std::string_view, std::string_view) = delete;
 
 #define NVP_QUOTE(x) #x
 #define NVP(value) serialization::makeNvp (NVP_QUOTE (value), value)

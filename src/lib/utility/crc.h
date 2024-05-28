@@ -31,6 +31,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 [[nodiscard]] uint32_t calcCheckSum (const char* data, size_t dataSize, uint32_t checksum);
@@ -51,6 +52,7 @@
 [[nodiscard]] uint32_t calcCheckSum (double data, uint32_t checksum);
 
 [[nodiscard]] uint32_t calcCheckSum (const std::string& data, uint32_t checksum);
+[[nodiscard]] uint32_t calcCheckSum (std::string_view data, uint32_t checksum);
 
 struct sCrcEnum
 {

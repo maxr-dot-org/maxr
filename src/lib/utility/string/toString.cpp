@@ -33,7 +33,7 @@ std::string getHexValue (unsigned char byte)
 }
 
 //------------------------------------------------------------------------------
-unsigned char getByteValue (const std::string& str, int index)
+unsigned char getByteValue (std::string_view str, int index)
 {
 	unsigned char first = str[index + 0] - '0';
 	unsigned char second = str[index + 1] - '0';

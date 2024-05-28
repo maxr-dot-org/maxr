@@ -27,13 +27,13 @@
 
 class cChatCommand;
 
-void skipWhiteSpace (const std::string& command, size_t& position);
+void skipWhiteSpace (std::string_view command, size_t& position);
 
 class cChatCommandExecutor
 {
 public:
 	virtual ~cChatCommandExecutor() = default;
-	virtual bool tryExecute (const std::string& command) const = 0;
+	virtual bool tryExecute (std::string_view command) const = 0;
 	virtual void printArguments (std::ostream& result) const = 0;
 	virtual const cChatCommand& getCommand() const = 0;
 };
@@ -44,7 +44,7 @@ class cChatCommandExecutorImpl : public cChatCommandExecutor
 public:
 	cChatCommandExecutorImpl (F function_, cChatCommandParser<Arguments...> parser_);
 
-	bool tryExecute (const std::string& command) const override;
+	bool tryExecute (std::string_view command) const override;
 	void printArguments (std::ostream& result) const override;
 	const cChatCommand& getCommand() const override;
 
@@ -60,7 +60,7 @@ cChatCommandExecutorImpl<F, Arguments...>::cChatCommandExecutorImpl (F function_
 {}
 
 template <typename F, typename... Arguments>
-bool cChatCommandExecutorImpl<F, Arguments...>::tryExecute (const std::string& command) const
+bool cChatCommandExecutorImpl<F, Arguments...>::tryExecute (std::string_view command) const
 {
 	if (!cChatCommand::isCommand (command)) return false;
 

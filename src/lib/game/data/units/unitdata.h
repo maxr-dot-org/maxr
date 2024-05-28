@@ -272,8 +272,8 @@ public:
 	cStaticUnitData() = default;
 	const std::string& getDefaultName() const;
 	const std::string& getDefaultDescription() const;
-	void setDefaultName (std::string name_) { name = name_; }
-	void setDefaultDescription (std::string text) { description = text; }
+	void setDefaultName (std::string&& s) { name = std::move (s); }
+	void setDefaultDescription (std::string&& s) { description = std::move (s); }
 
 	uint32_t getChecksum (uint32_t crc) const;
 

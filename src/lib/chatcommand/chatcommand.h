@@ -23,6 +23,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <string_view>
 
 template <typename... Arguments>
 class cChatCommandParser;
@@ -35,7 +36,7 @@ class cChatCommandExecutorImpl;
 class cChatCommand
 {
 public:
-	static bool isCommand (const std::string& command);
+	static bool isCommand (std::string_view command);
 
 	cChatCommand (std::string name, std::function<std::string()> description);
 

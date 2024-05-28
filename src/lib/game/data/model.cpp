@@ -149,7 +149,7 @@ const cPlayer* cModel::getPlayer (int playerNr) const
 	return it == playerList.end() ? nullptr : it->get();
 }
 //------------------------------------------------------------------------------
-const cPlayer* cModel::getPlayer (std::string playerName) const
+const cPlayer* cModel::getPlayer (std::string_view playerName) const
 {
 	// first try to find player by number
 	if (const auto playerNr = toInt (playerName))

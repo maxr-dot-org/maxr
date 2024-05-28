@@ -125,7 +125,7 @@ public:
 class cMuMsgChat : public cMultiplayerLobbyMessageT<cMultiplayerLobbyMessage::eMessageType::MU_MSG_CHAT>
 {
 public:
-	cMuMsgChat (const std::string& message);
+	explicit cMuMsgChat (std::string&& message);
 	cMuMsgChat (cBinaryArchiveIn& archive);
 
 	void serialize (cBinaryArchiveOut& archive) override;

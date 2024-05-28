@@ -420,9 +420,9 @@ void cClient::changeSentry (const cUnit& unit)
 }
 
 //------------------------------------------------------------------------------
-void cClient::changeUnitName (const cUnit& unit, const std::string& name)
+void cClient::changeUnitName (const cUnit& unit, std::string&& name)
 {
-	sendNetMessage (cActionChangeUnitName (unit, name));
+	sendNetMessage (cActionChangeUnitName (unit, std::move (name)));
 }
 
 //------------------------------------------------------------------------------

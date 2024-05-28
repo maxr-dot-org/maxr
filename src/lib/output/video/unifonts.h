@@ -23,6 +23,7 @@
 
 #include <SDL.h>
 #include <string>
+#include <string_view>
 #include <vector>
 
 class cPosition;
@@ -95,9 +96,9 @@ public:
 	 * @param sText text to draw
 	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 */
-	void showText (int x, int y, const std::string& sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
+	void showText (int x, int y, std::string_view sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 
-	void showText (const cPosition& position, const std::string& sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
+	void showText (const cPosition& position, std::string_view sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 
 	/**
 	 * Displays a text as block.<br><br>
@@ -111,7 +112,7 @@ public:
 	 * @param sText text to draw
 	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 */
-	int showTextAsBlock (SDL_Rect rDest, const std::string& sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
+	int showTextAsBlock (SDL_Rect rDest, std::string_view sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 	/**
 	 * Displays a text centered on given X
 	 * @author beko
@@ -120,9 +121,9 @@ public:
 	 * @param sText text to draw
 	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 */
-	void showTextCentered (int x, int y, const std::string& sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
+	void showTextCentered (int x, int y, std::string_view sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 
-	void showTextCentered (const cPosition& pos, const std::string& sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
+	void showTextCentered (const cPosition& pos, std::string_view sText, eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal);
 	/**
 	 * Calculates the needed width for a text in pixels
 	 * @author beko
@@ -130,7 +131,7 @@ public:
 	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 * @return needed width for text
 	 */
-	int getTextWide (const std::string& sText,
+	int getTextWide (std::string_view sText,
 	                 eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal) const;
 	/**
 	 * Calculates the needed space for a text in pixels
@@ -139,7 +140,7 @@ public:
 	 * @param eBitmapFontType enum of fonttype. LatinNormal is default
 	 * @return SDL_Rect with needed width and height for text
 	 */
-	SDL_Rect getTextSize (const std::string& sText,
+	SDL_Rect getTextSize (std::string_view sText,
 	                      eUnicodeFontType fonttype = eUnicodeFontType::LatinNormal) const;
 	/**
 	 * Holds information of font height
@@ -156,8 +157,8 @@ public:
 	 */
 	static eUnicodeFontSize getFontSize (eUnicodeFontType fonttype);
 
-	std::string shortenStringToSize (const std::string& str, int size, eUnicodeFontType fonttype) const;
-	std::vector<std::string> breakText (const std::string& text, int maximalWidth, eUnicodeFontType) const;
+	std::string shortenStringToSize (std::string_view str, int size, eUnicodeFontType fonttype) const;
+	std::vector<std::string> breakText (std::string_view text, int maximalWidth, eUnicodeFontType) const;
 
 private:
 	using FontTypeSurfaces = UniqueSurface[0xFFFF];
@@ -195,7 +196,7 @@ private:
 	 * @return the iso page
 	 */
 	const unsigned short* getIsoPage (eUnicodeFontCharset charset) const;
-	int drawWithBreakLines (SDL_Rect rDest, const std::string& sText, eUnicodeFontType fonttype);
+	int drawWithBreakLines (SDL_Rect rDest, std::string_view sText, eUnicodeFontType fonttype);
 
 private:
 	// character surfaces.

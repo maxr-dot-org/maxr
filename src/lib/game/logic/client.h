@@ -88,7 +88,7 @@ public:
 	void changeManualFire (const cUnit&);
 	void changeResearch (const std::array<int, cResearch::kNrResearchAreas>&);
 	void changeSentry (const cUnit&);
-	void changeUnitName (const cUnit&, const std::string&);
+	void changeUnitName (const cUnit&, std::string&&);
 	void startClearRubbles (const cVehicle&);
 	void endTurn();
 	void finishBuild (const cUnit&, const cPosition& escapePosition);

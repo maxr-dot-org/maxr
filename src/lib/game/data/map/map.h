@@ -33,7 +33,7 @@
 #include <cassert>
 #include <filesystem>
 #include <memory>
-#include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -303,7 +303,7 @@ public:
 private:
 	void init();
 	std::string resourcesToString() const;
-	void setResourcesFromString (const std::string&);
+	void setResourcesFromString (std::string_view);
 
 	static int getMapLevel (const cBuilding&);
 	static int getMapLevel (const cVehicle&);

@@ -28,6 +28,7 @@
 #include "utility/thread/concurrentqueue.h"
 
 #include <filesystem>
+#include <string_view>
 
 class cClient;
 class cLobbyServer;
@@ -46,7 +47,7 @@ public:
 	void connectToServer (const sNetworkAddress&);
 	void connectToLocalServer (cLobbyServer&);
 
-	void sendChatMessage (const std::string&);
+	void sendChatMessage (std::string&&);
 
 	void selectGameSettings (const cGameSettings&);
 	void selectMapFilename (const std::filesystem::path&);
@@ -54,7 +55,7 @@ public:
 	void selectLoadGame (const cSaveGameInfo&);
 
 	void tryToSwitchReadyState();
-	void changeLocalPlayerProperties (const std::string& name, cRgbColor, bool ready);
+	void changeLocalPlayerProperties (std::string&& name, cRgbColor, bool ready);
 
 	void askToFinishLobby();
 
@@ -72,7 +73,7 @@ public:
 	const sLobbyPreparationData& getLobbyPreparationData() const { return lobbyPreparationData; }
 
 	cSignal<void()> onLocalPlayerConnected;
-	cSignal<void (const std::string& version, const std::string& revision)> onDifferentVersion;
+	cSignal<void (std::string_view version, std::string_view revision)> onDifferentVersion;
 	cSignal<void (eDeclineConnectionReason)> onConnectionFailed;
 	cSignal<void()> onConnectionClosed;
 

@@ -431,7 +431,7 @@ std::string cPlayer::resourceMapToString() const
 }
 
 //--------------------------------------------------------------------------
-void cPlayer::setResourceMapFromString (const std::string& str)
+void cPlayer::setResourceMapFromString (std::string_view str)
 {
 	for (size_t i = 0; i != resourceMap.size(); ++i)
 	{

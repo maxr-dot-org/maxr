@@ -20,7 +20,7 @@
 #include "chatcommand.h"
 
 //------------------------------------------------------------------------------
-/*static*/ bool cChatCommand::isCommand (const std::string& command)
+/*static*/ bool cChatCommand::isCommand (std::string_view command)
 {
 	if (command.empty()) return false;
 	if (command[0] != '/') return false;

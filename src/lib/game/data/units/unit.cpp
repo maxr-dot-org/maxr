@@ -310,9 +310,9 @@ std::optional<std::string> cUnit::getCustomName() const
 //------------------------------------------------------------------------------
 /** changes the name of the unit and indicates it as "not default" */
 //------------------------------------------------------------------------------
-void cUnit::changeName (const std::string& newName)
+void cUnit::changeName (std::string&& newName)
 {
-	customName = newName;
+	customName = std::move (newName);
 	renamed();
 }
 

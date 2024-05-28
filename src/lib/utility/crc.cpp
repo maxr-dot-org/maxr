@@ -185,5 +185,11 @@ uint32_t calcCheckSum (double data, uint32_t checksum)
 //------------------------------------------------------------------------------
 uint32_t calcCheckSum (const std::string& data, uint32_t checksum)
 {
-	return calcCheckSum (data.c_str(), data.length(), checksum);
+	return calcCheckSum (data.data(), data.length(), checksum);
+}
+
+//------------------------------------------------------------------------------
+uint32_t calcCheckSum (std::string_view data, uint32_t checksum)
+{
+	return calcCheckSum (data.data(), data.length(), checksum);
 }

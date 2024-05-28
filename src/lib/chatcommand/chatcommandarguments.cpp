@@ -32,7 +32,7 @@
 /*static*/ const char* const cChatCommandArgumentBool::falseName = "off";
 
 //------------------------------------------------------------------------------
-size_t getNextWordLength (const std::string& s, size_t position)
+size_t getNextWordLength (std::string_view s, size_t position)
 {
 	const auto begin = s.begin() + position;
 	const auto end = std::find_if (begin, s.end(), [] (unsigned char c) { return std::isspace (c); });
@@ -47,7 +47,7 @@ cChatCommandArgumentBool::cChatCommandArgumentBool (bool isOptional, ValueType d
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentBool::parse (const std::string& command, size_t position)
+size_t cChatCommandArgumentBool::parse (std::string_view command, size_t position)
 {
 	const auto nextWordLength = getNextWordLength (command, position);
 	if (command.compare (position, nextWordLength, trueName) == 0)
@@ -111,7 +111,7 @@ cChatCommandArgumentChoice::cChatCommandArgumentChoice (std::vector<std::string>
 }
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentChoice::parse (const std::string& command, size_t position)
+size_t cChatCommandArgumentChoice::parse (std::string_view command, size_t position)
 {
 	const auto nextWordLength = getNextWordLength (command, position);
 	bool success = false;
@@ -193,7 +193,7 @@ cChatCommandArgumentString::cChatCommandArgumentString (std::string name, bool i
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentString::parse (const std::string& command, size_t position)
+size_t cChatCommandArgumentString::parse (std::string_view command, size_t position)
 {
 	value = command.substr (position);
 
@@ -238,7 +238,7 @@ cChatCommandArgumentServer::cChatCommandArgumentServer (cServer*& serverPointer,
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentServer::parse (const std::string&, size_t position)
+size_t cChatCommandArgumentServer::parse (std::string_view, size_t position)
 {
 	value = serverPointer;
 	if (value == nullptr)
@@ -277,7 +277,7 @@ cChatCommandArgumentClient::cChatCommandArgumentClient (const std::shared_ptr<cC
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentClient::parse (const std::string&, size_t position)
+size_t cChatCommandArgumentClient::parse (std::string_view, size_t position)
 {
 	if (activeClientPointer == nullptr)
 	{
@@ -319,7 +319,7 @@ cChatCommandArgumentServerPlayer::cChatCommandArgumentServerPlayer (cServer*& se
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentServerPlayer::parse (const std::string& command, size_t position)
+size_t cChatCommandArgumentServerPlayer::parse (std::string_view command, size_t position)
 {
 	const auto server = serverPointer;
 	if (server == nullptr)
@@ -358,7 +358,7 @@ size_t cChatCommandArgumentServerPlayer::parse (const std::string& command, size
 			else
 			{
 				// TODO: translate
-				throw std::runtime_error ("Could not find player with name '" + playerName + "'");
+				throw std::runtime_error ("Could not find player with name '" + std::string (playerName) + "'");
 			}
 		}
 	}
@@ -391,7 +391,7 @@ cChatCommandArgumentClientPlayer::cChatCommandArgumentClientPlayer (const std::s
 {}
 
 //------------------------------------------------------------------------------
-size_t cChatCommandArgumentClientPlayer::parse (const std::string& command, size_t position)
+size_t cChatCommandArgumentClientPlayer::parse (std::string_view command, size_t position)
 {
 	if (activeClientPointer == nullptr)
 	{
@@ -425,7 +425,7 @@ size_t cChatCommandArgumentClientPlayer::parse (const std::string& command, size
 			else
 			{
 				// TODO: translate
-				throw std::runtime_error ("Could not find player with name '" + playerName + "'");
+				throw std::runtime_error ("Could not find player with name '" + std::string (playerName) + "'");
 			}
 		}
 	}

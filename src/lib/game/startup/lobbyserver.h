@@ -75,7 +75,7 @@ public:
 	// Avoid that:
 	// - (no translations (which should be client side anyway))
 	// - mostly workaround for missing cMessage
-	void sendChatMessage (const std::string&, int receiverPlayerNr = -1 /*, int senderPlayerNr = -1*/);
+	void sendChatMessage (std::string&&, int receiverPlayerNr = -1 /*, int senderPlayerNr = -1*/);
 #endif
 
 	cSignal<void (const cPlayerBasicData&)> onClientConnected;

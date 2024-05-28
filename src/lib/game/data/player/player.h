@@ -37,6 +37,7 @@
 #include "utility/signal/signal.h"
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 class cMapField;
@@ -369,7 +370,7 @@ private:
 	void upgradeUnitTypes (const std::vector<cResearch::eResearchArea>&, const cUnitsData& originalUnitsData);
 
 	std::string resourceMapToString() const;
-	void setResourceMapFromString (const std::string&);
+	void setResourceMapFromString (std::string_view);
 
 	void refreshScanMaps();
 

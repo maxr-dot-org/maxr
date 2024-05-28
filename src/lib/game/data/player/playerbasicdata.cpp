@@ -70,7 +70,7 @@ const std::string& cPlayerBasicData::getName() const
 }
 
 //------------------------------------------------------------------------------
-void cPlayerBasicData::setName (std::string name_)
+void cPlayerBasicData::setName (std::string&& name_)
 {
 	std::swap (player.name, name_);
 	if (player.name != name_) nameChanged();

@@ -675,7 +675,7 @@ void cGameGuiController::connectClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameGui->getHud().endClicked, [&]() { client.endTurn(); });
 	clientSignalConnectionManager.connect (gameGui->getHud().triggeredRenameUnit, [&] (const cUnit& unit, const std::string& name) {
-		client.changeUnitName (unit, name);
+		client.changeUnitName (unit, std::string (name));
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap().triggeredStartWork, [&] (const cBuilding& building) {
 		client.startWork (building);

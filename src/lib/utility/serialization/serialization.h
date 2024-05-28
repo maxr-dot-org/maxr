@@ -100,8 +100,8 @@ namespace serialization
 			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&] (const auto& p) { return p.second == s; });
 			if (it != sEnumStringMapping<E>::m.end()) return it->first;
 
-			Log.warn (std::string ("Unknown ") + typeid (E).name() + " value " + s);
-			throw std::runtime_error (std::string ("Unknown ") + typeid (E).name() + " value " + s);
+			Log.warn (std::string ("Unknown ") + typeid (E).name() + " value " + std::string (s));
+			throw std::runtime_error (std::string ("Unknown ") + typeid (E).name() + " value " + std::string (s));
 		}
 	};
 
