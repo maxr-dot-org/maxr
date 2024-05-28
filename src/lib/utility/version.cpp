@@ -19,6 +19,8 @@
 
 #include "utility/version.h"
 
+#include "utility/string/toNumber.h"
+
 #ifdef major
 # undef major
 #endif
@@ -82,7 +84,7 @@ void cVersion::parseFromString (const std::string& string)
 	// NOTE: do we need this to be more robust?
 
 	auto firstDotPos = string.find_first_of (".");
-	major = atoi (string.substr (0, firstDotPos).c_str());
+	major = toInt (string.substr (0, firstDotPos)).value_or (0);
 
 	if (firstDotPos == std::string::npos)
 	{
@@ -92,7 +94,7 @@ void cVersion::parseFromString (const std::string& string)
 	else
 	{
 		auto secondDotPos = string.find_first_of (".", firstDotPos + 1);
-		minor = atoi (string.substr (firstDotPos + 1, secondDotPos).c_str());
+		minor = toInt (string.substr (firstDotPos + 1, secondDotPos)).value_or (0);
 
 		if (secondDotPos == std::string::npos)
 		{
@@ -100,7 +102,7 @@ void cVersion::parseFromString (const std::string& string)
 		}
 		else
 		{
-			revision = atoi (string.substr (secondDotPos + 1).c_str());
+			revision = toInt (string.substr (secondDotPos + 1)).value_or (0);
 		}
 	}
 }

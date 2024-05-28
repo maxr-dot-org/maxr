@@ -35,6 +35,7 @@
 #include "utility/crc.h"
 #include "utility/listhelpers.h"
 #include "utility/ranges.h"
+#include "utility/string/toNumber.h"
 
 #include <cassert>
 #include <set>
@@ -151,10 +152,9 @@ const cPlayer* cModel::getPlayer (int playerNr) const
 const cPlayer* cModel::getPlayer (std::string playerName) const
 {
 	// first try to find player by number
-	const int playerNr = atoi (playerName.c_str());
-	if (playerNr != 0 || playerName == "0")
+	if (const auto playerNr = toInt (playerName))
 	{
-		return getPlayer (playerNr);
+		return getPlayer (*playerNr);
 	}
 
 	// try to find player by name

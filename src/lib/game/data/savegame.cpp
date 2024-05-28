@@ -33,6 +33,7 @@
 #include "utility/ranges.h"
 #include "utility/serialization/jsonarchive.h"
 #include "utility/serialization/serialization.h"
+#include "utility/string/toNumber.h"
 
 #include <filesystem>
 #include <optional>
@@ -292,7 +293,7 @@ void fillSaveGames (std::size_t minIndex, std::size_t maxIndex, std::vector<cSav
 		std::string filename = filepath.string();
 		std::smatch match;
 		if (!std::regex_match (filename, match, savename_regex)) continue;
-		const std::size_t number = atoi (match[1].str().c_str());
+		const std::size_t number = toInt (match[1].str()).value_or (0);
 
 		if (number <= minIndex || number > maxIndex) continue;
 

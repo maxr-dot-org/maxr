@@ -29,6 +29,8 @@
 #include <string>
 #include <vector>
 
+#include "utility/string/toNumber.h"
+
 size_t getNextWordLength (const std::string& s, size_t position);
 
 class cPlayer;
@@ -208,21 +210,7 @@ size_t cChatCommandArgumentInt<T>::parse (const std::string& command, size_t pos
 {
 	const auto nextWordLength = getNextWordLength (command, position);
 
-	std::optional<long long> longValue;
-	try
-	{
-		size_t pos{};
-		longValue = std::stoll (command.substr (position, nextWordLength), &pos);
-		if (pos != nextWordLength)
-		{
-			longValue.reset();
-		}
-	}
-	catch (const std::exception&)
-	{
-		longValue.reset();
-	}
-
+	std::optional<long long> longValue = toLongLong (command.substr (position, nextWordLength));
 	if (longValue && (*longValue < static_cast<long long> (std::numeric_limits<ValueType>::min()) || *longValue > static_cast<long long> (std::numeric_limits<ValueType>::max())))
 	{
 		longValue.reset();

@@ -17,65 +17,38 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "validatorint.h"
-
-#include "utility/listhelpers.h"
 #include "utility/string/toNumber.h"
 
-#include <algorithm>
-#include <cctype>
-#include <cstdlib>
-#include <limits>
+#include <doctest.h>
 
 //------------------------------------------------------------------------------
-cValidatorInt::cValidatorInt() :
-	minValue (std::numeric_limits<int>::min()),
-	maxValue (std::numeric_limits<int>::max())
-{}
-
-//------------------------------------------------------------------------------
-cValidatorInt::cValidatorInt (int minValue_, int maxValue_) :
-	minValue (minValue_),
-	maxValue (maxValue_)
-{}
-
-//------------------------------------------------------------------------------
-eValidatorState cValidatorInt::validate (const std::string& text) const
+TEST_CASE ("parseInt")
 {
-	if (text.empty()) return eValidatorState::Intermediate;
-
-	if (ranges::any_of (text, [](int c) {return !std::isdigit (c);}))
+	const std::pair<std::string_view, std::pair<std::optional<int>, std::size_t>> v[]{
+		{"42", {42, 2u}},
+		{"42.412", {42, 2u}},
+		{"42e0", {42, 2u}},
+		{"", {std::nullopt, 0u}},
+		{"abc", {std::nullopt, 0u}},
+	};
+	for (auto [s, expected] : v)
 	{
-		return eValidatorState::Invalid;
+		CHECK (parseIntegerT<int> (s) == expected);
 	}
-
-	const int value = toInt (text).value_or (0);
-
-	if (value < minValue || value > maxValue) return eValidatorState::Intermediate;
-
-	return eValidatorState::Valid;
 }
 
 //------------------------------------------------------------------------------
-void cValidatorInt::fixup (std::string& text) const
+TEST_CASE ("toInt")
 {
-	EraseIf (text, [] (char c) { return !std::isdigit (c); });
-
-	if (text.empty())
+	const std::pair<std::string_view, std::optional<int>> v[]{
+		{"42", 42},
+		{"42.412", std::nullopt},
+		{"42e0", std::nullopt},
+		{"", std::nullopt},
+		{"abc", std::nullopt},
+	};
+	for (const auto [s, expected] : v)
 	{
-		text = std::to_string (std::clamp (0, minValue, maxValue));
-	}
-	else
-	{
-		const int value = toInt (text).value_or (0);
-
-		if (value < minValue)
-		{
-			text = std::to_string (minValue);
-		}
-		else if (value > maxValue)
-		{
-			text = std::to_string (maxValue);
-		}
+		CHECK (toInt (s) == expected);
 	}
 }

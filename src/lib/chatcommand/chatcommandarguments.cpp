@@ -21,6 +21,7 @@
 
 #include "game/logic/client.h"
 #include "game/logic/server.h"
+#include "utility/string/toNumber.h"
 
 #include <algorithm>
 #include <cassert>
@@ -329,26 +330,7 @@ size_t cChatCommandArgumentServerPlayer::parse (const std::string& command, size
 
 	const auto nextWordLength = getNextWordLength (command, position);
 
-	std::optional<int> playerNumber;
-	try
-	{
-		size_t pos{};
-		playerNumber = std::stoi (command.substr (position, nextWordLength), &pos);
-		if (pos != nextWordLength)
-		{
-			playerNumber.reset();
-		}
-	}
-	catch (const std::invalid_argument&)
-	{
-		playerNumber.reset();
-	}
-	catch (const std::out_of_range&)
-	{
-		// TODO: translate
-		throw std::runtime_error ("Invalid player number");
-	}
-	if (playerNumber)
+	if (const std::optional<int> playerNumber = toInt (command.substr (position, nextWordLength)))
 	{
 		try
 		{
@@ -419,27 +401,7 @@ size_t cChatCommandArgumentClientPlayer::parse (const std::string& command, size
 
 	const auto nextWordLength = getNextWordLength (command, position);
 
-	std::optional<int> playerNumber;
-	try
-	{
-		size_t pos{};
-		playerNumber = std::stoi (command.substr (position, nextWordLength), &pos);
-		if (pos != nextWordLength)
-		{
-			playerNumber.reset();
-		}
-	}
-	catch (const std::invalid_argument&)
-	{
-		playerNumber.reset();
-	}
-	catch (const std::out_of_range&)
-	{
-		// TODO: translate
-		throw std::runtime_error ("Invalid player number");
-	}
-
-	if (playerNumber)
+	if (const std::optional<int> playerNumber = toInt (command.substr (position, nextWordLength)))
 	{
 		value = activeClientPointer->getModel().getPlayer (*playerNumber);
 		if (value == nullptr)

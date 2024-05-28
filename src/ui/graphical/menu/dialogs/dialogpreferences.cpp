@@ -37,6 +37,7 @@
 #include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
 #include "utility/string/iequals.h"
+#include "utility/string/toNumber.h"
 
 #include <SDL_mixer.h>
 #include <functional>
@@ -253,8 +254,8 @@ void cDialogPreferences::saveValues()
 
 	const auto& resolutionText = resolutionsComboBox->getSelectedText();
 
-	const auto newResolutionX = atoi (resolutionText.substr (0, resolutionText.find ("x")).c_str());
-	const auto newResolutionY = atoi (resolutionText.substr (resolutionText.find ("x") + 1).c_str());
+	const auto newResolutionX = toInt (resolutionText.substr (0, resolutionText.find ("x"))).value_or (0);
+	const auto newResolutionY = toInt (resolutionText.substr (resolutionText.find ("x") + 1)).value_or (0);
 
 	if (newResolutionX > 0 && newResolutionY > 0)
 	{

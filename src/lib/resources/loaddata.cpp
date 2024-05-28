@@ -45,6 +45,7 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/serialization/jsonarchive.h"
+#include "utility/string/toNumber.h"
 
 #include <SDL_mixer.h>
 #include <filesystem>
@@ -118,7 +119,7 @@ void debugTranslationSize (const cLanguage& language, const cUnicodeFont& font)
 
 		if (std::regex_match (key, res, reg))
 		{
-			std::size_t maxSize = std::stoi (res[1]);
+			std::size_t maxSize = toInt (std::string (res[1])).value();
 			const char referenceLetter = 'a';
 
 			if (font.getTextWide (std::string (maxSize, referenceLetter)) < font.getTextWide (translatedText))

@@ -33,6 +33,7 @@
 #include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
 #include "utility/narrow_cast.h"
+#include "utility/string/toNumber.h"
 
 namespace
 {
@@ -331,12 +332,12 @@ cGameSettings cWindowGameSettings::getGameSettings() const
 	{
 		case eGameSettingsVictoryCondition::Points:
 		{
-			gameSettings.victoryPoints = (victoryCount == custom ? stoi (customVictoryPointsCheckBox->getText()) : victoryCount);
+			gameSettings.victoryPoints = (victoryCount == custom ? toInt (customVictoryPointsCheckBox->getText()).value_or (0) : victoryCount);
 			break;
 		}
 		case eGameSettingsVictoryCondition::Turns:
 		{
-			gameSettings.victoryTurns = (victoryCount == custom ? stoi (customVictoryTurnsCheckBox->getText()) : victoryCount);
+			gameSettings.victoryTurns = (victoryCount == custom ? toInt (customVictoryTurnsCheckBox->getText()).value_or (0) : victoryCount);
 			break;
 		}
 		case eGameSettingsVictoryCondition::Death: break;
@@ -345,7 +346,7 @@ cGameSettings cWindowGameSettings::getGameSettings() const
 	gameSettings.turnLimitActive = true;
 	switch (*turnLimitGroup->getSelectedValue())
 	{
-		case custom: gameSettings.turnLimit = std::chrono::seconds (atoi (customTurnLimitCheckBox->getText().c_str())); break;
+		case custom: gameSettings.turnLimit = std::chrono::seconds (toInt (customTurnLimitCheckBox->getText()).value_or (0)); break;
 		case unlimited: gameSettings.turnLimitActive = false; break;
 		default: gameSettings.turnLimit = std::chrono::seconds (*turnLimitGroup->getSelectedValue()); break;
 	}
@@ -353,7 +354,7 @@ cGameSettings cWindowGameSettings::getGameSettings() const
 	gameSettings.turnEndDeadlineActive = true;
 	switch (*endTurnDeadlineGroup->getSelectedValue())
 	{
-		case custom: gameSettings.turnEndDeadline = std::chrono::seconds (atoi (customEndTurnDeadlineCheckBox->getText().c_str())); break;
+		case custom: gameSettings.turnEndDeadline = std::chrono::seconds (toInt (customEndTurnDeadlineCheckBox->getText()).value_or (0)); break;
 		case unlimited: gameSettings.turnEndDeadlineActive = false; break;
 		default: gameSettings.turnEndDeadline = std::chrono::seconds (*endTurnDeadlineGroup->getSelectedValue()); break;
 	}

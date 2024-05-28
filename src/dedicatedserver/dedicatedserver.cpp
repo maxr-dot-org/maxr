@@ -23,6 +23,7 @@
 #include "defines.h"
 #include "settings.h"
 #include "utility/listhelpers.h"
+#include "utility/string/toNumber.h"
 #include "utility/os.h"
 
 #include <algorithm>
@@ -170,7 +171,14 @@ bool cDedicatedServer::handleInput (const std::string& command)
 	else if (tokens.at (0) == "loadGame")
 	{
 		if (tokens.size() == 2)
-			startServer (atoi (tokens.at (1).c_str()));
+			if (auto n = toInt (tokens.at (1)))
+			{
+				startServer (*n);
+			}
+			else
+			{
+				std::cout << "Not a number: " << std::quoted (tokens.at (1)) << std::endl;
+			}
 		else
 		{
 			std::cout << "No savegame number given. Trying to load auto save (savegame number " << kAutoSaveSlot << ")." << std::endl;
@@ -181,7 +189,16 @@ bool cDedicatedServer::handleInput (const std::string& command)
 	{
 		// TODO: select game, currently apply to first game
 		if (tokens.size() == 2)
-			saveGame (atoi (tokens.at (1).c_str()));
+		{
+			if (auto n = toInt (tokens.at (1)))
+			{
+				saveGame (*n);
+			}
+			else
+			{
+				std::cout << "Not a number: " << std::quoted (tokens.at (1)) << std::endl;
+			}
+		}
 		else
 			printHelpWrongArguments();
 	}
@@ -265,7 +282,7 @@ void cDedicatedServer::setProperty (const std::string& property, const std::stri
 {
 	if (property == "port")
 	{
-		int newPort = atoi (value.c_str());
+		int newPort = toInt (value).value_or (DEFAULTPORT);
 		if (newPort < 0 || newPort >= 65536)
 			newPort = DEFAULTPORT;
 		port = newPort;
