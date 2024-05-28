@@ -228,6 +228,7 @@ project "tests"
 	vpaths { ["tests/*"] = "tests" }
 
 	includedirs { "src/lib" }
+	includedirs { "tests" }
 	externalincludedirs { "submodules/doctest/doctest", "submodules/nlohmann/single_include" }
 	links { "maxr_lib" }
 	linksToCrashRpt()
