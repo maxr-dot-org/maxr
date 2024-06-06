@@ -24,13 +24,14 @@
 #include "utility/serialization/serialization.h"
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 class cKeySequence
 {
 public:
-	cKeySequence();
-	explicit cKeySequence (const std::string& sequence);
+	cKeySequence() = default;
+	explicit cKeySequence (std::string_view sequence);
 	explicit cKeySequence (cKeyCombination);
 	cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2);
 	cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2, cKeyCombination keyCombination3);

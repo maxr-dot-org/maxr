@@ -154,16 +154,16 @@ bool cKeyCombination::isRepresentableKey (SDL_Keycode key)
 }
 
 //------------------------------------------------------------------------------
-cKeyCombination::cKeyCombination (const std::string& sequence)
+cKeyCombination::cKeyCombination (std::string_view sequence)
 {
-	std::string::size_type start = 0;
+	std::string_view::size_type start = 0;
 	while (true)
 	{
 		auto end = sequence.find ('+', start);
 
 		addKey (sequence.substr (start, end - start));
 
-		if (end == std::string::npos) break;
+		if (end == std::string_view::npos) break;
 
 		start = end + 1;
 	}
@@ -176,9 +176,9 @@ cKeyCombination::cKeyCombination (KeyModifierFlags modifiers_, SDL_Keycode key_)
 {}
 
 //------------------------------------------------------------------------------
-void cKeyCombination::addKey (const std::string& sequence)
+void cKeyCombination::addKey (std::string_view sequence)
 {
-	auto trimmed = trim_copy (sequence);
+	auto trimmed = trim (sequence);
 
 	if (iequals (trimmed, "Ctrl"))
 	{
@@ -212,7 +212,7 @@ void cKeyCombination::addKey (const std::string& sequence)
 		}
 	}
 
-	throw std::runtime_error ("Unknown key name '" + sequence + "'");
+	throw std::runtime_error ("Unknown key name '" + std::string (sequence) + "'");
 }
 
 //------------------------------------------------------------------------------

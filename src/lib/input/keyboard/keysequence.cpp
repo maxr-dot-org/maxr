@@ -20,20 +20,16 @@
 #include "input/keyboard/keysequence.h"
 
 //------------------------------------------------------------------------------
-cKeySequence::cKeySequence()
-{}
-
-//------------------------------------------------------------------------------
-cKeySequence::cKeySequence (const std::string& sequence)
+cKeySequence::cKeySequence (std::string_view sequence)
 {
-	std::string::size_type start = 0;
+	std::string_view::size_type start = 0;
 	while (true)
 	{
 		auto end = sequence.find (',', start);
 
 		addKeyCombination (cKeyCombination (sequence.substr (start, end - start)));
 
-		if (end == std::string::npos) break;
+		if (end == std::string_view::npos) break;
 
 		start = end + 1;
 	}

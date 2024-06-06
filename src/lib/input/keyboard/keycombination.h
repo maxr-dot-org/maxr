@@ -24,11 +24,12 @@
 
 #include <SDL.h>
 #include <string>
+#include <string_view>
 
 class cKeyCombination
 {
 public:
-	explicit cKeyCombination (const std::string& sequence);
+	explicit cKeyCombination (std::string_view sequence);
 	cKeyCombination (KeyModifierFlags modifiers, SDL_Keycode key);
 	explicit cKeyCombination (SDL_Keycode key) :
 		cKeyCombination (eKeyModifierType::None, key) {}
@@ -46,7 +47,7 @@ private:
 	KeyModifierFlags modifiers;
 	SDL_Keycode key;
 
-	void addKey (const std::string& sequence);
+	void addKey (std::string_view sequence);
 };
 
 #endif // input_keyboard_keycombination_H

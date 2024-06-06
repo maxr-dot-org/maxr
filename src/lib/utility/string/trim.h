@@ -25,6 +25,8 @@
 #include <algorithm>
 #include <cctype>
 #include <locale>
+#include <string>
+#include <string_view>
 
 static inline std::string& trim_left (std::string& s)
 {
@@ -43,22 +45,19 @@ static inline std::string& trim (std::string& s)
 	return trim_left (trim_right (s));
 }
 
-static inline std::string trim_left_copy (const std::string& s)
+[[nodiscard]] inline std::string_view trim_left (std::string_view s)
 {
-	std::string s2 = s;
-	return trim_left (s2);
+	return s.substr (std::distance (s.begin(), ranges::find_if (s, [] (unsigned char c) { return !std::isspace (c); })));
 }
 
-static inline std::string trim_right_copy (const std::string& s)
+[[nodiscard]] inline std::string_view trim_right (std::string_view s)
 {
-	std::string s2 = s;
-	return trim_right (s2);
+	return s.substr (0, std::distance (s.begin(), std::find_if (s.rbegin(), s.rend(), [] (unsigned char c) { return !std::isspace (c); }).base()));
 }
 
-static inline std::string trim_copy (const std::string& s)
+[[nodiscard]] inline std::string_view trim (std::string_view s)
 {
-	std::string s2 = s;
-	return trim (s2);
+	return trim_left (trim_right (s));
 }
 
 #endif // utility_string_trimH
