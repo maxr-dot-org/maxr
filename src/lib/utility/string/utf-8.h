@@ -20,15 +20,16 @@
 #ifndef utility_string_utf8H
 #define utility_string_utf8H
 
-#include <string>
 #include <cstdint>
+#include <string>
+#include <string_view>
 
 namespace utf8
 {
-	void decreasePos (const ::std::string&, ::std::size_t& pos);
-	void increasePos (const ::std::string&, ::std::size_t& pos);
+	void decreasePos (::std::string_view, ::std::size_t& pos);
+	void increasePos (::std::string_view, ::std::size_t& pos);
 
-	::std::uint32_t decodeUnicode (const ::std::string&, ::std::size_t& pos);
+	::std::uint32_t decodeUnicode (::std::string_view, ::std::size_t& pos);
 
 	void pop_back (::std::string&);
 	void append_unicode (::std::string&, ::std::uint32_t);
@@ -36,7 +37,7 @@ namespace utf8
 
 	//--------------------------------------------------------------------------
 	template <typename F>
-	void for_each(const ::std::string& text, F f)
+	void for_each(const ::std::string_view& text, F f)
 	{
 		for (::std::size_t i = 0; i != text.size(); /* Empty */)
 		{

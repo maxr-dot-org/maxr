@@ -28,7 +28,7 @@ namespace utf8
 {
 
 	//--------------------------------------------------------------------------
-	void decreasePos (const ::std::string& text, ::std::size_t& pos)
+	void decreasePos (::std::string_view text, ::std::size_t& pos)
 	{
 		if (pos == 0)
 		{
@@ -39,7 +39,7 @@ namespace utf8
 		{
 			if (pos <= 1)
 			{
-				Log.warn ("Invalid UTF-8 string in text: '" + text + "'");
+				Log.warn ("Invalid UTF-8 string in text: '" + ::std::string (text) + "'");
 				break;
 			}
 
@@ -50,7 +50,7 @@ namespace utf8
 	}
 
 	//--------------------------------------------------------------------------
-	void increasePos (const ::std::string& text, ::std::size_t& pos)
+	void increasePos (::std::string_view text, ::std::size_t& pos)
 	{
 		if (text.length() <= pos)
 		{
@@ -78,7 +78,7 @@ namespace utf8
 		if (text.length() < pos)
 		{
 			pos = text.length();
-			Log.warn ("Invalid UTF-8 string in text: '" + text + "'");
+			Log.warn ("Invalid UTF-8 string in text: '" + ::std::string (text) + "'");
 		}
 	}
 
@@ -126,7 +126,7 @@ namespace utf8
 	}
 
 	//--------------------------------------------------------------------------
-	::std::uint32_t decodeUnicode (const ::std::string& text, ::std::size_t& pos)
+	::std::uint32_t decodeUnicode (::std::string_view text, ::std::size_t& pos)
 	{
 		if (text.size() <= pos)
 		{
@@ -135,9 +135,9 @@ namespace utf8
 		const ::std::uint32_t c0 = static_cast<unsigned char> (text[pos]);
 		const auto is_extra_char = [] (char c) { return (c & 0b1100'0000) == 0b1000'0000; };
 		const auto check_extra_size = [&] (int size) {
-			if (text.size() <= pos + size || !std::all_of (&text[pos + 1], &text.c_str()[pos + 1 + size], is_extra_char))
+			if (text.size() <= pos + size || !std::all_of (&text[pos + 1], &text.data()[pos + 1 + size], is_extra_char))
 			{
-				Log.warn ("Invalid UTF-8 string in text: '" + text + "' at pos " + ::std::to_string (pos));
+				Log.warn ("Invalid UTF-8 string in text: '" + ::std::string (text) + "' at pos " + ::std::to_string (pos));
 				throw ::std::out_of_range ("invalid position for decodeUnicode");
 			}
 		};
@@ -172,7 +172,7 @@ namespace utf8
 		{
 			if ((c0 & 0b1000'0000) != 0)
 			{
-				Log.warn ("Invalid UTF-8 string in text: '" + text + "' at pos " + ::std::to_string (pos));
+				Log.warn ("Invalid UTF-8 string in text: '" + ::std::string (text) + "' at pos " + ::std::to_string (pos));
 				throw ::std::runtime_error ("Invalid utf8 character for decodeUnicode");
 			}
 			pos += 1;
