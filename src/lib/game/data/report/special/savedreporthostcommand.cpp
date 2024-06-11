@@ -20,7 +20,7 @@
 #include "game/data/report/special/savedreporthostcommand.h"
 
 //------------------------------------------------------------------------------
-cSavedReportHostCommand::cSavedReportHostCommand (std::string command_) :
+cSavedReportHostCommand::cSavedReportHostCommand (std::string&& command_) :
 	command (std::move (command_))
 {}
 

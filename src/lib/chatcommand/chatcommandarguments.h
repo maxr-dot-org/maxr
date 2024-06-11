@@ -65,7 +65,7 @@ class cChatCommandArgumentInt
 public:
 	using ValueType = T;
 
-	explicit cChatCommandArgumentInt (std::string name, bool isOptional = false, ValueType defaultValue = 0) 
+	explicit cChatCommandArgumentInt (std::string&& name, bool isOptional = false, ValueType defaultValue = 0) 
 :		isOptional (isOptional),
 		name (std::move (name)),
 		defaultValue (std::move (defaultValue))
@@ -109,7 +109,7 @@ class cChatCommandArgumentString
 public:
 	using ValueType = std::string;
 
-	explicit cChatCommandArgumentString (std::string name, bool isOptional = false, ValueType defaultValue = "");
+	explicit cChatCommandArgumentString (std::string&& name, bool isOptional = false, ValueType defaultValue = "");
 
 	size_t parse (std::string_view command, size_t position);
 

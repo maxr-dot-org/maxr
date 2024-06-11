@@ -37,7 +37,7 @@ TEST_CASE ("ChatCommandFixtureNoArgs")
 {
 	std::size_t test_counter = 0;
 
-	auto test = cChatCommand (name, desc).setAction ([&]() { ++test_counter; });
+	auto test = cChatCommand (std::string (name), desc).setAction ([&]() { ++test_counter; });
 	REQUIRE (0 == test_counter);
 
 	CHECK (name == test->getCommand().getName());
@@ -58,7 +58,7 @@ TEST_CASE ("ChatCommand_Bool")
 	std::map<std::string, std::size_t> map_counter;
 	auto action = [&] (bool b) { ++map_counter[b ? "on" : "off"]; };
 
-	auto test = cChatCommand (name, desc).addArgument<cChatCommandArgumentBool>().setAction (action);
+	auto test = cChatCommand (std::string (name), desc).addArgument<cChatCommandArgumentBool>().setAction (action);
 	REQUIRE (map_counter.empty());
 
 	CHECK (!test->tryExecute ("/" + name + "2"));
@@ -80,7 +80,7 @@ TEST_CASE ("ChatCommand_Choice")
 	std::map<std::string, std::size_t> map_counter;
 	auto action = [&] (const std::string& s) { ++map_counter[s]; };
 
-	auto test = cChatCommand (name, desc).addArgument<cChatCommandArgumentChoice> (choices).setAction (action);
+	auto test = cChatCommand (std::string (name), desc).addArgument<cChatCommandArgumentChoice> (choices).setAction (action);
 	REQUIRE (map_counter.empty());
 
 	CHECK (!test->tryExecute ("/" + name + "2"));

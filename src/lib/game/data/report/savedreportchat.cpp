@@ -22,14 +22,14 @@
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
-cSavedReportChat::cSavedReportChat (const cPlayer& player, std::string text_) :
+cSavedReportChat::cSavedReportChat (const cPlayer& player, std::string&& text_) :
 	playerName (player.getName()),
 	playerNumber (player.getId()),
 	text (std::move (text_))
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportChat::cSavedReportChat (std::string playerName_, std::string text_) :
+cSavedReportChat::cSavedReportChat (std::string&& playerName_, std::string&& text_) :
 	playerName (std::move (playerName_)),
 	text (std::move (text_))
 {}

@@ -38,7 +38,7 @@ class cChatCommand
 public:
 	static bool isCommand (std::string_view command);
 
-	cChatCommand (std::string name, std::function<std::string()> description);
+	cChatCommand (std::string&& name, std::function<std::string()> description);
 
 	const std::string& getName() const { return name; }
 	std::string getDescription() const { return description(); }

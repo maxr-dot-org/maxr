@@ -97,6 +97,7 @@
 
 #include <cassert>
 #include <sstream>
+#include <string>
 
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
@@ -1596,7 +1597,7 @@ void cGameGuiController::showSelfDestroyDialog (const cBuilding& building)
 }
 
 //------------------------------------------------------------------------------
-void cGameGuiController::handleChatCommand (const std::string& chatString)
+void cGameGuiController::handleChatCommand (std::string_view chatString)
 {
 	if (cChatCommand::isCommand (chatString))
 	{
@@ -1608,7 +1609,7 @@ void cGameGuiController::handleChatCommand (const std::string& chatString)
 				{
 					if (commandExecutor->getCommand().getShouldBeReported() && server)
 					{
-						activeClient->report (std::make_unique<cSavedReportHostCommand> (chatString));
+						activeClient->report (std::make_unique<cSavedReportHostCommand> (std::string (chatString)));
 					}
 					return;
 				}
@@ -1617,13 +1618,13 @@ void cGameGuiController::handleChatCommand (const std::string& chatString)
 		}
 		catch (const std::runtime_error& e)
 		{
-			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (chatString));
+			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (std::string (chatString)));
 			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (e.what()));
 		}
 	}
 	else if (activeClient)
 	{
-		activeClient->report (std::make_unique<cSavedReportChat> (*getActivePlayer(), chatString));
+		activeClient->report (std::make_unique<cSavedReportChat> (*getActivePlayer(), std::string (chatString)));
 	}
 }
 

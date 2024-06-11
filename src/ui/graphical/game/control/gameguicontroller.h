@@ -30,7 +30,7 @@
 #include <array>
 #include <memory>
 #include <optional>
-#include <string>
+#include <string_view>
 #include <vector>
 
 class cAnimationTimer;
@@ -140,7 +140,7 @@ private:
 	void showStorageWindow (const cUnit&);
 	void showSelfDestroyDialog (const cBuilding&);
 
-	void handleChatCommand (const std::string& command);
+	void handleChatCommand (std::string_view command);
 
 	void handleReportForActivePlayer (const cSavedReport&);
 

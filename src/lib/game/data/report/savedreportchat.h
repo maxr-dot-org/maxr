@@ -27,8 +27,8 @@ class cPlayer;
 class cSavedReportChat : public cSavedReport
 {
 public:
-	cSavedReportChat (const cPlayer& player, std::string text);
-	cSavedReportChat (std::string playerName, std::string text);
+	cSavedReportChat (const cPlayer& player, std::string&& text);
+	cSavedReportChat (std::string&& playerName, std::string&& text);
 	template <typename Archive, ENABLE_ARCHIVE_IN>
 	explicit cSavedReportChat (Archive& archive)
 	{

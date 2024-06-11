@@ -25,7 +25,7 @@
 class cSavedReportHostCommand : public cSavedReport
 {
 public:
-	cSavedReportHostCommand (std::string command);
+	cSavedReportHostCommand (std::string&& command);
 	template <typename Archive, ENABLE_ARCHIVE_IN>
 	explicit cSavedReportHostCommand (Archive& archive)
 	{

@@ -186,7 +186,7 @@ const cChatCommandArgumentChoice::ValueType& cChatCommandArgumentChoice::getValu
 }
 
 //------------------------------------------------------------------------------
-cChatCommandArgumentString::cChatCommandArgumentString (std::string name, bool isOptional, ValueType defaultValue) :
+cChatCommandArgumentString::cChatCommandArgumentString (std::string&& name, bool isOptional, ValueType defaultValue) :
 	isOptional (isOptional),
 	name (std::move (name)),
 	defaultValue (std::move (defaultValue))
