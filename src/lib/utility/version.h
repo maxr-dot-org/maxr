@@ -61,10 +61,7 @@ public:
 	bool operator== (const cVersion& other) const;
 	bool operator!= (const cVersion& other) const;
 
-	// clang-format off
-	// See https://github.com/llvm/llvm-project/issues/61911
 	bool operator< (const cVersion& other) const;
-	// clang-format on
 	bool operator<= (const cVersion& other) const;
 	bool operator> (const cVersion& other) const;
 	bool operator>= (const cVersion& other) const;
