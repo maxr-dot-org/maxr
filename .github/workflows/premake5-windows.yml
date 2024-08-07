@@ -30,20 +30,11 @@ jobs:
       with:
         submodules: recursive
 
-    - name: checkout premake5
-      uses: actions/checkout@v4
-      with:
-        repository: premake/premake-core
-        path: premake-build
+    - name: install premake5
+      uses: Jarod42/install-premake5@v1
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
-
-    - name: Build premake5
-      run: |
-        $vcvarall_path = vswhere -find VC\Auxiliary\Build\vcvarsall.bat
-        cmd.exe /c "call ""$vcvarall_path"" x86_amd64 && cd premake-build && nmake -f Bootstrap.mak MSDEV=vs2022 windows-msbuild PLATFORM=Win32 CONFIG=release"
-        cp premake-build/bin/release/premake5.exe ./
 
     - name: Retrieve CrashRpt_v.1.4.3_r1645
       run: |
@@ -52,7 +43,7 @@ jobs:
         7z e -o"data/CrashRpt"          CrashRpt_v.1.4.3_r1645.7z "lang_files/*.ini"
 
     - name: run premake5
-      run: ./premake5.exe vs2022 --to=solution/vs2022 --crashRpt_root=CrashRpt_v.1.4.3_r1645
+      run: premake5.exe vs2022 --to=solution/vs2022 --crashRpt_root=CrashRpt_v.1.4.3_r1645
 
     - name: build
       run: |
