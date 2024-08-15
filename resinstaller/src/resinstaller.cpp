@@ -37,6 +37,7 @@
 
 #if MAC
 # include "mac/sources/resinstallerGUI.h"
+
 # include <thread>
 #elif WIN32
 # include <Shlobj.h>
@@ -2927,12 +2928,12 @@ static void installGfx()
 
 	// and now the ugly hud_stuff.pcx :|
 #define COPY_GRAPHIC(name, _x, _y) \
- surface = getImageFromRes (name); \
- setColor (surface, backgroundIndex, 255, 0, 255); \
- dst_rect.x = (_x); \
- dst_rect.y = (_y); \
- SDL_BlitSurface (surface, nullptr, output, &dst_rect); \
- SDL_FreeSurface (surface);
+	surface = getImageFromRes (name); \
+	setColor (surface, backgroundIndex, 255, 0, 255); \
+	dst_rect.x = (_x); \
+	dst_rect.y = (_y); \
+	SDL_BlitSurface (surface, nullptr, output, &dst_rect); \
+	SDL_FreeSurface (surface);
 
 	try
 	{
@@ -4402,7 +4403,7 @@ static std::filesystem::path getVoicePathFromUser()
 	}
 	// ask the user, which language to install
 #if MAC
-	switch (askForLanguage(bGerman, bItalian, bFrench))
+	switch (askForLanguage (bGerman, bItalian, bFrench))
 	{
 		default: // default - but should not happen
 		case 0: return sMAXPath; // english
@@ -4468,7 +4469,8 @@ static std::filesystem::path getVoicePathFromUser()
 			auto it = std::find (vectorLanguages.begin(), vectorLanguages.end(), input);
 			if (it != vectorLanguages.end())
 			{
-				if (bUppercase) {
+				if (bUppercase)
+				{
 					transform (input.begin(), input.end(), input.begin(), ::toupper);
 				}
 				return sMAXPath / input;
@@ -4577,7 +4579,7 @@ int main (int argc, char* argv[])
 #if MAC
 	// on MAC the installation has to happen in a separate thread to allow displaying and updating a progress window
 	gFinishedInstalling = false;
-	std::thread installThread([&]() { installEverything (sVoicePath); });
+	std::thread installThread ([&]() { installEverything (sVoicePath); });
 	displayProgressWindow (gFinishedInstalling);
 	installThread.join();
 #else

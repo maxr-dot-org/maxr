@@ -149,7 +149,7 @@ void sVehicleUIData::render_BuildingOrBigClearing (const cVehicle& vehicle, cons
 //------------------------------------------------------------------------------
 void sVehicleUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, const sStaticVehicleData& vehicleData, const cPlayer* owner, int dir, int walkFrame, int alpha) const
 {
-	render_simple(surface, dest, zoomFactor, vehicleData, owner ? std::make_optional(owner->getColor()) : std::nullopt, dir, walkFrame, alpha);
+	render_simple (surface, dest, zoomFactor, vehicleData, owner ? std::make_optional (owner->getColor()) : std::nullopt, dir, walkFrame, alpha);
 }
 
 //------------------------------------------------------------------------------

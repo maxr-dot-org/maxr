@@ -20,6 +20,8 @@
 #ifndef chatcommand_chatcommandargumentsH
 #define chatcommand_chatcommandargumentsH
 
+#include "utility/string/toNumber.h"
+
 #include <exception>
 #include <iostream>
 #include <limits>
@@ -28,8 +30,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
-#include "utility/string/toNumber.h"
 
 size_t getNextWordLength (std::string_view s, size_t position);
 
@@ -65,8 +65,8 @@ class cChatCommandArgumentInt
 public:
 	using ValueType = T;
 
-	explicit cChatCommandArgumentInt (std::string&& name, bool isOptional = false, ValueType defaultValue = 0) 
-:		isOptional (isOptional),
+	explicit cChatCommandArgumentInt (std::string&& name, bool isOptional = false, ValueType defaultValue = 0) :
+		isOptional (isOptional),
 		name (std::move (name)),
 		defaultValue (std::move (defaultValue))
 	{}

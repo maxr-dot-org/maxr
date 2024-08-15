@@ -24,8 +24,8 @@
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/jsonarchive.h"
 
-#include <optional>
 #include <memory>
+#include <optional>
 #include <string>
 
 struct sID;

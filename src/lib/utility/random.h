@@ -102,7 +102,8 @@ typename std::array<T, N>::const_reference getRandom (const std::array<T, N>& da
 template <typename T>
 const T& getRandom (const std::vector<T>& v)
 {
-	if (v.empty()) {
+	if (v.empty())
+	{
 		throw std::runtime_error ("Empty vector");
 	}
 	return v[random (v.size())];

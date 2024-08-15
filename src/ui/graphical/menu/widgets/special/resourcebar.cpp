@@ -31,7 +31,7 @@
 namespace
 {
 	//--------------------------------------------------------------------------
-	SDL_Surface* getResourceHorizontalBarSurface(eResourceBarType type)
+	SDL_Surface* getResourceHorizontalBarSurface (eResourceBarType type)
 	{
 		switch (type)
 		{
@@ -84,7 +84,7 @@ namespace
 //------------------------------------------------------------------------------
 cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxValue_, eResourceBarType type, eOrientationType orientation_, cSoundChunk* clickSound_) :
 	cClickableWidget (area),
-	surface (getResourceBarSurface(orientation_, type)),
+	surface (getResourceBarSurface (orientation_, type)),
 	clickSound (clickSound_),
 	orientation (orientation_),
 	additionalArea (orientation == eOrientationType::Horizontal ? 8 : 0, orientation == eOrientationType::Vertical ? 8 : 0),

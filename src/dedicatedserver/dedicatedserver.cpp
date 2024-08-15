@@ -23,8 +23,8 @@
 #include "defines.h"
 #include "settings.h"
 #include "utility/listhelpers.h"
-#include "utility/string/toNumber.h"
 #include "utility/os.h"
+#include "utility/string/toNumber.h"
 
 #include <algorithm>
 #include <iostream>

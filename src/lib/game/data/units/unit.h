@@ -156,7 +156,6 @@ public:
 	void forEachStoredUnits (std::function<void (const cVehicle&)> func) const;
 	void forEachStoredUnits (std::function<void (cVehicle&)> func);
 
-
 	virtual uint32_t getChecksum (uint32_t crc) const;
 
 	// Important NOTE: This signal will be triggered when the destructor of the unit gets called.

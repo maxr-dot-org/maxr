@@ -22,8 +22,8 @@
 
 #include "game/connectionmanager.h"
 #include "game/data/model.h"
-#include "game/logic/gametimer.h"
 #include "game/logic/action/actionstartmove.h"
+#include "game/logic/gametimer.h"
 #include "game/protocol/netmessage.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"

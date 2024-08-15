@@ -24,10 +24,9 @@
 
 #include <stdint.h>
 
-class cVehicle;
 class cModel;
 class cUnit;
-
+class cVehicle;
 
 class cEndMoveAction
 {

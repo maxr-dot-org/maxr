@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "utility/mathtools.h"
+
 #include "utility/narrow_cast.h"
 
 #include <cmath>

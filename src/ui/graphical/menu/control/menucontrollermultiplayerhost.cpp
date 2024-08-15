@@ -25,7 +25,6 @@
 #include "game/logic/server.h"
 #include "game/startup/gamepreparation.h"
 #include "mapdownloader/mapuploadmessagehandler.h"
-#include "ui/widgets/application.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/menu/control/network/networkgame.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
@@ -36,6 +35,7 @@
 #include "ui/graphical/menu/windows/windowload/windowload.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/graphical/menu/windows/windownetworklobbyhost/windownetworklobbyhost.h"
+#include "ui/widgets/application.h"
 #include "utility/language.h"
 #include "utility/log.h"
 
@@ -258,7 +258,8 @@ void cMenuControllerMultiplayerHost::startHost()
 		{
 			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Multiplayer~Network_Open", std::to_string (windowNetworkLobby->getPort())));
 			windowNetworkLobby->disablePortEdit();
-			if (auto* p = dynamic_cast<cWindowNetworkLobbyHost*>(windowNetworkLobby.get())) {
+			if (auto* p = dynamic_cast<cWindowNetworkLobbyHost*> (windowNetworkLobby.get()))
+			{
 				p->disableStartHostButton();
 			}
 			break;

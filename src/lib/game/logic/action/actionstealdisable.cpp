@@ -65,7 +65,8 @@ void cActionStealDisable::execute (cModel& model) const
 			auto* previousOwner = target->getOwner();
 			changeUnitOwner (*target, *infiltrator->getOwner(), model);
 			model.unitStolen (*infiltrator, *target, previousOwner);
-			if (previousOwner) {
+			if (previousOwner)
+			{
 				previousOwner->getGameOverStat().lostVehiclesCount++;
 			}
 		}

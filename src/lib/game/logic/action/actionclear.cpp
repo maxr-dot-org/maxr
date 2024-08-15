@@ -56,15 +56,12 @@ void cActionClear::execute (cModel& model) const
 	{
 		auto rubblePosition = rubble->getPosition();
 
-		model.sideStepStealthUnit (rubblePosition,                    *vehicle, rubblePosition);
+		model.sideStepStealthUnit (rubblePosition, *vehicle, rubblePosition);
 		model.sideStepStealthUnit (rubblePosition + cPosition (1, 0), *vehicle, rubblePosition);
 		model.sideStepStealthUnit (rubblePosition + cPosition (0, 1), *vehicle, rubblePosition);
 		model.sideStepStealthUnit (rubblePosition + cPosition (1, 1), *vehicle, rubblePosition);
 
-		if ((!map->possiblePlace (*vehicle, rubblePosition,                    false) && rubblePosition                    != vehicle->getPosition()) ||
-			(!map->possiblePlace (*vehicle, rubblePosition + cPosition (1, 0), false) && rubblePosition + cPosition (1, 0) != vehicle->getPosition()) ||
-			(!map->possiblePlace (*vehicle, rubblePosition + cPosition (0, 1), false) && rubblePosition + cPosition (0, 1) != vehicle->getPosition()) ||
-			(!map->possiblePlace (*vehicle, rubblePosition + cPosition (1, 1), false) && rubblePosition + cPosition (1, 1) != vehicle->getPosition()))
+		if ((!map->possiblePlace (*vehicle, rubblePosition, false) && rubblePosition != vehicle->getPosition()) || (!map->possiblePlace (*vehicle, rubblePosition + cPosition (1, 0), false) && rubblePosition + cPosition (1, 0) != vehicle->getPosition()) || (!map->possiblePlace (*vehicle, rubblePosition + cPosition (0, 1), false) && rubblePosition + cPosition (0, 1) != vehicle->getPosition()) || (!map->possiblePlace (*vehicle, rubblePosition + cPosition (1, 1), false) && rubblePosition + cPosition (1, 1) != vehicle->getPosition()))
 		{
 			return;
 		}

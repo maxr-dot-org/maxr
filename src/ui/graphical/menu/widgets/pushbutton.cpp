@@ -277,7 +277,8 @@ void cPushButton::renewSurface()
 
 	SDL_BlitSurface (partialSurface.surface, &partialSurface.rect, surface.get(), nullptr);
 
-	if (shorten) {
+	if (shorten)
+	{
 		text = cUnicodeFont::font->shortenStringToSize (text, partialSurface.rect.w - getBordersSize(), fontType);
 	}
 }

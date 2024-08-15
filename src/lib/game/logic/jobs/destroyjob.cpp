@@ -137,7 +137,7 @@ void cDestroyJob::deleteUnit (cModel& model)
 	if (auto* vehicle = dynamic_cast<cVehicle*> (unit))
 	{
 		isVehicle = true;
-		
+
 		if (auto* owner = vehicle->getOwner())
 		{
 			owner->getGameOverStat().lostVehiclesCount++;

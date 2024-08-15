@@ -22,8 +22,8 @@
 
 #include <memory>
 #include <mutex>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 class cNetwork;
 class cSocket;

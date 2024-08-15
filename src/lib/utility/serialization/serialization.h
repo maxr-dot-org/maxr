@@ -545,21 +545,21 @@ namespace serialization
 	}
 
 #define SERIALIZATION_SPLIT_MEMBER() \
- template <typename Archive> \
- void serialize (Archive& archive) \
- { \
-  serialization::detail::splitMember (archive, *this); \
- }
+	template <typename Archive> \
+	void serialize (Archive& archive) \
+	{ \
+		serialization::detail::splitMember (archive, *this); \
+	}
 
 #define SERIALIZATION_SPLIT_FREE(T) \
- namespace serialization \
- { \
-  template <typename Archive> \
-  void serialize (Archive& archive, T& value) \
-  { \
-   serialization::detail::splitFree (archive, value); \
-  } \
- }
+	namespace serialization \
+	{ \
+		template <typename Archive> \
+		void serialize (Archive& archive, T& value) \
+		{ \
+			serialization::detail::splitFree (archive, value); \
+		} \
+	}
 
 } //namespace serialization
 

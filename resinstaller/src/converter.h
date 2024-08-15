@@ -83,7 +83,6 @@ private:
 	short sHotY = 0;
 
 public:
-
 	bool bDecoded = false;
 	char name[9]{};
 	Sint32 lPos = 0;

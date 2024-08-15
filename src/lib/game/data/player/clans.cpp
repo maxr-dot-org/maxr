@@ -28,17 +28,16 @@ namespace serialization
 {
 	//--------------------------------------------------------------------------
 	const std::vector<std::pair<eClanModification, const char*>>
-	sEnumStringMapping<eClanModification>::m =
-	{
-		{ eClanModification::Damage, "Damage"},
-		{ eClanModification::Range, "Range"},
-		{ eClanModification::Armor, "Armor"},
-		{ eClanModification::Hitpoints, "Hitpoints"},
-		{ eClanModification::Scan, "Scan"},
-		{ eClanModification::Speed, "Speed"},
-		{ eClanModification::Built_Costs, "BuildCosts"}
-	};
-}
+		sEnumStringMapping<eClanModification>::m =
+			{
+				{eClanModification::Damage, "Damage"},
+				{eClanModification::Range, "Range"},
+				{eClanModification::Armor, "Armor"},
+				{eClanModification::Hitpoints, "Hitpoints"},
+				{eClanModification::Scan, "Scan"},
+				{eClanModification::Speed, "Speed"},
+				{eClanModification::Built_Costs, "BuildCosts"}};
+} // namespace serialization
 //------------------------------------------------------------------------------
 void cClanUnitStat::addModification (eClanModification area, int value)
 {

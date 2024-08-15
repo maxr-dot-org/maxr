@@ -802,7 +802,6 @@ void cGameGuiController::connectClient (cClient& client)
 		}
 		else if (const auto* building = dynamic_cast<const cBuilding*> (&unit))
 		{
-			
 			if (overVehicle && building->canLoad (overVehicle, false))
 			{
 				if (building->isNextTo (overVehicle->getPosition()))

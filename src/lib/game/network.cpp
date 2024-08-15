@@ -29,7 +29,7 @@ namespace
 {
 	constexpr auto START_WORD = 0x4D415852;
 	constexpr auto HEADER_LENGTH = 8;
-}
+} // namespace
 
 //------------------------------------------------------------------------
 // cSocket implementation

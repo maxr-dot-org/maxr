@@ -600,7 +600,7 @@ void cHud::setActiveUnit (const cUnit* unit)
 }
 
 //------------------------------------------------------------------------------
-void cHud::setCanSelectNextUnit(bool value)
+void cHud::setCanSelectNextUnit (bool value)
 {
 	if (value)
 	{

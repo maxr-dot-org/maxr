@@ -95,8 +95,8 @@ void cMouseModeEnter::establishUnitSelectionConnections()
 	selectedUnitSignalConnectionManager.connect (selectedUnit->ownerChanged, [this]() { needRefresh(); });
 	selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this]() { needRefresh(); });
 
-	if (auto selectedVehicle = dynamic_cast<cVehicle*>(selectedUnit)) {
-
+	if (auto selectedVehicle = dynamic_cast<cVehicle*> (selectedUnit))
+	{
 		selectedUnitSignalConnectionManager.connect (selectedVehicle->buildingChanged, [this]() { needRefresh(); });
 		selectedUnitSignalConnectionManager.connect (selectedVehicle->clearingChanged, [this]() { needRefresh(); });
 	}

@@ -39,10 +39,10 @@ namespace
 			case eSliderHandleType::ModernHorizontal: return {GraphicsData.gfx_menu_stuff.get(), {241, 59, 8, 16}};
 			case eSliderHandleType::ModernVertical: return {GraphicsData.gfx_menu_stuff.get(), {224, 91, 16, 8}};
 		}
-		throw std::runtime_error ("Unknown enum eSliderHandleType: " + std::to_string (static_cast<int>(sliderHandleType)));
+		throw std::runtime_error ("Unknown enum eSliderHandleType: " + std::to_string (static_cast<int> (sliderHandleType)));
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 cSliderHandle::cSliderHandle (const cPosition& position, eSliderHandleType sliderHandleType, eOrientationType orientation_) :

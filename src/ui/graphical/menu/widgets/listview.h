@@ -144,7 +144,7 @@ private:
 
 //------------------------------------------------------------------------------
 template <typename ItemType>
-cListView<ItemType>::cListView (const cBox<cPosition>& area, [[maybe_unused]]bool allowMultiSelection, cSoundChunk* clickSound_) :
+cListView<ItemType>::cListView (const cBox<cPosition>& area, [[maybe_unused]] bool allowMultiSelection, cSoundChunk* clickSound_) :
 	cClickableWidget (area),
 	beginMargin (3, 4),
 	endMargin (2, 2),

@@ -247,13 +247,16 @@ private:
 		{
 			cJsonArchiveIn (json.at (nvp.name), strict) >> nvp.value;
 		}
-		else {
+		else
+		{
 			auto it = json.find (nvp.name);
 
-			if (it != json.end()) {
+			if (it != json.end())
+			{
 				cJsonArchiveIn (*it, strict) >> nvp.value;
 			}
-			else {
+			else
+			{
 				Log.warn ("Entry " + std::string (nvp.name) + " is missing.");
 			}
 		}

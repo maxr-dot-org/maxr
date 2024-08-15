@@ -25,23 +25,21 @@ namespace serialization
 {
 	//--------------------------------------------------------------------------
 	const std::vector<std::pair<ePlayerConnectionState, const char*>>
-	sEnumStringMapping<ePlayerConnectionState>::m =
-	{
-		{ePlayerConnectionState::Inactive, "Inactive"},
-		{ePlayerConnectionState::Connected, "Connected"},
-		{ePlayerConnectionState::NotResponding, "Not responding"},
-		{ePlayerConnectionState::Disconnected, "Disconnected"}
-	};
+		sEnumStringMapping<ePlayerConnectionState>::m =
+			{
+				{ePlayerConnectionState::Inactive, "Inactive"},
+				{ePlayerConnectionState::Connected, "Connected"},
+				{ePlayerConnectionState::NotResponding, "Not responding"},
+				{ePlayerConnectionState::Disconnected, "Disconnected"}};
 
 	//--------------------------------------------------------------------------
 	const std::vector<std::pair<eFreezeMode, const char*>>
-	sEnumStringMapping<eFreezeMode>::m =
-	{
-		{eFreezeMode::WaitForTurnend, "WAIT_FOR_TURNEND"},
-		{eFreezeMode::Pause, "PAUSE"},
-		{eFreezeMode::WaitForClient, "WAIT_FOR_CLIENT"},
-		{eFreezeMode::WaitForServer, "WAIT_FOR_SERVER"}
-	};
+		sEnumStringMapping<eFreezeMode>::m =
+			{
+				{eFreezeMode::WaitForTurnend, "WAIT_FOR_TURNEND"},
+				{eFreezeMode::Pause, "PAUSE"},
+				{eFreezeMode::WaitForClient, "WAIT_FOR_CLIENT"},
+				{eFreezeMode::WaitForServer, "WAIT_FOR_SERVER"}};
 } // namespace serialization
 //------------------------------------------------------------------------------
 void cFreezeModes::enable (eFreezeMode mode)

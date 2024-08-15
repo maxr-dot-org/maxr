@@ -32,7 +32,7 @@ namespace
 {
 	constexpr auto READ = 1024;
 	constexpr auto VORBIS_QUALITY = 0.4f;
-}
+} // namespace
 
 void encodeWAV (std::filesystem::path fileName, cWaveFile& waveFile)
 {

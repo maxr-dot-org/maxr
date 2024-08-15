@@ -181,7 +181,7 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 			addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Own", PACKAGE_VERSION));
 			return;
 		}
-		addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Warning_Client", std::string(version) + " " + std::string(revision)));
+		addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Warning_Client", std::string (version) + " " + std::string (revision)));
 		addInfoEntry (lngPack.i18n ("Multiplayer~Gameversion_Own", (std::string) PACKAGE_VERSION + " " + PACKAGE_REV));
 	});
 	signalConnectionManager.connect (lobbyClient.onConnectionFailed, [this] (eDeclineConnectionReason reason) {
@@ -261,7 +261,7 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 			addInfoEntry (lngPack.i18n ("Multiplayer~Not_Ready", player.getName()));
 		}
 		if (!notReadyPlayers.empty()) addInfoEntry (lngPack.plural ("Multiplayer~Not_All_Player(s)_Ready", notReadyPlayers.size()));
-		if (hostNotInSavegame) addInfoEntry(lngPack.i18n ("Multiplayer~Missing_Host"));
+		if (hostNotInSavegame) addInfoEntry (lngPack.i18n ("Multiplayer~Missing_Host"));
 		for (const auto& player : missingPlayers)
 		{
 			addInfoEntry (lngPack.i18n ("Multiplayer~Missing_Player", player.getName()));
@@ -395,7 +395,7 @@ void cWindowNetworkLobby::updateMap()
 	{
 		while (cUnicodeFont::font->getTextWide (">" + mapName + "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)
 		{
-			utf8::pop_back(mapName);
+			utf8::pop_back (mapName);
 		}
 		mapName += "... (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";
 	}

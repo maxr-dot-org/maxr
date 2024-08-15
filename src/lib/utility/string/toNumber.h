@@ -27,7 +27,7 @@
 template <typename T>
 std::pair<std::optional<T>, std::size_t> parseIntegerT (std::string_view s)
 {
-	static_assert (std::is_integral_v <T>);
+	static_assert (std::is_integral_v<T>);
 	T n;
 	const auto [ptr, ec] = std::from_chars (s.data(), s.data() + s.size(), n);
 	if (ec != std::errc{})
@@ -60,6 +60,5 @@ inline std::optional<long long> toLongLong (std::string_view s)
 {
 	return toIntegerT<long long> (s);
 }
-
 
 #endif // utility_string_toNumberH

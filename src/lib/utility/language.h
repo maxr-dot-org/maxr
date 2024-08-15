@@ -38,7 +38,7 @@ class cLanguage
 public:
 	cLanguage();
 	cLanguage (const cLanguage&) = delete;
-	cLanguage& operator=(const cLanguage&) = delete;
+	cLanguage& operator= (const cLanguage&) = delete;
 
 	void setLanguagesFolder (const std::filesystem::path&);
 

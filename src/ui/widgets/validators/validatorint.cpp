@@ -44,7 +44,7 @@ eValidatorState cValidatorInt::validate (const std::string& text) const
 {
 	if (text.empty()) return eValidatorState::Intermediate;
 
-	if (ranges::any_of (text, [](int c) {return !std::isdigit (c);}))
+	if (ranges::any_of (text, [] (int c) { return !std::isdigit (c); }))
 	{
 		return eValidatorState::Invalid;
 	}

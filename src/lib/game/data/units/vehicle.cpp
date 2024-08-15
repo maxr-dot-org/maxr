@@ -252,10 +252,12 @@ void cVehicle::refreshData()
 //------------------------------------------------------------------------------
 int cVehicle::getPossibleShotCountForSpeed (int speed) const
 {
-	if (staticData->canAttack == false) {
+	if (staticData->canAttack == false)
+	{
 		return 0;
 	}
-	if (getStaticData().canDriveAndFire) {
+	if (getStaticData().canDriveAndFire)
+	{
 		return data.getShotsMax();
 	}
 	const int s = speed * data.getShotsMax() / data.getSpeedMax();
@@ -268,7 +270,7 @@ int cVehicle::getPossibleShotCountForSpeed (int speed) const
 void cVehicle::DecSpeed (int value)
 {
 	data.setSpeed (data.getSpeed() - value);
-	data.setShots (std::min (data.getShots(), getPossibleShotCountForSpeed(data.getSpeed())));
+	data.setShots (std::min (data.getShots(), getPossibleShotCountForSpeed (data.getSpeed())));
 }
 
 //------------------------------------------------------------------------------
@@ -337,7 +339,7 @@ bool cVehicle::doSurvey (const cMap& map)
 	auto& owner = *getOwner();
 	bool resourceFound = false;
 
-	for (const cPosition& position : map.staticMap->collectPositions (getArea(1)))
+	for (const cPosition& position : map.staticMap->collectPositions (getArea (1)))
 	{
 		if (!owner.hasResourceExplored (position) && map.getResource (position).typ != eResourceType::None)
 		{

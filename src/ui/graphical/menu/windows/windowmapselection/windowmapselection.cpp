@@ -29,10 +29,10 @@
 #include "ui/uidefines.h"
 #include "ui/widgets/image.h"
 #include "ui/widgets/label.h"
-#include "utility/string/utf-8.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
 #include "utility/os.h"
+#include "utility/string/utf-8.h"
 
 //------------------------------------------------------------------------------
 cWindowMapSelection::cWindowMapSelection() :
@@ -173,7 +173,7 @@ void cWindowMapSelection::updateMaps()
 			{
 				while (font->getTextWide (">" + mapName + "..." + mapSizeTxt + "<") > 140)
 				{
-					utf8::pop_back(mapName);
+					utf8::pop_back (mapName);
 				}
 				mapName += "...";
 			}

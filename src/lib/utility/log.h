@@ -29,7 +29,6 @@
 class cLog
 {
 public:
-
 	void info (const std::string& msg);
 	void warn (const std::string& msg);
 	void debug (const std::string& msg);

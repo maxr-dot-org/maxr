@@ -290,7 +290,7 @@ int cSubBase::getResource (eResourceType storeResType) const
 		case eResourceType::Gold:
 			return stored.gold;
 		default:
-			throw std::runtime_error("unreachable");
+			throw std::runtime_error ("unreachable");
 	}
 }
 

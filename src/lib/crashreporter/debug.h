@@ -43,9 +43,12 @@ void CR_INIT_CRASHREPORTING();
 
 #else
 
-inline void CR_ENABLE_CRASH_RPT_CURRENT_THREAD() {}
-inline void CR_EMULATE_CRASH() {}
-inline void CR_INIT_CRASHREPORTING() {}
+inline void CR_ENABLE_CRASH_RPT_CURRENT_THREAD()
+{}
+inline void CR_EMULATE_CRASH()
+{}
+inline void CR_INIT_CRASHREPORTING()
+{}
 
 #endif
 

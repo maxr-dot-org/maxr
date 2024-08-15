@@ -33,7 +33,8 @@ class cRgbColor
 {
 public:
 	constexpr cRgbColor() = default;
-	constexpr cRgbColor (unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 0xFF) : r (red),
+	constexpr cRgbColor (unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 0xFF) :
+		r (red),
 		g (green),
 		b (blue),
 		a (alpha)

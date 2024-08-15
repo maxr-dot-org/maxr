@@ -115,8 +115,9 @@ void cLabel::updateDisplayInformation()
 	if (surface == nullptr) return;
 
 	auto font = cUnicodeFont::font.get();
-	drawLines = wordWrap ? font->breakText (text, getSize().x(), fontType): std::vector{text};
-	if (shorten) {
+	drawLines = wordWrap ? font->breakText (text, getSize().x(), fontType) : std::vector{text};
+	if (shorten)
+	{
 		drawLines = ranges::Transform (drawLines, [&] (const auto& s) { return font->shortenStringToSize (s, surface->w, fontType); });
 	}
 

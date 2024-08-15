@@ -22,7 +22,6 @@
 #include "game/data/units/landingunit.h"
 #include "game/logic/client.h"
 #include "game/startup/gamepreparation.h"
-#include "ui/widgets/application.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/menu/control/network/networkgame.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
@@ -31,6 +30,7 @@
 #include "ui/graphical/menu/windows/windowload/windowload.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/graphical/menu/windows/windownetworklobbyclient/windownetworklobbyclient.h"
+#include "ui/widgets/application.h"
 #include "utility/language.h"
 #include "utility/log.h"
 

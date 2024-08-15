@@ -157,7 +157,8 @@ void cBox<PointType>::resize (const PointType& newSize)
 	maxCorner = minCorner + newSize;
 	if constexpr (std::is_integral<typename PointType::value_type>::value)
 	{
-		if constexpr (std::is_unsigned<typename PointType::value_type>::value) {
+		if constexpr (std::is_unsigned<typename PointType::value_type>::value)
+		{
 			for (size_t d = 0; d < PointType::const_size::value; ++d)
 			{
 				assert (newSize[d] != 0);

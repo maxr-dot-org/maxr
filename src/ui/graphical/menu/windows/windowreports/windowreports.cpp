@@ -502,7 +502,7 @@ void cWindowReports::initializeScorePlot()
 			minScore = std::min (minScore, extrapolate (*player, turnClock->getTurn(), turn));
 		}
 	}
-	maxScore = std::max(maxScore, minScore + 10);
+	maxScore = std::max (maxScore, minScore + 10);
 
 	const cRgbColor axisColor (164, 164, 164);
 	const cRgbColor limitColor (128, 128, 128);

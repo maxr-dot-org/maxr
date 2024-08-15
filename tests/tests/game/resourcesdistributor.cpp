@@ -33,7 +33,7 @@ OStream& operator<< (OStream& os, const sMiningResource& res)
 }
 
 //------------------------------------------------------------------------------
-bool operator<(eResourceType lhs, eResourceType rhs)
+bool operator< (eResourceType lhs, eResourceType rhs)
 {
 	return int (lhs) < int (rhs);
 }

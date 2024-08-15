@@ -42,7 +42,8 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 {
 	if (unitData == nullptr)
 	{
-		if (staticData) {
+		if (staticData)
+		{
 			data.setId (staticData->ID);
 		}
 	}
@@ -294,7 +295,7 @@ uint32_t cUnit::getChecksum (uint32_t crc) const
 }
 
 //------------------------------------------------------------------------------
-cBox<cPosition> cUnit::getArea(int range) const
+cBox<cPosition> cUnit::getArea (int range) const
 {
 	const auto offset = getIsBig() ? 1 + range : range;
 	return {position.relative (-range, -range), position.relative (offset, offset)};
@@ -525,7 +526,7 @@ void cUnit::detectOtherUnits (const cMap& map) const
 {
 	if (!owner || staticData->canDetectStealthOn == eTerrainFlag::None) return;
 
-	for (const cPosition& pos : map.staticMap->collectPositions (getArea(data.getScan())))
+	for (const cPosition& pos : map.staticMap->collectPositions (getArea (data.getScan())))
 	{
 		const int scanSquared = data.getScan() * data.getScan();
 		if ((getPosition() - pos).l2NormSquared() > scanSquared) continue;

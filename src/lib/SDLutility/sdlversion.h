@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #ifndef SDLutility_sdlversionH
-# define SDLutility_sdlversionH
+#define SDLutility_sdlversionH
 
 void logSDLVersions();
 

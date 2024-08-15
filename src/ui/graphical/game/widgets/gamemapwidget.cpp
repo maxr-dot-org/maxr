@@ -40,7 +40,6 @@
 #include "resources/sound.h"
 #include "resources/uidata.h"
 #include "settings.h"
-#include "ui/widgets/application.h"
 #include "ui/graphical/game/animations/animation.h"
 #include "ui/graphical/game/animations/animationdither.h"
 #include "ui/graphical/game/animations/animationstartup.h"
@@ -69,6 +68,7 @@
 #include "ui/sound/game/fxsound.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/application.h"
 #include "utility/indexiterator.h"
 #include "utility/listhelpers.h"
 #include "utility/mathtools.h"
@@ -1478,7 +1478,7 @@ void cGameMapWidget::drawExitPointsIf (const cUnit& unit, const std::function<bo
 {
 	if (!mapView) return;
 
-	for (const auto& adjacentPosition : staticMap->collectAroundPositions(unit.getPosition(), unit.getIsBig()))
+	for (const auto& adjacentPosition : staticMap->collectAroundPositions (unit.getPosition(), unit.getIsBig()))
 	{
 		if (predicate (adjacentPosition))
 		{
@@ -1660,7 +1660,8 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 			SDL_Rect shotDest = dest;
 			shotDest.x += (zoomedTileSize.x() - shotCount * (src.w + 2)) / 2;
 			shotDest.y += zoomedTileSize.y() - narrow_cast<int> ((src.h + 4) * getZoomFactor());
-			for (int i = 0; i != shotCount; ++i) {
+			for (int i = 0; i != shotCount; ++i)
+			{
 				SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, cVideo::buffer, &shotDest);
 				shotDest.x += narrow_cast<int> ((src.w + 2) * getZoomFactor());
 			}

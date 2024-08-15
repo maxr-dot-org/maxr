@@ -75,7 +75,7 @@ class cWaveFile
 {
 public:
 	cWaveFile() = default;
-	cWaveFile(const cWaveFile&) = delete;
+	cWaveFile (const cWaveFile&) = delete;
 	~cWaveFile();
 	cWaveFile& operator= (const cWaveFile&) = delete;
 

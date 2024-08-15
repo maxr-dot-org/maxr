@@ -94,7 +94,7 @@ struct sGameOverStat
 		// clang-format on
 	}
 
-	uint32_t getChecksum(uint32_t crc) const
+	uint32_t getChecksum (uint32_t crc) const
 	{
 		crc = calcCheckSum (builtFactoriesCount, crc);
 		crc = calcCheckSum (builtMineStationCount, crc);

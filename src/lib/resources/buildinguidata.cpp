@@ -116,7 +116,7 @@ namespace
 //------------------------------------------------------------------------------
 void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, const cPlayer* owner, int frameNr, int alpha) const
 {
-	render_simple(surface, dest, zoomFactor, owner ? owner->getClan() : -1, owner ? std::make_optional(owner->getColor()) : std::nullopt, frameNr, alpha);
+	render_simple (surface, dest, zoomFactor, owner ? owner->getClan() : -1, owner ? std::make_optional (owner->getColor()) : std::nullopt, frameNr, alpha);
 }
 
 //------------------------------------------------------------------------------

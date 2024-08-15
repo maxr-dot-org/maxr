@@ -30,44 +30,40 @@ cUnitsData UnitsDataGlobal;
 namespace serialization
 {
 	const std::vector<std::pair<eMuzzleType, const char*>>
-	sEnumStringMapping<eMuzzleType>::m =
-	{
-		{eMuzzleType::None, "None"},
-		{eMuzzleType::Big, "Big"},
-		{eMuzzleType::Rocket, "Rocket"},
-		{eMuzzleType::Small, "Small"},
-		{eMuzzleType::Med, "Med"},
-		{eMuzzleType::MedLong, "MedLong"},
-		{eMuzzleType::RocketCluster, "RocketCluster"},
-		{eMuzzleType::Torpedo, "Torpedo"},
-		{eMuzzleType::Sniper, "Sniper"}
-	};
+		sEnumStringMapping<eMuzzleType>::m =
+			{
+				{eMuzzleType::None, "None"},
+				{eMuzzleType::Big, "Big"},
+				{eMuzzleType::Rocket, "Rocket"},
+				{eMuzzleType::Small, "Small"},
+				{eMuzzleType::Med, "Med"},
+				{eMuzzleType::MedLong, "MedLong"},
+				{eMuzzleType::RocketCluster, "RocketCluster"},
+				{eMuzzleType::Torpedo, "Torpedo"},
+				{eMuzzleType::Sniper, "Sniper"}};
 	const std::vector<std::pair<eSurfacePosition, const char*>>
-	sEnumStringMapping<eSurfacePosition>::m =
-	{
-		{eSurfacePosition::BeneathSea, "BeneathSea"},
-		{eSurfacePosition::AboveSea, "AboveSea"},
-		{eSurfacePosition::Base, "Base"},
-		{eSurfacePosition::AboveBase, "AboveBase"},
-		{eSurfacePosition::Ground, "Ground"},
-		{eSurfacePosition::Above, "Above"}
-	};
+		sEnumStringMapping<eSurfacePosition>::m =
+			{
+				{eSurfacePosition::BeneathSea, "BeneathSea"},
+				{eSurfacePosition::AboveSea, "AboveSea"},
+				{eSurfacePosition::Base, "Base"},
+				{eSurfacePosition::AboveBase, "AboveBase"},
+				{eSurfacePosition::Ground, "Ground"},
+				{eSurfacePosition::Above, "Above"}};
 	const std::vector<std::pair<eOverbuildType, const char*>>
-	sEnumStringMapping<eOverbuildType>::m =
-	{
-		{eOverbuildType::No, "No"},
-		{eOverbuildType::Yes, "Yes"},
-		{eOverbuildType::YesNRemove, "YesNRemove"}
-	};
+		sEnumStringMapping<eOverbuildType>::m =
+			{
+				{eOverbuildType::No, "No"},
+				{eOverbuildType::Yes, "Yes"},
+				{eOverbuildType::YesNRemove, "YesNRemove"}};
 	const std::vector<std::pair<eStorageUnitsImageType, const char*>>
-	sEnumStringMapping<eStorageUnitsImageType>::m =
-	{
-		{eStorageUnitsImageType::None, "None"},
-		{eStorageUnitsImageType::Tank, "Tank"},
-		{eStorageUnitsImageType::Plane, "Plane"},
-		{eStorageUnitsImageType::Ship, "Ship"},
-		{eStorageUnitsImageType::Human, "Human"}
-	};
+		sEnumStringMapping<eStorageUnitsImageType>::m =
+			{
+				{eStorageUnitsImageType::None, "None"},
+				{eStorageUnitsImageType::Tank, "Tank"},
+				{eStorageUnitsImageType::Plane, "Plane"},
+				{eStorageUnitsImageType::Ship, "Ship"},
+				{eStorageUnitsImageType::Human, "Human"}};
 
 } // namespace serialization
 //------------------------------------------------------------------------------

@@ -26,8 +26,8 @@
 #include <SDL.h>
 #include <algorithm>
 #include <array>
-#include <iterator>
 #include <fstream>
+#include <iterator>
 #include <string>
 #include <vector>
 

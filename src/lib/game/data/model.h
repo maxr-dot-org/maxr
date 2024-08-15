@@ -223,7 +223,7 @@ public:
 			else
 			{
 				std::vector<unsigned char> buffer;
-				cBinaryArchiveOut out(buffer);
+				cBinaryArchiveOut out (buffer);
 				out << players[i];
 				cBinaryArchiveIn in (buffer.data(), buffer.size());
 				in >> *playerList[i];
@@ -266,7 +266,7 @@ public:
 
 		int activeTurnPlayerId;
 		archive >> NVP (activeTurnPlayerId);
-		activeTurnPlayer = getPlayer(activeTurnPlayerId);
+		activeTurnPlayer = getPlayer (activeTurnPlayerId);
 
 		archive >> NVP (helperJobs);
 		helperJobs.postLoad (*this);

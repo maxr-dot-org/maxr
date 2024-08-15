@@ -29,7 +29,7 @@
 namespace
 {
 	constexpr std::chrono::milliseconds doubleClickTime{500};
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 cMouse::cMouse()

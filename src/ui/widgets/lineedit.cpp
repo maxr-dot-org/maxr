@@ -67,7 +67,7 @@ void cLineEdit::setText (std::string text_)
 		}
 	}
 	resetTextPosition();
-	textEdited(text);
+	textEdited (text);
 	textSet();
 }
 
@@ -344,7 +344,7 @@ void cLineEdit::deleteRight()
 		utf8::increasePos (text, index);
 		text.erase (cursorPos, index - cursorPos);
 		endOffset -= index - cursorPos;
-		doPosIncrease(endOffset, endOffset);
+		doPosIncrease (endOffset, endOffset);
 		textEdited (text);
 	}
 }

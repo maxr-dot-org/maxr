@@ -213,7 +213,7 @@ std::vector<cVehicle*> cUnitSelection::getSelectedVehicles() const
 	std::vector<cVehicle*> result;
 	for (const auto& [unit, _] : selectedUnits)
 	{
-		if (auto* vehicle = dynamic_cast<cVehicle*>(unit))
+		if (auto* vehicle = dynamic_cast<cVehicle*> (unit))
 		{
 			result.push_back (vehicle);
 		}

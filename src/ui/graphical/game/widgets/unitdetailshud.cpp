@@ -138,7 +138,7 @@ void cUnitDetailsHud::reset()
 					break;
 				default:
 				case eResourceType::None:
-					throw std::runtime_error("unreachable");
+					throw std::runtime_error ("unreachable");
 			}
 
 			drawRow (1, symbolType, unit->getStoredResources(), staticData.storageResMax, lngPack.i18n ("Others~Cargo_7"));

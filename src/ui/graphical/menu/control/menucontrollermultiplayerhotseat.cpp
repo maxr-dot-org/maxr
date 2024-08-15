@@ -27,7 +27,6 @@
 #include "game/startup/gamepreparation.h"
 #include "resources/playercolor.h"
 #include "resources/uidata.h"
-#include "ui/widgets/application.h"
 #include "ui/graphical/menu/control/local/hotseat/localhotseatgamenew.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
@@ -37,6 +36,7 @@
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/graphical/menu/windows/windowplayerselection/windowplayerselection.h"
+#include "ui/widgets/application.h"
 #include "utility/language.h"
 
 #include <cassert>

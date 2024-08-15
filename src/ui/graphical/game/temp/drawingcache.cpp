@@ -19,6 +19,7 @@
 
 #include "drawingcache.h"
 
+#include "SDLutility/tosdl.h"
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "game/data/player/player.h"
@@ -29,7 +30,6 @@
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "settings.h"
-#include "SDLutility/tosdl.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/widgets/framecounter.h"
 #include "utility/mathtools.h"
@@ -120,7 +120,7 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned
 
 	surface = UniqueSurface (SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
-	SDL_FillRect (surface.get(), nullptr, toSdlAlphaColor(cRgbColor::transparent(), *surface));
+	SDL_FillRect (surface.get(), nullptr, toSdlAlphaColor (cRgbColor::transparent(), *surface));
 }
 
 //------------------------------------------------------------------------------

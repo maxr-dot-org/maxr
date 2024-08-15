@@ -33,6 +33,7 @@
 #include <filesystem>
 
 #if 1
+// clang-format off
 /*
  * The following stuff is part of the GNU LIBICONV Library.
  * Copyright (C) 1999-2001 Free Software Foundation, Inc.
@@ -317,7 +318,7 @@ static const unsigned short iso8859_16_2uni[96] =
 	0x0111, 0x0144, 0x00f2, 0x00f3, 0x00f4, 0x0151, 0x00f6, 0x015b,
 	0x0171, 0x00f9, 0x00fa, 0x00fb, 0x00fc, 0x0119, 0x021b, 0x00ff,
 };
-
+// clang-format on
 #endif
 
 //------------------------------------------------------------------------------
@@ -515,7 +516,7 @@ cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType fonttype)
 
 //------------------------------------------------------------------------------
 UniqueSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
-                                              eUnicodeFontType fonttype)
+                                                eUnicodeFontType fonttype)
 {
 	// build the filename from the information
 	std::string filename = "latin_";
@@ -963,7 +964,7 @@ std::vector<std::string> cUnicodeFont::breakText (std::string_view text, int max
 		while (next != nextLine)
 		{
 			auto candidate = std::find_if (next + 1, nextLine, isSpace);
-			const auto size = getTextWide ({&*it, narrow_cast<std::size_t>(candidate - it)}, fontType);
+			const auto size = getTextWide ({&*it, narrow_cast<std::size_t> (candidate - it)}, fontType);
 			if (size > maximalWidth)
 			{
 				break;

@@ -215,7 +215,10 @@ void cBuilding::CheckNeighbours (const cMap& map)
 	{ \
 		const cBuilding* b = map.getField (cPosition (x, y)).getTopBuilding(); \
 		if (b && b->getOwner() && b->getOwner() == getOwner() && b->getStaticData().connectsToBase) \
-		{m = true;}else{m = false;} \
+		{ \
+			m = true; \
+		} \
+		else { m = false; } \
 	}
 
 	if (!getIsBig())

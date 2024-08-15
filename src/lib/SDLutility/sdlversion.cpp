@@ -19,16 +19,16 @@
 
 #include "sdlversion.h"
 
+#include "utility/log.h"
+
 #include <SDL.h>
 #include <SDL_mixer.h>
 #include <SDL_net.h>
 
-#include "utility/log.h"
-
 namespace
 {
 	//--------------------------------------------------------------------------
-	std::string to_string(const SDL_version& version)
+	std::string to_string (const SDL_version& version)
 	{
 		return std::to_string (version.major) + "." + std::to_string (version.minor) + "." + std::to_string (version.patch);
 	}
@@ -36,8 +36,8 @@ namespace
 	//--------------------------------------------------------------------------
 	bool are_equal (const SDL_version& v1, const SDL_version& v2)
 	{
-		auto as_tuple = [](const auto& v) { return std::tuple (v.major, v.minor, v.patch); };
-		return as_tuple(v1) == as_tuple(v2);
+		auto as_tuple = [] (const auto& v) { return std::tuple (v.major, v.minor, v.patch); };
+		return as_tuple (v1) == as_tuple (v2);
 	}
 
 	//--------------------------------------------------------------------------
@@ -105,7 +105,7 @@ namespace
 		return version;
 	}
 
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 void logSDLVersions()

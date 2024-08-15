@@ -21,7 +21,6 @@
 
 #include "game/startup/gamepreparation.h"
 #include "game/startup/lobbyclient.h"
-#include "ui/widgets/application.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
@@ -29,6 +28,7 @@
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 #include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
+#include "ui/widgets/application.h"
 #include "utility/language.h"
 #include "utility/listhelpers.h"
 

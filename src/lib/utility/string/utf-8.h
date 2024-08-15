@@ -37,7 +37,7 @@ namespace utf8
 
 	//--------------------------------------------------------------------------
 	template <typename F>
-	void for_each(const ::std::string_view& text, F f)
+	void for_each (const ::std::string_view& text, F f)
 	{
 		for (::std::size_t i = 0; i != text.size(); /* Empty */)
 		{

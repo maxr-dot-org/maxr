@@ -77,8 +77,8 @@ void cAttackJob::run (cModel& model)
 		releaseTargets (model);
 		state = eAJState::Finished;
 	}
-	auto* aggressor = model.getUnitFromID(aggressorId);
-	assert(aggressor != nullptr);
+	auto* aggressor = model.getUnitFromID (aggressorId);
+	assert (aggressor != nullptr);
 	switch (state)
 	{
 		case eAJState::Rotating:

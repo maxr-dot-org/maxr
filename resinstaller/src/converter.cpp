@@ -76,10 +76,10 @@ void cImage::resampleFile()
 	int iMaxHotX = 0, iMaxHotY = 0, iMaxRight = 0, iMaxBottom = 0;
 	for (const auto& image : Images)
 	{
-		iMaxHotX = std::max(iMaxHotX, (int)image.sUHotX);
+		iMaxHotX = std::max (iMaxHotX, (int) image.sUHotX);
 		iMaxHotY = std::max (iMaxHotY, (int) image.sUHotY);
-		iMaxRight = std::max(iMaxRight, image.sWidth - image.sUHotX);
-		iMaxBottom = std::max(iMaxBottom, image.sHeight - image.sUHotY);
+		iMaxRight = std::max (iMaxRight, image.sWidth - image.sUHotX);
+		iMaxBottom = std::max (iMaxBottom, image.sHeight - image.sUHotY);
 	}
 	sWidth = iMaxHotX + iMaxRight;
 	sHeight = iMaxHotY + iMaxBottom;
@@ -220,7 +220,7 @@ bool cImage::decodeSimpleImage()
 
 	Images[0].data.resize (sLocWidth * sLocHeight);
 	SDL_RWread (res, Images[0].data.data(), sizeof (unsigned char), sLocWidth * sLocHeight);
-	Images[0].alpha.resize(sLocWidth * sLocHeight, 0);
+	Images[0].alpha.resize (sLocWidth * sLocHeight, 0);
 
 	return true;
 }
@@ -242,7 +242,7 @@ bool cImage::decodeMultiShadow()
 	{
 		return false;
 	}
-	std::vector <Sint32> lBounds (sCount);
+	std::vector<Sint32> lBounds (sCount);
 	for (Sint32 iPicIndex = 0; iPicIndex < sCount; iPicIndex++)
 	{
 		SDL_RWseek (res, lPos + 2 + iPicIndex * 4, SEEK_SET);
@@ -288,7 +288,7 @@ bool cImage::decodeMultiShadow()
 		Images[iPicIndex].sUHotY = sLocHotY;
 
 		Images[iPicIndex].data.resize (sLocWidth * sLocHeight, 0);
-		Images[iPicIndex].alpha.resize(sLocWidth * sLocHeight, 255);
+		Images[iPicIndex].alpha.resize (sLocWidth * sLocHeight, 255);
 
 		if (lBegin + 8 + sLocHeight * 4 > lEnd)
 		{
@@ -397,7 +397,7 @@ bool cImage::decodeMultiImage()
 		Images[iPicIndex].sUHotY = sLocHotY;
 
 		Images[iPicIndex].data.resize (sLocWidth * sLocHeight, 0);
-		Images[iPicIndex].alpha.resize(sLocWidth * sLocHeight, 255);
+		Images[iPicIndex].alpha.resize (sLocWidth * sLocHeight, 255);
 
 		if (lBegin + 8 + sLocHeight * 4 > lEnd)
 		{
@@ -454,7 +454,6 @@ bool cImage::decodeMultiImage()
 //------------------------------------------------------------------------------
 bool cImage::decodeBigImage()
 {
-
 	if (lLenght < 776)
 	{
 		return false;
@@ -650,7 +649,7 @@ void saveAllFiles()
 		Image.lLenght = (Sint32) SDL_ReadLE32 (res);
 
 		//copy color table
-		Image.palette.assign(std::begin(orig_palette), std::end(orig_palette));
+		Image.palette.assign (std::begin (orig_palette), std::end (orig_palette));
 
 		//extract image
 		Image.decodeFile();
@@ -722,7 +721,6 @@ void copyImageFromFLC (const std::filesystem::path& fileName, const std::filesys
 //------------------------------------------------------------------------------
 void resizeSurface (SDL_Surface*& surface, int x, int y, int h, int w)
 {
-
 	if (surface->format->BitsPerPixel != 8)
 		return;
 

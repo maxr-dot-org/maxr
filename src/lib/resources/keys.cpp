@@ -29,11 +29,10 @@ namespace serialization
 {
 	//--------------------------------------------------------------------------
 	const std::vector<std::pair<eMouseStyle, const char*>>
-	sEnumStringMapping<eMouseStyle>::m =
-	{
-		{eMouseStyle::Modern, "Modern"},
-		{eMouseStyle::OldSchool, "OldSchool"}
-	};
+		sEnumStringMapping<eMouseStyle>::m =
+			{
+				{eMouseStyle::Modern, "Modern"},
+				{eMouseStyle::OldSchool, "OldSchool"}};
 } // namespace serialization
 //------------------------------------------------------------------------------
 cKeysList::cKeysList() :

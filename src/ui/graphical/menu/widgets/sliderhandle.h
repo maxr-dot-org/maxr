@@ -47,7 +47,6 @@ public:
 	cSignal<void()> moved;
 
 private:
-
 	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
 	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
 	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;

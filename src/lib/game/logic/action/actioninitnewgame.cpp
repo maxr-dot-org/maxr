@@ -268,7 +268,7 @@ namespace
 				const eResourceType type = static_cast<eResourceType> ((p.y() % 2) * 2 + (p.x() % 2));
 
 				if (type != eResourceType::None && !map.isBlocked (p)
-					&& ((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold))
+				    && ((hasGold && i >= playerCount) || resSpotTypes[i] == eResourceType::Gold || type != eResourceType::Gold))
 				{
 					sResources res;
 					res.typ = type;

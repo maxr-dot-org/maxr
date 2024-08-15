@@ -356,7 +356,7 @@ std::vector<cPosition> cStaticMap::collectAroundPositions (const cPosition& posi
 			position.relative (1, 1)};
 	};
 	auto res = isBig ? aroundBigPositions() : aroundSmallPositions();
-	EraseIf (res, [this] (const auto& pos) { return !this->isValidPosition(pos); });
+	EraseIf (res, [this] (const auto& pos) { return !this->isValidPosition (pos); });
 	return res;
 }
 
@@ -617,7 +617,7 @@ void cMap::addBuilding (cBuilding& building)
 //------------------------------------------------------------------------------
 void cMap::addVehicle (cVehicle& vehicle)
 {
-	const cPosition position = vehicle.buildBigSavedPosition.value_or(vehicle.getPosition());
+	const cPosition position = vehicle.buildBigSavedPosition.value_or (vehicle.getPosition());
 	auto& field = getField (position);
 	if (vehicle.getStaticUnitData().factorAir > 0)
 	{
@@ -631,7 +631,7 @@ void cMap::addVehicle (cVehicle& vehicle)
 	if (vehicle.getIsBig())
 	{
 		const auto targetPosition = vehicle.getPosition();
-		vehicle.setPosition(*vehicle.buildBigSavedPosition);
+		vehicle.setPosition (*vehicle.buildBigSavedPosition);
 		vehicle.buildBigSavedPosition.reset();
 		moveVehicleBig (vehicle, targetPosition);
 	}
@@ -760,7 +760,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		}
 		else
 		{
-			const int notMovingPlanes = ranges::count_if (planes, [](const auto* plane) { return !plane->isUnitMoving(); });
+			const int notMovingPlanes = ranges::count_if (planes, [] (const auto* plane) { return !plane->isUnitMoving(); });
 			if (notMovingPlanes >= MAX_PLANES_PER_FIELD) return false;
 		}
 	}

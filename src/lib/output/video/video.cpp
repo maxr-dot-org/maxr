@@ -19,16 +19,16 @@
 
 #include "video.h"
 
+#include "SDLutility/tosdl.h"
+#include "SDLutility/uniquesurface.h"
 #include "input/keyboard/keyboard.h"
 #include "output/video/unifonts.h"
 #include "resources/pcx.h"
 #include "resources/uidata.h"
 #include "utility/log.h"
 #include "utility/mathtools.h"
-#include "utility/os.h"
-#include "SDLutility/tosdl.h"
-#include "SDLutility/uniquesurface.h"
 #include "utility/narrow_cast.h"
+#include "utility/os.h"
 #include "utility/thread/ismainthread.h"
 
 #include <SDL.h>

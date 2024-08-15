@@ -42,7 +42,7 @@ cGameTimer::cGameTimer() :
 	mutex()
 {
 	eventCounter = 0;
-	maxEventQueueSize = static_cast<unsigned>(-1);
+	maxEventQueueSize = static_cast<unsigned> (-1);
 	timerID = 0;
 }
 
@@ -251,7 +251,7 @@ void cGameTimerClient::run (cClient& client, cModel& model)
 	//collect some debug data
 	const unsigned int timeBuffer = getReceivedTime() - model.getGameTime();
 	const unsigned int tickPerFrame = std::min (timeBuffer, eventCounter); //assumes, that this function is called once per frame
-	                                                                       //and we are not running in the maxWorkingTime limit
+		//and we are not running in the maxWorkingTime limit
 
 	while (popEvent())
 	{
