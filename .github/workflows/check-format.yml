@@ -1,0 +1,30 @@
+name: Check source formatting
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '!**/*.yml'
+      - '.github/workflows/check-format.yml'
+      - '**/*.cpp'
+      - '**/*.c'
+      - '**/*.h'
+
+  pull_request:
+    paths:
+      - '!**/*.yml'
+      - '.github/workflows/check-format.yml'
+      - '**/*.cpp'
+      - '**/*.c'
+      - '**/*.h'
+
+jobs:
+  markdown-link-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: jidicula/clang-format-action@v4.13.0
+      with:
+        clang-format-version: '18'
+        exclude-regex: '^./mk/.*'
