@@ -178,6 +178,7 @@ void cMoveJob::stop (cVehicle& vehicle)
 	{
 		state = eMoveJobState::Finished;
 		vehicle.setMoving (false);
+		vehicle.bandPosition.reset();
 		vehicle.WalkFrame = 0;
 		vehicle.data.setSpeed (vehicle.data.getSpeed() + savedSpeed);
 	}
@@ -312,6 +313,7 @@ bool cMoveJob::recalculatePath (cModel& model, cVehicle& vehicle)
 	// no path to destination
 	state = eMoveJobState::Finished;
 	vehicle.setMoving (false);
+	vehicle.bandPosition.reset();
 	vehicle.WalkFrame = 0;
 	vehicle.moveJobBlocked();
 	return false;
