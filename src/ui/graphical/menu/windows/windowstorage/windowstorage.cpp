@@ -189,7 +189,7 @@ void cWindowStorage::updateUnitButtons (const cVehicle& storedUnit, size_t posit
 		repairButtons[positionIndex]->unlock();
 	else
 		repairButtons[positionIndex]->lock();
-	if (storedUnit.data.getVersion() != upgraded.getVersion() && metalBar->getValue() >= 1)
+	if (storedUnit.data.canBeUpgradedTo (upgraded) && metalBar->getValue() >= 1)
 		upgradeButtons[positionIndex]->unlock();
 	else
 		upgradeButtons[positionIndex]->lock();
@@ -202,7 +202,7 @@ void cWindowStorage::updateUnitName (const cVehicle& storedUnit, size_t position
 	auto name = getDisplayName (storedUnit);
 
 	const auto& upgraded = *storedUnit.getOwner()->getLastUnitData (storedUnit.data.getId());
-	if (storedUnit.data.getVersion() != upgraded.getVersion())
+	if (storedUnit.data.canBeUpgradedTo (upgraded))
 	{
 		name += "\n(" + lngPack.i18n ("Comp~Dated") + ")";
 	}
@@ -294,7 +294,7 @@ void cWindowStorage::updateGlobalButtons()
 
 			if (!vehicle->getOwner()) continue;
 			const auto& upgraded = *vehicle->getOwner()->getLastUnitData (vehicle->data.getId());
-			if (vehicle->data.getVersion() != upgraded.getVersion()) upgradeAllButton->unlock();
+			if (vehicle->data.canBeUpgradedTo (upgraded)) upgradeAllButton->unlock();
 		}
 	}
 }

@@ -48,12 +48,11 @@ void cActionUpgradeBuilding::execute (cModel& model) const
 	cSubBase& subbase = *building->subBase;
 	int availableMetal = subbase.getResourcesStored().metal;
 	cDynamicUnitData& upgradedData = *building->getOwner()->getLastUnitData (building->data.getId());
-	upgradedData.markLastVersionUsed();
 	cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	const int upgradeCost = uc.getMaterialCostForUpgrading (upgradedData.getBuildCost());
 
 	// first update the selected building
-	if (availableMetal >= upgradeCost && building->data.getVersion() < upgradedData.getVersion())
+	if (availableMetal >= upgradeCost && building->data.canBeUpgradedTo (upgradedData))
 	{
 		upgradedBuildings.push_back (building);
 		totalCosts += upgradeCost;
@@ -68,7 +67,7 @@ void cActionUpgradeBuilding::execute (cModel& model) const
 			if (b == building) continue;
 
 			// check unit version
-			if (b->data.getVersion() >= upgradedData.getVersion()) continue; // already up to date
+			if (!b->data.canBeUpgradedTo (upgradedData)) continue; // already up to date
 
 			// check upgrade costs
 			if (upgradeCost > availableMetal) break;
@@ -82,6 +81,7 @@ void cActionUpgradeBuilding::execute (cModel& model) const
 	// execute the upgrades
 	for (auto b : upgradedBuildings)
 	{
+		upgradedData.markLastVersionUsed();
 		// update scan & sentry
 		if (b->getOwner() && b->data.getScan() < upgradedData.getScan())
 		{

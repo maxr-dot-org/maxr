@@ -50,8 +50,7 @@ void cActionUpgradeVehicle::execute (cModel& model) const
 		{
 			// check unit version
 			cDynamicUnitData& upgradedData = *vehicle->getOwner()->getLastUnitData (vehicle->data.getId());
-			upgradedData.markLastVersionUsed();
-			if (vehicle->data.getVersion() >= upgradedData.getVersion()) continue; // already up to date
+			if (!vehicle->data.canBeUpgradedTo (upgradedData)) continue; // already up to date
 
 			// check upgrade costs
 			cUpgradeCalculator& uc = cUpgradeCalculator::instance();
@@ -59,6 +58,7 @@ void cActionUpgradeVehicle::execute (cModel& model) const
 			if (upgradeCost > containingBuilding->subBase->getResourcesStored().metal) continue;
 
 			// ok, execute upgrade
+			upgradedData.markLastVersionUsed();
 			vehicle->upgradeToCurrentVersion();
 			containingBuilding->subBase->addMetal (-upgradeCost);
 			result[vehicle->data.getId()].costs += upgradeCost;
