@@ -111,6 +111,8 @@ private:
 	static int serverThreadCallback (void* arg);
 	void run();
 
+	void run (const cNetMessage&);
+
 private:
 	cModel model;
 

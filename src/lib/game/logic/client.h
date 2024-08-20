@@ -140,6 +140,7 @@ public:
 	void run();
 
 private:
+	bool handleNetMessage (cNetMessage&);
 	/**
 	* sends a serialized copy of the netmessage to the server.
 	*/

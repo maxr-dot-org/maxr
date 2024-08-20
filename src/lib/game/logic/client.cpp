@@ -158,113 +158,123 @@ void cClient::handleNetMessages()
 	std::unique_ptr<cNetMessage> message;
 	while (eventQueue.try_pop (message))
 	{
-		if (message->getType() != eNetMessageType::GAMETIME_SYNC_SERVER && message->getType() != eNetMessageType::RESYNC_MODEL)
+		if (handleNetMessage (*message))
 		{
-			nlohmann::json json;
-			cJsonArchiveOut jsonarchive (json);
-			jsonarchive << *message;
-			NetLog.debug (getActivePlayer().getName() + ": <-- " + json.dump (-1) + " @" + std::to_string (model.getGameTime()));
+			return;
 		}
+	}
+}
 
-		switch (message->getType())
+//------------------------------------------------------------------------------
+bool cClient::handleNetMessage (cNetMessage& message)
+{
+	if (message.getType() != eNetMessageType::GAMETIME_SYNC_SERVER && message.getType() != eNetMessageType::RESYNC_MODEL)
+	{
+		nlohmann::json json;
+		cJsonArchiveOut jsonarchive (json);
+		jsonarchive << message;
+		NetLog.debug (getActivePlayer().getName() + ": <-- " + json.dump (-1) + " @" + std::to_string (model.getGameTime()));
+	}
+
+	switch (message.getType())
+	{
+		case eNetMessageType::REPORT:
 		{
-			case eNetMessageType::REPORT:
-			{
-				if (message->playerNr != -1 && model.getPlayer (message->playerNr) == nullptr) continue;
+			if (message.playerNr != -1 && model.getPlayer (message.playerNr) == nullptr) return false;
 
-				cNetMessageReport* chatMessage = static_cast<cNetMessageReport*> (message.get());
-				reportMessageReceived (chatMessage->playerNr, chatMessage->report, activePlayer->getId());
-			}
-			break;
-			case eNetMessageType::ACTION:
-			{
-				if (model.getPlayer (message->playerNr) == nullptr) continue;
+			cNetMessageReport& chatMessage = static_cast<cNetMessageReport&> (message);
+			reportMessageReceived (chatMessage.playerNr, chatMessage.report, activePlayer->getId());
+			return false;
+		}
+		case eNetMessageType::ACTION:
+		{
+			if (model.getPlayer (message.playerNr) == nullptr) return false;
 
-				const cAction* action = static_cast<cAction*> (message.get());
-				action->execute (model);
-			}
-			break;
-			case eNetMessageType::GAMETIME_SYNC_SERVER:
+			const cAction& action = static_cast<const cAction&> (message);
+			action.execute (model);
+			return false;
+		}
+		case eNetMessageType::GAMETIME_SYNC_SERVER:
+		{
+			const auto& syncMessage = static_cast<const cNetMessageSyncServer&> (message);
+			gameTimer->handleSyncMessage (syncMessage, model.getGameTime());
+			return true; //stop processing messages after receiving a sync message. Gametime needs to be increased before handling the next message.
+		}
+		case eNetMessageType::RANDOM_SEED:
+		{
+			const auto& msg = static_cast<const cNetMessageRandomSeed&> (message);
+			model.randomGenerator.seed (msg.seed);
+			return false;
+		}
+		case eNetMessageType::REQUEST_GUI_SAVE_INFO:
+		{
+			const auto& msg = static_cast<const cNetMessageRequestGUISaveInfo&> (message);
+			guiSaveInfoRequested (msg.slot, msg.savingID);
+			return false;
+		}
+		case eNetMessageType::GUI_SAVE_INFO:
+		{
+			const auto& msg = static_cast<const cNetMessageGUISaveInfo&> (message);
+			if (msg.playerNr != activePlayer->getId()) return false;
+			guiSaveInfoReceived (msg);
+			return false;
+		}
+		case eNetMessageType::RESYNC_MODEL:
+		{
+			NetLog.debug (" Client: Received model data for resynchronization");
+			const auto& msg = static_cast<const cNetMessageResyncModel&> (message);
+			try
 			{
-				const cNetMessageSyncServer* syncMessage = static_cast<cNetMessageSyncServer*> (message.get());
-				gameTimer->handleSyncMessage (*syncMessage, model.getGameTime());
-				return; //stop processing messages after receiving a sync message. Gametime needs to be increased before handling the next message.
+				msg.apply (model);
+				recreateSurveyorMoveJobs();
+				gameTimer->sendSyncMessage (*this, model.getGameTime(), 0, 0);
 			}
-			break;
-			case eNetMessageType::RANDOM_SEED:
+			catch (const std::runtime_error& e)
 			{
-				const cNetMessageRandomSeed* msg = static_cast<cNetMessageRandomSeed*> (message.get());
-				model.randomGenerator.seed (msg->seed);
+				NetLog.error (std::string (" Client: error loading received model data: ") + e.what());
 			}
-			break;
-			case eNetMessageType::REQUEST_GUI_SAVE_INFO:
+
+			//FIXME: deserializing model does not trigger signals on changed data members. Use this signal to trigger some gui updates
+			freezeModeChanged();
+			resynced();
+			return false;
+		}
+		case eNetMessageType::FREEZE_MODES:
+		{
+			const auto& msg = static_cast<const cNetMessageFreezeModes&> (message);
+
+			// don't overwrite waitForServer flag
+			const bool waitForServer = freezeModes.isEnabled (eFreezeMode::WaitForServer);
+			freezeModes = msg.freezeModes;
+			if (waitForServer) freezeModes.enable (eFreezeMode::WaitForServer);
+
+			for (const auto& [playerId, conn] : msg.playerStates)
 			{
-				const cNetMessageRequestGUISaveInfo* msg = static_cast<cNetMessageRequestGUISaveInfo*> (message.get());
-				guiSaveInfoRequested (msg->slot, msg->savingID);
-			}
-			break;
-			case eNetMessageType::GUI_SAVE_INFO:
-			{
-				const cNetMessageGUISaveInfo* msg = static_cast<cNetMessageGUISaveInfo*> (message.get());
-				if (msg->playerNr != activePlayer->getId()) continue;
-				guiSaveInfoReceived (*msg);
-			}
-			break;
-			case eNetMessageType::RESYNC_MODEL:
-			{
-				NetLog.debug (" Client: Received model data for resynchronization");
-				const cNetMessageResyncModel* msg = static_cast<cNetMessageResyncModel*> (message.get());
-				try
+				if (model.getPlayer (playerId) == nullptr)
 				{
-					msg->apply (model);
-					recreateSurveyorMoveJobs();
-					gameTimer->sendSyncMessage (*this, model.getGameTime(), 0, 0);
-				}
-				catch (const std::runtime_error& e)
-				{
-					NetLog.error (std::string (" Client: error loading received model data: ") + e.what());
-				}
-
-				//FIXME: deserializing model does not trigger signals on changed data members. Use this signal to trigger some gui updates
-				freezeModeChanged();
-				resynced();
-			}
-			break;
-			case eNetMessageType::FREEZE_MODES:
-			{
-				const cNetMessageFreezeModes* msg = static_cast<cNetMessageFreezeModes*> (message.get());
-
-				// don't overwrite waitForServer flag
-				bool waitForServer = freezeModes.isEnabled (eFreezeMode::WaitForServer);
-				freezeModes = msg->freezeModes;
-				if (waitForServer) freezeModes.enable (eFreezeMode::WaitForServer);
-
-				for (const auto& [playerId, conn] : msg->playerStates)
-				{
-					if (model.getPlayer (playerId) == nullptr)
-					{
-						NetLog.error (" Client: Invalid player id: " + std::to_string (playerId));
-						break;
-					}
-				}
-				if (msg->playerStates.size() != model.getPlayerList().size())
-				{
-					NetLog.error (" Client: Wrong size of playerState map " + std::to_string (msg->playerStates.size()));
+					NetLog.error (" Client: Invalid player id: " + std::to_string (playerId));
 					break;
 				}
-				playerConnectionStates = msg->playerStates;
-
-				freezeModeChanged();
 			}
-			break;
-			case eNetMessageType::TCP_CLOSE:
+			if (msg.playerStates.size() != model.getPlayerList().size())
 			{
-				connectionToServerLost();
+				NetLog.error (" Client: Wrong size of playerState map " + std::to_string (msg.playerStates.size()));
+				return false;
 			}
-			break;
-			default:
-				NetLog.warn (" Client: received unknown net message type");
-				break;
+			playerConnectionStates = msg.playerStates;
+
+			freezeModeChanged();
+			return false;
+		}
+		case eNetMessageType::TCP_CLOSE:
+		{
+			connectionToServerLost();
+			return false;
+		}
+		default:
+		{
+			NetLog.warn (" Client: received unknown net message type");
+			return false;
 		}
 	}
 }
