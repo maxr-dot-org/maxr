@@ -60,9 +60,7 @@ void cLobbyClient::pushMessage (std::unique_ptr<cNetMessage> message)
 //------------------------------------------------------------------------------
 std::unique_ptr<cNetMessage> cLobbyClient::popMessage()
 {
-	std::unique_ptr<cNetMessage> message;
-	messageQueue.try_pop (message);
-	return message;
+	return messageQueue.try_pop().value_or (nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -73,10 +71,9 @@ void cLobbyClient::run()
 		client->run();
 		return;
 	}
-	std::unique_ptr<cNetMessage> message;
-	while (messageQueue.try_pop (message))
+	while (const auto message = messageQueue.try_pop())
 	{
-		handleNetMessage (*message);
+		handleNetMessage (**message);
 	}
 }
 

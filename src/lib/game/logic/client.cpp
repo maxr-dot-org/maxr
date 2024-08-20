@@ -155,10 +155,9 @@ void cClient::runClientJobs()
 //------------------------------------------------------------------------------
 void cClient::handleNetMessages()
 {
-	std::unique_ptr<cNetMessage> message;
-	while (eventQueue.try_pop (message))
+	while (auto message = eventQueue.try_pop())
 	{
-		if (handleNetMessage (*message))
+		if (handleNetMessage (**message))
 		{
 			return;
 		}

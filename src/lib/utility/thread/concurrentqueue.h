@@ -22,6 +22,7 @@
 
 #include <deque>
 #include <mutex>
+#include <optional>
 
 template <typename T>
 class cConcurrentQueue
@@ -36,7 +37,7 @@ public:
 public:
 	void push (const T& value);
 	void push (T&& value);
-	bool try_pop (T& destination);
+	std::optional<T> try_pop();
 	void clear();
 
 	size_type safe_size() const;
@@ -67,16 +68,16 @@ void cConcurrentQueue<T>::push (T&& value)
 
 //------------------------------------------------------------------------------
 template <typename T>
-bool cConcurrentQueue<T>::try_pop (T& destination)
+std::optional<T> cConcurrentQueue<T>::try_pop()
 {
 	std::unique_lock<std::mutex> lock (mutex);
 
-	if (internalQueue.empty()) return false;
+	if (internalQueue.empty()) return std::nullopt;
 
-	destination = std::move (internalQueue.front());
+	auto res = std::move (internalQueue.front());
 	internalQueue.pop_front();
 
-	return true;
+	return res;
 }
 
 //------------------------------------------------------------------------------

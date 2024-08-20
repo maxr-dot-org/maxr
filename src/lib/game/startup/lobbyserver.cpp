@@ -67,9 +67,7 @@ void cLobbyServer::pushMessage (std::unique_ptr<cNetMessage> message)
 //------------------------------------------------------------------------------
 std::unique_ptr<cNetMessage> cLobbyServer::popMessage()
 {
-	std::unique_ptr<cNetMessage> message;
-	messageQueue.try_pop (message);
-	return message;
+	return messageQueue.try_pop().value_or (nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -136,11 +134,9 @@ eOpenServerResult cLobbyServer::startServer (int port)
 //------------------------------------------------------------------------------
 void cLobbyServer::run()
 {
-	std::unique_ptr<cNetMessage> message;
-
-	while (messageQueue.try_pop (message))
+	while (const auto message = messageQueue.try_pop())
 	{
-		handleNetMessage (*message);
+		handleNetMessage (**message);
 	}
 }
 

@@ -222,10 +222,9 @@ void cServer::run()
 {
 	while (!exit)
 	{
-		std::unique_ptr<cNetMessage> message;
-		while (eventQueue.try_pop (message))
+		while (const auto message = eventQueue.try_pop())
 		{
-			run (*message);
+			run (**message);
 		}
 
 		//TODO: gameinit: start timer, when all clients are ready
