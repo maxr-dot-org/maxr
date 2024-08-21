@@ -967,6 +967,16 @@ void cGameGuiController::connectClient (cClient& client)
 		if (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get())
 		{
 			playerGameGuiStates[activeClient->getActivePlayer().getId()].doneList.clear();
+
+			const auto player = getActivePlayer();
+			if (!player)
+			{
+				gameGui->getHud().setCanSelectNextUnit (false);
+				return;
+			}
+			const auto& unitSelection = gameGui->getGameMap().getUnitSelection();
+			const bool canSelectNextUnit = unitSelection.canSelectNextUnit (*player, playerGameGuiStates[player->getId()].doneList);
+			gameGui->getHud().setCanSelectNextUnit (canSelectNextUnit);
 		}
 
 		updateEndButtonState();
