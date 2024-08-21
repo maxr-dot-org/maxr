@@ -183,7 +183,7 @@ void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest,
 //------------------------------------------------------------------------------
 void sBuildingUIData::render_simple (SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, const cBuilding& building, unsigned long long animationTime, int alpha) const
 {
-	int frameNr = building.dir;
+	int frameNr = toUnderlyingType (building.dir);
 	if (hasFrames && staticData.isAnimated && cSettings::getInstance().isAnimations() && building.isDisabled() == false)
 	{
 		frameNr = (animationTime % hasFrames);

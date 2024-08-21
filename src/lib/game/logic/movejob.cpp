@@ -29,10 +29,6 @@
 #include "utility/narrow_cast.h"
 #include "utility/ranges.h"
 
-//                                 N, NE, E, SE, S, SW, W, NW
-static const int directionDx[8] = {0, 1, 1, 1, 0, -1, -1, -1};
-static const int directionDy[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
-
 constexpr double MOVE_ACCELERATION = 0.08; // change of vehicle speed per tick
 
 namespace
@@ -40,32 +36,11 @@ namespace
 
 	//--------------------------------------------------------------------------
 	/**
-	* calculates the needed rotation before the next movement
-	*/
-	std::optional<int> calcNextDir (const cVehicle& vehicle, const cPosition& dest)
-	{
-		const cPosition diff = dest - vehicle.getPosition();
-
-		for (int i = 0; i != 8; ++i)
-		{
-			if (diff.x() == directionDx[i] && diff.y() == directionDy[i])
-			{
-				return i;
-			}
-		}
-		return std::nullopt;
-	}
-
-	//--------------------------------------------------------------------------
-	/**
 	* moves the vehicle by 'offset' pixel in direction of 'nextDir'
 	*/
-	void changeVehicleOffset (cVehicle& vehicle, int offset, int dir)
+	void changeVehicleOffset (cVehicle& vehicle, int offset, EDirection dir)
 	{
-		auto newOffset = vehicle.getMovementOffset();
-		newOffset.x() += directionDx[dir] * offset;
-		newOffset.y() += directionDy[dir] * offset;
-
+		const auto newOffset = vehicle.getMovementOffset() + offsetFromDirection (dir) * offset;
 		vehicle.setMovementOffset (newOffset);
 	}
 
@@ -75,9 +50,9 @@ namespace
 	*/
 	bool reachedField (cVehicle& vehicle)
 	{
-		const auto& offset = vehicle.getMovementOffset();
-		const auto dir = vehicle.dir;
-		return (offset.x() * directionDx[dir] >= 0 && offset.y() * directionDy[dir] >= 0);
+		const auto& moveOffset = vehicle.getMovementOffset();
+		const auto dirOffset = offsetFromDirection (vehicle.dir);
+		return moveOffset.x() * dirOffset.x() >= 0 && moveOffset.y() * dirOffset.y() >= 0;
 	}
 
 } // namespace
@@ -131,7 +106,7 @@ void cMoveJob::run (cModel& model)
 	{
 		startMove (model, *vehicle);
 	}
-	else if (nextDir != static_cast<unsigned int> (vehicle->dir))
+	else if (nextDir != vehicle->dir)
 	{
 		if (timer100ms == 0)
 		{
@@ -227,7 +202,7 @@ void cMoveJob::startMove (cModel& model, cVehicle& vehicle)
 	// start the move
 
 	vehicle.setMoving (true);
-	nextDir = calcNextDir (vehicle, path.front());
+	nextDir = directionFromOffset (path.front() - vehicle.getPosition());
 
 	vehicle.triggerLandingTakeOff (model);
 

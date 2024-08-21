@@ -41,7 +41,7 @@
 cAttackJob::cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const cModel& model) :
 	aggressorId (aggressor.getId()),
 	targetPosition (targetPosition),
-	fireDir (calcFireDir (aggressor)),
+	fireDir (directionFromOffset (targetPosition - aggressor.getPosition()).value_or (aggressor.dir)),
 	counter (10),
 	state (eAJState::Rotating)
 {
@@ -143,48 +143,6 @@ uint32_t cAttackJob::getChecksum (uint32_t crc) const
 //------------------------------------------------------------------------------
 // private functions
 
-int cAttackJob::calcFireDir (const cUnit& aggressor)
-{
-	auto dx = (float) (targetPosition.x() - aggressor.getPosition().x());
-	auto dy = (float) -(targetPosition.y() - aggressor.getPosition().y());
-	auto r = std::sqrt (dx * dx + dy * dy);
-
-	int fireDir = aggressor.dir;
-	if (r > 0.001f)
-	{
-		// 360 / (2 * PI) = 57.29577951f;
-		dx /= r;
-		dy /= r;
-		r = asinf (dx) * 57.29577951f;
-		if (dy >= 0)
-		{
-			if (r < 0)
-				r += 360;
-		}
-		else
-			r = 180 - r;
-
-		if (r >= 337.5f || r <= 22.5f)
-			fireDir = 0;
-		else if (r >= 22.5f && r <= 67.5f)
-			fireDir = 1;
-		else if (r >= 67.5f && r <= 112.5f)
-			fireDir = 2;
-		else if (r >= 112.5f && r <= 157.5f)
-			fireDir = 3;
-		else if (r >= 157.5f && r <= 202.5f)
-			fireDir = 4;
-		else if (r >= 202.5f && r <= 247.5f)
-			fireDir = 5;
-		else if (r >= 247.5f && r <= 292.5f)
-			fireDir = 6;
-		else if (r >= 292.5f && r <= 337.5f)
-			fireDir = 7;
-	}
-
-	return fireDir;
-}
-
 //------------------------------------------------------------------------------
 void cAttackJob::lockTarget (const cMap& map, const cUnit& aggressor)
 {
@@ -277,31 +235,31 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx (const cUnit& aggressor)
 		case eMuzzleType::Big:
 			switch (fireDir)
 			{
-				case 0:
+				case EDirection::North:
 					offset.y() = -40;
 					break;
-				case 1:
+				case EDirection::NorthEast:
 					offset.x() = 32;
 					offset.y() = -32;
 					break;
-				case 2:
+				case EDirection::East:
 					offset.x() = 40;
 					break;
-				case 3:
+				case EDirection::SouthEast:
 					offset.x() = 32;
 					offset.y() = 32;
 					break;
-				case 4:
+				case EDirection::South:
 					offset.y() = 40;
 					break;
-				case 5:
+				case EDirection::SouthWest:
 					offset.x() = -32;
 					offset.y() = 32;
 					break;
-				case 6:
+				case EDirection::West:
 					offset.x() = -40;
 					break;
-				case 7:
+				case EDirection::NorthWest:
 					offset.x() = -32;
 					offset.y() = -32;
 					break;
@@ -319,31 +277,31 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx (const cUnit& aggressor)
 		case eMuzzleType::MedLong:
 			switch (fireDir)
 			{
-				case 0:
+				case EDirection::North:
 					offset.y() = -20;
 					break;
-				case 1:
+				case EDirection::NorthEast:
 					offset.x() = 12;
 					offset.y() = -12;
 					break;
-				case 2:
+				case EDirection::East:
 					offset.x() = 20;
 					break;
-				case 3:
+				case EDirection::SouthEast:
 					offset.x() = 12;
 					offset.y() = 12;
 					break;
-				case 4:
+				case EDirection::South:
 					offset.y() = 20;
 					break;
-				case 5:
+				case EDirection::SouthWest:
 					offset.x() = -12;
 					offset.y() = 12;
 					break;
-				case 6:
+				case EDirection::West:
 					offset.x() = -20;
 					break;
-				case 7:
+				case EDirection::NorthWest:
 					offset.x() = -12;
 					offset.y() = -12;
 					break;

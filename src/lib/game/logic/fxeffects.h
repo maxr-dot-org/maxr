@@ -21,6 +21,7 @@
 #define game_logic_fxeffectsH
 
 #include "game/data/units/unitdata.h"
+#include "utility/direction.h"
 #include "utility/position.h"
 
 #include <memory>
@@ -105,41 +106,41 @@ private:
 class cFxMuzzle : public cFx
 {
 public:
-	int getDir() const { return dir; }
+	EDirection getDir() const { return dir; }
 	const sID& getId() const { return id; }
 
 protected:
-	cFxMuzzle (const cPosition& position, int dir_, sID id);
+	cFxMuzzle (const cPosition&, EDirection, sID);
 
-	int dir;
+	EDirection dir;
 	const sID id;
 };
 
 class cFxMuzzleBig : public cFxMuzzle
 {
 public:
-	cFxMuzzleBig (const cPosition& position, int dir, sID id);
+	cFxMuzzleBig (const cPosition&, EDirection, sID);
 	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxMuzzleMed : public cFxMuzzle
 {
 public:
-	cFxMuzzleMed (const cPosition& position, int dir, sID id);
+	cFxMuzzleMed (const cPosition&, EDirection, sID);
 	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxMuzzleMedLong : public cFxMuzzle
 {
 public:
-	cFxMuzzleMedLong (const cPosition& position, int dir, sID id);
+	cFxMuzzleMedLong (const cPosition&, EDirection, sID);
 	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
 class cFxMuzzleSmall : public cFxMuzzle
 {
 public:
-	cFxMuzzleSmall (const cPosition& position, int dir, sID id);
+	cFxMuzzleSmall (const cPosition&, EDirection, sID);
 	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
@@ -241,10 +242,10 @@ class cFxTracks : public cFx
 public:
 	static constexpr int alphaStart = 100;
 	static constexpr int alphaEnd = 0;
-	const int dir;
+	const EDirection dir;
 
 public:
-	cFxTracks (const cPosition& position, int dir_);
+	cFxTracks (const cPosition&, EDirection);
 	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 };
 
@@ -253,14 +254,14 @@ class cFxRocket : public cFx
 private:
 	static constexpr int speed = 8;
 	std::vector<std::unique_ptr<cFx>> subEffects;
-	int dir;
+	EDirection dir;
 	int distance;
 	const cPosition startPosition;
 	const cPosition endPosition;
 	const sID id;
 
 public:
-	cFxRocket (const cPosition& startPosition, const cPosition& endPosition, int dir_, bool bottom, sID id);
+	cFxRocket (const cPosition& startPosition, const cPosition& endPosition, EDirection, bool bottom, sID);
 	void accept (IFxVisitor& visitor) const override { visitor.visit (*this); }
 	void run() override;
 	// return true, when the last smoke effect is finished.
@@ -268,7 +269,7 @@ public:
 	// the rocket has reached the destination
 	bool isFinished() const override;
 	const sID getId() const { return id; }
-	int getDir() const { return dir; }
+	EDirection getDir() const { return dir; }
 	const std::vector<std::unique_ptr<cFx>>& getSubEffects() const { return subEffects; }
 };
 

@@ -22,6 +22,7 @@
 
 #include "SDLutility/uniquesurface.h"
 #include "game/data/units/unitdata.h"
+#include "utility/direction.h"
 
 #include <memory>
 
@@ -73,7 +74,7 @@ struct sDrawingCacheEntry
 	//common properties
 	sID id;
 	cPlayer* owner = nullptr;
-	int dir = 0;
+	EDirection dir = EDirection::North;
 	double zoom = 0.;
 	unsigned long long lastUsed = 0;
 

@@ -21,6 +21,7 @@
 #define game_data_units_unitH
 
 #include "game/data/units/unitdata.h"
+#include "utility/direction.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 
@@ -103,7 +104,7 @@ public:
 	std::optional<std::string> getCustomName() const;
 	void changeName (std::string&& newName);
 
-	void rotateTo (int newDir);
+	void rotateTo (EDirection newDir);
 
 	/** checks if the unit can attack something at the offset.
 	 *  when forceAttack is false, the function only returns true,
@@ -222,7 +223,7 @@ public: // TODO: make protected/private and make getters/setters
 	const cStaticUnitData& getStaticUnitData() const;
 	cDynamicUnitData data; // basic data of the unit
 	const unsigned int iID; // the identification number of this unit
-	int dir = 0; // ?Frame of the unit/current direction the unit is facing?
+	EDirection dir = EDirection::North; // ?Frame of the unit/current direction the unit is facing?
 
 private:
 	std::vector<unsigned int> storedUnitIds; // equivalent of storedUnits, for serialization only.

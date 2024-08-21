@@ -320,12 +320,12 @@ void cUnit::changeName (std::string&& newName)
 //------------------------------------------------------------------------------
 /** rotates the unit to the given direction */
 //------------------------------------------------------------------------------
-void cUnit::rotateTo (int newDir)
+void cUnit::rotateTo (EDirection newDir)
 {
-	if (newDir < 0 || newDir >= 8 || newDir == dir)
+	if (newDir == dir)
 		return;
 
-	int t = dir;
+	EDirection t = dir;
 	int dest = 0;
 
 	for (int i = 0; i < 8; ++i)
@@ -336,23 +336,12 @@ void cUnit::rotateTo (int newDir)
 			break;
 		}
 		++t;
-
-		if (t > 7)
-			t = 0;
 	}
 
 	if (dest < 4)
 		++dir;
 	else
 		--dir;
-
-	if (dir < 0)
-		dir += 8;
-	else
-	{
-		if (dir > 7)
-			dir -= 8;
-	}
 }
 
 //------------------------------------------------------------------------------

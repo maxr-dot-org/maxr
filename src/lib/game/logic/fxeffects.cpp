@@ -78,7 +78,7 @@ void cFxContainer::run()
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-cFxMuzzle::cFxMuzzle (const cPosition& position_, int dir_, sID id_) :
+cFxMuzzle::cFxMuzzle (const cPosition& position_, EDirection dir_, sID id_) :
 	cFx (false, position_),
 	dir (dir_),
 	id (id_)
@@ -86,7 +86,7 @@ cFxMuzzle::cFxMuzzle (const cPosition& position_, int dir_, sID id_) :
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-cFxMuzzleBig::cFxMuzzleBig (const cPosition& position_, int dir_, sID id_) :
+cFxMuzzleBig::cFxMuzzleBig (const cPosition& position_, EDirection dir_, sID id_) :
 	cFxMuzzle (position_, dir_, id_)
 {
 	length = 6;
@@ -94,7 +94,7 @@ cFxMuzzleBig::cFxMuzzleBig (const cPosition& position_, int dir_, sID id_) :
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-cFxMuzzleMed::cFxMuzzleMed (const cPosition& position_, int dir_, sID id_) :
+cFxMuzzleMed::cFxMuzzleMed (const cPosition& position_, EDirection dir_, sID id_) :
 	cFxMuzzle (position_, dir_, id_)
 {
 	length = 6;
@@ -102,7 +102,7 @@ cFxMuzzleMed::cFxMuzzleMed (const cPosition& position_, int dir_, sID id_) :
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-cFxMuzzleMedLong::cFxMuzzleMedLong (const cPosition& position_, int dir_, sID id_) :
+cFxMuzzleMedLong::cFxMuzzleMedLong (const cPosition& position_, EDirection dir_, sID id_) :
 	cFxMuzzle (position_, dir_, id_)
 {
 	length = 16;
@@ -110,7 +110,7 @@ cFxMuzzleMedLong::cFxMuzzleMedLong (const cPosition& position_, int dir_, sID id
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-cFxMuzzleSmall::cFxMuzzleSmall (const cPosition& position_, int dir_, sID id_) :
+cFxMuzzleSmall::cFxMuzzleSmall (const cPosition& position_, EDirection dir_, sID id_) :
 	cFxMuzzle (position_, dir_, id_)
 {
 	length = 6;
@@ -200,7 +200,7 @@ cFxCorpse::cFxCorpse (const cPosition& position_) :
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-cFxTracks::cFxTracks (const cPosition& position_, int dir_) :
+cFxTracks::cFxTracks (const cPosition& position_, EDirection dir_) :
 	cFx (true, position_),
 	dir (dir_)
 {
@@ -209,7 +209,7 @@ cFxTracks::cFxTracks (const cPosition& position_, int dir_) :
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-cFxRocket::cFxRocket (const cPosition& startPosition_, const cPosition& endPosition_, int dir_, bool bottom, sID id_) :
+cFxRocket::cFxRocket (const cPosition& startPosition_, const cPosition& endPosition_, EDirection dir_, bool bottom, sID id_) :
 	cFx (bottom, startPosition_),
 	dir (dir_),
 	startPosition (startPosition_),

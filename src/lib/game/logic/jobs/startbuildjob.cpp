@@ -60,19 +60,19 @@ void cStartBuildJob::run (cModel& model)
 
 	if (big)
 	{
-		int deltaX = (vehicle->getPosition().x() < org.x() ? -1 : 1) * MOVE_SPEED;
-		int deltaY = (vehicle->getPosition().y() < org.y() ? -1 : 1) * MOVE_SPEED;
-		int dir = 0;
-		if (deltaX > 0 && deltaY > 0) dir = 3;
-		if (deltaX > 0 && deltaY < 0) dir = 1;
-		if (deltaX < 0 && deltaY > 0) dir = 5;
-		if (deltaX < 0 && deltaY < 0) dir = 7;
+		const int deltaX = (vehicle->getPosition().x() < org.x() ? -1 : 1) * MOVE_SPEED;
+		const int deltaY = (vehicle->getPosition().y() < org.y() ? -1 : 1) * MOVE_SPEED;
+		EDirection dir = EDirection::North;
+		if (deltaX > 0 && deltaY > 0) dir = EDirection::SouthEast;
+		if (deltaX > 0 && deltaY < 0) dir = EDirection::NorthEast;
+		if (deltaX < 0 && deltaY > 0) dir = EDirection::SouthWest;
+		if (deltaX < 0 && deltaY < 0) dir = EDirection::NorthWest;
 
 		if (vehicle->getMovementOffset().x() == 32)
 		{
 			if (model.getGameTime() % 10 != 0) return;
-			vehicle->rotateTo (0);
-			if (vehicle->dir == 0)
+			vehicle->rotateTo (EDirection::North);
+			if (vehicle->dir == EDirection::North)
 			{
 				finished = true;
 				vehicle->setMovementOffset (cPosition (0, 0));
@@ -99,8 +99,8 @@ void cStartBuildJob::run (cModel& model)
 	else
 	{
 		if (model.getGameTime() % 10 != 0) return;
-		vehicle->rotateTo (0);
-		if (vehicle->dir == 0)
+		vehicle->rotateTo (EDirection::North);
+		if (vehicle->dir == EDirection::North)
 		{
 			finished = true;
 		}

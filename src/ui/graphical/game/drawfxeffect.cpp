@@ -33,7 +33,7 @@ namespace
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
 		SDL_Rect src;
-		src.x = (int) (images[0]->w * zoom * fx.getDir() / 8);
+		src.x = (int) (images[0]->w * zoom * toUnderlyingType (fx.getDir()) / 8);
 		src.y = 0;
 		src.w = images[1]->w / 8;
 		src.h = images[1]->h;
@@ -87,7 +87,7 @@ namespace
 		CHECK_SCALING (*images[1], *images[0], zoom);
 
 		SDL_Rect src;
-		src.x = fx.getDir() * images[1]->w / 8;
+		src.x = toUnderlyingType (fx.getDir()) * images[1]->w / 8;
 		src.y = 0;
 		src.h = images[1]->h;
 		src.w = images[1]->w / 8;
@@ -127,7 +127,7 @@ namespace
 
 		SDL_Rect src;
 		src.y = 0;
-		src.x = images[1]->w * fx.dir / 4;
+		src.x = images[1]->w * toUnderlyingType (fx.dir) / 4;
 		src.w = images[1]->w / 4;
 		src.h = images[1]->h;
 		SDL_Rect dest = {destination.x(), destination.y(), 0, 0};

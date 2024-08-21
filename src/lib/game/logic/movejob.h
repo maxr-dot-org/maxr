@@ -21,6 +21,7 @@
 #define game_logic_movejobsH
 
 #include "game/logic/endmoveaction.h"
+#include "utility/direction.h"
 #include "utility/position.h"
 
 #include <forward_list>
@@ -172,7 +173,7 @@ private:
 	/** movement points, that are taken to the next turn, to prevent that the player looses movement points due to rounding issues */
 	unsigned int savedSpeed = 0;
 	/** direction the vehicle must be rotated to, before moving */
-	std::optional<unsigned int> nextDir;
+	std::optional<EDirection> nextDir;
 	/** 100 ms timer tick */
 	unsigned int timer100ms = 1;
 	/** 50 ms timer tick */

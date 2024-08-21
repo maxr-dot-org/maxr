@@ -75,7 +75,6 @@ public:
 	}
 
 private:
-	int calcFireDir (const cUnit& aggressor);
 	void lockTarget (const cMap& map, const cUnit& aggressor);
 	void releaseTargets (const cModel& model);
 	void fire (cModel& model);
@@ -88,7 +87,7 @@ private:
 	int aggressorId = -1;
 	cPosition targetPosition;
 	std::vector<int> lockedTargets;
-	int fireDir = 0;
+	EDirection fireDir = EDirection::North;
 	int counter = 0;
 	enum class eAJState
 	{

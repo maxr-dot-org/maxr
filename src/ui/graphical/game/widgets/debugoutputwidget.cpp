@@ -57,6 +57,24 @@ namespace
 		strStream << x;
 		return "0x" + strStream.str();
 	}
+
+	//--------------------------------------------------------------------------
+	std::string asString (EDirection dir)
+	{
+		switch (dir)
+		{
+			case EDirection::North: return "North";
+			case EDirection::NorthEast: return "NorthEast";
+			case EDirection::East: return "East";
+			case EDirection::SouthEast: return "SouthEast";
+			case EDirection::South: return "South";
+			case EDirection::SouthWest: return "SouthWest";
+			case EDirection::West: return "West";
+			case EDirection::NorthWest: return "NorthWest";
+		}
+		return "???";
+	}
+
 } // namespace
 
 //------------------------------------------------------------------------------
@@ -461,7 +479,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 	font->showText (drawPosition, tmpString, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
-	tmpString = "dir: " + std::to_string (vehicle.dir) + " moving: +" + std::to_string (vehicle.isUnitMoving()) + " mjob: " + pToStr (vehicle.getMoveJob()) + " speed: " + std::to_string (vehicle.data.getSpeed());
+	tmpString = "dir: " + asString (vehicle.dir) + " moving: +" + std::to_string (vehicle.isUnitMoving()) + " mjob: " + pToStr (vehicle.getMoveJob()) + " speed: " + std::to_string (vehicle.data.getSpeed());
 	font->showText (drawPosition, tmpString, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
@@ -516,7 +534,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 	font->showText (drawPosition, s, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 
-	s = "dir: " + std::to_string (building.dir) + " on sentry: +" + std::to_string (building.isSentryActive()) + " sub_base: " + pToStr (building.subBase);
+	s = "dir: " + asString (building.dir) + " on sentry: +" + std::to_string (building.isSentryActive()) + " sub_base: " + pToStr (building.subBase);
 	font->showText (drawPosition, s, eUnicodeFontType::LatinSmallWhite);
 	drawPosition.y() += 8;
 

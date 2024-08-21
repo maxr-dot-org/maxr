@@ -997,29 +997,29 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			switch (vehicle.dir)
 			{
-				case 0:
-					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (0, -10), 0));
+				case EDirection::North:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (0, -10), EDirection::North));
 					break;
-				case 4:
-					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (0, 10), 0));
+				case EDirection::South:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (0, 10), EDirection::North));
 					break;
-				case 2:
-					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, 0), 2));
+				case EDirection::East:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, 0), EDirection::East));
 					break;
-				case 6:
-					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, 0), 2));
+				case EDirection::West:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, 0), EDirection::East));
 					break;
-				case 1:
-					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, -10), 1));
+				case EDirection::NorthEast:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, -10), EDirection::NorthEast));
 					break;
-				case 5:
-					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, 10), 1));
+				case EDirection::SouthWest:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, 10), EDirection::NorthEast));
 					break;
-				case 3:
-					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, 10), 3));
+				case EDirection::SouthEast:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (10, 10), EDirection::SouthEast));
 					break;
-				case 7:
-					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, -10), 3));
+				case EDirection::NorthWest:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos + cPosition (-10, -10), EDirection::SouthEast));
 					break;
 			}
 		}
@@ -1027,15 +1027,14 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			switch (vehicle.dir)
 			{
-				case 1:
-				case 5:
-					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos, 1));
+				case EDirection::NorthEast:
+				case EDirection::SouthWest:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos, EDirection::NorthEast));
 					break;
-				case 3:
-				case 7:
-					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos, 3));
+				case EDirection::SouthEast:
+				case EDirection::NorthWest:
+					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos, EDirection::SouthEast));
 					break;
-					;
 			}
 		}
 	});

@@ -58,31 +58,31 @@ void sVehicleUIData::render_shadow (const cVehicle& vehicle, const cMapView& map
 
 	if (vehicle.alphaEffectValue && cSettings::getInstance().isAlphaEffects())
 	{
-		SDL_SetSurfaceAlphaMod (shw[vehicle.dir].get(), narrow_cast<Uint8> (vehicle.alphaEffectValue / 5));
+		SDL_SetSurfaceAlphaMod (shw[toUnderlyingType (vehicle.dir)].get(), narrow_cast<Uint8> (vehicle.alphaEffectValue / 5));
 	}
 	else
 	{
-		SDL_SetSurfaceAlphaMod (shw[vehicle.dir].get(), 50);
+		SDL_SetSurfaceAlphaMod (shw[toUnderlyingType (vehicle.dir)].get(), 50);
 	}
 	SDL_Rect tmp = dest;
 
 	// draw shadow
 	if (vehicle.getFlightHeight() > 0)
 	{
-		int high = ((int) (Round (shw_org[vehicle.dir]->w * zoomFactor) * (vehicle.getFlightHeight() / 64.0f)));
+		int high = ((int) (Round (shw_org[toUnderlyingType (vehicle.dir)]->w * zoomFactor) * (vehicle.getFlightHeight() / 64.0f)));
 		tmp.x += high;
 		tmp.y += high;
 
-		blitWithPreScale (*shw_org[vehicle.dir], *shw[vehicle.dir], nullptr, surface, &tmp, zoomFactor);
+		blitWithPreScale (*shw_org[toUnderlyingType (vehicle.dir)], *shw[toUnderlyingType (vehicle.dir)], nullptr, surface, &tmp, zoomFactor);
 	}
 	else if (vehicle.getStaticData().animationMovement)
 	{
-		const Uint16 size = narrow_cast<Uint16> (img_org[vehicle.dir]->h * zoomFactor);
+		const Uint16 size = narrow_cast<Uint16> (img_org[toUnderlyingType (vehicle.dir)]->h * zoomFactor);
 		SDL_Rect r = {Sint16 (vehicle.WalkFrame * size), 0, size, size};
-		blitWithPreScale (*shw_org[vehicle.dir], *shw[vehicle.dir], &r, surface, &tmp, zoomFactor);
+		blitWithPreScale (*shw_org[toUnderlyingType (vehicle.dir)], *shw[toUnderlyingType (vehicle.dir)], &r, surface, &tmp, zoomFactor);
 	}
 	else
-		blitWithPreScale (*shw_org[vehicle.dir], *shw[vehicle.dir], nullptr, surface, &tmp, zoomFactor);
+		blitWithPreScale (*shw_org[toUnderlyingType (vehicle.dir)], *shw[toUnderlyingType (vehicle.dir)], nullptr, surface, &tmp, zoomFactor);
 }
 
 //------------------------------------------------------------------------------
@@ -262,7 +262,7 @@ void sVehicleUIData::drawOverlayAnimation (SDL_Surface& surface, const SDL_Rect&
 void render_simple (const cVehicle& vehicle, SDL_Surface& surface, const SDL_Rect& dest, float zoomFactor, int alpha)
 {
 	auto* uiData = UnitsUiData.getVehicleUI (vehicle.getStaticUnitData().ID);
-	uiData->render_simple (surface, dest, zoomFactor, vehicle.getStaticData(), vehicle.getOwner(), vehicle.dir, vehicle.WalkFrame, alpha);
+	uiData->render_simple (surface, dest, zoomFactor, vehicle.getStaticData(), vehicle.getOwner(), toUnderlyingType (vehicle.dir), vehicle.WalkFrame, alpha);
 }
 
 //------------------------------------------------------------------------------

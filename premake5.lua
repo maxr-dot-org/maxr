@@ -101,6 +101,7 @@ end
 		nuget(nugetPackages)
 	filter { "toolset:msc*" }
 		defines { "_CRT_SECURE_NO_WARNINGS" } -- 4996: '$func': This function or variable may be unsafe. Consider using $func2 instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+		defines { "_USE_MATH_DEFINES" } -- for M_PI
 		buildoptions { "/Zc:__cplusplus" } -- else __cplusplus would be 199711L
 		disablewarnings {
 			"4458", -- declaration of '$var' hides class member
