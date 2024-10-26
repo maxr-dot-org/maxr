@@ -1,3 +1,9 @@
+Mechanized Assault & eXploration Reloaded 0.2.17 (October, 2024)
+=======================================================================
+- Fix blocked bandpath (B->.<-B)
+- Fix handling of upgrade (especially in windowstorage for dirty version)
+- Update prev/next buttons at new turn started
+
 Mechanized Assault & eXploration Reloaded 0.2.16 (April, 2024)
 =======================================================================
 - Fix crash when using metal (reparation/upgrade/reload) in any building.

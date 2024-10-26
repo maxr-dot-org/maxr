@@ -22,7 +22,7 @@
 #ifndef DefinesH
 #define DefinesH
 
-#define VERSION "0.2.16"
+#define VERSION "0.2.17"
 
 #ifdef WIN32
 # ifndef TEXT_FILE_LF
