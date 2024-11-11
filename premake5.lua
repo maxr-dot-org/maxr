@@ -32,6 +32,7 @@ local SDL2_libraryPath = os.findlib("SDL2", SDL2_DIR)
 local vorbis_headerPath = os.findheader("vorbis/vorbisenc.h")
 local ogg_headerPath = os.findheader("ogg/ogg.h")
 
+print("premake:", _PREMAKE_VERSION)
 print("SDL2_DIR: ", SDL2_DIR)
 print("SDL2 header path: ", SDL2_headerPath)
 print("SDL2 library path: ", SDL2_libraryPath)
@@ -258,6 +259,7 @@ project "maxr_lib"
 	files { "src/autoversion.h.in"} -- template to generate autoversion.h
 	files { "src/.clang-format" }
 	files { "CMakeLists.txt", "mk/cmake/**.*" } --CMake stuff
+	files { "premake5.lua" }
 	includedirs { "src", "src/lib" }
 	externalincludedirs { "submodules/nlohmann/single_include", "submodules/spiritless_po/include" }
 
