@@ -29,6 +29,8 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: recursive
+        fetch-depth: 0
+        fetch-tags: true
 
     - name: install premake5
       uses: Jarod42/install-premake5@v2
