@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_widgets_unitdetailshudH
 #define ui_graphical_game_widgets_unitdetailshudH
 
-#include "ui/graphical/menu/widgets/special/unitdatasymboltype.h"
+#include "lib/resources/unitdatasymboltype.h"
 #include "ui/widgets/widget.h"
 
 #include <array>
@@ -43,7 +43,6 @@ public:
 
 	// TODO: find nice place for these functions
 	static void drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType, const cPosition&, int value1, int value2);
-	static cBox<cPosition> getSmallSymbolPosition (eUnitDataSymbolType);
 
 private:
 	UniqueSurface surface;

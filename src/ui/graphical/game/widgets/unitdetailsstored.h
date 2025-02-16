@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_widgets_unitdetailsstoredH
 #define ui_graphical_game_widgets_unitdetailsstoredH
 
-#include "ui/graphical/menu/widgets/special/unitdatasymboltype.h"
+#include "lib/resources/unitdatasymboltype.h"
 #include "ui/widgets/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 

@@ -24,6 +24,7 @@
 #include "SDLutility/uniquesurface.h"
 #include "game/data/player/clans.h"
 #include "game/data/units/unitdata.h"
+#include "unitdatasymboltype.h"
 
 #include <filesystem>
 #include <vector>
@@ -183,6 +184,8 @@ public:
 	UniqueSurface gfx_hud_chatbox;
 
 	// Position in gfx_hud_stuff
+	static SDL_Rect getSmallSymbolPosition (eUnitDataSymbolType);
+
 	static SDL_Rect getRect_SmallSymbol_Speed() { return {0, 98, 7, 7}; }
 	static SDL_Rect getRect_SmallSymbol_Hits() { return {14, 98, 6, 9}; }
 	static SDL_Rect getRect_SmallSymbol_Ammo() { return {50, 98, 5, 7}; }

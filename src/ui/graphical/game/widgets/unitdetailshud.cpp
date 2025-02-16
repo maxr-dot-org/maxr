@@ -254,21 +254,19 @@ void cUnitDetailsHud::drawRow (size_t index, eUnitDataSymbolType symbolType, int
 void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2)
 {
 	const int maxX = destination->w - position.x() - 5;
-	auto src = getSmallSymbolPosition (symbolType);
-	const cPosition srcSize = src.getSize();
+	auto src = GraphicsData.getSmallSymbolPosition (symbolType);
+	const cPosition srcSize = {src.w, src.h};
 	int toValue = value2;
 
 	if (symbolType == eUnitDataSymbolType::Hits)
 	{
 		if (value1 <= value2 / 4) // red
 		{
-			src.getMinCorner().x() += srcSize.x() * 4;
-			src.getMaxCorner().x() += srcSize.x() * 4;
+			src.x += srcSize.x() * 4;
 		}
 		else if (value1 <= value2 / 2) // orange
 		{
-			src.getMinCorner().x() += srcSize.x() * 2;
-			src.getMaxCorner().x() += srcSize.x() * 2;
+			src.x += srcSize.x() * 2;
 		}
 	}
 	int offX = srcSize.x();
@@ -288,51 +286,18 @@ void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight,
 
 	SDL_Rect dest = {position.x(), position.y() + 2 + (rowHeight - srcSize.y()) / 2, 0, 0};
 
-	const auto oriSrcMinX = src.getMinCorner().x();
-	const auto oriSrcMaxX = src.getMaxCorner().x();
+	const auto oriSrcMinX = src.x;
 	for (int i = 0; i < toValue; i++)
 	{
 		if (value1 <= 0)
 		{
-			src.getMinCorner().x() = oriSrcMinX + srcSize.x();
-			src.getMaxCorner().x() = oriSrcMaxX + srcSize.x();
+			src.x = oriSrcMinX + srcSize.x();
 		}
 
-		auto srcRect = toSdlRect (src);
+		auto srcRect = src;
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, destination, &dest);
 
 		dest.x += offX;
 		value1 -= step;
 	}
-}
-
-//------------------------------------------------------------------------------
-cBox<cPosition> cUnitDetailsHud::getSmallSymbolPosition (eUnitDataSymbolType symbolType)
-{
-	SDL_Rect rect{};
-
-	switch (symbolType)
-	{
-		case eUnitDataSymbolType::Speed: rect = cGraphicsData::getRect_SmallSymbol_Speed(); break;
-		case eUnitDataSymbolType::Hits: rect = cGraphicsData::getRect_SmallSymbol_Hits(); break;
-		case eUnitDataSymbolType::Ammo: rect = cGraphicsData::getRect_SmallSymbol_Ammo(); break;
-		case eUnitDataSymbolType::Shots: rect = cGraphicsData::getRect_SmallSymbol_Shots(); break;
-		case eUnitDataSymbolType::Metal: rect = cGraphicsData::getRect_SmallSymbol_Metal(); break;
-		case eUnitDataSymbolType::Oil: rect = cGraphicsData::getRect_SmallSymbol_Oil(); break;
-		case eUnitDataSymbolType::Gold: rect = cGraphicsData::getRect_SmallSymbol_Gold(); break;
-		case eUnitDataSymbolType::Energy: rect = cGraphicsData::getRect_SmallSymbol_Energy(); break;
-		case eUnitDataSymbolType::Human: rect = cGraphicsData::getRect_SmallSymbol_Human(); break;
-		case eUnitDataSymbolType::TransportTank: rect = cGraphicsData::getRect_SmallSymbol_TransportTank(); break;
-		case eUnitDataSymbolType::TransportAir: rect = cGraphicsData::getRect_SmallSymbol_TransportAir(); break;
-
-		case eUnitDataSymbolType::Attack:
-		case eUnitDataSymbolType::Range:
-		case eUnitDataSymbolType::Armor:
-		case eUnitDataSymbolType::Scan:
-		case eUnitDataSymbolType::MetalEmpty:
-			break;
-	}
-	const cPosition position{rect.x, rect.y};
-	const cPosition size{rect.w, rect.h};
-	return cBox<cPosition> (position, position + size - 1);
 }
