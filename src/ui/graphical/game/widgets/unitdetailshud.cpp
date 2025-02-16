@@ -32,6 +32,36 @@
 
 #include <cassert>
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	eUnitDataSymbolType getUnitDataSymbolType (eResourceType resourceType)
+	{
+		switch (resourceType)
+		{
+			case eResourceType::Metal: return eUnitDataSymbolType::Metal;
+			case eResourceType::Oil: return eUnitDataSymbolType::Oil;
+			case eResourceType::Gold: return eUnitDataSymbolType::Gold;
+			default:
+			case eResourceType::None: throw std::runtime_error ("unreachable");
+		}
+	}
+
+	//--------------------------------------------------------------------------
+	eUnitDataSymbolType getUnitDataSymbolType (eStorageUnitsImageType storageUnitsImageType)
+	{
+		switch (storageUnitsImageType)
+		{
+			case eStorageUnitsImageType::Tank:
+			case eStorageUnitsImageType::Ship: return eUnitDataSymbolType::TransportTank;
+			case eStorageUnitsImageType::Plane: return eUnitDataSymbolType::TransportAir;
+			case eStorageUnitsImageType::Human: return eUnitDataSymbolType::Human;
+			default:
+			case eStorageUnitsImageType::None: throw std::runtime_error ("unreachable");
+		}
+	}
+} // namespace
+
 //------------------------------------------------------------------------------
 cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) :
 	cWidget (area),
@@ -124,23 +154,7 @@ void cUnitDetailsHud::reset()
 	{
 		if (staticData.storageResMax > 0)
 		{
-			eUnitDataSymbolType symbolType;
-			switch (staticData.storeResType)
-			{
-				case eResourceType::Metal:
-					symbolType = eUnitDataSymbolType::Metal;
-					break;
-				case eResourceType::Oil:
-					symbolType = eUnitDataSymbolType::Oil;
-					break;
-				case eResourceType::Gold:
-					symbolType = eUnitDataSymbolType::Gold;
-					break;
-				default:
-				case eResourceType::None:
-					throw std::runtime_error ("unreachable");
-			}
-
+			const eUnitDataSymbolType symbolType = getUnitDataSymbolType (staticData.storeResType);
 			drawRow (1, symbolType, unit->getStoredResources(), staticData.storageResMax, lngPack.i18n ("Others~Cargo_7"));
 
 			if (const auto* building = dynamic_cast<const cBuilding*> (unit))
@@ -166,24 +180,7 @@ void cUnitDetailsHud::reset()
 		}
 		else if (staticData.storageUnitsImageType != eStorageUnitsImageType::None)
 		{
-			eUnitDataSymbolType symbolType;
-			switch (staticData.storageUnitsImageType)
-			{
-				case eStorageUnitsImageType::Tank:
-				case eStorageUnitsImageType::Ship:
-					symbolType = eUnitDataSymbolType::TransportTank;
-					break;
-				case eStorageUnitsImageType::Plane:
-					symbolType = eUnitDataSymbolType::TransportAir;
-					break;
-				case eStorageUnitsImageType::Human:
-					symbolType = eUnitDataSymbolType::Human;
-					break;
-				default:
-				case eStorageUnitsImageType::None:
-					throw std::runtime_error ("unreachable");
-			}
-
+			const eUnitDataSymbolType symbolType = getUnitDataSymbolType (staticData.storageUnitsImageType);
 			drawRow (1, symbolType, unit->storedUnits.size(), staticData.storageUnitsMax, lngPack.i18n ("Others~Cargo_7"));
 		}
 	}
@@ -218,10 +215,7 @@ void cUnitDetailsHud::reset()
 	else if (staticData.needsHumans && unit->isABuilding())
 	{
 		const auto& building = static_cast<const cBuilding&> (*unit);
-		if (building.isUnitWorking())
-			drawRow (1, eUnitDataSymbolType::Human, staticData.needsHumans, staticData.needsHumans, lngPack.i18n ("Others~Usage_7"));
-		else
-			drawRow (1, eUnitDataSymbolType::Human, 0, staticData.needsHumans, lngPack.i18n ("Others~Usage_7"));
+		drawRow (1, eUnitDataSymbolType::Human, building.isUnitWorking() ? staticData.needsHumans : 0, staticData.needsHumans, lngPack.i18n ("Others~Usage_7"));
 
 		if (unit->getOwner() == player) drawRow (2, eUnitDataSymbolType::Human, building.subBase->getHumanNeed(), building.subBase->getMaxHumanNeed(), lngPack.i18n ("Others~Total"));
 	}
@@ -251,7 +245,7 @@ void cUnitDetailsHud::drawRow (size_t index, eUnitDataSymbolType symbolType, int
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2)
+/*static*/ void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2)
 {
 	const int maxX = destination->w - position.x() - 5;
 	auto src = GraphicsData.getSmallSymbolPosition (symbolType);
