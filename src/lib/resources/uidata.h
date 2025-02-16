@@ -187,7 +187,9 @@ public:
 	static SDL_Rect getSmallSymbolPosition (eUnitDataSymbolType);
 
 	static SDL_Rect getRect_SmallSymbol_Speed() { return {0, 98, 7, 7}; }
-	static SDL_Rect getRect_SmallSymbol_Hits() { return {14, 98, 6, 9}; }
+	static SDL_Rect getRect_SmallSymbol_HitsGreen() { return {14, 98, 6, 9}; }
+	static SDL_Rect getRect_SmallSymbol_HitsOrange() { return {26, 98, 6, 9}; }
+	static SDL_Rect getRect_SmallSymbol_HitsRed() { return {38, 98, 6, 9}; }
 	static SDL_Rect getRect_SmallSymbol_Ammo() { return {50, 98, 5, 7}; }
 	static SDL_Rect getRect_SmallSymbol_Shots() { return {88, 98, 8, 4}; }
 	static SDL_Rect getRect_SmallSymbol_Metal() { return {60, 98, 7, 10}; }

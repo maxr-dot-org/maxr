@@ -60,6 +60,7 @@ namespace
 			case eStorageUnitsImageType::None: throw std::runtime_error ("unreachable");
 		}
 	}
+
 } // namespace
 
 //------------------------------------------------------------------------------
@@ -136,7 +137,7 @@ void cUnitDetailsHud::reset()
 	const auto& data = unit->data;
 	const auto& staticData = unit->getStaticUnitData();
 
-	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Others~Hitpoints_7"));
+	drawRow (0, getUnitDataSymbolTypeHits (data.getHitpoints(), data.getHitpointsMax()), data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Others~Hitpoints_7"));
 
 	if (data.getSpeedMax() > 0) drawRow (2, eUnitDataSymbolType::Speed, data.getSpeed() / 4, data.getSpeedMax() / 4, lngPack.i18n ("Others~Speed_7"));
 
@@ -251,18 +252,6 @@ void cUnitDetailsHud::drawRow (size_t index, eUnitDataSymbolType symbolType, int
 	auto src = GraphicsData.getSmallSymbolPosition (symbolType);
 	const cPosition srcSize = {src.w, src.h};
 	int toValue = value2;
-
-	if (symbolType == eUnitDataSymbolType::Hits)
-	{
-		if (value1 <= value2 / 4) // red
-		{
-			src.x += srcSize.x() * 4;
-		}
-		else if (value1 <= value2 / 2) // orange
-		{
-			src.x += srcSize.x() * 2;
-		}
-	}
 	int offX = srcSize.x();
 	int step = 1;
 
@@ -293,5 +282,22 @@ void cUnitDetailsHud::drawRow (size_t index, eUnitDataSymbolType symbolType, int
 
 		dest.x += offX;
 		value1 -= step;
+	}
+}
+
+//------------------------------------------------------------------------------
+eUnitDataSymbolType cUnitDetailsHud::getUnitDataSymbolTypeHits (int value, int valueMax)
+{
+	if (value <= valueMax / 4) // red
+	{
+		return eUnitDataSymbolType::HitsRed;
+	}
+	else if (value <= valueMax / 2) // orange
+	{
+		return eUnitDataSymbolType::HitsOrange;
+	}
+	else
+	{
+		return eUnitDataSymbolType::HitsGreen;
 	}
 }

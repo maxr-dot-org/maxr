@@ -94,20 +94,20 @@ void cUnitDetailsStored::reset()
 
 	const auto& data = unit->data;
 
-	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Others~Hitpoints_7"));
+	drawRow (0, cUnitDetailsHud::getUnitDataSymbolTypeHits (data.getHitpoints(), data.getHitpointsMax()), data.getHitpoints(), data.getHitpointsMax(), lngPack.i18n ("Others~Hitpoints_7"));
 
 	if (unit->getStaticUnitData().canAttack) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo(), data.getAmmoMax(), lngPack.i18n ("Others~Ammo_7"));
 
 	const cVehicle* vehicle = dynamic_cast<const cVehicle*> (unit);
 	const auto storedResources = vehicle->getStoredResources();
-	const auto storagedResMax = vehicle->getStaticUnitData().storageResMax;
+	const auto storageResMax = vehicle->getStaticUnitData().storageResMax;
 	const auto title = toTranslatedString (unit->getStaticUnitData().storeResType);
 	switch (unit->getStaticUnitData().storeResType)
 	{
 		case eResourceType::None: break;
-		case eResourceType::Metal: drawRow (1, eUnitDataSymbolType::Metal, storedResources, storagedResMax, title); break;
-		case eResourceType::Oil: drawRow (1, eUnitDataSymbolType::Oil, storedResources, storagedResMax, title); break;
-		case eResourceType::Gold: drawRow (1, eUnitDataSymbolType::Gold, storedResources, storagedResMax, title); break;
+		case eResourceType::Metal: drawRow (1, eUnitDataSymbolType::Metal, storedResources, storageResMax, title); break;
+		case eResourceType::Oil: drawRow (1, eUnitDataSymbolType::Oil, storedResources, storageResMax, title); break;
+		case eResourceType::Gold: drawRow (1, eUnitDataSymbolType::Gold, storedResources, storageResMax, title); break;
 	}
 }
 

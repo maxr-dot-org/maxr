@@ -98,7 +98,7 @@ void cUnitDetails::setUpgrades (const cUnitUpgrade* upgrades_)
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetails::drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, const std::string& name, int value1, int value2)
+void cUnitDetails::drawRow (size_t index, eUnitDataBigSymbolType symbolType, int amount, const std::string& name, int value1, int value2)
 {
 	if (index >= maxRows) return;
 
@@ -132,21 +132,21 @@ void cUnitDetails::reset()
 	{
 		// Damage:
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::eUpgradeType::Damage) : nullptr;
-		drawRow (rowIndex++, eUnitDataSymbolType::Attack, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getDamage(), lngPack.i18n ("Others~Attack_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getDamage(), playerOriginalData->getDamage());
+		drawRow (rowIndex++, eUnitDataBigSymbolType::Attack, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getDamage(), lngPack.i18n ("Others~Attack_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getDamage(), playerOriginalData->getDamage());
 
 		if (staticUnitData->ID.isAVehicle() || !staticUnitData->buildingData.explodesOnContact)
 		{
 			// Shots:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::eUpgradeType::Shots) : nullptr;
-			drawRow (rowIndex++, eUnitDataSymbolType::Shots, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getShotsMax(), lngPack.i18n ("Others~Shots_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getShotsMax(), playerOriginalData->getShotsMax());
+			drawRow (rowIndex++, eUnitDataBigSymbolType::Shots, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getShotsMax(), lngPack.i18n ("Others~Shots_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getShotsMax(), playerOriginalData->getShotsMax());
 
 			// Range:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::eUpgradeType::Range) : nullptr;
-			drawRow (rowIndex++, eUnitDataSymbolType::Range, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getRange(), lngPack.i18n ("Others~Range_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getRange(), playerOriginalData->getRange());
+			drawRow (rowIndex++, eUnitDataBigSymbolType::Range, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getRange(), lngPack.i18n ("Others~Range_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getRange(), playerOriginalData->getRange());
 
 			// Ammo:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::eUpgradeType::Ammo) : nullptr;
-			drawRow (rowIndex++, eUnitDataSymbolType::Ammo, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getAmmoMax(), lngPack.i18n ("Others~Ammo_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getAmmoMax(), playerOriginalData->getAmmoMax());
+			drawRow (rowIndex++, eUnitDataBigSymbolType::Ammo, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getAmmoMax(), lngPack.i18n ("Others~Ammo_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getAmmoMax(), playerOriginalData->getAmmoMax());
 		}
 	}
 
@@ -154,17 +154,17 @@ void cUnitDetails::reset()
 
 	if (transport != eResourceType::None)
 	{
-		eUnitDataSymbolType symbolType;
+		eUnitDataBigSymbolType symbolType;
 		switch (transport)
 		{
 			case eResourceType::Metal:
-				symbolType = eUnitDataSymbolType::Metal;
+				symbolType = eUnitDataBigSymbolType::Metal;
 				break;
 			case eResourceType::Oil:
-				symbolType = eUnitDataSymbolType::Oil;
+				symbolType = eUnitDataBigSymbolType::Oil;
 				break;
 			case eResourceType::Gold:
-				symbolType = eUnitDataSymbolType::Gold;
+				symbolType = eUnitDataBigSymbolType::Gold;
 				break;
 			default:
 			case eResourceType::None:
@@ -176,68 +176,68 @@ void cUnitDetails::reset()
 	if (staticUnitData->produceEnergy)
 	{
 		// Energy production:
-		drawRow (rowIndex++, eUnitDataSymbolType::Energy, staticUnitData->produceEnergy, lngPack.i18n ("Others~Produce_7"), staticUnitData->produceEnergy, staticUnitData->produceEnergy);
+		drawRow (rowIndex++, eUnitDataBigSymbolType::Energy, staticUnitData->produceEnergy, lngPack.i18n ("Others~Produce_7"), staticUnitData->produceEnergy, staticUnitData->produceEnergy);
 
 		// Oil consumption:
-		drawRow (rowIndex++, eUnitDataSymbolType::Oil, staticUnitData->needsOil, lngPack.i18n ("Others~Usage_7"), staticUnitData->needsOil, staticUnitData->needsOil);
+		drawRow (rowIndex++, eUnitDataBigSymbolType::Oil, staticUnitData->needsOil, lngPack.i18n ("Others~Usage_7"), staticUnitData->needsOil, staticUnitData->needsOil);
 	}
 
 	if (staticUnitData->produceHumans)
 	{
 		// Human production:
-		drawRow (rowIndex++, eUnitDataSymbolType::Human, staticUnitData->produceHumans, lngPack.i18n ("Others~Produce_7"), staticUnitData->produceHumans, staticUnitData->produceHumans);
+		drawRow (rowIndex++, eUnitDataBigSymbolType::Human, staticUnitData->produceHumans, lngPack.i18n ("Others~Produce_7"), staticUnitData->produceHumans, staticUnitData->produceHumans);
 	}
 
 	// Armor:
 	upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::eUpgradeType::Armor) : nullptr;
-	drawRow (rowIndex++, eUnitDataSymbolType::Armor, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getArmor(), lngPack.i18n ("Others~Armor_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getArmor(), playerOriginalData->getArmor());
+	drawRow (rowIndex++, eUnitDataBigSymbolType::Armor, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getArmor(), lngPack.i18n ("Others~Armor_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getArmor(), playerOriginalData->getArmor());
 
 	// Hit points:
 	upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::eUpgradeType::Hits) : nullptr;
-	drawRow (rowIndex++, eUnitDataSymbolType::Hits, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getHitpointsMax(), lngPack.i18n ("Others~Hitpoints_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getHitpointsMax(), playerOriginalData->getHitpointsMax());
+	drawRow (rowIndex++, eUnitDataBigSymbolType::Hits, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getHitpointsMax(), lngPack.i18n ("Others~Hitpoints_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getHitpointsMax(), playerOriginalData->getHitpointsMax());
 
 	// Scan:
 	if (unitObjectCurrentData->getScan())
 	{
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::eUpgradeType::Scan) : nullptr;
-		drawRow (rowIndex++, eUnitDataSymbolType::Scan, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getScan(), lngPack.i18n ("Others~Scan_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getScan(), playerOriginalData->getScan());
+		drawRow (rowIndex++, eUnitDataBigSymbolType::Scan, upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getScan(), lngPack.i18n ("Others~Scan_7"), upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getScan(), playerOriginalData->getScan());
 	}
 
 	// Speed:
 	if (unitObjectCurrentData->getSpeedMax())
 	{
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::eUpgradeType::Speed) : nullptr;
-		drawRow (rowIndex++, eUnitDataSymbolType::Speed, (upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getSpeedMax()) / 4, lngPack.i18n ("Others~Speed_7"), (upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getSpeedMax()) / 4, playerOriginalData->getSpeedMax() / 4);
+		drawRow (rowIndex++, eUnitDataBigSymbolType::Speed, (upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getSpeedMax()) / 4, lngPack.i18n ("Others~Speed_7"), (upgrade ? upgrade->getCurValue() : unitObjectCurrentData->getSpeedMax()) / 4, playerOriginalData->getSpeedMax() / 4);
 	}
 
 	// energy consumption:
 	if (staticUnitData->needsEnergy)
 	{
-		drawRow (rowIndex++, eUnitDataSymbolType::Energy, staticUnitData->needsEnergy, lngPack.i18n ("Others~Usage_7"), staticUnitData->needsEnergy, staticUnitData->needsEnergy);
+		drawRow (rowIndex++, eUnitDataBigSymbolType::Energy, staticUnitData->needsEnergy, lngPack.i18n ("Others~Usage_7"), staticUnitData->needsEnergy, staticUnitData->needsEnergy);
 	}
 
 	// humans needed:
 	if (staticUnitData->needsHumans)
 	{
-		drawRow (rowIndex++, eUnitDataSymbolType::Human, staticUnitData->needsHumans, lngPack.i18n ("Others~Usage_7"), staticUnitData->needsHumans, staticUnitData->needsHumans);
+		drawRow (rowIndex++, eUnitDataBigSymbolType::Human, staticUnitData->needsHumans, lngPack.i18n ("Others~Usage_7"), staticUnitData->needsHumans, staticUnitData->needsHumans);
 	}
 
 	// raw material consumption:
 	if (staticUnitData->needsMetal)
 	{
-		drawRow (rowIndex++, eUnitDataSymbolType::Metal, staticUnitData->needsMetal, lngPack.i18n ("Others~Usage_7"), staticUnitData->needsMetal, staticUnitData->needsMetal);
+		drawRow (rowIndex++, eUnitDataBigSymbolType::Metal, staticUnitData->needsMetal, lngPack.i18n ("Others~Usage_7"), staticUnitData->needsMetal, staticUnitData->needsMetal);
 	}
 
 	// gold consumption:
 	if (staticUnitData->buildingData.convertsGold)
 	{
-		drawRow (rowIndex++, eUnitDataSymbolType::Gold, staticUnitData->buildingData.convertsGold, lngPack.i18n ("Others~Usage_7"), staticUnitData->buildingData.convertsGold, staticUnitData->buildingData.convertsGold);
+		drawRow (rowIndex++, eUnitDataBigSymbolType::Gold, staticUnitData->buildingData.convertsGold, lngPack.i18n ("Others~Usage_7"), staticUnitData->buildingData.convertsGold, staticUnitData->buildingData.convertsGold);
 	}
 
 	// Costs:
 	// Do not use unit data but currentVersion data
 	// since cost doesn't change unit version
-	drawRow (rowIndex++, eUnitDataSymbolType::Metal, playerCurrentData->getBuildCost(), lngPack.i18n ("Others~Costs"), playerCurrentData->getBuildCost(), playerOriginalData->getBuildCost());
+	drawRow (rowIndex++, eUnitDataBigSymbolType::Metal, playerCurrentData->getBuildCost(), lngPack.i18n ("Others~Costs"), playerCurrentData->getBuildCost(), playerOriginalData->getBuildCost());
 
 	while (rowIndex < maxRows)
 	{
@@ -248,7 +248,7 @@ void cUnitDetails::reset()
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2)
+void cUnitDetails::drawBigSymbols (eUnitDataBigSymbolType symbolType, const cPosition& position, int value1, int value2)
 {
 	int maxX = 160;
 	auto src = getBigSymbolPosition (symbolType);
@@ -284,9 +284,9 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 
 	SDL_FillRect (surface.get(), &mark, 0xFFFC0000);
 
-	if (symbolType == eUnitDataSymbolType::Metal)
+	if (symbolType == eUnitDataBigSymbolType::Metal)
 	{
-		src = getBigSymbolPosition (eUnitDataSymbolType::MetalEmpty);
+		src = getBigSymbolPosition (eUnitDataBigSymbolType::MetalEmpty);
 	}
 	for (int i = value1; i != value2; ++i)
 	{
@@ -298,29 +298,27 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 }
 
 //------------------------------------------------------------------------------
-cBox<cPosition> cUnitDetails::getBigSymbolPosition (eUnitDataSymbolType symbolType)
+cBox<cPosition> cUnitDetails::getBigSymbolPosition (eUnitDataBigSymbolType symbolType)
 {
 	SDL_Rect rect;
 
 	switch (symbolType)
 	{
-		case eUnitDataSymbolType::Speed: rect = cGraphicsData ::getRect_BigSymbol_Speed(); break;
-		case eUnitDataSymbolType::Hits: rect = cGraphicsData ::getRect_BigSymbol_Hitpoints(); break;
-		case eUnitDataSymbolType::Ammo: rect = cGraphicsData ::getRect_BigSymbol_Ammo(); break;
-		case eUnitDataSymbolType::Attack: rect = cGraphicsData ::getRect_BigSymbol_Attack(); break;
-		case eUnitDataSymbolType::Shots: rect = cGraphicsData ::getRect_BigSymbol_Shots(); break;
-		case eUnitDataSymbolType::Range: rect = cGraphicsData ::getRect_BigSymbol_Range(); break;
-		case eUnitDataSymbolType::Armor: rect = cGraphicsData ::getRect_BigSymbol_Armor(); break;
-		case eUnitDataSymbolType::Scan: rect = cGraphicsData ::getRect_BigSymbol_Scan(); break;
-		case eUnitDataSymbolType::Metal: rect = cGraphicsData ::getRect_BigSymbol_Metal(); break;
-		case eUnitDataSymbolType::MetalEmpty: rect = cGraphicsData ::getRect_BigSymbol_MetalEmpty(); break;
-		case eUnitDataSymbolType::Oil: rect = cGraphicsData ::getRect_BigSymbol_Oil(); break;
-		case eUnitDataSymbolType::Gold: rect = cGraphicsData ::getRect_BigSymbol_Gold(); break;
-		case eUnitDataSymbolType::Energy: rect = cGraphicsData ::getRect_BigSymbol_Energy(); break;
-		case eUnitDataSymbolType::Human: rect = cGraphicsData ::getRect_BigSymbol_Human(); break;
+		case eUnitDataBigSymbolType::Speed: rect = cGraphicsData::getRect_BigSymbol_Speed(); break;
+		case eUnitDataBigSymbolType::Hits: rect = cGraphicsData::getRect_BigSymbol_Hitpoints(); break;
+		case eUnitDataBigSymbolType::Ammo: rect = cGraphicsData::getRect_BigSymbol_Ammo(); break;
+		case eUnitDataBigSymbolType::Attack: rect = cGraphicsData::getRect_BigSymbol_Attack(); break;
+		case eUnitDataBigSymbolType::Shots: rect = cGraphicsData::getRect_BigSymbol_Shots(); break;
+		case eUnitDataBigSymbolType::Range: rect = cGraphicsData::getRect_BigSymbol_Range(); break;
+		case eUnitDataBigSymbolType::Armor: rect = cGraphicsData::getRect_BigSymbol_Armor(); break;
+		case eUnitDataBigSymbolType::Scan: rect = cGraphicsData::getRect_BigSymbol_Scan(); break;
+		case eUnitDataBigSymbolType::Metal: rect = cGraphicsData::getRect_BigSymbol_Metal(); break;
+		case eUnitDataBigSymbolType::MetalEmpty: rect = cGraphicsData::getRect_BigSymbol_MetalEmpty(); break;
+		case eUnitDataBigSymbolType::Oil: rect = cGraphicsData::getRect_BigSymbol_Oil(); break;
+		case eUnitDataBigSymbolType::Gold: rect = cGraphicsData::getRect_BigSymbol_Gold(); break;
+		case eUnitDataBigSymbolType::Energy: rect = cGraphicsData::getRect_BigSymbol_Energy(); break;
+		case eUnitDataBigSymbolType::Human: rect = cGraphicsData::getRect_BigSymbol_Human(); break;
 		default:
-		case eUnitDataSymbolType::TransportTank:
-		case eUnitDataSymbolType::TransportAir:
 			rect = {0, 109, 1, 1};
 			break;
 	}

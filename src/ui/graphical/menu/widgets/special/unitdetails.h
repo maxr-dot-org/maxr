@@ -46,9 +46,9 @@ public:
 private:
 	void reset();
 
-	void drawRow (size_t index, eUnitDataSymbolType, int amount, const std::string& name, int value1, int value2);
-	void drawBigSymbols (eUnitDataSymbolType, const cPosition&, int value1, int value2);
-	cBox<cPosition> getBigSymbolPosition (eUnitDataSymbolType);
+	void drawRow (size_t index, eUnitDataBigSymbolType, int amount, const std::string& name, int value1, int value2);
+	void drawBigSymbols (eUnitDataBigSymbolType, const cPosition&, int value1, int value2);
+	cBox<cPosition> getBigSymbolPosition (eUnitDataBigSymbolType);
 
 	static const size_t maxRows = 9;
 	static const int rowHeight = 19;

@@ -23,6 +23,23 @@
 enum class eUnitDataSymbolType
 {
 	Speed,
+	HitsGreen,
+	HitsOrange,
+	HitsRed,
+	Ammo,
+	Shots,
+	Metal,
+	Oil,
+	Gold,
+	Energy,
+	Human,
+	TransportTank,
+	TransportAir
+};
+
+enum class eUnitDataBigSymbolType
+{
+	Speed,
 	Hits,
 	Ammo,
 	Attack,
@@ -35,9 +52,7 @@ enum class eUnitDataSymbolType
 	Oil,
 	Gold,
 	Energy,
-	Human,
-	TransportTank,
-	TransportAir
+	Human
 };
 
 #endif

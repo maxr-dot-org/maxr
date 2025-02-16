@@ -43,6 +43,7 @@ public:
 
 	// TODO: find nice place for these functions
 	static void drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType, const cPosition&, int value1, int value2);
+	static eUnitDataSymbolType getUnitDataSymbolTypeHits (int value, int valueMax);
 
 private:
 	UniqueSurface surface;
