@@ -185,6 +185,7 @@ public:
 
 	// Position in gfx_hud_stuff
 	static SDL_Rect getSmallSymbolPosition (eUnitDataSymbolType);
+	static SDL_Rect getBigSymbolPosition (eUnitDataBigSymbolType);
 
 	static SDL_Rect getRect_SmallSymbol_Speed() { return {0, 98, 7, 7}; }
 	static SDL_Rect getRect_SmallSymbol_HitsGreen() { return {14, 98, 6, 9}; }

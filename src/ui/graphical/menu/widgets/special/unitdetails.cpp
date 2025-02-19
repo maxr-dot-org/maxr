@@ -250,14 +250,12 @@ void cUnitDetails::reset()
 //------------------------------------------------------------------------------
 void cUnitDetails::drawBigSymbols (eUnitDataBigSymbolType symbolType, const cPosition& position, int value1, int value2)
 {
-	int maxX = 160;
-	auto src = getBigSymbolPosition (symbolType);
-	const auto srcSize = src.getSize();
-	maxX -= srcSize.x();
+	auto src = GraphicsData.getBigSymbolPosition (symbolType);
+	int maxX = 160 - src.w;
 
-	if (value2 != value1) maxX -= srcSize.x() + 3;
+	if (value2 != value1) maxX -= src.w + 3;
 	if (value2 < value1) std::swap (value1, value2);
-	int offX = srcSize.x();
+	int offX = src.w;
 	while (offX * value2 > maxX)
 	{
 		--offX;
@@ -265,64 +263,34 @@ void cUnitDetails::drawBigSymbols (eUnitDataBigSymbolType symbolType, const cPos
 		{
 			value1 /= 2;
 			value2 /= 2;
-			offX = srcSize.x();
+			offX = src.w;
 		}
 	}
-	SDL_Rect dest = {position.x(), position.y() + (rowHeight - 4 - srcSize.y()) / 2, 0, 0};
+	SDL_Rect dest = {position.x(), position.y() + (rowHeight - 4 - src.h) / 2, 0, 0};
 
 	for (int i = 0; i != value1; ++i)
 	{
-		auto srcRect = toSdlRect (src);
+		auto srcRect = src;
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), &dest);
 
 		dest.x += offX;
 	}
 	if (value1 == value2) return;
 
-	dest.x += srcSize.x() + 3;
-	SDL_Rect mark = {Sint16 (dest.x - srcSize.x() / 2), dest.y, 1, srcSize.y()};
+	dest.x += src.w + 3;
+	SDL_Rect mark = {Sint16 (dest.x - src.w / 2), dest.y, 1, src.h};
 
 	SDL_FillRect (surface.get(), &mark, 0xFFFC0000);
 
 	if (symbolType == eUnitDataBigSymbolType::Metal)
 	{
-		src = getBigSymbolPosition (eUnitDataBigSymbolType::MetalEmpty);
+		src = GraphicsData.getBigSymbolPosition (eUnitDataBigSymbolType::MetalEmpty);
 	}
 	for (int i = value1; i != value2; ++i)
 	{
-		auto srcRect = toSdlRect (src);
+		auto srcRect = src;
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), &dest);
 
 		dest.x += offX;
 	}
-}
-
-//------------------------------------------------------------------------------
-cBox<cPosition> cUnitDetails::getBigSymbolPosition (eUnitDataBigSymbolType symbolType)
-{
-	SDL_Rect rect;
-
-	switch (symbolType)
-	{
-		case eUnitDataBigSymbolType::Speed: rect = cGraphicsData::getRect_BigSymbol_Speed(); break;
-		case eUnitDataBigSymbolType::Hits: rect = cGraphicsData::getRect_BigSymbol_Hitpoints(); break;
-		case eUnitDataBigSymbolType::Ammo: rect = cGraphicsData::getRect_BigSymbol_Ammo(); break;
-		case eUnitDataBigSymbolType::Attack: rect = cGraphicsData::getRect_BigSymbol_Attack(); break;
-		case eUnitDataBigSymbolType::Shots: rect = cGraphicsData::getRect_BigSymbol_Shots(); break;
-		case eUnitDataBigSymbolType::Range: rect = cGraphicsData::getRect_BigSymbol_Range(); break;
-		case eUnitDataBigSymbolType::Armor: rect = cGraphicsData::getRect_BigSymbol_Armor(); break;
-		case eUnitDataBigSymbolType::Scan: rect = cGraphicsData::getRect_BigSymbol_Scan(); break;
-		case eUnitDataBigSymbolType::Metal: rect = cGraphicsData::getRect_BigSymbol_Metal(); break;
-		case eUnitDataBigSymbolType::MetalEmpty: rect = cGraphicsData::getRect_BigSymbol_MetalEmpty(); break;
-		case eUnitDataBigSymbolType::Oil: rect = cGraphicsData::getRect_BigSymbol_Oil(); break;
-		case eUnitDataBigSymbolType::Gold: rect = cGraphicsData::getRect_BigSymbol_Gold(); break;
-		case eUnitDataBigSymbolType::Energy: rect = cGraphicsData::getRect_BigSymbol_Energy(); break;
-		case eUnitDataBigSymbolType::Human: rect = cGraphicsData::getRect_BigSymbol_Human(); break;
-		default:
-			rect = {0, 109, 1, 1};
-			break;
-	}
-	cPosition position (rect.x, rect.y);
-	cPosition size (rect.w, rect.h);
-	return cBox<cPosition> (position, position + size - 1);
 }
