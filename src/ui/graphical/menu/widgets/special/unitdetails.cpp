@@ -250,7 +250,7 @@ void cUnitDetails::reset()
 //------------------------------------------------------------------------------
 void cUnitDetails::drawBigSymbols (eUnitDataBigSymbolType symbolType, const cPosition& position, int value1, int value2)
 {
-	auto src = GraphicsData.getBigSymbolPosition (symbolType);
+	auto src = GraphicsData.getBigSymbol (symbolType).rect;
 	int maxX = 160 - src.w;
 
 	if (value2 != value1) maxX -= src.w + 3;
@@ -268,10 +268,10 @@ void cUnitDetails::drawBigSymbols (eUnitDataBigSymbolType symbolType, const cPos
 	}
 	SDL_Rect dest = {position.x(), position.y() + (rowHeight - 4 - src.h) / 2, 0, 0};
 
+	auto partialSurface = GraphicsData.getBigSymbol (symbolType);
 	for (int i = 0; i != value1; ++i)
 	{
-		auto srcRect = src;
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), &dest);
+		SDL_BlitSurface (partialSurface.surface, &partialSurface.rect, surface.get(), &dest);
 
 		dest.x += offX;
 	}
@@ -284,12 +284,11 @@ void cUnitDetails::drawBigSymbols (eUnitDataBigSymbolType symbolType, const cPos
 
 	if (symbolType == eUnitDataBigSymbolType::Metal)
 	{
-		src = GraphicsData.getBigSymbolPosition (eUnitDataBigSymbolType::MetalEmpty);
+		partialSurface = GraphicsData.getBigSymbol (eUnitDataBigSymbolType::MetalEmpty);
 	}
 	for (int i = value1; i != value2; ++i)
 	{
-		auto srcRect = src;
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, surface.get(), &dest);
+		SDL_BlitSurface (partialSurface.surface, &partialSurface.rect, surface.get(), &dest);
 
 		dest.x += offX;
 	}
