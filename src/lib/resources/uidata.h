@@ -201,9 +201,9 @@ public:
 	static SDL_Rect getRect_SmallSymbol_TransportTank() { return {138, 98, 16, 8}; }
 	static SDL_Rect getRect_SmallSymbol_TransportAir() { return {186, 98, 21, 8}; }
 
-	static SDL_Rect getRect_Symbol_Speed() { return {244, 97, 8, 10}; }
-	static SDL_Rect getRect_Symbol_Shots() { return {254, 97, 5, 10}; }
-	static SDL_Rect getRect_Symbol_Disabled() { return {150, 109, 25, 25}; }
+	sPartialSurface getSymbol_Speed() const { return {gfx_hud_stuff.get(), {244, 97, 8, 10}}; }
+	sPartialSurface getSymbol_Shots() const { return {gfx_hud_stuff.get(), {254, 97, 5, 10}}; }
+	sPartialSurface getSymbol_Disabled() const { return {gfx_hud_stuff.get(), {150, 109, 25, 25}}; }
 
 	static SDL_Rect getRect_Slider_HudZoom() { return {132, 0, 25, 16}; }
 };

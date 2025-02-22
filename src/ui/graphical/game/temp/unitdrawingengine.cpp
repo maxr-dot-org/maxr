@@ -373,8 +373,8 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 			dest.y += (destination.h / 2);
 			dest.x += (destination.w / 2);
 		}
-		SDL_Rect disabledSymbol = cGraphicsData::getRect_Symbol_Disabled();
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &disabledSymbol, cVideo::buffer, &dest);
+		auto disabledSymbol = GraphicsData.getSymbol_Disabled();
+		SDL_BlitSurface (disabledSymbol.surface, &disabledSymbol.rect, cVideo::buffer, &dest);
 	}
 	else
 	{
@@ -390,9 +390,9 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 			if (unit.data.getShots())
 				dest.x -= destination.w / 4;
 
-			SDL_Rect speedSymbol = cGraphicsData::getRect_Symbol_Speed();
+			auto speedSymbol = GraphicsData.getSymbol_Speed();
 			SDL_Rect destCopy = dest;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &speedSymbol, cVideo::buffer, &destCopy);
+			SDL_BlitSurface (speedSymbol.surface, &speedSymbol.rect, cVideo::buffer, &destCopy);
 		}
 
 		dest.x = destination.x + destination.w / 2 - 4;
@@ -400,8 +400,8 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 		{
 			if (unit.data.getSpeed())
 				dest.x += destination.w / 4;
-			SDL_Rect shotsSymbol = cGraphicsData::getRect_Symbol_Shots();
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &shotsSymbol, cVideo::buffer, &dest);
+			auto shotsSymbol = GraphicsData.getSymbol_Shots();
+			SDL_BlitSurface (shotsSymbol.surface, &shotsSymbol.rect, cVideo::buffer, &dest);
 		}
 	}
 }
