@@ -59,26 +59,26 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 		lngPack.i18n ("Others~Scan"),
 		lngPack.i18n ("Others~Costs")};
 
-	const SDL_Rect themeImageSrcs[rows] = {
-		cGraphicsData::getRect_BigSymbol_Attack(),
-		cGraphicsData::getRect_BigSymbol_Shots(),
-		cGraphicsData::getRect_BigSymbol_Range(),
-		cGraphicsData::getRect_BigSymbol_Armor(),
-		cGraphicsData::getRect_BigSymbol_Hitpoints(),
-		cGraphicsData::getRect_BigSymbol_Speed(),
-		cGraphicsData::getRect_BigSymbol_Scan(),
-		cGraphicsData::getRect_BigSymbol_Costs()};
+	const sPartialSurface themeImageSrcs[rows] = {
+		GraphicsData.getBigSymbol (eUnitDataBigSymbolType::Attack),
+		GraphicsData.getBigSymbol (eUnitDataBigSymbolType::Shots),
+		GraphicsData.getBigSymbol (eUnitDataBigSymbolType::Range),
+		GraphicsData.getBigSymbol (eUnitDataBigSymbolType::Armor),
+		GraphicsData.getBigSymbol (eUnitDataBigSymbolType::Hits),
+		GraphicsData.getBigSymbol (eUnitDataBigSymbolType::Speed),
+		GraphicsData.getBigSymbol (eUnitDataBigSymbolType::Scan),
+		GraphicsData.getBigSymbol (eUnitDataBigSymbolType::Gold)};
 
 	for (size_t i = 0; i < rows; ++i)
 	{
 		emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (183, 72 + 28 * i), getPosition() + cPosition (183 + 50, 72 + 28 * i + 10)), themeNames[i], eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 
-		auto src = themeImageSrcs[i];
+		auto src = themeImageSrcs[i].rect;
 
 		UniqueSurface image (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect (image.get(), nullptr, 0x00FF00FF);
 		SDL_SetColorKey (image.get(), SDL_TRUE, 0x00FF00FF);
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, image.get(), nullptr);
+		SDL_BlitSurface (themeImageSrcs[i].surface, &src, image.get(), nullptr);
 
 		emplaceChild<cImage> (getPosition() + cPosition (172 - src.w / 2, 78 - src.h / 2 + 28 * i), image.get());
 

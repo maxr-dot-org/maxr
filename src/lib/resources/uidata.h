@@ -205,22 +205,6 @@ public:
 	static SDL_Rect getRect_Symbol_Shots() { return {254, 97, 5, 10}; }
 	static SDL_Rect getRect_Symbol_Disabled() { return {150, 109, 25, 25}; }
 
-	static SDL_Rect getRect_BigSymbol_Speed() { return {0, 109, 11, 12}; }
-	static SDL_Rect getRect_BigSymbol_Hitpoints() { return {11, 109, 7, 11}; }
-	static SDL_Rect getRect_BigSymbol_Ammo() { return {18, 109, 9, 14}; }
-	static SDL_Rect getRect_BigSymbol_Attack() { return {27, 109, 10, 14}; }
-	static SDL_Rect getRect_BigSymbol_Shots() { return {37, 109, 15, 7}; }
-	static SDL_Rect getRect_BigSymbol_Range() { return {52, 109, 13, 13}; }
-	static SDL_Rect getRect_BigSymbol_Armor() { return {65, 109, 11, 14}; }
-	static SDL_Rect getRect_BigSymbol_Scan() { return {76, 109, 13, 13}; }
-	static SDL_Rect getRect_BigSymbol_Metal() { return {89, 109, 12, 15}; }
-	static SDL_Rect getRect_BigSymbol_Oil() { return {101, 109, 11, 12}; }
-	static SDL_Rect getRect_BigSymbol_Gold() { return {112, 109, 13, 10}; }
-	static SDL_Rect getRect_BigSymbol_Costs() { return {112, 109, 13, 10}; }
-	static SDL_Rect getRect_BigSymbol_Energy() { return {125, 109, 13, 17}; }
-	static SDL_Rect getRect_BigSymbol_Human() { return {138, 109, 12, 16}; }
-	static SDL_Rect getRect_BigSymbol_MetalEmpty() { return {175, 109, 12, 15}; }
-
 	static SDL_Rect getRect_Slider_HudZoom() { return {132, 0, 25, 16}; }
 };
 

@@ -33,6 +33,24 @@ cResourceData ResourceData;
 cUnitsUiData UnitsUiData;
 cOtherData OtherData;
 
+namespace
+{
+	constexpr SDL_Rect Rect_BigSymbol_Speed{0, 109, 11, 12};
+	constexpr SDL_Rect Rect_BigSymbol_Hitpoints{11, 109, 7, 11};
+	constexpr SDL_Rect Rect_BigSymbol_Ammo{18, 109, 9, 14};
+	constexpr SDL_Rect Rect_BigSymbol_Attack{27, 109, 10, 14};
+	constexpr SDL_Rect Rect_BigSymbol_Shots{37, 109, 15, 7};
+	constexpr SDL_Rect Rect_BigSymbol_Range{52, 109, 13, 13};
+	constexpr SDL_Rect Rect_BigSymbol_Armor{65, 109, 11, 14};
+	constexpr SDL_Rect Rect_BigSymbol_Scan{76, 109, 13, 13};
+	constexpr SDL_Rect Rect_BigSymbol_Metal{89, 109, 12, 15};
+	constexpr SDL_Rect Rect_BigSymbol_Oil{101, 109, 11, 12};
+	constexpr SDL_Rect Rect_BigSymbol_Gold{112, 109, 13, 10};
+	constexpr SDL_Rect Rect_BigSymbol_Energy{125, 109, 13, 17};
+	constexpr SDL_Rect Rect_BigSymbol_Human{138, 109, 12, 16};
+	constexpr SDL_Rect Rect_BigSymbol_MetalEmpty{175, 109, 12, 15};
+} // namespace
+
 //------------------------------------------------------------------------------
 SDL_Rect cGraphicsData::getSmallSymbolPosition (eUnitDataSymbolType symbolType)
 {
@@ -60,20 +78,20 @@ sPartialSurface cGraphicsData::getBigSymbol (eUnitDataBigSymbolType symbolType) 
 {
 	switch (symbolType)
 	{
-		case eUnitDataBigSymbolType::Speed: return {gfx_hud_stuff.get(), getRect_BigSymbol_Speed()};
-		case eUnitDataBigSymbolType::Hits: return {gfx_hud_stuff.get(), getRect_BigSymbol_Hitpoints()};
-		case eUnitDataBigSymbolType::Ammo: return {gfx_hud_stuff.get(), getRect_BigSymbol_Ammo()};
-		case eUnitDataBigSymbolType::Attack: return {gfx_hud_stuff.get(), getRect_BigSymbol_Attack()};
-		case eUnitDataBigSymbolType::Shots: return {gfx_hud_stuff.get(), getRect_BigSymbol_Shots()};
-		case eUnitDataBigSymbolType::Range: return {gfx_hud_stuff.get(), getRect_BigSymbol_Range()};
-		case eUnitDataBigSymbolType::Armor: return {gfx_hud_stuff.get(), getRect_BigSymbol_Armor()};
-		case eUnitDataBigSymbolType::Scan: return {gfx_hud_stuff.get(), getRect_BigSymbol_Scan()};
-		case eUnitDataBigSymbolType::Metal: return {gfx_hud_stuff.get(), getRect_BigSymbol_Metal()};
-		case eUnitDataBigSymbolType::MetalEmpty: return {gfx_hud_stuff.get(), getRect_BigSymbol_MetalEmpty()};
-		case eUnitDataBigSymbolType::Oil: return {gfx_hud_stuff.get(), getRect_BigSymbol_Oil()};
-		case eUnitDataBigSymbolType::Gold: return {gfx_hud_stuff.get(), getRect_BigSymbol_Gold()};
-		case eUnitDataBigSymbolType::Energy: return {gfx_hud_stuff.get(), getRect_BigSymbol_Energy()};
-		case eUnitDataBigSymbolType::Human: return {gfx_hud_stuff.get(), getRect_BigSymbol_Human()};
+		case eUnitDataBigSymbolType::Speed: return {gfx_hud_stuff.get(), Rect_BigSymbol_Speed};
+		case eUnitDataBigSymbolType::Hits: return {gfx_hud_stuff.get(), Rect_BigSymbol_Hitpoints};
+		case eUnitDataBigSymbolType::Ammo: return {gfx_hud_stuff.get(), Rect_BigSymbol_Ammo};
+		case eUnitDataBigSymbolType::Attack: return {gfx_hud_stuff.get(), Rect_BigSymbol_Attack};
+		case eUnitDataBigSymbolType::Shots: return {gfx_hud_stuff.get(), Rect_BigSymbol_Shots};
+		case eUnitDataBigSymbolType::Range: return {gfx_hud_stuff.get(), Rect_BigSymbol_Range};
+		case eUnitDataBigSymbolType::Armor: return {gfx_hud_stuff.get(), Rect_BigSymbol_Armor};
+		case eUnitDataBigSymbolType::Scan: return {gfx_hud_stuff.get(), Rect_BigSymbol_Scan};
+		case eUnitDataBigSymbolType::Metal: return {gfx_hud_stuff.get(), Rect_BigSymbol_Metal};
+		case eUnitDataBigSymbolType::MetalEmpty: return {gfx_hud_stuff.get(), Rect_BigSymbol_MetalEmpty};
+		case eUnitDataBigSymbolType::Oil: return {gfx_hud_stuff.get(), Rect_BigSymbol_Oil};
+		case eUnitDataBigSymbolType::Gold: return {gfx_hud_stuff.get(), Rect_BigSymbol_Gold};
+		case eUnitDataBigSymbolType::Energy: return {gfx_hud_stuff.get(), Rect_BigSymbol_Energy};
+		case eUnitDataBigSymbolType::Human: return {gfx_hud_stuff.get(), Rect_BigSymbol_Human};
 	}
 	return {};
 }
