@@ -66,23 +66,23 @@ sPartialSurface cGraphicsData::get_Slider (eSliderHandleType sliderHandleType) c
 }
 
 //------------------------------------------------------------------------------
-SDL_Rect cGraphicsData::getSmallSymbolPosition (eUnitDataSymbolType symbolType)
+SDL_Rect cGraphicsData::getSmallSymbolPosition (eUnitDataSymbolType symbolType, bool full)
 {
 	switch (symbolType)
 	{
-		case eUnitDataSymbolType::Speed: return getRect_SmallSymbol_Speed();
-		case eUnitDataSymbolType::HitsGreen: return getRect_SmallSymbol_HitsGreen();
-		case eUnitDataSymbolType::HitsOrange: return getRect_SmallSymbol_HitsOrange();
-		case eUnitDataSymbolType::HitsRed: return getRect_SmallSymbol_HitsRed();
-		case eUnitDataSymbolType::Ammo: return getRect_SmallSymbol_Ammo();
-		case eUnitDataSymbolType::Shots: return getRect_SmallSymbol_Shots();
-		case eUnitDataSymbolType::Metal: return getRect_SmallSymbol_Metal();
-		case eUnitDataSymbolType::Oil: return getRect_SmallSymbol_Oil();
-		case eUnitDataSymbolType::Gold: return getRect_SmallSymbol_Gold();
-		case eUnitDataSymbolType::Energy: return getRect_SmallSymbol_Energy();
-		case eUnitDataSymbolType::Human: return getRect_SmallSymbol_Human();
-		case eUnitDataSymbolType::TransportTank: return getRect_SmallSymbol_TransportTank();
-		case eUnitDataSymbolType::TransportAir: return getRect_SmallSymbol_TransportAir();
+		case eUnitDataSymbolType::Speed: return getRect_SmallSymbol_Speed (full);
+		case eUnitDataSymbolType::HitsGreen: return getRect_SmallSymbol_HitsGreen (full);
+		case eUnitDataSymbolType::HitsOrange: return getRect_SmallSymbol_HitsOrange (full);
+		case eUnitDataSymbolType::HitsRed: return getRect_SmallSymbol_HitsRed (full);
+		case eUnitDataSymbolType::Ammo: return getRect_SmallSymbol_Ammo (full);
+		case eUnitDataSymbolType::Shots: return getRect_SmallSymbol_Shots (full);
+		case eUnitDataSymbolType::Metal: return getRect_SmallSymbol_Metal (full);
+		case eUnitDataSymbolType::Oil: return getRect_SmallSymbol_Oil (full);
+		case eUnitDataSymbolType::Gold: return getRect_SmallSymbol_Gold (full);
+		case eUnitDataSymbolType::Energy: return getRect_SmallSymbol_Energy (full);
+		case eUnitDataSymbolType::Human: return getRect_SmallSymbol_Human (full);
+		case eUnitDataSymbolType::TransportTank: return getRect_SmallSymbol_TransportTank (full);
+		case eUnitDataSymbolType::TransportAir: return getRect_SmallSymbol_TransportAir (full);
 	}
 	return {};
 }

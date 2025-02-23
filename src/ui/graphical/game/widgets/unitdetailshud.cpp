@@ -249,7 +249,7 @@ void cUnitDetailsHud::drawRow (size_t index, eUnitDataSymbolType symbolType, int
 /*static*/ void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2)
 {
 	const int maxX = destination->w - position.x() - 5;
-	auto src = GraphicsData.getSmallSymbolPosition (symbolType);
+	auto src = GraphicsData.getSmallSymbolPosition (symbolType, true);
 	const cPosition srcSize = {src.w, src.h};
 	int toValue = value2;
 	int offX = srcSize.x();
@@ -269,15 +269,9 @@ void cUnitDetailsHud::drawRow (size_t index, eUnitDataSymbolType symbolType, int
 
 	SDL_Rect dest = {position.x(), position.y() + 2 + (rowHeight - srcSize.y()) / 2, 0, 0};
 
-	const auto oriSrcMinX = src.x;
 	for (int i = 0; i < toValue; i++)
 	{
-		if (value1 <= 0)
-		{
-			src.x = oriSrcMinX + srcSize.x();
-		}
-
-		auto srcRect = src;
+		auto srcRect = GraphicsData.getSmallSymbolPosition (symbolType, value1 > 0);
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &srcRect, destination, &dest);
 
 		dest.x += offX;

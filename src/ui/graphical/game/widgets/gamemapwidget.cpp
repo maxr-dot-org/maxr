@@ -1656,7 +1656,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 		const int shotCount = vehicle.getPossibleShotCountForSpeed (sp);
 		if (shotCount)
 		{
-			SDL_Rect src = cGraphicsData::getRect_SmallSymbol_Shots();
+			SDL_Rect src = cGraphicsData::getRect_SmallSymbol_Shots (true);
 			SDL_Rect shotDest = dest;
 			shotDest.x += (zoomedTileSize.x() - shotCount * (src.w + 2)) / 2;
 			shotDest.y += zoomedTileSize.y() - narrow_cast<int> ((src.h + 4) * getZoomFactor());

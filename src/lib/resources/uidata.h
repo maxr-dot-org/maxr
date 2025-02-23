@@ -187,22 +187,22 @@ public:
 	UniqueSurface gfx_hud_chatbox;
 
 	// Position in gfx_hud_stuff
-	static SDL_Rect getSmallSymbolPosition (eUnitDataSymbolType);
+	static SDL_Rect getSmallSymbolPosition (eUnitDataSymbolType, bool full);
 	sPartialSurface getBigSymbol (eUnitDataBigSymbolType) const;
 
-	static SDL_Rect getRect_SmallSymbol_Speed() { return {0, 98, 7, 7}; }
-	static SDL_Rect getRect_SmallSymbol_HitsGreen() { return {14, 98, 6, 9}; }
-	static SDL_Rect getRect_SmallSymbol_HitsOrange() { return {26, 98, 6, 9}; }
-	static SDL_Rect getRect_SmallSymbol_HitsRed() { return {38, 98, 6, 9}; }
-	static SDL_Rect getRect_SmallSymbol_Ammo() { return {50, 98, 5, 7}; }
-	static SDL_Rect getRect_SmallSymbol_Shots() { return {88, 98, 8, 4}; }
-	static SDL_Rect getRect_SmallSymbol_Metal() { return {60, 98, 7, 10}; }
-	static SDL_Rect getRect_SmallSymbol_Oil() { return {104, 98, 8, 9}; }
-	static SDL_Rect getRect_SmallSymbol_Gold() { return {120, 98, 9, 8}; }
-	static SDL_Rect getRect_SmallSymbol_Energy() { return {74, 98, 7, 7}; }
-	static SDL_Rect getRect_SmallSymbol_Human() { return {170, 98, 8, 9}; }
-	static SDL_Rect getRect_SmallSymbol_TransportTank() { return {138, 98, 16, 8}; }
-	static SDL_Rect getRect_SmallSymbol_TransportAir() { return {186, 98, 21, 8}; }
+	static SDL_Rect getRect_SmallSymbol_Speed (bool full) { return {full ? 0 : 7, 98, 7, 7}; }
+	static SDL_Rect getRect_SmallSymbol_HitsGreen (bool full) { return {full ? 14 : 20, 98, 6, 9}; }
+	static SDL_Rect getRect_SmallSymbol_HitsOrange (bool full) { return {full ? 26 : 32, 98, 6, 9}; }
+	static SDL_Rect getRect_SmallSymbol_HitsRed (bool full) { return {full ? 38 : 44, 98, 6, 9}; }
+	static SDL_Rect getRect_SmallSymbol_Ammo (bool full) { return {full ? 50 : 55, 98, 5, 7}; }
+	static SDL_Rect getRect_SmallSymbol_Shots (bool full) { return {full ? 88 : 96, 98, 8, 4}; }
+	static SDL_Rect getRect_SmallSymbol_Metal (bool full) { return {full ? 60 : 67, 98, 7, 10}; }
+	static SDL_Rect getRect_SmallSymbol_Oil (bool full) { return {full ? 104 : 112, 98, 8, 9}; }
+	static SDL_Rect getRect_SmallSymbol_Gold (bool full) { return {full ? 120 : 129, 98, 9, 8}; }
+	static SDL_Rect getRect_SmallSymbol_Energy (bool full) { return {full ? 74 : 81, 98, 7, 7}; }
+	static SDL_Rect getRect_SmallSymbol_Human (bool full) { return {full ? 170 : 178, 98, 8, 9}; }
+	static SDL_Rect getRect_SmallSymbol_TransportTank (bool full) { return {full ? 138 : 154, 98, 16, 8}; }
+	static SDL_Rect getRect_SmallSymbol_TransportAir (bool full) { return {full ? 186 : 207, 98, 21, 8}; }
 
 	sPartialSurface getSymbol_Speed() const { return {gfx_hud_stuff.get(), {244, 97, 8, 10}}; }
 	sPartialSurface getSymbol_Shots() const { return {gfx_hud_stuff.get(), {254, 97, 5, 10}}; }
