@@ -58,7 +58,7 @@ sPartialSurface cGraphicsData::get_Slider (eSliderHandleType sliderHandleType) c
 	{
 		case eSliderHandleType::Horizontal: return {gfx_menu_stuff.get(), {218, 35, 14, 17}};
 		case eSliderHandleType::Vertical: return {gfx_menu_stuff.get(), {201, 35, 17, 14}};
-		case eSliderHandleType::HudZoom: return {gfx_hud_stuff.get(), {132, 0, 25, 16}}; // TODO: move image
+		case eSliderHandleType::HudZoom: return {gfx_menu_stuff.get(), {314, 0, 25, 16}};
 		case eSliderHandleType::ModernHorizontal: return {gfx_menu_stuff.get(), {241, 59, 8, 16}};
 		case eSliderHandleType::ModernVertical: return {gfx_menu_stuff.get(), {224, 91, 16, 8}};
 	}
