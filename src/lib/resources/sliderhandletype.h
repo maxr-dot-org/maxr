@@ -17,42 +17,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_menu_widgets_sliderhandleH
-#define ui_graphical_menu_widgets_sliderhandleH
+#ifndef resources_sliderhandletypeH
+#define resources_sliderhandletypeH
 
-#include "SDLutility/partialsurface.h"
-#include "SDLutility/uniquesurface.h"
-#include "resources/sliderhandletype.h"
-#include "ui/widgets/orientation.h"
-#include "ui/widgets/widget.h"
-#include "utility/signal/signal.h"
-
-class cSliderHandle : public cWidget
+enum class eSliderHandleType
 {
-public:
-	cSliderHandle (const cPosition&, eSliderHandleType, eOrientationType);
-
-	void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) override;
-
-	void setMinMaxPosition (int minPosition, int maxPosition);
-
-	cSignal<void()> moved;
-
-private:
-	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
-	bool handleMousePressed (cApplication&, cMouse&, eMouseButtonType) override;
-	bool handleMouseReleased (cApplication&, cMouse&, eMouseButtonType) override;
-	void handleMoved (const cPosition& offset) override;
-
-private:
-	sPartialSurface partialSurface;
-
-	eOrientationType orientation;
-
-	int minPosition;
-	int maxPosition;
-
-	int grapOffset = 0;
+	Horizontal,
+	Vertical,
+	HudZoom,
+	ModernHorizontal,
+	ModernVertical,
 };
 
-#endif // ui_graphical_menu_widgets_sliderhandleH
+#endif

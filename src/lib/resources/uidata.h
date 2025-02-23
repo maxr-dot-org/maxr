@@ -24,6 +24,7 @@
 #include "SDLutility/uniquesurface.h"
 #include "game/data/player/clans.h"
 #include "game/data/units/unitdata.h"
+#include "sliderhandletype.h"
 #include "unitdatasymboltype.h"
 
 #include <filesystem>
@@ -117,6 +118,8 @@ public:
 	sPartialSurface get_PushButton_ArrowLeftSmallModern (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 272 : 264, 59, 8, 16}}; }
 	sPartialSurface get_PushButton_ArrowRightSmallModern (bool pressed) const { return {gfx_menu_stuff.get(), {pressed ? 256 : 248, 59, 8, 16}}; }
 
+	sPartialSurface get_Slider (eSliderHandleType) const;
+
 	UniqueSurface gfx_Chand;
 	UniqueSurface gfx_Cno;
 	UniqueSurface gfx_Cselect;
@@ -204,8 +207,6 @@ public:
 	sPartialSurface getSymbol_Speed() const { return {gfx_hud_stuff.get(), {244, 97, 8, 10}}; }
 	sPartialSurface getSymbol_Shots() const { return {gfx_hud_stuff.get(), {254, 97, 5, 10}}; }
 	sPartialSurface getSymbol_Disabled() const { return {gfx_hud_stuff.get(), {150, 109, 25, 25}}; }
-
-	static SDL_Rect getRect_Slider_HudZoom() { return {132, 0, 25, 16}; }
 };
 
 // Effects - Class containing all effect surfaces /////////////////////////////

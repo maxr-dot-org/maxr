@@ -26,28 +26,10 @@
 
 #include <algorithm>
 
-namespace
-{
-	//--------------------------------------------------------------------------
-	sPartialSurface getPartialSurface (eSliderHandleType sliderHandleType)
-	{
-		switch (sliderHandleType)
-		{
-			case eSliderHandleType::Horizontal: return {GraphicsData.gfx_menu_stuff.get(), {218, 35, 14, 17}};
-			case eSliderHandleType::Vertical: return {GraphicsData.gfx_menu_stuff.get(), {201, 35, 17, 14}};
-			case eSliderHandleType::HudZoom: return {GraphicsData.gfx_hud_stuff.get(), cGraphicsData::getRect_Slider_HudZoom()};
-			case eSliderHandleType::ModernHorizontal: return {GraphicsData.gfx_menu_stuff.get(), {241, 59, 8, 16}};
-			case eSliderHandleType::ModernVertical: return {GraphicsData.gfx_menu_stuff.get(), {224, 91, 16, 8}};
-		}
-		throw std::runtime_error ("Unknown enum eSliderHandleType: " + std::to_string (static_cast<int> (sliderHandleType)));
-	}
-
-} // namespace
-
 //------------------------------------------------------------------------------
 cSliderHandle::cSliderHandle (const cPosition& position, eSliderHandleType sliderHandleType, eOrientationType orientation_) :
 	cWidget (position),
-	partialSurface (getPartialSurface (sliderHandleType)),
+	partialSurface (GraphicsData.get_Slider (sliderHandleType)),
 	orientation (orientation_)
 {
 	minPosition = maxPosition = (orientation == eOrientationType::Horizontal ? getPosition().x() : getPosition().y());
