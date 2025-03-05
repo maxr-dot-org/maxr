@@ -137,7 +137,7 @@ project "resinstaller"
 	filter {}
 
 	warnings "Extra"
-	-- flags { "FatalWarnings"} -- We still have warnings :-(
+	-- fatalwarnings { "All" } -- We still have warnings :-(
 
 	files { "resinstaller/src/**.cpp", "resinstaller/src/**.c", "resinstaller/src/**.h" } -- source files
 	files { "resinstaller/.clang-format", "resinstaller/ABOUT", "resinstaller/AUTHORS", "resinstaller/Readme.md" } -- extra files
@@ -180,7 +180,7 @@ project "maxr"
 	filter {}
 
 	warnings "Extra"
-	flags { "FatalWarnings"}
+	fatalwarnings { "All" }
 
 	if have_autoversion_h then
 		includedirs { locationDir } -- for generated file (autoversion.h)
@@ -204,7 +204,7 @@ project "dedicated_server"
 	filter {}
 
 	warnings "Extra"
-	flags { "FatalWarnings"}
+	fatalwarnings { "All" }
 
 	if have_autoversion_h then
 		includedirs { locationDir } -- for generated file (autoversion.h)
@@ -224,7 +224,7 @@ project "tests"
 	targetname "maxr_tests"
 
 	warnings "Extra"
-	flags { "FatalWarnings"}
+	fatalwarnings { "All" }
 
 	files { "tests/**.cpp", "tests/**.h" }
 	vpaths { ["tests/*"] = "tests" }
@@ -248,7 +248,7 @@ project "maxr_lib"
 	targetname "maxr_lib"
 
 	warnings "Extra"
-	flags { "FatalWarnings"}
+	fatalwarnings { "All" }
 
 	if have_autoversion_h then
 		files { path.join(locationDir, "autoversion.h") } -- generated file
