@@ -666,7 +666,7 @@ void copyFileFromRes (std::string src, const std::filesystem::path& dst, int num
 {
 	try
 	{
-		SDL_Surface* surface = surface = getImageFromRes (src, number);
+		SDL_Surface* surface = getImageFromRes (src, number);
 		savePCX (surface, dst);
 		SDL_FreeSurface (surface);
 	}

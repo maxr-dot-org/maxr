@@ -50,6 +50,8 @@ cScrollBar::cScrollBar (const cPosition& position, int width, eScrollBarStyle st
 			sliderType = eSliderType::Invisible;
 			sliderHandleType = orientation == eOrientationType::Horizontal ? eSliderHandleType::ModernHorizontal : eSliderHandleType::ModernVertical;
 			break;
+		default:
+			throw std::runtime_error ("Unknown style " + std::to_string (static_cast<int> (style)));
 	}
 
 	backButton = emplaceChild<cPushButton> (getPosition(), backButtonType);

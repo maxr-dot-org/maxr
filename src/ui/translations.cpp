@@ -121,7 +121,7 @@ namespace
 	std::string getResearchAreaStatus (const cPlayer& player)
 	{
 		std::string res;
-		for (int area = 0; area < cResearch::kNrResearchAreas; area++)
+		for (std::size_t area = 0; area != cResearch::kNrResearchAreas; ++area)
 		{
 			res += getResearchAreaStatus (player, static_cast<cResearch::eResearchArea> (area));
 		}
@@ -606,6 +606,35 @@ namespace
 				return lngPack.i18n ("Comp~Path_interrupted");
 			case eSavedReportType::SurveyorAiConfused:
 				return "Surveyor AI: I'm totally confused. Don't know what to do...";
+			case eSavedReportType::MetalInsufficient:
+			case eSavedReportType::FuelInsufficient:
+			case eSavedReportType::GoldInsufficient:
+			case eSavedReportType::EnergyInsufficient:
+			case eSavedReportType::TeamInsufficient:
+			case eSavedReportType::MetalLow:
+			case eSavedReportType::FuelLow:
+			case eSavedReportType::GoldLow:
+			case eSavedReportType::EnergyLow:
+			case eSavedReportType::TeamLow:
+			case eSavedReportType::EnergyToLow:
+			case eSavedReportType::EnergyIsNeeded:
+			case eSavedReportType::BuildingDisabled:
+			case eSavedReportType::Producing_PositionBlocked:
+			case eSavedReportType::Producing_InsufficientMaterial:
+			case eSavedReportType::TurnStart:
+			case eSavedReportType::TurnWait:
+			case eSavedReportType::TurnAutoMove:
+			case eSavedReportType::Chat:
+			case eSavedReportType::HostCommand:
+			case eSavedReportType::ResourceChanged:
+			case eSavedReportType::PlayerEndedTurn:
+			case eSavedReportType::LostConnection:
+			case eSavedReportType::PlayerDefeated:
+			case eSavedReportType::PlayerWins:
+			case eSavedReportType::PlayerLeft:
+			case eSavedReportType::Upgraded:
+			case eSavedReportType::SuddenDeath:
+				return "";
 		}
 		return "";
 	}
@@ -673,6 +702,7 @@ namespace
 				case eResourceType::Gold: return lngPack.i18n ("Comp~Adjustments_Gold_Increased", std::to_string (amount));
 				case eResourceType::Oil: return lngPack.i18n ("Comp~Adjustments_Fuel_Increased", std::to_string (amount));
 				case eResourceType::Metal: return lngPack.i18n ("Comp~Adjustments_Metal_Increased", std::to_string (amount));
+				case eResourceType::None: return "";
 			}
 		}
 		else
@@ -682,6 +712,7 @@ namespace
 				case eResourceType::Gold: return lngPack.i18n ("Comp~Adjustments_Gold_Decreased", std::to_string (amount));
 				case eResourceType::Oil: return lngPack.i18n ("Comp~Adjustments_Fuel_Decreased", std::to_string (amount));
 				case eResourceType::Metal: return lngPack.i18n ("Comp~Adjustments_Metal_Decreased", std::to_string (amount));
+				case eResourceType::None: return "";
 			}
 		}
 		throw std::runtime_error ("Unknown resourceType " + std::to_string (static_cast<int> (report.getResourceType())));
@@ -814,6 +845,15 @@ std::string getMessage (const cSavedReport& report, const cModel& model)
 			return getMessage (model, static_cast<const cSavedReportPlayerLeft&> (report));
 		case eSavedReportType::Upgraded:
 			return getMessage (model, static_cast<const cSavedReportUpgraded&> (report));
+		case eSavedReportType::Attacked:
+		case eSavedReportType::AttackingEnemy:
+		case eSavedReportType::CapturedByEnemy:
+		case eSavedReportType::Destroyed:
+		case eSavedReportType::Detected:
+		case eSavedReportType::Disabled:
+		case eSavedReportType::PathInterrupted:
+		case eSavedReportType::SurveyorAiConfused:
+			return "";
 	}
 	return "";
 }

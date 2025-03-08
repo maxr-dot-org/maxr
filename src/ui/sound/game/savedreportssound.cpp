@@ -156,6 +156,7 @@ void playSound (cSoundManager& soundManager, const cModel& model, const cSavedRe
 		case eSavedReportType::TeamLow:
 		case eSavedReportType::EnergyToLow:
 		case eSavedReportType::EnergyIsNeeded:
+		case eSavedReportType::BuildingDisabled:
 		case eSavedReportType::Producing_PositionBlocked:
 		case eSavedReportType::Producing_InsufficientMaterial:
 		case eSavedReportType::TurnWait:
@@ -171,6 +172,7 @@ void playSound (cSoundManager& soundManager, const cModel& model, const cSavedRe
 		case eSavedReportType::PlayerWins:
 		case eSavedReportType::PlayerLeft:
 		case eSavedReportType::Upgraded:
+		case eSavedReportType::SuddenDeath:
 		{
 			// Empty
 			break;

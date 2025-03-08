@@ -1260,10 +1260,8 @@ void cUpgradeCalculator::printToLog (const char* str, int value) const
 //------------------------------------------------------------------------------
 cResearch::cResearch()
 {
-	for (int i = 0; i < kNrResearchAreas; i++)
+	for (std::size_t i = 0; i != kNrResearchAreas; ++i)
 	{
-		curResearchLevel[i] = 0;
-		curResearchPoints[i] = 0;
 		neededResearchPoints[i] = cUpgradeCalculator::instance().calcResearchTurns (0, getUpgradeCalculatorUpgradeType (static_cast<eResearchArea> (i)));
 	}
 }

@@ -59,7 +59,7 @@ void cActionChangeResearch::execute (cModel& model) const
 	bool error = false;
 	const auto buildings = player->getBuildings();
 	auto currentBuildingIter = buildings.begin();
-	for (int newArea = 0; newArea != cResearch::kNrResearchAreas; ++newArea)
+	for (std::size_t newArea = 0; newArea != cResearch::kNrResearchAreas; ++newArea)
 	{
 		int centersToAssign = researchAreas[newArea];
 		for (; currentBuildingIter != buildings.end() && centersToAssign > 0; ++currentBuildingIter)

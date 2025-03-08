@@ -297,9 +297,9 @@ public:
 	}
 	//-------------------------------------------
 private:
-	std::array<int, kNrResearchAreas> curResearchLevel; ///< 0, 10, 20, 30, ...
+	std::array<int, kNrResearchAreas> curResearchLevel{}; ///< 0, 10, 20, 30, ...
 	/// Number of research-center turns the player invested in an area
-	std::array<int, kNrResearchAreas> curResearchPoints;
+	std::array<int, kNrResearchAreas> curResearchPoints{};
 	/// Number of research-center turns needed to reach the next level
 	// (remainingResearchPoints == neededResearchPoints - curResearchPoints)
 	std::array<std::optional<int>, kNrResearchAreas> neededResearchPoints;

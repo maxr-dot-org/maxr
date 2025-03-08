@@ -29,6 +29,7 @@ int sMiningResource::get (eResourceType resourceType) const
 		case eResourceType::Metal: return metal;
 		case eResourceType::Oil: return oil;
 		case eResourceType::Gold: return gold;
+		case eResourceType::None: break;
 	}
 	abort();
 }
@@ -41,6 +42,7 @@ int& sMiningResource::get (eResourceType resourceType)
 		case eResourceType::Metal: return metal;
 		case eResourceType::Oil: return oil;
 		case eResourceType::Gold: return gold;
+		case eResourceType::None: break;
 	}
 	abort();
 }

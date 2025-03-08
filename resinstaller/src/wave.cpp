@@ -150,7 +150,7 @@ void saveWAV (const std::filesystem::path& dst, const cWaveFile& waveFile)
 	}
 
 	// Write the magic header
-	if (SDL_WriteLE32 (file, RIFF) == -1)
+	if (SDL_WriteLE32 (file, RIFF) != 1)
 	{
 		throw InstallException (std::string ("Couldn't write to file") + TEXT_FILE_LF);
 	}

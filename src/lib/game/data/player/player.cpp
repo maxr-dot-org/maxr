@@ -59,9 +59,9 @@ cPlayer::cPlayer() :
 }
 //------------------------------------------------------------------------------
 cPlayer::cPlayer (const cPlayerBasicData& splayer, const cUnitsData& unitsData) :
-	base (*this),
 	player ({splayer.getName(), splayer.getColor()}),
-	id (splayer.getNr())
+	id (splayer.getNr()),
+	base (*this)
 {
 	// get the default (no clan) unit data
 	dynamicUnitsData = unitsData.getDynamicUnitsData (-1);
@@ -478,7 +478,7 @@ std::vector<cResearch::eResearchArea> cPlayer::doResearch (const cUnitsData& uni
 {
 	std::vector<cResearch::eResearchArea> areasReachingNextLevel;
 
-	for (int area = 0; area < cResearch::kNrResearchAreas; ++area)
+	for (std::size_t area = 0; area != cResearch::kNrResearchAreas; ++area)
 	{
 		if (researchCentersWorkingOnArea[area] > 0 && researchState.doResearch (researchCentersWorkingOnArea[area], static_cast<cResearch::eResearchArea> (area)))
 		{
@@ -607,7 +607,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	}
 	std::swap (researchCentersWorkingTotal, newResearchCount);
 
-	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+	for (std::size_t i = 0; i != cResearch::kNrResearchAreas; i++)
 	{
 		if (oldResearchCentersWorkingOnArea[i] != researchCentersWorkingOnArea[i])
 		{

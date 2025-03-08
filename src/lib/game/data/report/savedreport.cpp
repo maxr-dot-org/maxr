@@ -103,6 +103,7 @@ std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (Archive& archive)
 		case eSavedReportType::Producing_PositionBlocked:
 		case eSavedReportType::TurnWait:
 		case eSavedReportType::TurnAutoMove:
+		case eSavedReportType::SuddenDeath:
 			return std::make_unique<cSavedReportSimple> (type);
 	}
 	throw std::runtime_error ("unreachable");

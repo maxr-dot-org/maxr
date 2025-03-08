@@ -47,7 +47,7 @@ TEST_CASE ("toInt")
 		{"", std::nullopt},
 		{"abc", std::nullopt},
 	};
-	for (const auto [s, expected] : v)
+	for (const auto& [s, expected] : v)
 	{
 		CHECK (toInt (s) == expected);
 	}

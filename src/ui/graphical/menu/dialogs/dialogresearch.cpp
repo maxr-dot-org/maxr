@@ -99,7 +99,7 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 	}
 
 	unusedResearchCenters = player.getResearchCentersWorkingTotal();
-	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+	for (std::size_t i = 0; i != cResearch::kNrResearchAreas; ++i)
 	{
 		researchSettings[i] = player.getResearchCentersWorkingOnArea ((cResearch::eResearchArea) i);
 		unusedResearchCenters -= researchSettings[i];

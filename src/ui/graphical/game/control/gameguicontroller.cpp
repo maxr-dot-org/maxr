@@ -1035,6 +1035,7 @@ void cGameGuiController::connectClient (cClient& client)
 				case EDirection::NorthWest:
 					map.addEffect (std::make_shared<cFxTracks> (vehiclePixelPos, EDirection::SouthEast));
 					break;
+				default: break;
 			}
 		}
 	});
