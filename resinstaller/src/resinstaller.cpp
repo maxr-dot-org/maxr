@@ -3954,16 +3954,16 @@ static void createLogFile (const std::filesystem::path& dataDir)
 	else
 	{
 		std::cout << "write log in " << fileName << std::endl;
-		freopen (fileName.string().c_str(), "a", stderr); // write errors to log instead stdout(.txt)
+		static_cast<void> (freopen (fileName.string().c_str(), "a", stderr)); // write errors to log instead stdout(.txt)
 	}
 
 	writeLog (std::string ("resinstaller version ") + VERSION + TEXT_FILE_LF);
 }
 
+#ifdef WIN32
 //------------------------------------------------------------------------------
 static void checkWritePermissions (const std::string& appName, bool bDoNotElevate)
 {
-#ifdef WIN32
 	// create test file
 	auto testFileName = sOutputPath / "writeTest.txt";
 	SDL_RWops* testFile = SDL_RWFromFile (testFileName.u8string().c_str(), "w");
@@ -4000,9 +4000,8 @@ static void checkWritePermissions (const std::string& appName, bool bDoNotElevat
 
 	SDL_RWclose (testFile);
 	std::filesystem::remove (testFileName);
-
-#endif
 }
+#endif
 
 //------------------------------------------------------------------------------
 static bool validateMAXPath (std::filesystem::path& maxPath)
@@ -4569,9 +4568,10 @@ int main (int argc, char* argv[])
 	const auto sVoicePath = getVoicePathFromUser();
 	writeLog ("Voice path: " + sVoicePath.u8string() + TEXT_FILE_LF);
 
+#ifdef WIN32
 	// check if we need admin rights for the selected output directory
 	checkWritePermissions (appName, bDoNotElevate);
-
+#endif
 	// init res converter
 	seekAfterEOD();
 
