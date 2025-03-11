@@ -4544,8 +4544,6 @@ int main (int argc, char* argv[])
 
 	sResChoice = validateResources (sResChoice); // validate the parameter for importing the resources
 
-	const bool bDoNotElevate = (std::string (argv[argc - 1]) == "/donotelevate");
-
 	if (sResChoice.empty())
 	{
 		// what resources should the resinstaller import into M.A.X. Reloaded? Call user input!
@@ -4569,6 +4567,7 @@ int main (int argc, char* argv[])
 	writeLog ("Voice path: " + sVoicePath.u8string() + TEXT_FILE_LF);
 
 #ifdef WIN32
+	const bool bDoNotElevate = (std::string (argv[argc - 1]) == "/donotelevate");
 	// check if we need admin rights for the selected output directory
 	checkWritePermissions (appName, bDoNotElevate);
 #endif
