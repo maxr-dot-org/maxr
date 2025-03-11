@@ -26,6 +26,7 @@ local nugetPackages = {
 	-- "vorbis-msvc14-x64:1.3.5.7785", "ogg-msvc-x64:1.3.2.8787", -- x64
 }
 
+local PATH = os.getenv("PATH")
 local SDL2_DIR = os.getenv("SDL2_DIR")
 local SDL2_headerPath = os.findheader("SDL2/SDL.h", SDL2_DIR)
 local SDL2_libraryPath = os.findlib("SDL2", SDL2_DIR)
@@ -33,6 +34,7 @@ local vorbis_headerPath = os.findheader("vorbis/vorbisenc.h")
 local ogg_headerPath = os.findheader("ogg/ogg.h")
 
 print("premake:", _PREMAKE_VERSION)
+print("PATH: ", PATH)
 print("SDL2_DIR: ", SDL2_DIR)
 print("SDL2 header path: ", SDL2_headerPath)
 print("SDL2 library path: ", SDL2_libraryPath)
@@ -100,6 +102,22 @@ end
 
 	filter { "action:vs*" }
 		nuget(nugetPackages)
+	filter { "action:not vs*", "kind:ConsoleApp" }
+		links { "SDL2main" }
+	filter { "action:not vs*" }
+if vorbis_headerPath then
+		includedirsafter { vorbis_headerPath }
+end
+if ogg_headerPath then
+		includedirsafter { ogg_headerPath }
+end
+if SDL2_headerPath then
+		externalincludedirs { path.join(SDL2_headerPath, "SDL2") }
+end
+if SDL2_libraryPath then
+		libdirs { SDL2_libraryPath }
+end
+		links { "SDL2", "SDL2_net", "SDL2_mixer", "ogg", "vorbis", "vorbisfile", "vorbisenc" }
 	filter { "toolset:msc*" }
 		defines { "_CRT_SECURE_NO_WARNINGS" } -- 4996: '$func': This function or variable may be unsafe. Consider using $func2 instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 		defines { "_USE_MATH_DEFINES" } -- for M_PI
@@ -153,21 +171,6 @@ project "resinstaller"
 			"4703", -- potentially uninitialized local pointer variable '$var' used
 			"4996", -- '$func': The POSIX name of this item is deprecated. Instead, use the ISO C and C++ conformant name: $func2. See online help for details.
 		}
-	filter "action:not vs*"
-if vorbis_headerPath then
-		includedirsafter { vorbis_headerPath }
-end
-if ogg_headerPath then
-		includedirsafter { ogg_headerPath }
-end
-if SDL2_headerPath then
-		externalincludedirs { path.join(SDL2_headerPath, "SDL2") }
-end
-if SDL2_libraryPath then
-		libdirs { SDL2_libraryPath }
-end
-		links { "SDL2", "ogg", "vorbis", "vorbisfile", "vorbisenc" }
-	filter {}
 
 project "maxr"
 	kind "WindowedApp"
@@ -186,13 +189,17 @@ project "maxr"
 		includedirs { locationDir } -- for generated file (autoversion.h)
 	end
 
-	files { "src/ui/**.cpp", "src/ui/**.h", "src/maxr.rc" }
+	files { "src/ui/**.cpp", "src/ui/**.h" }
+	filter "system:windows"
+		files { "src/maxr.rc" }
+	filter {}
 	includedirs { "src", "src/lib" }
 	externalincludedirs { "submodules/nlohmann/single_include" }
 	links { "maxr_lib", "SDL_flic", "mveplayer" }
 	linksToCrashRpt()
 
 	debugdir "data"
+
 
 project "dedicated_server"
 	kind "ConsoleApp"
@@ -210,7 +217,10 @@ project "dedicated_server"
 		includedirs { locationDir } -- for generated file (autoversion.h)
 	end
 
-	files { "src/dedicatedserver/**.cpp", "src/dedicated_server/**.h", "src/maxr.rc" }
+	files { "src/dedicatedserver/**.cpp", "src/dedicated_server/**.h" }
+	filter "system:windows"
+		files { "src/maxr.rc" }
+	filter {}
 	includedirs { "src", "src/lib" }
 	externalincludedirs { "submodules/nlohmann/single_include" }
 	links { "maxr_lib", "SDL_flic", "mveplayer" }
