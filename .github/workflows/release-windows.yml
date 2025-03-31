@@ -17,7 +17,7 @@ jobs:
         submodules: recursive
 
     - name: install premake5
-      uses: Jarod42/install-premake5@v4
+      uses: Jarod42/install-premake5@v5
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
