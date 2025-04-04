@@ -41,7 +41,6 @@
 # include <thread>
 #elif WIN32
 # include <Shlobj.h>
-# include <conio.h> // for getch
 #endif
 
 static std::filesystem::path sMAXPath;
@@ -3991,10 +3990,6 @@ static void checkWritePermissions (const std::string& appName, bool bDoNotElevat
 
 		std::cout << "Failed. Please restart the application with admin rights." << std::endl;
 
-		// wait for key press
-		FlushConsoleInputBuffer (GetStdHandle (STD_INPUT_HANDLE));
-		getch();
-
 		exit (-1);
 	}
 
@@ -4602,12 +4597,6 @@ int main (int argc, char* argv[])
 
 	SDL_RWclose (res);
 	SDL_RWclose (logFile);
-
-#if defined(WIN32) && !defined(NDEBUG)
-	// wait for key press
-	FlushConsoleInputBuffer (GetStdHandle (STD_INPUT_HANDLE));
-	getch();
-#endif
 
 	return 0;
 }
