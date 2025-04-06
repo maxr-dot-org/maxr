@@ -29,7 +29,7 @@ local nugetPackages = {
 local PATH = os.getenv("PATH")
 local SDL2_DIR = os.getenv("SDL2_DIR")
 local SDL2_headerPath = os.findheader("SDL2/SDL.h", SDL2_DIR)
-local SDL2_libraryPath = os.findlib("SDL2", SDL2_DIR)
+local SDL2_libraryPath = SDL2_headerPath and path.join(SDL2_headerPath, '../lib') or nil --os.findlib("SDL2", SDL2_DIR)
 local vorbis_headerPath = os.findheader("vorbis/vorbisenc.h")
 local ogg_headerPath = os.findheader("ogg/ogg.h")
 
