@@ -48,16 +48,17 @@ jobs:
     - name: install premake5
       uses: Jarod42/install-premake5@v5
 
-    - name: Retrieve CrashRpt_v.1.4.3_r1645
-      run: |
-        curl -o CrashRpt_v.1.4.3_r1645.7z -L https://sourceforge.net/projects/crashrpt/files/CrashRpt_v.1.4.3_r1645.7z/download
-        7z x -o"./CrashRpt_v.1.4.3_r1645" "CrashRpt_v.1.4.3_r1645.7z" "lib/*.*" "include/*.*" "bin/CrashRpt1403.dll" "bin/CrashSender1403.exe" "bin/crashrpt_lang.ini"
-        7z e -o"data/CrashRpt"          CrashRpt_v.1.4.3_r1645.7z "lang_files/*.ini"
+#    - name: Retrieve CrashRpt_v.1.4.3_r1645
+#      run: |
+#        curl -o CrashRpt_v.1.4.3_r1645.7z -L https://sourceforge.net/projects/crashrpt/files/CrashRpt_v.1.4.3_r1645.7z/download
+#        7z x -o"./CrashRpt_v.1.4.3_r1645" "CrashRpt_v.1.4.3_r1645.7z" "lib/*.*" "include/*.*" "bin/CrashRpt1403.dll" "bin/CrashSender1403.exe" "bin/crashrpt_lang.ini"
+#        7z e -o"data/CrashRpt"          CrashRpt_v.1.4.3_r1645.7z "lang_files/*.ini"
 
     - name: run premake5
       shell: msys2 {0}
       run: |
-        "/C/Program Files/premake/premake5.exe" gmake --to=solution/gmake --crashRpt_root=CrashRpt_v.1.4.3_r1645
+        "/C/Program Files/premake/premake5.exe" gmake --to=solution/gmake
+# --crashRpt_root=CrashRpt_v.1.4.3_r1645
 
     - name: build
       shell: msys2 {0}
@@ -83,4 +84,3 @@ jobs:
         path: |
           data/**.exe
           data/**.dll
-
