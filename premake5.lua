@@ -104,6 +104,8 @@ end
 		nuget(nugetPackages)
 	filter { "action:not vs*", "kind:ConsoleApp" }
 		links { "SDL2main" }
+	filter { "action:not vs*", "system:windows" }
+		defines { "SDL_MAIN_HANDLED" }
 	filter { "action:not vs*" }
 if vorbis_headerPath then
 		includedirsafter { vorbis_headerPath }
