@@ -3854,7 +3854,7 @@ static void initialize()
 	/*
 	 Uncommented since you do break any terminal I/O for users at least
 	 under linux with that too. You may write some WIN32 DEFINED code
-	 to prevend stdout.txt to be created on windows -- beko
+	 to prevent stdout.txt to be created on windows -- beko
 	 */
 	// added code to prevent writing to stdout.txt and stderr.txt
 	// freopen( "CON", "w", stdout );
