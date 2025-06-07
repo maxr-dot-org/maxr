@@ -20,15 +20,22 @@
 #ifndef SDLutility_sdlnetcomponentH
 #define SDLutility_sdlnetcomponentH
 
+#include <memory>
+
+struct SDLComponent;
+
 //------------------------------------------------------------------------------
 struct SDLNetComponent
 {
-	SDLNetComponent();
+	explicit SDLNetComponent (std::shared_ptr<SDLComponent>);
 
 	SDLNetComponent (const SDLNetComponent&) = delete;
 	SDLNetComponent& operator= (const SDLNetComponent&) = delete;
 
 	~SDLNetComponent();
+
+private:
+	std::shared_ptr<SDLComponent> sdlComponent; // to ensure order of construction/destruction
 };
 
 #endif

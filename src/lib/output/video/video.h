@@ -20,17 +20,14 @@
 #ifndef output_video_videoH
 #define output_video_videoH
 
+#include "SDLutility/sdlcomponent.h"
 #include "SDLutility/uniquesurface.h"
 #include "settings.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <filesystem>
-
-struct SDL_Texture;
-struct SDL_Renderer;
-struct SDL_Window;
-struct SDL_Surface;
+#include <memory>
 
 class cKeyboard;
 struct sVideoSettings;
@@ -49,7 +46,7 @@ public:
 
 	void clearMemory();
 
-	void init (const std::string& title, const std::filesystem::path& icon);
+	void init (std::shared_ptr<SDLComponent>, const std::string& title, const std::filesystem::path& icon);
 
 	/**
 	 * Shows the splash screen
@@ -184,6 +181,7 @@ private:
 	void detectResolutions();
 
 private:
+	std::shared_ptr<SDLComponent> sdlComponent; // to ensure order of construction/destruction
 	SDL_Window* sdlWindow = nullptr;
 	SDL_Renderer* sdlRenderer = nullptr;
 	SDL_Texture* sdlTexture = nullptr;

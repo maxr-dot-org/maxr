@@ -80,8 +80,9 @@ void cVideo::clearMemory()
 }
 
 //------------------------------------------------------------------------------
-void cVideo::init (const std::string& title, const std::filesystem::path& iconPath)
+void cVideo::init (std::shared_ptr<SDLComponent> sdlComponent, const std::string& title, const std::filesystem::path& iconPath)
 {
+	this->sdlComponent = std::move (sdlComponent);
 	sdlWindow = SDL_CreateWindow (title.c_str(),
 	                              SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex()),
 	                              SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex()),

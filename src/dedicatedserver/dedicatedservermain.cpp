@@ -41,8 +41,8 @@ try
 	logNlohmannVersion();
 	CR_INIT_CRASHREPORTING();
 
-	SDLComponent sdlComponent (false);
-	SDLNetComponent sdlNetComponent;
+	auto sdlComponent = std::make_shared<SDLComponent> (false);
+	auto sdlNetComponent = std::make_shared<SDLNetComponent> (sdlComponent);
 
 	if (LoadData (false) == eLoadingState::Error)
 	{

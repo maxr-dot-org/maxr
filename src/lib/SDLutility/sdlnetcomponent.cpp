@@ -24,7 +24,8 @@
 #include <SDL_net.h>
 
 //------------------------------------------------------------------------------
-SDLNetComponent::SDLNetComponent()
+SDLNetComponent::SDLNetComponent (std::shared_ptr<SDLComponent> sdlComponent) :
+	sdlComponent{std::move (sdlComponent)}
 {
 	if (SDLNet_Init() == -1)
 	{

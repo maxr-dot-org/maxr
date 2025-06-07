@@ -85,7 +85,6 @@ struct AtExit
 		//unload files here
 		cSoundDevice::getInstance().close();
 
-		Video.clearMemory();
 		Log.info ("EOF");
 	}
 };
@@ -108,10 +107,10 @@ try
 	logNlohmannVersion();
 	CR_INIT_CRASHREPORTING();
 
-	SDLComponent sdlComponent (true);
-	SDLNetComponent sdlNetComponent;
+	auto sdlComponent = std::make_shared<SDLComponent> (true);
+	auto sdlNetComponent = std::make_shared<SDLNetComponent> (sdlComponent);
 
-	Video.init (PACKAGE_NAME " " PACKAGE_VERSION " " PACKAGE_REV, MAXR_ICON);
+	Video.init (sdlComponent, PACKAGE_NAME " " PACKAGE_VERSION " " PACKAGE_REV, MAXR_ICON);
 	Video.showSplashScreen (SPLASH_BACKGROUND);
 	initSound(); // now config is loaded and we can init sound and net
 
