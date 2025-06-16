@@ -44,7 +44,7 @@ jobs:
         sudo apt-get install libsdl2-dev libsdl2-mixer-dev libsdl2-net-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisidec-dev
 
     - name: install premake5
-      uses: Jarod42/install-premake5@v5
+      uses: Jarod42/install-premake5@v6
 
     - name: run premake5
       run: premake5 gmake --to=solution/gmake
