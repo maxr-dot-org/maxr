@@ -39,7 +39,7 @@ jobs:
         msbuild.exe /property:Configuration=Release Maxr.sln
 
     - name: Create nsis installer
-      uses: joncloud/makensis-action@v4.1
+      uses: joncloud/makensis-action@v5.0
       with:
         script-file: mk/win32/installer/maxr-installer.nsi
 
