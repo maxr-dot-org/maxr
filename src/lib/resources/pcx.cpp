@@ -21,6 +21,7 @@
 
 #include "output/video/video.h"
 #include "utility/log.h"
+#include "utility/string/utf-8.h"
 
 #include <algorithm>
 #include <filesystem>
@@ -38,7 +39,7 @@ public:
 	//--------------------------------------------------------------------------
 	bool open (const std::filesystem::path& filename, const char* mode)
 	{
-		this->file = SDL_RWFromFile (filename.u8string().c_str(), mode);
+		this->file = SDL_RWFromFile (utf8::to_string (filename).c_str(), mode);
 		return this->file != nullptr;
 	}
 

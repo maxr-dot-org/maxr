@@ -27,6 +27,8 @@
 #include "utility/listhelpers.h"
 #include "utility/narrow_cast.h"
 
+#include <numbers>
+
 //--------------------------------------------------------------------------
 cSoundManager::sStoredSound::sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_) :
 	sound (std::move (sound_)),
@@ -252,7 +254,7 @@ void cSoundManager::updateSoundPosition (cSoundEffect& sound)
 	{
 		// y coordinate is taken into account as well
 		offset /= distance;
-		pan = offset[0] * std::cos (offset[1] * M_PI / 2);
+		pan = offset[0] * std::cos (offset[1] * std::numbers::pi / 2);
 
 		// if we are close to the position the panning will be reduced in effect.
 		const auto distanceFactor = 1. - (1. / std::max (5. * distance / maxListeningDistance, 1.));

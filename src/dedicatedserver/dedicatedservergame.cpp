@@ -244,7 +244,7 @@ void cDedicatedServerGame::handleChatCommand (int fromPlayer, const std::vector<
 			}
 			auto map = std::make_shared<cStaticMap>();
 			const auto* senderPlayer = lobbyServer.getConstPlayer (fromPlayer);
-			if (map->loadMap (std::filesystem::u8path (mapName)))
+			if (map->loadMap (std::u8string (mapName.begin(), mapName.end())))
 			{
 				lobbyServer.selectMap (map);
 				std::string reply = senderPlayer->getName();

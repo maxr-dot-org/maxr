@@ -62,6 +62,7 @@
 #include "utility/language.h"
 #include "utility/log.h"
 #include "utility/random.h"
+#include "utility/string/utf-8.h"
 
 #include <iomanip>
 #include <iostream>
@@ -206,7 +207,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	signalConnectionManager.connect (Video.resolutionChanged, [this]() { handleResolutionChange(); });
 
 	signalConnectionManager.connect (Video.screenShotTaken, [this] (const std::filesystem::path& path) {
-		messageList->addMessage (lngPack.i18n ("Comp~Screenshot_Done", path.u8string()));
+		messageList->addMessage (lngPack.i18n ("Comp~Screenshot_Done", utf8::to_string (path)));
 	});
 }
 

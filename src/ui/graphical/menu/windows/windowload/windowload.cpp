@@ -32,6 +32,7 @@
 #include "utility/language.h"
 #include "utility/log.h"
 #include "utility/ranges.h"
+#include "utility/string/utf-8.h"
 
 //Versions prior to 1.0 are no longer compatible
 #define MINIMUM_REQUIRED_SAVE_VERSION ((std::string) "1.0")
@@ -57,8 +58,8 @@ cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock, s
 
 	auto upButton = emplaceChild<cPushButton> (getPosition() + cPosition (33, 438), ePushButtonType::ArrowUpBig);
 	auto downButton = emplaceChild<cPushButton> (getPosition() + cPosition (63, 438), ePushButtonType::ArrowDownBig);
-	signalConnectionManager.connect (upButton->clicked, [=]() { handleUpClicked(); if (page == 0) { upButton->lock(); } downButton->unlock(); });
-	signalConnectionManager.connect (downButton->clicked, [=]() { handleDownClicked(); if (page == lastPage) {downButton->lock();} upButton->unlock(); });
+	signalConnectionManager.connect (upButton->clicked, [=, this]() { handleUpClicked(); if (page == 0) { upButton->lock(); } downButton->unlock(); });
+	signalConnectionManager.connect (downButton->clicked, [=, this]() { handleDownClicked(); if (page == lastPage) {downButton->lock();} upButton->unlock(); });
 	upButton->lock();
 
 	for (size_t x = 0; x < columns; x++)
@@ -164,7 +165,7 @@ void cWindowLoad::handleSlotDoubleClicked (size_t index)
 	if (cVersion (saveInfo->saveVersion) < cVersion (MINIMUM_REQUIRED_SAVE_VERSION))
 	{
 		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Incompatible", MINIMUM_REQUIRED_MAXR_VERSION)));
-		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName (saveNumber).u8string() + " is not compatible");
+		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + utf8::to_string (cSavegame::getFileName (saveNumber)) + " is not compatible");
 		return;
 	}
 
@@ -277,7 +278,7 @@ void cWindowLoad::handleLoadClicked()
 	if (cVersion (saveInfo->saveVersion) < cVersion (MINIMUM_REQUIRED_SAVE_VERSION))
 	{
 		getActiveApplication()->show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Save_Incompatible", MINIMUM_REQUIRED_MAXR_VERSION)));
-		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + cSavegame::getFileName (*selectedSaveNumber).u8string() + " is not compatible");
+		NetLog.warn ("Savegame Version " + saveInfo->gameVersion + " of file " + utf8::to_string (cSavegame::getFileName (*selectedSaveNumber)) + " is not compatible");
 		return;
 	}
 

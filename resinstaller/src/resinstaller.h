@@ -54,18 +54,33 @@ public:
 	std::string message;
 };
 
+namespace utf8
+{
+	//--------------------------------------------------------------------------
+	inline std::string to_string (const std::u8string& s)
+	{
+		return {s.begin(), s.end()};
+	}
+
+	//--------------------------------------------------------------------------
+	inline std::string to_string (const std::filesystem::path& p)
+	{
+		return to_string (p.u8string());
+	}
+} // namespace utf8
+
 // makes all necessary actions after a successful
 // or unsuccessful attempt to install a file
 #define END_INSTALL_FILE(file) \
 	catch (const InstallException& e) \
 	{ \
-		writeLog ("Error while installing file '" + std::filesystem::path (file).u8string() + "'" + TEXT_FILE_LF + e.message); \
+		writeLog ("Error while installing file '" + utf8::to_string (std::filesystem::path (file)) + "'" + TEXT_FILE_LF + e.message); \
 		iErrors++; \
 		wasError = true; \
 	} \
 	catch (const std::exception& e) \
 	{ \
-		writeLog ("Error while installing file '" + std::filesystem::path (file).u8string() + "'" + TEXT_FILE_LF + e.what() + TEXT_FILE_LF); \
+		writeLog ("Error while installing file '" + utf8::to_string (std::filesystem::path (file)) + "'" + TEXT_FILE_LF + e.what() + TEXT_FILE_LF); \
 		iErrors++; \
 		wasError = true; \
 	} \

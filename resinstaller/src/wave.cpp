@@ -118,7 +118,7 @@ void loadWAV (const std::filesystem::path& src, cWaveFile& waveFile)
 	if (SDL_LoadWAV_RW (file, 0, &waveFile.spec, &waveFile.buffer, &waveFile.length) == nullptr)
 	{
 		SDL_RWclose (file);
-		throw InstallException ("File '" + src.u8string() + "' may be corrupted" + TEXT_FILE_LF);
+		throw InstallException ("File '" + utf8::to_string (src) + "' may be corrupted" + TEXT_FILE_LF);
 	}
 	//load smpl chunk
 	readSmplChunk (file, waveFile);
@@ -143,7 +143,7 @@ void saveWAV (const std::filesystem::path& dst, const cWaveFile& waveFile)
 
 	//open destination file
 	std::filesystem::create_directories (dst.parent_path());
-	SDL_RWops* file = SDL_RWFromFile (dst.u8string().c_str(), "wb");
+	SDL_RWops* file = SDL_RWFromFile (utf8::to_string (dst).c_str(), "wb");
 	if (file == nullptr)
 	{
 		throw InstallException (std::string ("Couldn't open file for writing") + TEXT_FILE_LF);

@@ -23,6 +23,7 @@
 #include "ui/uidefines.h"
 #include "utility/log.h"
 #include "utility/random.h"
+#include "utility/string/utf-8.h"
 
 #include <filesystem>
 
@@ -31,19 +32,19 @@ static void showScene (const std::filesystem::path& filename)
 {
 	if (!std::filesystem::exists (filename))
 	{
-		Log.warn ("Couldn't find movie " + filename.u8string());
+		Log.warn ("Couldn't find movie " + utf8::to_string (filename));
 	}
 	// Close maxr sound for movie
 	cSoundDevice::getInstance().close();
 	const int oldCursorStatus = SDL_ShowCursor (SDL_QUERY);
 	SDL_ShowCursor (SDL_DISABLE);
 
-	Log.debug ("Starting movie " + filename.u8string());
-	const int mvereturn = MVEPlayer (filename.u8string().c_str(),
+	Log.debug ("Starting movie " + utf8::to_string (filename));
+	const int mvereturn = MVEPlayer (utf8::to_string (filename).c_str(),
 	                                 Video.getResolutionX(),
 	                                 Video.getResolutionY(),
 	                                 !Video.getWindowMode(),
-	                                 MAXR_ICON.u8string().c_str(),
+	                                 utf8::to_string (MAXR_ICON).c_str(),
 	                                 !cSettings::getInstance().isSoundMute());
 	Log.debug ("MVEPlayer returned " + std::to_string (mvereturn));
 	SDL_ShowCursor (oldCursorStatus);

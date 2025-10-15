@@ -40,7 +40,7 @@ void cCasualtiesTracker::logCasualty (const cUnit& unit)
 //------------------------------------------------------------------------------
 void cCasualtiesTracker::increaseCasualty (sID unitType, int playerNr)
 {
-	auto signalCaller = makeScopedOperation ([=]() { casualtyChanged (unitType, playerNr); });
+	auto signalCaller = makeScopedOperation ([=, this]() { casualtyChanged (unitType, playerNr); });
 
 	std::vector<Casualty>& casualties = getCasualtiesOfPlayer (playerNr);
 

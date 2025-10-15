@@ -83,7 +83,7 @@ CheckBox* cRadioGroupValue<T>::addCheckBox (T value, std::unique_ptr<CheckBox> n
 
 	if (currentlyCheckedButton == nullptr && !allowUncheckAll && !checkBox->isChecked()) checkBox->setChecked (true);
 
-	signalConnectionManager.connect (checkBox->toggled, [=]() { buttonToggled (*checkBox, value); });
+	signalConnectionManager.connect (checkBox->toggled, [=, this]() { buttonToggled (*checkBox, value); });
 	buttonToggled (*checkBox, value);
 
 	checkBoxes.emplace (value, checkBox);

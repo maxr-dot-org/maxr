@@ -22,92 +22,124 @@
 #include "utility/serialization/jsonarchive.h"
 
 #include <doctest.h>
-#include <iostream>
 #include <string>
 #include <vector>
 
-//------------------------------------------------------------------------------
-template <typename T>
-std::ostream& operator<< (std::ostream& os, const std::vector<T>& v)
+namespace doctest
 {
-	os << '{';
-	const char* sep = "";
-	for (const auto& e : v)
+	template <typename T, std::size_t N>
+	struct StringMaker<std::array<T, N>>
 	{
-		os << sep << e;
-		sep = ", ";
-	}
-	return os << '}';
-}
+		static String convert (const std::array<T, N>& a)
+		{
+			String res = "{";
+			const char* sep = "";
+			for (const auto& e : a)
+			{
+				res += sep;
+				res += toString (e);
+				sep = ", ";
+			}
+			res += "}";
+			return res;
+		}
+	};
 
-//------------------------------------------------------------------------------
-template <typename T, std::size_t N>
-std::ostream& operator<< (std::ostream& os, const std::array<T, N>& a)
-{
-	os << '{';
-	const char* sep = "";
-	for (const auto& e : a)
+	template <typename T>
+	struct StringMaker<std::optional<T>>
 	{
-		os << sep << e;
-		sep = ", ";
-	}
-	return os << '}';
-}
+		static String convert (const std::optional<T>& value)
+		{
+			if (value)
+			{
+				return toString (*value);
+			}
+			return "std::nullopt";
+		}
+	};
 
-//------------------------------------------------------------------------------
-template <typename T1, typename T2>
-std::ostream& operator<< (std::ostream& os, const std::pair<T1, T2>& p)
-{
-	return os << '{' << p.first << ", " << p.second << '}';
-}
-
-//------------------------------------------------------------------------------
-template <typename T>
-std::ostream& operator<< (std::ostream& os, const std::optional<T>& o)
-{
-	if (o)
+	template <typename T1, typename T2>
+	struct StringMaker<std::pair<T1, T2>>
 	{
-		return os << o.value();
-	}
-	return os << "{empty}";
-}
+		static String convert (const std::pair<T1, T2>& p)
+		{
+			String res = "{";
+			res += toString (p.first);
+			res += ", ";
+			res += toString (p.second);
+			res += "}";
+			return res;
+		}
+	};
 
-//------------------------------------------------------------------------------
-template <typename K, typename V>
-std::ostream& operator<< (std::ostream& os, const std::map<K, V>& m)
-{
-	os << '{';
-	const char* sep = "";
-	for (const auto& p : m)
+	template <typename T>
+	struct StringMaker<std::forward_list<T>>
 	{
-		os << sep << p;
-		sep = ", ";
-	}
-	return os << '}';
-}
+		static String convert (const std::forward_list<T>& l)
+		{
+			String res = "{";
+			const char* sep = "";
+			for (const auto& e : l)
+			{
+				res += sep;
+				res += toString (e);
+				sep = ", ";
+			}
+			res += "}";
+			return res;
+		}
+	};
 
-//------------------------------------------------------------------------------
-template <typename T>
-std::ostream& operator<< (std::ostream& os, const std::forward_list<T>& list)
-{
-	os << '{';
-	const char* sep = "";
-	for (const auto& e : list)
+	template <typename K, typename V>
+	struct StringMaker<std::map<K, V>>
 	{
-		os << sep << e;
-		sep = ", ";
-	}
-	return os << '}';
-}
+		static String convert (const std::map<K, V>& m)
+		{
+			String res = "{";
+			const char* sep = "";
+			for (const auto& p : m)
+			{
+				res += sep;
+				res += toString (p);
+				sep = ", ";
+			}
+			res += "}";
+			return res;
+		}
+	};
 
-//------------------------------------------------------------------------------
-template <typename... Ts>
-std::ostream& operator<< (std::ostream& os, const std::variant<Ts...>& var)
-{
-	os << R"({ "type": )" << var.index << R"(, "value": )";
-	std::visit ([&] (const auto& value) { os << value; });
-	return os << '}';
-}
+	template <typename... Ts>
+	struct StringMaker<std::variant<Ts...>>
+	{
+		static String convert (const std::variant<Ts...>& var)
+		{
+			String res = R"({ "type": )";
+			res += toString (var.index());
+			res += R"(, "value": )";
+			res += std::visit ([] (auto e) { return toString (e); }, var);
+			res += "}";
+			return res;
+		}
+	};
+
+	template <typename T>
+	struct StringMaker<std::vector<T>>
+	{
+		static String convert (const std::vector<T>& v)
+		{
+			String res = "{";
+			const char* sep = "";
+			for (const auto& e : v)
+			{
+				res += sep;
+				res += toString (e);
+				sep = ", ";
+			}
+			res += "}";
+			return res;
+		}
+	};
+} // namespace doctest
 
 namespace
 {

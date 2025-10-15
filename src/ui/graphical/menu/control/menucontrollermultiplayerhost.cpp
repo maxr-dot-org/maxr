@@ -38,6 +38,7 @@
 #include "ui/widgets/application.h"
 #include "utility/language.h"
 #include "utility/log.h"
+#include "utility/string/utf-8.h"
 
 #include <cassert>
 
@@ -155,7 +156,7 @@ void cMenuControllerMultiplayerHost::run()
 void cMenuControllerMultiplayerHost::handleSelectMap()
 {
 	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
-	windowMapSelection->done.connect ([=] (const std::filesystem::path& mapFilename) {
+	windowMapSelection->done.connect ([=, this] (const std::filesystem::path& mapFilename) {
 		lobbyClient.selectMapFilename (mapFilename);
 		windowMapSelection->close();
 	});
@@ -176,7 +177,7 @@ void cMenuControllerMultiplayerHost::handleSelectSaveGame()
 	if (!windowNetworkLobby) return;
 
 	auto windowLoad = application.show (std::make_shared<cWindowLoad>());
-	windowLoad->load.connect ([=] (const cSaveGameInfo& saveGame) {
+	windowLoad->load.connect ([=, this] (const cSaveGameInfo& saveGame) {
 		if (saveGame.number >= 0)
 		{
 			cStaticMap staticMap;
@@ -187,7 +188,7 @@ void cMenuControllerMultiplayerHost::handleSelectSaveGame()
 			}
 			else if (MapDownload::calculateCheckSum (saveGame.mapFilename) != saveGame.mapCrc)
 			{
-				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Map_Checksum", saveGame.mapFilename.u8string())));
+				application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~ERROR_Map_Checksum", utf8::to_string (saveGame.mapFilename))));
 				return;
 			}
 		}

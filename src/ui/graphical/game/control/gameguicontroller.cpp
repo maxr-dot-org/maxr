@@ -586,7 +586,7 @@ void cGameGuiController::connectGuiStaticCommands()
 		const bool canSelectNextUnit = unitSelection.canSelectNextUnit (*player, playerGameGuiStates[player->getId()].doneList);
 		gameGui->getHud().setCanSelectNextUnit (canSelectNextUnit);
 	};
-	signalConnectionManager.connect (gameGui->getHud().doneClicked, [=]() {
+	signalConnectionManager.connect (gameGui->getHud().doneClicked, [=, this]() {
 		auto keyboard = application.getActiveKeyboard();
 		if (keyboard && keyboard->isAnyModifierActive (toEnumFlag (eKeyModifierType::Ctrl)))
 		{
@@ -1269,7 +1269,7 @@ void cGameGuiController::connectReportSources (cClient& client)
 		if (looser.getId() == player.getId())
 		{
 			auto win = application.show (std::make_shared<cWindowEndGame> (getPlayers()));
-			allClientsSignalConnectionManager.connect (win->closed, [=]() { gameGui->exit(); });
+			allClientsSignalConnectionManager.connect (win->closed, [this]() { gameGui->exit(); });
 			// TODO: stop game
 		}
 	});
@@ -1278,7 +1278,7 @@ void cGameGuiController::connectReportSources (cClient& client)
 		if (winner.getId() == player.getId())
 		{
 			auto win = application.show (std::make_shared<cWindowEndGame> (getPlayers()));
-			allClientsSignalConnectionManager.connect (win->closed, [=]() { gameGui->exit(); });
+			allClientsSignalConnectionManager.connect (win->closed, [this]() { gameGui->exit(); });
 			// TODO: stop game
 		}
 	});

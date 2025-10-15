@@ -89,7 +89,7 @@ workspace "Maxr"
 	configurations {"Debug", "Release"}
 
 	language "C++"
-	cppdialect "C++17"
+	cppdialect "C++20"
 
 	objdir(path.join(locationDir, "obj")) -- premake adds $(configName)/$(AppName)
 	startproject "maxr"
@@ -120,8 +120,14 @@ end
 		links { "SDL2", "SDL2_net", "SDL2_mixer", "ogg", "vorbis", "vorbisfile", "vorbisenc" }
 	filter { "toolset:msc*" }
 		defines { "_CRT_SECURE_NO_WARNINGS" } -- 4996: '$func': This function or variable may be unsafe. Consider using $func2 instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-		defines { "_USE_MATH_DEFINES" } -- for M_PI
 		buildoptions { "/Zc:__cplusplus" } -- else __cplusplus would be 199711L
+		disablewarnings {
+			"4458", -- declaration of '%var' hides class member
+		}
+		enablewarnings { -- Not yet supported by premake for msvc
+			"4855", -- implicit capture of 'this' via '[=]' is deprecated in C++20
+		}
+		buildoptions { '-w1"4855"' } -- workaround to enablewarnings
 
 	filter { "configurations:Debug" }
 		symbols "On"

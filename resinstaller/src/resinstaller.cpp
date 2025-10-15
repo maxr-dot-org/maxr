@@ -3946,7 +3946,7 @@ static void createLogFile (const std::filesystem::path& dataDir)
 #endif
 	}
 	auto fileName = path / "resinstaller.log";
-	logFile = SDL_RWFromFile (fileName.u8string().c_str(), "a");
+	logFile = SDL_RWFromFile (utf8::to_string (fileName).c_str(), "a");
 	if (logFile == nullptr)
 	{
 		std::cout << "Warning: Couldn't create log file. Writing to stdout instead.\n";
@@ -3966,7 +3966,7 @@ static void checkWritePermissions (const std::string& appName, bool bDoNotElevat
 {
 	// create test file
 	auto testFileName = sOutputPath / "writeTest.txt";
-	SDL_RWops* testFile = SDL_RWFromFile (testFileName.u8string().c_str(), "w");
+	SDL_RWops* testFile = SDL_RWFromFile (utf8::to_string (testFileName).c_str(), "w");
 
 	if (testFile == nullptr)
 	{
@@ -4564,7 +4564,7 @@ int main (int argc, char* argv[])
 	{}
 
 	const auto sVoicePath = getVoicePathFromUser();
-	writeLog ("Voice path: " + sVoicePath.u8string() + TEXT_FILE_LF);
+	writeLog ("Voice path: " + utf8::to_string (sVoicePath) + TEXT_FILE_LF);
 
 #ifdef WIN32
 	const bool bDoNotElevate = (std::string (argv[argc - 1]) == "/donotelevate");

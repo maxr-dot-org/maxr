@@ -32,6 +32,7 @@
 #include "utility/language.h"
 #include "utility/log.h"
 #include "utility/random.h"
+#include "utility/string/utf-8.h"
 
 #include <SDL_thread.h>
 #include <cassert>
@@ -64,7 +65,7 @@ std::string cServer::getGameState() const
 	std::stringstream result;
 	result << "GameState: Game is active" << std::endl;
 
-	result << "Map: " << model.getMap()->getFilename().u8string() << std::endl;
+	result << "Map: " << utf8::to_string (model.getMap()->getFilename()) << std::endl;
 	result << "Turn: " << model.getTurnCounter()->getTurn() << std::endl;
 	const auto turnTimeClockPtr = model.getTurnTimeClock();
 	const auto& turnTimeClock = *turnTimeClockPtr;

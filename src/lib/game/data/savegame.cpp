@@ -34,6 +34,7 @@
 #include "utility/serialization/jsonarchive.h"
 #include "utility/serialization/serialization.h"
 #include "utility/string/toNumber.h"
+#include "utility/string/utf-8.h"
 
 #include <filesystem>
 #include <optional>
@@ -51,7 +52,7 @@ namespace
 		nlohmann::json json;
 		if (!(file >> json))
 		{
-			Log.error ("Error loading savegame file: " + fileName.u8string());
+			Log.error ("Error loading savegame file: " + utf8::to_string (fileName));
 			return std::nullopt;
 		}
 		return json;

@@ -33,6 +33,7 @@
 #include "ui/widgets/application.h"
 #include "utility/language.h"
 #include "utility/log.h"
+#include "utility/string/utf-8.h"
 
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication& application_) :
@@ -81,7 +82,7 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 
 	signalConnectionManager.connect (lobbyClient.onReconnectGame, [this] (std::shared_ptr<cClient> client) {
 		auto yesNoDialog = application.show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Multiplayer~Reconnect")));
-		signalConnectionManager.connect (yesNoDialog->yesClicked, [=]() {
+		signalConnectionManager.connect (yesNoDialog->yesClicked, [=, this]() {
 			reconnectToGame (client);
 		});
 
@@ -91,10 +92,10 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 	});
 
 	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameNoMap, [this] (const std::filesystem::path& mapFilename) {
-		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~Map_Not_Found", mapFilename.u8string())));
+		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~Map_Not_Found", utf8::to_string (mapFilename))));
 	});
 	signalConnectionManager.connect (lobbyClient.onFailToReconnectGameInvalidMap, [this] (const std::filesystem::path& mapFilename) {
-		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~Invalid_Map", mapFilename.u8string())));
+		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Error_Messages~Invalid_Map", utf8::to_string (mapFilename))));
 	});
 }
 
@@ -163,7 +164,7 @@ void cMenuControllerMultiplayerClient::handleSelectMap()
 	if (!windowNetworkLobby) return;
 
 	auto windowMapSelection = application.show (std::make_shared<cWindowMapSelection>());
-	windowMapSelection->done.connect ([=] (const std::filesystem::path& mapFilename) {
+	windowMapSelection->done.connect ([=, this] (const std::filesystem::path& mapFilename) {
 		lobbyClient.selectMapFilename (mapFilename);
 		windowMapSelection->close();
 	});
@@ -177,7 +178,7 @@ void cMenuControllerMultiplayerClient::handleSelectSaveGame()
 	auto windowLoad = application.show (std::make_shared<cWindowLoad> (nullptr, [this]() {
 		return lobbyClient.getSaveGames();
 	}));
-	windowLoad->load.connect ([=] (const cSaveGameInfo& saveGame) {
+	windowLoad->load.connect ([=, this] (const cSaveGameInfo& saveGame) {
 		lobbyClient.selectLoadGame (saveGame);
 		windowLoad->close();
 	});

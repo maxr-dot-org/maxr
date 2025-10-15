@@ -25,6 +25,7 @@
 #include "utility/os.h"
 #include "utility/serialization/jsonarchive.h"
 #include "utility/string/tolower.h"
+#include "utility/string/utf-8.h"
 
 #include <filesystem>
 #include <iostream>
@@ -90,7 +91,7 @@ namespace
 		{
 			if (std::filesystem::exists (sInitFile / "init.pcx"))
 			{
-				Log.info ("Found gamedata in: " + sInitFile.u8string());
+				Log.info ("Found gamedata in: " + utf8::to_string (sInitFile));
 				return sInitFile;
 			}
 		}

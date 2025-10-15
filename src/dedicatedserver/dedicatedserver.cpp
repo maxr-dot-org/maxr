@@ -25,6 +25,7 @@
 #include "utility/listhelpers.h"
 #include "utility/os.h"
 #include "utility/string/toNumber.h"
+#include "utility/string/utf-8.h"
 
 #include <algorithm>
 #include <iostream>
@@ -227,7 +228,7 @@ bool cDedicatedServer::handleInput (const std::string& command)
 //------------------------------------------------------------------------
 bool cDedicatedServer::startServer (int saveGameNumber)
 {
-	if (ranges::find_if (games, [=] (const auto& game) { return game->getPort() == port; }) != games.end())
+	if (ranges::find_if (games, [this] (const auto& game) { return game->getPort() == port; }) != games.end())
 	{
 		std::cout << "WARNING: Server is already open." << std::endl;
 		return true;
@@ -349,7 +350,7 @@ std::string cDedicatedServer::getAvailableMapsString() const
 	{
 		if (mapFilename.extension() == ".WRL" || mapFilename.extension() == ".wrl")
 		{
-			oss << mapFilename.u8string() << std::endl;
+			oss << utf8::to_string (mapFilename) << std::endl;
 		}
 	}
 	return oss.str();

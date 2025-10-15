@@ -26,6 +26,7 @@
 #include "utility/log.h"
 #include "utility/position.h"
 #include "utility/ranges.h"
+#include "utility/string/utf-8.h"
 
 #include <array>
 #include <cassert>
@@ -300,14 +301,14 @@ namespace serialization
 	template <typename Archive>
 	void save (Archive& archive, const std::filesystem::path& value)
 	{
-		archive << value.u8string();
+		archive << utf8::to_string (value);
 	}
 	template <typename Archive>
 	void load (Archive& archive, std::filesystem::path& value)
 	{
 		std::string s;
 		archive >> s;
-		value = std::filesystem::u8path (s);
+		value = std::u8string (s.begin(), s.end());
 	}
 	template <typename Archive>
 	void serialize (Archive& archive, std::filesystem::path& value)

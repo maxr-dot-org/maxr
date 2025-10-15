@@ -24,6 +24,7 @@
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/os.h"
+#include "utility/string/utf-8.h"
 
 #include <iomanip>
 #include <spiritless_po.h>
@@ -50,7 +51,7 @@ namespace
 
 		if (!catalog.Add (file))
 		{
-			Log.error ("Cannot open translation file: " + path.u8string());
+			Log.error ("Cannot open translation file: " + utf8::to_string (path));
 			for (const auto& s : catalog.GetError())
 			{
 				Log.error (s);

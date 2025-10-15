@@ -21,6 +21,7 @@
 #define utility_string_utf8H
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
 #include <string_view>
 
@@ -43,6 +44,18 @@ namespace utf8
 		{
 			f (decodeUnicode (text, i));
 		}
+	}
+
+	//--------------------------------------------------------------------------
+	inline std::string to_string (const std::u8string& s)
+	{
+		return {s.begin(), s.end()};
+	}
+
+	//--------------------------------------------------------------------------
+	inline std::string to_string (const std::filesystem::path& p)
+	{
+		return to_string (p.u8string());
 	}
 
 } // namespace utf8
