@@ -24,12 +24,12 @@ There is `update_translations.sh` for convenience to update pot and all supporte
 
 Current languages are:
 
-ca: Catalan
-de: German
-en: English
-es: Spanish
-fr: French
-hu: Hungarian
-nl: Dutch
-ru: Russian
-sl: Slovenian
+- ca: Catalan
+- de: German
+- en: English
+- es: Spanish
+- fr: French
+- hu: Hungarian
+- nl: Dutch
+- ru: Russian
+- sl: Slovenian
