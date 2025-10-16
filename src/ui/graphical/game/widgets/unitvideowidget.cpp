@@ -27,6 +27,7 @@
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/widgets/image.h"
+#include "utility/string/utf-8.h"
 
 #include <filesystem>
 
@@ -47,7 +48,7 @@ cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area) :
 	auto playButton = emplaceChild<cPushButton> (cPosition (area.getMaxCorner().x() - 19, area.getMaxCorner().y() - 31), ePushButtonType::HudPlay);
 	auto stopButton = emplaceChild<cPushButton> (cPosition (area.getMaxCorner().x() - 19, area.getMaxCorner().y() - 11), ePushButtonType::HudStop);
 
-	signalConnectionManager.connect (stateChanged, [=]() {
+	signalConnectionManager.connect (stateChanged, [=, this]() {
 		if (hasAnimation())
 		{
 			if (isPlaying())
@@ -119,7 +120,7 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 
 			if (std::filesystem::exists (uiData->FLCFile))
 			{
-				fliAnimation = FliAnimationPointerType (FLI_Open (SDL_RWFromFile (uiData->FLCFile.u8string().c_str(), "rb"), nullptr));
+				fliAnimation = FliAnimationPointerType (FLI_Open (SDL_RWFromFile (utf8::to_string (uiData->FLCFile).c_str(), "rb"), nullptr));
 				FLI_Rewind (fliAnimation.get());
 				FLI_NextFrame (fliAnimation.get());
 				currentFrameImage->setImage (fliAnimation->surface);

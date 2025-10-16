@@ -165,7 +165,7 @@ void cWindowMapSelection::updateMaps()
 			const int unselectedColor = 0x00'00'00;
 			UniqueSurface imageSurface (SDL_CreateRGBSurface (0, mapWinSize + 8, mapWinSize + 8, Video.getColDepth(), 0, 0, 0, 0));
 
-			std::string mapName = mapFilename.replace_extension().u8string();
+			std::string mapName = utf8::to_string (mapFilename.replace_extension());
 
 			// shorter too long name and add map size suffix
 			auto mapSizeTxt = " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")";

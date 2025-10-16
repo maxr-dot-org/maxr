@@ -21,6 +21,7 @@
 
 #include "output/video/video.h"
 #include "settings.h"
+#include "utility/string/utf-8.h"
 
 //------------------------------------------------------------------------------
 sMapPreview loadMapPreview (const std::filesystem::path& mapFilename)
@@ -28,11 +29,11 @@ sMapPreview loadMapPreview (const std::filesystem::path& mapFilename)
 	auto mapPath = cSettings::getInstance().getMapsPath() / mapFilename;
 	// if no factory map of that name exists, try the custom user maps
 
-	SDL_RWops* mapFile = SDL_RWFromFile (mapPath.u8string().c_str(), "rb");
+	SDL_RWops* mapFile = SDL_RWFromFile (utf8::to_string (mapPath).c_str(), "rb");
 	if (mapFile == nullptr && !cSettings::getInstance().getUserMapsDir().empty())
 	{
 		mapPath = cSettings::getInstance().getUserMapsDir() / mapFilename;
-		mapFile = SDL_RWFromFile (mapPath.u8string().c_str(), "rb");
+		mapFile = SDL_RWFromFile (utf8::to_string (mapPath).c_str(), "rb");
 	}
 
 	if (mapFile == nullptr) return {nullptr, {0, 0}};

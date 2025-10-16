@@ -35,7 +35,7 @@ cCheckBox* cRadioGroup::addButton (std::unique_ptr<cCheckBox> button)
 
 	if (currentlyCheckedButton == nullptr && !allowUncheckAll && !addedbutton->isChecked()) addedbutton->setChecked (true);
 
-	signalConnectionManager.connect (addedbutton->toggled, [=]() { buttonToggled (addedbutton); });
+	signalConnectionManager.connect (addedbutton->toggled, [=, this]() { buttonToggled (addedbutton); });
 	buttonToggled (addedbutton);
 
 	// resize own area to include the new button

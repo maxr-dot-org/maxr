@@ -25,6 +25,7 @@
 #include "settings.h"
 #include "utility/log.h"
 #include "utility/random.h"
+#include "utility/string/utf-8.h"
 
 const int cSoundDevice::soundEffectGroupTag = 0;
 const int cSoundDevice::voiceGroupTag = 1;
@@ -128,7 +129,7 @@ void cSoundDevice::startMusic (const std::filesystem::path& fileName)
 {
 	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isMusicMute()) return;
 
-	musicStream = SaveSdlMixMusicPointer (Mix_LoadMUS (fileName.u8string().c_str()));
+	musicStream = SaveSdlMixMusicPointer (Mix_LoadMUS (utf8::to_string (fileName).c_str()));
 	if (!musicStream)
 	{
 		Log.warn ("Failed opening music stream:");

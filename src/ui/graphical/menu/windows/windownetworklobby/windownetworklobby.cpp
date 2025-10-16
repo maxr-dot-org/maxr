@@ -209,22 +209,22 @@ void cWindowNetworkLobby::bindConnections (cLobbyClient& lobbyClient)
 	});
 
 	signalConnectionManager.connect (lobbyClient.onNoMapNoReady, [this] (const std::filesystem::path& mapFilename) {
-		addInfoEntry (lngPack.i18n ("Multiplayer~No_Map_No_Ready", mapFilename.u8string()));
+		addInfoEntry (lngPack.i18n ("Multiplayer~No_Map_No_Ready", utf8::to_string (mapFilename)));
 	});
 	signalConnectionManager.connect (lobbyClient.onIncompatibleMap, [this] (const std::filesystem::path& mapFilename, const std::filesystem::path& localPath) {
 		addInfoEntry ("You have an incompatible version of the"); //TODO: translate
-		addInfoEntry (std::string ("map \"") + mapFilename.u8string() + "\" at");
-		addInfoEntry (std::string ("\"") + localPath.u8string() + "\" !");
+		addInfoEntry (std::string ("map \"") + utf8::to_string (mapFilename) + "\" at");
+		addInfoEntry (std::string ("\"") + utf8::to_string (localPath) + "\" !");
 		addInfoEntry ("Move it away or delete it, then reconnect.");
 	});
 	signalConnectionManager.connect (lobbyClient.onMapDownloadRequest, [this] (const std::filesystem::path& mapFilename) {
 		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_DownloadRequest"));
-		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_Download", mapFilename.u8string()));
+		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_Download", utf8::to_string (mapFilename)));
 	});
 
 	signalConnectionManager.connect (lobbyClient.onMissingOriginalMap, [this] (const std::filesystem::path& mapFilename) {
 		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_DownloadRequestInvalid"));
-		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_DownloadInvalid", mapFilename.u8string()));
+		addInfoEntry (lngPack.i18n ("Multiplayer~MapDL_DownloadInvalid", utf8::to_string (mapFilename)));
 	});
 
 	signalConnectionManager.connect (lobbyClient.onDownloadMapPercentChanged, [this] (std::size_t percent) {
@@ -331,7 +331,7 @@ void cWindowNetworkLobby::updateSettingsText()
 	}
 	if (staticMap != nullptr)
 	{
-		text += lngPack.i18n ("Title~Map", staticMap->getFilename().u8string());
+		text += lngPack.i18n ("Title~Map", utf8::to_string (staticMap->getFilename()));
 		text += " (" + std::to_string (staticMap->getSize().x()) + "x" + std::to_string (staticMap->getSize().y()) + ")\n";
 	}
 	else if (saveGameInfo.number < 0)
@@ -388,7 +388,7 @@ void cWindowNetworkLobby::updateMap()
 
 	auto mapFilename = staticMap->getFilename();
 	mapFilename.replace_extension();
-	auto mapName = mapFilename.u8string();
+	auto mapName = utf8::to_string (mapFilename);
 	const auto size = staticMap->getSize();
 
 	if (cUnicodeFont::font->getTextWide (">" + mapName + " (" + std::to_string (size.x()) + "x" + std::to_string (size.y()) + ")<") > 140)

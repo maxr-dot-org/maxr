@@ -60,20 +60,20 @@ SDL_RWops* openFile (const std::filesystem::path& path, const char* mode)
 	const auto dir = path.parent_path();
 
 	//try to open with lower case file name
-	SDL_RWops* file = SDL_RWFromFile ((dir / fileName).u8string().c_str(), mode);
+	SDL_RWops* file = SDL_RWFromFile (utf8::to_string (dir / fileName).c_str(), mode);
 	if (file != nullptr)
 	{
 		return file;
 	}
 
 	//try to open with upper case file name
-	file = SDL_RWFromFile ((path / fileName).u8string().c_str(), mode);
+	file = SDL_RWFromFile (utf8::to_string (path / fileName).c_str(), mode);
 	if (file != nullptr)
 	{
 		return file;
 	}
 
-	throw InstallException ("Couldn't open file '" + (dir / fileName).u8string() + "' or '" + lowerCaseFileName + "'" + TEXT_FILE_LF);
+	throw InstallException ("Couldn't open file '" + utf8::to_string (dir / fileName) + "' or '" + lowerCaseFileName + "'" + TEXT_FILE_LF);
 	return nullptr;
 }
 
@@ -96,7 +96,7 @@ void copyFile (const std::filesystem::path& source, const std::filesystem::path&
 		}
 		else
 		{
-			throw InstallException ("Couldn't copy file '" + source.u8string() + "' to '" + dest.u8string() + "'" + TEXT_FILE_LF);
+			throw InstallException ("Couldn't copy file '" + utf8::to_string (source) + "' to '" + utf8::to_string (dest) + "'" + TEXT_FILE_LF);
 		}
 	}
 	END_INSTALL_FILE (dest);

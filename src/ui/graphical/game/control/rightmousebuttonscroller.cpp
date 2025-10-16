@@ -29,6 +29,8 @@
 #include "utility/color.h"
 #include "utility/narrow_cast.h"
 
+#include <numbers>
+
 const double cRightMouseButtonScrollerWidget::factor = 0.05;
 const double cRightMouseButtonScrollerWidget::minDistanceSquared = 15 * 15;
 
@@ -80,8 +82,8 @@ bool cRightMouseButtonScrollerWidget::handleMouseMoved (cApplication&, cMouse& m
 		const cPosition scaledOffset (static_cast<int> (offset.x() * factor), static_cast<int> (offset.y() * factor));
 
 		auto degrees = std::atan2 (offset.y(), offset.x());
-		if (degrees < 0) degrees += M_PI * 2.0;
-		degrees = (degrees * 180) / M_PI;
+		if (degrees < 0) degrees += std::numbers::pi * 2.0;
+		degrees = (degrees * 180) / std::numbers::pi;
 
 		if ((degrees >= 0 && degrees <= 20) || degrees > 350)
 			mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRight));

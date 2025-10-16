@@ -46,6 +46,7 @@
 #include "utility/log.h"
 #include "utility/serialization/jsonarchive.h"
 #include "utility/string/toNumber.h"
+#include "utility/string/utf-8.h"
 
 #include <SDL_mixer.h>
 #include <filesystem>
@@ -160,7 +161,7 @@ static int LoadGraphicToSurface (UniqueSurface& dest, const std::filesystem::pat
 	}
 	dest = LoadPCX (filepath);
 
-	Log.debug ("File loaded: " + filepath.u8string());
+	Log.debug ("File loaded: " + utf8::to_string (filepath));
 	return 1;
 }
 
@@ -409,7 +410,7 @@ static void LoadUnitData (sInitialBuildingData& buildingData, const std::filesys
 
 	if (!(file >> json))
 	{
-		Log.warn ("Can't load " + path.u8string());
+		Log.warn ("Can't load " + utf8::to_string (path));
 		return;
 	}
 	cJsonArchiveIn in (json);
@@ -431,7 +432,7 @@ static void LoadUnitData (sInitialVehicleData& vehicleData, const std::filesyste
 
 	if (!(file >> json))
 	{
-		Log.warn ("Can't load " + path.u8string());
+		Log.warn ("Can't load " + utf8::to_string (path));
 		return;
 	}
 	cJsonArchiveIn in (json);
@@ -655,7 +656,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 
 				if (std::filesystem::exists (sTmpString))
 				{
-					Log.debug (sTmpString.u8string());
+					Log.debug (utf8::to_string (sTmpString));
 					UniqueSurface sfTempSurface (LoadPCX (sTmpString));
 					if (!sfTempSurface)
 					{
@@ -707,7 +708,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 			char sztmp[16];
 			snprintf (sztmp, sizeof (sztmp), "img%d.pcx", n);
 			auto sTmpString = sVehiclePath / sztmp;
-			Log.debug (sTmpString.u8string());
+			Log.debug (utf8::to_string (sTmpString));
 			if (std::filesystem::exists (sTmpString))
 			{
 				ui.img_org[n] = LoadPCX (sTmpString);
@@ -739,7 +740,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	}
 	// load video
 	ui.FLCFile = sVehiclePath / "video.flc";
-	Log.debug ("Loading video: " + ui.FLCFile.u8string());
+	Log.debug ("Loading video: " + utf8::to_string (ui.FLCFile));
 	if (!std::filesystem::exists (ui.FLCFile))
 	{
 		ui.FLCFile = "";
@@ -747,7 +748,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 
 	// load infoimage
 	auto sTmpString = sVehiclePath / "info.pcx";
-	Log.debug ("Loading portrait: " + sTmpString.u8string());
+	Log.debug ("Loading portrait: " + utf8::to_string (sTmpString));
 	if (std::filesystem::exists (sTmpString))
 	{
 		ui.info = LoadPCX (sTmpString);
@@ -760,7 +761,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 
 	// load storageimage
 	sTmpString = sVehiclePath / "store.pcx";
-	Log.debug ("Loading storageportrait: " + sTmpString.u8string());
+	Log.debug ("Loading storageportrait: " + utf8::to_string (sTmpString));
 	if (std::filesystem::exists (sTmpString))
 	{
 		ui.storage = LoadPCX (sTmpString);
@@ -775,7 +776,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	if (ui.staticData.hasOverlay)
 	{
 		sTmpString = sVehiclePath / "overlay.pcx";
-		Log.debug ("Loading overlay: " + sTmpString.u8string());
+		Log.debug ("Loading overlay: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.overlay_org = LoadPCX (sTmpString);
@@ -800,7 +801,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	{
 		// load image
 		sTmpString = sVehiclePath / "build.pcx";
-		Log.debug ("Loading buildgraphics: " + sTmpString.u8string());
+		Log.debug ("Loading buildgraphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_org = LoadPCX (sTmpString);
@@ -817,7 +818,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		// load shadow
 		sTmpString = sVehiclePath / "build_shw.pcx";
-		Log.debug ("Loading buildgraphics: " + sTmpString.u8string());
+		Log.debug ("Loading buildgraphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_shw_org = LoadPCX (sTmpString);
@@ -844,7 +845,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 	{
 		// load image (small)
 		sTmpString = sVehiclePath / "clear_small.pcx";
-		Log.debug ("Loading cleargraphics: " + sTmpString.u8string());
+		Log.debug ("Loading cleargraphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.clear_small_org = LoadPCX (sTmpString);
@@ -861,7 +862,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		// load shadow (small)
 		sTmpString = sVehiclePath / "clear_small_shw.pcx";
-		Log.debug ("Loading cleargraphics: " + sTmpString.u8string());
+		Log.debug ("Loading cleargraphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.clear_small_shw_org = LoadPCX (sTmpString);
@@ -877,7 +878,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		// load image (big)
 		sTmpString = sVehiclePath / "clear_big.pcx";
-		Log.debug ("Loading cleargraphics: " + sTmpString.u8string());
+		Log.debug ("Loading cleargraphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_org = LoadPCX (sTmpString);
@@ -894,7 +895,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		// load shadow (big)
 		sTmpString = sVehiclePath / "clear_big_shw.pcx";
-		Log.debug ("Loading cleargraphics: " + sTmpString.u8string());
+		Log.debug ("Loading cleargraphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_shw_org = LoadPCX (sTmpString);
@@ -1029,7 +1030,7 @@ static int LoadBuildings (bool includingUiData)
 
 	if (!(file >> json))
 	{
-		Log.error ("Can't load " + buildingsJsonPath.u8string());
+		Log.error ("Can't load " + utf8::to_string (buildingsJsonPath));
 		return 0;
 	}
 	sBuildingsList buildingsList;
@@ -1052,12 +1053,12 @@ static int LoadBuildings (bool includingUiData)
 		if (p.id != buildingData.id.secondPart)
 		// check whether the read id is the same as the one from building.json
 		{
-			Log.error ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sBuildingPath.u8string());
+			Log.error ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + utf8::to_string (sBuildingPath));
 			return 0;
 		}
 		else
 		{
-			Log.debug ("id " + std::to_string (p.id) + " verified for " + sBuildingPath.u8string());
+			Log.debug ("id " + std::to_string (p.id) + " verified for " + utf8::to_string (sBuildingPath));
 		}
 		if (!checkUniqueness (buildingData.id)) return 0;
 
@@ -1123,7 +1124,7 @@ static int LoadVehicles (bool includingUiData)
 
 	if (!(file >> json))
 	{
-		Log.error ("Can't load " + vehicleJsonPath.u8string());
+		Log.error ("Can't load " + utf8::to_string (vehicleJsonPath));
 		return 0;
 	}
 	sVehiclesList vehiclesList;
@@ -1143,12 +1144,12 @@ static int LoadVehicles (bool includingUiData)
 		// check whether the read id is the same as the one from vehicles.json
 		if (p.id != vehicleData.id.secondPart)
 		{
-			Log.error ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + sVehiclePath.u8string());
+			Log.error ("ID " + std::to_string (p.id) + " isn't equal with ID from directory " + utf8::to_string (sVehiclePath));
 			return 0;
 		}
 		else
 		{
-			Log.debug ("id " + std::to_string (p.id) + " verified for " + sVehiclePath.u8string());
+			Log.debug ("id " + std::to_string (p.id) + " verified for " + utf8::to_string (sVehiclePath));
 		}
 		if (!checkUniqueness (vehicleData.id)) return 0;
 
@@ -1195,14 +1196,14 @@ static int LoadClans()
 
 	if (!std::filesystem::exists (clansPath))
 	{
-		Log.error ("File doesn't exist: " + clansPath.u8string());
+		Log.error ("File doesn't exist: " + utf8::to_string (clansPath));
 		return 0;
 	}
 	std::ifstream file (clansPath);
 	nlohmann::json json;
 	if (!(file >> json))
 	{
-		Log.error ("Can't load " + clansPath.u8string());
+		Log.error ("Can't load " + utf8::to_string (clansPath));
 		return 0;
 	}
 	cJsonArchiveIn in (json);
@@ -1223,7 +1224,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 {
 	const auto musicPath = directory / "musics.json";
 
-	Log.info ("Loading music: " + musicPath.u8string());
+	Log.info ("Loading music: " + utf8::to_string (musicPath));
 	if (!std::filesystem::exists (musicPath))
 	{
 		Log.error ("file doesn't exist");
@@ -1245,7 +1246,7 @@ static int LoadMusic (const std::filesystem::path& directory)
 	if (!MusicFiles.start.empty())
 	{
 		MusicFiles.start = directory / MusicFiles.start;
-		if (!std::filesystem::exists (MusicFiles.start)) Log.warn ("music file doesn't exist: " + MusicFiles.start.u8string());
+		if (!std::filesystem::exists (MusicFiles.start)) Log.warn ("music file doesn't exist: " + utf8::to_string (MusicFiles.start));
 	}
 	for (auto& filename : MusicFiles.backgrounds)
 	{
@@ -1447,7 +1448,7 @@ static int LoadEffectGraphicToSurface (UniqueSurface (&dest)[2], const std::file
 	dest[0] = LoadPCX (filepath);
 	dest[1] = CloneSDLSurface (*dest[0]);
 
-	Log.debug ("Effect successful loaded: " + filepath.u8string());
+	Log.debug ("Effect successful loaded: " + utf8::to_string (filepath));
 	return 1;
 }
 
@@ -1463,7 +1464,7 @@ static int LoadEffectAlphaToSurface (UniqueSurface (&dest)[2], const std::filesy
 	SDL_SetSurfaceAlphaMod (dest[0].get(), narrow_cast<Uint8> (alpha));
 	SDL_SetSurfaceAlphaMod (dest[1].get(), narrow_cast<Uint8> (alpha));
 
-	Log.debug ("Effectalpha loaded: " + filepath.u8string());
+	Log.debug ("Effectalpha loaded: " + utf8::to_string (filepath));
 	return 1;
 }
 

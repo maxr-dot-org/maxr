@@ -237,11 +237,11 @@ void savePCX (const SDL_Surface* surface, const std::filesystem::path& fileName)
 SDL_Surface* loadPCX (const std::filesystem::path& name)
 {
 	//open file
-	SDL_RWops* file = SDL_RWFromFile (name.u8string().c_str(), "rb");
+	SDL_RWops* file = SDL_RWFromFile (utf8::to_string (name).c_str(), "rb");
 
 	if (file == nullptr)
 	{
-		throw InstallException (std::string ("Couldn't open file ") + name.u8string() + TEXT_FILE_LF);
+		throw InstallException (std::string ("Couldn't open file ") + utf8::to_string (name) + TEXT_FILE_LF);
 	}
 
 	//load data

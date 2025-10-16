@@ -31,6 +31,7 @@
 # include "utility/log.h"
 # include "utility/os.h"
 # include "utility/string/toupper.h"
+# include "utility/string/utf-8.h"
 
 # ifndef NOMINMAX
 #  define NOMINMAX // CrashRpt includes windows.h
@@ -54,7 +55,7 @@ int CALLBACK CrashCallback (CR_CRASH_CALLBACK_INFO*)
 		if (!home.empty())
 		{
 			auto path = home / "Crashshot.bmp";
-			SDL_SaveBMP (cVideo::buffer, path.u8string().c_str());
+			SDL_SaveBMP (cVideo::buffer, utf8::to_string (path).c_str());
 			crAddFile2 (path.native().c_str(), nullptr, L ("Screenshot at the moment of the crash"), CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK);
 		}
 	}

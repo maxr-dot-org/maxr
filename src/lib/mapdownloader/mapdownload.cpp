@@ -29,6 +29,7 @@
 #include "utility/log.h"
 #include "utility/narrow_cast.h"
 #include "utility/string/tolower.h"
+#include "utility/string/utf-8.h"
 
 #include <filesystem>
 #include <fstream>
@@ -247,7 +248,7 @@ bool cMapSender::getMapFileContent()
 	}
 	if (!file.is_open())
 	{
-		Log.warn (std::string ("MapSender: could not read the map \"") + filename.u8string() + "\" into memory.");
+		Log.warn (std::string ("MapSender: could not read the map \"") + utf8::to_string (filename) + "\" into memory.");
 		return false;
 	}
 	const std::size_t mapSize = narrow_cast<std::size_t> (file.tellg());
@@ -255,7 +256,7 @@ bool cMapSender::getMapFileContent()
 	file.seekg (0, std::ios::beg);
 	file.read (sendBuffer.data(), mapSize);
 	file.close();
-	Log.debug (std::string ("MapSender: read the map \"") + filename.u8string() + "\" into memory.");
+	Log.debug (std::string ("MapSender: read the map \"") + utf8::to_string (filename) + "\" into memory.");
 	return true;
 }
 

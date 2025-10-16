@@ -29,6 +29,7 @@
 #include "utility/mathtools.h"
 #include "utility/narrow_cast.h"
 #include "utility/os.h"
+#include "utility/string/utf-8.h"
 #include "utility/thread/ismainthread.h"
 
 #include <SDL.h>
@@ -91,7 +92,7 @@ void cVideo::init (std::shared_ptr<SDLComponent> sdlComponent, const std::string
 	                              SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
 
 	{
-		auto icon = UniqueSurface (SDL_LoadBMP (iconPath.u8string().c_str()));
+		auto icon = UniqueSurface (SDL_LoadBMP (utf8::to_string (iconPath).c_str()));
 		SDL_SetColorKey (icon.get(), 1, 0xFF00FF);
 		SDL_SetWindowIcon (sdlWindow, icon.get());
 	}
@@ -361,7 +362,7 @@ int cVideo::getMinH() const
 //------------------------------------------------------------------------------
 void cVideo::takeScreenShot (const std::filesystem::path& filename) const
 {
-	SDL_SaveBMP (buffer, filename.u8string().c_str());
+	SDL_SaveBMP (buffer, utf8::to_string (filename).c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -385,7 +386,7 @@ void cVideo::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 				screenshotfile = screenshotDir / (timestr + std::to_string (counter) + ".bmp");
 			} while (std::filesystem::exists (screenshotfile));
 			std::filesystem::create_directories (screenshotDir);
-			Log.info ("Screenshot saved to " + screenshotfile.u8string());
+			Log.info ("Screenshot saved to " + utf8::to_string (screenshotfile));
 			takeScreenShot (screenshotfile);
 
 			screenShotTaken (screenshotfile);

@@ -32,6 +32,7 @@
 #include "utility/position.h"
 #include "utility/ranges.h"
 #include "utility/string/toString.h"
+#include "utility/string/utf-8.h"
 
 #include <cassert>
 
@@ -367,11 +368,11 @@ bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 	clear();
 	// Open File
 	filename = filename_;
-	Log.debug ("Loading map \"" + filename_.u8string() + "\"");
+	Log.debug ("Loading map \"" + utf8::to_string (filename_) + "\"");
 
 	// first try in the factory maps directory
 	auto fullFilename = cSettings::getInstance().getMapsPath() / filename;
-	SDL_RWops* fpMapFile = SDL_RWFromFile (fullFilename.u8string().c_str(), "rb");
+	SDL_RWops* fpMapFile = SDL_RWFromFile (utf8::to_string (fullFilename).c_str(), "rb");
 	if (fpMapFile == nullptr)
 	{
 		// now try in the user's map directory
@@ -379,12 +380,12 @@ bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 		if (!userMapsDir.empty())
 		{
 			fullFilename = userMapsDir / filename;
-			fpMapFile = SDL_RWFromFile (fullFilename.u8string().c_str(), "rb");
+			fpMapFile = SDL_RWFromFile (utf8::to_string (fullFilename).c_str(), "rb");
 		}
 	}
 	if (fpMapFile == nullptr)
 	{
-		Log.warn ("Cannot load map file: \"" + filename.u8string() + "\"");
+		Log.warn ("Cannot load map file: \"" + utf8::to_string (filename) + "\"");
 		clear();
 		return false;
 	}
@@ -398,7 +399,7 @@ bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 	// DMO - for some reason some original maps have this filetype
 	if (strcmp (szFileTyp, "WRL") != 0 && strcmp (szFileTyp, "WRX") != 0 && strcmp (szFileTyp, "DMO") != 0)
 	{
-		Log.warn ("Wrong file format: \"" + filename.u8string() + "\"");
+		Log.warn ("Wrong file format: \"" + utf8::to_string (filename) + "\"");
 		SDL_RWclose (fpMapFile);
 		clear();
 		return false;
@@ -421,7 +422,7 @@ bool cStaticMap::loadMap (const std::filesystem::path& filename_)
 
 	if (sWidth != sHeight)
 	{
-		Log.warn ("Map must be quadratic!: \"" + filename.u8string() + "\"");
+		Log.warn ("Map must be quadratic!: \"" + utf8::to_string (filename) + "\"");
 		SDL_RWclose (fpMapFile);
 		clear();
 		return false;

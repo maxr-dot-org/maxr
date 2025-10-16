@@ -21,7 +21,7 @@
 
 #include "utility/position.h"
 
-#include <cmath>
+#include <numbers>
 
 namespace
 {
@@ -60,7 +60,7 @@ namespace
 	//--------------------------------------------------------------------------
 	EDirection radianToDirection (double angle)
 	{
-		const auto degree_by_radian = 360 / (2 * M_PI); // 57.29577951f;
+		constexpr auto degree_by_radian = 360. / (2 * std::numbers::pi); // 57.29577951f;
 		return degreeToDirection (angle * degree_by_radian);
 	}
 

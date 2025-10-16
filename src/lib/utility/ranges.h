@@ -21,6 +21,7 @@
 #define utility_rangesH
 
 #include <algorithm>
+#include <iterator>
 #include <vector>
 
 namespace ranges
