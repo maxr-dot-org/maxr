@@ -36,8 +36,7 @@ public:
 
 	std::string toString() const;
 
-	bool operator== (const cKeyCombination&) const;
-	bool operator!= (const cKeyCombination&) const;
+	bool operator== (const cKeyCombination&) const = default;
 
 	bool matches (const cKeyCombination& other) const;
 

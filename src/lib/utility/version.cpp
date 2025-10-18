@@ -112,39 +112,3 @@ std::string cVersion::toString() const
 {
 	return std::to_string (major) + "." + std::to_string (minor) + "." + std::to_string (revision);
 }
-
-//------------------------------------------------------------------------------
-bool cVersion::operator== (const cVersion& other) const
-{
-	return major == other.major && minor == other.minor && revision == other.revision;
-}
-
-//------------------------------------------------------------------------------
-bool cVersion::operator!= (const cVersion& other) const
-{
-	return !(*this == other);
-}
-
-//------------------------------------------------------------------------------
-bool cVersion::operator< (const cVersion& other) const
-{
-	return major < other.major || (major == other.major && (minor < other.minor || (minor == other.minor && revision < other.revision)));
-}
-
-//------------------------------------------------------------------------------
-bool cVersion::operator<= (const cVersion& other) const
-{
-	return major < other.major || (major == other.major && (minor < other.minor || (minor == other.minor && revision <= other.revision)));
-}
-
-//------------------------------------------------------------------------------
-bool cVersion::operator> (const cVersion& other) const
-{
-	return major > other.major || (major == other.major && (minor > other.minor || (minor == other.minor && revision > other.revision)));
-}
-
-//------------------------------------------------------------------------------
-bool cVersion::operator>= (const cVersion& other) const
-{
-	return major > other.major || (major == other.major && (minor > other.minor || (minor == other.minor && revision >= other.revision)));
-}

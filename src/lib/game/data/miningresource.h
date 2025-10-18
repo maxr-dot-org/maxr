@@ -32,10 +32,7 @@ struct sMiningResource
 
 	int total() const;
 
-	friend bool operator== (const sMiningResource& lhs, const sMiningResource& rhs)
-	{
-		return lhs.metal == rhs.metal && lhs.oil == rhs.oil && lhs.gold == rhs.gold;
-	}
+	friend bool operator== (const sMiningResource&, const sMiningResource&) = default;
 
 	sMiningResource& operator+= (const sMiningResource&);
 	sMiningResource& operator-= (const sMiningResource&);

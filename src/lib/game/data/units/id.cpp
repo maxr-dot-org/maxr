@@ -49,9 +49,3 @@ bool sID::less_vehicleFirst (const sID& ID) const
 {
 	return firstPart == ID.firstPart ? secondPart < ID.secondPart : firstPart < ID.firstPart;
 }
-
-//------------------------------------------------------------------------------
-bool sID::operator== (const sID& ID) const
-{
-	return firstPart == ID.firstPart && secondPart == ID.secondPart;
-}

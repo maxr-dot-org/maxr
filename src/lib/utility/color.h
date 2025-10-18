@@ -41,8 +41,7 @@ public:
 	{
 	}
 
-	bool operator== (const cRgbColor& other) const;
-	bool operator!= (const cRgbColor& other) const;
+	bool operator== (const cRgbColor&) const = default;
 
 	cHsvColor toHsv() const;
 	cLabColor toLab() const;

@@ -27,18 +27,6 @@
 #include <cassert>
 
 //------------------------------------------------------------------------------
-bool cRgbColor::operator== (const cRgbColor& other) const
-{
-	return r == other.r && g == other.g && b == other.b && a == other.a;
-}
-
-//------------------------------------------------------------------------------
-bool cRgbColor::operator!= (const cRgbColor& other) const
-{
-	return !(*this == other);
-}
-
-//------------------------------------------------------------------------------
 cRgbColor cRgbColor::exchangeRed (unsigned char red_) const
 {
 	return cRgbColor (red_, g, b, a);

@@ -85,8 +85,7 @@ public:
 	bool operator== (const value_type& value) const;
 	bool operator!= (const value_type& value) const;
 
-	bool operator== (const self_type& other) const;
-	bool operator!= (const self_type& other) const;
+	bool operator== (const self_type& other) const = default;
 
 	value_type dotProduct (const self_type& other) const;
 
@@ -354,24 +353,6 @@ bool cFixedVector<T, D>::operator== (const value_type& other) const
 //------------------------------------------------------------------------------
 template <typename T, std::size_t D>
 bool cFixedVector<T, D>::operator!= (const value_type& other) const
-{
-	return !((*this) == other);
-}
-
-//------------------------------------------------------------------------------
-template <typename T, std::size_t D>
-bool cFixedVector<T, D>::operator== (const self_type& other) const
-{
-	for (std::size_t d = 0; d < D; ++d)
-	{
-		if (data_[d] != other[d]) return false;
-	}
-	return true;
-}
-
-//------------------------------------------------------------------------------
-template <typename T, std::size_t D>
-bool cFixedVector<T, D>::operator!= (const self_type& other) const
 {
 	return !((*this) == other);
 }

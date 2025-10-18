@@ -36,14 +36,8 @@ public:
 		x = PX;
 		y = PY;
 	}
-	bool operator== (const T_2<Type>& P) const
-	{
-		return x == P.x && y == P.y;
-	}
-	bool operator!= (const T_2<Type>& P) const
-	{
-		return x != P.x || y != P.y;
-	}
+	bool operator== (const T_2&) const = default;
+
 	void operator*= (Type f)
 	{
 		x *= f;

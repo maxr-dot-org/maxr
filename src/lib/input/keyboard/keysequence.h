@@ -36,8 +36,7 @@ public:
 	cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2);
 	cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2, cKeyCombination keyCombination3);
 
-	bool operator== (const cKeySequence&) const;
-	bool operator!= (const cKeySequence&) const;
+	bool operator== (const cKeySequence&) const = default;
 
 	void addKeyCombination (cKeyCombination);
 	void removeFirst();

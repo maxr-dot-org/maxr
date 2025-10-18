@@ -256,18 +256,6 @@ std::string cKeyCombination::toString() const
 }
 
 //------------------------------------------------------------------------------
-bool cKeyCombination::operator== (const cKeyCombination& other) const
-{
-	return (modifiers == other.modifiers) && (key == other.key);
-}
-
-//------------------------------------------------------------------------------
-bool cKeyCombination::operator!= (const cKeyCombination& other) const
-{
-	return !(*this == other);
-}
-
-//------------------------------------------------------------------------------
 bool cKeyCombination::matches (const cKeyCombination& other) const
 {
 	// NOTE: we do not check for "fixable" modifiers like CAPS, NUM, ... here because they are usually reflected in the key already.

@@ -43,7 +43,7 @@ struct sPlayerSettings
 		return crc;
 	}
 
-	bool operator== (const sPlayerSettings& rhs) const { return name == rhs.name && color == rhs.color; }
+	bool operator== (const sPlayerSettings&) const = default;
 
 	std::string name;
 	cRgbColor color;

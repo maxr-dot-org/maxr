@@ -47,8 +47,7 @@ public:
 
 	operator bool() const;
 
-	bool operator== (cEnumFlag<E> other) const;
-	bool operator!= (cEnumFlag<E> other) const;
+	bool operator== (const cEnumFlag&) const = default;
 
 	cEnumFlag<E> operator| (E other) const;
 	cEnumFlag<E> operator| (cEnumFlag<E> other) const;
@@ -100,20 +99,6 @@ template <typename E>
 cEnumFlag<E>::operator bool() const
 {
 	return data_ != (std::underlying_type_t<E>) (0);
-}
-
-//------------------------------------------------------------------------------
-template <typename E>
-bool cEnumFlag<E>::operator== (cEnumFlag<E> other) const
-{
-	return data_ == other.data_;
-}
-
-//------------------------------------------------------------------------------
-template <typename E>
-bool cEnumFlag<E>::operator!= (cEnumFlag<E> other) const
-{
-	return data_ != other.data_;
 }
 
 //------------------------------------------------------------------------------

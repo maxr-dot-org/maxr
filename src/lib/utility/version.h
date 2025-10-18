@@ -58,13 +58,8 @@ public:
 	void parseFromString (std::string_view string);
 	std::string toString() const;
 
-	bool operator== (const cVersion& other) const;
-	bool operator!= (const cVersion& other) const;
-
-	bool operator< (const cVersion& other) const;
-	bool operator<= (const cVersion& other) const;
-	bool operator> (const cVersion& other) const;
-	bool operator>= (const cVersion& other) const;
+	bool operator== (const cVersion&) const = default;
+	auto operator<=> (const cVersion&) const = default;
 
 	template <typename Archive>
 	void serialize (Archive& archive)
