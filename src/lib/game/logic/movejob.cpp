@@ -264,7 +264,7 @@ bool cMoveJob::recalculatePath (cModel& model, cVehicle& vehicle)
 	if (!vehicle.getOwner()) return false;
 	//use owners mapview to calc path
 	const auto& playerList = model.getPlayerList();
-	auto iter = ranges::find_if (playerList, [&] (const std::shared_ptr<cPlayer>& player) { return player->getId() == vehicle.getOwner()->getId(); });
+	auto iter = std::ranges::find_if (playerList, [&] (const std::shared_ptr<cPlayer>& player) { return player->getId() == vehicle.getOwner()->getId(); });
 	const cMapView mapView (model.getMap(), *iter);
 
 	cPosition dest;

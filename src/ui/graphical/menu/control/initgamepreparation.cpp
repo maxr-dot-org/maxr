@@ -52,12 +52,12 @@ void cInitGamePreparation::bindConnections (cLobbyClient& lobbyClient)
 		else
 		{
 			if (windowLandingPositionSelection) windowLandingPositionSelection->removeChatPlayerEntry (player.getNr());
-			EraseIf (playersLandingStatus, [&] (const std::unique_ptr<cPlayerLandingStatus>& status) { return status->getPlayer().getNr() == player.getNr(); });
+			std::erase_if (playersLandingStatus, [&] (const std::unique_ptr<cPlayerLandingStatus>& status) { return status->getPlayer().getNr() == player.getNr(); });
 		}
 	});
 
 	signalConnectionManager.connect (lobbyClient.onPlayerSelectLandingPosition, [this] (const cPlayerBasicData& player) {
-		auto it = ranges::find_if (playersLandingStatus, [&] (const std::unique_ptr<cPlayerLandingStatus>& entry) { return entry->getPlayer().getNr() == player.getNr(); });
+		auto it = std::ranges::find_if (playersLandingStatus, [&] (const std::unique_ptr<cPlayerLandingStatus>& entry) { return entry->getPlayer().getNr() == player.getNr(); });
 
 		if (it == playersLandingStatus.end()) return;
 

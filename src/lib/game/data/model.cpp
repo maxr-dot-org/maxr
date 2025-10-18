@@ -139,13 +139,13 @@ void cModel::setMap (std::shared_ptr<cStaticMap> map_)
 //------------------------------------------------------------------------------
 cPlayer* cModel::getPlayer (int playerNr)
 {
-	auto it = ranges::find_if (playerList, byPlayerId (playerNr));
+	auto it = std::ranges::find_if (playerList, byPlayerId (playerNr));
 	return it == playerList.end() ? nullptr : it->get();
 }
 //------------------------------------------------------------------------------
 const cPlayer* cModel::getPlayer (int playerNr) const
 {
-	auto it = ranges::find_if (playerList, byPlayerId (playerNr));
+	auto it = std::ranges::find_if (playerList, byPlayerId (playerNr));
 	return it == playerList.end() ? nullptr : it->get();
 }
 //------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ const cPlayer* cModel::getPlayer (std::string_view playerName) const
 	}
 
 	// try to find player by name
-	auto it = ranges::find_if (playerList, [&] (const auto& player) { return player->getName() == playerName; });
+	auto it = std::ranges::find_if (playerList, [&] (const auto& player) { return player->getName() == playerName; });
 	return it == playerList.end() ? nullptr : it->get();
 }
 
@@ -610,7 +610,7 @@ void cModel::runMoveJobs()
 			moveJob.reset();
 		}
 	}
-	Remove (moveJobs, nullptr);
+	std::erase (moveJobs, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -620,7 +620,7 @@ void cModel::runAttackJobs()
 	{
 		attackJob->run (*this); //this can add new items to 'attackjobs'
 	}
-	EraseIf (attackJobs, [] (const auto& job) { return job->finished(); });
+	std::erase_if (attackJobs, [] (const auto& job) { return job->finished(); });
 }
 
 //------------------------------------------------------------------------------
@@ -633,7 +633,7 @@ void cModel::handleTurnEnd()
 			bool turnFinished = true;
 			if (gameSettings->gameType == eGameSettingsGameType::Simultaneous)
 			{
-				turnFinished = ranges::all_of (playerList, [] (const auto& player) { return player->isDefeated || player->getHasFinishedTurn(); });
+				turnFinished = std::ranges::all_of (playerList, [] (const auto& player) { return player->isDefeated || player->getHasFinishedTurn(); });
 			}
 			else
 			{
@@ -658,7 +658,7 @@ void cModel::handleTurnEnd()
 		break;
 		case eTurnEndState::ExecuteRemainingMovements:
 		{
-			const bool activeMoveJob = ranges::any_of (moveJobs, [] (const auto& moveJob) { return moveJob->isActive(); });
+			const bool activeMoveJob = std::ranges::any_of (moveJobs, [] (const auto& moveJob) { return moveJob->isActive(); });
 			if (!activeMoveJob)
 			{
 				turnEndState = eTurnEndState::ExecuteTurnStart;
@@ -683,7 +683,7 @@ void cModel::handleTurnEnd()
 			else
 			{
 				// select next player
-				auto nextPlayerIter = ranges::find_if (playerList, [this] (const std::shared_ptr<cPlayer>& player) { return player.get() == activeTurnPlayer; });
+				auto nextPlayerIter = std::ranges::find_if (playerList, [this] (const std::shared_ptr<cPlayer>& player) { return player.get() == activeTurnPlayer; });
 				assert (nextPlayerIter != playerList.end());
 				++nextPlayerIter;
 				//TODO: skip defeated player?
@@ -794,7 +794,7 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 		bool detectOnDest = false;
 		if (stealthVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Ground)
 		{
-			if (ranges::any_of (playerList, [&] (auto& player) {
+			if (std::ranges::any_of (playerList, [&] (auto& player) {
 					return player.get() != stealthVehicle->getOwner() && player->hasLandDetection (currentPosition);
 				}))
 			{
@@ -804,7 +804,7 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 		}
 		if (stealthVehicle->getStaticUnitData().isStealthOn & eTerrainFlag::Sea)
 		{
-			if (ranges::any_of (playerList, [&] (auto& player) {
+			if (std::ranges::any_of (playerList, [&] (auto& player) {
 					return player.get() != stealthVehicle->getOwner() && player->hasSeaDetection (currentPosition);
 				}))
 			{
@@ -850,7 +850,7 @@ bool cModel::isVictoryConditionMet() const
 {
 	// if there is only one active player left, the game is over
 	// but only, if there have been other players.
-	const int activePlayers = ranges::count_if (playerList, [] (const auto& player) { return !player->isDefeated; });
+	const int activePlayers = std::ranges::count_if (playerList, [] (const auto& player) { return !player->isDefeated; });
 	if (activePlayers == 1 && playerList.size() > 1) return true;
 
 	switch (gameSettings->victoryConditionType)
@@ -861,7 +861,7 @@ bool cModel::isVictoryConditionMet() const
 		}
 		case eGameSettingsVictoryCondition::Points:
 		{
-			return ranges::any_of (playerList, [this] (const auto& player) { return !player->isDefeated && player->getScore() >= static_cast<int> (gameSettings->victoryPoints); });
+			return std::ranges::any_of (playerList, [this] (const auto& player) { return !player->isDefeated && player->getScore() >= static_cast<int> (gameSettings->victoryPoints); });
 		}
 		case eGameSettingsVictoryCondition::Death:
 			// The victory condition for this mode is already checked.

@@ -228,7 +228,7 @@ bool cDedicatedServer::handleInput (const std::string& command)
 //------------------------------------------------------------------------
 bool cDedicatedServer::startServer (int saveGameNumber)
 {
-	if (ranges::find_if (games, [this] (const auto& game) { return game->getPort() == port; }) != games.end())
+	if (std::ranges::find_if (games, [this] (const auto& game) { return game->getPort() == port; }) != games.end())
 	{
 		std::cout << "WARNING: Server is already open." << std::endl;
 		return true;

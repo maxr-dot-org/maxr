@@ -78,7 +78,7 @@ std::vector<std::unique_ptr<cJob>>::iterator cJobContainer::releaseJob (const cM
 
 	if (unit)
 	{
-		auto nr = ranges::count_if (jobs, [&] (const auto& x) {
+		auto nr = std::ranges::count_if (jobs, [&] (const auto& x) {
 			return narrow_cast<unsigned> (x->unitId) == unit->getId();
 		});
 		if (nr <= 1)

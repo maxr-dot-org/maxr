@@ -348,7 +348,7 @@ void cActionInitNewGame::execute (cModel& model) const
 	}
 	player.setLandingPos (updatedLandingPosition);
 
-	const auto playerReadyCount = ranges::count_if (model.getPlayerList(), [] (const auto& player) { return player->getLandingPos() != cPosition{-1, -1}; });
+	const auto playerReadyCount = std::ranges::count_if (model.getPlayerList(), [] (const auto& player) { return player->getLandingPos() != cPosition{-1, -1}; });
 
 	if (narrow_cast<std::size_t> (playerReadyCount) == model.getPlayerList().size())
 	{
@@ -392,7 +392,7 @@ void cActionInitNewGame::execute (cModel& model) const
 			return;
 		}
 
-		auto it = ranges::find_if (initialLandingUnits, [landing] (std::pair<sID, int> unit) { return unit.first == landing.unitID; });
+		auto it = std::ranges::find_if (initialLandingUnits, [landing] (std::pair<sID, int> unit) { return unit.first == landing.unitID; });
 		if (it != initialLandingUnits.end())
 		{
 			// landing unit is one of the initial landing units, that the player gets for free

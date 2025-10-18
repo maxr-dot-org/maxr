@@ -101,7 +101,7 @@ std::string cLobbyServer::getGameState() const
 //------------------------------------------------------------------------------
 const cPlayerBasicData* cLobbyServer::getConstPlayer (int playerNr) const
 {
-	auto it = ranges::find_if (players, byPlayerNr (playerNr));
+	auto it = std::ranges::find_if (players, byPlayerNr (playerNr));
 
 	return it == players.end() ? nullptr : &*it;
 }
@@ -109,7 +109,7 @@ const cPlayerBasicData* cLobbyServer::getConstPlayer (int playerNr) const
 //------------------------------------------------------------------------------
 cPlayerBasicData* cLobbyServer::getPlayer (int playerNr)
 {
-	auto it = ranges::find_if (players, byPlayerNr (playerNr));
+	auto it = std::ranges::find_if (players, byPlayerNr (playerNr));
 
 	return it == players.end() ? nullptr : &*it;
 }
@@ -365,7 +365,7 @@ void cLobbyServer::localClientConnects (cLobbyClient& client, cPlayerBasicData& 
 //------------------------------------------------------------------------------
 void cLobbyServer::clientLeaves (const cNetMessageTcpClose& message)
 {
-	auto it = ranges::find_if (players, byPlayerNr (message.playerNr));
+	auto it = std::ranges::find_if (players, byPlayerNr (message.playerNr));
 	if (it == players.end()) return;
 	onClientDisconnected (*it);
 	players.erase (it);
@@ -425,14 +425,14 @@ namespace
 	{
 		if (player == nullptr) return false;
 
-		const auto it = ranges::find_if (saveGameInfo.players, byPlayerName (player->getName()));
+		const auto it = std::ranges::find_if (saveGameInfo.players, byPlayerName (player->getName()));
 		return it != saveGameInfo.players.end();
 	}
 
 	//--------------------------------------------------------------------------
 	std::vector<cPlayerBasicData> getMissingPlayers (const cSaveGameInfo& saveGameInfo, const std::vector<cPlayerBasicData>& players)
 	{
-		auto isMissingPlayer = [&] (const auto& player) { return !player.isDefeated() && ranges::find_if (players, byPlayerName (player.getName())) == players.end(); };
+		auto isMissingPlayer = [&] (const auto& player) { return !player.isDefeated() && std::ranges::find_if (players, byPlayerName (player.getName())) == players.end(); };
 		return Filter (saveGameInfo.players, isMissingPlayer);
 	}
 
@@ -461,7 +461,7 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 		// disconnect or update menu players
 		for (auto& player : players)
 		{
-			auto it = ranges::find_if (saveGameInfo.players, byPlayerName (player.getName()));
+			auto it = std::ranges::find_if (saveGameInfo.players, byPlayerName (player.getName()));
 
 			if (it == saveGameInfo.players.end())
 			{
@@ -484,7 +484,7 @@ void cLobbyServer::handleAskToFinishLobby (const cMuMsgAskToFinishLobby& message
 				connectionManager->changePlayerNumber (oldPlayerNr, newPlayerNr);
 			}
 		}
-		EraseIf (players, byPlayerNr (-1));
+		std::erase_if (players, byPlayerNr (-1));
 
 		sendNetMessage (cMuMsgStartGame());
 

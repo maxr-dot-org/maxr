@@ -1568,7 +1568,7 @@ int cUnitUpgrade::getValueOrDefault (sUnitUpgrade::eUpgradeType upgradeType, int
 //------------------------------------------------------------------------------
 bool cUnitUpgrade::hasBeenPurchased() const
 {
-	return ranges::any_of (upgrades, [] (const auto& upgrade) { return upgrade.purchased; });
+	return std::ranges::any_of (upgrades, [] (const auto& upgrade) { return upgrade.purchased; });
 }
 
 //------------------------------------------------------------------------------

@@ -270,7 +270,7 @@ void cSurveyorAi::planLongMove (const std::vector<std::unique_ptr<cSurveyorAi>>&
 	{
 		//use owners mapview to calc path
 		const auto& playerList = model.getPlayerList();
-		auto iter = ranges::find_if (playerList, [&] (const std::shared_ptr<cPlayer>& p) {
+		auto iter = std::ranges::find_if (playerList, [&] (const std::shared_ptr<cPlayer>& p) {
 			return p->getId() == player.getId();
 		});
 		const cMapView mapView (model.getMap(), *iter);
@@ -309,7 +309,7 @@ void cSurveyorAi::changeOP()
 //------------------------------------------------------------------------------
 bool cSurveyorAi::positionHasBeenSurveyedByPath (const cPosition& position, const std::forward_list<cPosition>& path) const
 {
-	return ranges::any_of (path, [&] (const auto& pathPos) { return (pathPos - position).l2NormSquared() <= 2; });
+	return std::ranges::any_of (path, [&] (const auto& pathPos) { return (pathPos - position).l2NormSquared() <= 2; });
 }
 
 //------------------------------------------------------------------------------
@@ -317,7 +317,7 @@ bool cSurveyorAi::hasAdjacentResources (const cPosition& centerPosition, const c
 {
 	const cPlayer& owner = *vehicle.getOwner();
 
-	return ranges::any_of (map.staticMap->collectAroundPositions (centerPosition, vehicle.getIsBig()), [&] (const cPosition& position) {
+	return std::ranges::any_of (map.staticMap->collectAroundPositions (centerPosition, vehicle.getIsBig()), [&] (const cPosition& position) {
 		return owner.hasResourceExplored (position) && map.getResource (position).typ != eResourceType::None;
 	});
 }

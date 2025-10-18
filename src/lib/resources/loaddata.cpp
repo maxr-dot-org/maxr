@@ -441,7 +441,7 @@ static void LoadUnitData (sInitialVehicleData& vehicleData, const std::filesyste
 //------------------------------------------------------------------------------
 static bool checkUniqueness (const sID& id)
 {
-	if (ranges::any_of (UnitsDataGlobal.getStaticUnitsData(), [&] (const auto& data) { return data.ID == id; }))
+	if (std::ranges::any_of (UnitsDataGlobal.getStaticUnitsData(), [&] (const auto& data) { return data.ID == id; }))
 	{
 		char szTmp[100];
 		snprintf (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.firstPart, id.secondPart);

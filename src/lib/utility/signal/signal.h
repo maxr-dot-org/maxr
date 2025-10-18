@@ -272,7 +272,7 @@ void cSignal<void (Args...), MutexType>::cleanUpConnections()
 {
 	if (isInvoking) return; // it is not safe to clean up yet
 
-	EraseIf (slots, [] (const auto& slot) { return slot.disconnected; });
+	std::erase_if (slots, [] (const auto& slot) { return slot.disconnected; });
 }
 
 #endif

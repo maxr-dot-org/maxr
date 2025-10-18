@@ -31,7 +31,7 @@ cSignalConnectionManager::~cSignalConnectionManager()
 //------------------------------------------------------------------------------
 bool cSignalConnectionManager::disconnect (cSignalConnection& connection)
 {
-	auto it = ranges::find (connections, connection);
+	auto it = std::ranges::find (connections, connection);
 
 	if (it != connections.end())
 	{

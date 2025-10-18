@@ -134,7 +134,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 
 	std::unique_lock<std::recursive_mutex> playingSoundsLock (playingSoundsMutex);
 
-	EraseIf (playingSounds, [] (const sStoredSound& storedSound) { return !storedSound.active; });
+	std::erase_if (playingSounds, [] (const sStoredSound& storedSound) { return !storedSound.active; });
 
 	const unsigned int currentGameTime = model ? model->getGameTime() : 0;
 
@@ -147,7 +147,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 		};
 
 		// count conflicts and erase sounds that are no longer active
-		std::size_t conflicts = ranges::count_if (playingSounds, isInConflict);
+		std::size_t conflicts = std::ranges::count_if (playingSounds, isInConflict);
 
 		if (conflicts > sound->getMaxConcurrentConflictedCount())
 		{
@@ -220,7 +220,7 @@ void cSoundManager::finishedSound (cSoundEffect& sound)
 {
 	std::unique_lock<std::recursive_mutex> playingSoundsLock (playingSoundsMutex);
 
-	auto iter = ranges::find_if (playingSounds, [&sound] (const sStoredSound& entry) { return entry.sound.get() == &sound; });
+	auto iter = std::ranges::find_if (playingSounds, [&sound] (const sStoredSound& entry) { return entry.sound.get() == &sound; });
 
 	if (iter != playingSounds.end())
 	{

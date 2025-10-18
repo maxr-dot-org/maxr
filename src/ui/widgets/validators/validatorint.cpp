@@ -44,7 +44,7 @@ eValidatorState cValidatorInt::validate (const std::string& text) const
 {
 	if (text.empty()) return eValidatorState::Intermediate;
 
-	if (ranges::any_of (text, [] (int c) { return !std::isdigit (c); }))
+	if (std::ranges::any_of (text, [] (int c) { return !std::isdigit (c); }))
 	{
 		return eValidatorState::Invalid;
 	}
@@ -59,7 +59,7 @@ eValidatorState cValidatorInt::validate (const std::string& text) const
 //------------------------------------------------------------------------------
 void cValidatorInt::fixup (std::string& text) const
 {
-	EraseIf (text, [] (char c) { return !std::isdigit (c); });
+	std::erase_if (text, [] (char c) { return !std::isdigit (c); });
 
 	if (text.empty())
 	{

@@ -89,7 +89,7 @@ std::vector<sID> cCasualtiesTracker::getUnitTypesWithLosses() const
 		const std::vector<Casualty>& casualties = casualtiesForPlayer.casualties;
 		for (const Casualty& casualty : casualties)
 		{
-			if (ranges::any_of (result, [&] (const sID& id) { return id == casualty.unitID; })) continue;
+			if (std::ranges::any_of (result, [&] (const sID& id) { return id == casualty.unitID; })) continue;
 
 			bool inserted = false;
 			for (size_t j = 0; j != result.size(); ++j)

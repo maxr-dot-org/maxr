@@ -225,7 +225,7 @@ cLandingPositionManager::sLandingPositionData& cLandingPositionManager::getLandi
 //------------------------------------------------------------------------------
 const cLandingPositionManager::sLandingPositionData& cLandingPositionManager::getLandingPositionData (const cPlayerBasicData& player) const
 {
-	auto iter = ranges::find_if (landingPositions, [&] (const sLandingPositionData& data) { return data.player.getNr() == player.getNr(); });
+	auto iter = std::ranges::find_if (landingPositions, [&] (const sLandingPositionData& data) { return data.player.getNr() == player.getNr(); });
 	assert (iter != landingPositions.end());
 	return *iter;
 }

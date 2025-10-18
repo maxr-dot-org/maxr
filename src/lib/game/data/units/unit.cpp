@@ -128,7 +128,7 @@ void cUnit::storeVehicle (cVehicle& vehicle, cMap& map)
 //------------------------------------------------------------------------------
 void cUnit::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map)
 {
-	Remove (storedUnits, &vehicle);
+	std::erase (storedUnits, &vehicle);
 	storedUnitsChanged();
 	vehicle.setLoaded (false);
 
@@ -178,13 +178,13 @@ void cUnit::resetDetectedByPlayer (const cPlayer* player)
 {
 	if (ranges::contains (detectedByPlayerList, player->getId()))
 	{
-		Remove (detectedByPlayerList, player->getId());
+		std::erase (detectedByPlayerList, player->getId());
 		if (!isAVehicle() || !static_cast<const cVehicle*> (this)->isUnitLoaded())
 		{
 			player->stealthUnitDissappeared (*this);
 		}
 	}
-	Remove (detectedInThisTurnByPlayerList, player->getId());
+	std::erase (detectedInThisTurnByPlayerList, player->getId());
 }
 
 //------------------------------------------------------------------------------

@@ -86,7 +86,7 @@ void cApplication::execute()
 	{
 		eventManager.run();
 
-		EraseIf (runnables, [] (const auto& runnable) { return runnable->wantsToTerminate(); });
+		std::erase_if (runnables, [] (const auto& runnable) { return runnable->wantsToTerminate(); });
 		for (const auto& runnable : runnables)
 		{
 			runnable->run();
@@ -223,7 +223,7 @@ void cApplication::addRunnable (std::shared_ptr<cRunnable> runnable)
 std::shared_ptr<cRunnable> cApplication::removeRunnable (std::shared_ptr<cRunnable> runnable)
 {
 	if (runnables.empty()) return nullptr;
-	const auto it = ranges::find (runnables, runnable);
+	const auto it = std::ranges::find (runnables, runnable);
 
 	if (it != runnables.end())
 	{

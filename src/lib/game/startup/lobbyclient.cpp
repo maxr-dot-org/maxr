@@ -107,7 +107,7 @@ void cLobbyClient::connectToLocalServer (cLobbyServer& server)
 //------------------------------------------------------------------------------
 cPlayerBasicData* cLobbyClient::getPlayer (int playerNr)
 {
-	auto it = ranges::find_if (players, byPlayerNr (playerNr));
+	auto it = std::ranges::find_if (players, byPlayerNr (playerNr));
 
 	return it == players.end() ? nullptr : &*it;
 }

@@ -793,12 +793,12 @@ bool cVehicle::canLand (const cMap& map) const
 
 	// landing pad there?
 	const std::vector<cBuilding*>& buildings = map.getField (getPosition()).getBuildings();
-	const auto b_it = ranges::find_if (buildings, [] (const auto* b) { return b->getStaticData().canBeLandedOn; });
+	const auto b_it = std::ranges::find_if (buildings, [] (const auto* b) { return b->getStaticData().canBeLandedOn; });
 	if (b_it == buildings.end()) return false;
 
 	// is the landing pad already occupied?
 	const std::vector<cVehicle*>& v = map.getField (getPosition()).getPlanes();
-	if (ranges::any_of (v, [&] (const cVehicle* vehicle) { return vehicle->getFlightHeight() < 64 && vehicle->iID != iID; })) return false;
+	if (std::ranges::any_of (v, [&] (const cVehicle* vehicle) { return vehicle->getFlightHeight() < 64 && vehicle->iID != iID; })) return false;
 
 	// returning true before checking owner, because a stolen vehicle
 	// can stay on an enemy landing pad until it is moved

@@ -91,14 +91,14 @@ namespace serialization
 		static constexpr bool hasStringRepresentation = true;
 		static std::string toString (E e)
 		{
-			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&] (const auto& p) { return p.first == e; });
+			auto it = std::ranges::find_if (sEnumStringMapping<E>::m, [&] (const auto& p) { return p.first == e; });
 			if (it != sEnumStringMapping<E>::m.end()) return it->second;
 			Log.warn (std::string ("Unknown ") + typeid (E).name() + " " + std::to_string (static_cast<int> (e)));
 			return std::to_string (static_cast<int> (e));
 		}
 		static E fromString (const std::string& s)
 		{
-			auto it = ranges::find_if (sEnumStringMapping<E>::m, [&] (const auto& p) { return p.second == s; });
+			auto it = std::ranges::find_if (sEnumStringMapping<E>::m, [&] (const auto& p) { return p.second == s; });
 			if (it != sEnumStringMapping<E>::m.end()) return it->first;
 
 			Log.warn (std::string ("Unknown ") + typeid (E).name() + " value " + std::string (s));

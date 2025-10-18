@@ -710,7 +710,7 @@ void cSubBase::merge (cSubBase& sb)
 	}
 	sb.buildings.clear();
 
-	EraseIf (base.SubBases, ByGetTo (&sb));
+	std::erase_if (base.SubBases, ByGetTo (&sb));
 }
 
 //------------------------------------------------------------------------------
@@ -1049,7 +1049,7 @@ void cBase::deleteBuilding (cBuilding& building, const cMap& map)
 	if (!building.getStaticData().connectsToBase) return;
 
 	auto buildings = building.subBase->getBuildings();
-	EraseIf (SubBases, ByGetTo (building.subBase));
+	std::erase_if (SubBases, ByGetTo (building.subBase));
 
 	// add all the buildings again
 	for (auto b : buildings)

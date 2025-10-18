@@ -53,12 +53,12 @@ void cUnitLockList::toggleLockAt (const cMapFieldView& field)
 	}
 	if (unit == nullptr) return;
 
-	auto iter = ranges::find_if (lockedUnits, [unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == unit; });
+	auto iter = std::ranges::find_if (lockedUnits, [unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == unit; });
 	if (iter == lockedUnits.end())
 	{
 		lockedUnits.push_back (std::make_pair (unit, cSignalConnectionManager()));
 		lockedUnits.back().second.connect (unit->destroyed, [this, unit]() {
-			auto iter = ranges::find_if (lockedUnits, [unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == unit; });
+			auto iter = std::ranges::find_if (lockedUnits, [unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == unit; });
 			if (iter != lockedUnits.end())
 			{
 				lockedUnits.erase (iter);
@@ -92,12 +92,12 @@ void cUnitLockList::unlockAll()
 //------------------------------------------------------------------------------
 void cUnitLockList::lockUnit (const cUnit& unit)
 {
-	auto iter = ranges::find_if (lockedUnits, [&unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == &unit; });
+	auto iter = std::ranges::find_if (lockedUnits, [&unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == &unit; });
 	if (iter == lockedUnits.end())
 	{
 		lockedUnits.push_back (std::make_pair (&unit, cSignalConnectionManager()));
 		lockedUnits.back().second.connect (unit.destroyed, [this, &unit]() {
-			auto iter = ranges::find_if (lockedUnits, [&unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == &unit; });
+			auto iter = std::ranges::find_if (lockedUnits, [&unit] (const std::pair<const cUnit*, cSignalConnectionManager>& entry) { return entry.first == &unit; });
 			if (iter != lockedUnits.end())
 			{
 				lockedUnits.erase (iter);

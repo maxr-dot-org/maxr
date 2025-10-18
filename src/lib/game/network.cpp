@@ -167,7 +167,7 @@ void cNetwork::close (const cSocket& socket)
 {
 	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
-	if (ranges::none_of (sockets, ByGetTo (&socket)))
+	if (std::ranges::none_of (sockets, ByGetTo (&socket)))
 	{
 		NetLog.error ("Network: Unable to close socket. Invalid socket");
 		return;
@@ -177,7 +177,7 @@ void cNetwork::close (const cSocket& socket)
 	// sdl socket will be cleaned up later by the networkthread. This cannot be done
 	// immediately, because the network thread may be still using the socket in SDLNet_CheckSockets
 	closingSockets.push_back (socket.sdlSocket);
-	EraseIf (sockets, ByGetTo (&socket));
+	std::erase_if (sockets, ByGetTo (&socket));
 }
 
 //------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ int cNetwork::sendMessage (const cSocket& socket, unsigned int length, const uns
 {
 	std::unique_lock<std::recursive_mutex> tl (tcpMutex);
 
-	if (ranges::none_of (sockets, ByGetTo (&socket)))
+	if (std::ranges::none_of (sockets, ByGetTo (&socket)))
 	{
 		NetLog.error ("Network: Unable to send message. Invalid socket");
 		return -1;
@@ -358,7 +358,7 @@ void cNetwork::pushReadyMessages (cSocket& socket)
 		connectionManager.messageReceived (socket, socket.buffer.data + readPos + HEADER_LENGTH, messageLength);
 
 		//socket died during handling in connectionManager
-		if (ranges::find_if (sockets, ByGetTo (&socket)) == sockets.end()) return;
+		if (std::ranges::find_if (sockets, ByGetTo (&socket)) == sockets.end()) return;
 
 		//save position of next message
 		readPos += messageLength + HEADER_LENGTH;

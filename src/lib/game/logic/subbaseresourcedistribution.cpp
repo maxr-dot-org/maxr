@@ -146,7 +146,7 @@ namespace
 
 		while (prod != 0 && canIncreaseRes1 (&b) && canDecreaseRes2 (&b))
 		{
-			auto it = ranges::find_if (mines, combine (canIncreaseRes (res2), canIncreaseProd));
+			auto it = std::ranges::find_if (mines, combine (canIncreaseRes (res2), canIncreaseProd));
 
 			if (it == mines.end()) break;
 			auto& b2 = **it;
@@ -167,11 +167,11 @@ namespace
 
 		while (prod != 0 && canIncreaseRes1 (&b) && canDecreaseRes2 (&b))
 		{
-			auto it2 = ranges::find_if (mines, combine (canIncreaseRes (res2), canDecreaseRes (res3)));
+			auto it2 = std::ranges::find_if (mines, combine (canIncreaseRes (res2), canDecreaseRes (res3)));
 			if (it2 == mines.end()) break;
 			auto& b2 = **it2;
 
-			auto it3 = ranges::find_if (mines, combine (canIncreaseRes (res3), canIncreaseProd));
+			auto it3 = std::ranges::find_if (mines, combine (canIncreaseRes (res3), canIncreaseProd));
 			if (it3 == mines.end()) break;
 			auto& b3 = **it3;
 

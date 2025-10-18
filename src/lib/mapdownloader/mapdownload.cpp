@@ -72,13 +72,13 @@ bool MapDownload::isMapOriginal (const std::filesystem::path& mapFilename, int32
 			{"ultima thule.wrl", 1397392934},
 			{"valentine's planet.wrl", 280492815}};
 
-	if (ranges::any_of (maps, [&] (const auto& map) { return lowerMapName == map.filename; }))
+	if (std::ranges::any_of (maps, [&] (const auto& map) { return lowerMapName == map.filename; }))
 	{
 		return true;
 	}
 	if (checksum == 0)
 		checksum = calculateCheckSum (lowerMapName);
-	if (ranges::any_of (maps, [&] (const auto& map) { return map.checksum == checksum; }))
+	if (std::ranges::any_of (maps, [&] (const auto& map) { return map.checksum == checksum; }))
 	{
 		return true;
 	}

@@ -150,7 +150,7 @@ static const struct
 //------------------------------------------------------------------------------
 bool cKeyCombination::isRepresentableKey (SDL_Keycode key)
 {
-	return ranges::any_of (keyNames, [&] (const auto& keyName) { return keyName.key == key; });
+	return std::ranges::any_of (keyNames, [&] (const auto& keyName) { return keyName.key == key; });
 }
 
 //------------------------------------------------------------------------------

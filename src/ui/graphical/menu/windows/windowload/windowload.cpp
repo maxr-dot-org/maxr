@@ -220,7 +220,7 @@ std::optional<std::size_t> cWindowLoad::getSelectedSaveNumber() const
 //------------------------------------------------------------------------------
 cSaveGameInfo* cWindowLoad::getSaveFile (std::optional<std::size_t> saveNumber)
 {
-	auto iter = ranges::find_if (saveGames, [=] (const cSaveGameInfo& save) { return save.number == saveNumber; });
+	auto iter = std::ranges::find_if (saveGames, [=] (const cSaveGameInfo& save) { return save.number == saveNumber; });
 	return iter == saveGames.end() ? nullptr : &(*iter);
 }
 

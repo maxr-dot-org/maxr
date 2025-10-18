@@ -324,7 +324,7 @@ const std::vector<std::pair<int, int>>& cVideo::getDetectedResolutions() const
 //------------------------------------------------------------------------------
 bool cVideo::haveMinMode() const
 {
-	if (ranges::any_of (getDetectedResolutions(), [] (const auto& resolution) { return resolution == std::pair<int, int>{MINWIDTH, MINHEIGHT}; }))
+	if (std::ranges::any_of (getDetectedResolutions(), [] (const auto& resolution) { return resolution == std::pair<int, int>{MINWIDTH, MINHEIGHT}; }))
 	{
 		return true;
 	}

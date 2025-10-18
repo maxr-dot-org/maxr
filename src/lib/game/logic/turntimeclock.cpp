@@ -150,7 +150,7 @@ unsigned int cTurnTimeClock::startNewDeadlineFrom (unsigned int gameTime, const 
 //------------------------------------------------------------------------------
 void cTurnTimeClock::removeDeadline (unsigned int id)
 {
-	auto it = ranges::find_if (deadlines, [id] (const auto& deadline) { return deadline.getId() == id; });
+	auto it = std::ranges::find_if (deadlines, [id] (const auto& deadline) { return deadline.getId() == id; });
 	if (it != deadlines.end())
 	{
 		deadlines.erase (it);
@@ -161,7 +161,7 @@ void cTurnTimeClock::removeDeadline (unsigned int id)
 //------------------------------------------------------------------------------
 void cTurnTimeClock::changeDeadline (unsigned int id, const std::chrono::seconds& duration)
 {
-	auto it = ranges::find_if (deadlines, [id] (const auto& deadline) { return deadline.getId() == id; });
+	auto it = std::ranges::find_if (deadlines, [id] (const auto& deadline) { return deadline.getId() == id; });
 	if (it != deadlines.end())
 	{
 		it->changeDeadline (duration);
@@ -194,7 +194,7 @@ std::chrono::milliseconds cTurnTimeClock::getTimeTillFirstDeadline() const
 //------------------------------------------------------------------------------
 bool cTurnTimeClock::hasReachedAnyDeadline() const
 {
-	return ranges::find_if (deadlines, [this] (const auto& deadline) { return this->getTimeTillDeadlineReached (deadline) <= std::chrono::milliseconds (0); }) != deadlines.end();
+	return std::ranges::find_if (deadlines, [this] (const auto& deadline) { return this->getTimeTillDeadlineReached (deadline) <= std::chrono::milliseconds (0); }) != deadlines.end();
 }
 
 //------------------------------------------------------------------------------

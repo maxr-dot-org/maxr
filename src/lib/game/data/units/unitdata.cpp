@@ -246,7 +246,7 @@ void cUnitsData::initializeClanUnitData (const cClanData& clanData)
 //------------------------------------------------------------------------------
 bool cUnitsData::isValidId (const sID& id) const
 {
-	if (ranges::any_of (staticUnitData, [&] (const auto& unitData) { return unitData.ID == id; }))
+	if (std::ranges::any_of (staticUnitData, [&] (const auto& unitData) { return unitData.ID == id; }))
 	{
 		return true;
 	}

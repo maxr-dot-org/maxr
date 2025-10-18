@@ -73,7 +73,7 @@ void cFxContainer::run()
 	{
 		fx->run();
 	}
-	EraseIf (fxs, [] (const auto& fx) { return fx->isFinished(); });
+	std::erase_if (fxs, [] (const auto& fx) { return fx->isFinished(); });
 }
 
 //------------------------------------------------------------------------------
@@ -228,7 +228,7 @@ void cFxRocket::run()
 	{
 		subEffect->run();
 	}
-	EraseIf (subEffects, [] (const auto& subEffect) { return subEffect->isFinished(); });
+	std::erase_if (subEffects, [] (const auto& subEffect) { return subEffect->isFinished(); });
 	//add new smoke
 	if (tick >= length) return;
 	if (cSettings::getInstance().isAlphaEffects())

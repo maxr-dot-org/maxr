@@ -22,10 +22,7 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/client.h"
-#include "game/logic/turncounter.h"
 #include "utility/crc.h"
-#include "utility/listhelpers.h"
-#include "utility/ranges.h"
 #include "utility/string/toString.h"
 
 #include <cassert>
@@ -34,7 +31,7 @@
 //------------------------------------------------------------------------------
 void sNewTurnPlayerReport::addUnitBuilt (const sID& unitTypeId)
 {
-	auto iter = ranges::find_if (unitsBuilt, [unitTypeId] (const sTurnstartReport& entry) { return entry.type == unitTypeId; });
+	auto iter = std::ranges::find_if (unitsBuilt, [unitTypeId] (const sTurnstartReport& entry) { return entry.type == unitTypeId; });
 	if (iter != unitsBuilt.end())
 	{
 		++iter->count;
@@ -392,7 +389,7 @@ void cPlayer::revealResource()
 //------------------------------------------------------------------------------
 bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
 {
-	return ranges::any_of (unit.getPositions(), [this] (const auto& position) { return canSeeAt (position); });
+	return std::ranges::any_of (unit.getPositions(), [this] (const auto& position) { return canSeeAt (position); });
 }
 
 //------------------------------------------------------------------------------
@@ -512,7 +509,7 @@ void cPlayer::accumulateScore()
 //------------------------------------------------------------------------------
 int cPlayer::getNumEcoSpheres() const
 {
-	return ranges::count_if (buildings, [] (const auto& building) { return building->getStaticData().canScore && building->isUnitWorking(); });
+	return std::ranges::count_if (buildings, [] (const auto& building) { return building->getStaticData().canScore && building->isUnitWorking(); });
 }
 
 //------------------------------------------------------------------------------
@@ -734,7 +731,7 @@ bool cPlayer::mayHaveOffensiveUnit() const
 		const auto& staticUnitData = unit->getStaticUnitData();
 		return staticUnitData.canAttack || !staticUnitData.canBuild.empty();
 	};
-	return ranges::any_of (vehicles, canAttackOrBuild) || ranges::any_of (buildings, canAttackOrBuild);
+	return std::ranges::any_of (vehicles, canAttackOrBuild) || std::ranges::any_of (buildings, canAttackOrBuild);
 }
 
 //------------------------------------------------------------------------------

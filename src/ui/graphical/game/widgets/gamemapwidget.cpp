@@ -1044,7 +1044,7 @@ void cGameMapWidget::drawEffects (bool bottom)
 
 	const cPosition originalTileSize (sGraphicTile::tilePixelWidth, sGraphicTile::tilePixelHeight);
 
-	EraseIf (effects, [] (const auto& effect) { return effect->isFinished(); });
+	std::erase_if (effects, [] (const auto& effect) { return effect->isFinished(); });
 	for (const auto& effect : effects)
 	{
 		if (effect->bottom == bottom && (!player || player->canSeeAt (effect->getPixelPosition() / originalTileSize)))
@@ -1900,7 +1900,7 @@ bool cGameMapWidget::handleClicked (cApplication&, cMouse& mouse, eMouseButtonTy
 
 					auto units = field.getUnits();
 
-					auto it = ranges::find (units, selectedUnit);
+					auto it = std::ranges::find (units, selectedUnit);
 					if (it != units.end())
 					{
 						it++;
@@ -2000,7 +2000,7 @@ void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPositio
 	const auto oldTileDrawingArea = cBox<cPosition> (oldTileDrawingRange.first, oldTileDrawingRange.second - cPosition (1, 1));
 
 	// delete finished animations or animations that are no longer in the visible area.
-	EraseIf (animations, [&] (const auto& animation) { return animation->isFinished() || !animation->isLocatedIn (tileDrawingArea); });
+	std::erase_if (animations, [&] (const auto& animation) { return animation->isFinished() || !animation->isLocatedIn (tileDrawingArea); });
 
 	// add animations for units that just entered the visible area.
 	if (mapView)

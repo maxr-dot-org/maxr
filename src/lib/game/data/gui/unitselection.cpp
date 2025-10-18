@@ -81,7 +81,7 @@ void cUnitSelection::addSelectedUnitFront (cUnit& unit)
 //------------------------------------------------------------------------------
 void cUnitSelection::removeSelectedUnit (const cUnit& unit)
 {
-	auto iter = ranges::find_if (selectedUnits, [&unit] (const auto& entry) { return entry.first == &unit; });
+	auto iter = std::ranges::find_if (selectedUnits, [&unit] (const auto& entry) { return entry.first == &unit; });
 	if (iter == selectedUnits.end()) return;
 
 	selectedUnits.erase (iter);
@@ -244,19 +244,19 @@ size_t cUnitSelection::getSelectedUnitsCount() const
 //------------------------------------------------------------------------------
 size_t cUnitSelection::getSelectedVehiclesCount() const
 {
-	return ranges::count_if (selectedUnits, [] (const auto& p) { return p.first->isAVehicle(); });
+	return std::ranges::count_if (selectedUnits, [] (const auto& p) { return p.first->isAVehicle(); });
 }
 
 //------------------------------------------------------------------------------
 size_t cUnitSelection::getSelectedBuildingsCount() const
 {
-	return ranges::count_if (selectedUnits, [] (const auto& p) { return p.first->isABuilding(); });
+	return std::ranges::count_if (selectedUnits, [] (const auto& p) { return p.first->isABuilding(); });
 }
 
 //------------------------------------------------------------------------------
 bool cUnitSelection::isSelected (const cUnit& unit) const
 {
-	auto iter = ranges::find_if (selectedUnits, [&unit] (const auto& entry) { return entry.first == &unit; });
+	auto iter = std::ranges::find_if (selectedUnits, [&unit] (const auto& entry) { return entry.first == &unit; });
 	return iter != selectedUnits.end();
 }
 

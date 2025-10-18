@@ -218,5 +218,5 @@ void cWindowMapSelection::loadMaps()
 			}
 		}
 	}
-	EraseIf (maps, [] (const auto& mapName) { return mapName.extension() != ".WRL" && mapName.extension() != ".wrl"; });
+	std::erase_if (maps, [] (const auto& mapName) { return mapName.extension() != ".WRL" && mapName.extension() != ".wrl"; });
 }

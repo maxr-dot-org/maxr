@@ -290,8 +290,8 @@ public:
 		const std::function<bool (const std::shared_ptr<cVehicle>&)> filters[] =
 			{
 				[&] (const auto& vehicle) { return !hasStoredUnits (vehicle); },
-				[&] (const auto& vehicle) { return hasStoredUnits (vehicle) && ranges::none_of (vehicle->storedUnits, hasStoredUnits); },
-				[&] (const auto& vehicle) { return hasStoredUnits (vehicle) && ranges::any_of (vehicle->storedUnits, hasStoredUnits); }};
+				[&] (const auto& vehicle) { return hasStoredUnits (vehicle) && std::ranges::none_of (vehicle->storedUnits, hasStoredUnits); },
+				[&] (const auto& vehicle) { return hasStoredUnits (vehicle) && std::ranges::any_of (vehicle->storedUnits, hasStoredUnits); }};
 		std::vector<std::shared_ptr<cVehicle>> orderedVehicles;
 		for (const auto& filter : filters)
 		{

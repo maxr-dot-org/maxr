@@ -330,7 +330,7 @@ bool cBuilding::canTransferTo (const cUnit& unit) const
 
 		if (v->isUnitBuildingABuilding() || v->isUnitClearing())
 			return false;
-		return ranges::any_of (subBase->getBuildings(), [&] (const auto& b) { return b->isNextTo (v->getPosition()); });
+		return std::ranges::any_of (subBase->getBuildings(), [&] (const auto& b) { return b->isNextTo (v->getPosition()); });
 	}
 	else if (const cBuilding* b = dynamic_cast<const cBuilding*> (&unit))
 	{

@@ -182,7 +182,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 
 	clients = std::move (clients_);
 
-	auto iter = ranges::find_if (clients, [=] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == activePlayerNumber; });
+	auto iter = std::ranges::find_if (clients, [=] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == activePlayerNumber; });
 	if (iter != clients.end())
 		setActiveClient (*iter);
 	else
@@ -203,7 +203,7 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 			if (guiInfo.playerNr != client->getActivePlayer().getId()) return;
 
 			const cMap& map = *client->getModel().getMap();
-			if (ranges::any_of (guiInfo.guiInfo.savedPositions, [&] (const auto& savedPosition) { return savedPosition && !map.isValidPosition (*savedPosition); }))
+			if (std::ranges::any_of (guiInfo.guiInfo.savedPositions, [&] (const auto& savedPosition) { return savedPosition && !map.isValidPosition (*savedPosition); }))
 			{
 				return;
 			}
@@ -932,7 +932,7 @@ void cGameGuiController::connectClient (cClient& client)
 			}
 			playerGameGuiStates[player.getId()].gameGuiState = gameGui->getCurrentState();
 
-			auto it = ranges::find_if (clients, [&] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == player.getId(); });
+			auto it = std::ranges::find_if (clients, [&] (const std::shared_ptr<cClient>& client) { return client->getActivePlayer().getId() == player.getId(); });
 			assert (it != clients.end());
 			++it;
 			//TODO: skip defeated player? (maybe show defeat splashscreen once)
@@ -1777,7 +1777,7 @@ std::shared_ptr<const cPlayer> cGameGuiController::getActivePlayer() const
 
 	const auto& clientPlayerList = activeClient->getModel().getPlayerList();
 
-	auto iter = ranges::find_if (clientPlayerList, [this] (const std::shared_ptr<cPlayer>& player) { return player->getId() == activeClient->getActivePlayer().getId(); });
+	auto iter = std::ranges::find_if (clientPlayerList, [this] (const std::shared_ptr<cPlayer>& player) { return player->getId() == activeClient->getActivePlayer().getId(); });
 
 	if (iter == clientPlayerList.end()) return nullptr; // should never happen; just to be on the safe side
 
@@ -1854,7 +1854,7 @@ void cGameGuiController::sendStartGroupMoveAction (std::vector<cVehicle*> group,
 				path.clear();
 			}
 		}
-		Remove (group, nullptr);
+		std::erase (group, nullptr);
 		RemoveEmpty (paths);
 	}
 

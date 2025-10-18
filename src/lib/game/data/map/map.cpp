@@ -189,7 +189,7 @@ void cMapField::addPlane (cVehicle& plane, size_t index)
 //------------------------------------------------------------------------------
 void cMapField::removeBuilding (const cBuilding& building)
 {
-	Remove (buildings, &building);
+	std::erase (buildings, &building);
 
 	unitsChanged();
 }
@@ -197,7 +197,7 @@ void cMapField::removeBuilding (const cBuilding& building)
 //------------------------------------------------------------------------------
 void cMapField::removeVehicle (const cVehicle& vehicle)
 {
-	Remove (vehicles, &vehicle);
+	std::erase (vehicles, &vehicle);
 
 	unitsChanged();
 }
@@ -205,7 +205,7 @@ void cMapField::removeVehicle (const cVehicle& vehicle)
 //------------------------------------------------------------------------------
 void cMapField::removePlane (const cVehicle& plane)
 {
-	Remove (planes, &plane);
+	std::erase (planes, &plane);
 
 	unitsChanged();
 }
@@ -274,14 +274,14 @@ bool cStaticMap::possiblePlace (const cStaticUnitData& data, const cPosition& po
 {
 	const auto positions = getPositions (position, data.ID.isABuilding() && data.buildingData.isBig);
 
-	if (!ranges::all_of (positions, [this] (const auto& pos) { return isValidPosition (pos); })) return false;
+	if (!std::ranges::all_of (positions, [this] (const auto& pos) { return isValidPosition (pos); })) return false;
 	if (data.factorAir > 0) return true;
 
-	if (ranges::any_of (positions, [this] (const auto& pos) { return isBlocked (pos); })) return false;
+	if (std::ranges::any_of (positions, [this] (const auto& pos) { return isBlocked (pos); })) return false;
 
-	if (data.factorSea == 0 && ranges::any_of (positions, [this] (const auto& pos) { return isWater (pos); })) return false;
-	if (data.factorCoast == 0 && ranges::any_of (positions, [this] (const auto& pos) { return isCoast (pos); })) return false;
-	if (data.factorGround == 0 && ranges::any_of (positions, [this] (const auto& pos) { return isGround (pos); })) return false;
+	if (data.factorSea == 0 && std::ranges::any_of (positions, [this] (const auto& pos) { return isWater (pos); })) return false;
+	if (data.factorCoast == 0 && std::ranges::any_of (positions, [this] (const auto& pos) { return isCoast (pos); })) return false;
+	if (data.factorGround == 0 && std::ranges::any_of (positions, [this] (const auto& pos) { return isGround (pos); })) return false;
 
 	return true;
 }
@@ -357,7 +357,7 @@ std::vector<cPosition> cStaticMap::collectAroundPositions (const cPosition& posi
 			position.relative (1, 1)};
 	};
 	auto res = isBig ? aroundBigPositions() : aroundSmallPositions();
-	EraseIf (res, [this] (const auto& pos) { return !this->isValidPosition (pos); });
+	std::erase_if (res, [this] (const auto& pos) { return !this->isValidPosition (pos); });
 	return res;
 }
 
@@ -761,7 +761,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		}
 		else
 		{
-			const int notMovingPlanes = ranges::count_if (planes, [] (const auto* plane) { return !plane->isUnitMoving(); });
+			const int notMovingPlanes = std::ranges::count_if (planes, [] (const auto* plane) { return !plane->isUnitMoving(); });
 			if (notMovingPlanes >= MAX_PLANES_PER_FIELD) return false;
 		}
 	}

@@ -285,7 +285,7 @@ void cClient::handleSurveyorMoveJobs()
 	{
 		job->run (*this, surveyorAiJobs);
 	}
-	EraseIf (surveyorAiJobs, [] (auto& job) { return job->isFinished(); });
+	std::erase_if (surveyorAiJobs, [] (auto& job) { return job->isFinished(); });
 }
 
 //------------------------------------------------------------------------------
@@ -330,7 +330,7 @@ void cClient::addSurveyorMoveJob (const cVehicle& vehicle)
 	sendNetMessage (cActionSetAutoMove (vehicle, true));
 
 	//don't add new job, if there is already one for this vehicle
-	auto it = ranges::find_if (surveyorAiJobs, [&] (const std::unique_ptr<cSurveyorAi>& job) {
+	auto it = std::ranges::find_if (surveyorAiJobs, [&] (const std::unique_ptr<cSurveyorAi>& job) {
 		return job->getVehicle().getId() == vehicle.getId();
 	});
 	if (it != surveyorAiJobs.end())
@@ -345,7 +345,7 @@ void cClient::removeSurveyorMoveJob (const cVehicle& vehicle)
 {
 	sendNetMessage (cActionSetAutoMove (vehicle, false));
 
-	auto it = ranges::find_if (surveyorAiJobs, [&] (const std::unique_ptr<cSurveyorAi>& job) {
+	auto it = std::ranges::find_if (surveyorAiJobs, [&] (const std::unique_ptr<cSurveyorAi>& job) {
 		return job->getVehicle().getId() == vehicle.getId();
 	});
 	if (it != surveyorAiJobs.end())

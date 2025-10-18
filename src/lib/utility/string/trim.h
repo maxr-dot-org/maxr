@@ -30,7 +30,7 @@
 
 static inline std::string& trim_left (std::string& s)
 {
-	s.erase (s.begin(), ranges::find_if (s, [] (unsigned char c) { return !std::isspace (c); }));
+	s.erase (s.begin(), std::ranges::find_if (s, [] (unsigned char c) { return !std::isspace (c); }));
 	return s;
 }
 
@@ -47,7 +47,7 @@ static inline std::string& trim (std::string& s)
 
 [[nodiscard]] inline std::string_view trim_left (std::string_view s)
 {
-	return s.substr (std::distance (s.begin(), ranges::find_if (s, [] (unsigned char c) { return !std::isspace (c); })));
+	return s.substr (std::distance (s.begin(), std::ranges::find_if (s, [] (unsigned char c) { return !std::isspace (c); })));
 }
 
 [[nodiscard]] inline std::string_view trim_right (std::string_view s)
