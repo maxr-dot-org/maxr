@@ -59,7 +59,7 @@ jobs:
         ./maxr_tests.exe
 
     - name: upload maxr
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: maxr
         path: |
