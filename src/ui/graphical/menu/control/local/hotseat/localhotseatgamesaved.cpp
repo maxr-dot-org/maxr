@@ -19,7 +19,6 @@
 
 #include "localhotseatgamesaved.h"
 
-#include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"

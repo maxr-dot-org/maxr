@@ -25,8 +25,6 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-#include <memory>
-
 class cImage;
 class cLabel;
 class cPlayerBasicData;

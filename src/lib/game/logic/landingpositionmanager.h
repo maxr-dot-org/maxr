@@ -25,7 +25,6 @@
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 
-#include <memory>
 #include <vector>
 
 class cPlayerBasicData;

@@ -19,13 +19,7 @@
 
 #include "game/logic/fxeffects.h"
 
-#include "game/data/map/map.h"
-#include "game/data/player/player.h"
-#include "game/data/units/building.h"
-#include "game/data/units/vehicle.h"
-#include "game/logic/client.h"
 #include "settings.h"
-#include "utility/listhelpers.h"
 #include "utility/random.h"
 
 //------------------------------------------------------------------------------

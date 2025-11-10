@@ -23,6 +23,7 @@
 #include "game/data/player/clans.h"
 #include "game/data/player/playerbasicdata.h"
 #include "game/data/savegameinfo.h"
+#include "game/data/units/unitdata.h"
 #include "game/logic/landingpositionstate.h"
 #include "game/protocol/netmessage.h"
 

@@ -23,8 +23,6 @@
 #include "game/data/report/savedreport.h"
 #include "game/data/resourcetype.h"
 
-class cUnit;
-
 class cSavedReportResourceChanged : public cSavedReport
 {
 public:

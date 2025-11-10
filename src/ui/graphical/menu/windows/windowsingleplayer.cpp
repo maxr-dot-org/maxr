@@ -20,30 +20,17 @@
 #include "windowsingleplayer.h"
 
 #include "game/data/gamesettings.h"
-#include "game/data/player/player.h"
 #include "game/data/savegameinfo.h"
-#include "game/data/units/landingunit.h"
-#include "game/data/units/unitdata.h"
-#include "game/logic/client.h"
-#include "game/logic/server.h"
-#include "game/startup/gamepreparation.h"
-#include "resources/uidata.h"
-#include "ui/graphical/game/gamegui.h"
 #include "ui/graphical/menu/control/local/singleplayer/localsingleplayergamenew.h"
 #include "ui/graphical/menu/control/local/singleplayer/localsingleplayergamesaved.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 #include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
-#include "ui/graphical/menu/windows/windowlandingpositionselection/windowlandingpositionselection.h"
-#include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "ui/graphical/menu/windows/windowload/windowload.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/widgets/application.h"
 #include "utility/language.h"
 #include "utility/log.h"
-
-#include <functional>
 
 //------------------------------------------------------------------------------
 cWindowSinglePlayer::cWindowSinglePlayer() :

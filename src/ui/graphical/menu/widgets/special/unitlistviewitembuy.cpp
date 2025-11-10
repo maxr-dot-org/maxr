@@ -20,6 +20,7 @@
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 
 #include "game/data/player/player.h"
+#include "ui/widgets/clickablewidget.h"
 #include "ui/widgets/image.h"
 #include "ui/widgets/label.h"
 

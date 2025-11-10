@@ -22,6 +22,7 @@
 #include "SDLutility/uniquesurface.h"
 
 #include <SDL.h>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>

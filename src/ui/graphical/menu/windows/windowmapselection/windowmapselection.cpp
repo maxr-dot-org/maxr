@@ -20,19 +20,19 @@
 #include "windowmapselection.h"
 
 #include "SDLutility/uniquesurface.h"
-#include "game/data/map/map.h"
 #include "output/video/video.h"
 #include "resources/map/mappreview.h"
 #include "resources/pcx.h"
-#include "resources/uidata.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/uidefines.h"
 #include "ui/widgets/image.h"
 #include "ui/widgets/label.h"
 #include "utility/language.h"
-#include "utility/listhelpers.h"
 #include "utility/os.h"
+#include "utility/ranges.h"
 #include "utility/string/utf-8.h"
+
+#include <cassert>
 
 //------------------------------------------------------------------------------
 cWindowMapSelection::cWindowMapSelection() :

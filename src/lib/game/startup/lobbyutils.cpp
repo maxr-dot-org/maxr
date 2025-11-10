@@ -20,7 +20,6 @@
 #include "lobbyutils.h"
 
 #include "game/data/player/playerbasicdata.h"
-#include "utility/ranges.h"
 
 #include <algorithm>
 

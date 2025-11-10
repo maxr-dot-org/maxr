@@ -20,14 +20,12 @@
 #ifndef ui_graphical_game_gameguiH
 #define ui_graphical_game_gameguiH
 
-#include "game/data/gui/unitselection.h"
-#include "game/logic/upgradecalculator.h"
-#include "resources/sound.h"
+#include "output/sound/soundchunk.h"
 #include "ui/widgets/window.h"
-#include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-#include <array>
+#include <memory>
+#include <vector>
 
 class cHud;
 class cGameMapWidget;

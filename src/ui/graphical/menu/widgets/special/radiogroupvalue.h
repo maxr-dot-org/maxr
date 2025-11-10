@@ -24,6 +24,7 @@
 #include "ui/widgets/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <map>
 #include <optional>
 
 /*

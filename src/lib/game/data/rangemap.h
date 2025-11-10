@@ -24,6 +24,7 @@
 #include "utility/signal/signal.h"
 
 #include <optional>
+#include <vector>
 
 /**
 * This class is used to track, whether a position is a specific range to any

@@ -20,10 +20,9 @@
 #ifndef utility_string_trimH
 #define utility_string_trimH
 
-#include "utility/ranges.h"
-
 #include <algorithm>
 #include <cctype>
+#include <iterator>
 #include <locale>
 #include <string>
 #include <string_view>

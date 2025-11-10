@@ -20,12 +20,13 @@
 #ifndef game_data_player_clansH
 #define game_data_player_clansH
 
-#include "game/data/units/unitdata.h"
+#include "game/data/units/id.h"
 #include "utility/serialization/serialization.h"
 
 #include <map>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 enum class eClanModification

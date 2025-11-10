@@ -26,6 +26,9 @@
 #include "ui/widgets/validators/validator.h"
 #include "ui/widgets/widget.h"
 
+#include <memory>
+#include <string>
+
 class cEditableCheckBox : public cWidget
 {
 public:

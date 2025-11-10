@@ -20,6 +20,7 @@
 #include "gamepreparation.h"
 
 #include "game/data/gamesettings.h"
+#include "game/data/units/unitdata.h"
 
 //------------------------------------------------------------------------------
 std::vector<std::pair<sID, int>> computeInitialLandingUnits (int clan, const cGameSettings& gameSettings, const cUnitsData& unitsData)

@@ -22,7 +22,7 @@
 
 #include "game/logic/upgradecalculator.h"
 #include "utility/position.h"
-#include "utility/serialization/serialization.h"
+#include "utility/serialization/nvp.h"
 
 #include <vector>
 

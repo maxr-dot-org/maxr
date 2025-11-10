@@ -19,9 +19,9 @@
 
 #include "game/data/player/playerbasicdata.h"
 
-#include "game/network.h"
 #include "settings.h"
-#include "utility/crc.h"
+
+#include <utility>
 
 //------------------------------------------------------------------------------
 /*static*/ cPlayerBasicData cPlayerBasicData::fromSettings()

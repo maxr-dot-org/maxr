@@ -24,10 +24,11 @@
 #include "game/data/model.h"
 #include "game/data/player/player.h"
 #include "game/data/report/savedreport.h"
-#include "game/data/units/building.h"
-#include "game/data/units/vehicle.h"
+#include "game/data/units/id.h"
+#include "game/data/units/unit.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/turncounter.h"
+#include "output/video/video.h"
 #include "resources/pcx.h"
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
@@ -43,8 +44,6 @@
 #include "ui/widgets/image.h"
 #include "ui/widgets/label.h"
 #include "utility/language.h"
-
-#include <sstream>
 
 namespace
 {

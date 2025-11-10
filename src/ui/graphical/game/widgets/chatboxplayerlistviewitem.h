@@ -21,10 +21,7 @@
 #define ui_graphical_menu_widgets_special_lobbyplayerlistviewitemH
 
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
-#include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-
-#include <memory>
 
 class cImage;
 class cLabel;

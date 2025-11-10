@@ -22,6 +22,8 @@
 
 #include "action.h"
 
+#include <vector>
+
 class cBuilding;
 struct sID;
 

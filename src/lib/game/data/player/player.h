@@ -32,10 +32,10 @@
 #include "utility/color.h"
 #include "utility/flatset.h"
 #include "utility/position.h"
-#include "utility/ranges.h"
 #include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
+#include <algorithm>
 #include <string>
 #include <string_view>
 #include <vector>

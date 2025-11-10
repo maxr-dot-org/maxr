@@ -21,12 +21,11 @@
 
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
-#include "game/data/units/building.h"
-#include "game/data/units/vehicle.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/startup/lobbypreparationdata.h"
 #include "ui/widgets/application.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 #include <cassert>
 

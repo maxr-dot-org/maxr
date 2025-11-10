@@ -20,8 +20,9 @@
 #ifndef game_networkAddressH
 #define game_networkAddressH
 
-#include "utility/serialization/serialization.h"
+#include "utility/serialization/nvp.h"
 
+#include <cstdint>
 #include <string>
 
 struct sNetworkAddress

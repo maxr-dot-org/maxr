@@ -19,14 +19,16 @@
 
 #include "game/data/player/player.h"
 
+#include "game/data/map/map.h"
+#include "game/data/model.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/client.h"
+#include "playerbasicdata.h"
 #include "utility/crc.h"
 #include "utility/string/toString.h"
 
+#include <algorithm>
 #include <cassert>
-#include <cmath>
 
 //------------------------------------------------------------------------------
 void sNewTurnPlayerReport::addUnitBuilt (const sID& unitTypeId)

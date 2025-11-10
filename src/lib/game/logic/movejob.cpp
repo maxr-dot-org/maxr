@@ -24,10 +24,8 @@
 #include "game/data/model.h"
 #include "game/data/player/player.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/gametimer.h"
 #include "game/logic/pathcalculator.h"
 #include "utility/narrow_cast.h"
-#include "utility/ranges.h"
 
 constexpr double MOVE_ACCELERATION = 0.08; // change of vehicle speed per tick
 

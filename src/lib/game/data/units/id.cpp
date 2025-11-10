@@ -21,6 +21,8 @@
 
 #include "utility/crc.h"
 
+#include <cstdio>
+
 //------------------------------------------------------------------------------
 std::string sID::getText() const
 {

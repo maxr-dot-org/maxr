@@ -20,10 +20,13 @@
 #ifndef ui_graphical_menu_windows_windowadvancedhangar_windowadvancedhangarH
 #define ui_graphical_menu_windows_windowadvancedhangar_windowadvancedhangarH
 
+#include "resources/sound.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 #include "ui/graphical/menu/windows/windowhangar/windowhangar.h"
 #include "utility/color.h"
+
+#include <memory>
 
 template <typename SelectedUnitItemType>
 class cWindowAdvancedHangar : public cWindowHangar

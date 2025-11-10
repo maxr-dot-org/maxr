@@ -24,8 +24,6 @@
 #include "ui/widgets/label.h"
 #include "utility/language.h"
 
-#include <cassert>
-
 //------------------------------------------------------------------------------
 cBuildSpeedHandlerWidget::cBuildSpeedHandlerWidget (const cPosition& position) :
 	cWidget (position)

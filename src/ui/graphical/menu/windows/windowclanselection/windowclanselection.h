@@ -25,6 +25,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <array>
+#include <memory>
 
 class cClanData;
 class cImage;

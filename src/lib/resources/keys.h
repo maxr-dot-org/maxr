@@ -24,6 +24,8 @@
 #include "utility/serialization/serialization.h"
 
 #include <filesystem>
+#include <utility>
+#include <vector>
 
 enum class eMouseStyle
 {

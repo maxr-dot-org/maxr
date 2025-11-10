@@ -22,6 +22,7 @@
 #include "utility/crc.h"
 #include "utility/narrow_cast.h"
 
+#include <algorithm>
 #include <cassert>
 
 //------------------------------------------------------------------------------

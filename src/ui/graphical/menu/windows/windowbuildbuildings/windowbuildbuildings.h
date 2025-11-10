@@ -22,6 +22,8 @@
 
 #include "ui/graphical/menu/windows/windowhangar/windowhangar.h"
 
+#include <memory>
+
 class cVehicle;
 class cBuildSpeedHandlerWidget;
 class cTurnTimeClock;

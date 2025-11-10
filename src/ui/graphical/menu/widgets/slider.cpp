@@ -25,11 +25,9 @@
 #include "output/video/video.h"
 #include "resources/uidata.h"
 #include "ui/graphical/menu/widgets/sliderhandle.h"
-#include "utility/mathtools.h"
 
 #include <algorithm>
 #include <cassert>
-#include <functional>
 
 //------------------------------------------------------------------------------
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderType sliderType) :

@@ -21,6 +21,7 @@
 
 #include "SDLutility/drawing.h"
 #include "SDLutility/tosdl.h"
+#include "output/video/video.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/special/textlistviewitem.h"

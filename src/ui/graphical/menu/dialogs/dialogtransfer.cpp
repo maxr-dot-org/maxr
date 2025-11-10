@@ -19,14 +19,13 @@
 
 #include "dialogtransfer.h"
 
-#include "SDLutility/drawing.h"
 #include "game/data/base/base.h"
-#include "game/data/map/map.h"
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "output/video/video.h"
 #include "resources/buildinguidata.h"
+#include "resources/map/graphicstaticmap.h"
 #include "resources/pcx.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"

@@ -24,6 +24,8 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <memory>
+
 class cPushButton;
 class cCheckBox;
 class cSlider;

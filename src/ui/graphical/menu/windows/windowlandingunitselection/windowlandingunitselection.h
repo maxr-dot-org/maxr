@@ -24,6 +24,9 @@
 
 #include <array>
 #include <map>
+#include <memory>
+#include <utility>
+#include <vector>
 
 class cCheckBox;
 class cLabel;

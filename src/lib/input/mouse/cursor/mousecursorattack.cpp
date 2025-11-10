@@ -19,7 +19,6 @@
 
 #include "input/mouse/cursor/mousecursorattack.h"
 
-#include "game/data/map/map.h"
 #include "game/data/units/unit.h"
 #include "game/logic/attackjob.h"
 #include "output/video/video.h"

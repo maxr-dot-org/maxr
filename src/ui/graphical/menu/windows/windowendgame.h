@@ -20,7 +20,8 @@
 #ifndef ui_graphical_menu_windows_windowendgameH
 #define ui_graphical_menu_windows_windowendgameH
 
-#include "ui/graphical/menu/windows/windowmain.h"
+#include "ui/widgets/window.h"
+#include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <memory>

@@ -26,9 +26,9 @@
 #include "output/video/video.h"
 #include "ui/widgets/framecounter.h"
 #include "ui/widgets/runnable.h"
+#include "ui/widgets/shortcut.h"
 #include "ui/widgets/widget.h"
 #include "ui/widgets/window.h"
-#include "utility/listhelpers.h"
 
 //------------------------------------------------------------------------------
 cApplication::cApplication() :

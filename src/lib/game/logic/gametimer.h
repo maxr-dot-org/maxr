@@ -20,10 +20,9 @@
 #ifndef game_logic_gametimerH
 #define game_logic_gametimerH
 
-#include "utility/signal/signal.h"
-
 #include <SDL.h>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <vector>
 

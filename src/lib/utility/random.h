@@ -24,6 +24,7 @@
 #include <cassert>
 #include <random>
 #include <stdexcept>
+#include <type_traits>
 
 /**
  * Creates a uniform distributed random number in the interval [min, max).

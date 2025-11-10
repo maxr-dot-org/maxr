@@ -20,13 +20,15 @@
 #ifndef ui_graphical_menu_windows_windowresourcedistribution_windowresourcedistributionH
 #define ui_graphical_menu_windows_windowresourcedistribution_windowresourcedistributionH
 
-#include "game/data/base/base.h"
+#include "game/data/miningresource.h"
 #include "ui/widgets/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <array>
+#include <memory>
 
+class cBuilding;
 class cLabel;
 class cPushButton;
 class cResourceBar;

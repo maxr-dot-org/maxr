@@ -19,13 +19,12 @@
 
 #include "ui/graphical/menu/widgets/pushbutton.h"
 
-#include "SDLutility/drawing.h"
 #include "SDLutility/tosdl.h"
 #include "input/mouse/mouse.h"
-#include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "output/video/unifonts.h"
 #include "output/video/video.h"
+#include "resources/sound.h"
 #include "resources/uidata.h"
 #include "ui/widgets/application.h"
 

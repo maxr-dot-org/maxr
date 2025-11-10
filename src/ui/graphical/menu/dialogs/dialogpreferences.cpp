@@ -19,7 +19,6 @@
 
 #include "dialogpreferences.h"
 
-#include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 #include "resources/pcx.h"
@@ -30,17 +29,13 @@
 #include "ui/graphical/menu/widgets/combobox.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/slider.h"
-#include "ui/graphical/menu/widgets/special/textlistviewitem.h"
 #include "ui/uidefines.h"
+#include "ui/widgets/application.h"
 #include "ui/widgets/label.h"
 #include "ui/widgets/lineedit.h"
-#include "ui/widgets/validators/validatorint.h"
 #include "utility/language.h"
 #include "utility/string/iequals.h"
 #include "utility/string/toNumber.h"
-
-#include <SDL_mixer.h>
-#include <functional>
 
 //------------------------------------------------------------------------------
 cDialogPreferences::cDialogPreferences() :

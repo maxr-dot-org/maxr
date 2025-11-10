@@ -21,9 +21,12 @@
 #define ui_graphical_menu_windows_windowupgrades_windowupgradesH
 
 #include "ui/graphical/menu/windows/windowhangar/windowhangar.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 #include <array>
 #include <map>
+#include <utility>
+#include <vector>
 
 class cLabel;
 class cPushButton;

@@ -22,6 +22,8 @@
 
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 
+#include <string>
+
 class cLabel;
 
 class cTextListViewItem : public cAbstractListViewItem

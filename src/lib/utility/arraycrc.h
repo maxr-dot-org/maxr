@@ -24,6 +24,7 @@
 
 #include <cstdint>
 #include <optional>
+#include <vector>
 
 /**
 * This is a wrapper class around a dynamically allocated array.

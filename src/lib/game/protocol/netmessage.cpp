@@ -25,10 +25,6 @@
 #include "game/protocol/lobbymessage.h"
 #include "mapdownloader/mapdownload.h"
 #include "maxrversion.h"
-#include "utility/serialization/serialization.h"
-
-#include <cassert>
-#include <memory>
 
 //------------------------------------------------------------------------------
 namespace serialization

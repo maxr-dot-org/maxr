@@ -23,6 +23,8 @@
 #include "ui/widgets/window.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <string>
+
 class cCheckBox;
 class cColorSelector;
 class cComboBox;

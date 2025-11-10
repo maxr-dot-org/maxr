@@ -22,7 +22,6 @@
 #include "game/data/model.h"
 #include "game/logic/jobs/airtransportloadjob.h"
 #include "game/logic/jobs/getinjob.h"
-#include "utility/log.h"
 
 //------------------------------------------------------------------------------
 cActionLoad::cActionLoad (const cUnit& loadingUnit, const cVehicle& loadedVehicle) :

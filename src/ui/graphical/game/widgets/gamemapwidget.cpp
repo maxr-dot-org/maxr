@@ -26,13 +26,11 @@
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "game/logic/fxeffects.h"
 #include "game/logic/movejob.h"
 #include "game/logic/pathcalculator.h"
-#include "input/mouse/cursor/mousecursoramount.h"
-#include "input/mouse/cursor/mousecursorattack.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
-#include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 #include "resources/buildinguidata.h"
@@ -63,19 +61,19 @@
 #include "ui/graphical/game/control/mousemode/mousemodetransfer.h"
 #include "ui/graphical/game/control/rightmousebuttonscroller.h"
 #include "ui/graphical/game/drawfxeffect.h"
-#include "ui/graphical/game/hud.h"
 #include "ui/graphical/game/widgets/unitcontextmenuwidget.h"
 #include "ui/sound/game/fxsound.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/uidefines.h"
 #include "ui/widgets/application.h"
+#include "ui/widgets/shortcut.h"
 #include "utility/indexiterator.h"
-#include "utility/listhelpers.h"
 #include "utility/mathtools.h"
 #include "utility/narrow_cast.h"
 #include "utility/random.h"
 #include "utility/ranges.h"
 
+#include <algorithm>
 #include <cassert>
 
 //------------------------------------------------------------------------------

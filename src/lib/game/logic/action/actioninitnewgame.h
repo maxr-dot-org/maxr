@@ -23,9 +23,15 @@
 #include "action.h"
 #include "game/startup/initplayerdata.h"
 
-class cVehicle;
+#include <vector>
+
 class cBuilding;
+class cPlayer;
 class cStaticMap;
+class cUnitsData;
+class cVehicle;
+
+struct sLandingUnit;
 
 class cActionInitNewGame : public cActionT<cAction::eActiontype::InitNewGame>
 {

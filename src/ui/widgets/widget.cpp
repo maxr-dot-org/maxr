@@ -23,6 +23,7 @@
 #include "SDLutility/tosdl.h"
 #include "output/video/video.h"
 #include "ui/widgets/application.h"
+#include "ui/widgets/shortcut.h"
 #include "utility/color.h"
 
 /*static*/ bool cWidget::drawDebugFrames = false;

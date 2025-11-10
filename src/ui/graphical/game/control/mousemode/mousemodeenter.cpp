@@ -27,7 +27,6 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionenter.h"
-#include "ui/graphical/game/control/mouseaction/mouseactionload.h"
 
 //------------------------------------------------------------------------------
 cMouseModeEnter::cMouseModeEnter (const cMapView* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :

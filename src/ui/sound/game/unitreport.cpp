@@ -20,16 +20,18 @@
 #include "unitreport.h"
 
 #include "game/data/gui/gameguistate.h"
-#include "game/data/player/player.h"
 #include "game/data/units/building.h"
+#include "game/data/units/unit.h"
+#include "game/data/units/unitdata.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/movejob.h"
 #include "resources/sound.h"
-#include "ui/sound/effects/soundeffect.h"
+#include "ui/sound/effects/soundeffecttype.h"
 #include "ui/sound/effects/soundeffectvoice.h"
 #include "ui/sound/soundmanager.h"
-#include "utility/listhelpers.h"
 #include "utility/random.h"
+
+#include <memory>
 
 namespace
 {

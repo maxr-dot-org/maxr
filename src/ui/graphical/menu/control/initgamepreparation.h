@@ -20,16 +20,12 @@
 #ifndef ui_graphical_menu_control_initgamepreparationH
 #define ui_graphical_menu_control_initgamepreparationH
 
-#include "game/data/units/landingunit.h"
-#include "game/data/units/unitdata.h"
-#include "game/logic/upgradecalculator.h"
 #include "game/startup/initplayerdata.h"
 #include "game/startup/lobbypreparationdata.h"
 #include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <memory>
-#include <utility>
 #include <vector>
 
 class cApplication;

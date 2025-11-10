@@ -47,9 +47,6 @@
 #include "actiontransfer.h"
 #include "actionupgradebuilding.h"
 #include "actionupgradevehicle.h"
-#include "utility/log.h"
-
-#include <cassert>
 
 namespace serialization
 {

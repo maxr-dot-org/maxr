@@ -21,7 +21,7 @@
 #define utility_crossplatformrandomH
 
 #include "utility/crc.h"
-#include "utility/serialization/serialization.h"
+#include "utility/serialization/nvp.h"
 
 #include <cstdint>
 

@@ -26,7 +26,6 @@
 #include <algorithm>
 #include <cassert>
 #include <cctype>
-#include <functional>
 
 /*static*/ const char* const cChatCommandArgumentBool::trueName = "on";
 /*static*/ const char* const cChatCommandArgumentBool::falseName = "off";

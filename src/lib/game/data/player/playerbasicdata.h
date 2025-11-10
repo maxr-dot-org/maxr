@@ -22,7 +22,7 @@
 
 #include "game/data/player/playersettings.h"
 #include "utility/color.h"
-#include "utility/serialization/serialization.h"
+#include "utility/serialization/nvp.h"
 #include "utility/signal/signal.h"
 
 #include <string>

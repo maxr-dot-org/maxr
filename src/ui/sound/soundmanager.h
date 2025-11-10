@@ -24,7 +24,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <mutex>
-#include <set>
+#include <vector>
 
 class cSoundEffect;
 class cSoundChannel;

@@ -21,6 +21,7 @@
 #define game_data_units_buildingH
 
 #include "game/data/miningresource.h"
+#include "game/data/units/id.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/unitdata.h"
 #include "game/logic/upgradecalculator.h" // cResearch::eResearchArea

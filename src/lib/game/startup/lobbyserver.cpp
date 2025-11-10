@@ -19,8 +19,8 @@
 
 #include "lobbyserver.h"
 
+#include "game/data/savegame.h"
 #include "game/data/units/unitdata.h"
-#include "game/logic/server.h"
 #include "game/startup/lobbyclient.h"
 #include "game/startup/lobbyutils.h"
 #include "mapdownloader/mapdownload.h"
@@ -28,7 +28,6 @@
 #include "maxrversion.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
-#include "utility/ranges.h"
 
 #include <cassert>
 

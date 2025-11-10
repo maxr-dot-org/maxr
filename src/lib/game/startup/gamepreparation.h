@@ -20,7 +20,7 @@
 #ifndef game_startup_gamepreparationH
 #define game_startup_gamepreparationH
 
-#include "game/data/units/unitdata.h"
+#include "game/data/units/id.h"
 
 #include <utility>
 #include <vector>

@@ -21,7 +21,6 @@
 
 #include "game/data/player/clans.h"
 #include "resources/pcx.h"
-#include "resources/uidata.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/translations.h"
 #include "ui/uidefines.h"

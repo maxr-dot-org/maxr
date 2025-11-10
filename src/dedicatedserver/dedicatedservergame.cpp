@@ -19,6 +19,7 @@
 
 #include "dedicatedservergame.h"
 
+#include "game/data/savegame.h"
 #include "game/protocol/lobbymessage.h"
 #include "utility/log.h"
 

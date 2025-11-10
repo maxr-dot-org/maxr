@@ -20,10 +20,10 @@
 #ifndef game_logic_jobs_jobcontainerH
 #define game_logic_jobs_jobcontainerH
 
-#include "game/logic/jobs/job.h"
-#include "utility/serialization/serialization.h"
+#include "utility/serialization/nvp.h"
 
 #include <memory>
+#include <vector>
 
 class cJob;
 class cUnit;

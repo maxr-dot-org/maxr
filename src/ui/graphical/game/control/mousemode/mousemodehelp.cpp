@@ -21,7 +21,7 @@
 
 #include "game/data/gui/unitselection.h"
 #include "game/data/map/mapview.h"
-#include "game/data/units/unit.h"
+#include "game/data/units/unitdata.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
 #include "ui/graphical/game/control/mouseaction/mouseactionhelp.h"

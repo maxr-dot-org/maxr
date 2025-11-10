@@ -20,7 +20,7 @@
 #ifndef game_logic_fxeffectsH
 #define game_logic_fxeffectsH
 
-#include "game/data/units/unitdata.h"
+#include "game/data/units/id.h"
 #include "utility/direction.h"
 #include "utility/position.h"
 

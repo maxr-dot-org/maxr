@@ -22,7 +22,7 @@
 
 #include "utility/fixedvector.h"
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 /**

@@ -17,12 +17,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "3rd/mveplayer/mveplayer.h"
 #include "SDLutility/sdlcomponent.h"
 #include "SDLutility/sdlnetcomponent.h"
 #include "SDLutility/sdlversion.h"
 #include "crashreporter/debug.h"
-#include "defines.h"
 #include "input/keyboard/keyboard.h"
 #include "input/mouse/mouse.h"
 #include "maxrversion.h"
@@ -36,7 +34,6 @@
 #include "utility/log.h"
 #include "utility/thread/ismainthread.h"
 
-#include <filesystem>
 #include <future>
 #include <thread>
 

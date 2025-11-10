@@ -20,21 +20,20 @@
 #ifndef game_data_map_mapH
 #define game_data_map_mapH
 
-#include "game/data/gamesettings.h"
 #include "game/data/resourcetype.h"
 #include "resources/map/graphicstaticmap.h"
 #include "utility/arraycrc.h"
 #include "utility/box.h"
 #include "utility/log.h"
 #include "utility/position.h"
+#include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
-#include "utility/t_2.h"
 
 #include <cassert>
 #include <filesystem>
 #include <memory>
+#include <string>
 #include <string_view>
-#include <utility>
 #include <vector>
 
 class cUnit;
@@ -44,7 +43,7 @@ class cPlayer;
 class cPosition;
 class cStaticUnitData;
 
-// Resources Struktur ////////////////////////////////////////////////////////
+// Resources Structure ////////////////////////////////////////////////////////
 struct sResources
 {
 public:
@@ -99,7 +98,7 @@ public:
 	/** returns a pointer to an expl. mine, if there is one */
 	cBuilding* getMine() const;
 
-	/** checks if there is a building that allows gorund units on water fields */
+	/** checks if there is a building that allows ground units on water fields */
 	bool hasBridgeOrPlattform() const;
 
 	/** Adds the passed building before the given index to the building list of the field */
@@ -247,7 +246,7 @@ public:
 	/**
 	* moves a vehicle to the given position
 	* resets the vehicle to a single field, when it was centered on four fields
-	* @param height defines the flight hight, when more than one plane on a field. 0 means top/highest.
+	* @param height defines the flight high, when more than one plane on a field. 0 means top/highest.
 	*/
 	void moveVehicle (cVehicle&, const cPosition&, int height = 0);
 

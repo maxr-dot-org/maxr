@@ -20,7 +20,6 @@
 #include "image.h"
 
 #include "SDLutility/drawing.h"
-#include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 

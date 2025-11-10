@@ -24,6 +24,8 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <string>
+
 class cDialogOk : public cWindow
 {
 public:

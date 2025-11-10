@@ -22,7 +22,8 @@
 
 #include "utility/serialization/serialization.h"
 
-#include <string>
+#include <utility>
+#include <vector>
 
 enum class ePlayerConnectionState
 {

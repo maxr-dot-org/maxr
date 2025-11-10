@@ -29,7 +29,6 @@
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "input/mouse/mouse.h"
-#include "output/video/video.h"
 #include "resources/playercolor.h"
 #include "resources/uidata.h"
 #include "ui/graphical/game/animations/animation.h"
@@ -37,8 +36,7 @@
 #include "ui/translations.h"
 #include "utility/indexiterator.h"
 #include "utility/language.h"
-#include "utility/listhelpers.h"
-#include "utility/mathtools.h"
+#include "utility/ranges.h"
 
 namespace
 {

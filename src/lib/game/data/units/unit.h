@@ -21,11 +21,13 @@
 #define game_data_units_unitH
 
 #include "game/data/units/unitdata.h"
+#include "utility/box.h"
 #include "utility/direction.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 
 #include <string>
+#include <vector>
 
 class cClient;
 class cJob;

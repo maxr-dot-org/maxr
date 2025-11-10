@@ -22,10 +22,12 @@
 
 #include "SDLutility/uniquesurface.h"
 #include "game/data/units/id.h"
-#include "resources/sound.h"
-#include "utility/serialization/serialization.h"
+#include "output/sound/soundchunk.h"
+#include "utility/color.h"
+#include "utility/serialization/nvp.h"
 
 #include <SDL.h>
+#include <optional>
 
 class cBuilding;
 class cPlayer;

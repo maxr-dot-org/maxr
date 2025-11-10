@@ -21,6 +21,9 @@
 
 #include "input/mouse/mouse.h"
 #include "ui/widgets/application.h"
+#include "ui/widgets/shortcut.h"
+
+#include <memory>
 
 //------------------------------------------------------------------------------
 cClickableWidget::cClickableWidget (const cPosition& position) :

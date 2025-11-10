@@ -23,7 +23,6 @@
 #include "utility/flatset.h"
 
 #include <memory>
-#include <vector>
 
 class cSoundChannel;
 

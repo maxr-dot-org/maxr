@@ -24,6 +24,8 @@
 #include "game/data/report/savedreport.h"
 #include "game/logic/upgradecalculator.h"
 
+#include <vector>
+
 class cSavedReportTurnStart : public cSavedReport
 {
 public:

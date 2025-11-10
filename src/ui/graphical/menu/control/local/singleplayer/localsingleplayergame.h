@@ -24,11 +24,9 @@
 #include "ui/graphical/menu/control/game.h"
 
 #include <memory>
-#include <string>
 
 class cClient;
 class cServer;
-class cGameGuiController;
 
 class cLocalSingleplayerGame : public cGame
 {

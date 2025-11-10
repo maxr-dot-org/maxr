@@ -27,7 +27,6 @@
 #include "mapdownloader/mapdownloadmessagehandler.h"
 #include "maxrversion.h"
 #include "utility/log.h"
-#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
 cLobbyClient::cLobbyClient (std::shared_ptr<cConnectionManager> connectionManager, const cPlayerBasicData& player) :

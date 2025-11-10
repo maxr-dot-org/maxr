@@ -23,7 +23,6 @@
 #include "resources/pcx.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 #include "ui/uidefines.h"
 #include "ui/widgets/application.h"
 #include "ui/widgets/image.h"

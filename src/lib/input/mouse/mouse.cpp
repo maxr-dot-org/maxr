@@ -23,8 +23,7 @@
 #include "events/mouseevents.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 
-#include <algorithm>
-#include <cassert>
+#include <utility>
 
 namespace
 {

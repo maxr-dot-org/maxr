@@ -20,8 +20,8 @@
 #include "chatboxlandingplayerlistviewitem.h"
 
 #include "SDLutility/tosdl.h"
-#include "game/data/player/player.h"
 #include "game/logic/landingpositionmanager.h"
+#include "output/video/video.h"
 #include "resources/playercolor.h"
 #include "resources/uidata.h"
 #include "ui/widgets/image.h"

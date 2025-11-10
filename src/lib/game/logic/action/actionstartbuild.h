@@ -21,7 +21,9 @@
 #define game_logic_actionStartBuildH
 
 #include "action.h"
-#include "game/data/units/unitdata.h"
+#include "game/data/units/id.h"
+
+#include <optional>
 
 class cUnit;
 class cVehicle;

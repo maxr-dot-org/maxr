@@ -21,7 +21,7 @@
 #define game_data_base_baseH
 
 #include "game/data/miningresource.h"
-#include "game/data/units/unitdata.h"
+#include "utility/signal/signal.h"
 
 #include <memory>
 #include <vector>

@@ -30,8 +30,8 @@
 #include <cassert>
 #include <limits>
 #include <list>
+#include <memory>
 #include <mutex>
-#include <utility>
 
 /**
  * Basic signal class. This class should never be instantiated directly.

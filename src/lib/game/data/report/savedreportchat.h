@@ -22,6 +22,8 @@
 
 #include "game/data/report/savedreport.h"
 
+#include <string>
+
 class cPlayer;
 
 class cSavedReportChat : public cSavedReport

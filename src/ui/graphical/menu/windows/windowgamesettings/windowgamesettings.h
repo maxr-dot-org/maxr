@@ -24,6 +24,8 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <utility>
+
 class cGameSettings;
 
 class cCheckBox;

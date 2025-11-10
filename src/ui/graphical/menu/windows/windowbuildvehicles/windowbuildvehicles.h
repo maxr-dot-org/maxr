@@ -22,6 +22,7 @@
 
 #include "ui/graphical/menu/windows/windowadvancedhangar/windowadvancedhangar.h"
 
+#include <memory>
 #include <vector>
 
 class cBuildListItem;

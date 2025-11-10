@@ -21,10 +21,11 @@
 #define ui_widgets_widgetH
 
 #include "SDLutility/uniquesurface.h"
+#include "input/keyboard/keysequence.h"
 #include "input/mouse/mousebuttontype.h"
-#include "ui/widgets/shortcut.h"
 #include "utility/box.h"
 #include "utility/position.h"
+#include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <SDL.h>

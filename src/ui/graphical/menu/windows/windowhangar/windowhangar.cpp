@@ -21,8 +21,9 @@
 
 #include "game/data/player/player.h"
 #include "game/data/player/playerbasicdata.h"
-#include "game/data/units/building.h"
-#include "game/data/units/vehicle.h"
+#include "game/data/units/id.h"
+#include "game/data/units/unitdata.h"
+#include "game/logic/upgradecalculator.h"
 #include "resources/buildinguidata.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"

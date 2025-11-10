@@ -22,7 +22,7 @@
 #include "resources/uidata.h"
 #include "utility/position.h"
 
-#include <cassert>
+#include <stdexcept>
 
 //------------------------------------------------------------------------------
 cMouseCursorSimple::cMouseCursorSimple (eMouseCursorSimpleType type_) :

@@ -22,12 +22,12 @@
 
 #include "SDLutility/partialsurface.h"
 #include "SDLutility/uniquesurface.h"
-#include "game/data/player/clans.h"
-#include "game/data/units/unitdata.h"
+#include "game/data/units/id.h"
 #include "sliderhandletype.h"
 #include "unitdatasymboltype.h"
 
 #include <filesystem>
+#include <memory>
 #include <vector>
 
 class cBuilding;

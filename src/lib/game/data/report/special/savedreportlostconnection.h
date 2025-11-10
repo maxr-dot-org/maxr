@@ -20,8 +20,9 @@
 #ifndef game_data_reports_special_savedreportlostconnectionH
 #define game_data_reports_special_savedreportlostconnectionH
 
-#include "game/data/player/player.h"
 #include "game/data/report/savedreport.h"
+
+class cPlayer;
 
 class cSavedReportLostConnection : public cSavedReport
 {

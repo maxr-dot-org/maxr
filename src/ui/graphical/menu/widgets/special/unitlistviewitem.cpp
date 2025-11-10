@@ -21,9 +21,8 @@
 
 #include "SDLutility/drawing.h"
 #include "game/data/player/player.h"
-#include "game/data/units/building.h"
 #include "game/data/units/unitdata.h"
-#include "game/data/units/vehicle.h"
+#include "output/video/video.h"
 #include "resources/buildinguidata.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"

@@ -20,6 +20,8 @@
 #include "ui/graphical/game/widgets/gamemessagelistviewitem.h"
 
 #include "SDLutility/tosdl.h"
+#include "output/video/video.h"
+#include "settings.h"
 #include "ui/widgets/label.h"
 
 //------------------------------------------------------------------------------

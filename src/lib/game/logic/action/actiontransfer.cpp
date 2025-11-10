@@ -21,7 +21,6 @@
 
 #include "game/data/model.h"
 #include "game/data/resourcetype.h"
-#include "utility/log.h"
 
 //------------------------------------------------------------------------------
 cActionTransfer::cActionTransfer (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue_, eResourceType resourceType_) :

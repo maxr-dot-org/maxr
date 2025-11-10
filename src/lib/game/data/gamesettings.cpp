@@ -20,9 +20,6 @@
 #include "gamesettings.h"
 
 #include "utility/crc.h"
-#include "utility/tounderlyingtype.h"
-
-#include <algorithm>
 
 // Might be constexpr inline in C++17
 /* static */ const unsigned int cGameSettings::defaultVictoryTurnsOptions[3]{100, 200, 400};

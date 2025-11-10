@@ -29,8 +29,7 @@
 #include "SDLutility/uniquesurface.h"
 #include "crashreporter/debug.h"
 #include "game/data/player/clans.h"
-#include "game/data/units/building.h"
-#include "game/data/units/vehicle.h"
+#include "game/data/units/unit.h"
 #include "maxrversion.h"
 #include "output/video/unifonts.h"
 #include "output/video/video.h"
@@ -42,18 +41,14 @@
 #include "resources/vehicleuidata.h"
 #include "settings.h"
 #include "utility/language.h"
-#include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/serialization/jsonarchive.h"
 #include "utility/string/toNumber.h"
 #include "utility/string/utf-8.h"
 
-#include <SDL_mixer.h>
 #include <filesystem>
 #include <iostream>
 #include <regex>
-#include <set>
-#include <sstream>
 
 #define PFEIL_COLOR 0xFF0000FF // color of a waypointarrow
 #define PFEILS_COLOR 0xFF00FF00 // color of a special waypointarrow

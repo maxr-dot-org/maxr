@@ -23,9 +23,9 @@
 #include "game/connectionmanager.h"
 #include "game/data/map/map.h"
 #include "game/logic/landingpositionmanager.h"
+#include "game/logic/server.h"
 #include "game/protocol/lobbymessage.h"
 #include "game/protocol/netmessage.h"
-#include "game/startup/lobbypreparationdata.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/thread/concurrentqueue.h"
 
@@ -35,7 +35,6 @@
 #include <vector>
 
 class cLobbyClient;
-class cServer;
 
 enum class eOpenServerResult
 {

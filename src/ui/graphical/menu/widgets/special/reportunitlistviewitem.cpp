@@ -23,6 +23,7 @@
 #include "game/data/units/building.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
+#include "output/video/video.h"
 #include "resources/buildinguidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/game/widgets/unitdetailshud.h"

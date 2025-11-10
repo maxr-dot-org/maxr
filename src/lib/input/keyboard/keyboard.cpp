@@ -22,8 +22,6 @@
 #include "events/eventmanager.h"
 #include "events/keyboardevents.h"
 
-#include <cassert>
-
 //------------------------------------------------------------------------------
 cKeyboard::cKeyboard()
 {

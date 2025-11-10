@@ -23,6 +23,7 @@
 #include "game/data/gui/gameguistate.h"
 #include "game/data/report/savedreport.h"
 #include "utility/position.h"
+#include "utility/serialization/nvp.h"
 
 #include <array>
 #include <memory>

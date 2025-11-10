@@ -24,9 +24,7 @@
 #include "game/data/units/unitdata.h"
 #include "utility/crc.h"
 #include "utility/log.h"
-#include "utility/mathtools.h"
 
-#include <cassert>
 #include <sstream>
 
 //------------------------------------------------------------------------------

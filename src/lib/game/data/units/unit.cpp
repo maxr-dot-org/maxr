@@ -21,16 +21,15 @@
 
 #include "game/data/map/map.h"
 #include "game/data/map/mapview.h"
+#include "game/data/model.h"
 #include "game/data/player/player.h"
-#include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/attackjob.h"
-#include "game/logic/client.h"
 #include "utility/box.h"
 #include "utility/crc.h"
-#include "utility/listhelpers.h"
 #include "utility/mathtools.h"
 #include "utility/position.h"
+#include "utility/ranges.h"
 
 #include <algorithm>
 

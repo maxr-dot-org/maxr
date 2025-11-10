@@ -23,6 +23,7 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <utility>
 #include <vector>
 
 class cPosition;

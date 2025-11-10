@@ -26,7 +26,6 @@
 #include "game/data/units/unitdata.h"
 
 #include <memory>
-#include <vector>
 
 struct sLobbyPreparationData
 {

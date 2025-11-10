@@ -24,6 +24,9 @@ struct sUnitUpgrade;
 
 #include "action.h"
 
+#include <utility>
+#include <vector>
+
 class cActionBuyUpgrades : public cActionT<cAction::eActiontype::BuyUpgrades>
 {
 public:

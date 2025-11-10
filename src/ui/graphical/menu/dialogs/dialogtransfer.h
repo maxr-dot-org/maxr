@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_dialogs_dialogtransferH
 #define ui_graphical_menu_dialogs_dialogtransferH
 
-#include "game/data/units/unit.h"
+#include "game/data/resourcetype.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "ui/widgets/window.h"
 #include "utility/signal/signal.h"

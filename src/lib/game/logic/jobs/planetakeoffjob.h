@@ -20,7 +20,6 @@
 #ifndef game_logic_jobs_planetakeoffjobH
 #define game_logic_jobs_planetakeoffjobH
 
-#include "game/data/units/unit.h"
 #include "game/logic/jobs/job.h"
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/jsonarchive.h"

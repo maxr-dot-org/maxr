@@ -20,9 +20,7 @@
 #include "ui/graphical/game/temp/unitdrawingengine.h"
 
 #include "SDLutility/drawing.h"
-#include "game/data/gui/gameguistate.h"
 #include "game/data/gui/unitselection.h"
-#include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
@@ -32,9 +30,8 @@
 #include "resources/vehicleuidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "utility/box.h"
-#include "utility/listhelpers.h"
 #include "utility/narrow_cast.h"
-#include "utility/random.h"
+#include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
 cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<const cFrameCounter> frameCounter) :

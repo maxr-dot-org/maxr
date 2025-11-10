@@ -20,7 +20,6 @@
 #include "actionstartwork.h"
 
 #include "game/data/model.h"
-#include "utility/log.h"
 
 //------------------------------------------------------------------------------
 cActionStartWork::cActionStartWork (const cUnit& unit) :

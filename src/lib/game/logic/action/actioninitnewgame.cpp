@@ -22,12 +22,9 @@
 #include "game/data/gamesettings.h"
 #include "game/data/map/map.h"
 #include "game/data/model.h"
-#include "game/data/player/clans.h"
 #include "game/data/player/player.h"
 #include "game/startup/gamepreparation.h"
-#include "utility/listhelpers.h"
 #include "utility/log.h"
-#include "utility/mathtools.h"
 #include "utility/ranges.h"
 
 namespace

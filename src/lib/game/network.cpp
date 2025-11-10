@@ -20,10 +20,13 @@
 #include "network.h"
 
 #include "game/connectionmanager.h"
-#include "game/protocol/netmessage.h"
 #include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/narrow_cast.h"
+
+#include <algorithm>
+#include <cstdlib>
+#include <cstring>
 
 namespace
 {

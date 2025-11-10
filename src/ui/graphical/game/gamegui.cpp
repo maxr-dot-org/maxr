@@ -21,19 +21,15 @@
 
 #include "game/data/gui/gameguistate.h"
 #include "game/data/map/map.h"
+#include "game/data/map/mapfieldview.h"
+#include "game/data/map/mapview.h"
 #include "game/data/player/player.h"
-#include "game/data/report/savedreportchat.h"
-#include "game/data/report/savedreportsimple.h"
-#include "game/data/report/savedreportunit.h"
-#include "game/data/report/special/savedreporthostcommand.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/client.h"
-#include "game/logic/movejob.h"
 #include "game/logic/turncounter.h"
-#include "input/keyboard/keyboard.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/mouse.h"
+#include "output/video/video.h"
 #include "resources/buildinguidata.h"
 #include "resources/keys.h"
 #include "resources/sound.h"
@@ -48,7 +44,6 @@
 #include "ui/graphical/game/widgets/gamemessagelistview.h"
 #include "ui/graphical/game/widgets/hudpanels.h"
 #include "ui/graphical/game/widgets/minimapwidget.h"
-#include "ui/graphical/game/widgets/unitcontextmenuwidget.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/sound/effects/soundeffect.h"
 #include "ui/sound/effects/soundeffectunit.h"
@@ -58,14 +53,13 @@
 #include "ui/translations.h"
 #include "ui/widgets/application.h"
 #include "ui/widgets/label.h"
+#include "ui/widgets/shortcut.h"
 #include "utility/indexiterator.h"
 #include "utility/language.h"
-#include "utility/log.h"
 #include "utility/random.h"
 #include "utility/string/utf-8.h"
 
 #include <iomanip>
-#include <iostream>
 #include <sstream>
 
 //------------------------------------------------------------------------------

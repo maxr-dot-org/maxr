@@ -23,6 +23,10 @@
 #include "output/video/unifonts.h"
 #include "ui/widgets/widget.h"
 
+#include <memory>
+#include <string>
+#include <vector>
+
 class cBuilding;
 class cChatCommandExecutor;
 class cClient;

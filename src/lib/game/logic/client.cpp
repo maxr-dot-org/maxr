@@ -53,17 +53,11 @@
 #include "game/logic/action/actiontransfer.h"
 #include "game/logic/action/actionupgradebuilding.h"
 #include "game/logic/action/actionupgradevehicle.h"
-#include "game/logic/casualtiestracker.h"
-#include "game/logic/fxeffects.h"
 #include "game/logic/gametimer.h"
-#include "game/logic/server.h"
 #include "game/logic/surveyorai.h"
-#include "game/logic/turntimeclock.h"
 #include "game/protocol/netmessage.h"
 #include "game/startup/lobbypreparationdata.h"
-#include "utility/listhelpers.h"
 #include "utility/log.h"
-#include "utility/ranges.h"
 #include "utility/serialization/jsonarchive.h"
 
 //------------------------------------------------------------------------------

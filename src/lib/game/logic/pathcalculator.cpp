@@ -21,13 +21,12 @@
 
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
-#include "game/data/units/building.h"
 #include "game/data/units/unit.h"
+#include "game/data/units/unitdata.h"
 #include "game/data/units/vehicle.h"
-#include "utility/listhelpers.h"
-#include "utility/log.h"
 #include "utility/mathtools.h"
 #include "utility/narrow_cast.h"
+#include "utility/ranges.h"
 
 #include <cassert>
 #include <forward_list>

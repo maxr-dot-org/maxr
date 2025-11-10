@@ -20,7 +20,6 @@
 #include "actionselfdestroy.h"
 
 #include "game/data/model.h"
-#include "utility/log.h"
 
 //------------------------------------------------------------------------------
 cActionSelfDestroy::cActionSelfDestroy (const cBuilding& unit) :

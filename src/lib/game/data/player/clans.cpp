@@ -19,9 +19,6 @@
 
 #include "game/data/player/clans.h"
 
-#include "game/data/units/unitdata.h"
-#include "utility/log.h"
-
 cClanData ClanDataGlobal;
 
 namespace serialization

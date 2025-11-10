@@ -22,9 +22,6 @@
 #include "game/logic/turntimeclock.h"
 #include "ui/widgets/label.h"
 
-#include <iomanip>
-#include <sstream>
-
 //------------------------------------------------------------------------------
 cTurnTimeClockWidget::cTurnTimeClockWidget (const cBox<cPosition>& area) :
 	cWidget (area)

@@ -24,7 +24,7 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-#include <memory>
+#include <string>
 
 class cPosition;
 

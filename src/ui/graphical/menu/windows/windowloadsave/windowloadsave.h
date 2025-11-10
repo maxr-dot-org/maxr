@@ -21,8 +21,11 @@
 #define ui_graphical_menu_windows_windowloadsave_windowloadsaveH
 
 #include "ui/graphical/menu/windows/windowload/windowload.h"
+#include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
 
-#include <filesystem>
+#include <memory>
+#include <string>
 
 class cPushButton;
 class cTurnTimeClock;

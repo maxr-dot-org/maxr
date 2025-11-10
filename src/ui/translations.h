@@ -32,7 +32,7 @@ class cSavedReport;
 class cStaticUnitData;
 class cUnit;
 class cUnitsData;
-class cVecicle;
+class cVehicle;
 
 enum class eGameSettingsResourceAmount;
 enum class eGameSettingsResourceDensity;
@@ -63,7 +63,7 @@ std::string getDisplayName (const cUnit&);
 
 std::string getStatusStr (const cBuilding&, const cPlayer* whoWantsToKnow, const cUnitsData&);
 std::string getStatusStr (const cUnit&, const cPlayer* whoWantsToKnow, const cUnitsData&);
-std::string getStatusStr (const cVecicle&, const cPlayer* whoWantsToKnow, const cUnitsData&);
+std::string getStatusStr (const cVehicle&, const cPlayer* whoWantsToKnow, const cUnitsData&);
 
 std::string getMessage (const cSavedReport&, const cModel&);
 

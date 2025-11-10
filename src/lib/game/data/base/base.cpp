@@ -25,10 +25,6 @@
 #include "game/logic/subbaseresourcedistribution.h"
 #include "utility/crc.h"
 #include "utility/listhelpers.h"
-#include "utility/log.h"
-#include "utility/mathtools.h"
-
-#include <cassert>
 
 namespace
 {

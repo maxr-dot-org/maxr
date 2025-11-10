@@ -19,21 +19,20 @@
 
 #include "game/data/units/vehicle.h"
 
+#include "game/data/gamesettings.h"
 #include "game/data/map/map.h"
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
+#include "game/data/model.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/logic/attackjob.h"
-#include "game/logic/client.h"
-#include "game/logic/fxeffects.h"
 #include "game/logic/jobs/planetakeoffjob.h"
 #include "game/logic/jobs/startbuildjob.h"
 #include "utility/crc.h"
-#include "utility/listhelpers.h"
 #include "utility/log.h"
-#include "utility/mathtools.h"
 #include "utility/random.h"
+#include "utility/ranges.h"
 
 #include <cmath>
 

@@ -19,9 +19,6 @@
 
 #include "chatcommandparser.h"
 
-#include <cctype>
-#include <string>
-
 //------------------------------------------------------------------------------
 void skipWhiteSpace (std::string_view command, size_t& position)
 {

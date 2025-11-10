@@ -22,7 +22,6 @@
 
 #include "game/data/report/savedreport.h"
 #include "game/data/units/id.h"
-#include "game/data/units/unit.h"
 #include "utility/position.h"
 
 class cUnit;

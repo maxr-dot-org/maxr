@@ -20,9 +20,7 @@
 #ifndef ui_graphical_menu_widgets_abstractlistviewitemH
 #define ui_graphical_menu_widgets_abstractlistviewitemH
 
-#include "output/video/video.h"
-#include "ui/widgets/application.h"
-#include "ui/widgets/clickablewidget.h"
+#include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"
 
 class cAbstractListViewItem : public cWidget

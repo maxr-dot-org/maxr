@@ -25,14 +25,13 @@
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "game/logic/client.h"
 #include "resources/buildinguidata.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "settings.h"
-#include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/widgets/framecounter.h"
 #include "utility/mathtools.h"
+#include "utility/narrow_cast.h"
 
 #include <algorithm>
 

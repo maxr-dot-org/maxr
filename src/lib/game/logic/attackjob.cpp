@@ -27,13 +27,13 @@
 #include "game/data/units/vehicle.h"
 #include "game/logic/fxeffects.h"
 #include "utility/crc.h"
-#include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/narrow_cast.h"
+#include "utility/ranges.h"
 
-#include <algorithm>
 #include <cassert>
 #include <memory>
+#include <utility>
 
 //TODO: test alien attack (ground & air)
 

@@ -22,7 +22,7 @@
 
 #include "utility/serialization/nvp.h"
 
-#include <stdint.h>
+#include <cstdint>
 
 class cModel;
 class cUnit;

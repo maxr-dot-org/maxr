@@ -20,11 +20,8 @@
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 
 #include "input/mouse/mouse.h"
-#include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
-#include "output/video/video.h"
 #include "resources/uidata.h"
-#include "utility/mathtools.h"
 
 #include <cassert>
 

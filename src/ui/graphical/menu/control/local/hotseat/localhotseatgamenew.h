@@ -23,8 +23,6 @@
 #include "game/data/player/playerbasicdata.h"
 #include "game/startup/initplayerdata.h"
 #include "ui/graphical/menu/control/local/hotseat/localhotseatgame.h"
-#include "utility/position.h"
-#include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <memory>

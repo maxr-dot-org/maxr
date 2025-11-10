@@ -22,6 +22,8 @@
 
 #include "input/mouse/cursor/mousecursor.h"
 
+#include <SDL.h>
+
 enum class eMouseCursorSimpleType
 {
 	Hand,

@@ -19,10 +19,8 @@
 
 #include "menucontrollermultiplayerclient.h"
 
-#include "game/data/units/landingunit.h"
 #include "game/logic/client.h"
-#include "game/startup/gamepreparation.h"
-#include "ui/graphical/game/widgets/chatbox.h"
+#include "settings.h"
 #include "ui/graphical/menu/control/network/networkgame.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
@@ -32,8 +30,9 @@
 #include "ui/graphical/menu/windows/windownetworklobbyclient/windownetworklobbyclient.h"
 #include "ui/widgets/application.h"
 #include "utility/language.h"
-#include "utility/log.h"
 #include "utility/string/utf-8.h"
+
+#include <filesystem>
 
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication& application_) :

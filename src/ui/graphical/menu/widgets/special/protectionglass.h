@@ -20,8 +20,10 @@
 #ifndef ui_graphical_menu_widgets_special_protectionglassH
 #define ui_graphical_menu_widgets_special_protectionglassH
 
-#include "ui/widgets/clickablewidget.h"
+#include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"
+
+#include <memory>
 
 class cPosition;
 class cAnimationTimer;

@@ -25,6 +25,8 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <memory>
+
 class cCheckBox;
 class cImage;
 class cLabel;

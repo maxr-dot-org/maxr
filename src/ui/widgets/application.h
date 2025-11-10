@@ -23,7 +23,6 @@
 #include "input/keyboard/keysequence.h"
 #include "input/mouse/mousebuttontype.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/thread/concurrentqueue.h"
 
 #include <SDL.h>
 #include <list>

@@ -21,17 +21,16 @@
 #define ui_graphical_menu_widgets_listviewH
 
 #include "input/mouse/mouse.h"
-#include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
-#include "output/video/video.h"
 #include "resources/sound.h"
 #include "ui/graphical/menu/widgets/scrollbar.h"
 #include "ui/widgets/application.h"
 #include "ui/widgets/clickablewidget.h"
-#include "utility/ranges.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <algorithm>
 #include <cassert>
+#include <vector>
 
 class cAbstractListViewItem;
 

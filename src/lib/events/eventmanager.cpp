@@ -23,9 +23,6 @@
 #include "events/mouseevents.h"
 #include "output/video/video.h"
 
-#include <SDL.h>
-#include <algorithm>
-
 //------------------------------------------------------------------------------
 cEventManager::cEventManager()
 {}

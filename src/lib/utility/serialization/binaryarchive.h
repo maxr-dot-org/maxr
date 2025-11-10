@@ -23,8 +23,7 @@
 #include "serialization.h"
 
 #include <SDL_endian.h>
-#include <limits.h>
-#include <stdint.h>
+#include <vector>
 
 class cBinaryArchiveOut
 {

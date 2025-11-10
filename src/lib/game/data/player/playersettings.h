@@ -21,7 +21,9 @@
 
 #include "utility/color.h"
 #include "utility/crc.h"
-#include "utility/serialization/serialization.h"
+#include "utility/serialization/nvp.h"
+
+#include <string>
 
 struct sPlayerSettings
 {

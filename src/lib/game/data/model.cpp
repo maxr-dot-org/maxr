@@ -19,6 +19,7 @@
 
 #include "model.h"
 
+#include "game/data/gamesettings.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/fxeffects.h"
 #include "game/logic/jobs/destroyjob.h"
@@ -34,7 +35,6 @@
 #include "units/vehicle.h"
 #include "utility/crc.h"
 #include "utility/listhelpers.h"
-#include "utility/ranges.h"
 #include "utility/string/toNumber.h"
 
 #include <cassert>

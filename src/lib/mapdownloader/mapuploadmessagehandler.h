@@ -24,8 +24,11 @@
 #include "game/data/map/map.h"
 #include "game/protocol/lobbymessage.h"
 #include "mapdownloader/mapdownload.h"
+#include "utility/signal/signal.h"
 
 #include <functional>
+#include <map>
+#include <memory>
 
 class IMapUploadMessageHandler : public ILobbyMessageHandler
 {

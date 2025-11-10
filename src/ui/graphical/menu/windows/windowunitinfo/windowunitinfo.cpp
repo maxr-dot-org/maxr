@@ -19,8 +19,6 @@
 
 #include "windowunitinfo.h"
 
-#include "game/data/units/building.h"
-#include "game/data/units/vehicle.h"
 #include "resources/buildinguidata.h"
 #include "resources/pcx.h"
 #include "resources/uidata.h"

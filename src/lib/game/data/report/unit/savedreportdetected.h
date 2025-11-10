@@ -22,6 +22,8 @@
 
 #include "game/data/report/savedreportunit.h"
 
+#include <string>
+
 class cModel;
 
 class cSavedReportDetected : public cSavedReportUnit

@@ -19,8 +19,6 @@
 
 #include "windowmain.h"
 
-#include "game/data/units/building.h"
-#include "game/data/units/vehicle.h"
 #include "maxrversion.h"
 #include "resources/buildinguidata.h"
 #include "resources/pcx.h"
@@ -31,8 +29,6 @@
 #include "ui/widgets/label.h"
 #include "utility/language.h"
 #include "utility/random.h"
-
-#include <functional>
 
 //------------------------------------------------------------------------------
 cWindowMain::cWindowMain (const std::string& title) :

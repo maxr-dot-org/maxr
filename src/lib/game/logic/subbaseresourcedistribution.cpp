@@ -23,7 +23,6 @@
 #include "game/data/miningresource.h"
 #include "game/data/units/building.h"
 #include "utility/listhelpers.h"
-#include "utility/ranges.h"
 
 namespace
 {

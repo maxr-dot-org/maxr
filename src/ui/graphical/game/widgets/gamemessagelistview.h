@@ -23,6 +23,9 @@
 #include "ui/graphical/game/widgets/gamemessagelistviewitem.h"
 #include "ui/widgets/widget.h"
 
+#include <chrono>
+#include <string>
+
 template <typename>
 class cListView;
 

@@ -21,9 +21,9 @@
 
 #include "game/data/units/id.h"
 #include "settings.h"
-#include "utility/listhelpers.h"
 #include "utility/log.h"
 #include "utility/os.h"
+#include "utility/ranges.h"
 #include "utility/string/utf-8.h"
 
 #include <iomanip>

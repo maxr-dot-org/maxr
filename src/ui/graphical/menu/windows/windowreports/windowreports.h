@@ -20,9 +20,13 @@
 #ifndef ui_graphical_menu_windows_windowreports_windowreportsH
 #define ui_graphical_menu_windows_windowreports_windowreportsH
 
+#include "ui/graphical/menu/widgets/listview.h"
 #include "ui/widgets/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+
+#include <memory>
+#include <vector>
 
 class cCasualtiesTracker;
 class cCheckBox;

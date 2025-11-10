@@ -22,7 +22,6 @@
 
 #include "game/data/gui/unitlocklist.h"
 #include "game/data/gui/unitselection.h"
-#include "game/logic/fxeffects.h"
 #include "game/logic/upgradecalculator.h"
 #include "ui/graphical/game/control/mousemode/mousemodetype.h"
 #include "ui/graphical/game/temp/unitdrawingengine.h"
@@ -31,6 +30,7 @@
 #include "utility/signal/signal.h"
 
 #include <map>
+#include <memory>
 #include <set>
 
 struct SDL_Surface;

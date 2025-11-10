@@ -22,10 +22,8 @@
 #include "output/sound/soundchannelgroup.h"
 
 #include <SDL_mixer.h>
-#include <chrono>
 #include <filesystem>
 #include <memory>
-#include <vector>
 
 class cPosition;
 class cSoundChunk;

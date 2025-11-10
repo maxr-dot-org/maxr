@@ -32,11 +32,8 @@
 #include "utility/string/utf-8.h"
 #include "utility/thread/ismainthread.h"
 
-#include <SDL.h>
 #include <algorithm>
 #include <cassert>
-#include <ctime>
-#include <functional>
 #include <vector>
 
 cVideo Video;

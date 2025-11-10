@@ -22,16 +22,12 @@
 #include "SDLutility/tosdl.h"
 #include "input/keyboard/keyboard.h"
 #include "input/mouse/mouse.h"
-#include "output/video/video.h"
-#include "resources/keys.h"
 #include "ui/widgets/application.h"
 #include "ui/widgets/validators/validator.h"
-#include "ui/widgets/window.h"
-#include "utility/log.h"
 #include "utility/string/utf-8.h"
 
-#include <algorithm>
 #include <cassert>
+#include <chrono>
 
 //------------------------------------------------------------------------------
 cLineEdit::cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType_, eUnicodeFontType fontType_) :

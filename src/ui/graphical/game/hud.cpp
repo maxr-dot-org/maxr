@@ -35,7 +35,7 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/slider.h"
 #include "ui/widgets/label.h"
-#include "ui/widgets/lineedit.h"
+#include "ui/widgets/shortcut.h"
 #include "utility/language.h"
 
 //------------------------------------------------------------------------------

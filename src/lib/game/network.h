@@ -23,6 +23,7 @@
 
 #include <SDL_net.h>
 #include <atomic>
+#include <memory>
 #include <mutex>
 #include <optional>
 #include <thread>

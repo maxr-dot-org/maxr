@@ -22,7 +22,7 @@
 
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
 
-#include <memory>
+#include <string>
 
 class cImage;
 class cLabel;

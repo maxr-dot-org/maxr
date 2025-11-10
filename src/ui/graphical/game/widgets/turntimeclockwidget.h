@@ -23,7 +23,6 @@
 #include "ui/widgets/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
 
-#include <chrono>
 #include <memory>
 
 class cLabel;

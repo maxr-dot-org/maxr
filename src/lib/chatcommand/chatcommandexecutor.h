@@ -20,9 +20,9 @@
 #ifndef chatcommand_chatcommandexecutorH
 #define chatcommand_chatcommandexecutorH
 
-#include <exception>
 #include <sstream>
-#include <string>
+#include <stdexcept>
+#include <string_view>
 #include <tuple>
 
 class cChatCommand;

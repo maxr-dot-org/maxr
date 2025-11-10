@@ -22,6 +22,8 @@
 
 #include "game/data/report/savedreport.h"
 
+#include <string>
+
 class cSavedReportHostCommand : public cSavedReport
 {
 public:

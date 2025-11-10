@@ -20,12 +20,13 @@
 #ifndef game_startup_initplayerdataH
 #define game_startup_initplayerdataH
 
+#include "game/data/units/id.h"
 #include "game/data/units/landingunit.h"
-#include "game/data/units/unitdata.h"
 #include "game/logic/upgradecalculator.h"
 #include "utility/position.h"
-#include "utility/serialization/serialization.h"
+#include "utility/serialization/nvp.h"
 
+#include <utility>
 #include <vector>
 
 struct sInitPlayerData

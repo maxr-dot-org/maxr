@@ -28,7 +28,6 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <memory>
-#include <vector>
 
 class cApplication;
 class cWindowNetworkLobbyHost;

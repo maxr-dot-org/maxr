@@ -20,10 +20,10 @@
 #include "unitlocklist.h"
 
 #include "game/data/map/mapfieldview.h"
-#include "game/data/map/mapview.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "utility/ranges.h"
+
+#include <algorithm>
 
 //------------------------------------------------------------------------------
 void cUnitLockList::setPlayer (const cPlayer* player_)

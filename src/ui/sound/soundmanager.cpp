@@ -24,7 +24,6 @@
 #include "output/sound/sounddevice.h"
 #include "settings.h"
 #include "ui/sound/effects/soundeffect.h"
-#include "utility/listhelpers.h"
 #include "utility/narrow_cast.h"
 
 #include <numbers>

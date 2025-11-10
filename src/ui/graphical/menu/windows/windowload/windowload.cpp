@@ -31,7 +31,6 @@
 #include "ui/widgets/label.h"
 #include "utility/language.h"
 #include "utility/log.h"
-#include "utility/ranges.h"
 #include "utility/string/utf-8.h"
 
 //Versions prior to 1.0 are no longer compatible

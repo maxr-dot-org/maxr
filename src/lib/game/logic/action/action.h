@@ -22,6 +22,8 @@
 
 #include "game/protocol/netmessage.h"
 
+#include <memory>
+
 class cAction : public cNetMessageT<eNetMessageType::ACTION>
 {
 public:

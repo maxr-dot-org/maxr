@@ -20,9 +20,10 @@
 #define game_data_savegameinfoH
 
 #include "player/playerbasicdata.h"
-#include "utility/serialization/serialization.h"
+#include "utility/serialization/nvp.h"
 #include "utility/version.h"
 
+#include <filesystem>
 #include <string>
 #include <vector>
 

@@ -31,6 +31,7 @@
 #include "utility/string/tolower.h"
 #include "utility/string/utf-8.h"
 
+#include <SDL.h>
 #include <filesystem>
 #include <fstream>
 #include <iostream>

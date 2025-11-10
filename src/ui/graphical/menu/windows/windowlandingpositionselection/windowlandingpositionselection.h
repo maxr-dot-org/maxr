@@ -26,6 +26,8 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <memory>
+#include <string>
+#include <vector>
 
 class cAnimationTimer;
 class cChatBoxLandingPlayerListViewItem;

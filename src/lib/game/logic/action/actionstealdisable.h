@@ -22,6 +22,7 @@
 
 #include "action.h"
 
+class cPlayer;
 class cUnit;
 class cVehicle;
 

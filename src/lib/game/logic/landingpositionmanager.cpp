@@ -19,9 +19,6 @@
 
 #include "game/logic/landingpositionmanager.h"
 
-#include "game/data/player/player.h"
-#include "utility/ranges.h"
-
 #include <algorithm>
 #include <cassert>
 

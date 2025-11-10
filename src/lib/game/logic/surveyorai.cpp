@@ -23,9 +23,8 @@
 #include "game/data/player/player.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/client.h"
-#include "utility/listhelpers.h"
+#include "game/logic/pathcalculator.h"
 #include "utility/mathtools.h"
-#include "utility/ranges.h"
 
 #include <algorithm>
 #include <cmath>

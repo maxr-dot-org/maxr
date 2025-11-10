@@ -24,6 +24,8 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <string>
+
 class cPushButton;
 
 class cDialogYesNo : public cWindow

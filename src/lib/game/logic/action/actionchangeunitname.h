@@ -22,6 +22,8 @@
 
 #include "action.h"
 
+#include <string>
+
 class cUnit;
 
 class cActionChangeUnitName : public cActionT<cAction::eActiontype::ChangeUnitName>

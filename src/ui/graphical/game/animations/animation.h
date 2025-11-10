@@ -20,8 +20,6 @@
 #ifndef ui_graphical_game_animations_animationH
 #define ui_graphical_game_animations_animationH
 
-#include "utility/signal/signal.h"
-
 class cPosition;
 template <typename>
 class cBox;

@@ -24,6 +24,7 @@
 #include "game/data/map/map.h"
 #include "game/protocol/lobbymessage.h"
 #include "game/startup/lobbypreparationdata.h"
+#include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/thread/concurrentqueue.h"
 

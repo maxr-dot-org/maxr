@@ -19,9 +19,7 @@
 
 #include "ui/graphical/game/widgets/hudpanels.h"
 
-#include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
-#include "output/video/video.h"
 #include "resources/sound.h"
 #include "resources/uidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"

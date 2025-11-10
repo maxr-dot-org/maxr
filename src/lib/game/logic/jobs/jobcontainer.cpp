@@ -23,9 +23,7 @@
 #include "game/data/units/unit.h"
 #include "job.h"
 #include "utility/crc.h"
-#include "utility/log.h"
 #include "utility/narrow_cast.h"
-#include "utility/ranges.h"
 
 #include <algorithm>
 

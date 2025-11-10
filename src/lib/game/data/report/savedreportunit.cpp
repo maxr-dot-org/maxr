@@ -19,6 +19,8 @@
 
 #include "game/data/report/savedreportunit.h"
 
+#include "game/data/units/unit.h"
+
 //------------------------------------------------------------------------------
 cSavedReportUnit::cSavedReportUnit (const cUnit& unit) :
 	unitId (unit.getStaticUnitData().ID),

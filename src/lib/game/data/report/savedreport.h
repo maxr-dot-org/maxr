@@ -26,7 +26,6 @@
 
 #include <memory>
 #include <optional>
-#include <string>
 
 struct sID;
 class cModel;

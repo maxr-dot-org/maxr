@@ -21,11 +21,13 @@
 
 #include "game/data/player/playersettings.h"
 #include "game/networkaddress.h"
-#include "utility/serialization/serialization.h"
+#include "utility/position.h"
+#include "utility/serialization/nvp.h"
 #include "utility/signal/signal.h"
 
 #include <filesystem>
 #include <mutex>
+#include <optional>
 #include <string>
 
 struct sVideoSettings

@@ -23,12 +23,9 @@
 #include "game/data/freezemode.h"
 #include "game/data/gui/playerguiinfo.h"
 #include "game/data/player/playerbasicdata.h"
-#include "game/data/report/savedreport.h"
-#include "game/logic/gametimer.h"
-#include "utility/color.h"
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/jsonarchive.h"
-#include "utility/serialization/serialization.h"
+#include "utility/serialization/nvp.h"
 
 #include <memory>
 

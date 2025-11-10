@@ -20,7 +20,6 @@
 #ifndef serialization_nvpH
 #define serialization_nvpH
 
-#include <string>
 #include <string_view>
 
 namespace serialization

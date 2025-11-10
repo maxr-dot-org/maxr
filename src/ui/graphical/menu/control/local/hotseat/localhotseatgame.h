@@ -25,7 +25,6 @@
 #include "ui/graphical/menu/control/game.h"
 
 #include <memory>
-#include <string>
 #include <vector>
 
 class cClient;

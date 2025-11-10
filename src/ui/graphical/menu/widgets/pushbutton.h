@@ -21,8 +21,8 @@
 #define ui_graphical_menu_widgets_pushbuttonH
 
 #include "SDLutility/uniquesurface.h"
+#include "output/sound/soundchunk.h"
 #include "output/video/unifonts.h"
-#include "resources/sound.h"
 #include "ui/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"
 

@@ -23,6 +23,7 @@
 #include "utility/serialization/nvp.h"
 
 #include <cstdint>
+#include <string>
 
 class cMapView;
 class cPosition;

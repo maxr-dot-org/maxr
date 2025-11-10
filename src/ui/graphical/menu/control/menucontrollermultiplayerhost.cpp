@@ -19,28 +19,21 @@
 
 #include "menucontrollermultiplayerhost.h"
 
-#include "game/data/player/player.h"
 #include "game/data/savegameinfo.h"
-#include "game/data/units/landingunit.h"
-#include "game/logic/server.h"
-#include "game/startup/gamepreparation.h"
-#include "mapdownloader/mapuploadmessagehandler.h"
-#include "ui/graphical/game/widgets/chatbox.h"
+#include "mapdownloader/mapdownload.h"
+#include "settings.h"
 #include "ui/graphical/menu/control/network/networkgame.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
-#include "ui/graphical/menu/dialogs/dialogyesno.h"
-#include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
-#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/windows/windowgamesettings/windowgamesettings.h"
 #include "ui/graphical/menu/windows/windowload/windowload.h"
 #include "ui/graphical/menu/windows/windowmapselection/windowmapselection.h"
 #include "ui/graphical/menu/windows/windownetworklobbyhost/windownetworklobbyhost.h"
 #include "ui/widgets/application.h"
 #include "utility/language.h"
-#include "utility/log.h"
 #include "utility/string/utf-8.h"
 
 #include <cassert>
+#include <filesystem>
 
 //------------------------------------------------------------------------------
 cMenuControllerMultiplayerHost::cMenuControllerMultiplayerHost (cApplication& application_) :

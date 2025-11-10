@@ -22,7 +22,6 @@
 
 #include <atomic>
 #include <filesystem>
-#include <string>
 #include <thread>
 #include <vector>
 
@@ -37,7 +36,8 @@ namespace MapDownload
 	bool isMapOriginal (const std::filesystem::path& mapFilename, int32_t checksum = 0);
 
 	/** @return the path to the map (in user or factory maps directory),
- *          or empty string if not found */
+	 *          or empty string if not found
+	 */
 	std::filesystem::path getExistingMapFilePath (const std::filesystem::path& mapFilename);
 
 	/** @return a 32 bit checksum of the given map */

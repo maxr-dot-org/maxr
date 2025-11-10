@@ -25,12 +25,12 @@
 #include "utility/flatset.h"
 #include "utility/log.h"
 #include "utility/position.h"
-#include "utility/ranges.h"
 #include "utility/string/utf-8.h"
 
+#include <algorithm>
 #include <array>
-#include <cassert>
 #include <chrono>
+#include <cstdint>
 #include <filesystem>
 #include <forward_list>
 #include <map>
@@ -38,6 +38,7 @@
 #include <optional>
 #include <sstream>
 #include <string>
+#include <type_traits>
 #include <typeinfo>
 #include <variant>
 #include <vector>

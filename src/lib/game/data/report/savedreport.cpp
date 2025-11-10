@@ -39,7 +39,7 @@
 #include "game/data/report/unit/savedreportpathinterrupted.h"
 #include "game/data/report/unit/savedreportsurveyoraiconfused.h"
 
-#include <cassert>
+#include <stdexcept>
 
 //------------------------------------------------------------------------------
 template <typename Archive>

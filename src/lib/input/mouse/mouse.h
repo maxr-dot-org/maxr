@@ -21,7 +21,6 @@
 #define input_mouse_mouseH
 
 #include "input/mouse/mousebuttontype.h"
-#include "input/mouse/mousecursortype.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"

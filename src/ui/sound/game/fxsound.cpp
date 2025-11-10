@@ -19,15 +19,18 @@
 
 #include "fxsound.h"
 
-#include "game/data/map/map.h"
 #include "game/logic/fxeffects.h"
 #include "resources/buildinguidata.h"
+#include "resources/map/graphicstaticmap.h"
 #include "resources/sound.h"
 #include "resources/uidata.h"
 #include "resources/vehicleuidata.h"
 #include "ui/sound/effects/soundeffectposition.h"
 #include "ui/sound/soundmanager.h"
+#include "utility/position.h"
 #include "utility/random.h"
+
+#include <memory>
 
 namespace
 {

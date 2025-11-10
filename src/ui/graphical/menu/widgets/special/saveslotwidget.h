@@ -23,6 +23,8 @@
 #include "ui/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"
 
+#include <string>
+
 class cLabel;
 class cLineEdit;
 class cPosition;

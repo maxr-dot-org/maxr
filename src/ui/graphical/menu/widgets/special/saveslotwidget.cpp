@@ -21,7 +21,6 @@
 
 #include "game/data/savegameinfo.h"
 #include "input/mouse/mouse.h"
-#include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "resources/sound.h"
 #include "ui/widgets/application.h"

@@ -20,7 +20,7 @@
 #ifndef utility_versionH
 #define utility_versionH
 
-#include "utility/serialization/serialization.h"
+#include "utility/serialization/nvp.h"
 
 #include <string>
 #include <string_view>

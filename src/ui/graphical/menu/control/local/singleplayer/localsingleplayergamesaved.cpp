@@ -19,11 +19,10 @@
 
 #include "localsingleplayergamesaved.h"
 
-#include "game/data/gamesettings.h"
-#include "game/data/player/player.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "settings.h"
+#include "ui/graphical/game/control/gameguicontroller.h"
 #include "ui/graphical/intro.h"
 #include "ui/widgets/application.h"
 

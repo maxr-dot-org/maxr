@@ -21,13 +21,10 @@
 
 #include "SDLutility/drawing.h"
 #include "SDLutility/tosdl.h"
-#include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
 #include "output/video/video.h"
 #include "resources/uidata.h"
 #include "utility/color.h"
-
-#include <cassert>
 
 //------------------------------------------------------------------------------
 cCheckBox::cCheckBox (const cPosition& position, eCheckBoxType type_, bool centered, cSoundChunk* clickSound_) :

@@ -21,7 +21,6 @@
 #define ui_graphical_menu_control_local_singleplayer_localsingleplayergamenewH
 
 #include "game/connectionmanager.h"
-#include "game/startup/initplayerdata.h"
 #include "game/startup/lobbyclient.h"
 #include "game/startup/lobbyserver.h"
 #include "ui/graphical/menu/control/initgamepreparation.h"

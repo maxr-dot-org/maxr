@@ -24,8 +24,6 @@
 #include "ui/widgets/widget.h"
 #include "utility/signal/signal.h"
 
-#include <utility>
-
 class cMouseCursor;
 
 /**

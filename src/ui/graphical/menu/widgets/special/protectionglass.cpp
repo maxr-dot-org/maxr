@@ -19,7 +19,6 @@
 
 #include "ui/graphical/menu/widgets/special/protectionglass.h"
 
-#include "output/video/video.h"
 #include "resources/uidata.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 

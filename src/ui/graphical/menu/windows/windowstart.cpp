@@ -19,9 +19,8 @@
 
 #include "windowstart.h"
 
-#include "output/sound/soundchannel.h"
 #include "output/sound/sounddevice.h"
-#include "settings.h"
+#include "resources/sound.h"
 #include "ui/graphical/intro.h"
 #include "ui/graphical/menu/dialogs/dialoglicense.h"
 #include "ui/graphical/menu/dialogs/dialogpreferences.h"
@@ -30,8 +29,6 @@
 #include "ui/graphical/menu/windows/windowsingleplayer.h"
 #include "ui/widgets/application.h"
 #include "utility/language.h"
-
-#include <functional>
 
 //------------------------------------------------------------------------------
 cWindowStart::cWindowStart() :

@@ -20,10 +20,9 @@
 #ifndef ui_graphical_menu_windows_windowgamesettings_gamesettingsH
 #define ui_graphical_menu_windows_windowgamesettings_gamesettingsH
 
-#include "utility/serialization/serialization.h"
+#include "utility/serialization/nvp.h"
 
 #include <chrono>
-#include <string>
 
 enum class eGameSettingsResourceAmount
 {

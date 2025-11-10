@@ -20,6 +20,7 @@
 #ifndef game_logic_attackjobH
 #define game_logic_attackjobH
 
+#include "game/data/map/map.h"
 #include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "game/data/units/building.h"

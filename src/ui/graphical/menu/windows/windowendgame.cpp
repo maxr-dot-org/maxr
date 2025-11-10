@@ -21,16 +21,13 @@
 
 #include "game/data/player/player.h"
 #include "resources/pcx.h"
+#include "resources/sound.h"
 #include "settings.h"
-#include "ui/graphical/game/gamegui.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
-#include "ui/widgets/application.h"
 #include "ui/widgets/label.h"
 #include "utility/language.h"
 #include "utility/os.h"
 #include "utility/random.h"
-
-#include <functional>
 
 namespace
 {

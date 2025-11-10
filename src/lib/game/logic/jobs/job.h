@@ -22,7 +22,6 @@
 
 #include <cstdint>
 #include <memory>
-#include <string>
 
 class cJobContainer;
 class cUnit;

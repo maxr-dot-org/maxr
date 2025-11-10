@@ -23,7 +23,6 @@
 #include "game/data/map/map.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
-#include "utility/log.h"
 #include "utility/position.h"
 
 #include <forward_list>

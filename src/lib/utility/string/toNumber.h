@@ -23,6 +23,9 @@
 #include <charconv>
 #include <optional>
 #include <string_view>
+#include <system_error>
+#include <type_traits>
+#include <utility>
 
 template <typename T>
 std::pair<std::optional<T>, std::size_t> parseIntegerT (std::string_view s)

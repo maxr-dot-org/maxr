@@ -26,6 +26,7 @@
 
 #include <array>
 #include <filesystem>
+#include <optional>
 #include <vector>
 
 class cImage;

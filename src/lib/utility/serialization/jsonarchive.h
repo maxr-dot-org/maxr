@@ -25,6 +25,7 @@
 #include "utility/narrow_cast.h"
 
 #include <nlohmann/json.hpp>
+#include <type_traits>
 
 class cJsonArchiveOut
 {

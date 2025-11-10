@@ -28,8 +28,6 @@
 #include "ui/widgets/application.h"
 #include "utility/language.h"
 
-#include <functional>
-
 //------------------------------------------------------------------------------
 cWindowMultiPlayer::cWindowMultiPlayer() :
 	cWindowMain (lngPack.i18n ("Others~Multi_Player"))

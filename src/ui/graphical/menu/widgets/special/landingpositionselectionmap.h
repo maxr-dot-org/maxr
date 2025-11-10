@@ -24,6 +24,8 @@
 #include "ui/widgets/clickablewidget.h"
 #include "utility/signal/signal.h"
 
+#include <memory>
+
 class cStaticMap;
 struct sLandingUnit;
 class cUnitsData;

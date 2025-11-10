@@ -20,7 +20,6 @@
 #include "ui/graphical/game/widgets/unitdetailshud.h"
 
 #include "SDLutility/drawing.h"
-#include "SDLutility/tosdl.h"
 #include "game/data/gamesettings.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
