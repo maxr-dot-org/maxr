@@ -171,7 +171,7 @@ public:
 	mutable cSignal<void()> stored; // this unit has been loaded by another unit
 	mutable cSignal<void()> activated; // this unit has been unloaded by another unit
 
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	static std::unique_ptr<cVehicle> createFrom (Archive& archive)
 	{
 		int id;
@@ -184,7 +184,7 @@ public:
 		return res;
 	}
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		cUnit::serializeThis (archive); //serialize cUnit members

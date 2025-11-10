@@ -20,7 +20,7 @@
 #ifndef game_data_units_commandodataH
 #define game_data_units_commandodataH
 
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 
 #include <cstdint>
 #include <string>
@@ -57,7 +57,7 @@ public:
 
 	[[nodiscard]] std::uint32_t calcCheckSum (std::uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

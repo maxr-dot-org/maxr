@@ -82,7 +82,7 @@ protected:
 		action (action) {}
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

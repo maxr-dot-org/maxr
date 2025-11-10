@@ -46,7 +46,7 @@ std::unique_ptr<cJob> cJob::createFrom (cJsonArchiveIn& archive)
 }
 
 //------------------------------------------------------------------------------
-template <typename Archive>
+template <ArchiveIn Archive>
 std::unique_ptr<cJob> cJob::createFromImpl (Archive& archive)
 {
 	eJobType type;

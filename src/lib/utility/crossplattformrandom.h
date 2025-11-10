@@ -21,7 +21,7 @@
 #define utility_crossplatformrandomH
 
 #include "utility/crc.h"
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 
 #include <cstdint>
 
@@ -42,7 +42,7 @@ public:
 	/** returns a random number in the interval [0..interval) */
 	uint32_t get (uint32_t interval);
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

@@ -20,13 +20,13 @@
 #ifndef game_logic_turntimeclockH
 #define game_logic_turntimeclockH
 
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <chrono>
-#include <memory>
 #include <string>
+#include <vector>
 
 class cModel;
 
@@ -44,7 +44,7 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -93,7 +93,7 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

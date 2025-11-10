@@ -22,13 +22,14 @@
 
 #include "game/data/report/savedreport.h"
 #include "game/data/resourcetype.h"
+#include "utility/serialization/serialization.h"
 
 class cSavedReportResourceChanged : public cSavedReport
 {
 public:
 	cSavedReportResourceChanged (eResourceType, int amount, bool increase);
 
-	template <typename Archive, ENABLE_ARCHIVE_IN>
+	template <ArchiveIn Archive>
 	explicit cSavedReportResourceChanged (Archive& archive)
 	{
 		serializeThis (archive);
@@ -54,7 +55,7 @@ public:
 	bool isIncrease() const { return increase; }
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

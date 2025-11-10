@@ -38,7 +38,7 @@ public:
 
 	std::vector<sID> getUnitTypesWithLosses() const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -57,7 +57,7 @@ private:
 		sID unitID;
 		int numberOfLosses = 0;
 
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off
@@ -73,7 +73,7 @@ private:
 		std::vector<Casualty> casualties;
 		int playerNr = -1;
 
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off

@@ -43,7 +43,7 @@ struct sBuildingUIStaticData
 	bool isAnimated = false;
 	bool powerOnGraphic = false;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

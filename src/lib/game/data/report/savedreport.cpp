@@ -42,7 +42,7 @@
 #include <stdexcept>
 
 //------------------------------------------------------------------------------
-template <typename Archive>
+template <ArchiveInOrOut Archive>
 std::unique_ptr<cSavedReport> cSavedReport::createFromImpl (Archive& archive)
 {
 	eSavedReportType type;

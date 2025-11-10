@@ -23,6 +23,7 @@
 #include "game/data/report/savedreport.h"
 #include "game/data/units/id.h"
 #include "utility/position.h"
+#include "utility/serialization/serialization.h"
 
 class cUnit;
 
@@ -31,7 +32,7 @@ class cSavedReportUnit : public cSavedReport
 public:
 	explicit cSavedReportUnit (const cUnit&);
 
-	template <typename Archive, ENABLE_ARCHIVE_IN>
+	template <ArchiveIn Archive>
 	explicit cSavedReportUnit (Archive& archive)
 	{
 		serializeThis (archive);
@@ -56,7 +57,7 @@ public:
 	std::optional<cPosition> getPosition() const override;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

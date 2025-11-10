@@ -53,7 +53,7 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	static std::unique_ptr<cAttackJob> createFrom (Archive& archive)
 	{
 		auto res = std::make_unique<cAttackJob>();
@@ -61,7 +61,7 @@ public:
 		return res;
 	}
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

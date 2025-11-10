@@ -43,7 +43,7 @@ struct sVehicleUIStaticData
 	bool isAnimated = false;
 	int hasFrames = 0;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

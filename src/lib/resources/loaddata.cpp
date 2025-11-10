@@ -313,7 +313,7 @@ namespace
 		int scan = 0;
 
 		//----------------------------------------------------------------------
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off
@@ -343,7 +343,7 @@ namespace
 		sBuildingUIStaticData graphic;
 
 		//----------------------------------------------------------------------
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off
@@ -372,7 +372,7 @@ namespace
 		sVehicleUIStaticData graphic;
 
 		//----------------------------------------------------------------------
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off
@@ -940,7 +940,7 @@ namespace
 		static int currentIndex;
 
 		//----------------------------------------------------------------------
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off
@@ -975,7 +975,7 @@ namespace
 		std::vector<sUnitDirectory> buildings;
 
 		//----------------------------------------------------------------------
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off
@@ -992,7 +992,7 @@ namespace
 		std::vector<sUnitDirectory> vehicles;
 
 		//----------------------------------------------------------------------
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off

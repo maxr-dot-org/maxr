@@ -32,7 +32,7 @@ class cDestroyJob : public cJob
 {
 public:
 	cDestroyJob (cUnit& unit, cModel& model);
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	explicit cDestroyJob (Archive& archive)
 	{
 		serializeThis (archive);
@@ -60,7 +60,7 @@ private:
 	void deleteUnit (cModel& model);
 	int deleteAllBuildingsOnField (cMapField& field, bool deleteConnector, cModel& model);
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

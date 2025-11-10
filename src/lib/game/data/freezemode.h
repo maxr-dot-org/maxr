@@ -66,7 +66,7 @@ public:
 	bool isFreezed() const;
 	bool gameTimePaused() const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

@@ -22,7 +22,7 @@
 
 #include "game/data/player/playersettings.h"
 #include "utility/color.h"
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
 #include <string>
@@ -54,7 +54,7 @@ public:
 	bool operator== (const cPlayerBasicData&) const;
 	bool operator!= (const cPlayerBasicData& rhs) const { return !(*this == rhs); }
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

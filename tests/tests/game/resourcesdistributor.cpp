@@ -22,8 +22,10 @@
 #include "game/logic/subbaseresourcedistribution.h"
 #include "utility/listhelpers.h"
 
+#include <algorithm>
 #include <doctest.h>
-#include <iostream>
+#include <memory>
+#include <vector>
 
 //------------------------------------------------------------------------------
 template <typename OStream>
@@ -43,6 +45,8 @@ namespace
 	//--------------------------------------------------------------------------
 	struct sMine
 	{
+		static constexpr bool isWriter = false;
+
 		sMine (int metal, int oil, int gold) :
 			sMine{{metal, oil, gold}} {}
 		sMine (sMiningResource maxProd, int total = 16) :

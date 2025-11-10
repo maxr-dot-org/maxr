@@ -104,10 +104,10 @@ public:
 	virtual void serialize (cJsonArchiveOut& archive) { serializeThis (archive); }
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	static std::unique_ptr<cSavedReport> createFromImpl (Archive&);
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

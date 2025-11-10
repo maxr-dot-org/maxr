@@ -53,7 +53,7 @@ private:
 	int unitId;
 	cPosition escapePosition;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

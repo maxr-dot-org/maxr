@@ -23,6 +23,7 @@
 #include "game/data/player/player.h"
 #include "game/data/report/savedreport.h"
 #include "game/logic/upgradecalculator.h"
+#include "utility/serialization/serialization.h"
 
 #include <vector>
 
@@ -31,7 +32,7 @@ class cSavedReportTurnStart : public cSavedReport
 public:
 	cSavedReportTurnStart (int turn, const std::vector<sTurnstartReport>&, const std::vector<cResearch::eResearchArea>&);
 
-	template <typename Archive, ENABLE_ARCHIVE_IN>
+	template <ArchiveIn Archive>
 	explicit cSavedReportTurnStart (Archive& archive)
 	{
 		serializeThis (archive);
@@ -53,7 +54,7 @@ public:
 	bool isAlert() const override;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

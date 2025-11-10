@@ -23,6 +23,7 @@
 #include "serialization.h"
 
 #include <SDL_endian.h>
+#include <type_traits>
 #include <vector>
 
 class cBinaryArchiveOut
@@ -53,7 +54,8 @@ private:
 	void writeToBuffer (const T& value);
 
 	//--------------------------------------------------------------------------
-	template <typename T, std::enable_if_t<!std::is_enum<T>::value, int> = 0>
+	template <typename T>
+	requires (!std::is_enum_v<T>)
 	void pushValue (const T& value)
 	{
 		T& valueNonConst = const_cast<T&> (value);
@@ -79,7 +81,8 @@ private:
 	void pushValue (double value);
 
 	//--------------------------------------------------------------------------
-	template <typename E, std::enable_if_t<std::is_enum<E>::value, int> = 0>
+	template <typename E>
+	requires (std::is_enum_v<E>)
 	void pushValue (E value)
 	{
 		static_assert (sizeof (E) <= sizeof (int), "!");
@@ -149,14 +152,16 @@ private:
 	void readFromBuffer (T1& value);
 
 	//--------------------------------------------------------------------------
-	template <typename T, std::enable_if_t<!std::is_enum<T>::value, int> = 0>
+	template <typename T>
+	requires (!std::is_enum_v<T>)
 	void popValue (T& value)
 	{
 		serialization::serialize (*this, value);
 	}
 
 	//--------------------------------------------------------------------------
-	template <typename E, std::enable_if_t<std::is_enum<E>::value, int> = 0>
+	template <typename E>
+	requires (std::is_enum_v<E>)
 	void popValue (E& value)
 	{
 		static_assert (sizeof (E) <= sizeof (int), "!");

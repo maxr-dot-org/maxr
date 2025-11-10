@@ -61,7 +61,7 @@ public:
 
 	std::optional<int> getModificationValue (eClanModification) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -99,7 +99,7 @@ public:
 	cClanUnitStat* addUnitStat (sID);
 	int getNrUnitStats() const { return static_cast<int> (stats.size()); }
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -128,7 +128,7 @@ public:
 	cClan& addClan();
 	const std::vector<cClan>& getClans() const { return clans; }
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

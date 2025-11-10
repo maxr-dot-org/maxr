@@ -77,7 +77,7 @@ protected:
 		type (type) {}
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -139,7 +139,7 @@ public:
 	std::string message;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -166,7 +166,7 @@ public:
 	int newPlayerNr;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -196,7 +196,7 @@ public:
 	std::optional<cGameSettings> settings;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -226,7 +226,7 @@ public:
 	std::vector<cSaveGameInfo> saveGames;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -254,7 +254,7 @@ public:
 	std::vector<cPlayerBasicData> playerList;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -292,7 +292,7 @@ public:
 	std::vector<cPlayerBasicData> missingPlayers;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -331,7 +331,7 @@ public:
 	std::shared_ptr<const cClanData> clanData;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void loadThis (Archive& archive)
 	{
 		auto unitDataNonConst = std::make_shared<cUnitsData>();
@@ -342,7 +342,7 @@ private:
 		archive >> serialization::makeNvp ("clanData", *clanDataNonConst);
 		clanData = clanDataNonConst;
 	}
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void saveThis (Archive& archive)
 	{
 		archive << serialization::makeNvp ("unitsData", *unitsData);
@@ -367,7 +367,7 @@ public:
 	int landedPlayer;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -395,7 +395,7 @@ public:
 	bool isIn;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -423,7 +423,7 @@ public:
 	eLandingPositionState state;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -474,7 +474,7 @@ public:
 	cPosition position;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -501,7 +501,7 @@ public:
 	std::filesystem::path mapFilename;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -529,7 +529,7 @@ public:
 	int mapSize;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -557,7 +557,7 @@ public:
 	std::vector<char> data;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -594,7 +594,7 @@ public:
 	bool ready;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

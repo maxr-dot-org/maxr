@@ -57,7 +57,7 @@ public:
 	sInitPlayerData initPlayerData;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		initPlayerData.serialize (archive);

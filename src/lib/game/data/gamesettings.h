@@ -20,7 +20,7 @@
 #ifndef ui_graphical_menu_windows_windowgamesettings_gamesettingsH
 #define ui_graphical_menu_windows_windowgamesettings_gamesettingsH
 
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 
 #include <chrono>
 
@@ -94,7 +94,7 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

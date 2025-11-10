@@ -21,12 +21,14 @@
 #define game_data_reports_savedreportsurveyoraiconfusedH
 
 #include "game/data/report/savedreportunit.h"
+#include "utility/serialization/serialization.h"
 
 class cSavedReportSurveyorAiConfused : public cSavedReportUnit
 {
 public:
 	cSavedReportSurveyorAiConfused (const cUnit& unit);
-	template <typename Archive, ENABLE_ARCHIVE_IN>
+
+	template <ArchiveIn Archive>
 	cSavedReportSurveyorAiConfused (Archive& archive) :
 		cSavedReportUnit (archive)
 	{}

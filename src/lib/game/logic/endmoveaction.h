@@ -20,7 +20,7 @@
 #ifndef game_logic_endmoveaction_h
 #define game_logic_endmoveaction_h
 
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 
 #include <cstdint>
 
@@ -40,7 +40,7 @@ public:
 	bool isAttacking() const { return endMoveAction == eEndMoveActionType::Attack; }
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

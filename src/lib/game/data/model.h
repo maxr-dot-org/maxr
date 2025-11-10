@@ -158,7 +158,7 @@ public:
 	mutable cSignal<void (const cPlayer&)> playerHasWon;
 	mutable cSignal<void()> suddenDeathMode;
 
-	template <typename Archive>
+	template <ArchiveOut Archive>
 	void save (Archive& archive) const
 	{
 		archive << NVP (gameId);
@@ -185,7 +185,7 @@ public:
 		archive << serialization::makeNvp ("casualtiesTracker", *casualtiesTracker);
 		//TODO: serialize effectList
 	}
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	void load (Archive& archive)
 	{
 		archive >> NVP (gameId);

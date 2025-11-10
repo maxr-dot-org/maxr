@@ -20,7 +20,7 @@
 #ifndef game_logic_turncounterH
 #define game_logic_turncounterH
 
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
 class cTurnCounter
@@ -35,7 +35,7 @@ public:
 	void increaseTurn();
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

@@ -49,7 +49,7 @@ public:
 	void execute (cModel& model) const override;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

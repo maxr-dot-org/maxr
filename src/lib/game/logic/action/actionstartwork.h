@@ -46,7 +46,7 @@ public:
 private:
 	int unitId;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

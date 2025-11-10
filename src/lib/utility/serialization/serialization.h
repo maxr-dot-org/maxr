@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <array>
 #include <chrono>
+#include <concepts>
 #include <cstdint>
 #include <filesystem>
 #include <forward_list>
@@ -44,13 +45,16 @@
 #include <vector>
 
 //used to constrain a template definition to use with in-archive types only
-#define ENABLE_ARCHIVE_IN std::enable_if_t<Archive::isWriter == false, int> = 0
+template <typename Archive>
+concept ArchiveIn = !Archive::isWriter;
 
 //used to constrain a template definition to use with out-archive types only
-#define ENABLE_ARCHIVE_OUT std::enable_if_t<Archive::isWriter == true, int> = 0
+template <typename Archive>
+concept ArchiveOut = Archive::isWriter;
 
 //used to constrain a template definition to use with archive types only
-#define ENABLE_ARCHIVES std::enable_if_t<std::is_same<decltype (Archive::isWriter), bool>::value, int> = 0
+template <typename Archive>
+concept ArchiveInOrOut = ArchiveIn<Archive> || ArchiveOut<Archive>;
 
 namespace serialization
 {
@@ -115,14 +119,14 @@ namespace serialization
 
 	namespace detail
 	{
-		template <typename Archive, typename T>
+		template <ArchiveInOrOut Archive, typename T>
 		void splitFree (Archive& archive, T& value);
 	} // namespace detail
 
 	//
 	// default serialize implementations
 	//
-	template <typename Archive, typename T>
+	template <ArchiveInOrOut Archive, typename T>
 	auto serialize (Archive& archive, T& object) -> decltype (object.serialize (archive))
 	{
 		object.serialize (archive);
@@ -133,7 +137,7 @@ namespace serialization
 	//
 
 	//--------------------------------------------------------------------------
-	template <typename Archive, typename T, size_t SIZE>
+	template <ArchiveInOrOut Archive, typename T, size_t SIZE>
 	void serialize (Archive& archive, std::array<T, SIZE>& value)
 	{
 		for (size_t i = 0; i < SIZE; i++)
@@ -146,7 +150,7 @@ namespace serialization
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename Archive, typename T1, typename T2>
+	template <ArchiveInOrOut Archive, typename T1, typename T2>
 	void serialize (Archive& archive, std::pair<T1, T2>& value)
 	{
 		// clang-format off
@@ -157,7 +161,7 @@ namespace serialization
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive, cRgbColor& color)
 	{
 		// clang-format off
@@ -169,7 +173,7 @@ namespace serialization
 		// clang-format on
 	}
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive, cPosition& position)
 	{
 		// clang-format off
@@ -179,7 +183,7 @@ namespace serialization
 		// clang-format on
 	}
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive, cVector2& vec)
 	{
 		// clang-format off
@@ -190,7 +194,7 @@ namespace serialization
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename Archive, typename T>
+	template <ArchiveOut Archive, typename T>
 	void save (Archive& archive, const std::shared_ptr<T>& value)
 	{
 		if (value)
@@ -202,19 +206,19 @@ namespace serialization
 			throw std::runtime_error ("Unexpected null shared_ptr");
 		}
 	}
-	template <typename Archive, typename T>
+	template <ArchiveIn Archive, typename T>
 	void load (Archive& archive, std::shared_ptr<T>& value)
 	{
 		value = T::createFrom (archive);
 	}
-	template <typename Archive, typename T>
+	template <ArchiveInOrOut Archive, typename T>
 	void serialize (Archive& archive, std::shared_ptr<T>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename Archive, typename T>
+	template <ArchiveOut Archive, typename T>
 	void save (Archive& archive, const std::unique_ptr<T>& value)
 	{
 		if (value)
@@ -226,19 +230,19 @@ namespace serialization
 			throw std::runtime_error ("Unexpected null unique_ptr");
 		}
 	}
-	template <typename Archive, typename T>
+	template <ArchiveIn Archive, typename T>
 	void load (Archive& archive, std::unique_ptr<T>& value)
 	{
 		value = T::createFrom (archive);
 	}
-	template <typename Archive, typename T>
+	template <ArchiveInOrOut Archive, typename T>
 	void serialize (Archive& archive, std::unique_ptr<T>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename Archive, typename T>
+	template <ArchiveOut Archive, typename T>
 	void save (Archive& archive, const std::vector<T>& value)
 	{
 		uint32_t length = static_cast<uint32_t> (value.size());
@@ -248,7 +252,7 @@ namespace serialization
 			archive << NVP (item);
 		}
 	}
-	template <typename Archive, typename T>
+	template <ArchiveIn Archive, typename T>
 	void load (Archive& archive, std::vector<T>& value)
 	{
 		uint32_t length;
@@ -261,14 +265,14 @@ namespace serialization
 			value[i] = std::move (c);
 		}
 	}
-	template <typename Archive, typename T>
+	template <ArchiveInOrOut Archive, typename T>
 	void serialize (Archive& archive, std::vector<T>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename Archive>
+	template <ArchiveOut Archive>
 	void save (Archive& archive, const std::string& value)
 	{
 		uint32_t length = static_cast<uint32_t> (value.length());
@@ -278,7 +282,7 @@ namespace serialization
 			archive << c;
 		}
 	}
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	void load (Archive& archive, std::string& value)
 	{
 		uint32_t length;
@@ -292,71 +296,71 @@ namespace serialization
 			value.push_back (c);
 		}
 	}
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive, std::string& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename Archive>
+	template <ArchiveOut Archive>
 	void save (Archive& archive, const std::filesystem::path& value)
 	{
 		archive << utf8::to_string (value);
 	}
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	void load (Archive& archive, std::filesystem::path& value)
 	{
 		std::string s;
 		archive >> s;
 		value = std::u8string (s.begin(), s.end());
 	}
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive, std::filesystem::path& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename Archive>
+	template <ArchiveOut Archive>
 	void save (Archive& archive, const std::chrono::milliseconds& value)
 	{
 		archive << makeNvp ("milliseconds", value.count());
 	}
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	void load (Archive& archive, std::chrono::milliseconds& value)
 	{
 		long long tmp;
 		archive >> makeNvp ("milliseconds", tmp);
 		value = std::chrono::milliseconds (tmp);
 	}
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive, std::chrono::milliseconds& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename Archive>
+	template <ArchiveOut Archive>
 	void save (Archive& archive, const std::chrono::seconds& value)
 	{
 		archive << makeNvp ("seconds", value.count());
 	}
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	void load (Archive& archive, std::chrono::seconds& value)
 	{
 		long long tmp;
 		archive >> makeNvp ("seconds", tmp);
 		value = std::chrono::seconds (tmp);
 	}
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive, std::chrono::seconds& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename Archive, typename... Ts>
+	template <ArchiveOut Archive, typename... Ts>
 	void save (Archive& archive, const std::variant<Ts...>& var)
 	{
 		archive << makeNvp ("type", std::uint32_t (var.index()));
@@ -367,7 +371,7 @@ namespace serialization
 		// Some version of compilers (gcc)
 		// Doesn't like expanding lambda
 		// So create regular template function
-		template <typename T, typename Archive, typename Variant>
+		template <typename T, ArchiveIn Archive, typename Variant>
 		void loadT (Archive& archive, Variant& var)
 		{
 			T value;
@@ -376,7 +380,7 @@ namespace serialization
 		}
 
 	} // namespace detail
-	template <typename Archive, typename... Ts>
+	template <ArchiveIn Archive, typename... Ts>
 	void load (Archive& archive, std::variant<Ts...>& var)
 	{
 		std::uint32_t type;
@@ -385,14 +389,14 @@ namespace serialization
 		LoaderType* loaders[] = {&detail::loadT<Ts>...};
 		loaders[type](archive, var);
 	}
-	template <typename Archive, typename... Ts>
+	template <ArchiveInOrOut Archive, typename... Ts>
 	void serialize (Archive& archive, std::variant<Ts...>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//------------------------------------------------------------------------------
-	template <typename Archive, typename T, typename Cmp>
+	template <ArchiveOut Archive, typename T, typename Cmp>
 	void save (Archive& archive, const cFlatSet<T, Cmp>& value)
 	{
 		uint32_t length = static_cast<uint32_t> (value.size());
@@ -402,7 +406,7 @@ namespace serialization
 			archive << NVP (item);
 		}
 	}
-	template <typename Archive, typename T, typename Cmp>
+	template <ArchiveIn Archive, typename T, typename Cmp>
 	void load (Archive& archive, cFlatSet<T, Cmp>& value)
 	{
 		uint32_t length;
@@ -414,13 +418,13 @@ namespace serialization
 			value.insert (std::move (item));
 		}
 	}
-	template <typename Archive, typename T, typename Cmp>
+	template <ArchiveInOrOut Archive, typename T, typename Cmp>
 	void serialize (Archive& archive, cFlatSet<T, Cmp>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 	//------------------------------------------------------------------------------
-	template <typename Archive, typename K, typename T>
+	template <ArchiveOut Archive, typename K, typename T>
 	void save (Archive& archive, const std::map<K, T>& value)
 	{
 		uint32_t length = static_cast<uint32_t> (value.size());
@@ -430,7 +434,7 @@ namespace serialization
 			archive << NVP (pair);
 		}
 	}
-	template <typename Archive, typename K, typename T>
+	template <ArchiveIn Archive, typename K, typename T>
 	void load (Archive& archive, std::map<K, T>& value)
 	{
 		uint32_t length;
@@ -442,14 +446,14 @@ namespace serialization
 			value.insert (c);
 		}
 	}
-	template <typename Archive, typename K, typename T>
+	template <ArchiveInOrOut Archive, typename K, typename T>
 	void serialize (Archive& archive, std::map<K, T>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 
 	//-------------------------------------------------------------------------
-	template <typename Archive, typename T>
+	template <ArchiveOut Archive, typename T>
 	void save (Archive& archive, const std::forward_list<T>& value)
 	{
 		const uint32_t length = std::distance (value.begin(), value.end());
@@ -460,7 +464,7 @@ namespace serialization
 			archive << NVP (item);
 		}
 	}
-	template <typename Archive, typename T>
+	template <ArchiveIn Archive, typename T>
 	void load (Archive& archive, std::forward_list<T>& value)
 	{
 		uint32_t length;
@@ -472,13 +476,13 @@ namespace serialization
 			archive >> NVP (item);
 		}
 	}
-	template <typename Archive, typename T>
+	template <ArchiveInOrOut Archive, typename T>
 	void serialize (Archive& archive, std::forward_list<T>& value)
 	{
 		serialization::detail::splitFree (archive, value);
 	}
 	//-------------------------------------------------------------------------
-	template <typename Archive, typename T>
+	template <ArchiveOut Archive, typename T>
 	void save (Archive& archive, const std::optional<T>& value)
 	{
 		archive << makeNvp ("valid", static_cast<bool> (value));
@@ -487,7 +491,7 @@ namespace serialization
 			archive << makeNvp ("data", *value);
 		}
 	}
-	template <typename Archive, typename T>
+	template <ArchiveIn Archive, typename T>
 	void load (Archive& archive, std::optional<T>& value)
 	{
 		bool valid = false;
@@ -502,7 +506,7 @@ namespace serialization
 			value = std::nullopt;
 		}
 	}
-	template <typename Archive, typename T>
+	template <ArchiveInOrOut Archive, typename T>
 	void serialize (Archive& archive, std::optional<T>& value)
 	{
 		serialization::detail::splitFree (archive, value);
@@ -511,7 +515,7 @@ namespace serialization
 	//-------------------------------------------------------------------------
 	namespace detail
 	{
-		template <typename Archive, typename T>
+		template <ArchiveInOrOut Archive, typename T>
 		void splitMember (Archive& archive, T& value)
 		{
 			if constexpr (Archive::isWriter)
@@ -524,7 +528,7 @@ namespace serialization
 			}
 		}
 
-		template <typename Archive, typename T>
+		template <ArchiveInOrOut Archive, typename T>
 		void splitFree (Archive& archive, T& value)
 		{
 			if constexpr (Archive::isWriter)
@@ -540,14 +544,14 @@ namespace serialization
 	} //namespace detail
 
 	//--------------------------------------------------------------------------
-	template <typename Archive, typename T>
+	template <ArchiveInOrOut Archive, typename T>
 	void serialize (Archive& archive, const sNameValuePair<T>& nvp)
 	{
 		serialization::serialize (archive, nvp.value);
 	}
 
 #define SERIALIZATION_SPLIT_MEMBER() \
-	template <typename Archive> \
+	template <ArchiveInOrOut Archive> \
 	void serialize (Archive& archive) \
 	{ \
 		serialization::detail::splitMember (archive, *this); \
@@ -556,7 +560,7 @@ namespace serialization
 #define SERIALIZATION_SPLIT_FREE(T) \
 	namespace serialization \
 	{ \
-		template <typename Archive> \
+		template <ArchiveInOrOut Archive> \
 		void serialize (Archive& archive, T& value) \
 		{ \
 			serialization::detail::splitFree (archive, value); \

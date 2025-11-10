@@ -93,7 +93,7 @@ protected:
 		type (type) {}
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -154,7 +154,7 @@ public:
 	std::string packageRev;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -194,7 +194,7 @@ public:
 	const cSocket* socket = nullptr;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -233,7 +233,7 @@ public:
 	std::string packageRev;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -273,7 +273,7 @@ public:
 	eDeclineConnectionReason reason;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -319,7 +319,7 @@ public:
 	unsigned int ping = 0;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -362,7 +362,7 @@ public:
 	unsigned int eventCounter = 0;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -402,7 +402,7 @@ public:
 	uint64_t seed;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -440,7 +440,7 @@ public:
 	std::map<int, ePlayerConnectionState> playerStates;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -479,7 +479,7 @@ public:
 	std::unique_ptr<cSavedReport> report;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -518,7 +518,7 @@ public:
 	int savingID;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -558,7 +558,7 @@ public:
 	int savingID;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -592,7 +592,7 @@ public:
 	void apply (cModel& model) const;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -632,7 +632,7 @@ public:
 	int saveNumberForGuiInfo; // number of save game file, from which gui info will be loaded. -1 disables loading gui data
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
@@ -669,7 +669,7 @@ public:
 	std::vector<cPlayerBasicData> playerList;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

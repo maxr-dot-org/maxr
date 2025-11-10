@@ -20,7 +20,7 @@
 #ifndef game_networkAddressH
 #define game_networkAddressH
 
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 
 #include <cstdint>
 #include <string>
@@ -32,7 +32,7 @@ struct sNetworkAddress
 
 	std::string toString() const { return ip + ":" + std::to_string (port); }
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

@@ -21,12 +21,13 @@
 #define game_data_reports_savedreportdisabledH
 
 #include "game/data/report/savedreportunit.h"
+#include "utility/serialization/serialization.h"
 
 class cSavedReportDisabled : public cSavedReportUnit
 {
 public:
 	explicit cSavedReportDisabled (const cUnit& unit);
-	template <typename Archive, ENABLE_ARCHIVE_IN>
+	template <ArchiveIn Archive>
 	cSavedReportDisabled (Archive& archive) :
 		cSavedReportUnit (archive)
 	{

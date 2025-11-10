@@ -28,6 +28,7 @@
 #include "utility/thread/dummymutex.h"
 
 #include <cassert>
+#include <functional>
 #include <limits>
 #include <list>
 #include <memory>
@@ -124,7 +125,8 @@ public:
 	 *         The user has to make sure the signal object outlives all the connection objects
 	 *         that are created by the signal.
 	 */
-	template <typename F, std::enable_if_t<std::is_assignable_v<std::function<void (Args...)>, F>, int> = 0>
+	template <typename F>
+	requires (std::is_assignable_v<std::function<void (Args...)>, F>)
 	cSignalConnection connect (F&& f);
 
 	/**
@@ -155,7 +157,8 @@ public:
 	 *
 	 * @param ...args The arguments to call the functions with.
 	 */
-	template <typename... Args2, std::enable_if_t<std::is_invocable_v<std::function<void (Args...)>, Args2&&...>, int> = 0>
+	template <typename... Args2>
+	requires (std::is_invocable_v<std::function<void (Args...)>, Args2 && ...>)
 	void operator() (Args2&&... args);
 
 private:
@@ -179,7 +182,8 @@ private:
 
 //------------------------------------------------------------------------------
 template <typename... Args, typename MutexType>
-template <typename F, std::enable_if_t<std::is_assignable_v<std::function<void (Args...)>, F>, int>>
+template <typename F>
+requires (std::is_assignable_v<std::function<void (Args...)>, F>)
 cSignalConnection cSignal<void (Args...), MutexType>::connect (F&& f)
 {
 	std::unique_lock<MutexType> lock (mutex);
@@ -250,7 +254,8 @@ void cSignal<void (Args...), MutexType>::disconnect (const cSignalConnection& co
 
 //------------------------------------------------------------------------------
 template <typename... Args, typename MutexType>
-template <typename... Args2, std::enable_if_t<std::is_invocable_v<std::function<void (Args...)>, Args2&&...>, int>>
+template <typename... Args2>
+requires (std::is_invocable_v<std::function<void (Args...)>, Args2 && ...>)
 void cSignal<void (Args...), MutexType>::operator() (Args2&&... args)
 {
 	std::unique_lock<MutexType> lock (mutex);

@@ -22,7 +22,7 @@
 
 #include "game/logic/upgradecalculator.h"
 #include "utility/position.h"
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 
 #include <vector>
 
@@ -38,7 +38,7 @@ public:
 	void setLockedUnits (const cUnitLockList&);
 	const std::vector<unsigned int>& getLockedUnitIds() const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

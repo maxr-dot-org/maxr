@@ -64,7 +64,7 @@ public:
 	/** the slot number of the save game */
 	int number = 0;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

@@ -48,7 +48,7 @@ public:
 
 	std::string toString() const;
 
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	void load (Archive& archive)
 	{
 		std::string sequence;
@@ -56,7 +56,7 @@ public:
 		*this = cKeySequence (sequence);
 	}
 
-	template <typename Archive>
+	template <ArchiveOut Archive>
 	void save (Archive& archive) const
 	{
 		archive << serialization::makeNvp ("text", toString());

@@ -36,7 +36,7 @@ class cAirTransportLoadJob : public cJob
 public:
 	cAirTransportLoadJob (cVehicle& loadedVehicle, cUnit& loadingUnit);
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	explicit cAirTransportLoadJob (Archive& archive)
 	{
 		serializeThis (archive);
@@ -60,7 +60,7 @@ public:
 	uint32_t getChecksum (uint32_t crc) const override;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

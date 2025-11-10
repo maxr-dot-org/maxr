@@ -23,6 +23,7 @@
 #include "game/logic/endmoveaction.h"
 #include "utility/direction.h"
 #include "utility/position.h"
+#include "utility/serialization/serialization.h"
 
 #include <forward_list>
 #include <memory>
@@ -101,7 +102,7 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	static std::unique_ptr<cMoveJob> createFrom (Archive& archive)
 	{
 		auto res = std::make_unique<cMoveJob>();
@@ -109,7 +110,7 @@ public:
 		return res;
 	}
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

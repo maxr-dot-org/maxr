@@ -51,7 +51,7 @@ class cPlayerBasicData;
 */
 struct sTurnstartReport
 {
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -79,7 +79,7 @@ public:
 
 struct sGameOverStat
 {
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -260,7 +260,7 @@ public:
 	mutable cSignal<void (const cUnit&)> stealthUnitDissappeared;
 	mutable cSignal<void (const sID&, int unitsCount, int costs)> unitsUpgraded;
 
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	static std::unique_ptr<cPlayer> createFrom (Archive& archive)
 	{
 		auto res = std::make_unique<cPlayer>();
@@ -268,7 +268,7 @@ public:
 		return res;
 	}
 
-	template <typename Archive>
+	template <ArchiveOut Archive>
 	void save (Archive& archive) const
 	{
 		// clang-format off
@@ -321,7 +321,7 @@ public:
 		archive & NVP (gameOverStat);
 		// clang-format on
 	}
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	void load (Archive& archive)
 	{
 		// clang-format off

@@ -186,7 +186,7 @@ public:
 
 	mutable cSignal<void()> storedResourcesChanged;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

@@ -65,7 +65,7 @@ public:
 	cSignal<void()> typeChanged;
 	cSignal<void()> remainingMetalChanged;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -163,7 +163,7 @@ public:
 	cSignal<void()> metalPerRoundChanged;
 	cSignal<void()> repeatBuildChanged;
 
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	static std::unique_ptr<cBuilding> createFrom (Archive& archive)
 	{
 		int id;
@@ -176,7 +176,7 @@ public:
 		return res;
 	}
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		cUnit::serializeThis (archive); //serialize cUnit members

@@ -20,6 +20,8 @@
 #ifndef game_logic_jobs_jobH
 #define game_logic_jobs_jobH
 
+#include "utility/serialization/serialization.h"
+
 #include <cstdint>
 #include <memory>
 
@@ -72,7 +74,7 @@ protected:
 	int unitId = -1;
 
 private:
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	static std::unique_ptr<cJob> createFromImpl (Archive&);
 };
 

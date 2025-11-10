@@ -31,7 +31,7 @@ class cStartBuildJob : public cJob
 {
 public:
 	cStartBuildJob (cVehicle& vehicle, const cPosition& org, bool big);
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	cStartBuildJob (Archive& archive)
 	{
 		serializeThis (archive);
@@ -55,7 +55,7 @@ public:
 	uint32_t getChecksum (uint32_t crc) const override;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

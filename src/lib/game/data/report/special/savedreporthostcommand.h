@@ -21,6 +21,7 @@
 #define game_data_reports_special_savedreporthostcommandH
 
 #include "game/data/report/savedreport.h"
+#include "utility/serialization/serialization.h"
 
 #include <string>
 
@@ -28,7 +29,8 @@ class cSavedReportHostCommand : public cSavedReport
 {
 public:
 	cSavedReportHostCommand (std::string&& command);
-	template <typename Archive, ENABLE_ARCHIVE_IN>
+
+	template <ArchiveIn Archive>
 	explicit cSavedReportHostCommand (Archive& archive)
 	{
 		serializeThis (archive);
@@ -52,7 +54,7 @@ public:
 	const std::string& getCommand() const { return command; }
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

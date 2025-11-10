@@ -20,7 +20,7 @@
 #ifndef game_logic_upgradecalculatorH
 #define game_logic_upgradecalculatorH
 
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
 #include <array>
@@ -285,7 +285,7 @@ public:
 	cSignal<void (eResearchArea)> currentResearchPointsChanged;
 	cSignal<void (eResearchArea)> neededResearchPointsChanged;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -336,7 +336,7 @@ struct sUnitUpgrade
 	std::optional<int> getNextPrice() const { return nextPrice; }
 	int getPurchased() const { return purchased; }
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -376,7 +376,7 @@ public:
 	void updateUnitData (cDynamicUnitData&) const;
 	int calcTotalCosts (const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch&) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

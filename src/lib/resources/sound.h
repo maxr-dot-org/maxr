@@ -21,7 +21,7 @@
 #define soundH
 
 #include "output/sound/soundchunk.h"
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 
 #include <array>
 #include <filesystem>
@@ -124,7 +124,7 @@ struct sMusicFiles
 #endif
 	std::vector<std::filesystem::path> backgrounds;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

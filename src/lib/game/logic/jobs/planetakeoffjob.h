@@ -31,7 +31,7 @@ class cPlaneTakeoffJob : public cJob
 {
 public:
 	cPlaneTakeoffJob (cVehicle& vehicle);
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	cPlaneTakeoffJob (Archive& archive)
 	{
 		serializeThis (archive);
@@ -56,7 +56,7 @@ public:
 	uint32_t getChecksum (uint32_t crc) const override;
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

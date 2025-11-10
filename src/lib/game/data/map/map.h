@@ -49,7 +49,7 @@ struct sResources
 public:
 	sResources() = default;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -180,13 +180,13 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveOut Archive>
 	void save (Archive& archive) const
 	{
 		archive << NVP (filename);
 		archive << NVP (crc);
 	}
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	void load (Archive& archive)
 	{
 		std::filesystem::path fileToLoad;
@@ -279,14 +279,14 @@ public:
 
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveOut Archive>
 	void save (Archive& archive) const
 	{
 		archive << serialization::makeNvp ("mapFile", *staticMap);
 		const std::string resources = resourcesToString();
 		archive << NVP (resources);
 	}
-	template <typename Archive>
+	template <ArchiveIn Archive>
 	void load (Archive& archive)
 	{
 		assert (staticMap != nullptr);

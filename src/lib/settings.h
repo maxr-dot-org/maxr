@@ -22,7 +22,7 @@
 #include "game/data/player/playersettings.h"
 #include "game/networkaddress.h"
 #include "utility/position.h"
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 #include "utility/signal/signal.h"
 
 #include <filesystem>
@@ -37,7 +37,7 @@ struct sVideoSettings
 	int displayIndex = 0;
 	bool windowMode = true;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -205,7 +205,7 @@ public:
 	 */
 	std::filesystem::path getUserScreenshotsDir() const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -268,7 +268,7 @@ private:
 		/** cache size */
 		unsigned int cacheSize = 400;
 
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off
@@ -307,7 +307,7 @@ private:
 		/** in-game sound effects should respect position*/
 		bool sound3d = true;
 
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off
@@ -341,7 +341,7 @@ private:
 		std::filesystem::path buildings = "buildings"; // Path to the buildings
 		std::filesystem::path mve = "mve"; // Path to the in-game movies (*.mve)
 
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off
@@ -383,7 +383,7 @@ private:
 		/** scrollspeed on map */
 		int scrollSpeed = 32;
 
-		template <typename Archive>
+		template <ArchiveInOrOut Archive>
 		void serialize (Archive& archive)
 		{
 			// clang-format off

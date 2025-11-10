@@ -21,6 +21,7 @@
 #define game_data_reports_special_savedreportplayerwinsH
 
 #include "game/data/report/savedreport.h"
+#include "utility/serialization/serialization.h"
 
 class cPlayer;
 
@@ -29,7 +30,7 @@ class cSavedReportPlayerWins : public cSavedReport
 public:
 	cSavedReportPlayerWins (const cPlayer&);
 
-	template <typename Archive, ENABLE_ARCHIVE_IN>
+	template <ArchiveIn Archive>
 	explicit cSavedReportPlayerWins (Archive& archive)
 	{
 		serializeThis (archive);
@@ -53,7 +54,7 @@ public:
 	int getPlayerId() const { return playerId; }
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

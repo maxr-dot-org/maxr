@@ -139,7 +139,7 @@ struct sStaticCommonUnitData
 
 	[[nodiscard]] uint32_t computeChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -160,7 +160,7 @@ struct sStaticCommonUnitData
 		archive & NVP (isAlien);
 		archive & NVP (needsMetal);
 		archive & NVP (needsOil);
-		if (Archive::isWriter)
+		if constexpr (Archive::isWriter)
 		{
 			archive & serialization::makeNvp ("needsEnergy", needsEnergy > 0 ? needsEnergy : -produceEnergy);
 			archive & serialization::makeNvp ("needsHumans", needsHumans > 0 ? needsHumans : -produceHumans);
@@ -204,7 +204,7 @@ struct sStaticBuildingData
 
 	[[nodiscard]] uint32_t computeChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -244,7 +244,7 @@ struct sStaticVehicleData
 
 	[[nodiscard]] uint32_t computeChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -284,7 +284,7 @@ public:
 	sStaticVehicleData vehicleData;
 	sStaticBuildingData buildingData;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -381,7 +381,7 @@ public:
 	mutable cSignal<void()> damageChanged;
 	mutable cSignal<void()> armorChanged;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -404,7 +404,7 @@ public:
 		archive & NVP (armor);
 		// clang-format on
 
-		if (!Archive::isWriter)
+		if constexpr (!Archive::isWriter)
 			crcCache = std::nullopt;
 	}
 
@@ -442,7 +442,7 @@ struct sSpecialBuildingsId
 {
 	void logMissing() const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -472,7 +472,7 @@ struct sSpecialVehiclesId
 {
 	void logMissing() const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off
@@ -543,10 +543,10 @@ public:
 		crcCache = std::nullopt;
 	}
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
-		if (!Archive::isWriter)
+		if constexpr (!Archive::isWriter)
 		{
 			staticUnitData.clear();
 			dynamicUnitData.clear();

@@ -21,12 +21,14 @@
 #define game_data_reports_savedreportpathinterruptedH
 
 #include "game/data/report/savedreportunit.h"
+#include "utility/serialization/serialization.h"
 
 class cSavedReportPathInterrupted : public cSavedReportUnit
 {
 public:
 	cSavedReportPathInterrupted (const cUnit& unit);
-	template <typename Archive, ENABLE_ARCHIVE_IN>
+
+	template <ArchiveIn Archive>
 	explicit cSavedReportPathInterrupted (Archive& archive) :
 		cSavedReportUnit (archive)
 	{}

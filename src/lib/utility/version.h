@@ -20,7 +20,7 @@
 #ifndef utility_versionH
 #define utility_versionH
 
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 
 #include <string>
 #include <string_view>
@@ -61,7 +61,7 @@ public:
 	bool operator== (const cVersion&) const = default;
 	auto operator<=> (const cVersion&) const = default;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

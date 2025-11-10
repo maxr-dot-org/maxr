@@ -54,7 +54,7 @@ public:
 private:
 	void changeUnitOwner (cUnit& unit, cPlayer& newOwner, cModel& model) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

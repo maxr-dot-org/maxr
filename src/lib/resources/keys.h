@@ -122,7 +122,7 @@ public:
 	cKeySequence keyUnitMenuUpgrade;
 	cKeySequence keyUnitMenuDestroy;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

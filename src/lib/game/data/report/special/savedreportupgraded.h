@@ -22,12 +22,14 @@
 
 #include "game/data/report/savedreport.h"
 #include "game/data/units/id.h"
+#include "utility/serialization/serialization.h"
 
 class cSavedReportUpgraded : public cSavedReport
 {
 public:
 	cSavedReportUpgraded (const sID& unitId, int unitsCount, int costs);
-	template <typename Archive, ENABLE_ARCHIVE_IN>
+
+	template <ArchiveIn Archive>
 	explicit cSavedReportUpgraded (Archive& archive)
 	{
 		serializeThis (archive);
@@ -53,7 +55,7 @@ public:
 	int getCosts() const { return costs; }
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

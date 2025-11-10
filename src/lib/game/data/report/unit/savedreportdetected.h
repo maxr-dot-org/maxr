@@ -21,6 +21,7 @@
 #define game_data_reports_savedreportdetectedH
 
 #include "game/data/report/savedreportunit.h"
+#include "utility/serialization/serialization.h"
 
 #include <string>
 
@@ -31,7 +32,7 @@ class cSavedReportDetected : public cSavedReportUnit
 public:
 	explicit cSavedReportDetected (const cUnit&);
 
-	template <typename Archive, ENABLE_ARCHIVE_IN>
+	template <ArchiveIn Archive>
 	explicit cSavedReportDetected (Archive& archive) :
 		cSavedReportUnit (archive)
 	{
@@ -55,7 +56,7 @@ public:
 	std::string getPlayerOwnerName() const { return playerOwnerName; }
 
 private:
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off

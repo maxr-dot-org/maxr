@@ -66,7 +66,8 @@ private:
 	}
 
 	//--------------------------------------------------------------------------
-	template <typename T, std::enable_if_t<std::is_class<T>::value, int> = 0>
+	template <typename T>
+	requires (std::is_class_v<T>)
 	void pushValue (const T& object)
 	{
 		json = nlohmann::json::object();
@@ -81,7 +82,8 @@ private:
 	}
 
 	//--------------------------------------------------------------------------
-	template <typename E, std::enable_if_t<std::is_enum<E>::value, int> = 0>
+	template <typename E>
+	requires (std::is_enum_v<E>)
 	void pushValue (E e)
 	{
 		if (serialization::sEnumSerializer<E>::hasStringRepresentation)
@@ -264,7 +266,8 @@ private:
 	}
 
 	//--------------------------------------------------------------------------
-	template <typename T, std::enable_if_t<std::is_class<T>::value, int> = 0>
+	template <typename T>
+	requires (std::is_class_v<T>)
 	void popValue (T& object)
 	{
 		serialization::serialize (*this, object);
@@ -278,7 +281,8 @@ private:
 	}
 
 	//--------------------------------------------------------------------------
-	template <typename E, std::enable_if_t<std::is_enum<E>::value, int> = 0>
+	template <typename E>
+	requires (std::is_enum_v<E>)
 	void popValue (E& e)
 	{
 		if (json.is_string())

@@ -20,7 +20,7 @@
 #ifndef game_logic_jobs_jobcontainerH
 #define game_logic_jobs_jobcontainerH
 
-#include "utility/serialization/nvp.h"
+#include "utility/serialization/serialization.h"
 
 #include <memory>
 #include <vector>
@@ -37,7 +37,7 @@ public:
 	void run (cModel&);
 	uint32_t getChecksum (uint32_t crc) const;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

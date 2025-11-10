@@ -21,12 +21,14 @@
 #define game_data_reports_savedreportattackingenemyH
 
 #include "game/data/report/savedreportunit.h"
+#include "utility/serialization/serialization.h"
 
 class cSavedReportAttackingEnemy : public cSavedReportUnit
 {
 public:
 	cSavedReportAttackingEnemy (const cUnit& unit);
-	template <typename Archive, ENABLE_ARCHIVE_IN>
+
+	template <ArchiveIn Archive>
 	cSavedReportAttackingEnemy (Archive& archive) :
 		cSavedReportUnit (archive)
 	{

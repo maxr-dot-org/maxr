@@ -27,7 +27,7 @@ struct sLandingUnit
 	sID unitID;
 	unsigned cargo = 0;
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serialize (Archive& archive)
 	{
 		// clang-format off

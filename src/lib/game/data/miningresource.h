@@ -37,7 +37,7 @@ struct sMiningResource
 	sMiningResource& operator+= (const sMiningResource&);
 	sMiningResource& operator-= (const sMiningResource&);
 
-	template <typename Archive>
+	template <ArchiveInOrOut Archive>
 	void serializeThis (Archive& archive)
 	{
 		// clang-format off
