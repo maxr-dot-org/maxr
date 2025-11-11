@@ -22,7 +22,7 @@ multiplayer mode over the internet using TCP/IP.
 
 Soon after the founding Eiko (eiko) Oltmanns joined the team and
 together M.A.X.R. learned TCP/IP in no time. The Win API was completly
-removed and translation support was added. Beeing POSIX compatible and
+removed and translation support was added. Being POSIX compatible and
 available on english M.A.X.R. became international very fast and after
 the joining of Paul (pagra) Grathwohl a Mac hacker had been found too.
 The source was made little/big endian safe and can now be compiled on
@@ -47,7 +47,7 @@ CD - means no way to obtain a legal copy nowadays - was pretty useless.
 As a conclusion the creation of a free graphics set started in 2008 and
 shipped today M.A.X.R. can be played as standalone too.
 
-The goals of M.A.X.R. are still the same as in the beginning: Beeing a
+The goals of M.A.X.R. are still the same as in the beginning: Being a
 remake of the original featuring network games. The team focused on this
 fact and network playing works pretty stable today. Some features are
 still missing - like single player missions and AI.

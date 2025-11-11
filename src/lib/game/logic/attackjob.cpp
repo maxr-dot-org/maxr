@@ -157,7 +157,7 @@ void cAttackJob::lockTarget (const cMap& map, const cUnit& aggressor)
 				cUnit* target = selectTarget (targetPosition + cPosition (x, y), aggressor.getStaticUnitData().canAttack, map, aggressor.getOwner());
 				if (target)
 				{
-					target->setIsBeeinAttacked (true);
+					target->setIsBeingAttacked (true);
 					lockedTargets.push_back (target->iID);
 					NetLog.debug (" cAttackJob: locked target ID: " + std::to_string (target->iID) + " at (" + std::to_string (targetPosition.x() + x) + "," + std::to_string (targetPosition.y() + y) + ")");
 				}
@@ -177,7 +177,7 @@ void cAttackJob::releaseTargets (const cModel& model)
 
 		if (unit && unit->data.getHitpoints() > 0)
 		{
-			unit->setIsBeeinAttacked (false);
+			unit->setIsBeingAttacked (false);
 		}
 	}
 

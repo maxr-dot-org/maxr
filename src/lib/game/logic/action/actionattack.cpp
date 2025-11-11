@@ -46,7 +46,7 @@ void cActionAttack::execute (cModel& model) const
 	if (aggressor == nullptr || !aggressor->getOwner()) return;
 
 	if (aggressor->getOwner()->getId() != playerNr) return;
-	if (aggressor->isBeeingAttacked()) return;
+	if (aggressor->isBeingAttacked()) return;
 
 	//validate target
 	if (!model.getMap()->isValidPosition (targetPosition)) return;

@@ -194,7 +194,7 @@ msgstr[1] " so zaključeni"
 msgstr[2] " so zaključeni"
 msgstr[3] " so zaključeni"
 
-msgid "Comp~IsBeeingAttacked"
+msgid "Comp~IsBeingAttacked"
 msgstr "Je napadena"
 
 msgid "Comp~Labs"

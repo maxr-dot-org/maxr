@@ -189,7 +189,7 @@ msgid_plural "Comp~Is(Are)Finished"
 msgstr[0] " wurde fertig gestellt"
 msgstr[1] " wurden fertig gestellt"
 
-msgid "Comp~IsBeeingAttacked"
+msgid "Comp~IsBeingAttacked"
 msgstr "Wird angegriffen"
 
 msgid "Comp~Labs"

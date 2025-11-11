@@ -192,7 +192,7 @@ msgstr[0] " - готово"
 msgstr[1] " - готовы"
 msgstr[2] " - готовы"
 
-msgid "Comp~IsBeeingAttacked"
+msgid "Comp~IsBeingAttacked"
 msgstr ""
 
 msgid "Comp~Labs"

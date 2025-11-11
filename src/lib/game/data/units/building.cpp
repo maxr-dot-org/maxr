@@ -394,7 +394,7 @@ bool cBuilding::canLoad (const cVehicle* vehicle, bool checkPosition) const
 
 	if (vehicle->getOwner() != getOwner() || vehicle->isUnitBuildingABuilding() || vehicle->isUnitClearing()) return false;
 
-	if (vehicle->isBeeingAttacked()) return false;
+	if (vehicle->isBeingAttacked()) return false;
 
 	return true;
 }

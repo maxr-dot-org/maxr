@@ -73,7 +73,7 @@ void cSurveyorAi::run (cClient& client, const std::vector<std::unique_ptr<cSurve
 		return;
 	}
 
-	if (vehicle.isBeeingAttacked()) return;
+	if (vehicle.isBeingAttacked()) return;
 
 	const cMap& map = *client.getModel().getMap();
 
