@@ -27,7 +27,7 @@
 #include "ui/widgets/application.h"
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameSaved::start (cApplication& application)
+void cLocalSinglePlayerGameSaved::start (cApplication& application)
 {
 	if (cSettings::getInstance().shouldShowIntro())
 	{

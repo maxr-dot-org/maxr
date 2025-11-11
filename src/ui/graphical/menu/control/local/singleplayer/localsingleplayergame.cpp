@@ -23,7 +23,7 @@
 #include "game/logic/server.h"
 
 //------------------------------------------------------------------------------
-cLocalSingleplayerGame::~cLocalSingleplayerGame()
+cLocalSinglePlayerGame::~cLocalSinglePlayerGame()
 {
 	if (server)
 	{
@@ -32,7 +32,7 @@ cLocalSingleplayerGame::~cLocalSingleplayerGame()
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGame::run()
+void cLocalSinglePlayerGame::run()
 {
 	if (client) client->run();
 }

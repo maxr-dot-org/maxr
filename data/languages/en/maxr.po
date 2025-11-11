@@ -856,7 +856,7 @@ msgid "Others~Shots_7"
 msgstr "Shots"
 
 msgid "Others~Single_Player"
-msgstr "Singleplayer (No AI)"
+msgstr "Single player (No AI)"
 
 msgid "Others~Speed"
 msgstr "Speed"
