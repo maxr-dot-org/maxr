@@ -255,7 +255,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 
 		drawRectangle (*cVideo::buffer, d, groupSelectionColor, 1);
 	}
-	// draw the seleted-unit-flash-frame for vehicles
+	// draw the selected-unit-flash-frame for vehicles
 	if (unitSelection && &vehicle == unitSelection->getSelectedVehicle())
 	{
 		auto maxX = vehicle.getIsBig() ? destination.w * 2 : destination.w;
