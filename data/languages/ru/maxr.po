@@ -951,7 +951,7 @@ msgstr ": "
 msgid "Settings~3D"
 msgstr "3D"
 
-msgid "Settings~Alphaeffects"
+msgid "Settings~AlphaEffects"
 msgstr "Эффекты прозрачности"
 
 msgid "Settings~Animation"

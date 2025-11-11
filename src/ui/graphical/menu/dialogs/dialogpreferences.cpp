@@ -80,7 +80,7 @@ cDialogPreferences::cDialogPreferences() :
 
 	animationCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193), lngPack.i18n ("Settings~Animation"));
 	shadowsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20), lngPack.i18n ("Settings~Shadows"));
-	alphaCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20 * 2), lngPack.i18n ("Settings~Alphaeffects"));
+	alphaCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20 * 2), lngPack.i18n ("Settings~AlphaEffects"));
 	damageBuildingsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193), lngPack.i18n ("Settings~ShowDamage"));
 	damageVehiclesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20), lngPack.i18n ("Settings~ShowDamageVehicle"));
 	tracksCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20 * 2), lngPack.i18n ("Settings~Tracks"));
@@ -148,7 +148,7 @@ void cDialogPreferences::retranslate()
 	disableVoicesCheckBox->setText (lngPack.i18n ("Settings~Disable"));
 	animationCheckBox->setText (lngPack.i18n ("Settings~Animation"));
 	shadowsCheckBox->setText (lngPack.i18n ("Settings~Shadows"));
-	alphaCheckBox->setText (lngPack.i18n ("Settings~Alphaeffects"));
+	alphaCheckBox->setText (lngPack.i18n ("Settings~AlphaEffects"));
 	damageBuildingsCheckBox->setText (lngPack.i18n ("Settings~ShowDamage"));
 	damageVehiclesCheckBox->setText (lngPack.i18n ("Settings~ShowDamageVehicle"));
 	tracksCheckBox->setText (lngPack.i18n ("Settings~Tracks"));
