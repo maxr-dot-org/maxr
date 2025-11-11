@@ -994,7 +994,7 @@ msgstr "Lastnosti"
 msgid "Settings~Resolution"
 msgstr "Resolucija"
 
-msgid "Settings~Scrollspeed"
+msgid "Settings~ScrollSpeed"
 msgstr "Hitrost zaslona"
 
 msgid "Settings~Shadows"

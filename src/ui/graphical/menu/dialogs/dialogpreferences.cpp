@@ -75,7 +75,7 @@ cDialogPreferences::cDialogPreferences() :
 	colorLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 175), getPosition() + cPosition (135, 185)), lngPack.i18n ("Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	colorSelector = emplaceChild<cColorSelector> (getPosition() + cPosition (160, 172), cRgbColor::black());
 
-	scrollSpeedLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 257), getPosition() + cPosition (135, 267)), lngPack.i18n ("Settings~Scrollspeed"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	scrollSpeedLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 257), getPosition() + cPosition (135, 267)), lngPack.i18n ("Settings~ScrollSpeed"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	scrollSpeedSlider = emplaceChild<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 254), getPosition() + cPosition (240, 271)), 0, 128, eOrientationType::Horizontal);
 
 	animationCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193), lngPack.i18n ("Settings~Animation"));
@@ -135,7 +135,7 @@ void cDialogPreferences::retranslate()
 	voicesLabel->setText (lngPack.i18n ("Settings~Voices"));
 	playerNameLabel->setText (lngPack.i18n ("Title~Player_Name"));
 	colorLabel->setText (lngPack.i18n ("Title~Color"));
-	scrollSpeedLabel->setText (lngPack.i18n ("Settings~Scrollspeed"));
+	scrollSpeedLabel->setText (lngPack.i18n ("Settings~ScrollSpeed"));
 	languageLabel->setText (lngPack.i18n ("Settings~Language") + lngPack.i18n ("Punctuation~Colon"));
 	resolutionLabel->setText (lngPack.i18n ("Settings~Resolution") + lngPack.i18n ("Punctuation~Colon"));
 

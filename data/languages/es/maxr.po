@@ -971,7 +971,7 @@ msgstr "Preferéncias"
 msgid "Settings~Resolution"
 msgstr "Resolución"
 
-msgid "Settings~Scrollspeed"
+msgid "Settings~ScrollSpeed"
 msgstr "Desplazamiento"
 
 msgid "Settings~Shadows"

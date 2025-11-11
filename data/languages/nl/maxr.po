@@ -971,7 +971,7 @@ msgstr "Voorkeuren"
 msgid "Settings~Resolution"
 msgstr "Resolutie"
 
-msgid "Settings~Scrollspeed"
+msgid "Settings~ScrollSpeed"
 msgstr "Scrollsnelheid"
 
 msgid "Settings~Shadows"

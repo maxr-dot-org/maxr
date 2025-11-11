@@ -981,7 +981,7 @@ msgstr "Настройки"
 msgid "Settings~Resolution"
 msgstr "Разрешение экрана"
 
-msgid "Settings~Scrollspeed"
+msgid "Settings~ScrollSpeed"
 msgstr "Скорость прокрутки"
 
 msgid "Settings~Shadows"

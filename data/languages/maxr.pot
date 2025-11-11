@@ -953,7 +953,7 @@ msgstr ""
 msgid "Settings~Resolution"
 msgstr ""
 
-msgid "Settings~Scrollspeed"
+msgid "Settings~ScrollSpeed"
 msgstr ""
 
 msgid "Settings~Shadows"

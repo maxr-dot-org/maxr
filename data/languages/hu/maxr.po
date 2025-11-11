@@ -971,7 +971,7 @@ msgstr "Beállítások"
 msgid "Settings~Resolution"
 msgstr "Felbontás"
 
-msgid "Settings~Scrollspeed"
+msgid "Settings~ScrollSpeed"
 msgstr "Görgősebesség"
 
 msgid "Settings~Shadows"

@@ -960,8 +960,8 @@ msgstr "Preferences"
 msgid "Settings~Resolution"
 msgstr "Resolution"
 
-msgid "Settings~Scrollspeed"
-msgstr "Scrollspeed"
+msgid "Settings~ScrollSpeed"
+msgstr "ScrollSpeed"
 
 msgid "Settings~Shadows"
 msgstr "Shadows"
