@@ -364,7 +364,7 @@ void cConnectionManager::disconnectAll()
 
 	while (clientSockets.size() > 0)
 	{
-		//erease in loop
+		// erase in loop
 		network->close (*clientSockets[0].first);
 	}
 }
