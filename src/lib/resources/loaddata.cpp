@@ -274,7 +274,7 @@ static int LoadGraphics (const std::filesystem::path& directory)
 	GraphicsData.Dialog2Path = cSettings::getInstance().getGfxPath() / "dialog2.pcx";
 	GraphicsData.Dialog3Path = cSettings::getInstance().getGfxPath() / "dialog3.pcx";
 #endif
-	Log.debug ("Shadowgraphics...");
+	Log.debug ("Shadow graphics...");
 	// Shadow:
 	createShadowGfx();
 
@@ -282,17 +282,17 @@ static int LoadGraphics (const std::filesystem::path& directory)
 	SDL_SetSurfaceBlendMode (GraphicsData.gfx_tmp.get(), SDL_BLENDMODE_BLEND);
 	SDL_SetColorKey (GraphicsData.gfx_tmp.get(), SDL_TRUE, 0xFF00FF);
 
-	// Glas:
-	Log.debug ("Glassgraphic...");
+	// Glass:
+	Log.debug ("Glass graphic...");
 	LoadGraphicToSurface (GraphicsData.gfx_destruction_glas, directory / "destruction_glas.pcx");
 	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_destruction_glas.get(), 150);
 
 	// Waypoints:
-	Log.debug ("Waypointgraphics...");
+	Log.debug ("Waypoint graphics...");
 	OtherData.loadWayPoints();
 
 	// Resources:
-	Log.debug ("Resourcegraphics...");
+	Log.debug ("Resource graphics...");
 	ResourceData.load (directory);
 	return 1;
 }
@@ -392,8 +392,8 @@ namespace
 
 //------------------------------------------------------------------------------
 /**
- * Loads the unitdata from the data.json in the unitfolder
- * @param directory Unitdirectory, relative to the main game directory
+ * Loads the unitdata from the data.json in the unit folder
+ * @param directory Unit directory, relative to the main game directory
  */
 static void LoadUnitData (sInitialBuildingData& buildingData, const std::filesystem::path& directory)
 {
@@ -414,8 +414,8 @@ static void LoadUnitData (sInitialBuildingData& buildingData, const std::filesys
 
 //------------------------------------------------------------------------------
 /**
- * Loads the unitdata from the data.json in the unitfolder
- * @param directory Unitdirectory, relative to the main game directory
+ * Loads the unitdata from the data.json in the unit folder
+ * @param directory Unit directory, relative to the main game directory
  */
 static void LoadUnitData (sInitialVehicleData& vehicleData, const std::filesystem::path& directory)
 {
@@ -482,14 +482,14 @@ static cStaticUnitData createStaticUnitData (const sID& id, const sStaticCommonU
 
 //------------------------------------------------------------------------------
 /**
- * Loads a soundfile to the Mix_Chunk
+ * Loads a sound file to the Mix_Chunk
  * @param dest Destination Mix_Chunk
  * @param directory Directory of the file
  * @param filename Name of the file
  * @param localize When true, sVoiceLanguage is appended to the filename. Used for loading voice files.
  * @return 1 on success
  */
-static int LoadSoundfile (cSoundChunk& dest, const std::filesystem::path& filepath, bool localize = false)
+static int LoadSoundFile (cSoundChunk& dest, const std::filesystem::path& filepath, bool localize = false)
 {
 	if (localize && !cSettings::getInstance().getVoiceLanguage().empty())
 	{
@@ -511,11 +511,11 @@ static int LoadSoundfile (cSoundChunk& dest, const std::filesystem::path& filepa
 
 //------------------------------------------------------------------------------
 /**
- * Loads a unitsoundfile to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
+ * Loads a unit sound file to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
  * @param dest Destination Mix_Chunk
  * @param filepath Name of the file
  */
-static void LoadUnitSoundfile (cSoundChunk& dest, const std::filesystem::path& filepath)
+static void LoadUnitSoundFile (cSoundChunk& dest, const std::filesystem::path& filepath)
 {
 	if (SoundData.DummySound.empty())
 	{
@@ -572,12 +572,12 @@ static bool LoadUiData (const std::filesystem::path& sBuildingPath, sBuildingUID
 	if (std::filesystem::exists (sTmpString))
 		ui.video = LoadPCX (sTmpString);
 
-	// load infoimage
+	// load info image
 	sTmpString = sBuildingPath / "info.pcx";
 	if (std::filesystem::exists (sTmpString))
 		ui.info = LoadPCX (sTmpString);
 
-	// load effectgraphics if necessary
+	// load effect graphics if necessary
 	if (ui.staticData.powerOnGraphic)
 	{
 		sTmpString = sBuildingPath / "effect.pcx";
@@ -595,11 +595,11 @@ static bool LoadUiData (const std::filesystem::path& sBuildingPath, sBuildingUID
 	}
 
 	// load sounds
-	LoadUnitSoundfile (ui.Wait, sBuildingPath / "wait.ogg");
-	LoadUnitSoundfile (ui.Start, sBuildingPath / "start.ogg");
-	LoadUnitSoundfile (ui.Running, sBuildingPath / "running.ogg");
-	LoadUnitSoundfile (ui.Stop, sBuildingPath / "stop.ogg");
-	LoadUnitSoundfile (ui.Attack, sBuildingPath / "attack.ogg");
+	LoadUnitSoundFile (ui.Wait, sBuildingPath / "wait.ogg");
+	LoadUnitSoundFile (ui.Start, sBuildingPath / "start.ogg");
+	LoadUnitSoundFile (ui.Running, sBuildingPath / "running.ogg");
+	LoadUnitSoundFile (ui.Stop, sBuildingPath / "stop.ogg");
+	LoadUnitSoundFile (ui.Attack, sBuildingPath / "attack.ogg");
 
 	// Get Ptr if necessary:
 	if (ui.id == UnitsDataGlobal.getConnectorID())
@@ -741,7 +741,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		ui.FLCFile = "";
 	}
 
-	// load infoimage
+	// load info image
 	auto sTmpString = sVehiclePath / "info.pcx";
 	Log.debug ("Loading portrait: " + utf8::to_string (sTmpString));
 	if (std::filesystem::exists (sTmpString))
@@ -754,9 +754,9 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		return false;
 	}
 
-	// load storageimage
+	// load storage image
 	sTmpString = sVehiclePath / "store.pcx";
-	Log.debug ("Loading storageportrait: " + utf8::to_string (sTmpString));
+	Log.debug ("Loading storage portrait: " + utf8::to_string (sTmpString));
 	if (std::filesystem::exists (sTmpString))
 	{
 		ui.storage = LoadPCX (sTmpString);
@@ -767,7 +767,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		return false;
 	}
 
-	// load overlaygraphics if necessary
+	// load overlay graphics if necessary
 	if (ui.staticData.hasOverlay)
 	{
 		sTmpString = sVehiclePath / "overlay.pcx";
@@ -791,12 +791,12 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		ui.overlay = nullptr;
 	}
 
-	// load buildgraphics if necessary
+	// load build graphics if necessary
 	if (ui.staticData.buildUpGraphic)
 	{
 		// load image
 		sTmpString = sVehiclePath / "build.pcx";
-		Log.debug ("Loading buildgraphics: " + utf8::to_string (sTmpString));
+		Log.debug ("Loading build graphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_org = LoadPCX (sTmpString);
@@ -813,7 +813,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		// load shadow
 		sTmpString = sVehiclePath / "build_shw.pcx";
-		Log.debug ("Loading buildgraphics: " + utf8::to_string (sTmpString));
+		Log.debug ("Loading build graphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_shw_org = LoadPCX (sTmpString);
@@ -835,12 +835,12 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		ui.build_shw_org = nullptr;
 		ui.build_shw = nullptr;
 	}
-	// load cleargraphics if necessary
+	// load clear graphics if necessary
 	if (staticData.vehicleData.canClearArea)
 	{
 		// load image (small)
 		sTmpString = sVehiclePath / "clear_small.pcx";
-		Log.debug ("Loading cleargraphics: " + utf8::to_string (sTmpString));
+		Log.debug ("Loading clear graphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.clear_small_org = LoadPCX (sTmpString);
@@ -857,7 +857,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		// load shadow (small)
 		sTmpString = sVehiclePath / "clear_small_shw.pcx";
-		Log.debug ("Loading cleargraphics: " + utf8::to_string (sTmpString));
+		Log.debug ("Loading clear graphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.clear_small_shw_org = LoadPCX (sTmpString);
@@ -873,7 +873,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		// load image (big)
 		sTmpString = sVehiclePath / "clear_big.pcx";
-		Log.debug ("Loading cleargraphics: " + utf8::to_string (sTmpString));
+		Log.debug ("Loading clear graphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_org = LoadPCX (sTmpString);
@@ -890,7 +890,7 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 		}
 		// load shadow (big)
 		sTmpString = sVehiclePath / "clear_big_shw.pcx";
-		Log.debug ("Loading cleargraphics: " + utf8::to_string (sTmpString));
+		Log.debug ("Loading clear graphics: " + utf8::to_string (sTmpString));
 		if (std::filesystem::exists (sTmpString))
 		{
 			ui.build_shw_org = LoadPCX (sTmpString);
@@ -915,15 +915,15 @@ static bool LoadUiData (const std::filesystem::path& sVehiclePath, const cStatic
 
 	// load sounds
 	Log.debug ("Loading sounds");
-	LoadUnitSoundfile (ui.Wait, sVehiclePath / "wait.ogg");
-	LoadUnitSoundfile (ui.WaitWater, sVehiclePath / "wait_water.ogg");
-	LoadUnitSoundfile (ui.Start, sVehiclePath / "start.ogg");
-	LoadUnitSoundfile (ui.StartWater, sVehiclePath / "start_water.ogg");
-	LoadUnitSoundfile (ui.Stop, sVehiclePath / "stop.ogg");
-	LoadUnitSoundfile (ui.StopWater, sVehiclePath / "stop_water.ogg");
-	LoadUnitSoundfile (ui.Drive, sVehiclePath / "drive.ogg");
-	LoadUnitSoundfile (ui.DriveWater, sVehiclePath / "drive_water.ogg");
-	LoadUnitSoundfile (ui.Attack, sVehiclePath / "attack.ogg");
+	LoadUnitSoundFile (ui.Wait, sVehiclePath / "wait.ogg");
+	LoadUnitSoundFile (ui.WaitWater, sVehiclePath / "wait_water.ogg");
+	LoadUnitSoundFile (ui.Start, sVehiclePath / "start.ogg");
+	LoadUnitSoundFile (ui.StartWater, sVehiclePath / "start_water.ogg");
+	LoadUnitSoundFile (ui.Stop, sVehiclePath / "stop.ogg");
+	LoadUnitSoundFile (ui.StopWater, sVehiclePath / "stop_water.ogg");
+	LoadUnitSoundFile (ui.Drive, sVehiclePath / "drive.ogg");
+	LoadUnitSoundFile (ui.DriveWater, sVehiclePath / "drive_water.ogg");
+	LoadUnitSoundFile (ui.Attack, sVehiclePath / "attack.ogg");
 	return true;
 }
 
@@ -1080,7 +1080,7 @@ static int LoadBuildings (bool includingUiData)
 		if (cSettings::getInstance().isDebug()) Log.mark();
 	}
 
-	// Dirtsurfaces
+	// Dirt surfaces
 	if (includingUiData)
 	{
 		LoadGraphicToSurface (UnitsUiData.rubbleBig->img_org, cSettings::getInstance().getBuildingsPath() / "dirt_big.pcx");
@@ -1211,7 +1211,7 @@ static int LoadClans()
 
 //------------------------------------------------------------------------------
 /**
- * Loads all Musicfiles
+ * Loads all Music files
  * @param path Directory of the Vehicles
  * @return 1 on success
  */
@@ -1292,8 +1292,8 @@ eLoadingState LoadData (bool includingUiData)
 
 	MakeLog (getBuildVersion(), 0, 0);
 
-	// Load Languagepack
-	MakeLog ("Loading languagepack...", 0, 2);
+	// Load Language pack
+	MakeLog ("Loading language pack...", 0, 2);
 	LoadLanguage();
 	if (includingUiData && cSettings::getInstance().isDebug())
 	{
@@ -1427,7 +1427,7 @@ eLoadingState LoadData (bool includingUiData)
 
 //------------------------------------------------------------------------------
 /**
- * Loads a effectgraphic to the surface
+ * Loads a effect graphic to the surface
  * @param dest Destination surface
  * @param filepath Name of the file
  * @return 1 on success
@@ -1448,7 +1448,7 @@ static int LoadEffectGraphicToSurface (UniqueSurface (&dest)[2], const std::file
 }
 
 //------------------------------------------------------------------------------
-// Loads a effectgraphic as alpha to the surface:
+// Loads a effect graphic as alpha to the surface:
 static int LoadEffectAlphaToSurface (UniqueSurface (&dest)[2], const std::filesystem::path& filepath, int alpha)
 {
 	if (!std::filesystem::exists (filepath))
@@ -1459,7 +1459,7 @@ static int LoadEffectAlphaToSurface (UniqueSurface (&dest)[2], const std::filesy
 	SDL_SetSurfaceAlphaMod (dest[0].get(), narrow_cast<Uint8> (alpha));
 	SDL_SetSurfaceAlphaMod (dest[1].get(), narrow_cast<Uint8> (alpha));
 
-	Log.debug ("Effectalpha loaded: " + utf8::to_string (filepath));
+	Log.debug ("Effect alpha loaded: " + utf8::to_string (filepath));
 	return 1;
 }
 
@@ -1485,113 +1485,113 @@ void cEffectsData::load (const std::filesystem::path& directory)
 //------------------------------------------------------------------------------
 void cSoundData::load (const std::filesystem::path& directory)
 {
-	LoadSoundfile (SNDHudSwitch, directory / "HudSwitch.ogg");
-	LoadSoundfile (SNDHudButton, directory / "HudButton.ogg");
-	LoadSoundfile (SNDMenuButton, directory / "MenuButton.ogg");
-	LoadSoundfile (SNDChat, directory / "Chat.ogg");
-	LoadSoundfile (SNDObjectMenu, directory / "ObjectMenu.ogg");
-	LoadSoundfile (EXPBigWet[0], directory / "exp_big_wet0.ogg");
-	LoadSoundfile (EXPBigWet[1], directory / "exp_big_wet1.ogg");
-	LoadSoundfile (EXPBig[0], directory / "exp_big0.ogg");
-	LoadSoundfile (EXPBig[1], directory / "exp_big1.ogg");
-	LoadSoundfile (EXPBig[2], directory / "exp_big2.ogg");
-	LoadSoundfile (EXPBig[3], directory / "exp_big3.ogg");
-	LoadSoundfile (EXPSmallWet[0], directory / "exp_small_wet0.ogg");
-	LoadSoundfile (EXPSmallWet[1], directory / "exp_small_wet1.ogg");
-	LoadSoundfile (EXPSmallWet[2], directory / "exp_small_wet2.ogg");
-	LoadSoundfile (EXPSmall[0], directory / "exp_small0.ogg");
-	LoadSoundfile (EXPSmall[1], directory / "exp_small1.ogg");
-	LoadSoundfile (EXPSmall[2], directory / "exp_small2.ogg");
-	LoadSoundfile (SNDArm, directory / "arm.ogg");
-	LoadSoundfile (SNDBuilding, directory / "building.ogg");
-	LoadSoundfile (SNDClearing, directory / "clearing.ogg");
-	LoadSoundfile (SNDQuitsch, directory / "quitsch.ogg");
-	LoadSoundfile (SNDActivate, directory / "activate.ogg");
-	LoadSoundfile (SNDLoad, directory / "load.ogg");
-	LoadSoundfile (SNDReload, directory / "reload.ogg");
-	LoadSoundfile (SNDRepair, directory / "repair.ogg");
-	LoadSoundfile (SNDLandMinePlace, directory / "land_mine_place.ogg");
-	LoadSoundfile (SNDLandMineClear, directory / "land_mine_clear.ogg");
-	LoadSoundfile (SNDSeaMinePlace, directory / "sea_mine_place.ogg");
-	LoadSoundfile (SNDSeaMineClear, directory / "sea_mine_clear.ogg");
-	LoadSoundfile (SNDPanelOpen, directory / "panel_open.ogg");
-	LoadSoundfile (SNDPanelClose, directory / "panel_close.ogg");
-	LoadSoundfile (SNDAbsorb, directory / "absorb.ogg");
-	LoadSoundfile (SNDHitSmall, directory / "hit_small.ogg");
-	LoadSoundfile (SNDHitMed, directory / "hit_med.ogg");
-	LoadSoundfile (SNDHitLarge, directory / "hit_large.ogg");
-	LoadSoundfile (SNDPlaneLand, directory / "plane_land.ogg");
-	LoadSoundfile (SNDPlaneTakeoff, directory / "plane_takeoff.ogg");
+	LoadSoundFile (SNDHudSwitch, directory / "HudSwitch.ogg");
+	LoadSoundFile (SNDHudButton, directory / "HudButton.ogg");
+	LoadSoundFile (SNDMenuButton, directory / "MenuButton.ogg");
+	LoadSoundFile (SNDChat, directory / "Chat.ogg");
+	LoadSoundFile (SNDObjectMenu, directory / "ObjectMenu.ogg");
+	LoadSoundFile (EXPBigWet[0], directory / "exp_big_wet0.ogg");
+	LoadSoundFile (EXPBigWet[1], directory / "exp_big_wet1.ogg");
+	LoadSoundFile (EXPBig[0], directory / "exp_big0.ogg");
+	LoadSoundFile (EXPBig[1], directory / "exp_big1.ogg");
+	LoadSoundFile (EXPBig[2], directory / "exp_big2.ogg");
+	LoadSoundFile (EXPBig[3], directory / "exp_big3.ogg");
+	LoadSoundFile (EXPSmallWet[0], directory / "exp_small_wet0.ogg");
+	LoadSoundFile (EXPSmallWet[1], directory / "exp_small_wet1.ogg");
+	LoadSoundFile (EXPSmallWet[2], directory / "exp_small_wet2.ogg");
+	LoadSoundFile (EXPSmall[0], directory / "exp_small0.ogg");
+	LoadSoundFile (EXPSmall[1], directory / "exp_small1.ogg");
+	LoadSoundFile (EXPSmall[2], directory / "exp_small2.ogg");
+	LoadSoundFile (SNDArm, directory / "arm.ogg");
+	LoadSoundFile (SNDBuilding, directory / "building.ogg");
+	LoadSoundFile (SNDClearing, directory / "clearing.ogg");
+	LoadSoundFile (SNDQuitsch, directory / "quitsch.ogg");
+	LoadSoundFile (SNDActivate, directory / "activate.ogg");
+	LoadSoundFile (SNDLoad, directory / "load.ogg");
+	LoadSoundFile (SNDReload, directory / "reload.ogg");
+	LoadSoundFile (SNDRepair, directory / "repair.ogg");
+	LoadSoundFile (SNDLandMinePlace, directory / "land_mine_place.ogg");
+	LoadSoundFile (SNDLandMineClear, directory / "land_mine_clear.ogg");
+	LoadSoundFile (SNDSeaMinePlace, directory / "sea_mine_place.ogg");
+	LoadSoundFile (SNDSeaMineClear, directory / "sea_mine_clear.ogg");
+	LoadSoundFile (SNDPanelOpen, directory / "panel_open.ogg");
+	LoadSoundFile (SNDPanelClose, directory / "panel_close.ogg");
+	LoadSoundFile (SNDAbsorb, directory / "absorb.ogg");
+	LoadSoundFile (SNDHitSmall, directory / "hit_small.ogg");
+	LoadSoundFile (SNDHitMed, directory / "hit_med.ogg");
+	LoadSoundFile (SNDHitLarge, directory / "hit_large.ogg");
+	LoadSoundFile (SNDPlaneLand, directory / "plane_land.ogg");
+	LoadSoundFile (SNDPlaneTakeoff, directory / "plane_takeoff.ogg");
 }
 
 //------------------------------------------------------------------------------
 void cVoiceData::load (const std::filesystem::path& directory)
 {
-	LoadSoundfile (VOIAmmoLow[0], directory / "ammo_low1.ogg", true);
-	LoadSoundfile (VOIAmmoLow[1], directory / "ammo_low2.ogg", true);
-	LoadSoundfile (VOIAmmoEmpty[0], directory / "ammo_empty1.ogg", true);
-	LoadSoundfile (VOIAmmoEmpty[1], directory / "ammo_empty2.ogg", true);
-	LoadSoundfile (VOIAttacking[0], directory / "attacking1.ogg", true);
-	LoadSoundfile (VOIAttacking[1], directory / "attacking2.ogg", true);
-	LoadSoundfile (VOIAttackingEnemy[0], directory / "attacking_enemy1.ogg", true);
-	LoadSoundfile (VOIAttackingEnemy[1], directory / "attacking_enemy2.ogg", true);
-	LoadSoundfile (VOIAttackingUs[0], directory / "attacking_us.ogg", true);
-	LoadSoundfile (VOIAttackingUs[1], directory / "attacking_us2.ogg", true);
-	LoadSoundfile (VOIAttackingUs[2], directory / "attacking_us3.ogg", true);
-	LoadSoundfile (VOIBuildDone[0], directory / "build_done1.ogg", true);
-	LoadSoundfile (VOIBuildDone[1], directory / "build_done2.ogg", true);
-	LoadSoundfile (VOIBuildDone[2], directory / "build_done3.ogg", true);
-	LoadSoundfile (VOIBuildDone[3], directory / "build_done4.ogg", true);
-	LoadSoundfile (VOIClearing, directory / "clearing.ogg", true);
-	LoadSoundfile (VOIClearingMines[0], directory / "clearing_mines.ogg", true);
-	LoadSoundfile (VOIClearingMines[1], directory / "clearing_mines2.ogg", true);
-	LoadSoundfile (VOICommandoFailed[0], directory / "commando_failed1.ogg", true);
-	LoadSoundfile (VOICommandoFailed[1], directory / "commando_failed2.ogg", true);
-	LoadSoundfile (VOICommandoFailed[2], directory / "commando_failed3.ogg", true);
-	LoadSoundfile (VOIDestroyedUs[0], directory / "destroyed_us1.ogg", true);
-	LoadSoundfile (VOIDestroyedUs[1], directory / "destroyed_us2.ogg", true);
-	LoadSoundfile (VOIDetected[0], directory / "detected1.ogg", true);
-	LoadSoundfile (VOIDetected[1], directory / "detected2.ogg", true);
-	LoadSoundfile (VOILanding[0], directory / "landing1.ogg", true);
-	LoadSoundfile (VOILanding[1], directory / "landing2.ogg", true);
-	LoadSoundfile (VOILanding[2], directory / "landing3.ogg", true);
-	LoadSoundfile (VOILayingMines, directory / "laying_mines.ogg", true);
-	LoadSoundfile (VOINoPath[0], directory / "no_path1.ogg", true);
-	LoadSoundfile (VOINoPath[1], directory / "no_path2.ogg", true);
-	LoadSoundfile (VOINoSpeed, directory / "no_speed.ogg", true);
-	LoadSoundfile (VOIOK[0], directory / "ok1.ogg", true);
-	LoadSoundfile (VOIOK[1], directory / "ok2.ogg", true);
-	LoadSoundfile (VOIOK[2], directory / "ok3.ogg", true);
-	LoadSoundfile (VOIOK[3], directory / "ok4.ogg", true);
-	LoadSoundfile (VOIReammo, directory / "reammo.ogg", true);
-	LoadSoundfile (VOIReammoAll, directory / "reammo_all.ogg", true);
-	LoadSoundfile (VOIRepaired[0], directory / "repaired.ogg", true);
-	LoadSoundfile (VOIRepaired[1], directory / "repaired2.ogg", true);
-	LoadSoundfile (VOIRepairedAll[0], directory / "repaired_all1.ogg", true);
-	LoadSoundfile (VOIRepairedAll[1], directory / "repaired_all2.ogg", true);
-	LoadSoundfile (VOIResearchComplete, directory / "research_complete.ogg", true);
-	LoadSoundfile (VOISaved, directory / "saved.ogg", true);
-	LoadSoundfile (VOISentry, directory / "sentry.ogg", true);
-	LoadSoundfile (VOIStartMore, directory / "start_more.ogg", true);
-	LoadSoundfile (VOIStartNone, directory / "start_none.ogg", true);
-	LoadSoundfile (VOIStartOne, directory / "start_one.ogg", true);
-	LoadSoundfile (VOIStatusRed[0], directory / "status_red1.ogg", true);
-	LoadSoundfile (VOIStatusRed[1], directory / "status_red2.ogg", true);
-	LoadSoundfile (VOIStatusYellow[0], directory / "status_yellow1.ogg", true);
-	LoadSoundfile (VOIStatusYellow[1], directory / "status_yellow2.ogg", true);
-	LoadSoundfile (VOISubDetected, directory / "sub_detected.ogg", true);
-	LoadSoundfile (VOISurveying[0], directory / "surveying.ogg", true);
-	LoadSoundfile (VOISurveying[1], directory / "surveying2.ogg", true);
-	LoadSoundfile (VOITransferDone, directory / "transfer_done.ogg", true);
-	LoadSoundfile (VOITurnEnd20Sec[0], directory / "turn_end_20_sec1.ogg", true);
-	LoadSoundfile (VOITurnEnd20Sec[1], directory / "turn_end_20_sec2.ogg", true);
-	LoadSoundfile (VOITurnEnd20Sec[2], directory / "turn_end_20_sec3.ogg", true);
-	LoadSoundfile (VOIUnitDisabled, directory / "unit_disabled.ogg", true);
-	LoadSoundfile (VOIUnitDisabledByEnemy[0], directory / "unit_disabled_by_enemy1.ogg", true);
-	LoadSoundfile (VOIUnitDisabledByEnemy[1], directory / "unit_disabled_by_enemy2.ogg", true);
-	LoadSoundfile (VOIUnitStolen[0], directory / "unit_stolen1.ogg", true);
-	LoadSoundfile (VOIUnitStolen[1], directory / "unit_stolen2.ogg", true);
-	LoadSoundfile (VOIUnitStolenByEnemy, directory / "unit_stolen_by_enemy.ogg", true);
+	LoadSoundFile (VOIAmmoLow[0], directory / "ammo_low1.ogg", true);
+	LoadSoundFile (VOIAmmoLow[1], directory / "ammo_low2.ogg", true);
+	LoadSoundFile (VOIAmmoEmpty[0], directory / "ammo_empty1.ogg", true);
+	LoadSoundFile (VOIAmmoEmpty[1], directory / "ammo_empty2.ogg", true);
+	LoadSoundFile (VOIAttacking[0], directory / "attacking1.ogg", true);
+	LoadSoundFile (VOIAttacking[1], directory / "attacking2.ogg", true);
+	LoadSoundFile (VOIAttackingEnemy[0], directory / "attacking_enemy1.ogg", true);
+	LoadSoundFile (VOIAttackingEnemy[1], directory / "attacking_enemy2.ogg", true);
+	LoadSoundFile (VOIAttackingUs[0], directory / "attacking_us.ogg", true);
+	LoadSoundFile (VOIAttackingUs[1], directory / "attacking_us2.ogg", true);
+	LoadSoundFile (VOIAttackingUs[2], directory / "attacking_us3.ogg", true);
+	LoadSoundFile (VOIBuildDone[0], directory / "build_done1.ogg", true);
+	LoadSoundFile (VOIBuildDone[1], directory / "build_done2.ogg", true);
+	LoadSoundFile (VOIBuildDone[2], directory / "build_done3.ogg", true);
+	LoadSoundFile (VOIBuildDone[3], directory / "build_done4.ogg", true);
+	LoadSoundFile (VOIClearing, directory / "clearing.ogg", true);
+	LoadSoundFile (VOIClearingMines[0], directory / "clearing_mines.ogg", true);
+	LoadSoundFile (VOIClearingMines[1], directory / "clearing_mines2.ogg", true);
+	LoadSoundFile (VOICommandoFailed[0], directory / "commando_failed1.ogg", true);
+	LoadSoundFile (VOICommandoFailed[1], directory / "commando_failed2.ogg", true);
+	LoadSoundFile (VOICommandoFailed[2], directory / "commando_failed3.ogg", true);
+	LoadSoundFile (VOIDestroyedUs[0], directory / "destroyed_us1.ogg", true);
+	LoadSoundFile (VOIDestroyedUs[1], directory / "destroyed_us2.ogg", true);
+	LoadSoundFile (VOIDetected[0], directory / "detected1.ogg", true);
+	LoadSoundFile (VOIDetected[1], directory / "detected2.ogg", true);
+	LoadSoundFile (VOILanding[0], directory / "landing1.ogg", true);
+	LoadSoundFile (VOILanding[1], directory / "landing2.ogg", true);
+	LoadSoundFile (VOILanding[2], directory / "landing3.ogg", true);
+	LoadSoundFile (VOILayingMines, directory / "laying_mines.ogg", true);
+	LoadSoundFile (VOINoPath[0], directory / "no_path1.ogg", true);
+	LoadSoundFile (VOINoPath[1], directory / "no_path2.ogg", true);
+	LoadSoundFile (VOINoSpeed, directory / "no_speed.ogg", true);
+	LoadSoundFile (VOIOK[0], directory / "ok1.ogg", true);
+	LoadSoundFile (VOIOK[1], directory / "ok2.ogg", true);
+	LoadSoundFile (VOIOK[2], directory / "ok3.ogg", true);
+	LoadSoundFile (VOIOK[3], directory / "ok4.ogg", true);
+	LoadSoundFile (VOIReammo, directory / "reammo.ogg", true);
+	LoadSoundFile (VOIReammoAll, directory / "reammo_all.ogg", true);
+	LoadSoundFile (VOIRepaired[0], directory / "repaired.ogg", true);
+	LoadSoundFile (VOIRepaired[1], directory / "repaired2.ogg", true);
+	LoadSoundFile (VOIRepairedAll[0], directory / "repaired_all1.ogg", true);
+	LoadSoundFile (VOIRepairedAll[1], directory / "repaired_all2.ogg", true);
+	LoadSoundFile (VOIResearchComplete, directory / "research_complete.ogg", true);
+	LoadSoundFile (VOISaved, directory / "saved.ogg", true);
+	LoadSoundFile (VOISentry, directory / "sentry.ogg", true);
+	LoadSoundFile (VOIStartMore, directory / "start_more.ogg", true);
+	LoadSoundFile (VOIStartNone, directory / "start_none.ogg", true);
+	LoadSoundFile (VOIStartOne, directory / "start_one.ogg", true);
+	LoadSoundFile (VOIStatusRed[0], directory / "status_red1.ogg", true);
+	LoadSoundFile (VOIStatusRed[1], directory / "status_red2.ogg", true);
+	LoadSoundFile (VOIStatusYellow[0], directory / "status_yellow1.ogg", true);
+	LoadSoundFile (VOIStatusYellow[1], directory / "status_yellow2.ogg", true);
+	LoadSoundFile (VOISubDetected, directory / "sub_detected.ogg", true);
+	LoadSoundFile (VOISurveying[0], directory / "surveying.ogg", true);
+	LoadSoundFile (VOISurveying[1], directory / "surveying2.ogg", true);
+	LoadSoundFile (VOITransferDone, directory / "transfer_done.ogg", true);
+	LoadSoundFile (VOITurnEnd20Sec[0], directory / "turn_end_20_sec1.ogg", true);
+	LoadSoundFile (VOITurnEnd20Sec[1], directory / "turn_end_20_sec2.ogg", true);
+	LoadSoundFile (VOITurnEnd20Sec[2], directory / "turn_end_20_sec3.ogg", true);
+	LoadSoundFile (VOIUnitDisabled, directory / "unit_disabled.ogg", true);
+	LoadSoundFile (VOIUnitDisabledByEnemy[0], directory / "unit_disabled_by_enemy1.ogg", true);
+	LoadSoundFile (VOIUnitDisabledByEnemy[1], directory / "unit_disabled_by_enemy2.ogg", true);
+	LoadSoundFile (VOIUnitStolen[0], directory / "unit_stolen1.ogg", true);
+	LoadSoundFile (VOIUnitStolen[1], directory / "unit_stolen2.ogg", true);
+	LoadSoundFile (VOIUnitStolenByEnemy, directory / "unit_stolen_by_enemy.ogg", true);
 }
 
 //------------------------------------------------------------------------------
