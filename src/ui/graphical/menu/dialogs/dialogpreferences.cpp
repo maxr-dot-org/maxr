@@ -81,8 +81,8 @@ cDialogPreferences::cDialogPreferences() :
 	animationCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193), lngPack.i18n ("Settings~Animation"));
 	shadowsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20), lngPack.i18n ("Settings~Shadows"));
 	alphaCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20 * 2), lngPack.i18n ("Settings~Alphaeffects"));
-	demageBuildingsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193), lngPack.i18n ("Settings~ShowDamage"));
-	demageVehiclesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20), lngPack.i18n ("Settings~ShowDamageVehicle"));
+	damageBuildingsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193), lngPack.i18n ("Settings~ShowDamage"));
+	damageVehiclesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20), lngPack.i18n ("Settings~ShowDamageVehicle"));
 	tracksCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20 * 2), lngPack.i18n ("Settings~Tracks"));
 
 	autosaveCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294), lngPack.i18n ("Settings~Autosave"));
@@ -149,8 +149,8 @@ void cDialogPreferences::retranslate()
 	animationCheckBox->setText (lngPack.i18n ("Settings~Animation"));
 	shadowsCheckBox->setText (lngPack.i18n ("Settings~Shadows"));
 	alphaCheckBox->setText (lngPack.i18n ("Settings~Alphaeffects"));
-	demageBuildingsCheckBox->setText (lngPack.i18n ("Settings~ShowDamage"));
-	demageVehiclesCheckBox->setText (lngPack.i18n ("Settings~ShowDamageVehicle"));
+	damageBuildingsCheckBox->setText (lngPack.i18n ("Settings~ShowDamage"));
+	damageVehiclesCheckBox->setText (lngPack.i18n ("Settings~ShowDamageVehicle"));
 	tracksCheckBox->setText (lngPack.i18n ("Settings~Tracks"));
 	autosaveCheckBox->setText (lngPack.i18n ("Settings~Autosave"));
 	introCheckBox->setText (lngPack.i18n ("Settings~Intro"));
@@ -179,8 +179,8 @@ void cDialogPreferences::loadValues()
 	animationCheckBox->setChecked (settings.isAnimations());
 	shadowsCheckBox->setChecked (settings.isShadows());
 	alphaCheckBox->setChecked (settings.isAlphaEffects());
-	demageBuildingsCheckBox->setChecked (settings.isDamageEffects());
-	demageVehiclesCheckBox->setChecked (settings.isDamageEffectsVehicles());
+	damageBuildingsCheckBox->setChecked (settings.isDamageEffects());
+	damageVehiclesCheckBox->setChecked (settings.isDamageEffectsVehicles());
 	tracksCheckBox->setChecked (settings.isMakeTracks());
 
 	autosaveCheckBox->setChecked (settings.shouldAutosave());
@@ -227,8 +227,8 @@ void cDialogPreferences::saveValues()
 	settings.setAnimations (animationCheckBox->isChecked());
 	settings.setShadows (shadowsCheckBox->isChecked());
 	settings.setAlphaEffects (alphaCheckBox->isChecked());
-	settings.setDamageEffects (demageBuildingsCheckBox->isChecked());
-	settings.setDamageEffectsVehicles (demageVehiclesCheckBox->isChecked());
+	settings.setDamageEffects (damageBuildingsCheckBox->isChecked());
+	settings.setDamageEffectsVehicles (damageVehiclesCheckBox->isChecked());
 	settings.setMakeTracks (tracksCheckBox->isChecked());
 
 	settings.setAutosave (autosaveCheckBox->isChecked());
