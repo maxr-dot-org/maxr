@@ -75,7 +75,7 @@ private:
 
 	cCheckBox* animationCheckBox = nullptr;
 	cCheckBox* shadowsCheckBox = nullptr;
-	cCheckBox* aplhaCheckBox = nullptr;
+	cCheckBox* alphaCheckBox = nullptr;
 	cCheckBox* demageBuildingsCheckBox = nullptr;
 	cCheckBox* demageVehiclesCheckBox = nullptr;
 	cCheckBox* tracksCheckBox = nullptr;
