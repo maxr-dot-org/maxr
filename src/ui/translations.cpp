@@ -498,7 +498,7 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 				}
 				return sText + dated;
 			}
-			else //small building is rdy + activate after engineere moves away
+			else // small building is ready + activate after engineer moves away
 			{
 				sText = lngPack.i18n ("Comp~Producing_Fin");
 				sText += lngPack.i18n ("Punctuation~Colon");
