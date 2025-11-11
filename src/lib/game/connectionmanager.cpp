@@ -457,7 +457,7 @@ void cConnectionManager::messageReceived (const cSocket& socket, unsigned char* 
 	}
 
 	// handle messages for the connection handshake
-	if (handeConnectionHandshake (message, socket, playerOnSocket))
+	if (handleConnectionHandshake (message, socket, playerOnSocket))
 	{
 		return;
 	}
@@ -476,7 +476,7 @@ void cConnectionManager::messageReceived (const cSocket& socket, unsigned char* 
 	}
 }
 
-bool cConnectionManager::handeConnectionHandshake (const std::unique_ptr<cNetMessage>& message, const cSocket& socket, int playerOnSocket)
+bool cConnectionManager::handleConnectionHandshake (const std::unique_ptr<cNetMessage>& message, const cSocket& socket, int playerOnSocket)
 {
 	switch (message->getType())
 	{
