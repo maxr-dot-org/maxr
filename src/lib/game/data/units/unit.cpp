@@ -479,7 +479,7 @@ bool cUnit::isStealthOnCurrentTerrain (const cMapField& field, const sTerrain& t
 	{
 		return (staticData->isStealthOn & eTerrainFlag::Air) != 0;
 	}
-	else if ((field.hasBridgeOrPlattform() && staticData->factorGround > 0) || (!terrain.coast && !terrain.water))
+	else if ((field.hasBridgeOrPlatform() && staticData->factorGround > 0) || (!terrain.coast && !terrain.water))
 	{
 		return (staticData->isStealthOn & eTerrainFlag::Ground) != 0;
 	}
@@ -564,7 +564,7 @@ bool cUnit::checkDetectedByPlayer (const cPlayer& player, const cMap& map) const
 	bool isOnWater = map.isWater (position);
 	bool isOnCoast = map.isCoast (position);
 
-	if (staticData->factorGround > 0 && map.getField (position).hasBridgeOrPlattform())
+	if (staticData->factorGround > 0 && map.getField (position).hasBridgeOrPlatform())
 	{
 		isOnWater = false;
 		isOnCoast = false;

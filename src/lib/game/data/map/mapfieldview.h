@@ -51,7 +51,7 @@ public:
 	/** returns a pointer to an expl. mine, if there is one */
 	cBuilding* getMine() const;
 	/** checks if there is a building that allows ground units on water fields */
-	bool hasBridgeOrPlattform() const;
+	bool hasBridgeOrPlatform() const;
 
 	//TODO: maybe use iterators here, to prevent copying the unit vectors
 	/** returns the buildings on this field */

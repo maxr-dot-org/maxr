@@ -814,7 +814,7 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 
 			if (stealthVehicle->getStaticUnitData().factorGround > 0)
 			{
-				if (map->getField (currentPosition).hasBridgeOrPlattform())
+				if (map->getField (currentPosition).hasBridgeOrPlatform())
 				{
 					detectOnDest = true;
 				}

@@ -148,7 +148,7 @@ cBuilding* cMapFieldView::getMine() const
 }
 
 //------------------------------------------------------------------------------
-bool cMapFieldView::hasBridgeOrPlattform() const
+bool cMapFieldView::hasBridgeOrPlatform() const
 {
 	for (const auto& building : mapField.getBuildings())
 	{
