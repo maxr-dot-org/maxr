@@ -1875,7 +1875,7 @@ void cGameGuiController::updateChangeAllowed()
 	const cFreezeModes& freezeModes = activeClient->getFreezeModes();
 	const auto& model = activeClient->getModel();
 
-	bool changeAllowed = !freezeModes.isFreezed() && (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->gameType == eGameSettingsGameType::Simultaneous);
+	bool changeAllowed = !freezeModes.isFrozen() && (activeClient->getModel().getActiveTurnPlayer() == getActivePlayer().get() || model.getGameSettings()->gameType == eGameSettingsGameType::Simultaneous);
 	gameGui->getGameMap().setChangeAllowed (changeAllowed);
 }
 
