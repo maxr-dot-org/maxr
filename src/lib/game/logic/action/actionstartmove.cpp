@@ -64,7 +64,7 @@ void cActionStartMove::execute (cModel& model) const
 	}
 
 	// TODO: is this check really needed?
-	if (vehicle->isBeeingAttacked())
+	if (vehicle->isBeingAttacked())
 	{
 		NetLog.debug (" Cannot move a vehicle currently under attack");
 		return;

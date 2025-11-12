@@ -152,11 +152,11 @@ int cPathCalculator::calcNextCost (const cPosition& source, const cPosition& des
 	{
 		costs = (int) (4 * unitData.factorAir);
 	}
-	else if (map->isWater (destination) && !(map->getField (destination).hasBridgeOrPlattform() && unitData.factorGround > 0))
+	else if (map->isWater (destination) && !(map->getField (destination).hasBridgeOrPlatform() && unitData.factorGround > 0))
 	{
 		costs = (int) (4 * unitData.factorSea);
 	}
-	else if (map->isCoast (destination) && !(map->getField (destination).hasBridgeOrPlattform() && unitData.factorGround > 0))
+	else if (map->isCoast (destination) && !(map->getField (destination).hasBridgeOrPlatform() && unitData.factorGround > 0))
 	{
 		costs = (int) (4 * unitData.factorCoast);
 	}

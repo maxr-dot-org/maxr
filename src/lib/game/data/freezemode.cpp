@@ -84,7 +84,7 @@ void cFreezeModes::disable (eFreezeMode mode)
 }
 
 //------------------------------------------------------------------------------
-bool cFreezeModes::isFreezed() const
+bool cFreezeModes::isFrozen() const
 {
 	return pause | waitForTurnEnd | waitForClient | waitForServer;
 }

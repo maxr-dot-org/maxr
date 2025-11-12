@@ -89,7 +89,7 @@ void cMoveJob::run (cModel& model)
 		return;
 	}
 	assert (vehicle);
-	if (vehicle->isBeeingAttacked())
+	if (vehicle->isBeingAttacked())
 	{
 		// suspend movejobs of attacked vehicles
 		return;
@@ -172,7 +172,7 @@ void cMoveJob::startMove (cModel& model, cVehicle& vehicle)
 	{
 		return;
 	}
-	if (vehicle.isBeeingAttacked())
+	if (vehicle.isBeingAttacked())
 	{
 		// suspend movejobs of attacked vehicles
 		return;

@@ -57,7 +57,7 @@ cUnit::cUnit (const cDynamicUnitData* unitData, const cStaticUnitData* staticDat
 	sentryChanged.connect ([this]() { statusChanged(); });
 	manualFireChanged.connect ([this]() { statusChanged(); });
 	attackingChanged.connect ([this]() { statusChanged(); });
-	beeingAttackedChanged.connect ([this]() { statusChanged(); });
+	beingAttackedChanged.connect ([this]() { statusChanged(); });
 }
 
 //------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ void cUnit::storeVehicle (cVehicle& vehicle, cMap& map)
 	vehicle.setManualFireActive (false);
 
 	vehicle.setLoaded (true);
-	vehicle.setIsBeeinAttacked (false);
+	vehicle.setIsBeingAttacked (false);
 
 	storedUnits.push_back (&vehicle);
 	storedUnitsChanged();
@@ -286,7 +286,7 @@ uint32_t cUnit::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (sentryActive, crc);
 	crc = calcCheckSum (manualFireActive, crc);
 	crc = calcCheckSum (attacking, crc);
-	crc = calcCheckSum (beeingAttacked, crc);
+	crc = calcCheckSum (beingAttacked, crc);
 	crc = calcCheckSum (beenAttacked, crc);
 	crc = calcCheckSum (storageResCur, crc);
 
@@ -353,7 +353,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMapView& map, b
 	if (data.getAmmo() <= 0) return false;
 	if (attacking) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitMoving()) return false;
-	if (isBeeingAttacked()) return false;
+	if (isBeingAttacked()) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
 	if (map.isValidPosition (position) == false) return false;
 	if (checkRange && isInRange (position) == false) return false;
@@ -447,10 +447,10 @@ void cUnit::setAttacking (bool value)
 }
 
 //------------------------------------------------------------------------------
-void cUnit::setIsBeeinAttacked (bool value)
+void cUnit::setIsBeingAttacked (bool value)
 {
-	std::swap (beeingAttacked, value);
-	if (value != beeingAttacked) beeingAttackedChanged();
+	std::swap (beingAttacked, value);
+	if (value != beingAttacked) beingAttackedChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -479,7 +479,7 @@ bool cUnit::isStealthOnCurrentTerrain (const cMapField& field, const sTerrain& t
 	{
 		return (staticData->isStealthOn & eTerrainFlag::Air) != 0;
 	}
-	else if ((field.hasBridgeOrPlattform() && staticData->factorGround > 0) || (!terrain.coast && !terrain.water))
+	else if ((field.hasBridgeOrPlatform() && staticData->factorGround > 0) || (!terrain.coast && !terrain.water))
 	{
 		return (staticData->isStealthOn & eTerrainFlag::Ground) != 0;
 	}
@@ -564,7 +564,7 @@ bool cUnit::checkDetectedByPlayer (const cPlayer& player, const cMap& map) const
 	bool isOnWater = map.isWater (position);
 	bool isOnCoast = map.isCoast (position);
 
-	if (staticData->factorGround > 0 && map.getField (position).hasBridgeOrPlattform())
+	if (staticData->factorGround > 0 && map.getField (position).hasBridgeOrPlatform())
 	{
 		isOnWater = false;
 		isOnCoast = false;

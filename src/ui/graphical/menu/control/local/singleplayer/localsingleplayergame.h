@@ -28,10 +28,10 @@
 class cClient;
 class cServer;
 
-class cLocalSingleplayerGame : public cGame
+class cLocalSinglePlayerGame : public cGame
 {
 public:
-	~cLocalSingleplayerGame();
+	~cLocalSinglePlayerGame();
 
 	void run() override;
 

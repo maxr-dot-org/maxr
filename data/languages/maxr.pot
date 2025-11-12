@@ -184,7 +184,7 @@ msgid_plural "Comp~Is(Are)Finished"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Comp~IsBeeingAttacked"
+msgid "Comp~IsBeingAttacked"
 msgstr ""
 
 msgid "Comp~Labs"
@@ -923,7 +923,7 @@ msgstr ""
 msgid "Settings~3D"
 msgstr ""
 
-msgid "Settings~Alphaeffects"
+msgid "Settings~AlphaEffects"
 msgstr ""
 
 msgid "Settings~Animation"
@@ -953,7 +953,7 @@ msgstr ""
 msgid "Settings~Resolution"
 msgstr ""
 
-msgid "Settings~Scrollspeed"
+msgid "Settings~ScrollSpeed"
 msgstr ""
 
 msgid "Settings~Shadows"

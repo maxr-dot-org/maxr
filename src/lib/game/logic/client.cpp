@@ -437,7 +437,7 @@ void cClient::startClearRubbles (const cVehicle& vehicle)
 //------------------------------------------------------------------------------
 void cClient::endTurn()
 {
-	if (!getFreezeModes().isFreezed()) sendNetMessage (cActionEndTurn());
+	if (!getFreezeModes().isFrozen()) sendNetMessage (cActionEndTurn());
 }
 
 //------------------------------------------------------------------------------

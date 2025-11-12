@@ -147,7 +147,7 @@ cBuilding* cMapField::getMine() const
 }
 
 //------------------------------------------------------------------------------
-bool cMapField::hasBridgeOrPlattform() const
+bool cMapField::hasBridgeOrPlatform() const
 {
 	for (cBuilding* building : buildings)
 	{

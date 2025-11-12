@@ -257,9 +257,9 @@ void cServer::run (const cNetMessage& message)
 			// filter disallowed actions
 			if (action.getType() != cAction::eActiontype::InitNewGame)
 			{
-				if (freezeModes.isFreezed())
+				if (freezeModes.isFrozen())
 				{
-					NetLog.warn (" Server: Discarding action, because game is freezed.");
+					NetLog.warn (" Server: Discarding action, because game is frozen.");
 					break;
 				}
 				if (model.getGameSettings()->gameType == eGameSettingsGameType::Turns && message.playerNr != model.getActiveTurnPlayer()->getId())

@@ -139,14 +139,14 @@ public:
 	void setSentryActive (bool value);
 	void setManualFireActive (bool value);
 	void setAttacking (bool value);
-	void setIsBeeinAttacked (bool value);
+	void setIsBeingAttacked (bool value);
 	void setHasBeenAttacked (bool value);
 
 	int getDisabledTurns() const { return turnsDisabled; }
 	bool isSentryActive() const { return sentryActive; }
 	bool isManualFireActive() const { return manualFireActive; }
 	bool isAttacking() const { return attacking; }
-	bool isBeeingAttacked() const { return beeingAttacked; }
+	bool isBeingAttacked() const { return beingAttacked; }
 	bool hasBeenAttacked() const { return beenAttacked; }
 
 	int getStoredResources() const { return storageResCur; }
@@ -178,7 +178,7 @@ public:
 	mutable cSignal<void()> sentryChanged;
 	mutable cSignal<void()> manualFireChanged;
 	mutable cSignal<void()> attackingChanged;
-	mutable cSignal<void()> beeingAttackedChanged;
+	mutable cSignal<void()> beingAttackedChanged;
 	mutable cSignal<void()> beenAttackedChanged;
 	mutable cSignal<void()> movingChanged;
 
@@ -212,7 +212,7 @@ public:
 		archive & NVP (sentryActive);
 		archive & NVP (manualFireActive);
 		archive & NVP (attacking);
-		archive & NVP (beeingAttacked);
+		archive & NVP (beingAttacked);
 		archive & NVP (beenAttacked);
 		archive & NVP (storageResCur);
 		archive & NVP (jobActive);
@@ -268,7 +268,7 @@ private:
 	bool sentryActive = false; ///< is the unit on sentry?
 	bool manualFireActive = false; ///< if active, then the unit only fires by manual control and not as reaction fire
 	bool attacking = false; ///< is the unit currently attacking?
-	bool beeingAttacked = false; ///< true when an attack on this unit is running
+	bool beingAttacked = false; ///< true when an attack on this unit is running
 	bool beenAttacked = false; //the unit was attacked in this turn
 	int storageResCur = 0; //amount of stored resources
 };

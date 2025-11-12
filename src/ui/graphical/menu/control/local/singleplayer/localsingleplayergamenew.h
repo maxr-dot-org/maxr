@@ -35,10 +35,10 @@ class cStaticMap;
 class cGameSettings;
 class cPlayerBasicData;
 
-class cLocalSingleplayerGameNew : public cLocalSingleplayerGame
+class cLocalSinglePlayerGameNew : public cLocalSinglePlayerGame
 {
 public:
-	cLocalSingleplayerGameNew();
+	cLocalSinglePlayerGameNew();
 
 	void run() override;
 

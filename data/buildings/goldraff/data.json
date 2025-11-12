@@ -21,7 +21,7 @@
   "convertsGold": 5,
   "damage": 0,
   "defaultName": "goldraffinery",
-  "description": "Gold Refinery\n\nRefinery for converting gold into credits. Credits are required to purchase unit improvements. To run, a gold refinery needs a source of gold ore. A mining station can produce gold ore if one of its four spuares covers a spuare with undergound gold.",
+  "description": "Gold Refinery\n\nRefinery for converting gold into credits. Credits are required to purchase unit improvements. To run, a gold refinery needs a source of gold ore. A mining station can produce gold ore if one of its four squares covers a square with underground gold.",
   "doesSelfRepair": true,
   "explodesOnContact": false,
   "factorAir": 0.0,

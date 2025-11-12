@@ -189,7 +189,7 @@ msgid_plural "Comp~Is(Are)Finished"
 msgstr[0] " elkészült"
 msgstr[1] " elkészült"
 
-msgid "Comp~IsBeeingAttacked"
+msgid "Comp~IsBeingAttacked"
 msgstr ""
 
 msgid "Comp~Labs"
@@ -941,7 +941,7 @@ msgstr ": "
 msgid "Settings~3D"
 msgstr "3D"
 
-msgid "Settings~Alphaeffects"
+msgid "Settings~AlphaEffects"
 msgstr "Alfaeffektusok"
 
 msgid "Settings~Animation"
@@ -971,7 +971,7 @@ msgstr "Beállítások"
 msgid "Settings~Resolution"
 msgstr "Felbontás"
 
-msgid "Settings~Scrollspeed"
+msgid "Settings~ScrollSpeed"
 msgstr "Görgősebesség"
 
 msgid "Settings~Shadows"

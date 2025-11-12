@@ -25,10 +25,10 @@
 
 class cApplication;
 
-class cLocalSingleplayerGameSaved : public cLocalSingleplayerGame
+class cLocalSinglePlayerGameSaved : public cLocalSinglePlayerGame
 {
 public:
-	explicit cLocalSingleplayerGameSaved (int saveGameNumber) :
+	explicit cLocalSinglePlayerGameSaved (int saveGameNumber) :
 		saveGameNumber{saveGameNumber}
 	{}
 	void start (cApplication& application);

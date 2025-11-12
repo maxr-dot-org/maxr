@@ -99,7 +99,7 @@ public:
 	cBuilding* getMine() const;
 
 	/** checks if there is a building that allows ground units on water fields */
-	bool hasBridgeOrPlattform() const;
+	bool hasBridgeOrPlatform() const;
 
 	/** Adds the passed building before the given index to the building list of the field */
 	void addBuilding (cBuilding&, size_t index);

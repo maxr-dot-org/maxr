@@ -774,7 +774,7 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 	std::optional<cPosition> bestPosition;
 	for (const cPosition& currentPosition : map->staticMap->collectAroundPositions (position, stealthVehicle->getIsBig()))
 	{
-		// when a bigOffet was passed,
+		// when a bigOffset was passed,
 		// for example a constructor needs space for a big building
 		// so not all directions are allowed for the side stepping
 		if (bigOffset != -1)
@@ -814,7 +814,7 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 
 			if (stealthVehicle->getStaticUnitData().factorGround > 0)
 			{
-				if (map->getField (currentPosition).hasBridgeOrPlattform())
+				if (map->getField (currentPosition).hasBridgeOrPlatform())
 				{
 					detectOnDest = true;
 				}

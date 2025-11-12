@@ -33,7 +33,7 @@ cDialogSelfDestruction::cDialogSelfDestruction (const cUnit& unit, std::shared_p
 	cWindow (LoadPCX (GFXOD_DESTRUCTION), eWindowBackgrounds::Alpha)
 {
 	armButton = emplaceChild<cPushButton> (getPosition() + cPosition (88, 14), ePushButtonType::Angular, lngPack.i18n ("Others~Hot"), eUnicodeFontType::LatinNormal);
-	signalConnectionManager.connect (armButton->clicked, [this]() { armcClicked(); });
+	signalConnectionManager.connect (armButton->clicked, [this]() { armClicked(); });
 
 	destroyButton = emplaceChild<cPushButton> (getPosition() + cPosition (15, 13), ePushButtonType::Destroy);
 	destroyButton->lock();
@@ -65,7 +65,7 @@ void cDialogSelfDestruction::retranslate()
 }
 
 //------------------------------------------------------------------------------
-void cDialogSelfDestruction::armcClicked()
+void cDialogSelfDestruction::armClicked()
 {
 	protectionGlass->open();
 	armButton->lock();

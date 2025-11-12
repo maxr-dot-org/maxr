@@ -192,7 +192,7 @@ msgstr[0] " - готово"
 msgstr[1] " - готовы"
 msgstr[2] " - готовы"
 
-msgid "Comp~IsBeeingAttacked"
+msgid "Comp~IsBeingAttacked"
 msgstr ""
 
 msgid "Comp~Labs"
@@ -951,7 +951,7 @@ msgstr ": "
 msgid "Settings~3D"
 msgstr "3D"
 
-msgid "Settings~Alphaeffects"
+msgid "Settings~AlphaEffects"
 msgstr "Эффекты прозрачности"
 
 msgid "Settings~Animation"
@@ -981,7 +981,7 @@ msgstr "Настройки"
 msgid "Settings~Resolution"
 msgstr "Разрешение экрана"
 
-msgid "Settings~Scrollspeed"
+msgid "Settings~ScrollSpeed"
 msgstr "Скорость прокрутки"
 
 msgid "Settings~Shadows"

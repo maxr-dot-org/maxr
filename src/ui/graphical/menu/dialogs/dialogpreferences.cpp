@@ -75,14 +75,14 @@ cDialogPreferences::cDialogPreferences() :
 	colorLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 175), getPosition() + cPosition (135, 185)), lngPack.i18n ("Title~Color"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	colorSelector = emplaceChild<cColorSelector> (getPosition() + cPosition (160, 172), cRgbColor::black());
 
-	scrollSpeedLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 257), getPosition() + cPosition (135, 267)), lngPack.i18n ("Settings~Scrollspeed"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
+	scrollSpeedLabel = emplaceChild<cLabel> (cBox<cPosition> (getPosition() + cPosition (25, 257), getPosition() + cPosition (135, 267)), lngPack.i18n ("Settings~ScrollSpeed"), eUnicodeFontType::LatinNormal, eAlignmentType::Left);
 	scrollSpeedSlider = emplaceChild<cSlider> (cBox<cPosition> (getPosition() + cPosition (140, 254), getPosition() + cPosition (240, 271)), 0, 128, eOrientationType::Horizontal);
 
 	animationCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193), lngPack.i18n ("Settings~Animation"));
 	shadowsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20), lngPack.i18n ("Settings~Shadows"));
-	aplhaCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20 * 2), lngPack.i18n ("Settings~Alphaeffects"));
-	demageBuildingsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193), lngPack.i18n ("Settings~ShowDamage"));
-	demageVehiclesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20), lngPack.i18n ("Settings~ShowDamageVehicle"));
+	alphaCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 193 + 20 * 2), lngPack.i18n ("Settings~AlphaEffects"));
+	damageBuildingsCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193), lngPack.i18n ("Settings~ShowDamage"));
+	damageVehiclesCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20), lngPack.i18n ("Settings~ShowDamageVehicle"));
 	tracksCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (210, 193 + 20 * 2), lngPack.i18n ("Settings~Tracks"));
 
 	autosaveCheckBox = emplaceChild<cCheckBox> (getPosition() + cPosition (25, 294), lngPack.i18n ("Settings~Autosave"));
@@ -135,7 +135,7 @@ void cDialogPreferences::retranslate()
 	voicesLabel->setText (lngPack.i18n ("Settings~Voices"));
 	playerNameLabel->setText (lngPack.i18n ("Title~Player_Name"));
 	colorLabel->setText (lngPack.i18n ("Title~Color"));
-	scrollSpeedLabel->setText (lngPack.i18n ("Settings~Scrollspeed"));
+	scrollSpeedLabel->setText (lngPack.i18n ("Settings~ScrollSpeed"));
 	languageLabel->setText (lngPack.i18n ("Settings~Language") + lngPack.i18n ("Punctuation~Colon"));
 	resolutionLabel->setText (lngPack.i18n ("Settings~Resolution") + lngPack.i18n ("Punctuation~Colon"));
 
@@ -148,9 +148,9 @@ void cDialogPreferences::retranslate()
 	disableVoicesCheckBox->setText (lngPack.i18n ("Settings~Disable"));
 	animationCheckBox->setText (lngPack.i18n ("Settings~Animation"));
 	shadowsCheckBox->setText (lngPack.i18n ("Settings~Shadows"));
-	aplhaCheckBox->setText (lngPack.i18n ("Settings~Alphaeffects"));
-	demageBuildingsCheckBox->setText (lngPack.i18n ("Settings~ShowDamage"));
-	demageVehiclesCheckBox->setText (lngPack.i18n ("Settings~ShowDamageVehicle"));
+	alphaCheckBox->setText (lngPack.i18n ("Settings~AlphaEffects"));
+	damageBuildingsCheckBox->setText (lngPack.i18n ("Settings~ShowDamage"));
+	damageVehiclesCheckBox->setText (lngPack.i18n ("Settings~ShowDamageVehicle"));
 	tracksCheckBox->setText (lngPack.i18n ("Settings~Tracks"));
 	autosaveCheckBox->setText (lngPack.i18n ("Settings~Autosave"));
 	introCheckBox->setText (lngPack.i18n ("Settings~Intro"));
@@ -178,9 +178,9 @@ void cDialogPreferences::loadValues()
 
 	animationCheckBox->setChecked (settings.isAnimations());
 	shadowsCheckBox->setChecked (settings.isShadows());
-	aplhaCheckBox->setChecked (settings.isAlphaEffects());
-	demageBuildingsCheckBox->setChecked (settings.isDamageEffects());
-	demageVehiclesCheckBox->setChecked (settings.isDamageEffectsVehicles());
+	alphaCheckBox->setChecked (settings.isAlphaEffects());
+	damageBuildingsCheckBox->setChecked (settings.isDamageEffects());
+	damageVehiclesCheckBox->setChecked (settings.isDamageEffectsVehicles());
 	tracksCheckBox->setChecked (settings.isMakeTracks());
 
 	autosaveCheckBox->setChecked (settings.shouldAutosave());
@@ -226,9 +226,9 @@ void cDialogPreferences::saveValues()
 
 	settings.setAnimations (animationCheckBox->isChecked());
 	settings.setShadows (shadowsCheckBox->isChecked());
-	settings.setAlphaEffects (aplhaCheckBox->isChecked());
-	settings.setDamageEffects (demageBuildingsCheckBox->isChecked());
-	settings.setDamageEffectsVehicles (demageVehiclesCheckBox->isChecked());
+	settings.setAlphaEffects (alphaCheckBox->isChecked());
+	settings.setDamageEffects (damageBuildingsCheckBox->isChecked());
+	settings.setDamageEffectsVehicles (damageVehiclesCheckBox->isChecked());
 	settings.setMakeTracks (tracksCheckBox->isChecked());
 
 	settings.setAutosave (autosaveCheckBox->isChecked());

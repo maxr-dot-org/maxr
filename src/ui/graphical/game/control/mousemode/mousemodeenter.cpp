@@ -125,7 +125,7 @@ void cMouseModeEnter::updateFieldUnitConnections (const cMapFieldView& field)
 	{
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->moveJobChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->disabledChanged, [this]() { needRefresh(); });
-		mapFieldUnitsSignalConnectionManager.connect (vehicle->beeingAttackedChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->beingAttackedChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->attackingChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->buildingChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->movingChanged, [this]() { needRefresh(); });

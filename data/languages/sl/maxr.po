@@ -194,7 +194,7 @@ msgstr[1] " so zaključeni"
 msgstr[2] " so zaključeni"
 msgstr[3] " so zaključeni"
 
-msgid "Comp~IsBeeingAttacked"
+msgid "Comp~IsBeingAttacked"
 msgstr "Je napadena"
 
 msgid "Comp~Labs"
@@ -964,7 +964,7 @@ msgstr ": "
 msgid "Settings~3D"
 msgstr "3D"
 
-msgid "Settings~Alphaeffects"
+msgid "Settings~AlphaEffects"
 msgstr "Alfa efekti"
 
 msgid "Settings~Animation"
@@ -994,7 +994,7 @@ msgstr "Lastnosti"
 msgid "Settings~Resolution"
 msgstr "Resolucija"
 
-msgid "Settings~Scrollspeed"
+msgid "Settings~ScrollSpeed"
 msgstr "Hitrost zaslona"
 
 msgid "Settings~Shadows"

@@ -430,8 +430,8 @@ std::string getStatusStr (const cBuilding& building, const cPlayer* whoWantsToKn
 
 	if (building.isAttacking())
 		return lngPack.i18n ("Comp~AttackingStatusStr") + dated;
-	else if (building.isBeeingAttacked())
-		return lngPack.i18n ("Comp~IsBeeingAttacked") + dated;
+	else if (building.isBeingAttacked())
+		return lngPack.i18n ("Comp~IsBeingAttacked") + dated;
 	else if (building.isSentryActive())
 		return lngPack.i18n ("Comp~Sentry") + dated;
 	else if (building.isManualFireActive())
@@ -498,7 +498,7 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 				}
 				return sText + dated;
 			}
-			else //small building is rdy + activate after engineere moves away
+			else // small building is ready + activate after engineer moves away
 			{
 				sText = lngPack.i18n ("Comp~Producing_Fin");
 				sText += lngPack.i18n ("Punctuation~Colon");
@@ -536,8 +536,8 @@ std::string getStatusStr (const cVehicle& vehicle, const cPlayer* player, const 
 			sTmp = lngPack.i18n ("Comp~Moving");
 		else if (vehicle.isAttacking())
 			sTmp = lngPack.i18n ("Comp~AttackingStatusStr");
-		else if (vehicle.isBeeingAttacked())
-			sTmp = lngPack.i18n ("Comp~IsBeeingAttacked");
+		else if (vehicle.isBeingAttacked())
+			sTmp = lngPack.i18n ("Comp~IsBeingAttacked");
 		else if (vehicle.isManualFireActive())
 			sTmp = lngPack.i18n ("Comp~ReactionFireOff");
 		else if (vehicle.isSentryActive())

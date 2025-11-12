@@ -91,7 +91,7 @@ private:
 	void startTimeout (const cSocket&);
 	void stopTimeout (const cSocket&);
 	int sendMessage (const cSocket&, const cNetMessage&);
-	bool handeConnectionHandshake (const std::unique_ptr<cNetMessage>&, const cSocket&, int playerOnSocket);
+	bool handleConnectionHandshake (const std::unique_ptr<cNetMessage>&, const cSocket&, int playerOnSocket);
 
 private:
 	std::unique_ptr<cNetwork> network;

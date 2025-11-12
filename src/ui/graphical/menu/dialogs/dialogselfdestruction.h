@@ -47,7 +47,7 @@ private:
 	cPushButton* cancelButton = nullptr;
 	cProtectionGlass* protectionGlass = nullptr;
 
-	void armcClicked();
+	void armClicked();
 
 	void closeOnUnitDestruction();
 };

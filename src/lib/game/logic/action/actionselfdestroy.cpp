@@ -41,7 +41,7 @@ void cActionSelfDestroy::execute (cModel& model) const
 	if (b == nullptr || !b->getOwner()) return;
 	if (b->getOwner()->getId() != playerNr) return;
 
-	if (b->isBeeingAttacked()) return;
+	if (b->isBeingAttacked()) return;
 
 	// special case: when a land/sea mine explodes, it makes damage according to
 	// its attack points. So start an attack job instead of just destoying it.

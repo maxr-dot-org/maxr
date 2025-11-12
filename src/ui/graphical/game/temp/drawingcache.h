@@ -95,7 +95,7 @@ public:
 	SDL_Surface* getCachedImage (const cBuilding& building, double zoom);
 	SDL_Surface* getCachedImage (const cVehicle& vehicle, double zoom, const cMapView& map, unsigned long long animationTime);
 	/**
-	* This method creates a new chace entry, when there is space in the cache.
+	* This method creates a new cache entry, when there is space in the cache.
 	* When there is no free space, an old entry is reused.
 	* When there is no free space and no old entries, nullptr is returned.
 	* @return a surface to which the building has to be drawn, after calling this function. Returns nullptr when the cache is full.

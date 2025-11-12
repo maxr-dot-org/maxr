@@ -99,7 +99,7 @@ void cKeyboard::handleKeyboardEvent (const cKeyboardEvent& event)
 	}
 
 	//set modifier in case the key event was a modifier key itself
-	//this is needed when a mouse object will querry the current modifier state later
+	//this is needed when a mouse object will query the current modifier state later
 	updateModifiersFromKeyPress (event);
 
 	if (currentModifiers != oldModifiers)

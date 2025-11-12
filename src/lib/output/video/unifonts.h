@@ -75,7 +75,7 @@ enum class eUnicodeFontCharset
 /**
  * @author alzi alias DoctorDeath
  * Loads the fontbitmaps from a ISO-8859 structure to a unicode structure
- * and handles theire output to the screen
+ * and handles their output to the screen
 */
 class cUnicodeFont
 {

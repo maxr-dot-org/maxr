@@ -105,7 +105,7 @@ void cMouseModeLoad::updateFieldUnitConnections (const cMapFieldView& field)
 	if (plane)
 	{
 		mapFieldUnitsSignalConnectionManager.connect (plane->clearingChanged, [this]() { needRefresh(); });
-		mapFieldUnitsSignalConnectionManager.connect (plane->beeingAttackedChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->beingAttackedChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (plane->attackingChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (plane->buildingChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (plane->movingChanged, [this]() { needRefresh(); });
@@ -115,7 +115,7 @@ void cMouseModeLoad::updateFieldUnitConnections (const cMapFieldView& field)
 	{
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->moveJobChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->clearingChanged, [this]() { needRefresh(); });
-		mapFieldUnitsSignalConnectionManager.connect (vehicle->beeingAttackedChanged, [this]() { needRefresh(); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->beingAttackedChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->attackingChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->buildingChanged, [this]() { needRefresh(); });
 		mapFieldUnitsSignalConnectionManager.connect (vehicle->movingChanged, [this]() { needRefresh(); });

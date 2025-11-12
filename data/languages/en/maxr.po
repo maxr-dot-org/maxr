@@ -185,8 +185,8 @@ msgid_plural "Comp~Is(Are)Finished"
 msgstr[0] " is finished"
 msgstr[1] " are finished"
 
-msgid "Comp~IsBeeingAttacked"
-msgstr "Is beeing attacked"
+msgid "Comp~IsBeingAttacked"
+msgstr "Is being attacked"
 
 msgid "Comp~Labs"
 msgstr "Labs"
@@ -856,7 +856,7 @@ msgid "Others~Shots_7"
 msgstr "Shots"
 
 msgid "Others~Single_Player"
-msgstr "Singleplayer (No AI)"
+msgstr "Single player (No AI)"
 
 msgid "Others~Speed"
 msgstr "Speed"
@@ -930,8 +930,8 @@ msgstr ": "
 msgid "Settings~3D"
 msgstr "3D"
 
-msgid "Settings~Alphaeffects"
-msgstr "Alphaeffects"
+msgid "Settings~AlphaEffects"
+msgstr "Alpha effects"
 
 msgid "Settings~Animation"
 msgstr "Animations"
@@ -960,8 +960,8 @@ msgstr "Preferences"
 msgid "Settings~Resolution"
 msgstr "Resolution"
 
-msgid "Settings~Scrollspeed"
-msgstr "Scrollspeed"
+msgid "Settings~ScrollSpeed"
+msgstr "ScrollSpeed"
 
 msgid "Settings~Shadows"
 msgstr "Shadows"

@@ -63,7 +63,7 @@ public:
 	void enable (eFreezeMode);
 	bool isEnabled (eFreezeMode) const;
 
-	bool isFreezed() const;
+	bool isFrozen() const;
 	bool gameTimePaused() const;
 
 	template <ArchiveInOrOut Archive>

@@ -29,7 +29,7 @@
 #include "ui/widgets/application.h"
 
 //------------------------------------------------------------------------------
-cLocalSingleplayerGameNew::cLocalSingleplayerGameNew() :
+cLocalSinglePlayerGameNew::cLocalSinglePlayerGameNew() :
 	lobbyServer (connectionManager),
 	lobbyClient (connectionManager, cPlayerBasicData::fromSettings())
 {
@@ -38,7 +38,7 @@ cLocalSingleplayerGameNew::cLocalSingleplayerGameNew() :
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::run()
+void cLocalSinglePlayerGameNew::run()
 {
 	if (client)
 	{
@@ -64,7 +64,7 @@ void cLocalSingleplayerGameNew::run()
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::runGamePreparation (cApplication& application)
+void cLocalSinglePlayerGameNew::runGamePreparation (cApplication& application)
 {
 	run();
 	lobbyClient.tryToSwitchReadyState();
@@ -87,7 +87,7 @@ void cLocalSingleplayerGameNew::runGamePreparation (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::start (cApplication& application, cServer& server)
+void cLocalSinglePlayerGameNew::start (cApplication& application, cServer& server)
 {
 	if (cSettings::getInstance().shouldShowIntro())
 	{
@@ -126,21 +126,21 @@ void cLocalSingleplayerGameNew::start (cApplication& application, cServer& serve
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::setGameSettings (const cGameSettings& gameSettings)
+void cLocalSinglePlayerGameNew::setGameSettings (const cGameSettings& gameSettings)
 {
 	lobbyClient.selectGameSettings (gameSettings);
 	run();
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGameNew::selectMapFilename (const std::filesystem::path& mapFilename)
+void cLocalSinglePlayerGameNew::selectMapFilename (const std::filesystem::path& mapFilename)
 {
 	lobbyClient.selectMapFilename (mapFilename);
 	run();
 }
 
 //------------------------------------------------------------------------------
-cPlayerBasicData cLocalSingleplayerGameNew::createPlayer()
+cPlayerBasicData cLocalSinglePlayerGameNew::createPlayer()
 {
 	auto player = cPlayerBasicData::fromSettings();
 
