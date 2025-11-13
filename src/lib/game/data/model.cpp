@@ -597,9 +597,10 @@ void cModel::refreshMapPointer()
 //------------------------------------------------------------------------------
 void cModel::runMoveJobs()
 {
-	for (auto& moveJob : moveJobs)
+	for (std::size_t i = 0; i != moveJobs.size(); ++i)
 	{
-		moveJob->run (*this); //this can add new items to 'moveJobs'
+		moveJobs[i]->run (*this); // this can add new items to 'moveJobs'
+		auto& moveJob = moveJobs[i];
 		if (moveJob->isFinished())
 		{
 			cVehicle* vehicle = moveJob->getVehicleId() ? getVehicleFromID (*moveJob->getVehicleId()) : nullptr;
@@ -836,8 +837,10 @@ void cModel::sideStepStealthUnit (const cPosition& position, const cStaticUnitDa
 	{
 		std::forward_list<cPosition> path;
 		path.push_front (*bestPosition);
-		auto moveJob = addMoveJob (*stealthVehicle, path);
-		moveJob->resume();
+		if (auto moveJob = addMoveJob (*stealthVehicle, path))
+		{
+			moveJob->resume();
+		}
 		return;
 	}
 
