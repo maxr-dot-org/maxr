@@ -23,6 +23,9 @@
 #include "serialization.h"
 
 #include <SDL_endian.h>
+#include <climits>
+#include <cstdint>
+#include <stdexcept>
 #include <type_traits>
 #include <vector>
 

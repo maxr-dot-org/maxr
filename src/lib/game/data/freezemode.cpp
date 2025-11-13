@@ -19,7 +19,7 @@
 
 #include "freezemode.h"
 
-#include <cassert>
+#include <stdexcept>
 
 namespace serialization
 {
