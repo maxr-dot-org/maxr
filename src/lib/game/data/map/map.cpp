@@ -586,15 +586,6 @@ void cMap::setResourcesFromString (std::string_view str)
 }
 
 //------------------------------------------------------------------------------
-/* static */ int cMap::getMapLevel (const cVehicle& vehicle)
-{
-	if (vehicle.getStaticUnitData().factorSea > 0 && vehicle.getStaticUnitData().factorGround == 0) return 8; // ships
-	if (vehicle.getStaticUnitData().factorAir > 0) return 0; // planes
-
-	return 2; // other vehicles
-}
-
-//------------------------------------------------------------------------------
 void cMap::addBuilding (cBuilding& building)
 {
 	//big base building are not implemented

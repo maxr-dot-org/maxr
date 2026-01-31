@@ -305,7 +305,6 @@ private:
 	void setResourcesFromString (std::string_view);
 
 	static int getMapLevel (const cBuilding&);
-	static int getMapLevel (const cVehicle&);
 
 public:
 	mutable cSignal<void (const cUnit&)> addedUnit;

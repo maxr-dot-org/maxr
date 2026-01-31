@@ -54,21 +54,16 @@ public:
 
 	int getPlayerNumber() const;
 
-	void setLandingPositionManager (const cLandingPositionManager*);
-
 	void handleResized (const cPosition& oldSize) override;
 
 private:
 	cSignalConnectionManager signalConnectionManager;
-	cSignalConnectionManager managerSignalConnectionManager;
 
 	cLabel* nameLabel = nullptr;
 	cImage* colorImage = nullptr;
 	cImage* readyImage = nullptr;
 
 	const cPlayerLandingStatus& playerLandingStatus;
-
-	const cLandingPositionManager* landingPositionManager = nullptr;
 
 	void updatePlayerName();
 	void updatePlayerColor();

@@ -45,13 +45,6 @@ cMouse::~cMouse()
 {}
 
 //------------------------------------------------------------------------------
-cMouse& cMouse::getInstance()
-{
-	static cMouse instance;
-	return instance;
-}
-
-//------------------------------------------------------------------------------
 void cMouse::handleMouseMotionEvent (const cEventMouseMotion& event)
 {
 	position = event.getNewPosition();

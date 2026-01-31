@@ -81,53 +81,9 @@ int cChatBoxLandingPlayerListViewItem::getPlayerNumber() const
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxLandingPlayerListViewItem::setLandingPositionManager (const cLandingPositionManager* landingPositionManager_)
-{
-	landingPositionManager = landingPositionManager_;
-
-	managerSignalConnectionManager.disconnectAll();
-
-	updatePlayerName();
-
-	managerSignalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this] (const cPlayerBasicData& player, eLandingPositionState) {
-		if (player.getNr() == playerLandingStatus.getPlayer().getNr())
-		{
-			updatePlayerName();
-		}
-	});
-}
-
-//------------------------------------------------------------------------------
 void cChatBoxLandingPlayerListViewItem::updatePlayerName()
 {
-	if (landingPositionManager == nullptr)
-	{
-		nameLabel->setText (playerLandingStatus.getPlayer().getName());
-	}
-	else
-	{
-		const auto state = landingPositionManager->getPlayerState (playerLandingStatus.getPlayer());
-		std::string stateName;
-		switch (state)
-		{
-			case eLandingPositionState::Unknown:
-				stateName = "unknown";
-				break;
-			case eLandingPositionState::Clear:
-				stateName = "clear";
-				break;
-			case eLandingPositionState::Warning:
-				stateName = "warning";
-				break;
-			case eLandingPositionState::TooClose:
-				stateName = "too close";
-				break;
-			case eLandingPositionState::Confirmed:
-				stateName = "confirmed";
-				break;
-		}
-		nameLabel->setText (playerLandingStatus.getPlayer().getName() + " (" + stateName + ")");
-	}
+	nameLabel->setText (playerLandingStatus.getPlayer().getName());
 }
 
 //------------------------------------------------------------------------------

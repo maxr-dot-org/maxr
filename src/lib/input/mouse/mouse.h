@@ -58,16 +58,6 @@ public:
 	~cMouse();
 
 	/**
-	 * Returns the global instance of the mouse.
-	 *
-	 * Note: This may should be removed and everywhere where the mouse needs to be accessed an instance
-	 *       of the a mouse object should be passed to.
-	 *
-	 * @return The one global instance of the mouse.
-	 */
-	static cMouse& getInstance();
-
-	/**
 	 * Signal that will be triggered when a mouse button gets pressed.
 	 */
 	cSignal<void (cMouse&, eMouseButtonType)> pressed;
