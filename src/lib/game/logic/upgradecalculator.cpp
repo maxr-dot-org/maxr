@@ -1420,27 +1420,6 @@ int sUnitUpgrade::cancelPurchase (const cResearch& researchLevel)
 }
 
 //------------------------------------------------------------------------------
-int sUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
-{
-	if (type == sUnitUpgrade::eUpgradeType::None) return 0;
-
-	cUpgradeCalculator::eUpgradeType upgradeType = GetUpgradeType (*this);
-	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
-	sUnitUpgrade other (*this);
-	int cost = 0;
-	const auto researchArea = researchLevel.getResearchArea (upgradeType).value_or (cResearch::eResearchArea::AttackResearch);
-	const int bonusByResearch = uc.calcChangeByResearch (startValue, researchLevel.getCurResearchLevel (researchArea));
-
-	other.purchased = 0;
-	while (other.curValue != startValue + bonusByResearch)
-	{
-		cost += other.cancelPurchase (researchLevel);
-	}
-	purchased += -other.purchased;
-	return -cost;
-}
-
-//------------------------------------------------------------------------------
 void cUnitUpgrade::init (const cDynamicUnitData& origData, const cDynamicUnitData& curData, const cStaticUnitData& staticData, const cResearch& researchLevel)
 {
 	int i = 0;
@@ -1521,18 +1500,6 @@ void cUnitUpgrade::init (const cDynamicUnitData& origData, const cDynamicUnitDat
 }
 
 //------------------------------------------------------------------------------
-int cUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
-{
-	int cost = 0;
-
-	for (auto& upgrade : upgrades)
-	{
-		cost += upgrade.computedPurchasedCount (researchLevel);
-	}
-	return cost;
-}
-
-//------------------------------------------------------------------------------
 sUnitUpgrade* cUnitUpgrade::getUpgrade (sUnitUpgrade::eUpgradeType type)
 {
 	for (auto& upgrade : upgrades)
@@ -1550,17 +1517,6 @@ const sUnitUpgrade* cUnitUpgrade::getUpgrade (sUnitUpgrade::eUpgradeType type) c
 		if (upgrade.type == type) return &upgrade;
 	}
 	return nullptr;
-}
-
-//------------------------------------------------------------------------------
-int cUnitUpgrade::getValueOrDefault (sUnitUpgrade::eUpgradeType upgradeType, int defaultValue) const
-{
-	for (const auto& upgrade : upgrades)
-	{
-		if (upgrade.type == upgradeType)
-			return upgrade.curValue;
-	}
-	return defaultValue; // the specified upgrade was not found...
 }
 
 //------------------------------------------------------------------------------

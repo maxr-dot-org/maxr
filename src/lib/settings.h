@@ -97,9 +97,6 @@ public:
 	bool isAlphaEffects() const { return inGame.alphaEffects; }
 	void setAlphaEffects (bool alphaEffects) { inGame.alphaEffects = alphaEffects; }
 
-	bool shouldShowDescription() const { return inGame.showDescription; }
-	void setShowDescription (bool showDescription) { inGame.showDescription = showDescription; }
-
 	bool isDamageEffects() const { return inGame.damageEffects; }
 	void setDamageEffects (bool damageEffects) { inGame.damageEffects = damageEffects; }
 
@@ -372,8 +369,6 @@ private:
 		bool shadows = true;
 		/** enable alpha effects */
 		bool alphaEffects = true;
-		/** enable descriptions (e.g. in build menus) */
-		bool showDescription = true;
 		/** enable damage effects (smoke'n stuff) */
 		bool damageEffects = true;
 		/** enable damage effects for vehicles (smoke'n stuff) */
@@ -392,7 +387,6 @@ private:
 			archive & NVP (animations);
 			archive & NVP (shadows);
 			archive & NVP (alphaEffects);
-			archive & NVP (showDescription);
 			archive & NVP (damageEffects);
 			archive & NVP (damageEffectsVehicles);
 			archive & NVP (makeTracks);

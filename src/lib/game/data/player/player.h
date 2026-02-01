@@ -144,7 +144,6 @@ public:
 	const cPosition& getLandingPos() const { return landingPos; }
 
 	void initMaps (const cPosition& mapSize);
-	const cPosition& getMapSize() const { return mapSize; }
 
 	/**
 	* Update the scan and detection maps of the player. These maps control,
@@ -189,8 +188,6 @@ public:
 
 	const cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>>& getVehicles() const { return vehicles; }
 	const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& getBuildings() const { return buildings; }
-
-	bool hasUnits() const;
 
 	void addToSentryMap (const cUnit&);
 	void removeFromSentryMap (const cUnit&);

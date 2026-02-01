@@ -315,7 +315,6 @@ struct sUnitUpgrade
 
 	int purchase (const cResearch&);
 	int cancelPurchase (const cResearch&);
-	int computedPurchasedCount (const cResearch&);
 
 	/** The different values of a unit that can be upgraded */
 	enum class eUpgradeType
@@ -370,9 +369,7 @@ public:
 	sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeType);
 	const sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeType) const;
 
-	int computedPurchasedCount (const cResearch&);
 	bool hasBeenPurchased() const;
-	int getValueOrDefault (sUnitUpgrade::eUpgradeType, int defaultValue) const;
 	void updateUnitData (cDynamicUnitData&) const;
 	int calcTotalCosts (const cDynamicUnitData& originalData, const cDynamicUnitData& currentData, const cResearch&) const;
 

@@ -439,12 +439,6 @@ void cPlayer::setResourceMapFromString (std::string_view str)
 }
 
 //------------------------------------------------------------------------------
-bool cPlayer::hasUnits() const
-{
-	return !vehicles.empty() || !buildings.empty();
-}
-
-//------------------------------------------------------------------------------
 /** Starts a research center. */
 //------------------------------------------------------------------------------
 void cPlayer::startAResearch (cResearch::eResearchArea researchArea)

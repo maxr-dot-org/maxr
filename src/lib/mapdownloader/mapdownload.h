@@ -70,8 +70,6 @@ public:
 	cMapSender (cConnectionManager&, int toPlayerNr, const std::filesystem::path& mapFilename);
 	~cMapSender();
 
-	int getToPlayerNr() const { return toPlayerNr; }
-
 	void runInThread();
 
 private:

@@ -382,10 +382,7 @@ void cModel::deleteUnit (cUnit* unit)
 		owner->changeScore (-static_cast<cBuilding*> (unit)->points);
 	}
 
-	if (auto* building = dynamic_cast<cBuilding*> (unit))
-		map->deleteBuilding (*building);
-	else if (auto* vehicle = dynamic_cast<cVehicle*> (unit))
-		map->deleteVehicle (*vehicle);
+	map->deleteUnit (*unit);
 
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->subBase != nullptr && owner)
 		owner->base.deleteBuilding (static_cast<cBuilding&> (*unit), *map);

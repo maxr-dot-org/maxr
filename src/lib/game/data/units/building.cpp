@@ -180,31 +180,6 @@ void cBuilding::connectFirstBuildListItem()
 }
 
 //------------------------------------------------------------------------------
-void cBuilding::updateNeighbours (const cMap& map)
-{
-	if (!getOwner()) return;
-	if (!getIsBig())
-	{
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, -1), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, 0), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, 1), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 0), *this, map);
-	}
-	else
-	{
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, -1), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, -1), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (2, 0), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (2, 1), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (0, 2), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (1, 2), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 0), *this, map);
-		getOwner()->base.checkNeighbour (getPosition() + cPosition (-1, 1), *this, map);
-	}
-	CheckNeighbours (map);
-}
-
-//------------------------------------------------------------------------------
 /** Checks, if there are neighbours */
 //------------------------------------------------------------------------------
 void cBuilding::CheckNeighbours (const cMap& map)

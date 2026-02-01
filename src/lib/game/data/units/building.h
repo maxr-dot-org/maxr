@@ -101,7 +101,6 @@ public:
 	bool getIsBig() const override;
 
 	void refreshData();
-	void updateNeighbours (const cMap& map);
 	void CheckNeighbours (const cMap& Map);
 
 	void startWork();
