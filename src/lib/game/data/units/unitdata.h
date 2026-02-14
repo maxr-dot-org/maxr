@@ -417,7 +417,7 @@ private:
 
 	int version = 0;
 	bool dirtyVersion = false; // version should not be increased when stats change
-		// but when unit uses (via upgrape/build) the last version .
+		// but when unit uses (via upgrade/build) the last version .
 
 	int speedCur = 0;
 	int speedMax = 0;
