@@ -36,14 +36,14 @@ public:
 	explicit cScopedOperation (const FunctionType& function_) :
 		function (function_)
 	{}
-	cScopedOperation (const cScopedOperation<FunctionType>&) = delete;
-	cScopedOperation& operator= (const cScopedOperation<FunctionType>&) = delete;
-	cScopedOperation (cScopedOperation<FunctionType>&& other) :
+	cScopedOperation (const cScopedOperation&) = delete;
+	cScopedOperation& operator= (const cScopedOperation&) = delete;
+	cScopedOperation (cScopedOperation&& other) :
 		function (std::move (other.function)),
 		dismissed (std::exchange (other.dismissed, true))
 	{
 	}
-	cScopedOperation<FunctionType>& operator= (cScopedOperation<FunctionType>&& other)
+	cScopedOperation& operator= (cScopedOperation&& other)
 	{
 		function = std::move (other.function);
 		dismissed = std::exchange (other.dismissed, true);
