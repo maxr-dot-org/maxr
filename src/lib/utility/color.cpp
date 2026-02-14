@@ -151,18 +151,6 @@ cHsvColor::cHsvColor (unsigned short hue, unsigned char saturation, unsigned cha
 {}
 
 //------------------------------------------------------------------------------
-bool cHsvColor::operator== (const cHsvColor& other) const
-{
-	return h == other.h && s == other.s && v == other.v && a == other.a;
-}
-
-//------------------------------------------------------------------------------
-bool cHsvColor::operator!= (const cHsvColor& other) const
-{
-	return !(*this == other);
-}
-
-//------------------------------------------------------------------------------
 cRgbColor cHsvColor::toRgb() const
 {
 	assert (h < 360);

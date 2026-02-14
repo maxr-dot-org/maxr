@@ -23,12 +23,6 @@
 #include "utility/string/utf-8.h"
 
 //------------------------------------------------------------------------------
-bool cSoundChunk::operator== (const cSoundChunk& other) const
-{
-	return sdlSound == other.sdlSound;
-}
-
-//------------------------------------------------------------------------------
 void cSoundChunk::load (const std::filesystem::path& fileName)
 {
 	sdlSound = SaveSdlMixChunkPointer (Mix_LoadWAV (utf8::to_string (fileName).c_str()));

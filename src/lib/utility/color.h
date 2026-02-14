@@ -93,8 +93,7 @@ public:
 	cHsvColor() = default;
 	cHsvColor (unsigned short hue, unsigned char saturation, unsigned char value, unsigned char alpha = 0xFF);
 
-	bool operator== (const cHsvColor& other) const;
-	bool operator!= (const cHsvColor& other) const;
+	bool operator== (const cHsvColor&) const = default;
 
 	cRgbColor toRgb() const;
 

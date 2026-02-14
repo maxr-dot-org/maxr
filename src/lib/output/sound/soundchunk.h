@@ -34,7 +34,7 @@ public:
 	cSoundChunk (const cSoundChunk&) = delete;
 	cSoundChunk& operator= (const cSoundChunk&) = delete;
 
-	bool operator== (const cSoundChunk&) const;
+	bool operator== (const cSoundChunk&) const = default;
 
 	void load (const std::filesystem::path& fileName);
 
