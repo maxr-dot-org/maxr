@@ -63,29 +63,29 @@ enum class eGameSettingsVictoryCondition
 class cGameSettings
 {
 public:
-	static const int defaultCreditsNone = 0;
-	static const int defaultCreditsLow = 50;
-	static const int defaultCreditsLimited = 100;
-	static const int defaultCreditsNormal = 150;
-	static const int defaultCreditsHigh = 200;
-	static const int defaultCreditsMore = 250;
+	static constexpr int defaultCreditsNone = 0;
+	static constexpr int defaultCreditsLow = 50;
+	static constexpr int defaultCreditsLimited = 100;
+	static constexpr int defaultCreditsNormal = 150;
+	static constexpr int defaultCreditsHigh = 200;
+	static constexpr int defaultCreditsMore = 250;
 
-	static const unsigned int defaultVictoryTurnsOptions[3];
-	static const unsigned int defaultVictoryPointsOptions[3];
+	static constexpr unsigned int defaultVictoryTurnsOptions[3]{100, 200, 400};
+	static constexpr unsigned int defaultVictoryPointsOptions[3]{200, 400, 800};
 
-	static const std::chrono::seconds defaultTurnLimitOption0;
-	static const std::chrono::seconds defaultTurnLimitOption1;
-	static const std::chrono::seconds defaultTurnLimitOption2;
-	static const std::chrono::seconds defaultTurnLimitOption3;
-	static const std::chrono::seconds defaultTurnLimitOption4;
-	static const std::chrono::seconds defaultTurnLimitOption5;
+	static constexpr std::chrono::seconds defaultTurnLimitOption0{60};
+	static constexpr std::chrono::seconds defaultTurnLimitOption1{120};
+	static constexpr std::chrono::seconds defaultTurnLimitOption2{180};
+	static constexpr std::chrono::seconds defaultTurnLimitOption3{240};
+	static constexpr std::chrono::seconds defaultTurnLimitOption4{300};
+	static constexpr std::chrono::seconds defaultTurnLimitOption5{350};
 
-	static const std::chrono::seconds defaultEndTurnDeadlineOption0;
-	static const std::chrono::seconds defaultEndTurnDeadlineOption1;
-	static const std::chrono::seconds defaultEndTurnDeadlineOption2;
-	static const std::chrono::seconds defaultEndTurnDeadlineOption3;
-	static const std::chrono::seconds defaultEndTurnDeadlineOption4;
-	static const std::chrono::seconds defaultEndTurnDeadlineOption5;
+	static constexpr std::chrono::seconds defaultEndTurnDeadlineOption0{15};
+	static constexpr std::chrono::seconds defaultEndTurnDeadlineOption1{30};
+	static constexpr std::chrono::seconds defaultEndTurnDeadlineOption2{45};
+	static constexpr std::chrono::seconds defaultEndTurnDeadlineOption3{60};
+	static constexpr std::chrono::seconds defaultEndTurnDeadlineOption4{75};
+	static constexpr std::chrono::seconds defaultEndTurnDeadlineOption5{90};
 
 	cGameSettings() = default;
 	cGameSettings (const cGameSettings&) = default;

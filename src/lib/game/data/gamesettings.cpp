@@ -21,24 +21,6 @@
 
 #include "utility/crc.h"
 
-// Might be constexpr inline in C++17
-/* static */ const unsigned int cGameSettings::defaultVictoryTurnsOptions[3]{100, 200, 400};
-/* static */ const unsigned int cGameSettings::defaultVictoryPointsOptions[3]{200, 400, 800};
-
-const std::chrono::seconds cGameSettings::defaultTurnLimitOption0 (60);
-const std::chrono::seconds cGameSettings::defaultTurnLimitOption1 (120);
-const std::chrono::seconds cGameSettings::defaultTurnLimitOption2 (180);
-const std::chrono::seconds cGameSettings::defaultTurnLimitOption3 (240);
-const std::chrono::seconds cGameSettings::defaultTurnLimitOption4 (300);
-const std::chrono::seconds cGameSettings::defaultTurnLimitOption5 (350);
-
-const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption0 (15);
-const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption1 (30);
-const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption2 (45);
-const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption3 (60);
-const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption4 (75);
-const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption5 (90);
-
 //------------------------------------------------------------------------------
 uint32_t cGameSettings::getChecksum (uint32_t crc) const
 {
