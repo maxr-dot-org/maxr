@@ -8,7 +8,7 @@ on:
 
 jobs:
   release-windows:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     - name: Checkout
@@ -46,7 +46,7 @@ jobs:
     - name: Upload maxr
       uses: actions/upload-artifact@v7
       with:
-        name: maxr-installer.exe
+        archive: false
         path: mk/win32/installer/maxr-*.exe
 
     - name: Upload pdb files
