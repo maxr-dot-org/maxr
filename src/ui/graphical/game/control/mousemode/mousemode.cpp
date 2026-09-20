@@ -29,7 +29,7 @@ cMouseMode::cMouseMode (const cMapView* map_, const cUnitSelection& unitSelectio
 	unitSelection (unitSelection_),
 	player (player_)
 {
-	signalConnectionManager.connect (unitSelection.selectionChanged, [this]() { updateSelectedUnitConnections(); });
+	signalConnectionManager.connect (unitSelection.groupSelectionChanged, [this]() { updateSelectedUnitConnections(); });
 }
 
 //------------------------------------------------------------------------------
