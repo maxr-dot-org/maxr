@@ -248,6 +248,7 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 	}
 
 	gameGui->setMapView (mapView);
+	gameGui->setUnitsData (getUnitsData());
 	gameGui->setPlayers (getPlayers());
 	gameGui->setPlayer (getActivePlayer());
 	gameGui->setTurnClock (getTurnCounter());
@@ -255,7 +256,6 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 	gameGui->setGameSettings (getGameSettings());
 	gameGui->getDebugOutput().setClient (activeClient.get());
 	gameGui->getDebugOutput().setServer (server);
-	gameGui->setUnitsData (getUnitsData());
 
 	if (activeClient != nullptr)
 	{
