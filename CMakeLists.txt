@@ -20,6 +20,12 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Define WIN32 for the source code on Windows.
+# MinGW/GCC provides _WIN32 by default, while MAXR checks for WIN32.
+if(WIN32)
+  add_definitions(-DWIN32)
+endif()
+
 # ---------------------------------------
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
@@ -167,9 +173,8 @@ target_include_directories(
                       ${VORBIS_INCLUDE_DIR})
 target_link_libraries(resinstaller SDL_flic ${SDL2_LIBRARY} ${OGG_LIBRARY}
                       ${VORBIS_LIBRARY})
-if(WIN32)
 
-else()
+if(NOT WIN32 OR MINGW)
   target_link_libraries(resinstaller ${VORBISFILE_LIBRARY} ${VORBISENC_LIBRARY})
 endif()
 
