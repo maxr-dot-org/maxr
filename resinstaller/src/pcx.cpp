@@ -143,13 +143,13 @@ namespace
 		file.write (reinterpret_cast<const char*> (PCXHeader.data()), 128);
 
 		//build color table
-		std::vector<unsigned char> bild (surface.w * surface.h - 1); // Adresse des Bildspeichers
+		std::vector<unsigned char> bild (surface.w * surface.h); // Adresse des Bildspeichers
 		const Uint32* surface_data = static_cast<const Uint32*> (surface.pixels);
 		Uint32 colors[256]{};
 		int NrColors = 0;
 
 		long Index; // Adresse des Pixels im Bild
-		for (Index = 0; Index < surface.h * surface.w - 1; Index++)
+		for (Index = 0; Index < surface.h * surface.w; Index++)
 		{
 			Uint32 sourceIndex = (Index / surface.w) * (surface.pitch / 4) + (Index % surface.w);
 			//search color in table
