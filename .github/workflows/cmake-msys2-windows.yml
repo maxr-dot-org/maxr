@@ -1,0 +1,81 @@
+name: cmake-msys2-windows
+
+on:
+  workflow_dispatch:
+
+  push:
+    paths:
+      - 'CMakeLists.txt'
+      - 'mk/cmake/**'
+      - 'resinstaller/**'
+      - 'src/**'
+      - 'submodules/**'
+      - 'tests/**'
+      - '.github/workflows/cmake-msys2-windows.yml'
+
+  pull_request:
+    paths:
+      - 'CMakeLists.txt'
+      - 'mk/cmake/**'
+      - 'resinstaller/**'
+      - 'src/**'
+      - 'submodules/**'
+      - 'tests/**'
+      - '.github/workflows/cmake-msys2-windows.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  windows-msys2:
+    runs-on: windows-latest
+
+    steps:
+      - name: Configure Git line endings
+        shell: pwsh
+        run: git config --global core.autocrlf input
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up MSYS2 UCRT64
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            git
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-ninja
+            mingw-w64-ucrt-x86_64-SDL2
+            mingw-w64-ucrt-x86_64-SDL2_mixer
+            mingw-w64-ucrt-x86_64-SDL2_net
+            mingw-w64-ucrt-x86_64-libogg
+            mingw-w64-ucrt-x86_64-libvorbis
+
+      - name: Show toolchain versions
+        shell: msys2 {0}
+        run: |
+          g++ --version
+          cmake --version
+          ninja --version
+
+      - name: Configure
+        shell: msys2 {0}
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DBUILD_TESTING=ON
+
+      - name: Build
+        shell: msys2 {0}
+        run: cmake --build build
+
+      - name: Run tests
+        shell: msys2 {0}
+        run: ctest --test-dir build --output-on-failure
