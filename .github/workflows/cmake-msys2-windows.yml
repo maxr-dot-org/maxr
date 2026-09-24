@@ -31,10 +31,6 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Configure Git line endings
-        shell: pwsh
-        run: git config --global core.autocrlf input
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -46,15 +42,8 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           msystem: UCRT64
-          update: false
-          cache: true
-
-      - name: Install MSYS2 dependencies
-        shell: msys2 {0}
-        run: |
-          set -e
-
-          packages=(
+          update: true
+          install: >-
             git
             mingw-w64-ucrt-x86_64-gcc
             mingw-w64-ucrt-x86_64-cmake
@@ -64,22 +53,6 @@ jobs:
             mingw-w64-ucrt-x86_64-SDL2_net
             mingw-w64-ucrt-x86_64-libogg
             mingw-w64-ucrt-x86_64-libvorbis
-          )
-
-          for attempt in 1 2 3; do
-            echo "MSYS2 package installation attempt $attempt/3"
-
-            if pacman -S --needed --noconfirm --disable-download-timeout "${packages[@]}"; then
-              exit 0
-            fi
-
-            if [ "$attempt" -lt 3 ]; then
-              sleep $((attempt * 15))
-            fi
-          done
-
-          echo "MSYS2 package installation failed after 3 attempts"
-          exit 1
 
       - name: Show toolchain versions
         shell: msys2 {0}
