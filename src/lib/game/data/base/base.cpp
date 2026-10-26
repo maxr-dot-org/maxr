@@ -759,7 +759,9 @@ void cSubBase::addBuilding (cBuilding& b)
 		maxNeeded.metal += staticUnitData.needsMetal * 12;
 		if (b.isUnitWorking())
 		{
-			needed.metal += std::min (b.getMetalPerRound(), b.getBuildListItem (0).getRemainingMetal());
+			// getMetalPerRound() is already limited by the remaining metal
+			// of the current job and is 0 for an empty build list
+			needed.metal += b.getMetalPerRound();
 		}
 	}
 	const sStaticBuildingData& staticBuildingData = b.getStaticData();

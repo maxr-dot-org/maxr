@@ -123,6 +123,14 @@ void cActionFinishBuild::finishAVehicle (cModel& model, cBuilding& building) con
 	model.sideStepStealthUnit (escapePosition, unitData, player);
 	if (!map->possiblePlaceVehicle (unitData, escapePosition, player)) return;
 
+	// The factory may still be working, although its job is finished
+	// (e.g. when it has been started again after the job was finished).
+	// Stop it, like cActionChangeBuildList does: startWork() below does nothing
+	// for a working factory, so the metal consumption of the next job
+	// would not be added to the needed metal of the sub base.
+	building.stopWork (false);
+	if (building.isUnitWorking()) return;
+
 	if (player)
 	{
 		if (auto* dynamicUnitData = player->getLastUnitData (buildingListItem.getType()))
