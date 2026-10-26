@@ -141,6 +141,10 @@ void cActionFinishBuild::finishAVehicle (cModel& model, cBuilding& building) con
 		vehicle.triggerLandingTakeOff (model);
 	}
 
+	// the vehicle appears on the field without a move step:
+	// let enemy units fire on it, like cMoveJob::endMove does
+	vehicle.inSentryRange (model);
+
 	// start new buildjob
 	if (building.getRepeatBuild())
 	{
