@@ -368,12 +368,11 @@ void cModel::deleteUnit (cUnit* unit)
 			vehicle->getMoveJob()->removeVehicle();
 		}
 	}
-	if (unit->isAttacking())
+	// detach from attack jobs, also when the unit is no longer marked as attacking:
+	// its attacking state is cleared at the impact, while its attack job is still running
+	for (auto& attackJob : attackJobs)
 	{
-		for (auto& attackJob : attackJobs)
-		{
-			attackJob->onRemoveUnit (*unit);
-		}
+		attackJob->onRemoveUnit (*unit);
 	}
 
 	// lose eco points
