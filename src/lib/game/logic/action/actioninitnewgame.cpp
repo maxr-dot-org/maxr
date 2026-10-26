@@ -141,6 +141,9 @@ namespace
 		for (const auto& offset : offsets)
 		{
 			const auto position = landingPos + offset;
+			// the factory may stand on the last but one row (getRandomAlienPosition):
+			// offset (x, 2) is then outside the map - skip it instead of writing out of bounds
+			if (!map.isValidPosition (position)) continue;
 
 			if (map.isWater (position))
 			{
