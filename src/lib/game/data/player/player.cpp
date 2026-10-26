@@ -366,12 +366,14 @@ void cPlayer::refreshScanMaps()
 	//2 add all units (yes they are on the scan maps twice now)
 	for (const auto& vehicle : vehicles)
 	{
-		if (vehicle->isUnitLoaded()) continue;
+		// disabled units are not on the scan maps (see cActionStealDisable)
+		if (vehicle->isUnitLoaded() || vehicle->isDisabled()) continue;
 		addToScan (*vehicle);
 	}
 
 	for (const auto& building : buildings)
 	{
+		if (building->isDisabled()) continue;
 		addToScan (*building);
 	}
 
