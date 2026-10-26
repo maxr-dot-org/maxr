@@ -639,6 +639,7 @@ sNewTurnPlayerReport cPlayer::makeTurnStart (cModel& model)
 			if (!building->isDisabled())
 			{
 				addToScan (*building);
+				building->detectOtherUnits (*model.getMap());
 				if (building->wasWorking)
 				{
 					building->startWork();
@@ -658,6 +659,9 @@ sNewTurnPlayerReport cPlayer::makeTurnStart (cModel& model)
 			if (!vehicle->isDisabled())
 			{
 				addToScan (*vehicle);
+				// the unit can detect again: search for stealth units in its range,
+				// like after a move step (a disabled vehicle may have been loaded)
+				if (!vehicle->isUnitLoaded()) vehicle->detectOtherUnits (*model.getMap());
 			}
 		}
 		vehicle->refreshData();

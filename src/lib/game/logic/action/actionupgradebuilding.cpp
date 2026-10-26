@@ -93,6 +93,8 @@ void cActionUpgradeBuilding::execute (cModel& model) const
 		}
 
 		b->upgradeToCurrentVersion();
+		// search for stealth units in the new scan range
+		b->detectOtherUnits (*model.getMap());
 	}
 	subbase.addMetal (-totalCosts);
 
