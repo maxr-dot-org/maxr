@@ -40,6 +40,8 @@ void cActionStartWork::execute (cModel& model) const
 	cBuilding* b = model.getBuildingFromID (unitId);
 	if (b == nullptr || !b->getOwner()) return;
 	if (b->getOwner()->getId() != playerNr) return;
+	// same check as the "Start" entry of the unit menu
+	if (!b->buildingCanBeStarted()) return;
 
 	b->startWork();
 }
