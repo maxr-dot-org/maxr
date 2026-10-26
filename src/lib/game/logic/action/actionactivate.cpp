@@ -77,6 +77,9 @@ void cActionActivate::execute (cModel& model) const
 		}
 
 		activatedVehicle->detectOtherUnits (*model.getMap());
+		// the vehicle appears on the field without a move step:
+		// check here, whether a stealth vehicle is detected (like cMoveJob::endMove does)
+		activatedVehicle->detectThisUnit (*model.getMap(), model.getPlayerList());
 
 		model.unitActivated (*containingUnit, *activatedVehicle);
 	}
