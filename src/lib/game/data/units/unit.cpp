@@ -352,6 +352,8 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMapView& map, b
 	if (data.getShots() <= 0) return false;
 	if (data.getAmmo() <= 0) return false;
 	if (attacking) return false;
+	// a unit disabled by an infiltrator does not fire (sentry, reaction fire and orders)
+	if (isDisabled()) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitMoving()) return false;
 	if (isBeingAttacked()) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
@@ -513,6 +515,8 @@ void cUnit::detectThisUnit (const cMap& map, const std::vector<std::shared_ptr<c
 void cUnit::detectOtherUnits (const cMap& map) const
 {
 	if (!owner || staticData->canDetectStealthOn == eTerrainFlag::None) return;
+	// a unit disabled by an infiltrator does not search
+	if (isDisabled()) return;
 
 	for (const cPosition& pos : map.staticMap->collectPositions (getArea (data.getScan())))
 	{
