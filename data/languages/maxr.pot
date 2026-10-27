@@ -144,6 +144,9 @@ msgstr ""
 msgid "Comp~Disabled"
 msgstr ""
 
+msgid "Comp~Draw"
+msgstr ""
+
 msgid "Comp~EcoSphere(s)"
 msgid_plural "Comp~EcoSphere(s)"
 msgstr[0] ""

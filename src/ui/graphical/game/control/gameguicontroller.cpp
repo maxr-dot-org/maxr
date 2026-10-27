@@ -1293,8 +1293,14 @@ void cGameGuiController::connectReportSources (cClient& client)
 			// TODO: stop game
 		}
 	});
-	allClientsSignalConnectionManager.connect (model.suddenDeathMode, [&]() {
-		addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::SuddenDeath), player.getId());
+	allClientsSignalConnectionManager.connect (model.playerHasDrawn, [&] (const cPlayer& drawnPlayer) {
+		if (drawnPlayer.getId() == player.getId())
+		{
+			addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::Draw), player.getId());
+			auto win = application.show (std::make_shared<cWindowEndGame> (getPlayers(), lngPack.i18n ("Comp~Draw")));
+			allClientsSignalConnectionManager.connect (win->closed, [this]() { gameGui->exit(); });
+			// TODO: stop game
+		}
 	});
 }
 

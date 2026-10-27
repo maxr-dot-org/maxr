@@ -627,6 +627,7 @@ namespace
 			case eSavedReportType::PlayerLeft:
 			case eSavedReportType::Upgraded:
 			case eSavedReportType::SuddenDeath:
+			case eSavedReportType::Draw:
 				return "";
 		}
 		return "";
@@ -817,6 +818,8 @@ std::string getMessage (const cSavedReport& report, const cModel& model)
 			return lngPack.i18n ("Comp~Turn_Automove");
 		case eSavedReportType::SuddenDeath:
 			return lngPack.i18n ("Comp~SuddenDeath");
+		case eSavedReportType::Draw:
+			return lngPack.i18n ("Comp~Draw");
 
 		case eSavedReportType::Chat:
 			return getMessage (static_cast<const cSavedReportChat&> (report));

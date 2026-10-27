@@ -161,6 +161,7 @@ void playSound (cSoundManager& soundManager, const cModel& model, const cSavedRe
 		case eSavedReportType::PlayerLeft:
 		case eSavedReportType::Upgraded:
 		case eSavedReportType::SuddenDeath:
+		case eSavedReportType::Draw:
 		{
 			// Empty
 			break;
