@@ -178,7 +178,7 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 {
 	// add all nearby nodes
 	const int minx = std::max (ParentNode->position.x() - 1, 0);
-	const int maxx = std::min (ParentNode->position.x() + 1, Map->getSize().y() - 1);
+	const int maxx = std::min (ParentNode->position.x() + 1, Map->getSize().x() - 1);
 	const int miny = std::max (ParentNode->position.y() - 1, 0);
 	const int maxy = std::min (ParentNode->position.y() + 1, Map->getSize().y() - 1);
 
