@@ -42,6 +42,8 @@ void cActionLoad::execute (cModel& model) const
 
 	auto loadingUnit = model.getUnitFromID (loadingUnitId);
 	if (loadingUnit == nullptr) return;
+	if (!loadingUnit->getOwner() || loadingUnit->getOwner()->getId() != playerNr) return;
+	if (loadingUnit->isDisabled()) return;
 
 	auto loadedVehicle = model.getVehicleFromID (loadedVehicleId);
 	if (loadedVehicle == nullptr) return;
