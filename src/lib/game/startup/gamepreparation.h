@@ -30,4 +30,10 @@ class cUnitsData;
 
 std::vector<std::pair<sID, int>> computeInitialLandingUnits (int clan, const cGameSettings&, const cUnitsData&);
 
+/**
+* Credits for the cargo of a unit bought for the landing: one credit per started
+* 5 units above the free cargo (the same in the landing window and on the server).
+*/
+int computeLandingCargoCost (int cargo, int freeCargo);
+
 #endif
