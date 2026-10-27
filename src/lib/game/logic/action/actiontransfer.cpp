@@ -22,6 +22,34 @@
 #include "game/data/model.h"
 #include "game/data/resourcetype.h"
 
+#include <algorithm>
+
+namespace
+{
+	//--------------------------------------------------------------------------
+	/**
+	* The units can exchange resources, as in the game (see canTransferTo): units of the same owner,
+	* a vehicle and a unit next to it, a building and a vehicle next to a building of its sub base,
+	* two buildings of the same sub base.
+	*/
+	bool canExchangeResources (const cUnit& source, const cUnit& destination)
+	{
+		if (&source == &destination || source.getOwner() != destination.getOwner()) return false;
+
+		const auto* sourceBuilding = dynamic_cast<const cBuilding*> (&source);
+		const auto* destinationBuilding = dynamic_cast<const cBuilding*> (&destination);
+		if (sourceBuilding && !sourceBuilding->subBase) return false;
+		if (destinationBuilding && !destinationBuilding->subBase) return false;
+
+		if (sourceBuilding && destinationBuilding) return sourceBuilding->subBase == destinationBuilding->subBase;
+		if (sourceBuilding)
+		{
+			return std::ranges::any_of (sourceBuilding->subBase->getBuildings(), [&] (const auto& building) { return building->isNextTo (destination.getPosition()); });
+		}
+		return destination.isNextTo (source.getPosition());
+	}
+} // namespace
+
 //------------------------------------------------------------------------------
 cActionTransfer::cActionTransfer (const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue_, eResourceType resourceType_) :
 	sourceUnitId (sourceUnit.getId()),
@@ -46,6 +74,11 @@ void cActionTransfer::execute (cModel& model) const
 
 	const auto destinationUnit = model.getUnitFromID (destinationUnitId);
 	if (destinationUnit == nullptr) return;
+
+	// the player transfers from his own unit to a neighbouring unit of his
+	if (sourceUnit->getOwner() == nullptr || sourceUnit->getOwner()->getId() != playerNr) return;
+	if (sourceUnit->isDisabled()) return;
+	if (!canExchangeResources (*sourceUnit, *destinationUnit)) return;
 
 	if (auto* sourceBuilding = dynamic_cast<cBuilding*> (sourceUnit))
 	{
