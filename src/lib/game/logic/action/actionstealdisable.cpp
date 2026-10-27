@@ -57,8 +57,26 @@ void cActionStealDisable::execute (cModel& model) const
 	bool success = model.randomGenerator.get (100) < chance;
 	if (success)
 	{
+		auto* building = dynamic_cast<cBuilding*> (target);
+		if (building && !steal)
+		{
+			// the building is restarted, when it recovers (see cPlayer::makeTurnStart)
+			building->wasWorking = building->isUnitWorking();
+			building->stopWork (true);
+		}
+		// a disabled constructor or bulldozer pauses its work: the invested metal and the
+		// turns done are kept, it goes on, when it recovers (see cPlayer::makeTurnStart)
+		auto* targetVehicle = dynamic_cast<cVehicle*> (target);
+		const bool pauseWork = !steal && targetVehicle && (targetVehicle->isUnitBuildingABuilding() || targetVehicle->isUnitClearing());
 		// stop running movejobs, build orders, etc.
-		cActionStop (*target).execute (model);
+		// cActionStop checks, that the unit belongs to the sender of the action:
+		// execute it on behalf of the owner of the target
+		if (target->getOwner() && !pauseWork)
+		{
+			cActionStop stop (*target);
+			stop.playerNr = target->getOwner()->getId();
+			stop.execute (model);
+		}
 
 		if (steal)
 		{
