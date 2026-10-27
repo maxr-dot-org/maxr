@@ -64,6 +64,11 @@ void cActionStealDisable::execute (cModel& model) const
 		{
 			auto* previousOwner = target->getOwner();
 			changeUnitOwner (*target, *infiltrator->getOwner(), model);
+			// the previous owner notices the theft at the start of his next turn (see cModel::noticeStolenVehicles)
+			if (auto* vehicle = dynamic_cast<cVehicle*> (target); vehicle && previousOwner)
+			{
+				vehicle->setUnnoticedStolenFrom (previousOwner->getId());
+			}
 			model.unitStolen (*infiltrator, *target, previousOwner);
 			if (previousOwner)
 			{

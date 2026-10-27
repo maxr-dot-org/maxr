@@ -1196,10 +1196,10 @@ void cGameGuiController::connectReportSources (cClient& client)
 			addSavedReport (std::make_unique<cSavedReportDisabled> (target), player.getId());
 		}
 	});
-	allClientsSignalConnectionManager.connect (model.unitStolen, [&] (const cUnit&, const cUnit& target, const cPlayer* previousOwner) {
-		if (previousOwner && previousOwner->getId() == player.getId())
+	allClientsSignalConnectionManager.connect (model.stolenVehicleNoticed, [&] (const cVehicle& vehicle, const cPlayer& previousOwner) {
+		if (previousOwner.getId() == player.getId())
 		{
-			addSavedReport (std::make_unique<cSavedReportCapturedByEnemy> (target), player.getId());
+			addSavedReport (std::make_unique<cSavedReportCapturedByEnemy> (vehicle), player.getId());
 		}
 	});
 	allClientsSignalConnectionManager.connect (player.turnEndMovementsStarted, [&]() {

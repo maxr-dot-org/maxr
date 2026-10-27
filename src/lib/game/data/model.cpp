@@ -475,8 +475,26 @@ std::vector<const cPlayer*> cModel::resumeMoveJobs (const cPlayer* player /*= nu
 }
 
 //------------------------------------------------------------------------------
+void cModel::noticeStolenVehicles (const cPlayer& previousOwner)
+{
+	for (const auto& player : playerList)
+	{
+		if (player.get() == &previousOwner) continue;
+		for (const auto& vehicle : player->getVehicles())
+		{
+			if (!vehicle->isUnnoticedStolenFrom (&previousOwner)) continue;
+			vehicle->setUnnoticedStolenFrom (-1);
+			stolenVehicleNoticed (*vehicle, previousOwner);
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
 void cModel::addAttackJob (cUnit& aggressor, const cPosition& targetPosition)
 {
+	// a stolen vehicle, that fires, gives itself away
+	if (auto* vehicle = dynamic_cast<cVehicle*> (&aggressor)) vehicle->setUnnoticedStolenFrom (-1);
+
 	attackJobs.push_back (std::make_unique<cAttackJob> (aggressor, targetPosition, *this));
 }
 
@@ -672,6 +690,11 @@ void cModel::handleTurnEnd()
 			{
 				turnCounter->increaseTurn();
 
+				// before the turn start of any player: his units may fire at a stolen vehicle then
+				for (auto& player : playerList)
+				{
+					noticeStolenVehicles (*player);
+				}
 				for (auto& player : playerList)
 				{
 					newTurnReport.reports.emplace (player->getId(), player->makeTurnStart (*this));
@@ -699,6 +722,8 @@ void cModel::handleTurnEnd()
 					activeTurnPlayer = nextPlayerIter->get();
 				}
 
+				// (a vehicle may be stolen in the first turn already)
+				noticeStolenVehicles (*activeTurnPlayer);
 				if (turnCounter->getTurn() > 1)
 				{
 					// don't execute turn start action in turn 1, because model is already completely initialized for turn 1

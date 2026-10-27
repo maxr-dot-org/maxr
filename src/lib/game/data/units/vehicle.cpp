@@ -430,8 +430,17 @@ bool cVehicle::makeAttackOnThis (cModel& model, cUnit* opponentUnit, const std::
 }
 
 //------------------------------------------------------------------------------
+bool cVehicle::isUnnoticedStolenFrom (const cPlayer* player) const
+{
+	return player != nullptr && player->getId() == unnoticedStolenFrom;
+}
+
+//------------------------------------------------------------------------------
 bool cVehicle::makeSentryAttack (cModel& model, cUnit* sentryUnit) const
 {
+	// the previous owner does not know yet, that the vehicle has been stolen
+	if (sentryUnit != nullptr && isUnnoticedStolenFrom (sentryUnit->getOwner())) return false;
+
 	cMapView mapView (model.getMap(), nullptr);
 	if (sentryUnit != 0 && sentryUnit->isSentryActive() && sentryUnit->canAttackObjectAt (getPosition(), mapView, true))
 	{
@@ -520,6 +529,9 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (const cModel& mo
 //------------------------------------------------------------------------------
 bool cVehicle::doReactionFireForUnit (cModel& model, cUnit* opponentUnit) const
 {
+	// the previous owner does not know yet, that the vehicle has been stolen
+	if (isUnnoticedStolenFrom (opponentUnit->getOwner())) return false;
+
 	cMapView mapView (model.getMap(), nullptr);
 	if (opponentUnit->isSentryActive() == false && opponentUnit->isManualFireActive() == false
 	    && opponentUnit->canAttackObjectAt (getPosition(), mapView, true)
