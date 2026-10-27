@@ -287,6 +287,8 @@ private:
 	void runMoveJobs();
 	void runAttackJobs();
 	void handleTurnEnd();
+	/** neutral units (aliens) recover from disabling once a turn: they have no owner, whose turn start counts down */
+	void makeNeutralTurnStart();
 
 	bool isVictoryConditionMet() const;
 	void defeatLoserPlayers();
