@@ -452,6 +452,9 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 
 	if (dynamic_cast<cBuilding*> (aggressor) && aggressor->getStaticUnitData().buildingData.explodesOnContact)
 	{
+		// a mine, which destroys itself (cActionSelfDestroy), attacks its own field
+		// and can be its own target: the target is gone with the mine
+		if (target == aggressor) target = nullptr;
 		model.deleteUnit (aggressor);
 		aggressor = nullptr;
 	}
