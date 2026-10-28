@@ -89,9 +89,12 @@ void cMoveJob::run (cModel& model)
 		return;
 	}
 	assert (vehicle);
-	if (vehicle->isBeingAttacked())
+	if (vehicle->isBeingAttacked() || vehicle->isAttacking())
 	{
-		// suspend movejobs of attacked vehicles
+		// suspend movejobs of attacked and attacking vehicles.
+		// A vehicle between two movement steps is not moving and may become
+		// an aggressor (e.g. of a reaction fire). Moving it would rotate it to
+		// the next field, while the attack job rotates it to the target, forever.
 		return;
 	}
 
@@ -172,9 +175,9 @@ void cMoveJob::startMove (cModel& model, cVehicle& vehicle)
 	{
 		return;
 	}
-	if (vehicle.isBeingAttacked())
+	if (vehicle.isBeingAttacked() || vehicle.isAttacking())
 	{
-		// suspend movejobs of attacked vehicles
+		// suspend movejobs of attacked and attacking vehicles
 		return;
 	}
 	if (!handleCollision (model, vehicle))
