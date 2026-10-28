@@ -83,7 +83,9 @@ void cActionUpgradeBuilding::execute (cModel& model) const
 	{
 		upgradedData.markLastVersionUsed();
 		// update scan & sentry
-		const bool scanIncreased = b->getOwner() && b->data.getScan() < upgradedData.getScan();
+		// (a disabled building is not in the scan maps: it is added with the new scan, when it recovers,
+		// and searches for stealth units then)
+		const bool scanIncreased = b->getOwner() && !b->isDisabled() && b->data.getScan() < upgradedData.getScan();
 		if (scanIncreased)
 		{
 			b->getOwner()->updateScan (*b, upgradedData.getScan());

@@ -174,3 +174,37 @@ TEST_CASE ("DetectorSearchesWhenItRecoversFromBeingDisabled")
 	CHECK (player.hasLandDetection (vehicle.getPosition()));
 	CHECK (vehicle.isDetectedByPlayer (&player));
 }
+
+//------------------------------------------------------------------------------
+TEST_CASE ("UpgradeOfADisabledBuildingKeepsItOutOfTheScanMaps")
+{
+	cModel model;
+	initModel (model);
+	cPlayer& player = *model.getPlayer (0);
+	cPlayer& enemy = *model.getPlayer (1);
+
+	const auto& ringVehicle = model.addVehicle (cPosition (8, 8), stealthVehicleId, &enemy); // distance 5
+	auto& detector = model.addBuilding (cPosition (3, 8), detectorBuildingId, &player);
+	detector.setDisabledTurns (1);
+	player.removeFromScan (detector);
+
+	cDynamicUnitData& upgradedData = *player.getLastUnitData (detectorBuildingId);
+	upgradedData.setScan (6);
+	upgradedData.makeVersionDirty();
+
+	cActionUpgradeBuilding action (detector, false);
+	action.From (player.getId());
+	action.execute (model);
+
+	// the disabled building neither sees nor detects
+	REQUIRE (detector.data.getScan() == 6);
+	CHECK_FALSE (player.canSeeAt (ringVehicle.getPosition()));
+	CHECK_FALSE (player.hasLandDetection (ringVehicle.getPosition()));
+	CHECK_FALSE (ringVehicle.isDetectedByPlayer (&player));
+
+	// it recovers with the new scan range and searches then
+	player.makeTurnStart (model);
+
+	CHECK (player.hasLandDetection (ringVehicle.getPosition()));
+	CHECK (ringVehicle.isDetectedByPlayer (&player));
+}

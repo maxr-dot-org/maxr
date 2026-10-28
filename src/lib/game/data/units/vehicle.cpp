@@ -616,6 +616,9 @@ bool cVehicle::canLoad (const cVehicle* vehicle, bool checkPosition) const
 
 	if (vehicle->isUnitLoaded()) return false;
 
+	// a disabled vehicle is not in the scan maps of its owner (see cActionStealDisable), storeVehicle would remove it again
+	if (vehicle->isDisabled()) return false;
+
 	if (storedUnits.size() >= static_cast<unsigned> (staticData->storageUnitsMax)) return false;
 
 	if (checkPosition && !isNextTo (vehicle->getPosition())) return false;
