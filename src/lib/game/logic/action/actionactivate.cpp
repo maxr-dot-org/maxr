@@ -79,5 +79,9 @@ void cActionActivate::execute (cModel& model) const
 		activatedVehicle->detectOtherUnits (*model.getMap());
 
 		model.unitActivated (*containingUnit, *activatedVehicle);
+
+		// the vehicle appears on the field without a move step:
+		// let enemy units fire on it, like cMoveJob::endMove does
+		activatedVehicle->inSentryRange (model);
 	}
 }
