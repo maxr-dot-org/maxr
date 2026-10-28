@@ -101,21 +101,28 @@ namespace
 
 		return unitsData;
 	}
+
+	//--------------------------------------------------------------------------
+	// a map of 16x16 fields of ground, the units above and two players
+	void initModel (cModel& model)
+	{
+		auto staticMap = std::make_shared<cStaticMap>();
+		const auto mapFilename = writeGroundMap (16);
+		REQUIRE (staticMap->loadMap (mapFilename));
+		std::filesystem::remove (mapFilename);
+
+		model.setUnitsData (makeUnitsData());
+		model.setGameSettings (cGameSettings{});
+		model.setMap (staticMap);
+		model.setPlayerList ({cPlayerBasicData ({"Player 0", cRgbColor::red()}, 0, false), cPlayerBasicData ({"Player 1", cRgbColor::blue()}, 1, false)});
+	}
 } // namespace
 
 //------------------------------------------------------------------------------
 TEST_CASE ("UpgradeBuildingDetectsStealthUnitsInTheNewScanRange")
 {
-	auto staticMap = std::make_shared<cStaticMap>();
-	const auto mapFilename = writeGroundMap (16);
-	REQUIRE (staticMap->loadMap (mapFilename));
-	std::filesystem::remove (mapFilename);
-
 	cModel model;
-	model.setUnitsData (makeUnitsData());
-	model.setGameSettings (cGameSettings{});
-	model.setMap (staticMap);
-	model.setPlayerList ({cPlayerBasicData ({"Player 0", cRgbColor::red()}, 0, false), cPlayerBasicData ({"Player 1", cRgbColor::blue()}, 1, false)});
+	initModel (model);
 	cPlayer& player = *model.getPlayer (0);
 	cPlayer& enemy = *model.getPlayer (1);
 
@@ -142,4 +149,28 @@ TEST_CASE ("UpgradeBuildingDetectsStealthUnitsInTheNewScanRange")
 	CHECK (nearVehicle.isDetectedByPlayer (&player));
 	CHECK (ringVehicle.isDetectedByPlayer (&player));
 	CHECK_FALSE (farVehicle.isDetectedByPlayer (&player));
+}
+
+//------------------------------------------------------------------------------
+TEST_CASE ("DetectorSearchesWhenItRecoversFromBeingDisabled")
+{
+	cModel model;
+	initModel (model);
+	cPlayer& player = *model.getPlayer (0);
+	cPlayer& enemy = *model.getPlayer (1);
+
+	auto& detector = model.addBuilding (cPosition (3, 8), detectorBuildingId, &player);
+	// disabled for one turn, as by an infiltrator (cActionStealDisable)
+	detector.setDisabledTurns (1);
+	player.removeFromScan (detector);
+
+	// a stealth vehicle in the range of the disabled detector
+	const auto& vehicle = model.addVehicle (cPosition (5, 8), stealthVehicleId, &enemy);
+	CHECK_FALSE (vehicle.isDetectedByPlayer (&player));
+
+	player.makeTurnStart (model);
+
+	REQUIRE_FALSE (detector.isDisabled());
+	CHECK (player.hasLandDetection (vehicle.getPosition()));
+	CHECK (vehicle.isDetectedByPlayer (&player));
 }
