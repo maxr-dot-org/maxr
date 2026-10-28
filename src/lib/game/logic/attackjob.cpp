@@ -326,6 +326,12 @@ void cAttackJob::impact (cModel& model)
 	auto* aggressor = model.getUnitFromID (aggressorId);
 	assert (aggressor != nullptr);
 
+	// The attack of the aggressor is over: unlock it once, before the impact.
+	// A hit may start a reaction fire of the aggressor itself (inSentryRange
+	// in impactSingle). Its new attack job must keep the aggressor locked,
+	// also while the remaining fields of a cluster impact are hit.
+	aggressor->setAttacking (false);
+
 	if (aggressor->getStaticUnitData().muzzleType == eMuzzleType::RocketCluster)
 		impactCluster (model);
 	else
@@ -430,8 +436,6 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 		}
 		model.addFx (std::make_unique<cFxHit> (position * 64 + offset + cPosition (32, 32), targetHit, bigTarget));
 	}
-
-	aggressor->setAttacking (false);
 
 	//make message
 	if (target && target->getOwner())
