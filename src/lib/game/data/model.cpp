@@ -255,6 +255,7 @@ cVehicle& cModel::addVehicle (const cPosition& position, const sID& id, cPlayer*
 			addedVehicle->doSurvey (*getMap());
 		}
 		addedVehicle->detectOtherUnits (*map);
+		addedVehicle->detectThisUnit (*map, playerList);
 	}
 	else
 	{

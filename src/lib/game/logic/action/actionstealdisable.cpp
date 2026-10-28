@@ -146,4 +146,6 @@ void cActionStealDisable::changeUnitOwner (cUnit& unit, cPlayer& newOwner, cMode
 		vehicle->doSurvey (*model.getMap());
 	}
 	unit.detectOtherUnits (*model.getMap());
+	// the detection state has been reset: detect a stealth unit in range of the other players again
+	unit.detectThisUnit (*model.getMap(), model.getPlayerList());
 }
