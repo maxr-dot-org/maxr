@@ -229,6 +229,8 @@ cBuilding& cModel::addBuilding (const cPosition& position, const sID& id, cPlaye
 		addedBuilding->startWork();
 	}
 	addedBuilding->detectOtherUnits (*map);
+	// a stealth building (a mine) can be placed in range of an enemy mine detector
+	addedBuilding->detectThisUnit (*map, playerList);
 
 	return *addedBuilding;
 }
