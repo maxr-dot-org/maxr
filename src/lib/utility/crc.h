@@ -54,6 +54,10 @@
 [[nodiscard]] uint32_t calcCheckSum (const std::string& data, uint32_t checksum);
 [[nodiscard]] uint32_t calcCheckSum (std::string_view data, uint32_t checksum);
 
+// The same value as the generic calcCheckSum (const std::vector<T>&, uint32_t) for T = uint16_t,
+// but faster for runs of zero values (most fields of a range map are zero)
+[[nodiscard]] uint32_t calcCheckSum (const std::vector<uint16_t>& data, uint32_t checksum);
+
 struct sCrcEnum
 {
 	template <typename T>

@@ -23,52 +23,7 @@
 #include "utility/narrow_cast.h"
 
 #include <algorithm>
-#include <bit>
 #include <cassert>
-#include <cstring>
-
-namespace
-{
-	//--------------------------------------------------------------------------
-	// The same value as calcCheckSum (map, 0): the checksum of the bytes of all
-	// values in little endian order (see calcCheckSum (const char*, size_t,
-	// uint32_t)), but faster: a zero byte only rotates the checksum by one bit,
-	// so a run of zero values costs one rotation. Most fields of a range map
-	// are zero on big maps.
-	uint32_t calcMapCheckSum (const std::vector<uint16_t>& map)
-	{
-		uint32_t checksum = 0;
-		unsigned int rotation = 0; // pending rotation by the zero bytes skipped
-		const std::size_t size = map.size();
-		std::size_t i = 0;
-		while (i < size)
-		{
-			if (i + 4 <= size)
-			{
-				uint64_t fourValues;
-				std::memcpy (&fourValues, &map[i], sizeof (fourValues));
-				if (fourValues == 0)
-				{
-					rotation += 8;
-					i += 4;
-					continue;
-				}
-			}
-			const uint16_t value = map[i++];
-			if (value == 0)
-			{
-				rotation += 2;
-				continue;
-			}
-			checksum = std::rotl (checksum, static_cast<int> ((rotation + 1) % 32));
-			rotation = 0;
-			checksum += static_cast<char> (value & 0xFF);
-			checksum = std::rotl (checksum, 1);
-			checksum += static_cast<char> (value >> 8);
-		}
-		return std::rotl (checksum, static_cast<int> (rotation % 32));
-	}
-} // namespace
 
 //------------------------------------------------------------------------------
 void cRangeMap::reset()
@@ -254,7 +209,7 @@ uint32_t cRangeMap::getChecksum (uint32_t crc) const
 {
 	if (!crcCache)
 	{
-		crcCache = calcMapCheckSum (map);
+		crcCache = calcCheckSum (map, 0);
 	}
 
 	return calcCheckSum (*crcCache, crc);

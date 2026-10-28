@@ -20,6 +20,7 @@
 #include "crc.h"
 
 #include <SDL_endian.h>
+#include <bit>
 #include <climits>
 
 //------------------------------------------------------------------------------
@@ -192,4 +193,37 @@ uint32_t calcCheckSum (const std::string& data, uint32_t checksum)
 uint32_t calcCheckSum (std::string_view data, uint32_t checksum)
 {
 	return calcCheckSum (data.data(), data.length(), checksum);
+}
+
+//------------------------------------------------------------------------------
+uint32_t calcCheckSum (const std::vector<uint16_t>& data, uint32_t checksum)
+{
+	// The bytes of each value, low byte first, as in calcCheckSum (uint16_t, uint32_t):
+	// each byte rotates the checksum left by one bit, then is added as a char
+	// (see calcCheckSum (const char*, size_t, uint32_t)). A zero byte only rotates,
+	// so zero values are skipped with a pending rotation.
+	unsigned int rotation = 0; // pending rotation of the skipped zero bytes, modulo 32
+	const std::size_t size = data.size();
+	std::size_t i = 0;
+	while (i < size)
+	{
+		if (i + 4 <= size && (data[i] | data[i + 1] | data[i + 2] | data[i + 3]) == 0)
+		{
+			rotation = (rotation + 4 * 2) % 32;
+			i += 4;
+			continue;
+		}
+		const uint16_t value = data[i++];
+		if (value == 0)
+		{
+			rotation = (rotation + 2) % 32;
+			continue;
+		}
+		checksum = std::rotl (checksum, static_cast<int> (rotation + 1));
+		checksum += static_cast<char> (value & 0xFF);
+		checksum = std::rotl (checksum, 1);
+		checksum += static_cast<char> (value >> 8);
+		rotation = 0;
+	}
+	return std::rotl (checksum, static_cast<int> (rotation));
 }
