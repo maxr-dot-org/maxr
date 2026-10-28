@@ -59,6 +59,13 @@ bool cPathDestHandler::hasReachedDestination (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
+std::optional<cPosition> cPathDestHandler::getExactDestination() const
+{
+	if (type == ePathDestinationType::Pos) return destination;
+	return std::nullopt;
+}
+
+//------------------------------------------------------------------------------
 int cPathDestHandler::heuristicCost (const cPosition& source) const
 {
 	switch (type)
@@ -122,10 +129,22 @@ std::forward_list<cPosition> cPathCalculator::calcPath()
 {
 	std::forward_list<cPosition> path;
 
+	// a field, that no node can be placed on, is never reached:
+	// the search would visit the whole reachable area and find nothing
+	if (const auto destination = destHandler->getExactDestination())
+	{
+		if (*destination != source && (!Map->isValidPosition (*destination) || !isPassable (*destination)))
+		{
+			return path;
+		}
+	}
+
 	// generate open and closed list
 	nodesHeap.resize (Map->getSize().x() * Map->getSize().y() + 1, nullptr);
 	openList.resize (Map->getSize().x() * Map->getSize().y() + 1, nullptr);
 	closedList.resize (Map->getSize().x() * Map->getSize().y() + 1, nullptr);
+	blockedList.resize (Map->getSize().x() * Map->getSize().y() + 1, false);
+	fieldCostList.resize (Map->getSize().x() * Map->getSize().y() + 1, -1);
 
 	// generate startnode
 	sPathNode* StartNode = allocNode();
@@ -188,54 +207,86 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 		{
 			const cPosition currentPosition (x, y);
 			if (currentPosition == ParentNode->position) continue;
+			if (!Map->isValidPosition (currentPosition)) continue;
 
-			if (!Map->possiblePlace (*Vehicle, currentPosition))
+			// The map does not change during the search and isPassable() has no
+			// side effects: an open or closed field has already passed the check
+			// (the start field is closed first), and a field, that failed it,
+			// fails again. So each field is checked only once per search.
+			const int offset = Map->getOffset (currentPosition);
+			if (closedList[offset] != nullptr) continue;
+
+			if (openList[offset] == nullptr)
 			{
-				// when we have a group of units, the units will not block each other
-				if (group)
+				if (blockedList[offset]) continue;
+				if (!isPassable (currentPosition))
 				{
-					const auto& field = Map->getField (currentPosition);
-					// get the blocking unit
-					cVehicle* blockingUnit = (Vehicle->getStaticUnitData().factorAir > 0) ? field.getPlane() : field.getVehicle();
-					// check whether the blocking unit is the group
-					bool isInGroup = ranges::contains (*group, blockingUnit);
-					if (!isInGroup) continue;
-				}
-				else
+					blockedList[offset] = true;
 					continue;
-			}
-			if (closedList[Map->getOffset (currentPosition)] != nullptr) continue;
+				}
 
-			if (openList[Map->getOffset (currentPosition)] == nullptr)
-			{
 				// generate new node
 				sPathNode* NewNode = allocNode();
 				NewNode->position = currentPosition;
-				NewNode->costG = calcNextCost (ParentNode->position, currentPosition, Vehicle, Map) + ParentNode->costG;
+				NewNode->costG = applyDiagonalCost (ParentNode->position, currentPosition, getFieldCost (currentPosition, offset)) + ParentNode->costG;
 				NewNode->costH = destHandler->heuristicCost (currentPosition);
 				NewNode->costF = NewNode->costG + NewNode->costH;
 				NewNode->prev = ParentNode;
-				openList[Map->getOffset (currentPosition)] = NewNode;
+				openList[offset] = NewNode;
 				insertToHeap (NewNode, false);
 			}
 			else
 			{
 				// modify existing node
 				int costG, costH, costF;
-				costG = calcNextCost (ParentNode->position, currentPosition, Vehicle, Map) + ParentNode->costG;
+				costG = applyDiagonalCost (ParentNode->position, currentPosition, getFieldCost (currentPosition, offset)) + ParentNode->costG;
 				costH = destHandler->heuristicCost (currentPosition);
 				costF = costG + costH;
-				if (costF < openList[Map->getOffset (currentPosition)]->costF)
+				if (costF < openList[offset]->costF)
 				{
-					openList[Map->getOffset (currentPosition)]->costG = costG;
-					openList[Map->getOffset (currentPosition)]->costH = costH;
-					openList[Map->getOffset (currentPosition)]->costF = costF;
-					openList[Map->getOffset (currentPosition)]->prev = ParentNode;
-					insertToHeap (openList[Map->getOffset (currentPosition)], true);
+					openList[offset]->costG = costG;
+					openList[offset]->costH = costH;
+					openList[offset]->costF = costF;
+					openList[offset]->prev = ParentNode;
+					insertToHeap (openList[offset], true);
 				}
 			}
 		}
 	}
+}
+
+//------------------------------------------------------------------------------
+bool cPathCalculator::isPassable (const cPosition& position) const
+{
+	if (Map->possiblePlace (*Vehicle, position)) return true;
+
+	// when we have a group of units, the units will not block each other
+	if (!group) return false;
+
+	const auto& field = Map->getField (position);
+	// get the blocking unit
+	cVehicle* blockingUnit = (Vehicle->getStaticUnitData().factorAir > 0) ? field.getPlane() : field.getVehicle();
+	// check whether the blocking unit is the group
+	return ranges::contains (*group, blockingUnit);
+}
+
+//------------------------------------------------------------------------------
+int cPathCalculator::getFieldCost (const cPosition& position, int offset)
+{
+	// the map does not change during the search: the costs of a field are the same from every side
+	if (fieldCostList[offset] < 0)
+	{
+		fieldCostList[offset] = calcFieldCost (position, Vehicle, Map);
+	}
+	return fieldCostList[offset];
+}
+
+//------------------------------------------------------------------------------
+void cPathCalculator::swapHeapNodes (int a, int b)
+{
+	std::swap (nodesHeap[a], nodesHeap[b]);
+	nodesHeap[a]->heapIndex = a;
+	nodesHeap[b]->heapIndex = b;
 }
 
 //------------------------------------------------------------------------------
@@ -258,21 +309,16 @@ void cPathCalculator::insertToHeap (sPathNode* Node, bool exists)
 	int i = 0;
 	if (exists)
 	{
-		// get the number of the existing node
-		for (int j = 1; j <= heapCount; j++)
-		{
-			if (nodesHeap[j] == Node)
-			{
-				i = j;
-				break;
-			}
-		}
+		// the position of the existing node (no search through the heap)
+		i = Node->heapIndex;
+		assert (i >= 1 && i <= heapCount);
 	}
 	else
 	{
 		// add the new node in the end
 		heapCount++;
 		nodesHeap[heapCount] = Node;
+		Node->heapIndex = heapCount;
 		i = heapCount;
 	}
 	// resort the nodes
@@ -281,7 +327,7 @@ void cPathCalculator::insertToHeap (sPathNode* Node, bool exists)
 		assert (nodesHeap[i] == Node);
 		if (Node->costF < nodesHeap[i / 2]->costF)
 		{
-			std::swap (nodesHeap[i / 2], nodesHeap[i]);
+			swapHeapNodes (i / 2, i);
 			i = i / 2;
 		}
 		else
@@ -294,6 +340,7 @@ void cPathCalculator::deleteFirstFromHeap()
 {
 	// overwrite the first node by the last one
 	nodesHeap[1] = nodesHeap[heapCount];
+	nodesHeap[1]->heapIndex = 1;
 	nodesHeap[heapCount] = nullptr;
 	heapCount--;
 	int v = 1;
@@ -312,7 +359,7 @@ void cPathCalculator::deleteFirstFromHeap()
 		// do the resort
 		if (u != v)
 		{
-			std::swap (nodesHeap[u], nodesHeap[v]);
+			swapHeapNodes (u, v);
 		}
 		else
 			break;

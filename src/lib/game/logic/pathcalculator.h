@@ -26,6 +26,7 @@
 #include "utility/position.h"
 
 #include <forward_list>
+#include <optional>
 
 class cVehicle;
 class cUnit;
@@ -42,6 +43,8 @@ struct sPathNode
 	int costH = 0;
 	/* previous node of this one in the hole path */
 	sPathNode* prev = nullptr;
+	/* current index in the heap */
+	int heapIndex = 0;
 };
 
 enum class ePathDestinationType
@@ -64,6 +67,8 @@ public:
 	cPathDestHandler (ePathDestinationType, const cPosition& destination, const cVehicle* srcVehicle, const cUnit* destUnit);
 
 	bool hasReachedDestination (const cPosition& position) const;
+	/** the destination field, if only this field is a destination (type Pos) */
+	std::optional<cPosition> getExactDestination() const;
 	int heuristicCost (const cPosition& source) const;
 };
 
@@ -89,6 +94,15 @@ public:
 	*/
 	template <typename T>
 	static int calcNextCost (const cPosition& source, const cPosition& destination, const cVehicle*, const T* map);
+	/**
+	* the costs for moving onto the destination field, before the factor for diagonal movements
+	*/
+	template <typename T>
+	static int calcFieldCost (const cPosition& destination, const cVehicle*, const T* map);
+	/**
+	* the costs for moving from source to destination, when moving onto destination costs fieldCost
+	*/
+	static int applyDiagonalCost (const cPosition& source, const cPosition& destination, int fieldCost);
 
 	/* the map on which the path will be calculated */
 	const cMapView* Map = nullptr;
@@ -116,6 +130,10 @@ private:
 	std::vector<sPathNode*> openList;
 	/* closed nodes map */
 	std::vector<sPathNode*> closedList;
+	/* fields found not passable in this search */
+	std::vector<bool> blockedList;
+	/* calcFieldCost() of the fields in this search, -1: not calculated yet */
+	std::vector<int> fieldCostList;
 	/* number of nodes saved on the heaplist; equal to number of nodes in the openlist */
 	int heapCount = 0;
 	/**
@@ -128,6 +146,19 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	sPathNode* allocNode();
+	/**
+	* whether a node may be placed on the field: the vehicle can be placed there,
+	* or the field is blocked by a vehicle of the group
+	*/
+	bool isPassable (const cPosition&) const;
+	/**
+	* calcFieldCost() for the field, calculated once per search
+	*/
+	int getFieldCost (const cPosition&, int offset);
+	/**
+	* swaps two nodes of the heap
+	*/
+	void swapHeapNodes (int a, int b);
 	/**
 	* inserts a node into the heaplist and sets it to the right position by its costF value.
 	*@author alzi alias DoctorDeath
@@ -142,6 +173,12 @@ private:
 
 template <typename T>
 int cPathCalculator::calcNextCost (const cPosition& source, const cPosition& destination, const cVehicle* vehicle, const T* map)
+{
+	return applyDiagonalCost (source, destination, calcFieldCost (destination, vehicle, map));
+}
+
+template <typename T>
+int cPathCalculator::calcFieldCost (const cPosition& destination, const cVehicle* vehicle, const T* map)
 {
 	static_assert (std::is_same<T, cMap>::value || std::is_same<T, cMapView>::value, "Type must be cMap or cMapView");
 
@@ -172,7 +209,11 @@ int cPathCalculator::calcNextCost (const cPosition& source, const cPosition& des
 	{
 		costs = (int) (costs * building->getStaticData().modifiesSpeed);
 	}
+	return costs;
+}
 
+inline int cPathCalculator::applyDiagonalCost (const cPosition& source, const cPosition& destination, int costs)
+{
 	// multiply with the factor 1.5 for diagonal movements
 	if (source.x() != destination.x() && source.y() != destination.y())
 	{
