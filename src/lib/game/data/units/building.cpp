@@ -544,8 +544,10 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 //------------------------------------------------------------------------------
 bool cBuilding::buildingCanBeStarted() const
 {
+	// a factory needs an unfinished first item: with a finished one (or an empty list)
+	// it would only consume energy and report the same unit again
 	return (getStaticData().canWork && isUnitWorking() == false
-	        && (!buildList.empty() || staticData->canBuild.empty()));
+	        && ((!buildList.empty() && buildList[0].getRemainingMetal() > 0) || staticData->canBuild.empty()));
 }
 
 //------------------------------------------------------------------------------
