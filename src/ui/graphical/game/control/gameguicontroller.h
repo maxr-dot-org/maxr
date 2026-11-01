@@ -109,6 +109,9 @@ private:
 
 	std::map<int, sPlayerGuiInfo> playerGameGuiStates;
 
+	bool initialPanelOpeningFinished = false;
+	std::optional<int> pendingGuiInfoRestorePlayerNr;
+
 	std::optional<cPosition> savedReportPosition;
 	std::shared_ptr<cWindowUpgradesFilterState> upgradesFilterState;
 
@@ -142,6 +145,7 @@ private:
 
 	void handleChatCommand (std::string_view command);
 
+	void restoreGuiInfoForActivePlayer();
 	void handleReportForActivePlayer (const cSavedReport&);
 
 	void selectNextUnit();
