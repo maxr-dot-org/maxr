@@ -573,6 +573,10 @@ void cGameGuiController::connectGuiStaticCommands()
 		restoreGuiInfoForActivePlayer();
 	});
 
+	signalConnectionManager.connect (animationTimer->triggered10ms, [this]() {
+		restoreReportSoundsForActivePlayer();
+	});
+
 	signalConnectionManager.connect (gameGui->getChatBox().commandEntered, [this] (const std::string& text) { handleChatCommand (text); });
 
 	signalConnectionManager.connect (gameGui->getHud().preferencesClicked, [this]() { showPreferencesDialog(); });
@@ -1660,12 +1664,45 @@ void cGameGuiController::restoreGuiInfoForActivePlayer()
 	gameGui->restoreState (iter->second.gameGuiState);
 	for (const auto& report : *iter->second.reports)
 	{
-		handleReportForActivePlayer (*report);
+		showReportForActivePlayer (*report);
+	}
+	pendingReportSoundRestorePlayerNr = playerNr;
+	pendingReportSoundRestoreCount = iter->second.reports->size();
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::restoreReportSoundsForActivePlayer()
+{
+	if (!pendingReportSoundRestorePlayerNr) return;
+	if (cSoundDevice::getInstance().isVoicePlaying()) return;
+
+	const int playerNr = *pendingReportSoundRestorePlayerNr;
+	const std::size_t reportCount = pendingReportSoundRestoreCount;
+
+	pendingReportSoundRestorePlayerNr.reset();
+	pendingReportSoundRestoreCount = 0;
+
+	if (!activeClient || activeClient->getActivePlayer().getId() != playerNr) return;
+
+	auto iter = playerGameGuiStates.find (playerNr);
+	if (iter == playerGameGuiStates.end()) return;
+
+	const auto& reports = *iter->second.reports;
+	for (std::size_t i = 0; i < reportCount && i < reports.size(); ++i)
+	{
+		playReportSoundsForActivePlayer (*reports[i]);
 	}
 }
 
 //------------------------------------------------------------------------------
 void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report)
+{
+	showReportForActivePlayer (report);
+	playReportSoundsForActivePlayer (report);
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::showReportForActivePlayer (const cSavedReport& report)
 {
 	if (report.getType() == eSavedReportType::Chat)
 	{
@@ -1674,12 +1711,17 @@ void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report
 
 		if (playerEntry)
 		{
-			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (playerEntry->getPlayer().getName(), savedChatReport.getText()));
-			cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
+			gameGui->getChatBox().addChatEntry (
+				std::make_unique<cLobbyChatBoxListViewItem> (
+					playerEntry->getPlayer().getName(),
+					savedChatReport.getText()));
 		}
 		else // message from non in-game player (e.g. dedicated server)
 		{
-			gameGui->getChatBox().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (savedChatReport.getPlayerName(), savedChatReport.getText()));
+			gameGui->getChatBox().addChatEntry (
+				std::make_unique<cLobbyChatBoxListViewItem> (
+					savedChatReport.getPlayerName(),
+					savedChatReport.getText()));
 		}
 	}
 	else if (auto position = report.getPosition())
@@ -1687,18 +1729,50 @@ void cGameGuiController::handleReportForActivePlayer (const cSavedReport& report
 		savedReportPosition = *position;
 
 		if (activeClient)
-			gameGui->getGameMessageList().addMessage (getMessage (report, activeClient->getModel()) + " (" + KeysList.keyJumpToAction.toString() + ")", eGameMessageListViewItemBackgroundColor::LightGray);
+		{
+			gameGui->getGameMessageList().addMessage (
+				getMessage (report, activeClient->getModel()) + " (" + KeysList.keyJumpToAction.toString() + ")",
+				eGameMessageListViewItemBackgroundColor::LightGray);
+		}
 	}
 	else
 	{
 		if (activeClient)
-			gameGui->getGameMessageList().addMessage (getMessage (report, activeClient->getModel()), report.isAlert() ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
-		if (report.isAlert()) soundManager->playSound (std::make_shared<cSoundEffect> (eSoundEffectType::EffectAlert, SoundData.SNDQuitsch));
+		{
+			gameGui->getGameMessageList().addMessage (
+				getMessage (report, activeClient->getModel()),
+				report.isAlert() ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
+		}
 	}
-	if (activeClient)
-		playSound (*soundManager, activeClient->getModel(), report);
 
-	if (cSettings::getInstance().isDebug() && activeClient) Log.debug (getMessage (report, activeClient->getModel()));
+	if (cSettings::getInstance().isDebug() && activeClient)
+	{
+		Log.debug (getMessage (report, activeClient->getModel()));
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::playReportSoundsForActivePlayer (const cSavedReport& report)
+{
+	if (report.getType() == eSavedReportType::Chat)
+	{
+		auto& savedChatReport = static_cast<const cSavedReportChat&> (report);
+		auto playerEntry = gameGui->getChatBox().getPlayerEntryFromNumber (savedChatReport.getPlayerNumber());
+
+		if (playerEntry)
+		{
+			cSoundDevice::getInstance().playSoundEffect (SoundData.SNDChat);
+		}
+	}
+	else if (!report.getPosition() && report.isAlert())
+	{
+		soundManager->playSound (std::make_shared<cSoundEffect> (eSoundEffectType::EffectAlert, SoundData.SNDQuitsch));
+	}
+
+	if (activeClient)
+	{
+		playSound (*soundManager, activeClient->getModel(), report);
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -81,6 +81,16 @@ cSoundChannel& cSoundChannelGroup::getFreeChannel (bool haltIfNotAvailable)
 }
 
 //------------------------------------------------------------------------------
+bool cSoundChannelGroup::isPlaying() const
+{
+	for (const auto& soundChannel : soundChannels)
+	{
+		if (soundChannel->isPlaying()) return true;
+	}
+	return false;
+}
+
+//------------------------------------------------------------------------------
 void cSoundChannelGroup::setVolume (int volume)
 {
 	for (const auto& soundChannel : soundChannels)

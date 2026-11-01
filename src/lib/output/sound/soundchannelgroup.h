@@ -37,6 +37,8 @@ public:
 
 	cSoundChannel& getFreeChannel (bool haltIfNotAvailable = true);
 
+	bool isPlaying() const;
+
 	void setVolume (int volume);
 
 private:

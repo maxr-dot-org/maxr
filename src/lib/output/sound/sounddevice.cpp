@@ -125,6 +125,12 @@ bool cSoundDevice::playVoice (const cSoundChunk& chunk)
 }
 
 //------------------------------------------------------------------------------
+bool cSoundDevice::isVoicePlaying() const
+{
+	return voiceChannelGroup.isPlaying();
+}
+
+//------------------------------------------------------------------------------
 void cSoundDevice::startMusic (const std::filesystem::path& fileName)
 {
 	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isMusicMute()) return;
