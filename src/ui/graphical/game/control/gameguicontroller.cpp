@@ -217,10 +217,10 @@ void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clien
 			{
 				pendingGuiInfoRestorePlayerNr = client->getActivePlayer().getId();
 
-				 if (initialPanelOpeningFinished)
-                {
+				if (initialPanelOpeningFinished)
+				{
 					restoreGuiInfoForActivePlayer();
-                }
+				}
 			}
 		});
 	}
@@ -569,9 +569,9 @@ void cGameGuiController::connectGuiStaticCommands()
 	signalConnectionManager.connect (gameGui->terminated, [this]() { terminated(); });
 
 	signalConnectionManager.connect (gameGui->initialPanelOpened, [this]() {
-        initialPanelOpeningFinished = true;
-        restoreGuiInfoForActivePlayer();
-    });
+		initialPanelOpeningFinished = true;
+		restoreGuiInfoForActivePlayer();
+	});
 
 	signalConnectionManager.connect (gameGui->getChatBox().commandEntered, [this] (const std::string& text) { handleChatCommand (text); });
 
@@ -1647,21 +1647,21 @@ void cGameGuiController::handleChatCommand (std::string_view chatString)
 //------------------------------------------------------------------------------
 void cGameGuiController::restoreGuiInfoForActivePlayer()
 {
-    if (!activeClient || !pendingGuiInfoRestorePlayerNr) return;
+	if (!activeClient || !pendingGuiInfoRestorePlayerNr) return;
 
-    const int playerNr = *pendingGuiInfoRestorePlayerNr;
-    if (activeClient->getActivePlayer().getId() != playerNr) return;
+	const int playerNr = *pendingGuiInfoRestorePlayerNr;
+	if (activeClient->getActivePlayer().getId() != playerNr) return;
 
-    auto iter = playerGameGuiStates.find (playerNr);
-    if (iter == playerGameGuiStates.end()) return;
+	auto iter = playerGameGuiStates.find (playerNr);
+	if (iter == playerGameGuiStates.end()) return;
 
-    pendingGuiInfoRestorePlayerNr.reset();
+	pendingGuiInfoRestorePlayerNr.reset();
 
-    gameGui->restoreState (iter->second.gameGuiState);
-    for (const auto& report : *iter->second.reports)
-        {
-            handleReportForActivePlayer (*report);
-        }
+	gameGui->restoreState (iter->second.gameGuiState);
+	for (const auto& report : *iter->second.reports)
+	{
+		handleReportForActivePlayer (*report);
+	}
 }
 
 //------------------------------------------------------------------------------
