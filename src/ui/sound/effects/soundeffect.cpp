@@ -76,6 +76,7 @@ void cSoundEffect::play (cSoundChannel& channel_, bool loop)
 				{
 					signalConnectionManager.disconnectAll();
 					channel = nullptr;
+					hadChannel = true;
 				}
 			}
 			if (hadChannel) stopped();
