@@ -23,6 +23,7 @@
 #include "utility/log.h"
 
 #include <SDL_mixer.h>
+#include <algorithm>
 #include <cassert>
 
 //------------------------------------------------------------------------------
