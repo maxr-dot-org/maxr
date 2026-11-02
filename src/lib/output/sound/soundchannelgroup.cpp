@@ -83,11 +83,7 @@ cSoundChannel& cSoundChannelGroup::getFreeChannel (bool haltIfNotAvailable)
 //------------------------------------------------------------------------------
 bool cSoundChannelGroup::isPlaying() const
 {
-	for (const auto& soundChannel : soundChannels)
-	{
-		if (soundChannel->isPlaying()) return true;
-	}
-	return false;
+	return std::ranges::any_of (soundChannels, [] (const auto& soundChannel) { return soundChannel->isPlaying(); });
 }
 
 //------------------------------------------------------------------------------
