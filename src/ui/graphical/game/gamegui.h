@@ -24,6 +24,7 @@
 #include "ui/widgets/window.h"
 #include "utility/signal/signalconnectionmanager.h"
 
+#include <atomic>
 #include <memory>
 #include <vector>
 
@@ -129,11 +130,13 @@ private:
 
 	void startSelectedUnitSound (const cUnit&, const cSoundChunk&);
 	void stopSelectedUnitSound();
+	void stopSelectedUnitMoveStartSound();
 
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager panelSignalConnectionManager;
 	cSignalConnectionManager selectedUnitConnectionManager;
+	cSignalConnectionManager selectedUnitMoveStartSoundConnectionManager;
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
 	std::shared_ptr<cSoundManager> soundManager;
@@ -156,6 +159,8 @@ private:
 	cPosition mouseScrollDirection;
 
 	std::shared_ptr<cSoundEffect> selectedUnitSoundLoop;
+	std::shared_ptr<cSoundEffect> selectedUnitMoveStartSound;
+	std::atomic_bool selectedUnitMoveStartFinished = false;
 
 	bool openPanelOnActivation = true;
 };
