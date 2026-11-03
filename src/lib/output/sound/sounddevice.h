@@ -44,6 +44,7 @@ public:
 
 	bool playSoundEffect (const cSoundChunk&);
 	bool playVoice (const cSoundChunk&);
+	bool isVoicePlaying() const;
 
 	void startMusic (const std::filesystem::path& fileName);
 	void startRandomMusic();

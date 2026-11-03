@@ -28,6 +28,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 #include <array>
+#include <cstddef>
 #include <memory>
 #include <optional>
 #include <string_view>
@@ -109,6 +110,11 @@ private:
 
 	std::map<int, sPlayerGuiInfo> playerGameGuiStates;
 
+	bool initialPanelOpeningFinished = false;
+	std::optional<int> pendingGuiInfoRestorePlayerNr;
+	std::optional<int> pendingReportSoundRestorePlayerNr;
+	std::size_t pendingReportSoundRestoreCount = 0;
+
 	std::optional<cPosition> savedReportPosition;
 	std::shared_ptr<cWindowUpgradesFilterState> upgradesFilterState;
 
@@ -142,6 +148,10 @@ private:
 
 	void handleChatCommand (std::string_view command);
 
+	void restoreGuiInfoForActivePlayer();
+	void restoreReportSoundsForActivePlayer();
+	void showReportForActivePlayer (const cSavedReport&);
+	void playReportSoundsForActivePlayer (const cSavedReport&);
 	void handleReportForActivePlayer (const cSavedReport&);
 
 	void selectNextUnit();

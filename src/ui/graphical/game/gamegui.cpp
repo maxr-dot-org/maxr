@@ -104,6 +104,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	signalConnectionManager.connect (hudPanels->opened, [this]() {
 		hudPanels->disable();
 		hudPanels->hide();
+		initialPanelOpened();
 	});
 
 	hud->activateShortcuts();

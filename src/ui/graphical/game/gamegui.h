@@ -95,6 +95,8 @@ public:
 	cGameGuiState getCurrentState() const;
 	void restoreState (const cGameGuiState&);
 
+	cSignal<void()> initialPanelOpened;
+
 	bool handleMouseMoved (cApplication&, cMouse&, const cPosition& offset) override;
 	bool handleMouseWheelMoved (cApplication&, cMouse&, const cPosition& amount) override;
 	void handleActivated (cApplication&, bool firstTime) override;

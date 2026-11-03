@@ -23,6 +23,7 @@
 #include "utility/log.h"
 
 #include <SDL_mixer.h>
+#include <algorithm>
 #include <cassert>
 
 //------------------------------------------------------------------------------
@@ -78,6 +79,12 @@ cSoundChannel& cSoundChannelGroup::getFreeChannel (bool haltIfNotAvailable)
 	auto iter = soundChannels.find (channel);
 	assert (iter != soundChannels.end());
 	return **iter;
+}
+
+//------------------------------------------------------------------------------
+bool cSoundChannelGroup::isPlaying() const
+{
+	return std::ranges::any_of (soundChannels, [] (const auto& soundChannel) { return soundChannel->isPlaying(); });
 }
 
 //------------------------------------------------------------------------------
