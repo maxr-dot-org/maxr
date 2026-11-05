@@ -80,3 +80,11 @@ std::vector<std::pair<sID, int>> computeInitialLandingUnits (int clan, const cGa
 
 	return initialLandingUnits;
 }
+
+//------------------------------------------------------------------------------
+int computeLandingCargoCost (int cargo, int freeCargo)
+{
+	constexpr int cargoPerCredit = 5;
+	const int bought = cargo > freeCargo ? cargo - freeCargo : 0;
+	return (bought + cargoPerCredit - 1) / cargoPerCredit;
+}

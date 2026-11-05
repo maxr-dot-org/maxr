@@ -21,6 +21,7 @@
 
 #include "game/data/player/player.h"
 #include "game/data/units/landingunit.h"
+#include "game/startup/gamepreparation.h"
 #include "resources/pcx.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/listview.h"
@@ -289,7 +290,7 @@ bool cWindowLandingUnitSelection::tryRemoveSelectedUnit (const cUnitListViewItem
 	const auto& unitId = unitItem.getUnitId();
 	int buildCosts = unitsData->getDynamicUnitData (unitId, getPlayer().getClan()).getBuildCost();
 
-	const auto value = buildCosts + (unitItem.getCargo() / singleCreditResourceAmount);
+	const auto value = buildCosts + computeLandingCargoCost (unitItem.getCargo(), 0);
 
 	if (goldBar->getValue() + value > goldBar->getMaxValue()) return false;
 
@@ -347,17 +348,20 @@ std::pair<int, int> cWindowLandingUnitSelection::testBuyCargo (const cUnitListVi
 	const int min_cargo = (it != fixedSelectedUnits.end() ? it->second : 0);
 
 	amount = std::clamp (amount, min_cargo - unit.getCargo(), metalBar->getMaxValue() - unit.getCargo());
-	auto price = amount / singleCreditResourceAmount; // may be negative (if we are selling)
+	// one credit per started 5 units above the free cargo, as the server counts (computeLandingCargoCost)
+	const int oldCost = computeLandingCargoCost (unit.getCargo(), min_cargo);
+	auto price = computeLandingCargoCost (unit.getCargo() + amount, min_cargo) - oldCost; // may be negative (if we are selling)
 
 	if (goldBar->getValue() - price < goldBar->getMinValue())
 	{
+		// as much cargo as the gold pays for
 		price = goldBar->getValue() - goldBar->getMinValue();
-		amount = price * singleCreditResourceAmount;
+		amount = std::min (amount, min_cargo + (oldCost + price) * singleCreditResourceAmount - unit.getCargo());
 	}
 	if (goldBar->getValue() - price > goldBar->getMaxValue())
 	{
 		price = goldBar->getValue() - goldBar->getMaxValue();
-		amount = price * singleCreditResourceAmount;
+		amount = min_cargo + (oldCost + price) * singleCreditResourceAmount - unit.getCargo();
 	}
 
 	return std::make_pair (price, amount);

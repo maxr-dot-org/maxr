@@ -373,7 +373,8 @@ void cActionInitNewGame::execute (cModel& model) const
 			return;
 		}
 		credits -= costs;
-		if (credits <= 0)
+		// the landing window lets the player spend all credits
+		if (credits < 0)
 		{
 			NetLog.error (" Apply upgrade failed. Used more than the available credits.");
 			return;
@@ -383,7 +384,9 @@ void cActionInitNewGame::execute (cModel& model) const
 	player.getGameOverStat().totalUpgradeCost = model.getGameSettings()->startCredits - credits;
 
 	// land vehicles
-	auto initialLandingUnits = computeInitialLandingUnits (initPlayerData.clan, *model.getGameSettings(), unitsdata);
+	// (the free units and the prices depend on the clan of the player, not on the requested one:
+	// without clans it is -1)
+	auto initialLandingUnits = computeInitialLandingUnits (player.getClan(), *model.getGameSettings(), unitsdata);
 	for (const auto& landing : initPlayerData.landingUnits)
 	{
 		if (!unitsdata.isValidId (landing.unitID))
@@ -391,19 +394,38 @@ void cActionInitNewGame::execute (cModel& model) const
 			NetLog.error (" Landing failed. Unknown sID: " + landing.unitID.getText());
 			return;
 		}
+		const cStaticUnitData& landingData = unitsdata.getStaticUnitData (landing.unitID);
 
 		auto it = std::ranges::find_if (initialLandingUnits, [landing] (std::pair<sID, int> unit) { return unit.first == landing.unitID; });
+		const int freeCargo = it != initialLandingUnits.end() ? it->second : 0;
+
+		// the same rules as in the landing window (cWindowLandingUnitSelection):
+		// only ground vehicles without infantry and aliens can be bought,
+		// cargo only for metal or oil, not more than the storage, not less than the free cargo
+		if (it == initialLandingUnits.end() && (landing.unitID.isABuilding() || landingData.factorGround == 0 || landingData.vehicleData.isHuman || landingData.isAlien))
+		{
+			NetLog.error (" Landing failed. This unit can't be bought for the landing: " + landing.unitID.getText());
+			return;
+		}
+		const bool canTakeCargo = landingData.storeResType == eResourceType::Metal || landingData.storeResType == eResourceType::Oil;
+		if (static_cast<int> (landing.cargo) < freeCargo || (landing.cargo != 0 && (!canTakeCargo || static_cast<int> (landing.cargo) > landingData.storageResMax)))
+		{
+			NetLog.error (" Landing failed. Invalid cargo " + std::to_string (landing.cargo) + " for " + landing.unitID.getText());
+			return;
+		}
+
 		if (it != initialLandingUnits.end())
 		{
 			// landing unit is one of the initial landing units, that the player gets for free
 			// so don't pay for the unit and the default cargo
-			credits -= (landing.cargo - it->second) / 5;
+			// (one credit per started 5 units of cargo, as in the landing window)
+			credits -= computeLandingCargoCost (static_cast<int> (landing.cargo), freeCargo);
 			initialLandingUnits.erase (it);
 		}
 		else
 		{
-			credits -= landing.cargo / 5;
-			credits -= unitsdata.getDynamicUnitData (landing.unitID, initPlayerData.clan).getBuildCost();
+			credits -= computeLandingCargoCost (static_cast<int> (landing.cargo), 0);
+			credits -= unitsdata.getDynamicUnitData (landing.unitID, player.getClan()).getBuildCost();
 		}
 	}
 	if (credits < 0)
