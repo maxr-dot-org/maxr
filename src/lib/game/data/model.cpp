@@ -671,6 +671,7 @@ void cModel::handleTurnEnd()
 			if (gameSettings->gameType == eGameSettingsGameType::Simultaneous)
 			{
 				turnCounter->increaseTurn();
+				makeNeutralTurnStart();
 
 				for (auto& player : playerList)
 				{
@@ -693,6 +694,7 @@ void cModel::handleTurnEnd()
 					activeTurnPlayer = playerList.front().get();
 					turnCounter->increaseTurn();
 					hasChangedTurn = true;
+					makeNeutralTurnStart();
 				}
 				else
 				{
@@ -731,6 +733,21 @@ void cModel::handleTurnEnd()
 			newTurnStarted (newTurnReport);
 		}
 		break;
+	}
+}
+
+//------------------------------------------------------------------------------
+void cModel::makeNeutralTurnStart()
+{
+	// the turns a unit is disabled are counted down at the turn start of its owner
+	// (cPlayer::makeTurnStart): a neutral unit has none, so count them down once a turn
+	for (auto& vehicle : neutralVehicles)
+	{
+		if (vehicle->isDisabled()) vehicle->setDisabledTurns (vehicle->getDisabledTurns() - 1);
+	}
+	for (auto& building : neutralBuildings)
+	{
+		if (building->isDisabled()) building->setDisabledTurns (building->getDisabledTurns() - 1);
 	}
 }
 
