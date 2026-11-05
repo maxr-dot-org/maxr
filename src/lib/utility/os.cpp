@@ -75,8 +75,10 @@ namespace os
 #if WIN32
 		// this is where windowsuser should set their %HOME%
 		//set home dir
-		TCHAR szPath[MAX_PATH];
-		SHGetFolderPath (nullptr, CSIDL_PERSONAL, nullptr, 0, szPath);
+		// (wide characters: std::filesystem::path reads a narrow string as UTF-8,
+		// but the narrow Windows API returns the ANSI code page, e.g. for cyrillic letters)
+		wchar_t szPath[MAX_PATH];
+		SHGetFolderPathW (nullptr, CSIDL_PERSONAL, nullptr, 0, szPath);
 		return szPath;
 #elif __amigaos4__
 		return "";
@@ -96,10 +98,11 @@ namespace os
 		return ""; // TODO
 #elif WIN32
 		//set exe path
-		TCHAR szPath[MAX_PATH];
+		// (wide characters: see getHomeDir)
+		wchar_t szPath[MAX_PATH];
 		HMODULE hModule = GetModuleHandle (nullptr);
 
-		GetModuleFileName (hModule, szPath, MAX_PATH);
+		GetModuleFileNameW (hModule, szPath, MAX_PATH);
 		const std::filesystem::path exe = szPath;
 		return exe.parent_path();
 #elif __amigaos4__
