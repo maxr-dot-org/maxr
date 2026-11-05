@@ -176,12 +176,22 @@ namespace os
 	//--------------------------------------------------------------------------
 	std::string getUserName()
 	{
+		// the variable may be missing (a service, a reduced environment):
+		// constructing std::string from nullptr throws
 #ifdef WIN32
-		return getenv ("USERNAME");
+		// wide characters: the narrow environment is in the ANSI code page, the game uses UTF-8
+		const wchar_t* name = _wgetenv (L"USERNAME");
+		if (name == nullptr) return "";
+		const int size = WideCharToMultiByte (CP_UTF8, 0, name, -1, nullptr, 0, nullptr, nullptr);
+		if (size <= 1) return "";
+		std::string result (size - 1, '\0');
+		WideCharToMultiByte (CP_UTF8, 0, name, -1, result.data(), size, nullptr, nullptr);
+		return result;
 #elif __amigaos4__
 		return "AmigaOS4-User";
 #else
-		return getenv ("USER"); //get $USER on linux
+		const char* name = getenv ("USER"); //get $USER on linux
+		return name != nullptr ? name : "";
 #endif
 	}
 
