@@ -654,6 +654,9 @@ sNewTurnPlayerReport cPlayer::makeTurnStart (cModel& model)
 	// reload all vehicles
 	for (auto& vehicle : vehicles)
 	{
+		// a vehicle disabled by an infiltrator pauses its building or clearing
+		// for the turns it is disabled (see cActionStealDisable)
+		const bool paused = vehicle->isDisabled();
 		if (vehicle->isDisabled())
 		{
 			vehicle->setDisabledTurns (vehicle->getDisabledTurns() - 1);
@@ -663,8 +666,11 @@ sNewTurnPlayerReport cPlayer::makeTurnStart (cModel& model)
 			}
 		}
 		vehicle->refreshData();
-		vehicle->proceedBuilding (model, report);
-		vehicle->proceedClearing (model);
+		if (!paused)
+		{
+			vehicle->proceedBuilding (model, report);
+			vehicle->proceedClearing (model);
+		}
 	}
 
 	//just to prevent, that an error in scanmap updates have a permanent impact
