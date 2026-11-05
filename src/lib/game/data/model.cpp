@@ -659,7 +659,10 @@ void cModel::handleTurnEnd()
 		case eTurnEndState::ExecuteRemainingMovements:
 		{
 			const bool activeMoveJob = std::ranges::any_of (moveJobs, [] (const auto& moveJob) { return moveJob->isActive(); });
-			if (!activeMoveJob)
+			// The turn passes, when the shots of the ending turn have hit and the destroyed
+			// units are removed: a target of a shot still in flight would start the next turn
+			// under attack and could neither move nor fire, until the shot hits.
+			if (!activeMoveJob && attackJobs.empty() && helperJobs.empty())
 			{
 				turnEndState = eTurnEndState::ExecuteTurnStart;
 			}
