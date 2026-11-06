@@ -130,6 +130,11 @@ void cActionStealDisable::changeUnitOwner (cUnit& unit, cPlayer& newOwner, cMode
 	{
 		oldOwner->removeFromScan (unit);
 	}
+	// a unit on sentry guards for its new owner from now on
+	if (oldOwner && unit.isSentryActive())
+	{
+		oldOwner->removeFromSentryMap (unit);
+	}
 
 	// unit is fully operational for new owner
 	unit.setDisabledTurns (0);
@@ -151,6 +156,7 @@ void cActionStealDisable::changeUnitOwner (cUnit& unit, cPlayer& newOwner, cMode
 	unit.setOwner (&newOwner);
 
 	newOwner.addToScan (unit);
+	if (unit.isSentryActive()) newOwner.addToSentryMap (unit);
 
 	for (const auto& player : model.getPlayerList())
 	{

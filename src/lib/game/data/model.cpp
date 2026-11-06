@@ -391,8 +391,11 @@ void cModel::deleteUnit (cUnit* unit)
 
 	if (owner != nullptr)
 	{
-		owner->removeFromSentryMap (*unit);
-		owner->removeFromScan (*unit);
+		// remove the unit only from the maps, that contain it:
+		// a unit not on sentry is not in the sentry maps,
+		// a disabled unit is not in the scan maps (see cActionStealDisable)
+		if (unit->isSentryActive()) owner->removeFromSentryMap (*unit);
+		if (!unit->isDisabled()) owner->removeFromScan (*unit);
 	}
 }
 //------------------------------------------------------------------------------
