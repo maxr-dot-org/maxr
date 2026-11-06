@@ -7,3 +7,4 @@
 [submodule "submodules/nlohmann"]
 	path = submodules/nlohmann
 	url = https://github.com/nlohmann/json.git
+	branch = master
