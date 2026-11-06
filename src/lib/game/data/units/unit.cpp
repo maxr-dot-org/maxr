@@ -523,10 +523,12 @@ void cUnit::detectOtherUnits (const cMap& map) const
 		const int scanSquared = data.getScan() * data.getScan();
 		if ((getPosition() - pos).l2NormSquared() > scanSquared) continue;
 
+		// the unit searches by itself: only with its own detection and range,
+		// not with the detection of the other units of its owner
 		const auto& vehicles = map.getField (pos).getVehicles();
 		for (const auto& vehicle : vehicles)
 		{
-			if (vehicle->checkDetectedByPlayer (*owner, map))
+			if (vehicle->checkDetectedByPlayer (*owner, map, this))
 			{
 				vehicle->setDetectedByPlayer (owner);
 			}
@@ -534,7 +536,7 @@ void cUnit::detectOtherUnits (const cMap& map) const
 		const auto& buildings = map.getField (pos).getBuildings();
 		for (const auto& building : buildings)
 		{
-			if (building->checkDetectedByPlayer (*owner, map))
+			if (building->checkDetectedByPlayer (*owner, map, this))
 			{
 				building->setDetectedByPlayer (owner);
 			}
@@ -548,8 +550,20 @@ const cStaticUnitData& cUnit::getStaticUnitData() const
 	return *staticData;
 }
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	/** the position is in the range of the unit: the same circle (or square) as in the range maps of the players (cRangeMap) */
+	bool isInRangeOfUnit (const cUnit& unit, const cPosition& position, int range, bool square)
+	{
+		const cPosition delta2x = (position - unit.getPosition()) * 2 - (unit.getIsBig() ? 2 : 1) + 1;
+		if (square) return delta2x.abs().max() <= 2 * range;
+		return delta2x.l2NormSquared() <= 4 * range * range;
+	}
+} // namespace
+
 //------------------------------------------------------------------------------
-bool cUnit::checkDetectedByPlayer (const cPlayer& player, const cMap& map) const
+bool cUnit::checkDetectedByPlayer (const cPlayer& player, const cMap& map, const cUnit* detector) const
 {
 	//big stealth units not implemented yet
 	if (getIsBig())
@@ -574,28 +588,47 @@ bool cUnit::checkDetectedByPlayer (const cPlayer& player, const cMap& map) const
 		isOnCoast = false;
 	}
 
+	// the sight and the detection of the player (all his units),
+	// or of the detector alone (a unit, that searches by itself, see detectOtherUnits)
+	const auto canSee = [&]() {
+		if (detector == nullptr) return player.canSeeAnyAreaUnder (*this);
+		return isInRangeOfUnit (*detector, position, detector->data.getScan(), false);
+	};
+	const auto hasDetection = [&] (eTerrainFlag type) {
+		if (detector == nullptr)
+		{
+			if (type == eTerrainFlag::Ground) return player.hasLandDetection (position);
+			if (type == eTerrainFlag::Sea) return player.hasSeaDetection (position);
+			return player.hasMineDetection (position);
+		}
+		if (!(detector->getStaticUnitData().canDetectStealthOn & type)) return false;
+		// mines can only be detected on directly adjacent fields (see cPlayer::addToScan)
+		if (type == eTerrainFlag::AreaExpMine) return isInRangeOfUnit (*detector, position, 1, true);
+		return isInRangeOfUnit (*detector, position, detector->data.getScan(), false);
+	};
+
 	// check stealth status
-	if (!isStealthOnCurrentTerrain (map.getField (position), map.staticMap->getTerrain (position)) && player.canSeeAnyAreaUnder (*this))
+	if (!isStealthOnCurrentTerrain (map.getField (position), map.staticMap->getTerrain (position)) && canSee())
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & eTerrainFlag::Ground) && player.hasLandDetection (position) && !isOnCoast && !isOnWater)
+	else if ((staticData->isStealthOn & eTerrainFlag::Ground) && hasDetection (eTerrainFlag::Ground) && !isOnCoast && !isOnWater)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & eTerrainFlag::Sea) && player.hasSeaDetection (position) && isOnWater)
+	else if ((staticData->isStealthOn & eTerrainFlag::Sea) && hasDetection (eTerrainFlag::Sea) && isOnWater)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & eTerrainFlag::Coast) && player.hasLandDetection (position) && isOnCoast && staticData->factorGround > 0)
+	else if ((staticData->isStealthOn & eTerrainFlag::Coast) && hasDetection (eTerrainFlag::Ground) && isOnCoast && staticData->factorGround > 0)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & eTerrainFlag::Coast) && player.hasSeaDetection (position) && isOnCoast && staticData->factorSea > 0)
+	else if ((staticData->isStealthOn & eTerrainFlag::Coast) && hasDetection (eTerrainFlag::Sea) && isOnCoast && staticData->factorSea > 0)
 	{
 		return true;
 	}
-	else if ((staticData->isStealthOn & eTerrainFlag::AreaExpMine) && player.hasMineDetection (position))
+	else if ((staticData->isStealthOn & eTerrainFlag::AreaExpMine) && hasDetection (eTerrainFlag::AreaExpMine))
 	{
 		return true;
 	}
