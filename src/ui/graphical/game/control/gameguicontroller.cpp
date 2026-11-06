@@ -1668,29 +1668,57 @@ void cGameGuiController::restoreGuiInfoForActivePlayer()
 	}
 	pendingReportSoundRestorePlayerNr = playerNr;
 	pendingReportSoundRestoreCount = iter->second.reports->size();
+	pendingReportSoundRestoreIndex = 0;
+
+	// Restore sounds only for reports from the most recent turn.
+	const auto& reports = *iter->second.reports;
+	for (std::size_t i = reports.size(); i > 0; --i)
+	{
+		if (reports[i - 1]->getType() == eSavedReportType::TurnStart)
+		{
+			pendingReportSoundRestoreIndex = i - 1;
+			break;
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
 void cGameGuiController::restoreReportSoundsForActivePlayer()
 {
 	if (!pendingReportSoundRestorePlayerNr) return;
-	if (cSoundDevice::getInstance().isVoicePlaying()) return;
 
 	const int playerNr = *pendingReportSoundRestorePlayerNr;
-	const std::size_t reportCount = pendingReportSoundRestoreCount;
 
-	pendingReportSoundRestorePlayerNr.reset();
-	pendingReportSoundRestoreCount = 0;
-
-	if (!activeClient || activeClient->getActivePlayer().getId() != playerNr) return;
+	if (!activeClient || activeClient->getActivePlayer().getId() != playerNr)
+	{
+		pendingReportSoundRestorePlayerNr.reset();
+		pendingReportSoundRestoreCount = 0;
+		pendingReportSoundRestoreIndex = 0;
+		return;
+	}
 
 	auto iter = playerGameGuiStates.find (playerNr);
-	if (iter == playerGameGuiStates.end()) return;
+	if (iter == playerGameGuiStates.end())
+	{
+		pendingReportSoundRestorePlayerNr.reset();
+		pendingReportSoundRestoreCount = 0;
+		pendingReportSoundRestoreIndex = 0;
+		return;
+	}
 
 	const auto& reports = *iter->second.reports;
-	for (std::size_t i = 0; i < reportCount && i < reports.size(); ++i)
+
+	while (pendingReportSoundRestoreIndex < pendingReportSoundRestoreCount && pendingReportSoundRestoreIndex < reports.size() && !cSoundDevice::getInstance().isVoicePlaying())
 	{
-		playReportSoundsForActivePlayer (*reports[i]);
+		playReportSoundsForActivePlayer (*reports[pendingReportSoundRestoreIndex]);
+		++pendingReportSoundRestoreIndex;
+	}
+
+	if (pendingReportSoundRestoreIndex >= pendingReportSoundRestoreCount || pendingReportSoundRestoreIndex >= reports.size())
+	{
+		pendingReportSoundRestorePlayerNr.reset();
+		pendingReportSoundRestoreCount = 0;
+		pendingReportSoundRestoreIndex = 0;
 	}
 }
 

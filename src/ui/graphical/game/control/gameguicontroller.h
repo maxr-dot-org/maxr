@@ -114,6 +114,7 @@ private:
 	std::optional<int> pendingGuiInfoRestorePlayerNr;
 	std::optional<int> pendingReportSoundRestorePlayerNr;
 	std::size_t pendingReportSoundRestoreCount = 0;
+	std::size_t pendingReportSoundRestoreIndex = 0;
 
 	std::optional<cPosition> savedReportPosition;
 	std::shared_ptr<cWindowUpgradesFilterState> upgradesFilterState;
