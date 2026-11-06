@@ -143,7 +143,7 @@ void cServer::sendGuiInfoToClients (int saveGameNumber, [[maybe_unused]] int pla
 		cSavegame savegame;
 		savegame.loadGuiInfo (this, saveGameNumber);
 	}
-	catch (std::runtime_error& e)
+	catch (const std::exception& e)
 	{
 		NetLog.error ((std::string) " Server: Loading GuiInfo from savegame failed: " + e.what());
 	}

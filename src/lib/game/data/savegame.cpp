@@ -265,7 +265,15 @@ void cSavegame::loadGuiInfo (const cServer* server, int slot, int playerNr) cons
 		throw std::runtime_error ("Could not load savegame file " + std::to_string (slot));
 	}
 
-	for (const auto& player : json->at ("GuiInfo"))
+	// GuiInfo is added, when the clients answer the save request (see saveGuiInfo):
+	// a game saved without connected clients with a gui has none
+	const auto guiInfos = json->find ("GuiInfo");
+	if (guiInfos == json->end())
+	{
+		NetLog.debug (" Savegame " + std::to_string (slot) + " has no GuiInfo");
+		return;
+	}
+	for (const auto& player : *guiInfos)
 	{
 		cJsonArchiveIn archive (player);
 		cNetMessageGUISaveInfo guiInfo (slot, -1);
