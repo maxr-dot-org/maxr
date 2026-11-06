@@ -33,7 +33,8 @@ class cPushButton;
 class cWindowEndGame : public cWindow
 {
 public:
-	explicit cWindowEndGame (const std::vector<std::shared_ptr<const cPlayer>>&);
+	/** result: a line under the title (e.g. the draw), empty - none */
+	explicit cWindowEndGame (const std::vector<std::shared_ptr<const cPlayer>>&, const std::string& result = "");
 
 	void retranslate() override;
 

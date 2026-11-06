@@ -142,6 +142,9 @@ msgstr "%s detected"
 msgid "Comp~Disabled"
 msgstr "disabled"
 
+msgid "Comp~Draw"
+msgstr "Draw: the leading players have the same score"
+
 msgid "Comp~EcoSphere(s)"
 msgid_plural "Comp~EcoSphere(s)"
 msgstr[0] "%d Eco-sphere"

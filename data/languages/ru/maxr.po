@@ -145,6 +145,9 @@ msgstr "%s повреждено"
 msgid "Comp~Disabled"
 msgstr "сломано"
 
+msgid "Comp~Draw"
+msgstr "Ничья: у лидеров поровну очков"
+
 #, fuzzy
 msgid "Comp~EcoSphere(s)"
 msgid_plural "Comp~EcoSphere(s)"
@@ -327,7 +330,7 @@ msgid "Comp~Waits"
 msgstr "бездействует"
 
 msgid "Comp~Wins"
-msgstr ""
+msgstr "Игрок %s победил"
 
 msgid "Comp~Working"
 msgstr "работает"

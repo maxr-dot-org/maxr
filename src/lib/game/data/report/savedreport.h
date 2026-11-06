@@ -70,7 +70,8 @@ enum class eSavedReportType
 	Upgraded = 22,
 	TurnStart = 23,
 	PlayerWins = 35,
-	SuddenDeath = 36,
+	SuddenDeath = 36, // not used any more, kept for old saved games
+	Draw = 37,
 
 	// Unit reports
 	Attacked = 24,
