@@ -98,6 +98,16 @@ public:
 	void setPlayerList (const std::vector<cPlayerBasicData>&);
 	const cPlayer* getActiveTurnPlayer() const;
 
+	/**
+	* The start of the current turn is played out: the attacks, that the turn start
+	* triggered (reaction fire on the units of the starting player, see
+	* cPlayer::makeTurnStart), have hit and the destroyed units are removed. A player
+	* (e.g. a computer player) should decide after that: a unit under attack can
+	* neither move nor fire, its orders are rejected.
+	* Not part of the game state: not saved, not in the checksum.
+	*/
+	bool isTurnStartPlayedOut() const { return !turnStartRunning; }
+
 	std::shared_ptr<const cTurnCounter> getTurnCounter() const;
 	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock() const;
 
@@ -328,6 +338,9 @@ private:
 		ExecuteTurnStart
 	};
 	eTurnEndState turnEndState = eTurnEndState::TurnActive;
+
+	// see isTurnStartPlayedOut, not part of the game state
+	bool turnStartRunning = false;
 
 	/** lists with all FX-Animation */
 	cFxContainer effectsList;

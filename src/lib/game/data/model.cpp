@@ -84,6 +84,12 @@ void cModel::advanceGameTime()
 	effectsList.run();
 	handleTurnEnd();
 	helperJobs.run (*this);
+	// the start of the turn is played out, when the attacks it triggered have hit
+	// and the destroyed units are removed (see isTurnStartPlayedOut)
+	if (turnStartRunning && attackJobs.empty() && helperJobs.empty())
+	{
+		turnStartRunning = false;
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -733,6 +739,7 @@ void cModel::handleTurnEnd()
 			}
 
 			turnEndState = eTurnEndState::TurnActive;
+			turnStartRunning = true;
 			newTurnStarted (newTurnReport);
 		}
 		break;
