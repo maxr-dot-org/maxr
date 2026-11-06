@@ -25,8 +25,11 @@
 #include "game/data/units/unitdata.h"
 
 #include <array>
+#include <type_traits>
 #include <vector>
 
+class cBinaryArchiveIn;
+class cBinaryArchiveOut;
 class cBuilding;
 class cMap;
 class cMapField;
@@ -145,6 +148,16 @@ public:
 	int getFlightHeight() const;
 	void setFlightHeight (int value);
 
+	/**
+	* A vehicle stolen by an infiltrator: its previous owner does not notice the theft,
+	* until the vehicle fires or his next turn starts (see cModel::noticeStolenVehicles).
+	* Until then his units do not fire at it by themselves (sentry, reaction fire, mines).
+	* -1: no such player.
+	*/
+	int getUnnoticedStolenFrom() const { return unnoticedStolenFrom; }
+	void setUnnoticedStolenFrom (int playerId) { unnoticedStolenFrom = playerId; }
+	bool isUnnoticedStolenFrom (const cPlayer*) const;
+
 	cMoveJob* getMoveJob();
 	const cMoveJob* getMoveJob() const;
 	void setMoveJob (cMoveJob* moveJob);
@@ -210,6 +223,15 @@ public:
 		archive & NVP (clearMines);
 		archive & NVP (flightHeight);
 		// clang-format on
+		if constexpr (std::is_same_v<Archive, cBinaryArchiveIn> || std::is_same_v<Archive, cBinaryArchiveOut>)
+		{
+			// the network (resync of a client model) needs it; the saved games do not get it,
+			// so that the old ones stay loadable (after loading, nobody has missed a theft),
+			// and so it is not in the checksum either (a saved game must load with its checksum)
+			// clang-format off
+			archive & NVP (unnoticedStolenFrom);
+			// clang-format on
+		}
 		commandoData.serialize (archive);
 	}
 
@@ -257,6 +279,8 @@ private:
 
 	bool isClearing = false;
 	int clearingTurns = 0;
+
+	int unnoticedStolenFrom = -1; // see getUnnoticedStolenFrom
 
 	bool layMines = false;
 	bool clearMines = false;

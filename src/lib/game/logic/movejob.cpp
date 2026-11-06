@@ -380,7 +380,8 @@ void cMoveJob::endMove (cModel& model, cVehicle& vehicle)
 	vehicle.detectThisUnit (map, model.getPlayerList());
 
 	cBuilding* mine = map.getField (vehicle.getPosition()).getMine();
-	if (mine && vehicle.getStaticUnitData().factorAir == 0 && mine->getOwner() != vehicle.getOwner() && mine->isManualFireActive() == false)
+	if (mine && vehicle.getStaticUnitData().factorAir == 0 && mine->getOwner() != vehicle.getOwner() && mine->isManualFireActive() == false
+	    && !vehicle.isUnnoticedStolenFrom (mine->getOwner()))
 	{
 		model.addAttackJob (*mine, vehicle.getPosition());
 
