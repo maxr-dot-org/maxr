@@ -39,7 +39,8 @@ void cActionResourceDistribution::execute (cModel& model) const
 	//Note: this function handles incoming data from network. Make every possible sanity check!
 
 	auto building = model.getBuildingFromID (buildingId);
-	if (building == nullptr) return;
+	if (building == nullptr || building->subBase == nullptr) return;
+	if (!building->getOwner() || building->getOwner()->getId() != playerNr) return;
 
 	cSubBase& subBase = *building->subBase;
 
