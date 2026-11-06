@@ -20,6 +20,7 @@
 #include "actionactivate.h"
 
 #include "game/data/model.h"
+#include "game/logic/jobs/stealthstepwaitjob.h"
 #include "utility/ranges.h"
 
 //------------------------------------------------------------------------------
@@ -52,7 +53,12 @@ void cActionActivate::execute (cModel& model) const
 	if (!containingUnit->isNextTo (position)) return;
 	if (!ranges::contains (containingUnit->storedUnits, activatedVehicle)) return;
 
-	model.sideStepStealthUnit (position, *activatedVehicle);
+	if (auto* stealthVehicle = model.sideStepStealthUnit (position, *activatedVehicle))
+	{
+		// the vehicle leaves, when the stealth unit has made its step
+		model.addJob (std::make_unique<cStealthStepWaitJob> (*containingUnit, std::vector<cVehicle*>{stealthVehicle}, this));
+		return;
+	}
 	if (containingUnit->canExitTo (position, map, activatedVehicle->getStaticUnitData()))
 	{
 		activatedVehicle->tryResetOfDetectionStateBeforeMove (map, model.getPlayerList());

@@ -25,6 +25,7 @@
 #include "game/logic/jobs/getinjob.h"
 #include "game/logic/jobs/planetakeoffjob.h"
 #include "game/logic/jobs/startbuildjob.h"
+#include "game/logic/jobs/stealthstepwaitjob.h"
 #include "utility/serialization/binaryarchive.h"
 #include "utility/serialization/jsonarchive.h"
 
@@ -64,6 +65,8 @@ std::unique_ptr<cJob> cJob::createFromImpl (Archive& archive)
 			return std::make_unique<cGetInJob> (archive);
 		case eJobType::AIR_TRANSPORT_LOAD:
 			return std::make_unique<cAirTransportLoadJob> (archive);
+		case eJobType::STEALTH_STEP_WAIT:
+			return std::make_unique<cStealthStepWaitJob> (archive);
 		default:
 			throw std::runtime_error ("Unknown job type " + std::to_string (static_cast<int> (type)));
 	}

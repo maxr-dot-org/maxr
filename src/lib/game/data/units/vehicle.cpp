@@ -29,6 +29,7 @@
 #include "game/logic/attackjob.h"
 #include "game/logic/jobs/planetakeoffjob.h"
 #include "game/logic/jobs/startbuildjob.h"
+#include "game/logic/jobs/stealthstepwaitjob.h"
 #include "utility/crc.h"
 #include "utility/log.h"
 #include "utility/random.h"
@@ -98,7 +99,6 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 	setBuildTurns (getBuildTurns() - 1);
 	if (getBuildTurns() != 0) return;
 
-	const cMap& map = *model.getMap();
 	report.addUnitBuilt (getBuildingType());
 
 	// handle pathbuilding
@@ -107,71 +107,7 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 	// the new build event is generated in cMoveJob::endMove()
 	if (bandPosition)
 	{
-		// Find a next position that either
-		// a) is something we can't move to
-		//  (in which case we cancel the path building)
-		// or b) doesn't have a building type that we're trying to build.
-		cPosition nextPosition (getPosition());
-		bool found_next = false;
-
-		while (!found_next && (nextPosition != *bandPosition))
-		{
-			// Calculate the next position in the path.
-			if (getPosition().x() > bandPosition->x()) nextPosition.x()--;
-			if (getPosition().x() < bandPosition->x()) nextPosition.x()++;
-			if (getPosition().y() > bandPosition->y()) nextPosition.y()--;
-			if (getPosition().y() < bandPosition->y()) nextPosition.y()++;
-			// Can we move to this position?
-			// If not, we need to kill the path building now.
-			model.sideStepStealthUnit (nextPosition, *this);
-			if (!map.possiblePlace (*this, nextPosition, false))
-			{
-				// We can't build along this path any more.
-				break;
-			}
-			// Can we build at this next position?
-			if (map.possiblePlaceBuilding (model.getUnitsData()->getStaticUnitData (getBuildingType()), nextPosition, nullptr))
-			{
-				// We can build here.
-				found_next = true;
-				break;
-			}
-		}
-
-		//If we've found somewhere to move to, move there now.
-		const cPosition oldPosition = getPosition();
-		if (found_next && model.addMoveJob (*this, nextPosition))
-		{
-			getMoveJob()->resume();
-			if (getOwner())
-			{
-				if (auto* unitData = getOwner()->getLastUnitData (getBuildingType()))
-				{
-					unitData->markLastVersionUsed();
-				}
-			}
-			model.addBuilding (oldPosition, getBuildingType(), getOwner());
-			setBuildingABuilding (false);
-		}
-		else
-		{
-			if (model.getUnitsData()->getStaticUnitData (getBuildingType()).surfacePosition != eSurfacePosition::Ground)
-			{
-				// add building immediately
-				// if it doesn't require the engineer to drive away
-				setBuildingABuilding (false);
-				if (getOwner())
-				{
-					if (auto* unitData = getOwner()->getLastUnitData (getBuildingType()))
-					{
-						unitData->markLastVersionUsed();
-					}
-				}
-				model.addBuilding (getPosition(), getBuildingType(), getOwner());
-			}
-			bandPosition.reset();
-			if (getOwner()) getOwner()->buildPathInterrupted (*this);
-		}
+		moveOnBuildPath (model);
 	}
 	else if (model.getUnitsData()->getStaticUnitData (getBuildingType()).surfacePosition != staticData->surfacePosition)
 	{
@@ -186,6 +122,85 @@ void cVehicle::proceedBuilding (cModel& model, sNewTurnPlayerReport& report)
 			}
 		}
 		model.addBuilding (getPosition(), getBuildingType(), getOwner());
+	}
+}
+
+//------------------------------------------------------------------------------
+void cVehicle::moveOnBuildPath (cModel& model)
+{
+	if (!bandPosition || !isUnitBuildingABuilding() || getBuildTurns() != 0) return;
+
+	const cMap& map = *model.getMap();
+
+	// Find a next position that either
+	// a) is something we can't move to
+	//  (in which case we cancel the path building)
+	// or b) doesn't have a building type that we're trying to build.
+	cPosition nextPosition (getPosition());
+	bool found_next = false;
+
+	while (!found_next && (nextPosition != *bandPosition))
+	{
+		// Calculate the next position in the path.
+		if (getPosition().x() > bandPosition->x()) nextPosition.x()--;
+		if (getPosition().x() < bandPosition->x()) nextPosition.x()++;
+		if (getPosition().y() > bandPosition->y()) nextPosition.y()--;
+		if (getPosition().y() < bandPosition->y()) nextPosition.y()++;
+		// Can we move to this position?
+		// If not, we need to kill the path building now.
+		if (auto* stealthVehicle = model.sideStepStealthUnit (nextPosition, *this))
+		{
+			// the constructor goes on, when the stealth unit has made its step
+			model.addJob (std::make_unique<cStealthStepWaitJob> (*this, std::vector<cVehicle*>{stealthVehicle}, nullptr));
+			return;
+		}
+		if (!map.possiblePlace (*this, nextPosition, false))
+		{
+			// We can't build along this path any more.
+			break;
+		}
+		// Can we build at this next position?
+		if (map.possiblePlaceBuilding (model.getUnitsData()->getStaticUnitData (getBuildingType()), nextPosition, nullptr))
+		{
+			// We can build here.
+			found_next = true;
+			break;
+		}
+	}
+
+	//If we've found somewhere to move to, move there now.
+	const cPosition oldPosition = getPosition();
+	if (found_next && model.addMoveJob (*this, nextPosition))
+	{
+		getMoveJob()->resume();
+		if (getOwner())
+		{
+			if (auto* unitData = getOwner()->getLastUnitData (getBuildingType()))
+			{
+				unitData->markLastVersionUsed();
+			}
+		}
+		model.addBuilding (oldPosition, getBuildingType(), getOwner());
+		setBuildingABuilding (false);
+	}
+	else
+	{
+		if (model.getUnitsData()->getStaticUnitData (getBuildingType()).surfacePosition != eSurfacePosition::Ground)
+		{
+			// add building immediately
+			// if it doesn't require the engineer to drive away
+			setBuildingABuilding (false);
+			if (getOwner())
+			{
+				if (auto* unitData = getOwner()->getLastUnitData (getBuildingType()))
+				{
+					unitData->markLastVersionUsed();
+				}
+			}
+			model.addBuilding (getPosition(), getBuildingType(), getOwner());
+		}
+		bandPosition.reset();
+		if (getOwner()) getOwner()->buildPathInterrupted (*this);
 	}
 }
 

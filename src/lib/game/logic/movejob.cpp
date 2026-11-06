@@ -249,7 +249,12 @@ bool cMoveJob::handleCollision (cModel& model, cVehicle& vehicle)
 	}
 
 	// enemy stealth units get the chance to get out of the way...
-	model.sideStepStealthUnit (path.front(), vehicle);
+	if (model.sideStepStealthUnit (path.front(), vehicle))
+	{
+		// ...and the vehicle continues on its path, when the stealth unit has made its step
+		// (as for a field blocked by a moving unit)
+		return false;
+	}
 	if (map.possiblePlace (vehicle, path.front(), false))
 	{
 		return true;
@@ -277,7 +282,12 @@ bool cMoveJob::recalculatePath (cModel& model, cVehicle& vehicle)
 	if (!newPath.empty())
 	{
 		const cMap& map = *model.getMap();
-		model.sideStepStealthUnit (newPath.front(), vehicle);
+		if (model.sideStepStealthUnit (newPath.front(), vehicle))
+		{
+			// the new path is ok, when the stealth unit has stepped aside (see handleCollision)
+			path.swap (newPath);
+			return false;
+		}
 		if (map.possiblePlace (vehicle, newPath.front(), false))
 		{
 			// new path is ok. Use it to continue movement...

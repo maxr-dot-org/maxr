@@ -70,6 +70,8 @@ public:
 
 	void refreshData();
 	void proceedBuilding (cModel&, sNewTurnPlayerReport&);
+	/** the building on the field of the path building is finished: add it and drive to the next field */
+	void moveOnBuildPath (cModel&);
 	void continuePathBuilding (cModel&);
 	void proceedClearing (cModel&);
 

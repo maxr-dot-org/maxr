@@ -130,9 +130,17 @@ public:
 
 	/**
 	* Try to move an undetected enemy stealth unit out of the way, if necessary to free position.
+	* Returns the stealth unit, if it steps aside: the position is free, when its move step is done.
+	* A move waits for this step (see cMoveJob::handleCollision), an action is executed again
+	* after it (see cStealthStepWaitJob).
 	*/
-	void sideStepStealthUnit (const cPosition&, const cVehicle&, const cPosition& bigOffset = cPosition (-1, -1));
-	void sideStepStealthUnit (const cPosition&, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition (-1, -1));
+	cVehicle* sideStepStealthUnit (const cPosition&, const cVehicle&, const cPosition& bigOffset = cPosition (-1, -1));
+	cVehicle* sideStepStealthUnit (const cPosition&, const cStaticUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition (-1, -1));
+	/**
+	* Only for cStealthStepWaitJob: while an action is executed again after the step of a stealth unit,
+	* a stealth unit, that is still in the way, is detected instead of stepping aside once more.
+	*/
+	void setStealthStepWaited (bool value) { stealthStepWaited = value; }
 
 	mutable cSignal<void()> gameTimeChanged;
 	mutable cSignal<void (const cVehicle&)> triggeredAddTracks;
@@ -320,6 +328,9 @@ private:
 	unsigned int turnLimitDeadline = 0;
 
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
+
+	// see setStealthStepWaited, set only during a call, not part of the game state
+	bool stealthStepWaited = false;
 
 	enum class eTurnEndState
 	{

@@ -33,7 +33,10 @@ void cJobContainer::addJob (cModel& model, std::unique_ptr<cJob> job)
 	auto* unit = model.getUnitFromID (job->unitId);
 
 	unit->jobActive = true;
-	jobs.push_back (std::move (job));
+	if (running)
+		addedJobs.push_back (std::move (job));
+	else
+		jobs.push_back (std::move (job));
 }
 
 //------------------------------------------------------------------------------
@@ -48,6 +51,7 @@ void cJobContainer::postLoad (const cModel& model)
 //------------------------------------------------------------------------------
 void cJobContainer::run (cModel& model)
 {
+	running = true;
 	for (auto it = jobs.begin(); it != jobs.end();)
 	{
 		cJob& job = **it;
@@ -59,6 +63,15 @@ void cJobContainer::run (cModel& model)
 		else
 			++it;
 	}
+	running = false;
+
+	for (auto& job : addedJobs)
+	{
+		// (releaseJob may have reset the flag of the unit of a job added during the run)
+		if (auto* unit = model.getUnitFromID (job->unitId)) unit->jobActive = true;
+		jobs.push_back (std::move (job));
+	}
+	addedJobs.clear();
 }
 
 //------------------------------------------------------------------------------
@@ -90,12 +103,15 @@ std::vector<std::unique_ptr<cJob>>::iterator cJobContainer::releaseJob (const cM
 //------------------------------------------------------------------------------
 void cJobContainer::onRemoveUnit (const cUnit& unit)
 {
-	for (auto& job : jobs)
+	for (auto* list : {&jobs, &addedJobs})
 	{
-		if (narrow_cast<unsigned> (job->unitId) == unit.getId())
+		for (auto& job : *list)
 		{
-			job->unitId = -1;
-			job->finished = true;
+			if (narrow_cast<unsigned> (job->unitId) == unit.getId())
+			{
+				job->unitId = -1;
+				job->finished = true;
+			}
 		}
 	}
 }
