@@ -406,7 +406,7 @@ bool cVehicle::canTransferTo (const cUnit& unit) const
 		if (staticData->storeResType == eResourceType::Oil && maxStored.oil == 0)
 			return false;
 
-		if (staticData->storeResType == eResourceType::Gold && maxStored.oil == 0)
+		if (staticData->storeResType == eResourceType::Gold && maxStored.gold == 0)
 			return false;
 
 		return true;
