@@ -270,58 +270,6 @@ void cBuilding::stopWork (bool forced)
 }
 
 //------------------------------------------------------------------------------
-bool cBuilding::canTransferTo (const cPosition& position, const cMapView& map) const
-{
-	const auto& field = map.getField (position);
-
-	const cUnit* unit = field.getVehicle();
-	if (unit)
-	{
-		return canTransferTo (*unit);
-	}
-
-	unit = field.getTopBuilding();
-	if (unit)
-	{
-		return canTransferTo (*unit);
-	}
-
-	return false;
-}
-
-//------------------------------------------------------------------------------
-bool cBuilding::canTransferTo (const cUnit& unit) const
-{
-	if (unit.getOwner() != getOwner())
-		return false;
-
-	if (&unit == this)
-		return false;
-
-	if (const cVehicle* v = dynamic_cast<const cVehicle*> (&unit))
-	{
-		if (v->getStaticUnitData().storeResType != staticData->storeResType)
-			return false;
-
-		if (v->isUnitBuildingABuilding() || v->isUnitClearing())
-			return false;
-		return std::ranges::any_of (subBase->getBuildings(), [&] (const auto& b) { return b->isNextTo (v->getPosition()); });
-	}
-	else if (const cBuilding* b = dynamic_cast<const cBuilding*> (&unit))
-	{
-		if (b->subBase != subBase)
-			return false;
-
-		if (staticData->storeResType != b->getStaticUnitData().storeResType)
-			return false;
-
-		return true;
-	}
-
-	return false;
-}
-
-//------------------------------------------------------------------------------
 bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& vehicleData) const
 {
 	if (!map.possiblePlaceVehicle (vehicleData, position, getOwner())) return false;

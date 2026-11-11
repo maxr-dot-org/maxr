@@ -106,9 +106,6 @@ public:
 	void startWork();
 	void stopWork (bool forced = false);
 
-	/** check whether a transfer to a unit on the field is possible */
-	bool canTransferTo (const cPosition& position, const cMapView& map) const override;
-	bool canTransferTo (const cUnit& unit) const override;
 	void initMineResourceProd (const cMap& map);
 	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
 	bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const override;

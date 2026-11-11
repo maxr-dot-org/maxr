@@ -76,8 +76,6 @@ public:
 	int getPossibleShotCountForSpeed (int speed) const;
 	void DecSpeed (int value);
 	bool doSurvey (const cMap& map);
-	bool canTransferTo (const cPosition& position, const cMapView& map) const override;
-	bool canTransferTo (const cUnit& position) const override;
 	bool inSentryRange (cModel& model);
 	bool canExitTo (const cPosition& position, const cMap& map, const cStaticUnitData& unitData) const override;
 	bool canExitTo (const cPosition& position, const cMapView& map, const cStaticUnitData& unitData) const override;

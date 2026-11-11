@@ -19,10 +19,13 @@
 
 #include "game/data/units/unit.h"
 
+#include "game/data/base/base.h"
 #include "game/data/map/map.h"
+#include "game/data/map/mapfieldview.h"
 #include "game/data/map/mapview.h"
 #include "game/data/model.h"
 #include "game/data/player/player.h"
+#include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/attackjob.h"
 #include "utility/box.h"
@@ -100,6 +103,82 @@ void cUnit::setOwner (cPlayer* owner_)
 {
 	std::swap (owner, owner_);
 	if (owner != owner_) ownerChanged();
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::canTransferTo (const cPosition& position, const cMapView& map) const
+{
+	const auto& field = map.getField (position);
+
+	const cUnit* unit = field.getVehicle();
+	if (unit)
+	{
+		return canTransferTo (*unit);
+	}
+
+	unit = field.getTopBuilding();
+	if (unit)
+	{
+		return canTransferTo (*unit);
+	}
+
+	return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+* Checks, if resources can be transferred to the unit, in the game window and in cActionTransfer:
+* - units of the same owner, the source is not disabled, a vehicle does not build or clear,
+* - a vehicle to a vehicle next to it, with the same resource,
+* - a vehicle to a building next to it, whose sub base stores the resource of the vehicle,
+* - a building to a vehicle next to a building of its sub base, with the same resource,
+* - a building to a building of the same sub base, with the same resource.
+*/
+bool cUnit::canTransferTo (const cUnit& unit) const
+{
+	if (&unit == this) return false;
+	if (unit.getOwner() != getOwner()) return false;
+	if (isDisabled()) return false;
+
+	const auto* destinationVehicle = dynamic_cast<const cVehicle*> (&unit);
+	const auto* destinationBuilding = dynamic_cast<const cBuilding*> (&unit);
+	if (destinationVehicle && (destinationVehicle->isUnitBuildingABuilding() || destinationVehicle->isUnitClearing())) return false;
+	if (destinationBuilding && !destinationBuilding->subBase) return false;
+
+	if (const auto* vehicle = dynamic_cast<const cVehicle*> (this))
+	{
+		if (vehicle->isUnitBuildingABuilding() || vehicle->isUnitClearing()) return false;
+		if (!unit.isNextTo (getPosition())) return false;
+
+		if (destinationVehicle)
+		{
+			return destinationVehicle->getStaticUnitData().storeResType == staticData->storeResType;
+		}
+		if (destinationBuilding)
+		{
+			const sMiningResource& maxStored = destinationBuilding->subBase->getMaxResourcesStored();
+			if (staticData->storeResType == eResourceType::Metal && maxStored.metal == 0) return false;
+			if (staticData->storeResType == eResourceType::Oil && maxStored.oil == 0) return false;
+			if (staticData->storeResType == eResourceType::Gold && maxStored.gold == 0) return false;
+			return true;
+		}
+	}
+	else if (const auto* building = dynamic_cast<const cBuilding*> (this))
+	{
+		if (!building->subBase) return false;
+
+		if (destinationVehicle)
+		{
+			if (destinationVehicle->getStaticUnitData().storeResType != staticData->storeResType) return false;
+			return std::ranges::any_of (building->subBase->getBuildings(), [&] (const auto& b) { return b->isNextTo (destinationVehicle->getPosition()); });
+		}
+		if (destinationBuilding)
+		{
+			if (destinationBuilding->subBase != building->subBase) return false;
+			return destinationBuilding->getStaticUnitData().storeResType == staticData->storeResType;
+		}
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------
