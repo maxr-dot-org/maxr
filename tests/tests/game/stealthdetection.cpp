@@ -17,53 +17,21 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/data/gamesettings.h"
-#include "game/data/map/map.h"
 #include "game/data/model.h"
 #include "game/data/player/player.h"
-#include "game/data/player/playerbasicdata.h"
 #include "game/data/units/building.h"
 #include "game/data/units/unitdata.h"
 #include "game/data/units/vehicle.h"
 #include "game/logic/action/actionupgradebuilding.h"
+#include "testutility.h"
 
 #include <doctest.h>
-#include <filesystem>
-#include <fstream>
 #include <memory>
-#include <random>
-#include <string>
 
 namespace
 {
 	const sID detectorBuildingId{1, 100};
 	const sID stealthVehicleId{0, 100};
-
-	//--------------------------------------------------------------------------
-	void writeLE16 (std::ofstream& file, int value)
-	{
-		file.put (static_cast<char> (value & 0xFF));
-		file.put (static_cast<char> ((value >> 8) & 0xFF));
-	}
-
-	//--------------------------------------------------------------------------
-	// writes a map file (WRL format) of plain ground, with one terrain
-	std::filesystem::path writeGroundMap (int size)
-	{
-		const auto filename = std::filesystem::temp_directory_path() / ("maxr_tests_" + std::to_string (std::random_device{}()) + ".wrl");
-		std::ofstream file (filename, std::ios::binary);
-		file.write ("WRL", 3);
-		writeLE16 (file, 1);
-		writeLE16 (file, size);
-		writeLE16 (file, size);
-		file << std::string (size * size, '\0'); // mini map
-		file << std::string (size * size * 2, '\0'); // all fields use terrain 0
-		writeLE16 (file, 1); // number of terrains
-		file << std::string (64 * 64, '\0'); // terrain graphic
-		file << std::string (256 * 3, '\0'); // palette
-		file.put (0); // terrain 0: ground
-		return filename;
-	}
 
 	//--------------------------------------------------------------------------
 	std::shared_ptr<cUnitsData> makeUnitsData()
@@ -101,28 +69,13 @@ namespace
 
 		return unitsData;
 	}
-
-	//--------------------------------------------------------------------------
-	// a map of 16x16 fields of ground, the units above and two players
-	void initModel (cModel& model)
-	{
-		auto staticMap = std::make_shared<cStaticMap>();
-		const auto mapFilename = writeGroundMap (16);
-		REQUIRE (staticMap->loadMap (mapFilename));
-		std::filesystem::remove (mapFilename);
-
-		model.setUnitsData (makeUnitsData());
-		model.setGameSettings (cGameSettings{});
-		model.setMap (staticMap);
-		model.setPlayerList ({cPlayerBasicData ({"Player 0", cRgbColor::red()}, 0, false), cPlayerBasicData ({"Player 1", cRgbColor::blue()}, 1, false)});
-	}
 } // namespace
 
 //------------------------------------------------------------------------------
 TEST_CASE ("UpgradeBuildingDetectsStealthUnitsInTheNewScanRange")
 {
 	cModel model;
-	initModel (model);
+	REQUIRE (initModel (model, makeUnitsData()));
 	cPlayer& player = *model.getPlayer (0);
 	cPlayer& enemy = *model.getPlayer (1);
 
@@ -155,7 +108,7 @@ TEST_CASE ("UpgradeBuildingDetectsStealthUnitsInTheNewScanRange")
 TEST_CASE ("DetectorSearchesWhenItRecoversFromBeingDisabled")
 {
 	cModel model;
-	initModel (model);
+	REQUIRE (initModel (model, makeUnitsData()));
 	cPlayer& player = *model.getPlayer (0);
 	cPlayer& enemy = *model.getPlayer (1);
 
