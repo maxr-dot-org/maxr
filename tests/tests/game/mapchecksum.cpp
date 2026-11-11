@@ -18,49 +18,14 @@
  ***************************************************************************/
 
 #include "mapdownloader/mapdownload.h"
+#include "testutility.h"
 #include "utility/crc.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <doctest.h>
-#include <filesystem>
-#include <fstream>
 #include <random>
-#include <string>
 #include <vector>
-
-namespace
-{
-	//--------------------------------------------------------------------------
-	void appendLE16 (std::vector<char>& bytes, int value)
-	{
-		bytes.push_back (static_cast<char> (value & 0xFF));
-		bytes.push_back (static_cast<char> ((value >> 8) & 0xFF));
-	}
-
-	//--------------------------------------------------------------------------
-	// a map file (WRL format) of size x size fields: header, mini map and
-	// fields (pseudo-random bytes), one terrain graphic, palette
-	std::vector<char> makeMapFile (int size)
-	{
-		std::vector<char> bytes{'W', 'R', 'L'};
-		appendLE16 (bytes, 1);
-		appendLE16 (bytes, size);
-		appendLE16 (bytes, size);
-		std::minstd_rand generator (size);
-		for (int i = 0; i != size * size * 3; ++i) // mini map, fields
-			bytes.push_back (static_cast<char> (generator() & 0xFF));
-		appendLE16 (bytes, 1); // number of terrains
-		bytes.insert (bytes.end(), 64 * 64 + 256 * 3 + 1, '\0'); // terrain graphic, palette, terrain type
-		return bytes;
-	}
-
-	//--------------------------------------------------------------------------
-	void writeFile (const std::filesystem::path& filename, const std::vector<char>& bytes)
-	{
-		std::ofstream file (filename, std::ios::binary | std::ios::trunc);
-		file.write (bytes.data(), bytes.size());
-	}
-} // namespace
 
 //------------------------------------------------------------------------------
 // The size of a map is read as unsigned: on x86 (signed char) a map of 128 to
@@ -68,28 +33,32 @@ namespace
 // versions of such a map could have the same checksum.
 TEST_CASE ("MapCheckSumCoversAllFieldsOfMapsFrom128To255Fields")
 {
-	const auto filename = std::filesystem::temp_directory_path() / ("maxr_tests_" + std::to_string (std::random_device{}()) + ".wrl");
+	const cTemporaryFile file (".wrl");
+	const std::uint16_t sizes[] = {112, 128, 160, 250, 255};
 
-	for (int size : {112, 128, 160, 250, 255})
+	for (const std::uint16_t size : sizes)
 	{
 		CAPTURE (size);
-		auto bytes = makeMapFile (size);
-		const std::size_t relevantSize = 9 + size * size * 3; // header, mini map, fields
+		// header, mini map and fields (pseudo-random bytes), graphics
+		auto bytes = makeGroundMapFile (size);
+		const std::size_t relevantSize = 9 + std::size_t (size) * size * 3;
+		std::minstd_rand generator (size);
+		for (std::size_t i = 9; i != relevantSize; ++i)
+			bytes[i] = static_cast<unsigned char> (generator() & 0xFF);
 
-		writeFile (filename, bytes);
-		const auto checksum = MapDownload::calculateCheckSum (filename);
-		CHECK (checksum == calcCheckSum (bytes.data(), relevantSize, 0));
+		file.write (bytes);
+		const auto checksum = MapDownload::calculateCheckSum (file.getPath());
+		CHECK (checksum == calcCheckSum (reinterpret_cast<const char*> (bytes.data()), relevantSize, 0));
 
 		// the last byte of the fields is in the checksum
 		bytes[relevantSize - 1] ^= 0x55;
-		writeFile (filename, bytes);
-		CHECK (MapDownload::calculateCheckSum (filename) != checksum);
+		file.write (bytes);
+		CHECK (MapDownload::calculateCheckSum (file.getPath()) != checksum);
 		bytes[relevantSize - 1] ^= 0x55;
 
 		// the graphics after it are not
 		bytes[relevantSize + 2] ^= 0x55;
-		writeFile (filename, bytes);
-		CHECK (MapDownload::calculateCheckSum (filename) == checksum);
+		file.write (bytes);
+		CHECK (MapDownload::calculateCheckSum (file.getPath()) == checksum);
 	}
-	std::filesystem::remove (filename);
 }

@@ -116,23 +116,21 @@ uint32_t MapDownload::calculateCheckSum (const std::filesystem::path& mapFilenam
 	if (file.is_open())
 	{
 		const int mapSize = (int) file.tellg();
-		std::vector<char> data (mapSize);
+		std::vector<unsigned char> data (mapSize);
 		file.seekg (0, std::ios::beg);
 
-		file.read (data.data(), 9); // read only header
-		// the size bytes are unsigned: as (signed) char, a map of 128 to 255 fields
-		// was summed only over its first (256 - size)^2 * 3 bytes on x86
-		const int width = static_cast<unsigned char> (data[5]) + static_cast<unsigned char> (data[6]) * 256;
-		const int height = static_cast<unsigned char> (data[7]) + static_cast<unsigned char> (data[8]) * 256;
+		file.read (reinterpret_cast<char*> (data.data()), 9); // read only header
+		const int width = data[5] + data[6] * 256;
+		const int height = data[7] + data[8] * 256;
 		// the information after this is only for graphic stuff
 		// and not necessary for comparing two maps
 		const int relevantMapDataSize = width * height * 3;
 
 		if (relevantMapDataSize + 9 <= mapSize)
 		{
-			file.read (data.data() + 9, relevantMapDataSize);
+			file.read (reinterpret_cast<char*> (data.data() + 9), relevantMapDataSize);
 			if (!file.bad() && !file.eof())
-				result = calcCheckSum (data.data(), relevantMapDataSize + 9, 0);
+				result = calcCheckSum (reinterpret_cast<const char*> (data.data()), relevantMapDataSize + 9, 0);
 		}
 	}
 	return result;
