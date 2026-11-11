@@ -70,14 +70,6 @@ void cActionStartBuild::execute (cModel& model) const
 
 	if (vehicle->getStaticUnitData().canBuild != data.buildAs) return;
 
-	// a big building takes the field of the constructor and three fields next to it
-	// (see cMouseModeSelectBuildPosition): the constructor must stand on its area
-	if (data.buildingData.isBig)
-	{
-		const cPosition offset = vehicle->getPosition() - buildPosition;
-		if (offset.x() < 0 || offset.x() > 1 || offset.y() < 0 || offset.y() > 1) return;
-	}
-
 	vehicle->setSentryActive (false);
 
 	std::array<int, 3> turboBuildRounds;
@@ -94,6 +86,11 @@ void cActionStartBuild::execute (cModel& model) const
 	cPosition oldPosition = vehicle->getPosition();
 	if (data.buildingData.isBig)
 	{
+		// the building takes the field of the constructor and three fields next to it
+		// (see cMouseModeSelectBuildPosition)
+		const cPosition offset = vehicle->getPosition() - buildPosition;
+		if (offset.x() < 0 || offset.x() > 1 || offset.y() < 0 || offset.y() > 1) return;
+
 		model.sideStepStealthUnit (buildPosition, *vehicle, buildPosition);
 		model.sideStepStealthUnit (buildPosition + cPosition (1, 0), *vehicle, buildPosition);
 		model.sideStepStealthUnit (buildPosition + cPosition (0, 1), *vehicle, buildPosition);
