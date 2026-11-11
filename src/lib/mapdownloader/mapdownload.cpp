@@ -32,6 +32,7 @@
 #include "utility/string/utf-8.h"
 
 #include <SDL.h>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -104,7 +105,6 @@ std::filesystem::path MapDownload::getExistingMapFilePath (const std::filesystem
 //------------------------------------------------------------------------------
 uint32_t MapDownload::calculateCheckSum (const std::filesystem::path& mapFilename)
 {
-	uint32_t result = 0;
 	auto filename = cSettings::getInstance().getMapsPath() / mapFilename;
 	std::ifstream file (filename, std::ios::in | std::ios::binary | std::ios::ate);
 	if (!file.is_open() && !cSettings::getInstance().getUserMapsDir().empty())
@@ -113,27 +113,31 @@ uint32_t MapDownload::calculateCheckSum (const std::filesystem::path& mapFilenam
 		filename = cSettings::getInstance().getUserMapsDir() / mapFilename;
 		file.open (filename, std::ios::in | std::ios::binary | std::ios::ate);
 	}
-	if (file.is_open())
-	{
-		const int mapSize = (int) file.tellg();
-		std::vector<char> data (mapSize);
-		file.seekg (0, std::ios::beg);
+	if (!file.is_open())
+		return 0;
 
-		file.read (data.data(), 9); // read only header
-		const int width = data[5] + data[6] * 256;
-		const int height = data[7] + data[8] * 256;
-		// the information after this is only for graphic stuff
-		// and not necessary for comparing two maps
-		const int relevantMapDataSize = width * height * 3;
+	const std::int64_t mapSize = file.tellg(); // -1 on error
+	if (mapSize < 9)
+		return 0;
+	std::vector<unsigned char> data (9);
+	file.seekg (0, std::ios::beg);
+	if (!file.read (reinterpret_cast<char*> (data.data()), 9)) // read only header
+		return 0;
+	const std::int64_t width = data[5] + data[6] * 256;
+	const std::int64_t height = data[7] + data[8] * 256;
+	// the information after this is only for graphic stuff
+	// and not necessary for comparing two maps
+	// (up to 3 * 65535 * 65535 bytes, more than an int holds)
+	const std::int64_t relevantMapDataSize = width * height * 3;
 
-		if (relevantMapDataSize + 9 <= mapSize)
-		{
-			file.read (data.data() + 9, relevantMapDataSize);
-			if (!file.bad() && !file.eof())
-				result = calcCheckSum (data.data(), relevantMapDataSize + 9, 0);
-		}
-	}
-	return result;
+	// a broken file: the header promises more than the file has
+	// (or more than a 32-bit build can hold)
+	if (9 + relevantMapDataSize > mapSize || static_cast<std::uint64_t> (9 + relevantMapDataSize) > data.max_size())
+		return 0;
+	data.resize (narrow_cast<std::size_t> (9 + relevantMapDataSize));
+	if (!file.read (reinterpret_cast<char*> (data.data() + 9), relevantMapDataSize))
+		return 0;
+	return calcCheckSum (reinterpret_cast<const char*> (data.data()), data.size(), 0);
 }
 
 //------------------------------------------------------------------------------
