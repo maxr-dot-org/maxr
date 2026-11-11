@@ -40,7 +40,9 @@ namespace MapDownload
 	 */
 	std::filesystem::path getExistingMapFilePath (const std::filesystem::path& mapFilename);
 
-	/** @return a 32 bit checksum of the given map */
+	/** @return a 32 bit checksum of the given map,
+	 *          or 0 if the map file cannot be read or is shorter than its header says
+	 */
 	uint32_t calculateCheckSum (const std::filesystem::path& mapFilename);
 
 } // namespace MapDownload
