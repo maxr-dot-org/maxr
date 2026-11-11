@@ -20,6 +20,7 @@
 #include "actionfinishbuild.h"
 
 #include "game/data/model.h"
+#include "game/logic/jobs/stealthstepwaitjob.h"
 
 //------------------------------------------------------------------------------
 cActionFinishBuild::cActionFinishBuild (const cUnit& unit, const cPosition& escapePosition) :
@@ -63,7 +64,12 @@ void cActionFinishBuild::finishABuilding (cModel& model, cVehicle& vehicle) cons
 	if (!map->isValidPosition (escapePosition)) return;
 	if (!vehicle.isNextTo (escapePosition)) return;
 
-	model.sideStepStealthUnit (escapePosition, vehicle);
+	if (auto* stealthVehicle = model.sideStepStealthUnit (escapePosition, vehicle))
+	{
+		// the constructor drives away, when the stealth unit has made its step
+		model.addJob (std::make_unique<cStealthStepWaitJob> (vehicle, std::vector<cVehicle*>{stealthVehicle}, this));
+		return;
+	}
 	if (!map->possiblePlace (vehicle, escapePosition, false)) return;
 
 	auto player = vehicle.getOwner();
@@ -120,7 +126,12 @@ void cActionFinishBuild::finishAVehicle (cModel& model, cBuilding& building) con
 	const cStaticUnitData& unitData = model.getUnitsData()->getStaticUnitData (buildingListItem.getType());
 
 	auto* player = building.getOwner();
-	model.sideStepStealthUnit (escapePosition, unitData, player);
+	if (auto* stealthVehicle = model.sideStepStealthUnit (escapePosition, unitData, player))
+	{
+		// the vehicle leaves the factory, when the stealth unit has made its step
+		model.addJob (std::make_unique<cStealthStepWaitJob> (building, std::vector<cVehicle*>{stealthVehicle}, this));
+		return;
+	}
 	if (!map->possiblePlaceVehicle (unitData, escapePosition, player)) return;
 
 	// The factory may still be working, although its job is finished

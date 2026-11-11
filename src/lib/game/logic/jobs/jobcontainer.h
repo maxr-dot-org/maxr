@@ -55,6 +55,10 @@ private:
 
 private:
 	std::vector<std::unique_ptr<cJob>> jobs;
+	// jobs added by a running job (e.g. by an action, that cStealthStepWaitJob executes again):
+	// they join the others after the run, jobs must not change during the iteration
+	bool running = false;
+	std::vector<std::unique_ptr<cJob>> addedJobs;
 };
 
 #endif

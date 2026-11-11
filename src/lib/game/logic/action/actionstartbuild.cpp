@@ -21,6 +21,7 @@
 
 #include "game/data/model.h"
 #include "game/logic/jobs/startbuildjob.h"
+#include "game/logic/jobs/stealthstepwaitjob.h"
 
 //------------------------------------------------------------------------------
 cActionStartBuild::cActionStartBuild (const cVehicle& vehicle, sID buildingTypeID, int buildSpeed, const cPosition& buildPosition) :
@@ -86,10 +87,20 @@ void cActionStartBuild::execute (cModel& model) const
 	cPosition oldPosition = vehicle->getPosition();
 	if (data.buildingData.isBig)
 	{
-		model.sideStepStealthUnit (buildPosition, *vehicle, buildPosition);
-		model.sideStepStealthUnit (buildPosition + cPosition (1, 0), *vehicle, buildPosition);
-		model.sideStepStealthUnit (buildPosition + cPosition (0, 1), *vehicle, buildPosition);
-		model.sideStepStealthUnit (buildPosition + cPosition (1, 1), *vehicle, buildPosition);
+		std::vector<cVehicle*> stealthVehicles;
+		for (const cPosition& offset : {cPosition (0, 0), cPosition (1, 0), cPosition (0, 1), cPosition (1, 1)})
+		{
+			if (auto* stealthVehicle = model.sideStepStealthUnit (buildPosition + offset, *vehicle, buildPosition))
+			{
+				stealthVehicles.push_back (stealthVehicle);
+			}
+		}
+		if (!stealthVehicles.empty())
+		{
+			// the building is started, when the stealth units have made their steps
+			model.addJob (std::make_unique<cStealthStepWaitJob> (*vehicle, stealthVehicles, this));
+			return;
+		}
 
 		if (!(map.possiblePlaceBuilding (data, buildPosition, nullptr, vehicle) && map.possiblePlaceBuilding (data, buildPosition + cPosition (1, 0), nullptr, vehicle) && map.possiblePlaceBuilding (data, buildPosition + cPosition (0, 1), nullptr, vehicle) && map.possiblePlaceBuilding (data, buildPosition + cPosition (1, 1), nullptr, vehicle)))
 		{

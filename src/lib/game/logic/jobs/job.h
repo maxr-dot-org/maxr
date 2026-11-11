@@ -39,7 +39,8 @@ enum class eJobType
 	PLANE_TAKEOFF,
 	DESTROY,
 	AIR_TRANSPORT_LOAD,
-	GET_IN
+	GET_IN,
+	STEALTH_STEP_WAIT
 };
 
 /**
