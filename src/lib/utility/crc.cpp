@@ -201,7 +201,7 @@ uint32_t calcCheckSum (std::string_view data, uint32_t checksum)
 uint32_t calcCheckSum (const std::vector<uint16_t>& data, uint32_t checksum)
 {
 	// The bytes of each value, low byte first, as in calcCheckSum (uint16_t, uint32_t):
-	// each byte rotates the checksum left by one bit, then is added as a char
+	// each byte rotates the checksum left by one bit, then is added as a signed char
 	// (see calcCheckSum (const char*, size_t, uint32_t)). A zero byte only rotates,
 	// so zero values are skipped with a pending rotation.
 	unsigned int rotation = 0; // pending rotation of the skipped zero bytes, modulo 32
@@ -222,9 +222,9 @@ uint32_t calcCheckSum (const std::vector<uint16_t>& data, uint32_t checksum)
 			continue;
 		}
 		checksum = std::rotl (checksum, static_cast<int> (rotation + 1));
-		checksum += static_cast<char> (value & 0xFF);
+		checksum += static_cast<signed char> (value & 0xFF);
 		checksum = std::rotl (checksum, 1);
-		checksum += static_cast<char> (value >> 8);
+		checksum += static_cast<signed char> (value >> 8);
 		rotation = 0;
 	}
 	return std::rotl (checksum, static_cast<int> (rotation));
