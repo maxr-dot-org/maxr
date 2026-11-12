@@ -19,49 +19,38 @@
 
 #include "game/logic/action/actionupgradebuilding.h"
 
-#include "game/data/gamesettings.h"
-#include "game/data/map/map.h"
 #include "game/data/model.h"
 #include "game/data/player/player.h"
-#include "game/data/player/playerbasicdata.h"
 #include "game/data/units/building.h"
 #include "game/data/units/unitdata.h"
+#include "testutility.h"
 
 #include <doctest.h>
-#include <filesystem>
-#include <fstream>
 #include <memory>
-#include <random>
-#include <string>
 
 namespace
 {
 	const sID buildingId{1, 100};
 
 	//--------------------------------------------------------------------------
-	void writeLE16 (std::ofstream& file, int value)
+	std::shared_ptr<cUnitsData> makeUnitsData()
 	{
-		file.put (static_cast<char> (value & 0xFF));
-		file.put (static_cast<char> ((value >> 8) & 0xFF));
-	}
+		auto unitsData = std::make_shared<cUnitsData>();
 
-	//--------------------------------------------------------------------------
-	// writes a map file (WRL format) of plain ground, with one terrain
-	std::filesystem::path writeGroundMap (int size)
-	{
-		const auto filename = std::filesystem::temp_directory_path() / ("maxr_tests_" + std::to_string (std::random_device{}()) + ".wrl");
-		std::ofstream file (filename, std::ios::binary);
-		file.write ("WRL", 3);
-		writeLE16 (file, 1);
-		writeLE16 (file, size);
-		writeLE16 (file, size);
-		file << std::string (size * size, '\0'); // mini map
-		file << std::string (size * size * 2, '\0'); // all fields use terrain 0
-		writeLE16 (file, 1); // number of terrains
-		file << std::string (64 * 64, '\0'); // terrain graphic
-		file << std::string (256 * 3, '\0'); // palette
-		file.put (0); // terrain 0: ground
-		return filename;
+		cStaticUnitData buildingStatic;
+		buildingStatic.ID = buildingId;
+		buildingStatic.surfacePosition = eSurfacePosition::Ground;
+		// connectsToBase stays false: such a building has no sub base
+		unitsData->addData (buildingStatic);
+
+		cDynamicUnitData buildingData;
+		buildingData.setId (buildingId);
+		buildingData.setHitpointsMax (10);
+		buildingData.setScan (3);
+		buildingData.setMaximumCurrentValues();
+		unitsData->addData (buildingData);
+
+		return unitsData;
 	}
 } // namespace
 
@@ -72,31 +61,8 @@ namespace
 // building->subBase).
 TEST_CASE ("UpgradeOfABuildingWithoutASubBaseIsRefused")
 {
-	auto staticMap = std::make_shared<cStaticMap>();
-	const auto mapFilename = writeGroundMap (16);
-	REQUIRE (staticMap->loadMap (mapFilename));
-	std::filesystem::remove (mapFilename);
-
-	auto unitsData = std::make_shared<cUnitsData>();
-
-	cStaticUnitData buildingStatic;
-	buildingStatic.ID = buildingId;
-	buildingStatic.surfacePosition = eSurfacePosition::Ground;
-	// connectsToBase stays false: such a building has no sub base
-	unitsData->addData (buildingStatic);
-
-	cDynamicUnitData buildingData;
-	buildingData.setId (buildingId);
-	buildingData.setHitpointsMax (10);
-	buildingData.setScan (3);
-	buildingData.setMaximumCurrentValues();
-	unitsData->addData (buildingData);
-
 	cModel model;
-	model.setUnitsData (unitsData);
-	model.setGameSettings (cGameSettings{});
-	model.setMap (staticMap);
-	model.setPlayerList ({cPlayerBasicData ({"Player 0", cRgbColor::red()}, 0, false), cPlayerBasicData ({"Player 1", cRgbColor::blue()}, 1, false)});
+	REQUIRE (initModel (model, makeUnitsData()));
 	cPlayer& player = *model.getPlayer (0);
 
 	const auto& building = model.addBuilding (cPosition (3, 8), buildingId, &player);
