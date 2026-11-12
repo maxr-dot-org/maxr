@@ -19,10 +19,14 @@
 
 #include "utility/crc.h"
 
+#include "game/data/player/playersettings.h"
+#include "utility/color.h"
+
 #include <cstdint>
 #include <doctest.h>
 #include <iterator>
 #include <random>
+#include <string>
 #include <vector>
 
 namespace
@@ -103,4 +107,32 @@ TEST_CASE ("CalcCheckSumUint16VectorEqualsByteByByte")
 		CHECK (calcCheckSum (data, start) == calcCheckSumByteByByte (data, start));
 		CHECK (calcCheckSum (data, start) == calcCheckSumValueByValue (data, start));
 	}
+}
+
+//------------------------------------------------------------------------------
+// The bytes from 128 to 255 give the same checksum on every platform,
+// whether char is signed (x86, Windows, macOS) or unsigned (Linux on ARM).
+// The expected values are the ones of x86.
+TEST_CASE ("CalcCheckSumOfBytesFrom128IsTheSameOnEveryPlatform")
+{
+	const char bytes[] = {'\x80', '\xFF', '\x7F', '\x00', '\xC8'};
+	CHECK (calcCheckSum (bytes, sizeof (bytes), 0) == 0xfffff9cbu);
+
+	CHECK (calcCheckSum (uint8_t (255), 0) == 0xffffffffu);
+	CHECK (calcCheckSum (uint16_t (200), 0) == 0xffffff91u);
+	CHECK (calcCheckSum (-1, 0) == 0xfffffff8u);
+	CHECK (calcCheckSum (1000, 0) == 0xffffff53u);
+
+	// the overload for a vector of uint16_t (range maps)
+	CHECK (calcCheckSum (std::vector<uint16_t>{200, 0, 0xFF80, 0x80FF}, 0) == 0xffffdff9u);
+	CHECK (calcCheckSum (std::vector<uint16_t>{200, 0, 0xFF80, 0x80FF}, 0x12345678) == 0x3456578cu);
+	CHECK (calcCheckSum (std::vector<uint16_t>{0, 0, 0, 0, 0x8000, 0, 0, 0, 0, 0, 0x00FF, 0xFFFF}, 0) == 0xffe03ff4u);
+
+	// player names in UTF-8: "Jürgen", "Владыка"
+	CHECK (calcCheckSum (std::string ("J\xC3\xBCrgen"), 0) == 0x00000d04u);
+	CHECK (calcCheckSum (std::string ("\xD0\x92\xD0\xBB\xD0\xB0\xD0\xB4\xD1\x8B\xD0\xBA\xD0\xB0"), 0) == 0xffefc087u);
+
+	// part of the model checksum (cPlayer::getChecksum()): the alpha of every color is 255
+	CHECK (cRgbColor::red().getChecksum (0) == 0xfffffffeu);
+	CHECK (sPlayerSettings{"Player", cRgbColor::red()}.getCheckSum (0) == 0x00016e77u);
 }
