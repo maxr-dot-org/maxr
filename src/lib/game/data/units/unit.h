@@ -73,8 +73,8 @@ public:
 	cPlayer* getOwner() const { return owner; }
 	void setOwner (cPlayer* owner);
 
-	virtual bool canTransferTo (const cPosition&, const cMapView&) const = 0;
-	virtual bool canTransferTo (const cUnit&) const = 0;
+	bool canTransferTo (const cPosition&, const cMapView&) const;
+	bool canTransferTo (const cUnit&) const;
 	virtual bool canLoad (const cVehicle*, bool checkPosition = true) const = 0;
 	virtual bool canExitTo (const cPosition&, const cMapView&, const cStaticUnitData&) const = 0;
 	virtual bool canExitTo (const cPosition&, const cMap&, const cStaticUnitData&) const = 0;

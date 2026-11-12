@@ -47,14 +47,15 @@ void cActionTransfer::execute (cModel& model) const
 	const auto destinationUnit = model.getUnitFromID (destinationUnitId);
 	if (destinationUnit == nullptr) return;
 
+	// the player transfers from his own unit, as in the game window
+	if (sourceUnit->getOwner() == nullptr || sourceUnit->getOwner()->getId() != playerNr) return;
+	if (!sourceUnit->canTransferTo (*destinationUnit)) return;
+
 	if (auto* sourceBuilding = dynamic_cast<cBuilding*> (sourceUnit))
 	{
 		if (auto* destinationBuilding = dynamic_cast<cBuilding*> (destinationUnit))
 		{
-			if (sourceBuilding->subBase != destinationBuilding->subBase) return;
-			if (sourceBuilding->getOwner() != destinationBuilding->getOwner()) return;
 			if (sourceBuilding->getStaticUnitData().storeResType != resourceType) return;
-			if (sourceBuilding->getStaticUnitData().storeResType != destinationBuilding->getStaticUnitData().storeResType) return;
 			if (destinationBuilding->getStoredResources() + transferValue > destinationBuilding->getStaticUnitData().storageResMax || destinationBuilding->getStoredResources() + transferValue < 0) return;
 			if (sourceBuilding->getStoredResources() - transferValue > sourceBuilding->getStaticUnitData().storageResMax || sourceBuilding->getStoredResources() - transferValue < 0) return;
 
@@ -63,7 +64,6 @@ void cActionTransfer::execute (cModel& model) const
 		}
 		else if (auto* destinationVehicle = dynamic_cast<cVehicle*> (destinationUnit))
 		{
-			if (destinationVehicle->isUnitBuildingABuilding() || destinationVehicle->isUnitClearing()) return;
 			if (destinationVehicle->getStaticUnitData().storeResType != resourceType) return;
 			if (destinationVehicle->getStoredResources() + transferValue > destinationVehicle->getStaticUnitData().storageResMax || destinationVehicle->getStoredResources() + transferValue < 0) return;
 
@@ -101,7 +101,6 @@ void cActionTransfer::execute (cModel& model) const
 	else if (auto* sourceVehicle = dynamic_cast<cVehicle*> (sourceUnit))
 	{
 		if (sourceVehicle->getStaticUnitData().storeResType != resourceType) return;
-		if (sourceVehicle->isUnitBuildingABuilding() || sourceVehicle->isUnitClearing()) return;
 		if (sourceVehicle->getStoredResources() - transferValue > sourceVehicle->getStaticUnitData().storageResMax || sourceVehicle->getStoredResources() - transferValue < 0) return;
 
 		if (auto destinationBuilding = dynamic_cast<cBuilding*> (destinationUnit))
@@ -136,8 +135,6 @@ void cActionTransfer::execute (cModel& model) const
 		}
 		else if (auto destinationVehicle = dynamic_cast<cVehicle*> (destinationUnit))
 		{
-			if (destinationVehicle->isUnitBuildingABuilding() || destinationVehicle->isUnitClearing()) return;
-			if (destinationVehicle->getStaticUnitData().storeResType != resourceType) return;
 			if (destinationVehicle->getStoredResources() + transferValue > destinationVehicle->getStaticUnitData().storageResMax || destinationVehicle->getStoredResources() + transferValue < 0) return;
 			destinationVehicle->setStoredResources (destinationVehicle->getStoredResources() + transferValue);
 		}
