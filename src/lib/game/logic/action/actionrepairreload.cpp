@@ -43,6 +43,8 @@ void cActionRepairReload::execute (cModel& model) const
 
 	auto sourceUnit = model.getUnitFromID (sourceUnitId);
 	if (sourceUnit == nullptr) return;
+	if (!sourceUnit->getOwner() || sourceUnit->getOwner()->getId() != playerNr) return;
+	if (sourceUnit->isDisabled()) return;
 
 	auto destUnit = model.getUnitFromID (destUnitId);
 	if (destUnit == nullptr) return;

@@ -42,6 +42,7 @@ void cActionUpgradeBuilding::execute (cModel& model) const
 	cBuilding* building = model.getBuildingFromID (buildingId);
 	if (building == nullptr || !building->getOwner()) return;
 	if (building->getOwner()->getId() != playerNr) return;
+	if (building->subBase == nullptr) return; // no sub base (a mine, a road): nothing to pay the upgrade with
 
 	std::vector<cBuilding*> upgradedBuildings;
 	int totalCosts = 0;

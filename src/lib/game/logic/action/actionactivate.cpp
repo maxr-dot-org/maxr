@@ -44,6 +44,8 @@ void cActionActivate::execute (cModel& model) const
 
 	cUnit* containingUnit = model.getUnitFromID (containingUnitId);
 	if (!containingUnit) return;
+	if (!containingUnit->getOwner() || containingUnit->getOwner()->getId() != playerNr) return;
+	if (containingUnit->isDisabled()) return;
 
 	cVehicle* activatedVehicle = model.getVehicleFromID (activatedVehicleId);
 	if (!activatedVehicle) return;
