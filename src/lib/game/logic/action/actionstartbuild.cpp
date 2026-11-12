@@ -86,6 +86,11 @@ void cActionStartBuild::execute (cModel& model) const
 	cPosition oldPosition = vehicle->getPosition();
 	if (data.buildingData.isBig)
 	{
+		// the building takes the field of the constructor and three fields next to it
+		// (see cMouseModeSelectBuildPosition)
+		const cPosition offset = vehicle->getPosition() - buildPosition;
+		if (offset.x() < 0 || offset.x() > 1 || offset.y() < 0 || offset.y() > 1) return;
+
 		model.sideStepStealthUnit (buildPosition, *vehicle, buildPosition);
 		model.sideStepStealthUnit (buildPosition + cPosition (1, 0), *vehicle, buildPosition);
 		model.sideStepStealthUnit (buildPosition + cPosition (0, 1), *vehicle, buildPosition);
