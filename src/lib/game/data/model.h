@@ -108,6 +108,8 @@ public:
 	cBuilding& addBuilding (const cPosition&, const sID&, cPlayer*);
 	cVehicle& addVehicle (const cPosition&, const sID&, cPlayer*);
 	void destroyUnit (cUnit&);
+	/** the unit is destroyed and waits for its removal (cDestroyJob) */
+	bool isDestroyed (const cUnit&) const;
 
 	void addRubble (const cPosition&, int value, bool big);
 	void deleteUnit (cUnit*);

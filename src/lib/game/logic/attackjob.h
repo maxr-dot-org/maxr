@@ -48,6 +48,12 @@ public:
 	cAttackJob (cUnit& aggressor, const cPosition& targetPosition, const cModel& model);
 
 	void run (cModel& model);
+	/**
+	* A destroyed unit does not fire: ends the attack job,
+	* when the aggressor is destroyed before it fired.
+	* A shot already fired still hits.
+	*/
+	void endIfAggressorDestroyed (const cModel& model);
 	bool finished() const;
 	void onRemoveUnit (const cUnit& unit);
 
@@ -72,6 +78,10 @@ public:
 		archive & NVP (fireDir);
 		archive & NVP (counter);
 		archive & NVP (state);
+		archive & NVP (ownerId);
+		archive & NVP (canAttack);
+		archive & NVP (muzzleType);
+		archive & NVP (damage);
 		// clang-format on
 	}
 
@@ -98,6 +108,13 @@ private:
 		Finished
 	};
 	eAJState state = eAJState::Rotating;
+
+	// The data of the fired shot (kept by fire()):
+	// it hits also, when the aggressor is removed before the impact.
+	int ownerId = -1; // the player of the aggressor
+	char canAttack = 0;
+	eMuzzleType muzzleType = eMuzzleType::None;
+	int damage = 0;
 };
 
 //--------------------------------------------------------------------------

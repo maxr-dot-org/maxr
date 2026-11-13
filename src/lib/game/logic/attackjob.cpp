@@ -72,18 +72,19 @@ void cAttackJob::run (cModel& model)
 {
 	if (counter > 0) counter--;
 
-	if (aggressorId == -1)
-	{
-		releaseTargets (model);
-		state = eAJState::Finished;
-		return;
-	}
-	auto* aggressor = model.getUnitFromID (aggressorId);
-	assert (aggressor != nullptr);
 	switch (state)
 	{
 		case eAJState::Rotating:
 		{
+			if (aggressorId == -1)
+			{
+				// the aggressor is removed before it fired
+				releaseTargets (model);
+				state = eAJState::Finished;
+				break;
+			}
+			auto* aggressor = model.getUnitFromID (aggressorId);
+			assert (aggressor != nullptr);
 			if (counter == 0)
 			{
 				if (aggressor->dir == fireDir)
@@ -100,6 +101,7 @@ void cAttackJob::run (cModel& model)
 			break;
 		}
 		case eAJState::Firing:
+			// the shot is fired: it hits, also when the aggressor is destroyed or removed meanwhile
 			if (counter == 0)
 			{
 				impact (model);
@@ -111,6 +113,19 @@ void cAttackJob::run (cModel& model)
 		case eAJState::PlayingMuzzle:
 			break;
 	}
+}
+
+//------------------------------------------------------------------------------
+void cAttackJob::endIfAggressorDestroyed (const cModel& model)
+{
+	if (state != eAJState::Rotating) return;
+
+	auto* aggressor = model.getUnitFromID (aggressorId);
+	if (aggressor == nullptr || !model.isDestroyed (*aggressor)) return;
+
+	aggressor->setAttacking (false);
+	releaseTargets (model);
+	state = eAJState::Finished;
 }
 
 //------------------------------------------------------------------------------
@@ -137,6 +152,10 @@ uint32_t cAttackJob::getChecksum (uint32_t crc) const
 	crc = calcCheckSum (fireDir, crc);
 	crc = calcCheckSum (counter, crc);
 	crc = calcCheckSum (state, crc);
+	crc = calcCheckSum (ownerId, crc);
+	crc = calcCheckSum (canAttack, crc);
+	crc = calcCheckSum (muzzleType, crc);
+	crc = calcCheckSum (damage, crc);
 
 	return crc;
 }
@@ -190,6 +209,13 @@ void cAttackJob::fire (cModel& model)
 {
 	auto* aggressor = model.getUnitFromID (aggressorId);
 	assert (aggressor != nullptr);
+
+	// keep the data of the shot for the impact: the aggressor may be removed before
+	ownerId = aggressor->getOwner() ? aggressor->getOwner()->getId() : -1;
+	canAttack = aggressor->getStaticUnitData().canAttack;
+	muzzleType = aggressor->getStaticUnitData().muzzleType;
+	damage = aggressor->data.getDamage();
+
 	//update data
 	aggressor->data.setShots (aggressor->data.getShots() - 1);
 	aggressor->data.setAmmo (aggressor->data.getAmmo() - 1);
@@ -324,19 +350,18 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx (const cUnit& aggressor)
 //------------------------------------------------------------------------------
 void cAttackJob::impact (cModel& model)
 {
-	auto* aggressor = model.getUnitFromID (aggressorId);
-	assert (aggressor != nullptr);
-
 	// The attack of the aggressor is over: unlock it once, before the impact.
 	// A hit may start a reaction fire of the aggressor itself (inSentryRange
 	// in impactSingle). Its new attack job must keep the aggressor locked,
 	// also while the remaining fields of a cluster impact are hit.
-	aggressor->setAttacking (false);
+	// The aggressor is gone, when it was removed while the shot flew.
+	if (auto* aggressor = model.getUnitFromID (aggressorId))
+		aggressor->setAttacking (false);
 
-	if (aggressor->getStaticUnitData().muzzleType == eMuzzleType::RocketCluster)
+	if (muzzleType == eMuzzleType::RocketCluster)
 		impactCluster (model);
 	else
-		impactSingle (targetPosition, aggressor->data.getDamage(), model);
+		impactSingle (targetPosition, damage, model);
 }
 
 //------------------------------------------------------------------------------
@@ -344,28 +369,26 @@ void cAttackJob::impactCluster (cModel& model)
 {
 	std::vector<cUnit*> targets;
 
-	auto* aggressor = model.getUnitFromID (aggressorId);
-	assert (aggressor != nullptr);
 	//full damage
-	int clusterDamage = aggressor->data.getDamage();
+	int clusterDamage = damage;
 	impactSingle (targetPosition, clusterDamage, model, &targets);
 
 	// 3/4 damage
-	clusterDamage = (aggressor->data.getDamage() * 3) / 4;
+	clusterDamage = (damage * 3) / 4;
 	impactSingle (targetPosition + cPosition (-1, 0), clusterDamage, model, &targets);
 	impactSingle (targetPosition + cPosition (+1, 0), clusterDamage, model, &targets);
 	impactSingle (targetPosition + cPosition (0, -1), clusterDamage, model, &targets);
 	impactSingle (targetPosition + cPosition (0, +1), clusterDamage, model, &targets);
 
 	// 1/2 damage
-	clusterDamage = aggressor->data.getDamage() / 2;
+	clusterDamage = damage / 2;
 	impactSingle (targetPosition + cPosition (+1, +1), clusterDamage, model, &targets);
 	impactSingle (targetPosition + cPosition (+1, -1), clusterDamage, model, &targets);
 	impactSingle (targetPosition + cPosition (-1, +1), clusterDamage, model, &targets);
 	impactSingle (targetPosition + cPosition (-1, -1), clusterDamage, model, &targets);
 
 	// 1/3 damage
-	clusterDamage = aggressor->data.getDamage() / 3;
+	clusterDamage = damage / 3;
 	impactSingle (targetPosition + cPosition (-2, 0), clusterDamage, model, &targets);
 	impactSingle (targetPosition + cPosition (+2, 0), clusterDamage, model, &targets);
 	impactSingle (targetPosition + cPosition (0, -2), clusterDamage, model, &targets);
@@ -379,10 +402,10 @@ void cAttackJob::impactSingle (const cPosition& position, int attackPoints, cMod
 
 	if (!map.isValidPosition (position))
 		return;
+	// nullptr, when the aggressor was removed while the shot flew
 	auto* aggressor = model.getUnitFromID (aggressorId);
-	assert (aggressor != nullptr);
 
-	cUnit* target = selectTarget (position, aggressor->getStaticUnitData().canAttack, map, aggressor->getOwner());
+	cUnit* target = selectTarget (position, canAttack, map, model.getPlayer (ownerId));
 
 	//check list of units that will be ignored as target.
 	//Used to prevent, that cluster attacks hit the same unit multiple times
