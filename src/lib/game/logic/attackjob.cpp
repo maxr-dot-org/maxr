@@ -76,6 +76,7 @@ void cAttackJob::run (cModel& model)
 	{
 		releaseTargets (model);
 		state = eAJState::Finished;
+		return;
 	}
 	auto* aggressor = model.getUnitFromID (aggressorId);
 	assert (aggressor != nullptr);
