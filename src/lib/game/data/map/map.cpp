@@ -34,6 +34,7 @@
 #include "utility/string/toString.h"
 #include "utility/string/utf-8.h"
 
+#include <array>
 #include <cassert>
 
 static constexpr int MAX_PLANES_PER_FIELD = 5;
@@ -732,29 +733,39 @@ bool cMap::possiblePlace (const cVehicle& vehicle, const cPosition& position, bo
 bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool ignoreMovingVehicles) const
 {
 	if (isValidPosition (position) == false) return false;
-	const auto field = cMapFieldView (getField (position), staticMap->getTerrain (position), player);
+	const auto& mapField = getField (position);
+	const auto& terrain = staticMap->getTerrain (position);
+	const auto field = cMapFieldView (mapField, terrain, player);
+	const auto isVisible = [&] (const cUnit& unit) { return !player || player->canSeeUnit (unit, mapField, terrain); };
 
-	const std::vector<cBuilding*> buildings = field.getBuildings();
-	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
-	std::vector<cBuilding*>::const_iterator b_end = buildings.end();
+	// The first three buildings, the player can see, are enough for the checks below:
+	// a connector is skipped, and a landmine looks at the building after it.
+	// No vector of the visible buildings is built: path searches call this function
+	// for every field they look at.
+	std::array<const cBuilding*, 3> buildings{};
+	std::size_t buildingCount = 0;
+	for (const cBuilding* building : mapField.getBuildings())
+	{
+		if (!isVisible (*building)) continue;
+		buildings[buildingCount++] = building;
+		if (buildingCount == buildings.size()) break;
+	}
+	// b: index of the first building, that is not a connector; "b < buildingCount": there is one
+	std::size_t b = 0;
 
 	//search first building, that is not a connector
-	if (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::Above) ++b_it;
+	if (b < buildingCount && buildings[b]->getStaticUnitData().surfacePosition == eSurfacePosition::Above) ++b;
 
 	if (vehicleData.factorAir > 0)
 	{
 		if (player && !player->canSeeAt (position)) return true;
 
-		const auto& planes = field.getPlanes();
-		if (!ignoreMovingVehicles)
+		int planes = 0;
+		for (const cVehicle* plane : mapField.getPlanes())
 		{
-			if (planes.size() >= MAX_PLANES_PER_FIELD) return false;
+			if (isVisible (*plane) && (!ignoreMovingVehicles || !plane->isUnitMoving())) ++planes;
 		}
-		else
-		{
-			const int notMovingPlanes = std::ranges::count_if (planes, [] (const auto* plane) { return !plane->isUnitMoving(); });
-			if (notMovingPlanes >= MAX_PLANES_PER_FIELD) return false;
-		}
+		if (planes >= MAX_PLANES_PER_FIELD) return false;
 	}
 	if (vehicleData.factorGround > 0)
 	{
@@ -765,11 +776,11 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 			if (player && !player->canSeeAt (position)) return false;
 
 			//vehicle can drive on water, if there is a bridge, platform or road
-			if (b_it == b_end) return false;
-			if ((*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::Base && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveBase) return false;
+			if (b >= buildingCount) return false;
+			if (buildings[b]->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea && buildings[b]->getStaticUnitData().surfacePosition != eSurfacePosition::Base && buildings[b]->getStaticUnitData().surfacePosition != eSurfacePosition::AboveBase) return false;
 		}
 		//check for enemy mines
-		if (player && b_it != b_end && (*b_it)->getOwner() != player && (*b_it)->getStaticData().explodesOnContact && (*b_it)->isDetectedByPlayer (player))
+		if (player && b < buildingCount && buildings[b]->getOwner() != player && buildings[b]->getStaticData().explodesOnContact && buildings[b]->isDetectedByPlayer (player))
 		{
 			return false;
 		}
@@ -784,11 +795,11 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		{
 			return false;
 		}
-		if (b_it != b_end)
+		if (b < buildingCount)
 		{
 			// only base buildings and rubble is allowed on the same field with a vehicle
 			// (connectors have been skiped, so doesn't matter here)
-			if ((*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::Base && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveBase && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::BeneathSea && !(*b_it)->isRubble()) return false;
+			if (buildings[b]->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea && buildings[b]->getStaticUnitData().surfacePosition != eSurfacePosition::Base && buildings[b]->getStaticUnitData().surfacePosition != eSurfacePosition::AboveBase && buildings[b]->getStaticUnitData().surfacePosition != eSurfacePosition::BeneathSea && !buildings[b]->isRubble()) return false;
 		}
 	}
 	else if (vehicleData.factorSea > 0)
@@ -798,7 +809,7 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		if (!isWater (position) && (!isCoast (position) || vehicleData.factorCoast == 0)) return false;
 
 		//check for enemy mines
-		if (player && b_it != b_end && (*b_it)->getOwner() != player && (*b_it)->getStaticData().explodesOnContact && (*b_it)->isDetectedByPlayer (player))
+		if (player && b < buildingCount && buildings[b]->getOwner() != player && buildings[b]->getStaticData().explodesOnContact && buildings[b]->isDetectedByPlayer (player))
 		{
 			return false;
 		}
@@ -811,13 +822,13 @@ bool cMap::possiblePlaceVehicle (const cStaticUnitData& vehicleData, const cPosi
 		}
 
 		//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
-		if (b_it != b_end && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea && (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::BeneathSea)
+		if (b < buildingCount && buildings[b]->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea && buildings[b]->getStaticUnitData().surfacePosition != eSurfacePosition::BeneathSea)
 		{
 			// if the building is a landmine, we have to check whether it's on a bridge or not
-			if ((*b_it)->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase)
+			if (buildings[b]->getStaticUnitData().surfacePosition == eSurfacePosition::AboveBase)
 			{
-				++b_it;
-				if (b_it == b_end || (*b_it)->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea) return false;
+				++b;
+				if (b >= buildingCount || buildings[b]->getStaticUnitData().surfacePosition != eSurfacePosition::AboveSea) return false;
 			}
 			else
 				return false;
