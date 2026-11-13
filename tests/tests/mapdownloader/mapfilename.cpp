@@ -17,13 +17,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mapdownloader/mapdownload.h"
-
 #include "game/connectionmanager.h"
 #include "game/data/map/map.h"
 #include "game/data/player/playerbasicdata.h"
 #include "game/protocol/lobbymessage.h"
 #include "game/startup/lobbyclient.h"
+#include "mapdownloader/mapdownload.h"
 #include "settings.h"
 #include "testutility.h"
 #include "utility/color.h"
