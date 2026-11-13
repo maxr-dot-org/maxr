@@ -243,8 +243,10 @@ protected:
 	/** checks if this is a stealth unit, and if it can be detected by player
 	* at it's current position. Sets the "detectedByPlayer" state in this case.
 	* Returns true, if the unit is detected by player (no matter if it was detected before.
+	* With a detector (a unit of the player), only the sight and the detection of this
+	* unit count, not those of the other units of the player (see detectOtherUnits).
 	*/
-	bool checkDetectedByPlayer (const cPlayer&, const cMap&) const;
+	bool checkDetectedByPlayer (const cPlayer&, const cMap&, const cUnit* detector = nullptr) const;
 
 	/** Detection state of stealth units. Use cPlayer::canSeeUnit() to check
 	*   if the unit is actually visible at the moment.
