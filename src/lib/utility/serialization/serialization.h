@@ -260,9 +260,8 @@ namespace serialization
 		value.resize (length);
 		for (size_t i = 0; i < length; i++)
 		{
-			T c;
-			archive >> makeNvp ("item", c);
-			value[i] = std::move (c);
+			// in place, like cJsonArchiveIn: a copy may lose members (cDynamicUnitData does not copy dirtyVersion)
+			archive >> makeNvp ("item", value[i]);
 		}
 	}
 	template <ArchiveInOrOut Archive, typename T>
