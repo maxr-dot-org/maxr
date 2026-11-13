@@ -62,6 +62,12 @@ void cJobContainer::run (cModel& model)
 }
 
 //------------------------------------------------------------------------------
+bool cJobContainer::hasJob (const cUnit& unit, eJobType type) const
+{
+	return std::ranges::any_of (jobs, [&] (const auto& job) { return narrow_cast<unsigned> (job->unitId) == unit.getId() && job->getType() == type; });
+}
+
+//------------------------------------------------------------------------------
 uint32_t cJobContainer::getChecksum (uint32_t crc) const
 {
 	return calcCheckSum (jobs, crc);

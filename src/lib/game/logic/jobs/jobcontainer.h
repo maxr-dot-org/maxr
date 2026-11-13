@@ -28,6 +28,7 @@
 class cJob;
 class cUnit;
 class cModel;
+enum class eJobType;
 
 class cJobContainer
 {
@@ -35,6 +36,8 @@ public:
 	void addJob (cModel&, std::unique_ptr<cJob>);
 	void onRemoveUnit (const cUnit&);
 	void run (cModel&);
+	/** a job of this type runs for the unit */
+	bool hasJob (const cUnit&, eJobType) const;
 	/** no job is running */
 	bool empty() const { return jobs.empty(); }
 	uint32_t getChecksum (uint32_t crc) const;

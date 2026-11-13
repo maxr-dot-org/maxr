@@ -271,6 +271,12 @@ void cModel::destroyUnit (cUnit& unit)
 }
 
 //------------------------------------------------------------------------------
+bool cModel::isDestroyed (const cUnit& unit) const
+{
+	return helperJobs.hasJob (unit, eJobType::DESTROY);
+}
+
+//------------------------------------------------------------------------------
 void cModel::addRubble (const cPosition& position, int value, bool big)
 {
 	value = std::max (1, value);
@@ -616,6 +622,12 @@ void cModel::runMoveJobs()
 //------------------------------------------------------------------------------
 void cModel::runAttackJobs()
 {
+	// A destroyed unit does not fire. Check it for all jobs before running them:
+	// a unit still fires in the game time, in which the impact of another job destroys it.
+	for (auto& attackJob : attackJobs)
+	{
+		attackJob->endIfAggressorDestroyed (*this);
+	}
 	for (auto* attackJob : ExtractPtrs (attackJobs))
 	{
 		attackJob->run (*this); //this can add new items to 'attackjobs'
