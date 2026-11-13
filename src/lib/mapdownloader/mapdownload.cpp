@@ -102,6 +102,12 @@ std::filesystem::path MapDownload::getExistingMapFilePath (const std::filesystem
 }
 
 //------------------------------------------------------------------------------
+bool MapDownload::isValidMapFileSize (std::int64_t size)
+{
+	return 0 < size && size <= 64 * 1024 * 1024;
+}
+
+//------------------------------------------------------------------------------
 uint32_t MapDownload::calculateCheckSum (const std::filesystem::path& mapFilename)
 {
 	uint32_t result = 0;
@@ -143,8 +149,10 @@ uint32_t MapDownload::calculateCheckSum (const std::filesystem::path& mapFilenam
 //------------------------------------------------------------------------------
 cMapReceiver::cMapReceiver (const std::filesystem::path& mapFilename, int mapSize) :
 	mapFilename (mapFilename),
-	readBuffer (mapSize)
+	readBuffer (MapDownload::isValidMapFileSize (mapSize) ? static_cast<std::size_t> (mapSize) : 0)
 {
+	if (readBuffer.empty())
+		Log.warn ("MapReceiver: the map \"" + utf8::to_string (mapFilename) + "\" is not received: " + std::to_string (mapSize) + " bytes is not the size of a map file");
 }
 
 //------------------------------------------------------------------------------
@@ -170,7 +178,7 @@ bool cMapReceiver::finished()
 {
 	Log.debug ("MapReceiver: Received complete map");
 
-	if (bytesReceived != readBuffer.size())
+	if (readBuffer.empty() || bytesReceived != readBuffer.size())
 		return false;
 	std::filesystem::path mapsFolder = cSettings::getInstance().getUserMapsDir();
 	if (mapsFolder.empty())
@@ -252,7 +260,13 @@ bool cMapSender::getMapFileContent()
 		Log.warn (std::string ("MapSender: could not read the map \"") + utf8::to_string (filename) + "\" into memory.");
 		return false;
 	}
-	const std::size_t mapSize = narrow_cast<std::size_t> (file.tellg());
+	const std::int64_t size = file.tellg(); // -1 on error
+	if (!MapDownload::isValidMapFileSize (size))
+	{
+		Log.warn (std::string ("MapSender: the map \"") + utf8::to_string (filename) + "\" is not sent: " + std::to_string (size) + " bytes is not the size of a map file");
+		return false;
+	}
+	const std::size_t mapSize = narrow_cast<std::size_t> (size);
 	sendBuffer.resize (mapSize);
 	file.seekg (0, std::ios::beg);
 	file.read (sendBuffer.data(), mapSize);

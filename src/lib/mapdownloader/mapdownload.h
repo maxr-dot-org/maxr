@@ -21,6 +21,7 @@
 #define mapdownloader_mapdownloadH
 
 #include <atomic>
+#include <cstdint>
 #include <filesystem>
 #include <thread>
 #include <vector>
@@ -43,6 +44,13 @@ namespace MapDownload
 	/** @return a 32 bit checksum of the given map */
 	uint32_t calculateCheckSum (const std::filesystem::path& mapFilename);
 
+	/**
+	 * @return can a map file of this size be downloaded:
+	 *         more than 0 bytes and not more than 64 MiB?
+	 *         (A map of 256 x 256 fields with 4096 terrains has 16 MiB.)
+	 */
+	bool isValidMapFileSize (std::int64_t size);
+
 } // namespace MapDownload
 
 //--------------------------------------------------------------------
@@ -55,7 +63,7 @@ public:
 	bool finished();
 
 	const std::filesystem::path& getMapFilename() const { return mapFilename; }
-	std::size_t getBytesReceivedPercent() const { return (100 * bytesReceived) / readBuffer.size(); }
+	std::size_t getBytesReceivedPercent() const { return readBuffer.empty() ? 0 : (100 * bytesReceived) / readBuffer.size(); }
 
 private:
 	std::filesystem::path mapFilename;
