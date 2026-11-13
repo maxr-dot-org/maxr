@@ -42,8 +42,8 @@ namespace
 } // namespace
 
 //------------------------------------------------------------------------------
-cTemporaryFile::cTemporaryFile (const std::string& extension) :
-	path (std::filesystem::temp_directory_path() / ("maxr_tests_" + std::to_string (std::random_device{}()) + extension))
+cTemporaryFile::cTemporaryFile (const std::string& extension, const std::filesystem::path& directory) :
+	path (directory / ("maxr_tests_" + std::to_string (std::random_device{}()) + extension))
 {}
 
 //------------------------------------------------------------------------------

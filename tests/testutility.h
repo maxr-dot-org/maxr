@@ -31,13 +31,13 @@ class cStaticMap;
 class cUnitsData;
 
 /**
- * A file with a unique name in the temp directory,
+ * A file with a unique name in the temp directory (or in the given directory),
  * that is removed when the object is destroyed.
  */
 class cTemporaryFile
 {
 public:
-	explicit cTemporaryFile (const std::string& extension);
+	explicit cTemporaryFile (const std::string& extension, const std::filesystem::path& directory = std::filesystem::temp_directory_path());
 	cTemporaryFile (const cTemporaryFile&) = delete;
 	cTemporaryFile& operator= (const cTemporaryFile&) = delete;
 	~cTemporaryFile();

@@ -21,6 +21,7 @@
 #define game_data_map_mapH
 
 #include "game/data/resourcetype.h"
+#include "mapdownloader/mapdownload.h"
 #include "resources/map/graphicstaticmap.h"
 #include "utility/arraycrc.h"
 #include "utility/box.h"
@@ -199,7 +200,8 @@ public:
 			NetLog.debug ("Static map already loaded. Skipped...");
 			return;
 		}
-		if (!loadMap (fileToLoad))
+		// the model can come from the network (resynchronization)
+		if (!MapDownload::isValidMapFilename (fileToLoad) || !loadMap (fileToLoad))
 			throw std::runtime_error ("Loading map failed.");
 
 		if (crc != crcFromSave && crcFromSave != 0)
