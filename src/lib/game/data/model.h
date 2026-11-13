@@ -158,7 +158,8 @@ public:
 
 	mutable cSignal<void (const cPlayer&)> playerHasLost;
 	mutable cSignal<void (const cPlayer&)> playerHasWon;
-	mutable cSignal<void()> suddenDeathMode;
+	/** the game ends in a draw: the player is one of the leaders with the same best score */
+	mutable cSignal<void (const cPlayer&)> playerHasDrawn;
 
 	template <ArchiveOut Archive>
 	void save (Archive& archive) const

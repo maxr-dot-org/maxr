@@ -41,10 +41,14 @@ namespace
 } // namespace
 
 //------------------------------------------------------------------------------
-cWindowEndGame::cWindowEndGame (const std::vector<std::shared_ptr<const cPlayer>>& players) :
+cWindowEndGame::cWindowEndGame (const std::vector<std::shared_ptr<const cPlayer>>& players, const std::string& result) :
 	cWindow (LoadPCX (getRandomEndGamePath()))
 {
 	emplaceChild<cLabel> (cBox<cPosition> (cPosition (0, 10), cPosition (640, 25)), lngPack.i18n ("Title~GameOver"), eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top);
+	if (!result.empty())
+	{
+		emplaceChild<cLabel> (cBox<cPosition> (cPosition (0, 35), cPosition (640, 50)), result, eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top);
+	}
 
 	emplaceChild<cLabel> (cBox<cPosition> (cPosition (0, 130), cPosition (160, 145)), lngPack.i18n ("Comp~Points"), eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::Right) | eAlignmentType::Top);
 	emplaceChild<cLabel> (cBox<cPosition> (cPosition (0, 180), cPosition (160, 195)), lngPack.i18n ("GameOver~Builtfactories"), eUnicodeFontType::LatinBig, toEnumFlag (eAlignmentType::Right) | eAlignmentType::Top);

@@ -943,29 +943,24 @@ void cModel::checkDefeats()
 		winners.insert (player.get());
 	}
 
-	// Handle the case where there is more than one winner.
-	// Original MAX calls a draw and displays the results screen.
-	// For now we will have sudden death,
-	// i.e. first player to get ahead in score wins.
-	if (winners.size() > 1)
+	// More than one player with the best score:
+	// like the original MAX, the game ends in a draw of these players
+	// (the results screen is displayed), the others lose.
+	for (const auto& player : playerList)
 	{
-		suddenDeathMode();
-	}
-	else
-	{
-		assert (winners.size() == 1);
-		for (const auto& player : playerList)
+		if (player->isDefeated) continue;
+		if (winners.count (player.get()) == 0)
 		{
-			if (player->isDefeated) continue;
-			if (winners.count (player.get()) != 0)
-			{
-				playerHasWon (*player);
-			}
-			else
-			{
-				player->isDefeated = true;
-				playerHasLost (*player);
-			}
+			player->isDefeated = true;
+			playerHasLost (*player);
+		}
+		else if (winners.size() > 1)
+		{
+			playerHasDrawn (*player);
+		}
+		else
+		{
+			playerHasWon (*player);
 		}
 	}
 }
