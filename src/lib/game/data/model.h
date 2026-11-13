@@ -124,6 +124,12 @@ public:
 
 	void addAttackJob (cUnit& aggressor, const cPosition& targetPosition);
 
+	/**
+	* The start of the next turn of the previous owner of stolen vehicles:
+	* he notices the theft (see cVehicle::getUnnoticedStolenFrom).
+	*/
+	void noticeStolenVehicles (const cPlayer& previousOwner);
+
 	void handlePlayerStartTurn (cPlayer&);
 	void handlePlayerFinishedTurn (cPlayer&);
 
@@ -152,6 +158,8 @@ public:
 	mutable cSignal<void (const cUnit& source, const cUnit& target)> unitStealDisableFailed;
 	mutable cSignal<void (const cUnit& source, const cUnit& target)> unitDisabled;
 	mutable cSignal<void (const cUnit& source, const cUnit& target, const cPlayer* previousOwner)> unitStolen;
+	/** the previous owner notices, that his vehicle has been stolen (see cVehicle::getUnnoticedStolenFrom) */
+	mutable cSignal<void (const cVehicle& vehicle, const cPlayer& previousOwner)> stolenVehicleNoticed;
 
 	mutable cSignal<void (const cVehicle& plane)> planeLanding;
 	mutable cSignal<void (const cVehicle& plane)> planeTakeoff;
