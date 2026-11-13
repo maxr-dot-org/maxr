@@ -36,6 +36,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <string_view>
 
 //------------------------------------------------------------------------------
 bool MapDownload::isMapOriginal (const std::filesystem::path& mapFilename, int32_t checksum)
@@ -84,6 +85,34 @@ bool MapDownload::isMapOriginal (const std::filesystem::path& mapFilename, int32
 		return true;
 	}
 	return false;
+}
+
+//------------------------------------------------------------------------------
+bool MapDownload::isValidMapFilename (const std::filesystem::path& mapFilename)
+{
+	const std::string name = utf8::to_string (mapFilename);
+
+	// no directory, drive or stream: none of the characters, that Windows reserves
+	const auto isReservedCharacter = [] (unsigned char c) {
+		return c < 0x20 || std::string_view ("<>:\"/\\|?*").find (static_cast<char> (c)) != std::string_view::npos;
+	};
+	if (std::ranges::any_of (name, isReservedCharacter)) return false;
+	if (to_lower_copy (utf8::to_string (mapFilename.extension())) != ".wrl") return false;
+
+	// no device of Windows, also with an extension ("con.wrl" is the console)
+	std::string device = to_lower_copy (name.substr (0, name.find ('.')));
+	while (device.ends_with (' '))
+		device.pop_back();
+	const std::string_view devices[] = {"con", "prn", "aux", "nul", "conin$", "conout$"};
+	if (std::ranges::find (devices, device) != std::end (devices)) return false;
+	if (device.starts_with ("com") || device.starts_with ("lpt"))
+	{
+		const std::string_view number = std::string_view (device).substr (3);
+		const std::string_view superscripts[] = {"\xC2\xB9", "\xC2\xB2", "\xC2\xB3"}; // 1, 2, 3 in UTF-8
+		if (number.size() == 1 && number[0] >= '0' && number[0] <= '9') return false;
+		if (std::ranges::find (superscripts, number) != std::end (superscripts)) return false;
+	}
+	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -183,6 +212,11 @@ bool cMapReceiver::finished()
 	std::filesystem::path mapsFolder = cSettings::getInstance().getUserMapsDir();
 	if (mapsFolder.empty())
 		mapsFolder = cSettings::getInstance().getMapsPath();
+	if (!MapDownload::isValidMapFilename (mapFilename))
+	{
+		Log.warn ("MapReceiver: the map \"" + utf8::to_string (mapFilename) + "\" is not saved: this is not the name of a map file");
+		return false;
+	}
 	const auto filename = mapsFolder / mapFilename;
 	std::ofstream newMapFile (filename, std::ios::out | std::ios::binary);
 	if (newMapFile.bad())

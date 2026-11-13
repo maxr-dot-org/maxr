@@ -36,6 +36,14 @@ namespace MapDownload
 	/** @return is this a map that originates from the original M.A.X. ? */
 	bool isMapOriginal (const std::filesystem::path& mapFilename, int32_t checksum = 0);
 
+	/**
+	 * @return is this the name of a map file, that can be joined to a maps directory:
+	 *         a file name with the extension .wrl, without a directory or a drive,
+	 *         and without a character or a device name that Windows reserves?
+	 *         A map file name from the network has to pass this check.
+	 */
+	bool isValidMapFilename (const std::filesystem::path& mapFilename);
+
 	/** @return the path to the map (in user or factory maps directory),
 	 *          or empty string if not found
 	 */

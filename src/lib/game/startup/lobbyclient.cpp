@@ -24,9 +24,11 @@
 #include "game/protocol/netmessage.h"
 #include "game/startup/lobbyserver.h"
 #include "game/startup/lobbyutils.h"
+#include "mapdownloader/mapdownload.h"
 #include "mapdownloader/mapdownloadmessagehandler.h"
 #include "maxrversion.h"
 #include "utility/log.h"
+#include "utility/string/utf-8.h"
 
 //------------------------------------------------------------------------------
 cLobbyClient::cLobbyClient (std::shared_ptr<cConnectionManager> connectionManager, const cPlayerBasicData& player) :
@@ -444,7 +446,9 @@ void cLobbyClient::handleNetMessage_MU_MSG_OPTIONS (const cMuMsgOptions& message
 	{
 		if (!lobbyPreparationData.staticMap || lobbyPreparationData.staticMap->getFilename() != message.mapFilename)
 		{
-			bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (message.mapFilename) == message.mapCrc);
+			// the name from the host is joined to the maps directories
+			const bool validMapFilename = MapDownload::isValidMapFilename (message.mapFilename);
+			bool mapCheckSumsEqual = validMapFilename && (MapDownload::calculateCheckSum (message.mapFilename) == message.mapCrc);
 			auto newStaticMap = std::make_shared<cStaticMap>();
 			if (mapCheckSumsEqual && newStaticMap->loadMap (message.mapFilename))
 			{
@@ -460,9 +464,13 @@ void cLobbyClient::handleNetMessage_MU_MSG_OPTIONS (const cMuMsgOptions& message
 				}
 				triedLoadMapFilename = message.mapFilename;
 
-				auto existingMapFilePath = MapDownload::getExistingMapFilePath (message.mapFilename);
+				auto existingMapFilePath = validMapFilename ? MapDownload::getExistingMapFilePath (message.mapFilename) : std::filesystem::path();
 				bool existsMap = !existingMapFilePath.empty();
-				if (!mapCheckSumsEqual && existsMap)
+				if (!validMapFilename)
+				{
+					Log.warn ("LobbyClient: the map of the host is not loaded or downloaded, \"" + utf8::to_string (message.mapFilename) + "\" is not the name of a map file");
+				}
+				else if (!mapCheckSumsEqual && existsMap)
 				{
 					onIncompatibleMap (message.mapFilename, existingMapFilePath);
 				}
@@ -550,7 +558,7 @@ void cLobbyClient::handleNetMessage_GAME_ALREADY_RUNNING (const cNetMessageGameA
 	lobbyPreparationData.staticMap = std::make_shared<cStaticMap>();
 	players = message.playerList;
 
-	if (!lobbyPreparationData.staticMap->loadMap (message.mapFilename))
+	if (!MapDownload::isValidMapFilename (message.mapFilename) || !lobbyPreparationData.staticMap->loadMap (message.mapFilename))
 	{
 		onFailToReconnectGameNoMap (message.mapFilename);
 		disconnect();

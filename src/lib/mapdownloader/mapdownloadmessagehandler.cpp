@@ -103,11 +103,9 @@ void cMapDownloadMessageHandler::finished (const cMuMsgFinishedMapDownload&)
 {
 	if (mapReceiver == nullptr) return;
 
-	mapReceiver->finished();
-
 	auto staticMap = std::make_shared<cStaticMap>();
 
-	if (!staticMap->loadMap (mapReceiver->getMapFilename())) staticMap = nullptr;
+	if (!mapReceiver->finished() || !staticMap->loadMap (mapReceiver->getMapFilename())) staticMap = nullptr;
 
 	onDownloaded (staticMap);
 
