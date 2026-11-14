@@ -248,11 +248,14 @@ public:
 		}
 		archive >> NVP (attackJobs);
 
+		// loaded into an existing model (a resync): the loaded units replace the old ones
+		neutralBuildings.clear();
 		archive >> NVP (neutralBuildings);
 		for (auto& building : neutralBuildings)
 		{
 			building->postLoad (*this);
 		}
+		neutralVehicles.clear();
 		archive >> NVP (neutralVehicles);
 		for (auto& vehicle : neutralVehicles)
 		{

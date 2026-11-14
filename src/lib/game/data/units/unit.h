@@ -191,19 +191,22 @@ public:
 	{
 		// clang-format off
 		// See https://github.com/llvm/llvm-project/issues/44312
+		std::vector<unsigned int> storedUnitIds;
 		if constexpr (Archive::isWriter)
 		{
 			int id = iID;
 			archive & NVP (id); // const member. needs to be deserialized before calling constructor
-			storedUnitIds = ranges::Transform (storedUnits, [] (auto* unit) { return unit->getId(); });
-		}
-		else
-		{
-			storedUnitIds.clear();
+			// written between the deserialization and postLoad() (cModel::load copies a loaded player into an
+			// existing one): storedUnits are not restored yet, the loaded ids are the stored units
+			storedUnitIds = loadedStoredUnitIds ? *loadedStoredUnitIds : ranges::Transform (storedUnits, [] (auto* unit) { return unit->getId(); });
 		}
 		archive & NVP (data);
 		archive & NVP (dir);
 		archive & NVP (storedUnitIds);
+		if constexpr (!Archive::isWriter)
+		{
+			loadedStoredUnitIds = std::move (storedUnitIds);
+		}
 		archive & NVP (detectedByPlayerList);
 		archive & NVP (detectedInThisTurnByPlayerList);
 		archive & NVP (position);
@@ -228,7 +231,7 @@ public: // TODO: make protected/private and make getters/setters
 	EDirection dir = EDirection::North; // ?Frame of the unit/current direction the unit is facing?
 
 private:
-	std::vector<unsigned int> storedUnitIds; // equivalent of storedUnits, for serialization only.
+	std::optional<std::vector<unsigned int>> loadedStoredUnitIds; // ids of storedUnits, from the deserialization until postLoad() restores storedUnits
 public:
 	std::vector<cVehicle*> storedUnits; // list with the vehicles, that are stored in this unit
 
