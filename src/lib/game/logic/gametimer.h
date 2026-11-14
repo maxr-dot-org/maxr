@@ -21,6 +21,7 @@
 #define game_logic_gametimerH
 
 #include <SDL.h>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -64,6 +65,8 @@ protected:
 
 	/** SDL_Timer that controls the game time */
 	SDL_TimerID timerID;
+	/** id of this timer for the SDL timer callback (see gameTimerCallback) */
+	std::uintptr_t callbackId = 0;
 	std::mutex mutex;
 	unsigned int eventCounter;
 

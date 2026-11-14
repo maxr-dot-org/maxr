@@ -27,10 +27,38 @@
 
 #include <SDL.h>
 
+namespace
+{
+	//--------------------------------------------------------------------------
+	// The SDL timer callback runs in the timer thread of SDL, and SDL_RemoveTimer()
+	// does not wait for a callback, that is already running: a stopped timer may be
+	// destroyed, while its callback still uses it. So the callback gets the id of
+	// the timer and looks it up under a common mutex, and stop() unregisters the
+	// timer under the same mutex: after stop() no callback can reach the timer.
+	struct sTimerRegistry
+	{
+		std::mutex mutex;
+		std::map<std::uintptr_t, cGameTimer*> timers;
+		std::uintptr_t nextId = 1;
+	};
+
+	sTimerRegistry& timerRegistry()
+	{
+		// never destroyed: SDL may still call back during the exit
+		static auto* registry = new sTimerRegistry();
+		return *registry;
+	}
+} // namespace
+
 //------------------------------------------------------------------------------
 Uint32 cGameTimer::gameTimerCallback (Uint32 interval, void* arg)
 {
-	reinterpret_cast<cGameTimer*> (arg)->timerCallback();
+	auto& registry = timerRegistry();
+	std::unique_lock<std::mutex> lock (registry.mutex);
+	const auto it = registry.timers.find (reinterpret_cast<std::uintptr_t> (arg));
+	if (it == registry.timers.end()) return 0; // the timer has been stopped
+
+	it->second->timerCallback();
 	return interval;
 }
 
@@ -53,14 +81,29 @@ cGameTimer::~cGameTimer()
 void cGameTimer::start()
 {
 	if (timerID == 0)
-		timerID = SDL_AddTimer (GAME_TICK_TIME, gameTimerCallback, this);
+	{
+		auto& registry = timerRegistry();
+		{
+			std::unique_lock<std::mutex> lock (registry.mutex);
+			callbackId = registry.nextId++;
+			registry.timers[callbackId] = this;
+		}
+		timerID = SDL_AddTimer (GAME_TICK_TIME, gameTimerCallback, reinterpret_cast<void*> (callbackId));
+	}
 }
 
 //------------------------------------------------------------------------------
 void cGameTimer::stop()
 {
 	if (timerID != 0)
+	{
 		SDL_RemoveTimer (timerID);
+
+		// wait for a callback, that may be running, and keep the next ones away (see gameTimerCallback)
+		auto& registry = timerRegistry();
+		std::unique_lock<std::mutex> lock (registry.mutex);
+		registry.timers.erase (callbackId);
+	}
 
 	timerID = 0;
 	eventCounter = 0;
